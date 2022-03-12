@@ -8,7 +8,6 @@ data class ConfirmLocation(
     val httpCode: Int,
     val links: List<Any>,
     val orderSummary: OrderSummary,
-    val preReservedDeliverySlots: List<String>,
     val productCountMap: ProductCountMap,
     val response: Response
 )

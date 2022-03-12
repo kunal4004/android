@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.shop;
 import static android.app.Activity.RESULT_OK;
 import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY;
 import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.DELIVERY_TYPE;
+import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION;
 import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.IS_DELIVERY;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
@@ -526,20 +527,54 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         Activity activity = getActivity();
         if (activity != null) {
             KotlinUtils.IS_COMING_FROM_CHECKOUT = true;
-            if (TextUtils.isEmpty(response.getDefaultAddressNickname())) {
+            if (KotlinUtils.Companion.getPreferredDeliveryType().equals(Delivery.CNC)) {
+                // navigate to checkoutWhoIsCollectingFragment
                 KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
                         requireActivity(),
                         CartFragment.REQUEST_PAYMENT_STATUS,
                         null,
-                        null);
+                        null,
+                        true,
+                        false);
             }
 
-//            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT, getActivity());
-//            Intent checkoutActivityIntent = new Intent(getActivity(), CheckoutActivity.class);
-//            checkoutActivityIntent.putExtra(SAVED_ADDRESS_KEY, response);
-//            checkoutActivityIntent.putExtra(DELIVERY_TYPE, KotlinUtils.Companion.getPreferredDeliveryType().toString());
-//            activity.startActivityForResult(checkoutActivityIntent, REQUEST_PAYMENT_STATUS);
-//            activity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_to_left);
+            if (KotlinUtils.Companion.getPreferredDeliveryType().equals(Delivery.STANDARD)) {
+                if (!response.getAddresses().isEmpty()) {
+                    if (TextUtils.isEmpty(response.getDefaultAddressNickname())) {
+                        // confirm address fragment i.e. confirm_nav_host --> add new user
+                        KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
+                                requireActivity(),
+                                CartFragment.REQUEST_PAYMENT_STATUS,
+                                null,
+                                null,
+                                true,
+                                false);
+                    } else {
+
+                        // slot selection page CheckoutAddAddressReturningUserFragment
+                        // i.e. open chekcout activity
+
+                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT,
+                                getActivity());
+                        Intent checkoutActivityIntent = new Intent(getActivity(), CheckoutActivity.class);
+                        checkoutActivityIntent.putExtra(SAVED_ADDRESS_KEY, response);
+                        checkoutActivityIntent.putExtra(GEO_SLOT_SELECTION, true);
+                        activity.startActivityForResult(checkoutActivityIntent,
+                                REQUEST_PAYMENT_STATUS);
+                        activity.overridePendingTransition(R.anim.slide_from_right,
+                                R.anim.slide_out_to_left);
+                    }
+                } else {
+                        // add address page CheckoutAddAddressNewUserFragment i.e. confirm_nav_host
+                    KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
+                            requireActivity(),
+                            CartFragment.REQUEST_PAYMENT_STATUS,
+                            null,
+                            null,
+                            true,
+                            false);
+                }
+            }
         }
     }
 
@@ -645,7 +680,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
                     activity, REQUEST_SUBURB_CHANGE,
                     KotlinUtils.Companion.getPreferredDeliveryType(),
-                    placeId
+                    placeId,
+                    false,
+                    false
             );
         }
     }

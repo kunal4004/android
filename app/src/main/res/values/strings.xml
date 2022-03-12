@@ -2306,9 +2306,9 @@
     <string name="my_address_details">My Address Details</string>
     <string name="address_nickname_text_view">Address Nickname: *</string>
     <string name="unit_complex_floor_text_view">Unit No/Complex/Floor/Building:</string>
-    <string name="suburb_colon_text_view">Suburb: *</string>
-    <string name="province_colon_text_view">Province: *</string>
-    <string name="postal_code_colon_text_view">Postal Code: *</string>
+    <string name="suburb_colon_text_view">Suburb:</string>
+    <string name="province_colon_text_view">Province:</string>
+    <string name="postal_code_colon_text_view">Postal Code:</string>
     <string name="optional_hint">Optional</string>
     <string name="places_autocomplete_tv_hint">Enter a new address</string>
     <string name="add_a_new_address">Add A New Address</string>

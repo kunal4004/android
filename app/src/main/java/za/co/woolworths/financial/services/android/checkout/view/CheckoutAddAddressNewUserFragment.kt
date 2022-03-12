@@ -953,9 +953,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         }
         if (autoCompleteTextView?.text.toString().trim()
                 .isNotEmpty() && addressNicknameEditText?.text.toString().trim()
-                .isNotEmpty() && suburbEditText?.text.toString().trim()
-                .isNotEmpty() && provinceAutocompleteEditText?.text.toString().trim()
-                .isNotEmpty() && postalCode?.text.toString().trim()
                 .isNotEmpty() && recipientNameEditText?.text.toString().trim()
                 .isNotEmpty() && cellphoneNumberEditText?.text.toString().trim()
                 .isNotEmpty() && selectedDeliveryAddressType != null
@@ -1167,7 +1164,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
     fun showSuburbNotDeliverableBottomSheetDialog(errorCode: String?) {
         view?.findNavController()?.navigate(
-            R.id.action_checkoutAddAddressNewUserFragment_to_errorHandlerBottomSheetDialog,
+            //action_CheckoutAddAddressNewUserFragment_to_suburbNotDeliverableBottomsheetDialogFragment
+            R.id.action_checkoutAddAddressNewUserFragment_to_geoSuburbNotDeliverableBottomsheetDialogFragment,
             bundleOf(
                 ERROR_CODE to errorCode
             )
@@ -1410,7 +1408,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
     private fun navigateToAddressConfirmation() {
         navController?.navigate(
-            R.id.action_checkoutAddAddressNewUserFragment_to_confirmDeliveryLocationFragment,
+            R.id.action_checkoutAddAddressNewUserFragment_to_confirmAddressLocationFragment,
             baseFragBundle
         )
     }

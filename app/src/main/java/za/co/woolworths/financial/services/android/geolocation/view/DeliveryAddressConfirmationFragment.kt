@@ -27,13 +27,18 @@ import za.co.woolworths.financial.services.android.geolocation.network.model.Val
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.StoreLiveData
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
+import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
+import za.co.woolworths.financial.services.android.models.dto.Suburb
+import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -43,11 +48,12 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
  */
 class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
 
+    private var isUnSellableItemsRemoved: Boolean? = false
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     private var placeId: String? = null
     private var latitude: String? = null
     private var longitude: String? = null
-    private lateinit var validateLocationResponse: ValidateLocationResponse
+    private  var validateLocationResponse: ValidateLocationResponse? = null
     private var deliveryType: String? = STANDARD_DELIVERY
     private var mStoreName: String? = null
     private var mStoreId: String? = null
@@ -155,61 +161,78 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
     }
 
     private fun sendConfirmLocation() {
-        if (placeId == null) {
-            return
-        }
 
-        val confirmLocationAddress = ConfirmLocationAddress(placeId)
-        var confirmLocationRequest = ConfirmLocationRequest("", confirmLocationAddress,"", )
-        if (deliveryType.equals(STANDARD_DELIVERY)) {
-            confirmLocationRequest =
-                ConfirmLocationRequest(STANDARD, confirmLocationAddress)
-        }
-        if (deliveryType.equals(CLICK_AND_COLLECT)) {
-            confirmLocationRequest =
-                ConfirmLocationRequest(CNC, confirmLocationAddress, mStoreId)
-        }
+      if (validateLocationResponse?.validatePlace?.unSellableCommerceItems?.isEmpty() == false) {
+            // show unsellable items
+          validateLocationResponse?.validatePlace?.unSellableCommerceItems?.let {
+              navigateToUnsellableItemsFragment(it)
+              if (isUnSellableItemsRemoved == false) {
+                  return
+              }
+          }
+      } else {
+          if (placeId == null) {
+              return
+          }
+          val confirmLocationAddress = ConfirmLocationAddress(placeId)
+          var confirmLocationRequest = ConfirmLocationRequest("", confirmLocationAddress, "",)
+          if (deliveryType.equals(STANDARD_DELIVERY)) {
+              confirmLocationRequest =
+                  ConfirmLocationRequest(STANDARD, confirmLocationAddress)
+          }
+          if (deliveryType.equals(CLICK_AND_COLLECT)) {
+              confirmLocationRequest =
+                  ConfirmLocationRequest(CNC, confirmLocationAddress, mStoreId)
+          }
 
-        lifecycleScope.launch {
-            progressBar.visibility = View.VISIBLE
-            try {
-                val confirmLocationResponse =
-                    confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
-                progressBar.visibility = View.GONE
-                if (confirmLocationResponse != null) {
-                    when (confirmLocationResponse.httpCode) {
-                        HTTP_OK -> {
-                            // save details in cache
+          lifecycleScope.launch {
+              progressBar.visibility = View.VISIBLE
+              try {
+                  val confirmLocationResponse =
+                      confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
+                  progressBar.visibility = View.GONE
+                  if (confirmLocationResponse != null) {
+                      when (confirmLocationResponse.httpCode) {
+                          HTTP_OK -> {
+                              // save details in cache
 
-                            confirmLocationResponse?.orderSummary?.fulfillmentDetails?.let {
-                                Utils.savePreferredDeliveryLocation(
-                                    ShoppingDeliveryLocation(
-                                        confirmLocationResponse?.orderSummary?.fulfillmentDetails
-                                    )
-                                )
+                              confirmLocationResponse?.orderSummary?.fulfillmentDetails?.let {
+                                  Utils.savePreferredDeliveryLocation(
+                                      ShoppingDeliveryLocation(
+                                          confirmLocationResponse?.orderSummary?.fulfillmentDetails
+                                      )
+                                  )
+                              }
+
+                            if (KotlinUtils.IS_COMING_FROM_CHECKOUT) {
+
+                                /*now refactor UI from here to selct tab*/
+
+
+
+                            } else {
+                                    // navigate to shop/list/cart tab
+                                Log.e("GEO_REQUEST_CODE :", "" + KotlinUtils.GEO_REQUEST_CODE)
+                                activity?.setResult(KotlinUtils.GEO_REQUEST_CODE)
+                                activity?.finish()
                             }
-
-                            // navigate to shop tab
-                            Log.e("GEO_REQUEST_CODE :", "" + KotlinUtils.GEO_REQUEST_CODE)
-                            activity?.setResult(KotlinUtils.GEO_REQUEST_CODE)
-                            activity?.finish()
-
-                        }
-                        else -> {
-                            // navigate to shop tab with error sceanario
-                            activity?.setResult(EditDeliveryLocationActivity.REQUEST_CODE)
-                            activity?.finish()
-                        }
-                    }
-                }
-            } catch (e: HttpException) {
-                e.printStackTrace()
-                progressBar.visibility = View.GONE
-                // navigate to shop tab with error sceanario
-                activity?.setResult(EditDeliveryLocationActivity.REQUEST_CODE)
-                activity?.finish()
-            }
-        }
+                          }
+                          else -> {
+                              // navigate to shop tab with error sceanario
+                              activity?.setResult(EditDeliveryLocationActivity.REQUEST_CODE)
+                              activity?.finish()
+                          }
+                      }
+                  }
+              } catch (e: HttpException) {
+                  e.printStackTrace()
+                  progressBar.visibility = View.GONE
+                  // navigate to shop tab with error sceanario
+                  activity?.setResult(EditDeliveryLocationActivity.REQUEST_CODE)
+                  activity?.finish()
+              }
+          }
+      }
     }
 
     companion object {
@@ -265,6 +288,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
             mStoreName = it?.storeName.toString()
             mStoreId = it?.storeId.toString()
         })
+        isUnSellableItemsRemoved()
         placeId?.let {
             getDeliveryDetailsFromValidateLocation(it) }
     }
@@ -290,7 +314,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
         updateCollectionDetails()
     }
 
-    private fun getDeliveryDetailsFromValidateLocation(placeId: String) {
+    private fun     getDeliveryDetailsFromValidateLocation(placeId: String) {
         if (placeId.isNullOrEmpty())
             return
 
@@ -301,7 +325,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
                     confirmAddressViewModel.getValidateLocation(placeId)
                 progressBar.visibility = View.GONE
                 if (validateLocationResponse != null) {
-                    when (validateLocationResponse.httpCode) {
+                    when (validateLocationResponse?.httpCode) {
                         HTTP_OK -> {
                             openDeliveryTab()
                         }
@@ -348,7 +372,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
             validateLocationResponse?.validatePlace?.placeDetails?.address1
 
         val earliestFoodDate =
-            validateLocationResponse.validatePlace?.firstAvailableFoodDeliveryDate
+            validateLocationResponse?.validatePlace?.firstAvailableFoodDeliveryDate
         if (earliestFoodDate.isNullOrEmpty())
             earliestDeliveryDateLayout.visibility = View.GONE
         else {
@@ -357,7 +381,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
         }
 
         val earliestFashionDate =
-            validateLocationResponse.validatePlace?.firstAvailableOtherDeliveryDate
+            validateLocationResponse?.validatePlace?.firstAvailableOtherDeliveryDate
         if (earliestFashionDate.isNullOrEmpty())
             earliestFashionDeliveryDateLayout.visibility = View.GONE
         else {
@@ -427,7 +451,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
         }
 
         val earliestFoodDate =
-            validateLocationResponse.validatePlace?.firstAvailableFoodDeliveryDate
+            validateLocationResponse?.validatePlace?.firstAvailableFoodDeliveryDate
         if (earliestFoodDate.isNullOrEmpty())
             earliestDeliveryDateLayout.visibility = View.GONE
         else {
@@ -455,6 +479,35 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
         StoreLiveData.value?.storeName = null
         StoreLiveData.value?.storeId = null
         StoreLiveData.postValue(null)
+    }
+
+    /**
+     * This function is to navigate to Unsellable Items screen.
+     * @param [unSellableCommerceItems] list of items that are not deliverable in the selected location
+     * @param [deliverable] boolean flag to determine if provided list of items are deliverable
+     *
+     * @see [Suburb]
+     * @see [Province]
+     * @see [UnSellableCommerceItem]
+     */
+    private fun navigateToUnsellableItemsFragment(
+        unSellableCommerceItems: MutableList<UnSellableCommerceItem>
+    ) {
+        findNavController()?.navigate(
+            R.id.action_deliveryAddressConfirmationFragment_to_geoUnsellableItemsFragment,
+            bundleOf(
+                UnsellableItemsFragment.KEY_ARGS_BUNDLE to bundleOf(
+                    UnsellableItemsFragment.KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS to Utils.toJson(unSellableCommerceItems),
+                )
+            )
+        )
+    }
+
+    private fun isUnSellableItemsRemoved() {
+        UnSellableItemsLiveData.observe(viewLifecycleOwner, {
+            isUnSellableItemsRemoved = it
+         }
+        )
     }
 }
 

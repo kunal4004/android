@@ -29,8 +29,10 @@ import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 
 import com.google.android.gms.maps.model.BitmapDescriptor
@@ -85,6 +87,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
         setUpViewModel()
         tvConfirmStore?.setOnClickListener(this)
         ivCross?.setOnClickListener(this)
+        btChange?.setOnClickListener(this)
         etEnterNewAddress.addTextChangedListener(this)
         mapFragment = childFragmentManager
             .findFragmentById(R.id.mapView) as SupportMapFragment
@@ -149,12 +152,6 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
     ) {
         tvStoresNearMe.text = resources.getString(R.string.near_stores, address?.size)
         tvAddress.text = mValidateLocationResponse?.validatePlace?.placeDetails?.address1
-
-        btChange.setOnClickListener {
-            (activity as? BottomNavigationActivity)?.pushFragment(
-                ConfirmAddressFragment.newInstance())
-        }
-
         setStoreList(address)
     }
 
@@ -183,6 +180,11 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
             }
             R.id.ivCross -> {
                 dismiss()
+            }
+            R.id.btChange -> {
+                findNavController().navigate(
+                    R.id.action_clickAndCollectStoresFragment_to_confirmAddressLocationFragment
+                )
             }
         }
     }

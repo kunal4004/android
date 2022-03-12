@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.geolocation.model.response
 
 data class ConfirmLocationAddress (
-    val placeId: String?
+    val placeId: String?,
+    val nickname: String? = ""
  )

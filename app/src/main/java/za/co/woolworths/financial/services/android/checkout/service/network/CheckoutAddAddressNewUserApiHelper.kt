@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import retrofit2.Response
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
+import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocation
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse
 import za.co.woolworths.financial.services.android.models.network.*
@@ -99,7 +101,7 @@ class CheckoutAddAddressNewUserApiHelper : RetrofitConfig() {
         return changeAddressLiveData
     }
 
-    fun getConfirmDeliveryAddressDetails(body: ConfirmDeliveryAddressBody): LiveData<Any> {
+   /* fun getConfirmDeliveryAddressDetails(body: ConfirmDeliveryAddressBody): LiveData<Any> {
         val confirmDeliveryAddress = MutableLiveData<Any>()
         OneAppService.getConfirmDeliveryAddressDetails(body).enqueue(CompletionHandler(object :
             IResponseListener<ConfirmDeliveryAddressResponse> {
@@ -115,7 +117,7 @@ class CheckoutAddAddressNewUserApiHelper : RetrofitConfig() {
 
         }, ConfirmDeliveryAddressResponse::class.java))
         return confirmDeliveryAddress
-    }
+    }*/
 
     fun getShippingDetails(body: ShippingDetailsBody): LiveData<Any> {
         val shippingDetailsResp = MutableLiveData<Any>()
@@ -169,5 +171,24 @@ class CheckoutAddAddressNewUserApiHelper : RetrofitConfig() {
                 }
             }, ConfirmSelectionResponse::class.java))
         return confirmSelectionData
+    }
+
+
+    fun getConfirmLocationDetails(body: ConfirmLocationRequest): LiveData<Any> {
+        val confirmDeliveryAddress = MutableLiveData<Any>()
+        OneAppService.getConfirmDeliveryAddressDetails(body).enqueue(CompletionHandler(object :
+            IResponseListener<ConfirmLocation> {
+            override fun onSuccess(confirmDeliveryAddressResponse: ConfirmLocation?) {
+                confirmDeliveryAddress.value = confirmDeliveryAddressResponse ?: null
+            }
+
+            override fun onFailure(error: Throwable?) {
+                if (error != null) {
+                    confirmDeliveryAddress.value = error!!
+                }
+            }
+
+        }, ConfirmLocation::class.java))
+        return confirmDeliveryAddress
     }
 }

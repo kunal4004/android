@@ -33,14 +33,13 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.repository.AppStateRepository
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
+import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
-import za.co.woolworths.financial.services.android.util.AuthenticateUtils
-import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment
+import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS
-import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAddressView
-import za.co.woolworths.financial.services.android.util.Utils
 
 
 class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchListener {
@@ -435,38 +434,22 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
             }
         }
 
-        if (Utils.getPreferredDeliveryLocation() != null) {
-            view?.let {
-                val bundle = Bundle()
-                bundle.putString(
-                    DeliveryAddressConfirmationFragment.KEY_PLACE_ID,
-                    Utils.getPreferredDeliveryLocation().fulfillmentDetails?.address?.placeId
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            /* if (Utils.getPreferredDeliveryLocation() != null) {
+                 activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, if (Utils.getPreferredDeliveryLocation().suburb.storePickup) DeliveryType.STORE_PICKUP else DeliveryType.DELIVERY) }
+             } else*/
+
+            activity?.apply {
+                KotlinUtils.presentEditDeliveryGeoLocationActivity(
+                    this,
+                    EditDeliveryLocationActivity.REQUEST_CODE,
+                    KotlinUtils.getPreferredDeliveryType(),
+                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                 )
-                bundle.putString(
-                    DeliveryAddressConfirmationFragment.DELIVERY_TYPE,
-                    KotlinUtils.getPreferredDeliveryType().toString()
-                )
-                try {
-                    Navigation.findNavController(it)
-                        .navigate(
-                            R.id.action_myPreferencesFragment_to_deliveryAddressConfirmationFragment,
-                            bundle
-                        )
-                } catch (e: Exception) {
-                    FirebaseManager.logException(e)
-                }
             }
         } else {
-            view?.let {
-                try {
-                    Navigation.findNavController(it)
-                        .navigate(R.id.action_myPreferencesFragment_to_confirmAddressFragment)
-                } catch (e: Exception) {
-                    FirebaseManager.logException(e)
-                }
-            }
+            ScreenManager.presentSSOSignin(activity, DepartmentsFragment.DEPARTMENT_LOGIN_REQUEST)
         }
-
 
     }
 

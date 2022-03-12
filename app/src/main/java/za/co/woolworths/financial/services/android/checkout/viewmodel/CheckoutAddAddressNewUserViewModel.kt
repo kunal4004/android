@@ -9,6 +9,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.AddA
 import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmSelectionRequestBody
 import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsBody
 import za.co.woolworths.financial.services.android.checkout.utils.NativeCheckoutResource
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.models.network.ConfirmDeliveryAddressBody
 import za.co.woolworths.financial.services.android.models.network.StorePickupInfoBody
 
@@ -64,9 +65,9 @@ class CheckoutAddAddressNewUserViewModel(private val checkoutAddAddressNewUserIn
         return checkoutAddAddressNewUserInteractor.deleteAddress(addressId)
     }
 
-    fun getConfirmDeliveryAddressDetails(body: ConfirmDeliveryAddressBody): LiveData<Any> {
+   /* fun getConfirmDeliveryAddressDetails(body: ConfirmDeliveryAddressBody): LiveData<Any> {
         return checkoutAddAddressNewUserInteractor.getConfirmDeliveryAddressDetails(body)
-    }
+    }*/
 
     fun changeAddress(nickName: String): LiveData<Any> {
         return checkoutAddAddressNewUserInteractor.changeAddress(nickName)
@@ -83,4 +84,9 @@ class CheckoutAddAddressNewUserViewModel(private val checkoutAddAddressNewUserIn
     fun getStorePickupInfo(body: StorePickupInfoBody): LiveData<Any> {
         return checkoutAddAddressNewUserInteractor.getStorePickupInfo(body)
     }
+
+    fun getConfirmLocationDetails(body: ConfirmLocationRequest): LiveData<Any> {
+        return checkoutAddAddressNewUserInteractor.getConfirmLocationDetails(body)
+    }
+
 }
