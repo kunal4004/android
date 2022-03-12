@@ -1,20 +1,19 @@
 package za.co.woolworths.financial.services.android.geolocation.view
 
-import android.content.Intent
+
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.geolocation_deliv_click_collect.*
-import kotlinx.android.synthetic.main.geolocation_deliv_click_collect.deliveryTab
+import kotlinx.android.synthetic.main.geo_location_delivery_address.*
 import kotlinx.android.synthetic.main.layout_laocation_not_available.view.*
 import kotlinx.android.synthetic.main.no_collection_store_fragment.view.*
 import kotlinx.coroutines.launch
@@ -29,7 +28,6 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLoca
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.StoreLiveData
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
-import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT
@@ -58,7 +56,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        return inflater.inflate(R.layout.geolocation_deliv_click_collect, container, false)
+        return inflater.inflate(R.layout.geo_location_delivery_address, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -80,11 +78,11 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.geoloc_deliv_click_back -> {
+            R.id.imgDelBack -> {
                 activity?.onBackPressed()
                 deliveryType = AppConstant.EMPTY_STRING
             }
-            R.id.geoloc_clickNCollectEditChangetv -> {
+            R.id.editDelivery -> {
 
                 if (deliveryType.equals(CLICK_AND_COLLECT)) {
 
@@ -137,19 +135,19 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
             R.id.img_close -> {
                 (activity as? BottomNavigationActivity)?.popFragment()
             }
-            R.id.geocollectionTab -> {
+            R.id.geoCollectTab -> {
                 deliveryType = CLICK_AND_COLLECT
-                if (progressBar.visibility == View.VISIBLE)
+                if (progressBar?.visibility == View.VISIBLE)
                     return
                 else
                     openCollectionTab()
             }
-            R.id.deliveryTab -> {
+            R.id.geoDeliveryTab -> {
                 deliveryType = STANDARD_DELIVERY
-                if (progressBar.visibility == View.VISIBLE)
+                if (progressBar?.visibility == View.VISIBLE)
                     return
                 else
-                    openDeliveryTab()
+                    opengeoDeliveryTab()
             }
         }
     }
@@ -160,7 +158,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
         }
 
         val confirmLocationAddress = ConfirmLocationAddress(placeId)
-        var confirmLocationRequest = ConfirmLocationRequest("", confirmLocationAddress,"", )
+        var confirmLocationRequest = ConfirmLocationRequest("", confirmLocationAddress, "")
         if (deliveryType.equals(STANDARD_DELIVERY)) {
             confirmLocationRequest =
                 ConfirmLocationRequest(STANDARD, confirmLocationAddress)
@@ -171,11 +169,11 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
         }
 
         lifecycleScope.launch {
-            progressBar.visibility = View.VISIBLE
+            progressBar?.visibility = View.VISIBLE
             try {
                 val confirmLocationResponse =
                     confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
-                progressBar.visibility = View.GONE
+                progressBar?.visibility = View.GONE
                 if (confirmLocationResponse != null) {
                     when (confirmLocationResponse.httpCode) {
                         HTTP_OK -> {
@@ -190,7 +188,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
                             }
 
                             // navigate to shop tab
-                            Log.e("GEO_REQUEST_CODE :", "" + KotlinUtils.GEO_REQUEST_CODE)
+
                             activity?.setResult(KotlinUtils.GEO_REQUEST_CODE)
                             activity?.finish()
 
@@ -204,7 +202,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
                 }
             } catch (e: HttpException) {
                 e.printStackTrace()
-                progressBar.visibility = View.GONE
+                progressBar?.visibility = View.GONE
                 // navigate to shop tab with error sceanario
                 activity?.setResult(EditDeliveryLocationActivity.REQUEST_CODE)
                 activity?.finish()
@@ -218,15 +216,11 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
         val KEY_PLACE_ID = "placeId"
         val DELIVERY_TYPE = "deliveryType"
         val ADDRESS = "address"
-
         val VALIDATE_RESPONSE = "ValidateResponse"
-
         private const val STANDARD_DELIVERY = "StandardDelivery"
         private const val CLICK_AND_COLLECT = "CLICKANDCOLLECT"
-
         private const val STANDARD = "Standard"
         private const val CNC = "CnC"
-
 
         fun newInstance(latitude: String, longitude: String, placesId: String) =
             DeliveryAddressConfirmationFragment().withArgs {
@@ -251,17 +245,16 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
     }
 
     private fun initView() {
-        geoloc_deliv_click_back?.setOnClickListener(this)
-        geoloc_clickNCollectEditChangetv?.setOnClickListener(this)
+        imgDelBack?.setOnClickListener(this)
+        editDelivery?.setOnClickListener(this)
         btnConfirmAddress?.setOnClickListener(this)
-        deliveryTab?.setOnClickListener(this)
-        geocollectionTab?.setOnClickListener(this)
+        geoDeliveryTab?.setOnClickListener(this)
+        geoCollectTab?.setOnClickListener(this)
         StoreLiveData.observe(viewLifecycleOwner,{
-            geoloc_clickNCollectTitle?.text = bindString(R.string.collecting_from)
-            geoloc_clickNCollectEditChangetv.text = bindString(R.string.edit)
-            geoloc_clickNCollectValue?.text = it?.storeName
-            btnConfirmAddress.isEnabled = true
-            btnConfirmAddress.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
+            geoDeliveryText?.text = HtmlCompat.fromHtml(getString(R.string.collecting_from_geo,it?.storeName), HtmlCompat.FROM_HTML_MODE_LEGACY)
+            editDelivery?.text = bindString(R.string.edit)
+            btnConfirmAddress?.isEnabled = true
+            btnConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
             mStoreName = it?.storeName.toString()
             mStoreId = it?.storeId.toString()
         })
@@ -269,24 +262,24 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
             getDeliveryDetailsFromValidateLocation(it) }
     }
 
-    private fun openDeliveryTab() {
-        deliveryTab.setBackgroundResource(R.drawable.delivery_round_btn_black)
-        deliveryTab.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-        geocollectionTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
-        geocollectionTab.setTextColor(ContextCompat.getColor(requireContext(), R.color.offer_title))
-        geoloc_delivIconImage.background = ContextCompat.getDrawable(requireContext(), R.drawable.icon_delivery)
-        btnConfirmAddress.isEnabled = true
-        btnConfirmAddress.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
-        geoloc_clickNCollectEditChangetv.text = getString(R.string.edit)
+    private fun opengeoDeliveryTab() {
+        geoDeliveryTab?.setBackgroundResource(R.drawable.bg_geo_selected_tab)
+        geoDeliveryTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+        geoCollectTab?.setBackgroundResource(R.drawable.bg_geo_unselected_tab)
+        geoCollectTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_444444))
+        deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.ic_delivery_circle))
+        btnConfirmAddress?.isEnabled = true
+        btnConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
+        editDelivery?.text = getString(R.string.edit)
         updateDeliveryDetails()
     }
 
     private fun openCollectionTab() {
-        geocollectionTab.setBackgroundResource(R.drawable.delivery_round_btn_black)
-        geocollectionTab.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-        deliveryTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
-        deliveryTab.setTextColor(ContextCompat.getColor(requireContext(), R.color.offer_title))
-        geoloc_delivIconImage.background = ContextCompat.getDrawable(requireContext(), R.drawable.shoppingbag)
+        geoCollectTab?.setBackgroundResource(R.drawable.bg_geo_selected_tab)
+        geoCollectTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+        geoDeliveryTab?.setBackgroundResource(R.drawable.bg_geo_unselected_tab)
+        geoDeliveryTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_444444))
+        deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.ic_bag_circle))
         updateCollectionDetails()
     }
 
@@ -295,15 +288,16 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
             return
 
         lifecycleScope.launch {
-            progressBar.visibility = View.VISIBLE
+            progressBar?.visibility = View.VISIBLE
             try {
                 validateLocationResponse =
                     confirmAddressViewModel.getValidateLocation(placeId)
-                progressBar.visibility = View.GONE
+                progressBar?.visibility = View.GONE
+                geoDeliveryView?.visibility = View.VISIBLE
                 if (validateLocationResponse != null) {
                     when (validateLocationResponse.httpCode) {
                         HTTP_OK -> {
-                            openDeliveryTab()
+                            opengeoDeliveryTab()
                         }
                         else -> {
                             /*TODO Error sceanario*/
@@ -312,7 +306,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
                 }
             } catch (e: HttpException) {
                 FirebaseManager.logException(e)
-                progressBar.visibility = View.GONE
+                progressBar?.visibility = View.GONE
                 /*TODO Error sceanario*/
             }
         }
@@ -322,10 +316,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
 
         if (validateLocationResponse?.validatePlace?.stores?.isEmpty() == true) {
             no_conn_layout?.visibility = View.VISIBLE
-            main_layout?.visibility = View.GONE
+            geoDeliveryView?.visibility = View.GONE
             no_loc_layout?.visibility = View.GONE
-            geoloc_deliv_clickLayout?.visibility = View.GONE
-            geoloc_deliv_click_back?.visibility = View.GONE
             no_conn_layout?.img_close?.setOnClickListener(this)
             no_conn_layout?.btn_change_location?.setOnClickListener(this)
             return
@@ -333,37 +325,41 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
 
         if (validateLocationResponse?.validatePlace?.deliverable == false) {
             no_loc_layout?.visibility = View.VISIBLE
-            main_layout?.visibility = View.GONE
+            geoDeliveryView?.visibility = View.GONE
             no_loc_layout?.img_no_loc?.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.ic_delivery_truck))
             no_loc_layout?.btn_no_loc_change_location?.setOnClickListener(this)
             return
         }
-
-        geolocDeliveryDetailsLayout.visibility = View.VISIBLE
-        geoloc_clickNCollectTitle.text = bindString(R.string.delivering_to)
-        icon_deliv_click.background = bindDrawable(R.drawable.icon_delivery)
-        feeLayout.visibility = View.GONE
-        feeValue?.text = ""//validateLocationResponse.validatePlace
-        geoloc_clickNCollectValue?.text =
-            validateLocationResponse?.validatePlace?.placeDetails?.address1
-
+        geoDeliveryView?.visibility = View.VISIBLE
+        geoDeliveryText?.text = HtmlCompat.fromHtml(getString(R.string.delivering_to_geo,validateLocationResponse?.validatePlace?.placeDetails?.address1), HtmlCompat.FROM_HTML_MODE_LEGACY)
+        imgDelIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.ic_delivery_geo))
+        //TODO: Need to add fee value from responce.
+        feeLabel?.visibility = View.GONE
+        feeValue?.visibility = View.GONE
+        feeValue?.text = ""
         val earliestFoodDate =
             validateLocationResponse.validatePlace?.firstAvailableFoodDeliveryDate
-        if (earliestFoodDate.isNullOrEmpty())
-            earliestDeliveryDateLayout.visibility = View.GONE
-        else {
+        if (earliestFoodDate.isNullOrEmpty()) {
+            earliestDeliveryDateLabel?.visibility = View.GONE
+            earliestDeliveryDateValue?.visibility = View.GONE
+        } else {
+            earliestDeliveryDateLabel?.visibility = View.VISIBLE
+            earliestDeliveryDateValue?.visibility = View.VISIBLE
             earliestDeliveryDateValue?.text = WFormatter.getFullMonthWithDate(earliestFoodDate)
-            earliestDeliveryDateLayout.visibility = View.VISIBLE
+
         }
 
         val earliestFashionDate =
             validateLocationResponse.validatePlace?.firstAvailableOtherDeliveryDate
-        if (earliestFashionDate.isNullOrEmpty())
-            earliestFashionDeliveryDateLayout.visibility = View.GONE
-        else {
-            earliestFashionDeliveryDateLayout.visibility = View.VISIBLE
+        if (earliestFashionDate.isNullOrEmpty()) {
+            earliestFashionDeliveryDateLabel?.visibility = View.GONE
+            earliestFashionDeliveryDateValue?.visibility = View.GONE
+        } else {
             earliestFashionDeliveryDateValue?.text =
                 WFormatter.getFullMonthWithDate(earliestFashionDate)
+            earliestFashionDeliveryDateLabel?.visibility = View.VISIBLE
+            earliestFashionDeliveryDateValue?.visibility = View.VISIBLE
+
         }
         if (!earliestFoodDate.isNullOrEmpty() && !earliestFashionDate.isNullOrEmpty()) {
             productsAvailableValue?.text = bindString(R.string.all)
@@ -390,7 +386,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
     private fun updateCollectionDetails() {
         if (validateLocationResponse?.validatePlace?.deliverable == false) {
             no_loc_layout?.visibility = View.VISIBLE
-            main_layout?.visibility = View.GONE
+            geoDeliveryView?.visibility = View.GONE
             no_loc_layout?.img_no_loc?.setImageDrawable(
                 ContextCompat.getDrawable(
                     requireActivity(),
@@ -401,40 +397,37 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
             return
         }
 
-        geolocDeliveryDetailsLayout.visibility = View.VISIBLE
-
-        icon_deliv_click.background = bindDrawable(R.drawable.shoppingbag)
-        feeLayout.visibility = View.GONE
-        feeValue?.text = ""//validateLocationResponse.validatePlace
-       // val storeName = getNearestStore(validateLocationResponse?.validatePlace?.stores)
-//        if (storeName.isNullOrEmpty())
-//            geoloc_clickNCollectValue?.text = ""
-//        else
-//            geoloc_clickNCollectValue?.text = if (mStoreName != null) mStoreName else storeName
-
+        geoDeliveryView?.visibility = View.VISIBLE
+        imgDelIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.ic_basket))
+        //TODO: Need to add fee from responce with condition
+        feeLabel?.visibility = View.GONE
+        feeValue?.visibility = View.GONE
+        feeValue?.text = ""
         if (StoreLiveData.value?.storeName.isNullOrEmpty()) {
-            geoloc_clickNCollectTitle.text = bindString(R.string.where_do_you_want_to_collect)
-            geoloc_clickNCollectEditChangetv.text = bindString(R.string.choose)
-            geoloc_clickNCollectValue?.text = AppConstant.EMPTY_STRING
-            btnConfirmAddress.isEnabled = false
-            btnConfirmAddress.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.color_A9A9A9))
+            geoDeliveryText?.text = bindString(R.string.where_do_you_want_to_collect)
+            editDelivery?.text = bindString(R.string.choose)
+            btnConfirmAddress?.isEnabled = false
+            btnConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.color_A9A9A9))
         } else {
-            geoloc_clickNCollectTitle.text = bindString(R.string.collecting_from)
-            geoloc_clickNCollectEditChangetv.text = bindString(R.string.edit)
-            geoloc_clickNCollectValue?.text = mStoreName
-            btnConfirmAddress.isEnabled = true
-            btnConfirmAddress.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
+
+            geoDeliveryText?.text = HtmlCompat.fromHtml(getString(R.string.collecting_from_geo,mStoreName), HtmlCompat.FROM_HTML_MODE_LEGACY)
+            editDelivery?.text = bindString(R.string.edit)
+            btnConfirmAddress?.isEnabled = true
+            btnConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
         }
 
         val earliestFoodDate =
             validateLocationResponse.validatePlace?.firstAvailableFoodDeliveryDate
-        if (earliestFoodDate.isNullOrEmpty())
-            earliestDeliveryDateLayout.visibility = View.GONE
-        else {
-            earliestDeliveryDateLayout.visibility = View.VISIBLE
+        if (earliestFoodDate.isNullOrEmpty()) {
+            earliestDeliveryDateLabel?.visibility = View.GONE
+            earliestDeliveryDateValue?.visibility = View.GONE
+        } else {
+            earliestDeliveryDateLabel?.visibility = View.VISIBLE
+            earliestDeliveryDateValue?.visibility = View.VISIBLE
             earliestDeliveryDateValue?.text = WFormatter.getFullMonthWithDate(earliestFoodDate)
         }
-        earliestFashionDeliveryDateLayout.visibility = View.GONE
+        earliestFashionDeliveryDateLabel?.visibility = View.GONE
+        earliestFashionDeliveryDateValue?.visibility = View.GONE
         productsAvailableValue?.text = bindString(R.string.food)
         itemLimitValue?.text =
             validateLocationResponse?.validatePlace?.quantityLimit?.foodMaximumQuantity?.toString()
