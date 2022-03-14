@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.pma_manage_card_fragment.*
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAYMENT_DETAIL_CARD_UPDATE
 import za.co.woolworths.financial.services.android.ui.adapters.PMACardsAdapter
@@ -71,19 +71,21 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
         payMyAccountViewModel.getNavigationResult().observe(viewLifecycleOwner) { result ->
             when (result) {
                 PayMyAccountViewModel.OnBackNavigation.REMOVE -> {
-                    // deleteRow(position)
-                    GlobalScope.doAfterDelay(AppConstant.DELAY_300_MS) {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        delay(AppConstant.DELAY_300_MS)
                         removeCardProduct(mTemporarySelectedPosition)
                     }
                 }
                 PayMyAccountViewModel.OnBackNavigation.ADD -> {
-                    GlobalScope.doAfterDelay(AppConstant.DELAY_300_MS) {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        delay(AppConstant.DELAY_300_MS)
                         navController?.navigate(R.id.action_manageCardFragment_to_addNewPayUCardFragment)
                     }
                 }
 
                 PayMyAccountViewModel.OnBackNavigation.MAX_CARD_LIMIT -> {
-                    GlobalScope.doAfterDelay(AppConstant.DELAY_350_MS) {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        delay(AppConstant.DELAY_350_MS)
                         navController?.navigate(R.id.action_manageCardFragment_to_PMATenCardLimitDialogFragment)
                     }
                 }
@@ -165,6 +167,8 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
             deleteProgressVisibility(true)
             payMyAccountViewModel.queryServiceDeletePaymentMethod(deletedPaymentMethod, position, {
                 deleteProgressVisibility(false)
+                mTemporarySelectedPosition = 0
+                manageCardAdapter?.notifyUpdate(mPaymentMethodList, mTemporarySelectedPosition)
             }, {
                 // Add deleted card to list
                 deleteProgressVisibility(false)
@@ -196,7 +200,8 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
     }
 
     private fun deleteProgressVisibility(isVisible: Boolean) {
-        GlobalScope.doAfterDelay(100) {
+       CoroutineScope(Dispatchers.Main).launch {
+           delay(AppConstant.DELAY_100_MS)
             deleteProgressBar?.visibility = if (isVisible) VISIBLE else GONE
             useThisCardButton?.isEnabled = !isVisible
         }

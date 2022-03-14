@@ -435,7 +435,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     }
 
     override fun showUserOfferActiveProgress() {
-        cancelRetrofitRequest(mCardPresenterImpl?.mStoreCardCall)
+        cancelRetrofitRequest(mCardPresenterImpl?.mOfferActiveCall)
         llIncreaseLimitContainer?.isEnabled = false
         relIncreaseMyLimit?.isEnabled = false
         progressCreditLimit?.visibility = VISIBLE

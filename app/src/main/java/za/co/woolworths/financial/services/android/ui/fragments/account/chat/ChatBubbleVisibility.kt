@@ -66,13 +66,13 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
 
         var productGroupCodeAccount: Account? = null
         accountList?.forEach { account ->
-            if (account.productGroupCode?.toLowerCase(Locale.getDefault()) == productGroupCode) {
+            if (account.productGroupCode?.lowercase() == productGroupCode) {
                 productGroupCodeAccount = account
                 return@forEach
             }
         }
 
-        return productGroupCodeAccount?.productOfferingGoodStanding != true && (productGroupCodeAccount?.productOfferingStatus == Utils.ACCOUNT_ACTIVE) || when (activity){
+        return productGroupCodeAccount?.productOfferingGoodStanding != true && (productGroupCodeAccount?.productOfferingStatus?.equals(Utils.ACCOUNT_ACTIVE, ignoreCase = true) == true) || when (activity) {
             is PayMyAccountActivity, is WTransactionsActivity, is StatementActivity, is AbsaStatementsActivity -> true
             else -> false
         }
@@ -310,6 +310,6 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
 
     private fun isAccountNotChargeOff(productGroupCode: AccountsProductGroupCode): Boolean {
         val account = accountList?.singleOrNull { it.productGroupCode == productGroupCode.groupCode }
-        return account?.productOfferingStatus != Utils.ACCOUNT_CHARGED_OFF
+        return (account?.productOfferingGoodStanding == false && account.productOfferingStatus == Utils.ACCOUNT_ACTIVE)
     }
 }

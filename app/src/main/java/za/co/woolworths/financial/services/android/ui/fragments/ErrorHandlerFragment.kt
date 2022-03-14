@@ -115,10 +115,12 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
                 cancelButton?.visibility = View.VISIBLE
             }
             ErrorHandlerActivity.WITH_NO_ACTION -> {
-                errorLogo.setImageResource(R.drawable.ic_error_icon)
-                errorTitle.text = getString(R.string.absa_general_error_title)
-                errorDescription.text = getString(R.string.absa_common_error_message)
-                actionsLayout.visibility = View.INVISIBLE
+                errorLogo?.setImageResource(R.drawable.ic_error_icon)
+                errorTitle?.text = getString(R.string.absa_general_error_title)
+                errorDescription?.text = getString(R.string.absa_otp_retry_max_attempt_error)
+                actionsLayout?.visibility = View.VISIBLE
+                actionButton?.visibility = View.GONE
+                cancelButton?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
             }
             ErrorHandlerActivity.LINK_DEVICE_FAILED -> {
                 errorLogo.setImageResource(R.drawable.ic_error_icon)
