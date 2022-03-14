@@ -103,9 +103,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
                 }
 
                 if (deliveryType.equals(STANDARD_DELIVERY)) {
-                    findNavController().navigate(
-                        R.id.action_deliveryAddressConfirmationFragment_to_confirmDeliveryLocationFragment
-                    )
+                    navigateToConfirmAddressScreen()
                     return
                 }
             }
@@ -131,11 +129,11 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
             }
 
             R.id.btn_no_loc_change_location -> {
-                (activity as? BottomNavigationActivity)?.pushFragment(ConfirmAddressFragment.newInstance())
+                navigateToConfirmAddressScreen()
             }
 
             R.id.btn_change_location -> {
-                (activity as? BottomNavigationActivity)?.pushFragment(ConfirmAddressFragment.newInstance())
+                navigateToConfirmAddressScreen()
             }
 
             R.id.img_close -> {
@@ -156,6 +154,12 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
                     opengeoDeliveryTab()
             }
         }
+    }
+
+    private fun navigateToConfirmAddressScreen() {
+        findNavController().navigate(
+            R.id.action_deliveryAddressConfirmationFragment_to_confirmDeliveryLocationFragment
+        )
     }
 
     private fun sendConfirmLocation() {
