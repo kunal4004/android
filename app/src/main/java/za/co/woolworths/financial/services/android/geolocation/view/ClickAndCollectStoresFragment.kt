@@ -89,6 +89,8 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
         ivCross?.setOnClickListener(this)
         btChange?.setOnClickListener(this)
         etEnterNewAddress.addTextChangedListener(this)
+        dialog?.window
+            ?.attributes?.windowAnimations = R.style.DialogFragmentAnimation
         mapFragment = childFragmentManager
             .findFragmentById(R.id.mapView) as SupportMapFragment
         mapFragment.getMapAsync(this)

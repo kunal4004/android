@@ -2753,7 +2753,7 @@
     </style>
 
     <style name="DialogFragmentAnimation">
-        <item name="android:windowEnterAnimation">@anim/slide_out_up</item>
+        <item name="android:windowEnterAnimation">@anim/slide_up_anim</item>
         <item name="android:windowExitAnimation">@anim/slide_down_anim</item>
     </style>
 
