@@ -26,7 +26,6 @@ import com.google.maps.GeocodingApi
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.geolocation_confirm_address.*
 import kotlinx.android.synthetic.main.geolocation_confirm_address.autoCompleteTextView
-import kotlinx.android.synthetic.main.geolocation_deliv_click_collect.*
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
@@ -37,9 +36,9 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLoca
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import java.util.*
 import javax.inject.Inject
@@ -141,26 +140,47 @@ class ConfirmAddressMapFragment() :
     }
 
     private fun confirmAddressClick() {
-        confirmAddress?.setOnClickListener {
-            if (mLatitude != null && mLongitude != null && placeId != null) {
 
-                val bundle = Bundle()
-                bundle?.apply {
-                    putString(
-                        DeliveryAddressConfirmationFragment.KEY_LATITUDE, mLatitude
-                    )
-                    putString(
-                        DeliveryAddressConfirmationFragment.KEY_LONGITUDE, mLongitude
-                    )
-                    putString(
-                        DeliveryAddressConfirmationFragment.KEY_PLACE_ID, placeId
+        confirmAddress?.setOnClickListener {
+
+            if(KotlinUtils.IS_COMING_FROM_CHECKOUT) {
+                if (KotlinUtils.IS_COMING_FROM_DEL_SLOT_SELECTION) {
+                    /*TODO need to test*/
+                    // where we are delivering to screen
+                    findNavController().navigate(
+                        R.id.action_confirmAddressMapFragment_to_checkoutAddAddressNewUserFragment)
+                } else  if (KotlinUtils.IS_COMING_FROM_CNC_SLOT_SELECTION) {
+                    /*TODO need to test*/
+                    // where we are collecting from screen
+                    findNavController().navigate(
+                        R.id.action_confirmAddressMapFragment_to_checkoutCollectingFragment)
+                } else {
+                    // where we are delivering
+                    findNavController().navigate(
+                        R.id.action_confirmAddressMapFragment_to_checkoutAddAddressNewUserFragment)
+                }
+            } else {
+                // normal geo flow
+                if (mLatitude != null && mLongitude != null && placeId != null) {
+                    val bundle = Bundle()
+                    bundle?.apply {
+                        putString(
+                            DeliveryAddressConfirmationFragment.KEY_LATITUDE, mLatitude
+                        )
+                        putString(
+                            DeliveryAddressConfirmationFragment.KEY_LONGITUDE, mLongitude
+                        )
+                        putString(
+                            DeliveryAddressConfirmationFragment.KEY_PLACE_ID, placeId
+                        )
+                    }
+                    findNavController().navigate(
+                        R.id.action_confirmAddressMapFragment_to_deliveryAddressConfirmationFragment,
+                        bundleOf("bundle" to bundle)
                     )
                 }
-
-                findNavController().navigate(R.id.action_confirmAddressMapFragment_to_deliveryAddressConfirmationFragment,
-                    bundleOf("bundle" to bundle)
-                )
             }
+
         }
     }
 

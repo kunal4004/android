@@ -195,7 +195,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     private fun locationSelectionClicked() {
 //        activity?.apply {
 //            KotlinUtils.presentEditDeliveryGeoLocationActivity(this, 0) }
-
+        KotlinUtils.IS_COMING_FROM_CHECKOUT = false
         KotlinUtils.presentEditDeliveryGeoLocationActivity(
             requireActivity(),
             0,

@@ -85,6 +85,10 @@ class KotlinUtils {
         var GEO_REQUEST_CODE = -1
         @JvmField
         var IS_COMING_FROM_CHECKOUT: Boolean = false
+        var IS_COMING_FROM_CNC_SLOT_SELECTION: Boolean = false
+        var IS_COMING_FROM_DEL_SLOT_SELECTION: Boolean = false
+        var IS_COMING_FROM_SLOT_SELECTION: Boolean = false
+
 
         fun highlightTextInDesc(
             context: Context?,
@@ -363,8 +367,12 @@ class KotlinUtils {
             activity: Activity?,
             requestCode: Int,
             delivery: Delivery? = null,
-            placeId: String? = null
+            placeId: String? = null,
+            isComingFromCheckout: Boolean = false,
+            isComingSlotSelection: Boolean = false
         ) {
+            KotlinUtils.IS_COMING_FROM_CHECKOUT = isComingFromCheckout
+            KotlinUtils.IS_COMING_FROM_SLOT_SELECTION = isComingSlotSelection
             var type = delivery
             if (type == null) {
                 if (Utils.getPreferredDeliveryLocation() != null) {
@@ -413,15 +421,15 @@ class KotlinUtils {
             tvDeliveryLocation: WTextView,
             deliverLocationIcon: ImageView?
         ) {
-            with(shoppingDeliveryLocation.fulfillmentDetails) {
-                when (Delivery.getType(deliveryType)) {
+            with(shoppingDeliveryLocation?.fulfillmentDetails) {
+                when (Delivery?.getType(deliveryType)) {
                     Delivery.CNC -> {
-                        tvDeliveringTo.text =
+                        tvDeliveringTo?.text =
                             context?.resources?.getString(R.string.collecting_from)
-                        tvDeliveryLocation.text =
+                        tvDeliveryLocation?.text =
                                 context?.resources?.getString(R.string.store) + storeName?:""
 
-                        tvDeliveryLocation.visibility = View.VISIBLE
+                        tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setBackgroundResource(R.drawable.icon_basket)
                     }
                     Delivery.STANDARD -> {

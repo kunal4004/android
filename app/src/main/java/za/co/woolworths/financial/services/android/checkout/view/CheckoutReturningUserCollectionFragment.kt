@@ -649,6 +649,18 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                     FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
                             FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_EDIT_USER_DETAILS
                 ), activity)
+
+                /*TODO : start Fullfilemnt screen from here */
+
+           /*     KotlinUtils.presentEditDeliveryGeoLocationActivity(
+                    requireActivity(),
+                    98989,
+                    mDelivery,
+                    placesId,
+                    true,
+                    true
+                )*/
+
                 val bundle = Bundle()
                 bundle.putBoolean(KEY_IS_WHO_IS_COLLECTING, true)
                 navController?.navigate(

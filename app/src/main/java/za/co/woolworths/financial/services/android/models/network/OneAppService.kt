@@ -5,6 +5,8 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
+import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocation
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.Response
@@ -235,10 +237,10 @@ object OneAppService : RetrofitConfig() {
             getDeviceIdentityToken())
     }
 
-    fun getConfirmDeliveryAddressDetails(body: ConfirmDeliveryAddressBody): Call<ConfirmDeliveryAddressResponse>{
+    /*fun getConfirmDeliveryAddressDetails(body: ConfirmDeliveryAddressBody): Call<ConfirmDeliveryAddressResponse>{
         return mApiInterface.getConfirmDeliveryAddressDetails("", "", getSessionToken(),
         getDeviceIdentityToken(), body)
-    }
+    }*/
 
     fun getShippingDetails(body: ShippingDetailsBody): Call<ShippingDetailsResponse>{
         return mApiInterface.getShippingDetails("", "", getSessionToken(),
@@ -685,6 +687,17 @@ object OneAppService : RetrofitConfig() {
             getDeviceIdentityToken(),
             insuranceType,
             insuranceTypeOptInBody
+        )
+    }
+
+
+    fun getConfirmDeliveryAddressDetails(body: ConfirmLocationRequest): Call<ConfirmLocation>{
+        return mApiInterface.confirmLocation("",
+            "",
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            "SIT2",
+            body
         )
     }
 }

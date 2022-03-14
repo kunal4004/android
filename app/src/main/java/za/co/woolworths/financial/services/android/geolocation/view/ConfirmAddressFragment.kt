@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -116,6 +117,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             inSavedAddress?.visibility = View.VISIBLE
             tvConfirmAddress?.visibility = View.GONE
         }
+        setButtonUI(false)
     }
 
     @SuppressLint("MissingPermission")
@@ -180,9 +182,9 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
 
     private fun setButtonUI(activated: Boolean) {
         if (activated) {
-            tvConfirmAddress?.setBackgroundColor(resources.getColor(R.color.black))
+            tvConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireActivity(),R.color.black))
         } else {
-            tvConfirmAddress?.setBackgroundColor(resources.getColor(R.color.color_A9A9A9))
+            tvConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireActivity(),R.color.color_A9A9A9))
         }
 
     }
@@ -251,17 +253,25 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             }
             R.id.inCurrentLocation -> {
 
-                if (KotlinUtils.IS_COMING_FROM_CHECKOUT) {
-                    navigateToAddAddress(savedAddressResponse)
-                } else {
-                    val getMapData =
-                        getDataForMapView(mLastLocation?.latitude, mLastLocation?.longitude, false)
-                    val directions =
-                        ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
-                            getMapData
-                        )
-                    findNavController().navigate(directions)
-                }
+                val getMapData =
+                    getDataForMapView(mLastLocation?.latitude, mLastLocation?.longitude, false)
+                val directions =
+                    ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
+                        getMapData
+                    )
+                findNavController().navigate(directions)
+
+//                if (KotlinUtils.IS_COMING_FROM_CHECKOUT) {
+//                    navigateToAddAddress(savedAddressResponse)
+//                } else {
+//                    val getMapData =
+//                        getDataForMapView(mLastLocation?.latitude, mLastLocation?.longitude, false)
+//                    val directions =
+//                        ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
+//                            getMapData
+//                        )
+//                    findNavController().navigate(directions)
+//                }
             }
             R.id.inSavedAddress -> {
                 ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
@@ -270,17 +280,25 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 activity?.onBackPressed()
             }
             R.id.enterNewAddress -> {
-                if (KotlinUtils.IS_COMING_FROM_CHECKOUT) {
-                    navigateToAddAddress(savedAddressResponse)
-                } else {
-                    val getMapData =
-                        getDataForMapView(0.0, 0.0, true)
-                    val directions =
-                        ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
-                            getMapData
-                        )
-                    findNavController().navigate(directions)
-                }
+                val getMapData =
+                    getDataForMapView(0.0, 0.0, true)
+                val directions =
+                    ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
+                        getMapData
+                    )
+                findNavController().navigate(directions)
+
+//                if (KotlinUtils.IS_COMING_FROM_CHECKOUT) {
+//                    navigateToAddAddress(savedAddressResponse)
+//                } else {
+//                    val getMapData =
+//                        getDataForMapView(0.0, 0.0, true)
+//                    val directions =
+//                        ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
+//                            getMapData
+//                        )
+//                    findNavController().navigate(directions)
+//                }
             }
         }
     }
@@ -305,7 +323,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             mPosition)
 
         findNavController().navigate(
-            R.id.action_confirmDeliveryLocationFragment_to_checkoutAddAddressNewUserFragment,
+            R.id.action_confirmAddressLocationFragment_to_checkoutAddAddressNewUserFragment,
             bundleOf("bundle" to bundle)
         )
     }
@@ -324,7 +342,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         )
 
         findNavController()?.navigate(
-            R.id.action_confirmDeliveryLocationFragment_to_checkoutAddAddressNewUserFragment,
+            R.id.action_confirmAddressLocationFragment_to_checkoutAddAddressNewUserFragment,
             bundle
         )
     }

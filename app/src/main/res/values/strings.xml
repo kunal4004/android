@@ -504,6 +504,7 @@
     <string name="favourite_delivery_location_description">In order to improve your shopping experience you can set your favourite delivery location. We will use this as your default delivery location.</string>
     <string name="product_unavailable_desc">Sorry, this product is unavailable in your delivery location</string>
     <string name="delivering_to">Delivering to</string>
+    <string name="delivering_to_geo"> <![CDATA[Delivering to <font color=\'#000000\'><b>%s</b></font>]]></string>
     <string name="delivering_location_popup_message">Your Delivery Location must match your Delivery Address in Checkout. Changing your Delivery Location can affect the product availability of items in your cart.</string>
     <string name="confirm_size_range_desc">size range</string>
     <string name="set_up_device_biometrics_title">BIOMETRICS&#47;PIN</string>
@@ -1574,6 +1575,7 @@
     <string name="select_a_store">Select a Store</string>
     <string name="delivery_or_collection">Delivery or Collection?</string>
     <string name="collecting_from">Collecting from</string>
+    <string name="collecting_from_geo"> <![CDATA[Collecting from <font color=\'#000000\'><b>%s</b></font>]]></string>
     <string name="select_your_collection_store">Select your collection store:</string>
     <string name="select_your_delivery_location">Select your delivery location:</string>
     <string name="remove_these_items_continue">remove these items &amp; continue</string>
@@ -2306,9 +2308,9 @@
     <string name="my_address_details">My Address Details</string>
     <string name="address_nickname_text_view">Address Nickname: *</string>
     <string name="unit_complex_floor_text_view">Unit No/Complex/Floor/Building:</string>
-    <string name="suburb_colon_text_view">Suburb: *</string>
-    <string name="province_colon_text_view">Province: *</string>
-    <string name="postal_code_colon_text_view">Postal Code: *</string>
+    <string name="suburb_colon_text_view">Suburb:</string>
+    <string name="province_colon_text_view">Province:</string>
+    <string name="postal_code_colon_text_view">Postal Code:</string>
     <string name="optional_hint">Optional</string>
     <string name="places_autocomplete_tv_hint">Enter a new address</string>
     <string name="add_a_new_address">Add A New Address</string>

@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResultListener
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,6 +27,7 @@ import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
 import kotlinx.android.synthetic.main.checkout_grid_layout_other.*
 import kotlinx.android.synthetic.main.checkout_how_would_you_delivered.*
+import kotlinx.android.synthetic.main.delivery_or_click_and_collect_selector_dialog.*
 import kotlinx.android.synthetic.main.edit_delivery_location_confirmation_fragment.view.*
 import kotlinx.android.synthetic.main.layout_delivering_to_details.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
@@ -49,6 +51,12 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.Shoppin
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
+import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
+import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
+import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
@@ -61,7 +69,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.shop.Che
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.KeyboardUtils
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.regex.Pattern
 
 
@@ -77,11 +87,16 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         const val REGEX_DELIVERY_INSTRUCTIONS = "^\$|^[a-zA-Z0-9\\s<!>@#\$&().+,-/\\\"']+\$"
     }
 
+    private var mDelivery: Delivery? = null
     private var selectedOpenDayDeliverySlot = OpenDayDeliverySlot()
     private var selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
     private var oddSelectedPosition: Int = -1
     private var suburbId: String = ""
     private var selectedShoppingBagType: Double? = null
+    private var placesId: String? = ""
+    private var storeId: String? = ""
+    private var nickName: String? = ""
+
 
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -113,6 +128,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     private var checkoutDeliveryTypeSelectionShimmerAdapter: CheckoutDeliveryTypeSelectionShimmerAdapter? =
         null
     private var shimmerComponentArray: List<Pair<ShimmerFrameLayout, View>> = ArrayList()
+
+
+    private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
+
 
     enum class FoodSubstitution(val rgb: String) {
         PHONE_CONFIRM("YES_CALL_CONFIRM"),
@@ -157,6 +176,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     private fun initViews() {
+        setUpConfirmAddressViewModel()
+        setupViewModel()
         initializeVariables()
         addFragmentListner()
         initializeDeliveringToView()
@@ -349,6 +370,9 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 savedAddresses.addresses?.forEach { address ->
                     if (savedAddresses.defaultAddressNickname.equals(address.nickname)) {
                         suburbId = address.suburbId ?: ""
+                        placesId = address?.placesId
+                        storeId = address?.storeId
+                        nickName = address?.nickname
                         val addressName = SpannableString(address.address1)
                         val typeface1 =
                             ResourcesCompat.getFont(context, R.font.myriad_pro_regular)
@@ -614,18 +638,36 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     private fun getConfirmDeliveryAddressDetails() {
-
-        if (TextUtils.isEmpty(suburbId)) {
+  /*
+       if (TextUtils.isEmpty(suburbId)) {
             presentErrorDialog(
                 getString(R.string.common_error_unfortunately_something_went_wrong),
                 getString(R.string.common_error_message_without_contact_info)
             )
             return
         }
+   */
         deliverySummaryScrollView?.fullScroll(FOCUS_UP)
         startShimmerView()
-        val body = ConfirmDeliveryAddressBody(suburbId)
-        checkoutAddAddressNewUserViewModel.getConfirmDeliveryAddressDetails(body)
+      //  val body = ConfirmDeliveryAddressBody(suburbId)
+
+
+        /*TODO : store id */
+        val  confirmLocationAddress = ConfirmLocationAddress(placesId, nickName)
+        var body = ConfirmLocationRequest("", confirmLocationAddress, "",page = "")
+        mDelivery = if (storeId.equals("")) Delivery.STANDARD else Delivery.CNC
+        mDelivery?.let {
+            if (it.equals(Delivery.STANDARD) == true) {
+                body =
+                    ConfirmLocationRequest(Delivery.STANDARD.toString(), confirmLocationAddress, "checkout")
+            }
+            if (it.equals(Delivery.CNC) == true) {
+                body =
+                    ConfirmLocationRequest(Delivery.CNC.toString(), confirmLocationAddress, "checkout")
+            }
+        }
+
+        checkoutAddAddressNewUserViewModel.getConfirmLocationDetails(body)
             .observe(viewLifecycleOwner, { response ->
                 stopShimmerView()
                 when (response) {
@@ -797,18 +839,27 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 }
             }
             R.id.checkoutDeliveryDetailsLayout -> {
-                baseFragBundle?.putString(
-                    CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY,
-                    Utils.toJson(confirmDeliveryAddressResponse)
+                /* TODO need to set request code*/
+                KotlinUtils.presentEditDeliveryGeoLocationActivity(
+                    requireActivity(),
+                    98989,
+                    mDelivery,
+                    placesId,
+                    true,
+                    true
                 )
-                baseFragBundle?.putBoolean(
-                    IS_DELIVERY,
-                    (tvNativeCheckoutDeliveringTitle.text == getString(R.string.native_checkout_delivering_to_title))
-                )
-                view?.findNavController()?.navigate(
-                    R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutAddressConfirmationFragment,
-                    baseFragBundle
-                )
+//                baseFragBundle?.putString(
+//                    CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY,
+//                    Utils.toJson(confirmDeliveryAddressResponse)
+//                )
+//                baseFragBundle?.putBoolean(
+//                    IS_DELIVERY,
+//                    (tvNativeCheckoutDeliveringTitle.text == getString(R.string.native_checkout_delivering_to_title))
+//                )
+//                view?.findNavController()?.navigate(
+//                    R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutAddressConfirmationFragment,
+//                    baseFragBundle
+//                )
             }
             R.id.txtContinueToPayment -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_CONTINUE_TO_PAYMENT,
@@ -1168,5 +1219,12 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 }
             }
         }
+    }
+
+    private fun setUpConfirmAddressViewModel() {
+        confirmAddressViewModel = ViewModelProvider(
+            this,
+            GeoLocationViewModelFactory(GeoLocationApiHelper())
+        ).get(ConfirmAddressViewModel::class.java)
     }
 }

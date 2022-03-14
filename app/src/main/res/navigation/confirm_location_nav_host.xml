@@ -2,13 +2,12 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/confirm_delivery_location_nav_host"
-    app:startDestination="@id/suburbSelectorFragment2">
+    android:id="@+id/confirm_delivery_location_nav_host">
 
     <fragment
-        android:id="@+id/confirmDeliveryLocationFragment"
+        android:id="@+id/confirmAddressLocationFragment"
         android:name="za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressFragment"
-        android:label="ConfirmDeliveryLocationFragment"
+        android:label="ConfirmAddressFragment"
         tools:layout="@layout/confirm_address_bottom_sheet_dialog">
 
         <argument
@@ -31,8 +30,12 @@
             app:popEnterAnim="@anim/slide_from_left"
             app:popExitAnim="@anim/slide_to_right" />
         <action
-            android:id="@+id/action_confirmDeliveryLocationFragment_to_checkoutAddAddressNewUserFragment"
-            app:destination="@id/checkoutAddAddressNewUserFragment" />
+            android:id="@+id/action_confirmAddressLocationFragment_to_checkoutAddAddressNewUserFragment"
+            app:destination="@id/checkoutAddAddressNewUserFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
 
     </fragment>
 
@@ -53,6 +56,23 @@
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
             app:popExitAnim="@anim/slide_to_right" />
+        <action
+            android:id="@+id/action_confirmAddressMapFragment_to_checkoutAddAddressNewUserFragment"
+            app:destination="@id/checkoutAddAddressNewUserFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
+        <action
+            android:id="@+id/action_confirmAddressMapFragment_to_checkoutCollectingFragment"
+            app:destination="@id/geoCheckoutCollectingFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
+        <action
+            android:id="@+id/action_confirmAddressMapFragment2_to_geoCheckoutCollectingFragment"
+            app:destination="@id/geoCheckoutCollectingFragment" />
 
     </fragment>
 
@@ -71,7 +91,15 @@
 
         <action
             android:id="@+id/action_deliveryAddressConfirmationFragment_to_confirmDeliveryLocationFragment"
-            app:destination="@id/confirmDeliveryLocationFragment"
+            app:destination="@id/confirmAddressLocationFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right" />
+
+        <action
+            android:id="@+id/action_deliveryAddressConfirmationFragment_to_geoUnsellableItemsFragment"
+            app:destination="@id/geoUnsellableItemsFragment"
             app:enterAnim="@anim/slide_in_from_right"
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
@@ -85,12 +113,19 @@
 
         <action
             android:id="@+id/action_clickAndCollectStoresFragment_to_confirmDeliveryLocationFragment"
-            app:destination="@id/confirmDeliveryLocationFragment"
+            app:destination="@id/confirmAddressLocationFragment"
             app:enterAnim="@anim/slide_in_from_right"
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
             app:popExitAnim="@anim/slide_to_right"
             app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_clickAndCollectStoresFragment_to_confirmAddressLocationFragment"
+            app:destination="@id/confirmAddressLocationFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
 
     </dialog>
     <fragment
@@ -112,8 +147,15 @@
             app:popEnterAnim="@anim/slide_from_left"
             app:popExitAnim="@anim/slide_to_right"/>
         <action
-            android:id="@+id/action_checkoutAddAddressNewUserFragment_to_confirmDeliveryLocationFragment"
-            app:destination="@id/confirmDeliveryLocationFragment"
+            android:id="@+id/action_checkoutAddAddressNewUserFragment_to_confirmAddressLocationFragment"
+            app:destination="@id/confirmAddressLocationFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
+        <action
+            android:id="@+id/action_checkoutAddAddressNewUserFragment_to_geoSuburbNotDeliverableBottomsheetDialogFragment"
+            app:destination="@id/geoSuburbNotDeliverableBottomsheetDialogFragment"
             app:enterAnim="@anim/slide_in_from_right"
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
@@ -128,6 +170,21 @@
         android:id="@+id/suburbSelectorFragment2"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.SuburbSelectorFragment"
         android:label="SuburbSelectorFragment" />
+
+    <fragment
+        android:id="@+id/geoCheckoutCollectingFragment"
+        android:name="za.co.woolworths.financial.services.android.checkout.view.CheckoutWhoIsCollectingFragment"
+        android:label="CheckoutWhoIsCollectingFragment" />
+
+    <dialog
+        android:id="@+id/geoSuburbNotDeliverableBottomsheetDialogFragment"
+        android:name="za.co.woolworths.financial.services.android.checkout.view.SuburbNotDeliverableBottomsheetDialogFragment"
+        android:label="SuburbNotDeliverableBottomsheetDialogFragment"
+        tools:layout="@layout/fragment_suburb_not_deliverable_bottomsheet_dialog" />
+    <fragment
+        android:id="@+id/geoUnsellableItemsFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment"
+        android:label="UnsellableItemsFragment" />
 
 
 </navigation>

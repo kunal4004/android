@@ -16,13 +16,14 @@ import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddr
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 @AndroidEntryPoint
 class EditDeliveryLocationActivity : AppCompatActivity() {
 
-    private var bundle: Bundle? = null
-    private var delivery: String? = null
-    private var placeId: String? = null
+   private var bundle: Bundle? = null
+   private var delivery: String? = null
+   private var placeId: String? = null
 
     companion object {
         var REQUEST_CODE = 1515
@@ -38,7 +39,7 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
         bundle = intent.getBundleExtra("bundle")
         bundle?.apply {
             delivery = this.getString(DELIVERY_TYPE, "")
-            placeId = this.getString(PLACE_ID, "")
+            placeId =  this.getString(PLACE_ID, "")
         }
         actionBar()
         loadNavHostFragment()
@@ -74,34 +75,78 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
     }
 
     private fun onEditDeliveryLocation() {
+
+        /*TODO : need to refactor this condition*/
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.editAddressNavHost) as NavHostFragment
         val navController = navHostFragment.navController
         val navGraph = navController.navInflater.inflate(R.navigation.confirm_location_nav_host)
-        val placeId = bundle?.getString(PLACE_ID, "")
-        if (placeId.isNullOrEmpty()) {
-            navGraph.startDestination = R.id.confirmDeliveryLocationFragment
-            navController.graph = navGraph
-            navController
-                .setGraph(
-                    navGraph,
-                    bundleOf("bundle" to bundle)
-                )
-        } else {
-            navGraph.startDestination = R.id.deliveryAddressConfirmationFragment
-            navController.graph = navGraph
-            bundle?.apply {
-                putString(
-                    DeliveryAddressConfirmationFragment.KEY_PLACE_ID, placeId
-                )
-            }
-            navController
-                .setGraph(
-                    navGraph,
-                    bundleOf("bundle" to bundle)
-                )
-        }
 
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address == null
+                || KotlinUtils.IS_COMING_FROM_CHECKOUT == true
+            ) {
+                /*editer coming from normal flow or coming from checkout with delivery type STANDARD*/
+                if (KotlinUtils.IS_COMING_FROM_SLOT_SELECTION) {
+                    // fullfillement screen
+                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.let {
+                        navGraph.startDestination = R.id.deliveryAddressConfirmationFragment
+                        navController.graph = navGraph
+                        bundle?.apply {
+                            putString(
+                                DeliveryAddressConfirmationFragment.KEY_PLACE_ID, it.placeId
+                            )
+                        }
+                        navController
+                            .setGraph(
+                                navGraph,
+                                bundleOf("bundle" to bundle)
+                            )
+                    }
+                } else {
+                    //confirm address screen
+                    navGraph.startDestination = R.id.confirmAddressLocationFragment
+                    navController.graph = navGraph
+                    navController
+                        .setGraph(
+                            navGraph,
+                            bundleOf("bundle" to bundle)
+                    )
+                }
+            } else if (KotlinUtils.IS_COMING_FROM_CHECKOUT == true) {
+                // coming from checkout with delivery type CNC
+                if (KotlinUtils.getPreferredDeliveryType()?.equals(Delivery.CNC) == true) {
+                    // where we are from collecting screen
+                    navGraph.startDestination = R.id.geoCheckoutCollectingFragment
+                    navController.graph = navGraph
+                    navController
+                        .setGraph(
+                            navGraph,
+                            bundleOf("bundle" to bundle)
+                        )
+                    return
+                }
+
+            } else {
+                // fullfillement screen
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.let {
+                    navGraph.startDestination = R.id.deliveryAddressConfirmationFragment
+                    navController.graph = navGraph
+                    bundle?.apply {
+                        putString(
+                            DeliveryAddressConfirmationFragment.KEY_PLACE_ID, it.placeId
+                        )
+                    }
+                    navController
+                        .setGraph(
+                            navGraph,
+                            bundleOf("bundle" to bundle)
+                        )
+                }
+            }
+        } else {
+            ScreenManager.presentSSOSignin(this, DepartmentsFragment.DEPARTMENT_LOGIN_REQUEST)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
