@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -116,6 +117,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             inSavedAddress?.visibility = View.VISIBLE
             tvConfirmAddress?.visibility = View.GONE
         }
+        setButtonUI(false)
     }
 
     @SuppressLint("MissingPermission")
@@ -180,9 +182,9 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
 
     private fun setButtonUI(activated: Boolean) {
         if (activated) {
-            tvConfirmAddress?.setBackgroundColor(resources.getColor(R.color.black))
+            tvConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireActivity(),R.color.black))
         } else {
-            tvConfirmAddress?.setBackgroundColor(resources.getColor(R.color.color_A9A9A9))
+            tvConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireActivity(),R.color.color_A9A9A9))
         }
 
     }
