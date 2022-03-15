@@ -1847,6 +1847,7 @@
     <string name="chat_to_us_label">CHAT TO US</string>
 
     <string name="earliest_delivery_date">Earliest Delivery date:</string>
+    <string name="earliest_delivery_dates">Earliest Delivery Dates:</string>
     <string name="food_items">Food Items</string>
     <string name="fashion_beauty_home">Fashion, Beauty &amp; Home</string>
     <string name="get_your_free_credit_report">View Free Credit Report &amp; More</string>
@@ -1888,6 +1889,7 @@
     <string name="promo_discount_dialog_title">Promo Code Applied</string>
     <string name="promo_discount_dialog_desc">If more than one Promo Code is applied, we select the code with the highest priority for you.</string>
     <string name="earliest_collection_date">Earliest Collection date:</string>
+    <string name="earliest_collection_Date">Earliest Collection Date:</string>
 
     <!-- Dash Details -->
     <string name="dash_banner_text_open_app">Same Day Delivery. Open Our App.</string>
@@ -2441,6 +2443,8 @@
     <string name="device_location_service_disabled">Your Device’s Location Services Are Disabled.</string>
     <string name="device_location_service_disabled_subTitle">We use your location to show available Click &amp; Collect stores near you.</string>
     <string name="btn_turn_on_location_text">Turn location on</string>
+    <string name="all_products_available">All Products Available</string>
+    <string name="next_dash_delivery_timeslot_text">Next Dash Delivery timeslot</string>
 
 
     <string name="product_listing_price_from">From</string>
