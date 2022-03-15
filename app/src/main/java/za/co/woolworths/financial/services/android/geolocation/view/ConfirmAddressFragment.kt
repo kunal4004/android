@@ -216,6 +216,12 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         }
     }
 
+    override fun onEditAddress(address: Address, position: Int) {
+        selectedAddress = address
+        mPosition = position
+        savedAddressResponse?.let { navigateToUpdateAddress(it) }
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
 
@@ -223,7 +229,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 if (progressBar.visibility == View.GONE
                     && selectedAddress != null
                     && tvConfirmAddress.text == getString(R.string.update_address)){
-                    savedAddressResponse?.let { navuageToUpdateAddress(it) }
+                    savedAddressResponse?.let { navigateToUpdateAddress(it) }
                     return
                 }
                 if (progressBar.visibility == View.GONE
@@ -311,7 +317,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         )
     }
 
-    private fun navuageToUpdateAddress(savedAddressResponse: SavedAddressResponse) {
+    private fun navigateToUpdateAddress(savedAddressResponse: SavedAddressResponse) {
         val bundle = Bundle()
 
         bundle.putString(

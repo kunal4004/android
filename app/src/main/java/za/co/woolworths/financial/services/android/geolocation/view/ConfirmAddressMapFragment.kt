@@ -3,9 +3,7 @@ package za.co.woolworths.financial.services.android.geolocation.view
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -33,6 +31,7 @@ import za.co.woolworths.financial.services.android.geolocation.model.request.Sav
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.LocationErrorLiveData
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
@@ -44,7 +43,7 @@ import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ConfirmAddressMapFragment() :
+class ConfirmAddressMapFragment :
     Fragment(R.layout.geolocation_confirm_address), OnMapReadyCallback, VtoTryAgainListener {
 
     private var mMap: GoogleMap? = null
@@ -136,6 +135,8 @@ class ConfirmAddressMapFragment() :
     private fun clearAddress() {
         imgRemoveAddress?.setOnClickListener {
             autoCompleteTextView?.setText("")
+            errorMassageDivider?.visibility = View.GONE
+            errorMessage?.visibility = View.GONE
         }
     }
 
@@ -197,6 +198,16 @@ class ConfirmAddressMapFragment() :
             autoCompleteTextView?.apply {
                 setAdapter(placesAdapter)
             }
+            LocationErrorLiveData.observe(viewLifecycleOwner, { isResult ->
+                if (isResult) {
+                    errorMassageDivider?.visibility = View.VISIBLE
+                    errorMessage?.visibility = View.VISIBLE
+                } else {
+                    errorMassageDivider?.visibility = View.GONE
+                    errorMessage?.visibility = View.GONE
+                }
+            })
+
             autoCompleteTextView?.onItemClickListener =
                 AdapterView.OnItemClickListener { parent, _, position, _ ->
                     val item = parent.getItemAtPosition(position) as? PlaceAutocomplete
@@ -353,5 +364,9 @@ class ConfirmAddressMapFragment() :
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        LocationErrorLiveData.value = false
+    }
 }
 
