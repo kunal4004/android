@@ -6,9 +6,11 @@
 
     <ImageView
         android:id="@+id/img_view"
-        android:layout_width="@dimen/fifty_dp"
-        android:layout_height="@dimen/fourty_dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/thirty_two_dp"
+        android:maxWidth="@dimen/hundred_dp"
+        android:maxHeight="@dimen/hundred_dp"
         android:src="@drawable/scooter"
         app:layout_constraintBottom_toTopOf="@+id/txt_dash_title"
         app:layout_constraintEnd_toEndOf="parent"

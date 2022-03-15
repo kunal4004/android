@@ -2187,6 +2187,7 @@
     <string name="pma_amount_overdue_popup_desc">The amount that is outstanding from the previous billing due date</string>
     <string name="collection_remove_block_current_balance_popup_desc">Balance as at the current date.</string>
     <string name="empty_cart_title">Your Cart Is Empty</string>
+    <string name="empty_cart_text">Your Cart Is Empty.</string>
     <string name="removed_items_empty_cart_desc">When you made changes to your location, your cart was updated, and all items were removed.</string>
 
 

@@ -26,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -320,15 +321,17 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         rlLocationSelectedLayout.setOnClickListener(this);
 
         //Empty cart UI
-        WTextView txtEmptyStateTitle = view.findViewById(R.id.txtEmptyStateTitle);
-        WTextView txtEmptyStateDesc = view.findViewById(R.id.txtEmptyStateDesc);
-        WButton btnGoToProduct = view.findViewById(R.id.btnGoToProduct);
+        view.findViewById(R.id.empty_state_template).setVisibility(View.VISIBLE);
+        view.findViewById(R.id.txt_dash_sub_title).setVisibility(View.GONE);
+        ImageView imgView = view.findViewById(R.id.img_view);
+        imgView.setImageResource(R.drawable.empty_cart_icon);
+        TextView txtEmptyStateTitle = view.findViewById(R.id.txt_dash_title);
         if (SessionUtilities.getInstance().isUserAuthenticated()) {
             String firstName = SessionUtilities.getInstance().getJwt().name.get(0);
-            txtEmptyStateTitle.setText("HI " + firstName + ",");
+            txtEmptyStateTitle.setText("HI " + firstName + "," + System.getProperty("line.separator") + getString(R.string.empty_cart_text));
         }
-        txtEmptyStateDesc.setText(getString(R.string.empty_cart_desc));
-        btnGoToProduct.setVisibility(View.VISIBLE);
+
+        Button btnGoToProduct = view.findViewById(R.id.btn_dash_set_address);
         btnGoToProduct.setText(getString(R.string.start_shopping));
         btnGoToProduct.setOnClickListener(this);
     }
@@ -383,8 +386,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         }
         View view = getView();
         String firstName = SessionUtilities.getInstance().getJwt().name.get(0);
-        WTextView txtEmptyStateTitle = view.findViewById(R.id.txtEmptyStateTitle);
-        txtEmptyStateTitle.setText("HI " + firstName + ",");
+        view.findViewById(R.id.empty_state_template).setVisibility(View.VISIBLE);
+        TextView txtEmptyStateTitle = view.findViewById(R.id.txt_dash_title);
+        txtEmptyStateTitle.setText("HI " + firstName + "," + System.getProperty("line.separator") + getString(R.string.empty_cart_text));
     }
 
     public void onRemoveItem(boolean visibility) {
@@ -430,7 +434,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             case R.id.locationSelectedLayout:
                 locationSelectionClicked();
                 break;
-            case R.id.btnGoToProduct:
+            case R.id.btn_dash_set_address:
                 Activity activity = getActivity();
                 if (activity instanceof BottomNavigator) {
                     BottomNavigator navigator = (BottomNavigator) activity;

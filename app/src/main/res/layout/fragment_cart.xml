@@ -114,9 +114,11 @@
                     android:layout_marginBottom="@dimen/one_thirty_four"
                     android:nestedScrollingEnabled="false"
                     android:scrollbars="none" />
-
+                
                 <include
-                    layout="@layout/empty_state_template"/>
+                    android:id="@+id/empty_state_template"
+                    android:visibility="gone"
+                    layout="@layout/layout_dash_set_address_fragment"/>
 
                 <include
                     layout="@layout/no_connection_handler"/>
