@@ -3,21 +3,22 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
+import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
-import android.view.LayoutInflater
+import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
+import android.widget.ImageButton
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
-import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_shop.*
 import kotlinx.android.synthetic.main.shop_custom_tab.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -59,7 +60,14 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private var rootCategories: RootCategories? = null
     private var ordersResponse: OrdersResponse? = null
     private var shoppingListsResponse: ShoppingListsResponse? = null
+    private var blackToolTipDialog: Dialog? = null
     private var user: String = ""
+
+    enum class Delivery_Types(val value: String) {
+        STANDARD("standard"),
+        CLICK_AND_COLLECT("click_and_collect"),
+        DASH("dash");
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,14 +113,16 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                             FirebaseManagerAnalyticsProperties.SHOP_CATEGORIES,
                             this
                         )
-                        1 -> Utils.triggerFireBaseEvents(
-                            FirebaseManagerAnalyticsProperties.SHOPMYLISTS,
-                            this
-                        )
-                        2 -> Utils.triggerFireBaseEvents(
-                            FirebaseManagerAnalyticsProperties.SHOPMYORDERS,
-                            this
-                        )
+                        1 -> {
+                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS,
+                                this)
+                            showBlackToolTip(Delivery_Types.CLICK_AND_COLLECT)
+                        }
+                        2 -> {
+                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYORDERS,
+                                this)
+                            showBlackToolTip(Delivery_Types.DASH)
+                        }
                     }
                 }
             }
@@ -120,6 +130,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         tabs_main?.setupWithViewPager(viewpager_main)
         updateTabIconUI(0)
         showShopFeatureWalkThrough()
+        showBlackToolTip(Delivery_Types.STANDARD)
         setupToolbar(0)
     }
 
@@ -449,6 +460,92 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
     }
 
+    private fun showBlackToolTip(deliveryType: Delivery_Types) {
+        blackToolTipDialog = activity?.let { activity -> Dialog(activity) }
+        blackToolTipDialog?.apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            val view = layoutInflater.inflate(R.layout.black_tool_tip_layout, null)
+            view.findViewById<ImageButton>(R.id.closeWhiteBtn).setOnClickListener {
+                if (this != null && this.isShowing) {
+                    this.dismiss()
+                }
+            }
+            when (deliveryType) {
+                Delivery_Types.STANDARD -> {
+                    showStandardDeliveryToolTip(view)
+                }
+                Delivery_Types.CLICK_AND_COLLECT -> {
+                    showClickAndCollectToolTip(view)
+                }
+                Delivery_Types.DASH -> {
+                    showDashToolTip(view)
+                }
+            }
+            setContentView(view)
+            window?.apply {
+                setLayout(
+                    WindowManager.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT
+                )
+                setBackgroundDrawableResource(R.color.transparent)
+                setGravity(Gravity.TOP)
+            }
+
+            setTitle(null)
+            setCancelable(true)
+            show()
+        }
+    }
+
+    private fun showStandardDeliveryToolTip(view: View) {
+        //ToDo: Remove this hardcoded value in WOP-15382
+        view.findViewById<TextView>(R.id.deliveryCollectionTitle).text =
+            getString(R.string.earliest_delivery_dates)
+        view.findViewById<TextView>(R.id.foodItemDateText).text = "Sun, 19 Aug 1pm - 2pm"
+        view.findViewById<TextView>(R.id.fashionItemDateText).text =
+            "Mon, 22 Aug 10:30am - 11:30am"
+        view.findViewById<TextView>(R.id.productAvailableText).text = "All products available"
+        view.findViewById<TextView>(R.id.deliveryFeeText).text = "R50 Delivery Fee"
+    }
+
+    private fun showClickAndCollectToolTip(view: View) {
+        view.findViewById<TextView>(R.id.deliveryCollectionTitle).text =
+            getString(R.string.earliest_collection_Date)
+        view.findViewById<TextView>(R.id.foodItemTitle).visibility = View.GONE
+        view.findViewById<TextView>(R.id.fashionItemDateText).visibility = View.GONE
+        view.findViewById<ConstraintLayout>(R.id.deliveryIconLayout).visibility = View.GONE
+        view.findViewById<TextView>(R.id.fashionItemTitle).visibility = View.VISIBLE
+
+        //ToDo: Remove this hardcoded value in WOP-15382
+        view.findViewById<TextView>(R.id.foodItemDateText).text = "Mon, 22 Aug 10:30am - 11:30am"
+        view.findViewById<TextView>(R.id.fashionItemTitle).text =
+            getString(R.string.all_products_available)
+        view.findViewById<TextView>(R.id.productAvailableText).text = "Free Collection"
+        view.findViewById<com.daasuu.bl.BubbleLayout>(R.id.bubbleLayout).arrowPosition = 640.0F
+        view.findViewById<ImageButton>(R.id.cartIcon)
+            .setImageResource(R.drawable.white_shopping_bag_icon)
+    }
+
+    private fun showDashToolTip(view: View) {
+        view.findViewById<TextView>(R.id.deliveryCollectionTitle).text =
+            getString(R.string.next_dash_delivery_timeslot_text)
+        view.findViewById<TextView>(R.id.foodItemTitle).visibility = View.GONE
+        view.findViewById<TextView>(R.id.fashionItemDateText).visibility = View.GONE
+        view.findViewById<ConstraintLayout>(R.id.deliveryIconLayout).visibility = View.VISIBLE
+        view.findViewById<ConstraintLayout>(R.id.cartIconLayout).visibility = View.VISIBLE
+        view.findViewById<TextView>(R.id.fashionItemTitle).visibility = View.GONE
+
+        //ToDo: Remove this hardcoded value in WOP-15382
+        view.findViewById<TextView>(R.id.foodItemDateText).text = "1pm - 2pm, Today"
+        view.findViewById<ImageButton>(R.id.cartIcon).setImageResource(R.drawable.icon_cart_white)
+        view.findViewById<ImageButton>(R.id.deliveryIcon)
+            .setImageResource(R.drawable.icon_scooter_white)
+        view.findViewById<com.daasuu.bl.BubbleLayout>(R.id.bubbleLayout).arrowPosition = 1060.0F
+        view.findViewById<TextView>(R.id.productAvailableText).text = "42 Item Limit"
+        view.findViewById<TextView>(R.id.deliveryFeeText).text = "Free for orders over R75"
+
+    }
+
     private fun showShopFeatureWalkThrough() {
         (activity as? BottomNavigationActivity)?.let {
             // Prevent dialog to display in other section when fragment is not visible
@@ -510,7 +607,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             )
             it.walkThroughPromtView =
                 WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.DELIVERY_DETAILS)
-                    .setTarget(tabs_main?.getTabAt(0)?.customView?.tvTitle)
+                    .setTarget(imgToolbarStart)
                     .setTitle(R.string.walkthrough_delivery_details_title)
                     .setDescription(R.string.walkthrough_delivery_details_desc)
                     .setActionText(R.string.walkthrough_delivery_details_action)
