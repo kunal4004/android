@@ -5,22 +5,17 @@ import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
-import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_shop.*
 import kotlinx.android.synthetic.main.shop_custom_tab.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.dash.view.DashCollectionStoreFragment
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
@@ -261,19 +256,32 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 viewpager_main,
                 viewpager_main.currentItem
             ) as? DepartmentsFragment
-            // If request is cancelled, the result arrays are empty.
-            if (grantResults.isNotEmpty()
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED
-            ) {
-
-                // permission was granted, yay! Do the
-                // contacts-related task you need to do.
-                fragment?.onActivityResult(requestCode, RESULT_OK, null)
-            } else {
-                fragment?.onActivityResult(requestCode, RESULT_CANCELED, null)
-            }
+            callOnActivityResult(grantResults, fragment, requestCode)
+        } else if (requestCode == DepartmentsFragment.REQUEST_CODE_FINE_GPS && viewpager_main.currentItem == 1) {
+            val fragment = viewpager_main?.adapter?.instantiateItem(
+                viewpager_main,
+                viewpager_main.currentItem
+            ) as? DashCollectionStoreFragment
+            callOnActivityResult(grantResults, fragment, requestCode)
         }
         permissionUtils?.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    private fun callOnActivityResult(
+        grantResults: IntArray,
+        fragment: Fragment?,
+        requestCode: Int,
+    ) {
+        // If request is cancelled, the result arrays are empty.
+        if (grantResults.isNotEmpty()
+            && grantResults[0] == PackageManager.PERMISSION_GRANTED
+        ) {
+            // permission was granted, yay! Do the
+            // contacts-related task you need to do.
+            fragment?.onActivityResult(requestCode, RESULT_OK, null)
+        } else {
+            fragment?.onActivityResult(requestCode, RESULT_CANCELED, null)
+        }
     }
 
     private fun navigateToBarcode() {

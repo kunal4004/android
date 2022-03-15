@@ -86,6 +86,9 @@ class DashCollectionStoreFragment : Fragment(R.layout.layout_dash_collection_sto
                                 StoresNearbyFragment1.REQUEST_CHECK_SETTINGS
                             )
                             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+                        } else {
+                            hideLocationDisabledUi()
+                            stopLocationUpdates()
                         }
                     }
                 }
@@ -109,7 +112,7 @@ class DashCollectionStoreFragment : Fragment(R.layout.layout_dash_collection_sto
             ) {
                 if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
                     //Asking only once.
-                        showLocationDisabledUi(perms)
+                    showLocationDisabledUi(perms)
                 } else {
                     //we can request the permission.
                     showLocationDisabledUi(perms)
@@ -166,7 +169,7 @@ class DashCollectionStoreFragment : Fragment(R.layout.layout_dash_collection_sto
         txt_dash_title.text = bindString(R.string.device_location_service_disabled)
         txt_dash_sub_title.text = bindString(R.string.device_location_service_disabled_subTitle)
         btn_dash_set_address.text = bindString(R.string.btn_turn_on_location_text)
-        btn_dash_set_address.setOnClickListener{
+        btn_dash_set_address.setOnClickListener {
             ActivityCompat.requestPermissions(this.requireActivity(), perms, REQUEST_CODE_FINE_GPS)
         }
     }

@@ -82,6 +82,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
+import za.co.woolworths.financial.services.android.dash.view.DashCollectionStoreFragment;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
@@ -992,6 +993,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         } else if (fragment instanceof ShopFragment) {
             fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
         } else if (fragment instanceof ProductDetailsFragment) {
+            fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        } else if (fragment instanceof DashCollectionStoreFragment) {
             fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
