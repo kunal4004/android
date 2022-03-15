@@ -1,11 +1,10 @@
-package za.co.woolworths.financial.services.android.dash.viewmodel
+package za.co.woolworths.financial.services.android.viewmodels.shop
 
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.network.Event
@@ -14,7 +13,7 @@ import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.models.network.Status
 import java.io.IOException
 
-class DashDeliveryViewModel : ViewModel() {
+class ShopViewModel : ViewModel() {
 
     private val _isCategoriesAvailable = MutableLiveData(false)
     val isCategoriesAvailable: LiveData<Boolean>

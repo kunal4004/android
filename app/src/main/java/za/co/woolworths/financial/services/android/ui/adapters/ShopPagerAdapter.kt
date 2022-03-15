@@ -4,11 +4,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.PagerAdapter
-import za.co.woolworths.financial.services.android.dash.view.DashCollectionStoreFragment
-import za.co.woolworths.financial.services.android.dash.view.DashDeliveryAddressFragment
+import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashCollectionStoreFragment
+import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashDeliveryAddressFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment
-import za.co.woolworths.financial.services.android.ui.fragments.shop.MyListsFragment
-import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
 
 class ShopPagerAdapter(fm: FragmentManager, tabTitle: MutableList<String>?, var listener: OnChildFragmentEvents) : FragmentStatePagerAdapter(fm) {

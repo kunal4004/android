@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.dash.view
+package za.co.woolworths.financial.services.android.ui.views.shop.dash
 
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R

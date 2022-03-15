@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.dash.view
+package za.co.woolworths.financial.services.android.ui.views.shop.dash
 
 import android.os.Bundle
 import android.view.View
@@ -8,20 +8,20 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_dash_delivery.*
-import za.co.woolworths.financial.services.android.dash.adapter.DashDeliveryAdapter
-import za.co.woolworths.financial.services.android.dash.viewmodel.DashDeliveryViewModel
+import za.co.woolworths.financial.services.android.ui.adapters.shop.dash.DashDeliveryAdapter
+import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 import za.co.woolworths.financial.services.android.models.network.Status
 
 class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery) {
 
-    lateinit var viewModel: DashDeliveryViewModel
+    lateinit var viewModel: ShopViewModel
 
     private lateinit var dashDeliveryAdapter: DashDeliveryAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dashDeliveryAdapter = DashDeliveryAdapter()
-        viewModel = ViewModelProvider(requireActivity()).get(DashDeliveryViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity()).get(ShopViewModel::class.java)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

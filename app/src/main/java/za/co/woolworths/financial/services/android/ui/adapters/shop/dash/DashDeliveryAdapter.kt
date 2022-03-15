@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.dash.adapter
+package za.co.woolworths.financial.services.android.ui.adapters.shop.dash
 
 import android.view.LayoutInflater
 import android.view.View
