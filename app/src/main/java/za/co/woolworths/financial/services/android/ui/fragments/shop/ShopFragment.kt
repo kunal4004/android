@@ -15,12 +15,14 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_shop.*
 import kotlinx.android.synthetic.main.shop_custom_tab.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.dash.viewmodel.DashDeliveryViewModel
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
@@ -109,10 +111,17 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                             FirebaseManagerAnalyticsProperties.SHOPMYLISTS,
                             this
                         )
-                        2 -> Utils.triggerFireBaseEvents(
-                            FirebaseManagerAnalyticsProperties.SHOPMYORDERS,
-                            this
-                        )
+                        2 -> {
+                            Utils.triggerFireBaseEvents(
+                                FirebaseManagerAnalyticsProperties.SHOPMYORDERS,
+                                this
+                            )
+                            val dashViewModel =
+                                ViewModelProvider(requireActivity()).get(DashDeliveryViewModel::class.java)
+                            if (dashViewModel.isCategoriesAvailable.value == false) {
+                                dashViewModel.getDashCategories()
+                            }
+                        }
                     }
                 }
             }

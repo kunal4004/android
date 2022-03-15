@@ -186,6 +186,15 @@ object OneAppService : RetrofitConfig() {
             getDeviceIdentityToken(), locationCord?.latitude, locationCord?.longitude, suburbId, storeId, fulFillmentStoreId01)
     }
 
+    suspend fun getDashCategory(): retrofit2.Response<RootCategories> {
+        val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
+        val fulFillmentStoreId01 = Utils.retrieveStoreId("01")
+
+        return mApiInterface.getDashCategories(
+            getSessionToken(),
+            getDeviceIdentityToken(), null, null, suburbId, storeId, fulFillmentStoreId01)
+    }
+
     fun getSubCategory(category_id: String, version: String): Call<SubCategories> {
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
         // Pass storeId value of 01 fulfillment type
