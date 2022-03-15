@@ -39,6 +39,11 @@ class SavedAddressAdapter(
         }
 
         holder.view.setOnClickListener {
+            if (addressList[position].verified) {
+                holder.imgEditAddress?.visibility = View.VISIBLE
+            } else {
+                holder.imgEditAddress?.visibility = View.GONE
+            }
             selectedPosition = position
             listener.onAddressSelected(addressList[position], position)
             notifyDataSetChanged()
@@ -49,10 +54,8 @@ class SavedAddressAdapter(
 
         if (addressList[position].verified) {
             holder.tvUpdateAddress?.visibility = View.GONE
-            holder.imgEditAddress?.tvUpdateAddress?.visibility = View.VISIBLE
         } else {
             holder.tvUpdateAddress?.visibility = View.VISIBLE
-            holder.imgEditAddress?.tvUpdateAddress?.visibility = View.GONE
         }
         holder.tvAddress?.text = addressList[position].address1
     }
