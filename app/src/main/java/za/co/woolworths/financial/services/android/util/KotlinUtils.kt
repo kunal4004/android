@@ -33,14 +33,12 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import com.awfs.coordination.R
-import com.google.android.gms.tasks.Task
+import com.google.android.gms.common.util.CrashUtils
 import com.google.common.reflect.TypeToken
-import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.internal.common.CrashlyticsCore
 import com.google.firebase.installations.FirebaseInstallations
-import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.layout_link_device_validate_otp.*
 import kotlinx.coroutines.GlobalScope
 import org.json.JSONObject
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -980,6 +978,25 @@ class KotlinUtils {
             )
         }
 
+        fun saveAnonymousUserLocationDetails(shoppingDeliveryLocation: ShoppingDeliveryLocation){
+            Utils.sessionDaoSave(KEY.ANONYMOUS_USER_LOCATION_DETAILS,Utils.objectToJson(shoppingDeliveryLocation))
+        }
+
+        fun getAnonymousUserLocationDetails(): ShoppingDeliveryLocation? {
+            var location: ShoppingDeliveryLocation? = null
+            try {
+                SessionDao.getByKey(KEY.ANONYMOUS_USER_LOCATION_DETAILS).value?.let {
+                    location = Utils.strToJson(it, ShoppingDeliveryLocation::class.java) as ShoppingDeliveryLocation?
+                }
+            }catch (e:Exception){
+                FirebaseManager.logException(e)
+            }
+            return location
+        }
+
+        fun clearAnonymousUserLocationDetails(){
+            Utils.removeFromDb(KEY.ANONYMOUS_USER_LOCATION_DETAILS)
+        }
     }
 
 }

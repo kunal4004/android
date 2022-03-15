@@ -35,4 +35,13 @@ class GeoLocationApiHelper : RetrofitConfig() {
             "SIT2",
             saveAddressLocationRequest
         ).await()
+
+    fun initConfirmLocation(confirmLocationRequest: ConfirmLocationRequest) =
+        mApiInterface.confirmLocation("",
+            "",
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            "SIT2",
+            confirmLocationRequest
+        )
 }
