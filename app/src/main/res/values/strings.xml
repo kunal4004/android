@@ -2438,6 +2438,9 @@
     <string name="set_address">SET ADDRESS</string>
     <string name="dash_delivery_title">To view and shop with Woolies Dash,\n we need your address.</string>
     <string name="dash_delivery_msg">Set your address to \n start shopping.</string>
+    <string name="device_location_service_disabled">Your Device’s Location Services Are Disabled.</string>
+    <string name="device_location_service_disabled_subTitle">We use your location to show available Click &amp; Collect stores near you.</string>
+    <string name="btn_turn_on_location_text">Turn location on</string>
 
 
     <string name="product_listing_price_from">From</string>
