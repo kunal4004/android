@@ -10,9 +10,12 @@ import android.os.Handler
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_shop.*
 import kotlinx.android.synthetic.main.shop_custom_tab.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -44,6 +47,7 @@ import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_L
  * A simple [Fragment] subclass.
  *
  */
+@AndroidEntryPoint
 class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     OnChildFragmentEvents,
     WMaterialShowcaseView.IWalkthroughActionListener {
@@ -74,9 +78,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
         tvSearchProduct?.setOnClickListener { navigateToProductSearch() }
         imBarcodeScanner?.setOnClickListener { checkCameraPermission() }
-        activity?.supportFragmentManager?.let {
-            shopPagerAdapter = ShopPagerAdapter(it, mTabTitle, this)
-        }
+        shopPagerAdapter = ShopPagerAdapter(childFragmentManager, mTabTitle, this)
         viewpager_main?.offscreenPageLimit = 2
         viewpager_main?.adapter = shopPagerAdapter
         viewpager_main?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -110,11 +112,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                                 FirebaseManagerAnalyticsProperties.SHOPMYORDERS,
                                 this
                             )
-                            val dashViewModel =
-                                ViewModelProvider(requireActivity()).get(ShopViewModel::class.java)
-                            if (dashViewModel.isCategoriesAvailable.value == false) {
-                                dashViewModel.getDashCategories()
-                            }
                         }
                     }
                 }

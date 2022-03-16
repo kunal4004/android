@@ -1,19 +1,22 @@
 package za.co.woolworths.financial.services.android.viewmodels.shop
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.network.Event
-import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.models.network.Status
-import java.io.IOException
+import za.co.woolworths.financial.services.android.repository.shop.ShopRepository
+import javax.inject.Inject
 
-class ShopViewModel : ViewModel() {
+@HiltViewModel
+class ShopViewModel @Inject constructor(
+    val shopRepository: ShopRepository
+) : ViewModel() {
 
     private val _isCategoriesAvailable = MutableLiveData(false)
     val isCategoriesAvailable: LiveData<Boolean>
@@ -25,25 +28,9 @@ class ShopViewModel : ViewModel() {
     fun getDashCategories() {
         _categories.value = Event(Resource.loading(null))
         viewModelScope.launch {
-            val response = fetchDashCategories()
+            val response = shopRepository.fetchDashCategories()
             _categories.value = Event(response)
             _isCategoriesAvailable.value = response.status == Status.SUCCESS
-        }
-    }
-
-    private suspend fun fetchDashCategories(): Resource<RootCategories> {
-        return try {
-            val response = OneAppService.getDashCategory()
-            if (response.isSuccessful) {
-                response.body()?.let {
-                    return@let Resource.success(it)
-                } ?: Resource.error("An unknown error occured", null)
-            } else {
-                Resource.error("An unknown error occured", null)
-            }
-        } catch (e: IOException) {
-            Log.e("EXCEPTION", "EXCEPTION:", e)
-            Resource.error("Couldn't reach the server. Check your internet connection", null)
         }
     }
 }

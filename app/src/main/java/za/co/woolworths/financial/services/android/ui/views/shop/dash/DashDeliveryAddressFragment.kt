@@ -3,25 +3,30 @@ package za.co.woolworths.financial.services.android.ui.views.shop.dash
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_dash_delivery.*
 import za.co.woolworths.financial.services.android.ui.adapters.shop.dash.DashDeliveryAdapter
 import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 import za.co.woolworths.financial.services.android.models.network.Status
 
+@AndroidEntryPoint
 class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery) {
 
-    lateinit var viewModel: ShopViewModel
+    private val viewModel: ShopViewModel by viewModels(
+        ownerProducer = { requireParentFragment() }
+    )
 
     private lateinit var dashDeliveryAdapter: DashDeliveryAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dashDeliveryAdapter = DashDeliveryAdapter()
-        viewModel = ViewModelProvider(requireActivity()).get(ShopViewModel::class.java)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -39,6 +44,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery) {
                 dashDeliveryAdapter.categoryList =
                     resource.data?.rootCategories ?: ArrayList(0)
             }
+        } else {
+            viewModel.getDashCategories()
         }
 
         viewModel.categories.observe(viewLifecycleOwner, {
