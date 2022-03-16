@@ -165,7 +165,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     private ArrayList<CartItemGroup> cartItems;
 
     public ConstraintLayout itemLimitsBanner;
-    private RelativeLayout orderTotalLayout, rlLocationSelectedLayout, parentLayout, relEmptyStateHandler;
+    private RelativeLayout orderTotalLayout, rlLocationSelectedLayout, parentLayout;
     public TextView itemLimitsMessage, itemLimitsCounter, upSellMessageTextView, orderTotal;
     private ImageView deliverLocationIcon, deliverLocationRightArrow;
     private NestedScrollView nestedScrollView;
@@ -297,7 +297,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         rlCheckOut = view.findViewById(R.id.rlCheckOut);
         parentLayout = view.findViewById(R.id.parentLayout);
         pBar = view.findViewById(R.id.loadingBar);
-        relEmptyStateHandler = view.findViewById(R.id.relEmptyStateHandler);
         rlLocationSelectedLayout = view.findViewById(R.id.locationSelectedLayout);
         upSellMessageTextView = view.findViewById(R.id.upSellMessageTextView);
         tvDeliveryLocation = view.findViewById(R.id.tvDeliveryLocation);
@@ -642,7 +641,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         parentLayout.setVisibility(View.VISIBLE);
         mSkuInventories = new HashMap<>();
         if (cartResponse.cartItems.size() > 0) {
-            relEmptyStateHandler.setVisibility(View.GONE);
+            getView().findViewById(R.id.empty_state_template).setVisibility(View.GONE);
             rvCartList.setVisibility(View.VISIBLE);
             rlCheckOut.setVisibility(View.VISIBLE);
             showEditCart();
@@ -666,7 +665,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             rvCartList.setVisibility(View.GONE);
             rlCheckOut.setVisibility(View.GONE);
             onRemoveSuccess();
-            relEmptyStateHandler.setVisibility(View.VISIBLE);
+            getView().findViewById(R.id.empty_state_template).setVisibility(View.VISIBLE);
             Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
             resetToolBarIcons();
             isMaterialPopUpClosed = true;
@@ -730,7 +729,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             resetToolBarIcons();
             rlCheckOut.setVisibility(View.GONE);
             rvCartList.setVisibility(View.GONE);
-            relEmptyStateHandler.setVisibility(View.VISIBLE);
+            getView().findViewById(R.id.empty_state_template).setVisibility(View.VISIBLE);
             Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
         }
 
@@ -855,7 +854,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             resetToolBarIcons();
             rlCheckOut.setVisibility(View.GONE);
             rvCartList.setVisibility(View.GONE);
-            relEmptyStateHandler.setVisibility(View.VISIBLE);
+            getView().findViewById(R.id.empty_state_template).setVisibility(View.VISIBLE);
         }
         onChangeQuantityComplete();
         setItemLimitsBanner();
