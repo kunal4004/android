@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.models.network
 
 import android.location.Location
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import retrofit2.Call
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
@@ -187,12 +189,14 @@ object OneAppService : RetrofitConfig() {
     }
 
     suspend fun getDashCategory(): retrofit2.Response<RootCategories> {
-        val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
-        val fulFillmentStoreId01 = Utils.retrieveStoreId("01")
+        return withContext(Dispatchers.IO) {
+            val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
+            val fulFillmentStoreId01 = Utils.retrieveStoreId("01")
 
-        return mApiInterface.getDashCategories(
-            getSessionToken(),
-            getDeviceIdentityToken(), null, null, suburbId, storeId, fulFillmentStoreId01)
+             mApiInterface.getDashCategories(
+                getSessionToken(),
+                getDeviceIdentityToken(), null, null, suburbId, storeId, fulFillmentStoreId01)
+        }
     }
 
     fun getSubCategory(category_id: String, version: String): Call<SubCategories> {
