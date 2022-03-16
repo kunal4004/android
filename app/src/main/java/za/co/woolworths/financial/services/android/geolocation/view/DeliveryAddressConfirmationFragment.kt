@@ -12,10 +12,12 @@ import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.geo_location_delivery_address.*
 import kotlinx.android.synthetic.main.layout_laocation_not_available.view.*
 import kotlinx.android.synthetic.main.no_collection_store_fragment.view.*
@@ -24,8 +26,6 @@ import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.*
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.COLLECTION_SLOT_SLECTION_REQUEST_CODE
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_IS_WHO_IS_COLLECTING
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
@@ -44,18 +44,21 @@ import za.co.woolworths.financial.services.android.models.network.StorePickupInf
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment
+import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
+import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import javax.inject.Inject
 
 /**
  * Created by Kunal Uttarwar on 24/02/22.
  */
-class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
+@AndroidEntryPoint
+class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, VtoTryAgainListener {
 
     private var isUnSellableItemsRemoved: Boolean? = false
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
@@ -72,6 +75,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
     private var defaultAddress: Address? = null
     private var savedAddressResponse: SavedAddressResponse? = null
     private var whoIsCollecting: WhoIsCollectingDetails? = null
+    @Inject
+    lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -138,15 +143,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
                 }
             }
             R.id.btnConfirmAddress -> {
-                if (SessionUtilities.getInstance().isUserAuthenticated) {
-                    // sign in user :  make confirm api call and store response in cache navigate to shop tab
-                    sendConfirmLocation()
-                } else {
-                    // navigate to shop tab
-                    (activity as? BottomNavigationActivity)?.clearStack()
-                    (activity as? BottomNavigationActivity)?.getBottomNavigationById()
-                        ?.setCurrentItem(INDEX_PRODUCT)
-                }
+                sendConfirmLocation()
             }
 
             R.id.btn_no_loc_change_location -> {
@@ -416,14 +413,15 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
                             }
                         }
                         else -> {
-                            /*TODO Error sceanario*/
+                            showErrorDialog()
+
                         }
                     }
                 }
             } catch (e: HttpException) {
                 FirebaseManager.logException(e)
                 progressBar?.visibility = View.GONE
-                /*TODO Error sceanario*/
+                showErrorDialog()
             }
         }
     }
@@ -448,8 +446,10 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
         }
         geoDeliveryView?.visibility = View.VISIBLE
         geoDeliveryText?.text = HtmlCompat.fromHtml(getString(R.string.delivering_to_geo,validateLocationResponse?.validatePlace?.placeDetails?.address1), HtmlCompat.FROM_HTML_MODE_LEGACY)
-        imgDelIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.ic_delivery_geo))
-        //TODO: Need to add fee value from responce.
+        imgDelIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
+            R.drawable.ic_delivery_geo))
+        setProductStatus()
+
         feeLabel?.visibility = View.GONE
         feeValue?.visibility = View.GONE
         feeValue?.text = ""
@@ -478,12 +478,10 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
 
         }
         if (!earliestFoodDate.isNullOrEmpty() && !earliestFashionDate.isNullOrEmpty()) {
-            productsAvailableValue?.text = bindString(R.string.all)
             itemLimitValue?.text = bindString(R.string.unlimited)
         }
 
         if (earliestFoodDate.isNullOrEmpty() && !earliestFashionDate.isNullOrEmpty()) {
-            productsAvailableValue?.text = bindString(R.string.fashion_beauty)
             val otherMaxQuantity =
                 validateLocationResponse?.validatePlace?.quantityLimit?.otherMaximumQuantity?.toString()
             if (otherMaxQuantity.isNullOrEmpty())
@@ -493,9 +491,33 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
         }
 
         if (!earliestFoodDate.isNullOrEmpty() && earliestFashionDate.isNullOrEmpty()) {
-            productsAvailableValue?.text = bindString(R.string.food)
             itemLimitValue?.text =
                 validateLocationResponse?.validatePlace?.quantityLimit?.foodMaximumQuantity?.toString()
+        }
+    }
+
+    private fun setProductStatus() {
+        productsAvailableValue?.apply {
+            if (deliveryType == Delivery.STANDARD.toString()) {
+                validateLocationResponse?.validatePlace?.let {
+                    when {
+                        !it.firstAvailableFoodDeliveryDate.isNullOrEmpty()
+                                && it.firstAvailableOtherDeliveryDate.isNullOrEmpty() -> {
+                            this.text = getString(R.string.food)
+
+                        }
+                        it.firstAvailableFoodDeliveryDate.isNullOrEmpty()
+                                && !it.firstAvailableOtherDeliveryDate.isNullOrEmpty() -> {
+                            this.text = getString(R.string.fashion_beauty_geo)
+                        }
+                        else -> {
+                            this.text = getString(R.string.all)
+                        }
+                    }
+                }
+            } else {
+                this.text = getString(R.string.food)
+            }
         }
     }
 
@@ -515,7 +537,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
 
         geoDeliveryView?.visibility = View.VISIBLE
         imgDelIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.ic_basket))
-        //TODO: Need to add fee from responce with condition
+        setProductStatus()
         feeLabel?.visibility = View.GONE
         feeValue?.visibility = View.GONE
         feeValue?.text = ""
@@ -544,7 +566,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
         }
         earliestFashionDeliveryDateLabel?.visibility = View.GONE
         earliestFashionDeliveryDateValue?.visibility = View.GONE
-        productsAvailableValue?.text = bindString(R.string.food)
         itemLimitValue?.text =
             validateLocationResponse?.validatePlace?.quantityLimit?.foodMaximumQuantity?.toString()
     }
@@ -593,6 +614,22 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
             isUnSellableItemsRemoved = it
          }
         )
+    }
+
+    private fun showErrorDialog() {
+        requireActivity().resources?.apply {
+            vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
+                this@DeliveryAddressConfirmationFragment,
+                requireActivity(),
+                getString(R.string.vto_generic_error),
+                "",
+                getString(R.string.retry_label)
+            )
+        }
+    }
+
+    override fun tryAgain() {
+       initView()
     }
 }
 
