@@ -69,7 +69,8 @@ class ProductOfferingStatus(private val account: Account?) : IProductOffering {
             false -> {
                 val isProductChargedOff = account?.productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)
                 when {
-                    !isProductChargedOff && isTakeUpTreatmentPlanJourneyEnabled() -> AccountOfferingState.MakeGetEligibilityCall
+                    //                    isTakeUpTreatmentPlanJourneyEnabled() || isViewTreatmentPlanSupported()-> if (isProductChargedOff) AccountOfferingState.MakeGetEligibilityCall else  AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig
+                    isTakeUpTreatmentPlanJourneyEnabled() -> AccountOfferingState.MakeGetEligibilityCall
                     isViewTreatmentPlanSupported() -> if (isProductChargedOff) AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff else AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig
                     else -> if (isProductChargedOff) AccountOfferingState.AccountIsChargedOff else AccountOfferingState.AccountIsInArrears
                 }

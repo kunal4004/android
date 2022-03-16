@@ -134,13 +134,13 @@
         layout="@layout/view_statement_button"
         android:layout_width="0dp"
         android:layout_height="@dimen/available_fund_transaction_button_height"
-        android:layout_marginEnd="@dimen/eight_dp"
         android:layout_marginTop="@dimen/thirty_dp"
+        android:layout_marginEnd="@dimen/eight_dp"
         android:visibility="visible"
-        app:layout_constraintTop_toBottomOf="@+id/totalAmountDueLabelTextview"
         app:layout_constraintEnd_toStartOf="@+id/incPayMyAccountButton"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/incRecentTransactionButton" />
+        app:layout_constraintStart_toEndOf="@+id/incRecentTransactionButton"
+        app:layout_constraintTop_toBottomOf="@+id/totalAmountDueLabelTextview" />
 
     <include
         android:id="@+id/incPayMyAccountButton"
@@ -186,5 +186,25 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_end="@dimen/nineteen_dp" />
+
+    <LinearLayout
+        android:id="@+id/helpWithPaymentView"
+        style="@style/accountPaymentOptionsRootStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/_10sdp"
+        app:layout_constraintEnd_toEndOf="@+id/endGuide"
+        app:layout_constraintStart_toStartOf="@+id/startGuide"
+        app:layout_constraintTop_toBottomOf="@id/incPayMyAccountButton">
+
+        <Button
+            android:id="@+id/helpWithPayment"
+            style="@style/accountPaymentOptionIconTextViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:text="@string/get_help_repayment" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
