@@ -2426,4 +2426,5 @@
     <string name="amount_you_save">Amount You Save</string>
     <string name="get_help_repayment">GET HELP WITH YOUR REPAYMENTS</string>
     <string name="view_your_payment_plan">VIEW YOUR PAYMENT PLAN</string>
+    <string name="total_amount_you_saving">This is the total amount you are saving as agreed \n upon in your settlement plan</string>
 </resources>

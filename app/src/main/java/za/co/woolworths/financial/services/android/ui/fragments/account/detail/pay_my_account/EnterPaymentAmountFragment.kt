@@ -71,7 +71,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
                     amountOverdueLabelTextView?.text = getString(R.string.overdue_amount_label)
                     amountOutstandingValueTextView?.text = getCurrentBalance()
                 }else{
-                    elitePlanViews(this)
+                    setViewsForElitePlan(this)
                 }
 
             } else {
@@ -87,7 +87,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         }
     }
 
-    private fun elitePlanViews(payMyAccountViewModel: PayMyAccountViewModel) {
+    private fun setViewsForElitePlan(payMyAccountViewModel: PayMyAccountViewModel) {
         amountOverdueLabelTextView?.text = getString(R.string.overdue_amount_label)
         enterPaymentAmountTextView?.text = getString(R.string.amount_payable)
         amountOutstandingValueTextView?.text = payMyAccountViewModel.getDiscountAmount()
@@ -102,6 +102,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
     private fun setListeners() {
         currentBalanceDescImageButton?.setOnClickListener(this)
         totalAmountDueInfoDescImageButton?.setOnClickListener(this)
+        amountYouSaveImageButton?.setOnClickListener(this)
 
         totalAmountDueValueTextView?.apply {
             if (isZeroAmount(payMyAccountViewModel.getTotalAmountDue())) return
@@ -244,6 +245,16 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
             R.id.totalAmountDueInfoDescImageButton-> {
                 hideKeyboard()
                 view?.findNavController()?.navigate(EnterPaymentAmountFragmentDirections.actionEnterPaymentAmountFragmentToInfoDialogFragment(R.string.total_amount_due,R.string.pma_total_amount_due_popup_desc))
+
+            }
+            R.id.amountYouSaveImageButton -> {
+                hideKeyboard()
+                view?.findNavController()?.navigate(
+                    EnterPaymentAmountFragmentDirections.actionEnterPaymentAmountFragmentToInfoDialogFragment(
+                        R.string.amount_you_save,
+                        R.string.total_amount_you_saving
+                    )
+                )
 
             }
             R.id.currentBalanceDescImageButton -> {
