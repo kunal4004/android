@@ -44,6 +44,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         setHasOptionsMenu(true)
         arguments?.apply {
             isDoneButtonEnabled = getBoolean(IS_DONE_BUTTON_ENABLED, false)
+
         }
     }
 
@@ -53,7 +54,6 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         configureToolbar()
         configureButton()
         configureCurrencyEditText()
@@ -64,20 +64,38 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         with(payMyAccountViewModel) {
             totalAmountDueValueTextView?.text = getTotalAmountDue()
             if (isAccountChargedOff()) {
-                amountOverdueLabelTextView?.text = getString(R.string.current_balance_label)
-                amountOutstandingValueTextView?.text = getCurrentBalance()
+                paymentAmountInputEditText?.setText(getAmountEntered())
+
+                if (elitePlanModel?.scope.isNullOrEmpty()){
+                    amountOverdueLabelTextView?.text = getString(R.string.overdue_amount_label)
+                    amountOutstandingValueTextView?.text = getCurrentBalance()
+                }else{
+                    elitePlanViews(this)
+                }
+
             } else {
                 amountOverdueLabelTextView?.text = getString(R.string.overdue_amount_label)
                 amountOutstandingValueTextView?.text = getOverdueAmount()
             }
 
-            paymentAmountInputEditText?.setText(getAmountEntered())
         }
 
         setFragmentResultListener(InfoDialogFragment::class.java.simpleName) { _, _ ->
             activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
             showKeyboard()
         }
+    }
+
+    private fun elitePlanViews(payMyAccountViewModel: PayMyAccountViewModel) {
+        amountOverdueLabelTextView?.text = getString(R.string.overdue_amount_label)
+        enterPaymentAmountTextView?.text = getString(R.string.amount_payable)
+        amountOutstandingValueTextView?.text = payMyAccountViewModel.getDiscountAmount()
+        paymentAmountInputEditText?.setText(payMyAccountViewModel.getDiscountAmount())
+        amountYouSaveValueTextView?.text = payMyAccountViewModel.getSavedAmount()
+        totalAmountGroup?.visibility = GONE
+        amountOutstandingValueTextView.isActivated = true
+        amountOutstandingValueTextView.isClickable = false
+        amountYouSaveGroup.visibility = VISIBLE
     }
 
     private fun setListeners() {
