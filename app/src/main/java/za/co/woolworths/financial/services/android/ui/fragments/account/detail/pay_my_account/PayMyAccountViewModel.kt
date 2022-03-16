@@ -245,11 +245,10 @@ class PayMyAccountViewModel : ViewModel() {
     }
 
     fun getSavedAmount(): String? {
-        return  "R " + ((elitePlanModel?.settlementAmount?.toDouble() ?: 0.0) - (elitePlanModel?.discountAmount?.toDouble()
-            ?:  0.0)).toString()
+        return  "R " + elitePlanModel?.discountAmount
     }
     fun getDiscountAmount(): String? {
-        return  "R " + elitePlanModel?.discountAmount
+        return  "R " + elitePlanModel?.settlementAmount
     }
 
     private fun formatAndRemoveNegativeSymbol(amount: Int): String? {

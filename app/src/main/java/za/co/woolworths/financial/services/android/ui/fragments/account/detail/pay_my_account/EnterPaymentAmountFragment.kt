@@ -92,6 +92,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         enterPaymentAmountTextView?.text = getString(R.string.amount_payable)
         amountOutstandingValueTextView?.text = payMyAccountViewModel.getDiscountAmount()
         paymentAmountInputEditText?.setText(payMyAccountViewModel.getDiscountAmount())
+        paymentAmountInputEditText?.isEnabled = false
         amountYouSaveValueTextView?.text = payMyAccountViewModel.getSavedAmount()
         totalAmountGroup?.visibility = GONE
         amountOutstandingValueTextView.isActivated = true
