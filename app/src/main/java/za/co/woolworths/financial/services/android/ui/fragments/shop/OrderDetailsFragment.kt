@@ -7,6 +7,7 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
@@ -25,6 +26,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.activities.CancelOrderProgressActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.adapters.OrderDetailsAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
@@ -276,8 +278,9 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         val gson = Gson()
         val strProductList = gson.toJson(productDetails)
         // Move to shop tab first.
-        (activity as BottomNavigationActivity).bottomNavigationById.currentItem =
-            BottomNavigationActivity.INDEX_PRODUCT
+        (activity as BottomNavigationActivity).apply {
+            onShopTabSelected(bottomNavigationById.menu[INDEX_PRODUCT])
+        }
         ScreenManager.openProductDetailFragment(activity, productName, strProductList)
     }
 
