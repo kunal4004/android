@@ -2410,7 +2410,6 @@
     <string name="my_saved_addresses">My Saved Addresses</string>
     <string name="current_location">Current Location</string>
     <string name="update_address">Update Address</string>
-
     <string name="get_payment_plan_title">Get a Payment Plan</string>
     <string name="get_payment_plan_desc">By signing up for a repayment plan, you secure the use of your facility for some point in the future. Once you have successfully completed your repayment plan, you will be able to utilise your facility again.</string>
     <string name="get_a_payment_plan_1">Pay smaller instalments over a chosen period.</string>
@@ -2431,9 +2430,7 @@
     <string name="unlimited">Unlimited</string>
     <string name="food">Food</string>
     <string name="fashion_beauty">Fashion and Beauty</string>
-
     <string name="geoloc_ClickNCollectValue">28 Eastlake Isla...</string>
-
     <string name="collection_store_title">There Are No Collection Stores Available Near You</string>
     <string name="change_location">CHANGE LOCATION</string>
     <string name="enter_your_street_number_and_name">Enter your street number and name</string>
@@ -2445,14 +2442,11 @@
     <string name="confirm_collection_location_desc">Your current collection store is set to </string>
     <string name="confirm_btn">Confirm</string>
     <string name="edt_location">EDIT LOCATION </string>
-
-
     <string name="please_select_the_store_you_are_collecting_from">Please select the store you\nare collecting from.</string>
     <string name="search_by_store_or_location">Search by store or location</string>
     <string name="change">change</string>
     <string name="near_stores">%d Strores near me.</string>
     <string name="where_do_you_want_to_collect">Where do you want to collect?.</string>
-
-
     <string name="product_listing_price_from">From</string>
+    <string name="geo_loc_error_msg">We can’t seem to find you. Please enter number and name of your street ,or drag the pin to your exact location.</string>
 </resources>

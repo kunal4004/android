@@ -51,13 +51,14 @@
     <TextView
         android:id="@+id/tvAddressNickName"
         style="@style/myriad_pro_semi_bold_black_15_text_style"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/sixteen_dp"
         android:ellipsize="end"
+        android:maxWidth="@dimen/_150sdp"
         android:lineSpacingExtra="@dimen/_2sdp"
+        android:textColor="@color/black"
         android:maxLines="1"
-        app:layout_constraintEnd_toStartOf="@id/tvUpdateAddress"
         app:layout_constraintStart_toEndOf="@+id/rbAddressSelector"
         app:layout_constraintTop_toTopOf="@id/guidelineTop" />
 
@@ -66,12 +67,13 @@
         style="@style/myriad_pro_semi_bold_amber_14_text_style"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/sixteen_dp"
+        android:layout_marginStart="@dimen/_5sdp"
         android:ellipsize="end"
         android:lineSpacingExtra="@dimen/_2sdp"
         android:maxLines="1"
+        app:layout_constraintEnd_toStartOf="@id/imgEditAddress"
         android:text="@string/update_address"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toEndOf="@+id/tvAddressNickName"
         app:layout_constraintTop_toTopOf="@id/guidelineTop" />
 
     <TextView
@@ -82,10 +84,22 @@
         android:layout_marginStart="@dimen/sixteen_dp"
         android:layout_marginTop="@dimen/_2sdp"
         android:lineSpacingExtra="@dimen/_2sdp"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:textColor="@color/color_444444"
         app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintEnd_toStartOf="@id/imgEditAddress"
         app:layout_constraintStart_toEndOf="@+id/rbAddressSelector"
         app:layout_constraintTop_toBottomOf="@+id/tvAddressNickName" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgEditAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_geo_edit"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -39,16 +39,25 @@ class SavedAddressAdapter(
         }
 
         holder.view.setOnClickListener {
+            if (addressList[position].verified) {
+                holder.imgEditAddress?.visibility = View.VISIBLE
+            } else {
+                holder.imgEditAddress?.visibility = View.GONE
+            }
             selectedPosition = position
             listener.onAddressSelected(addressList[position], position)
             notifyDataSetChanged()
         }
-        if (addressList[position].verified) {
-            holder.tvUpdateAddress.visibility = View.GONE
-        } else {
-            holder.tvUpdateAddress.visibility = View.VISIBLE
+        holder.imgEditAddress?.setOnClickListener {
+            listener.onEditAddress(addressList[position], position)
         }
-        holder.tvAddress.text = addressList[position].address1
+
+        if (addressList[position].verified) {
+            holder.tvUpdateAddress?.visibility = View.GONE
+        } else {
+            holder.tvUpdateAddress?.visibility = View.VISIBLE
+        }
+        holder.tvAddress?.text = addressList[position].address1
     }
 
     inner class SavedAddressViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -58,9 +67,11 @@ class SavedAddressAdapter(
         val tvAddress = itemView.tvAddress
         val tvUpdateAddress = itemView.tvUpdateAddress
         val rbAddressSelector = itemView.rbAddressSelector
+        val imgEditAddress = itemView.imgEditAddress
     }
 
     interface OnAddressSelected {
         fun onAddressSelected(address: Address, position: Int)
+        fun onEditAddress(address: Address, position: Int)
     }
 }
