@@ -38,12 +38,13 @@ class SavedAddressAdapter(
             holder.view?.setBackgroundResource(R.color.white)
         }
 
+        if (selectedPosition == position && addressList[position].verified) {
+            holder.imgEditAddress?.visibility = View.VISIBLE
+        } else {
+            holder.imgEditAddress?.visibility = View.GONE
+        }
+
         holder.view.setOnClickListener {
-            if (addressList[position].verified) {
-                holder.imgEditAddress?.visibility = View.VISIBLE
-            } else {
-                holder.imgEditAddress?.visibility = View.GONE
-            }
             selectedPosition = position
             listener.onAddressSelected(addressList[position], position)
             notifyDataSetChanged()
