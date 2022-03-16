@@ -33,7 +33,10 @@
                 android:visibility="gone" />
         </RelativeLayout>
 
-        <include layout="@layout/empty_state_template" />
+        <include
+            android:id="@+id/empty_state_template"
+            layout="@layout/layout_dash_set_address_fragment"
+            android:visibility="gone" />
     </FrameLayout>
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
