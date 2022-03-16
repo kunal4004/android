@@ -64,6 +64,7 @@ import za.co.woolworths.financial.services.android.models.dto.app_config.native_
 import za.co.woolworths.financial.services.android.models.network.ConfirmDeliveryAddressBody
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity.Companion.ERROR_TYPE_EMPTY_CART
+import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_EMPTY_CART
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART
@@ -85,6 +86,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
     companion object {
         const val REGEX_DELIVERY_INSTRUCTIONS = "^\$|^[a-zA-Z0-9\\s<!>@#\$&().+,-/\\\"']+\$"
+        const val SLOT_SELECTION_REQUEST_CODE = 9876
     }
 
     private var mDelivery: Delivery? = null
@@ -131,6 +133,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
 
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
+    private var defaultAddress: Address? = null
 
 
     enum class FoodSubstitution(val rgb: String) {
@@ -369,6 +372,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 // Extract default address display name
                 savedAddresses.addresses?.forEach { address ->
                     if (savedAddresses.defaultAddressNickname.equals(address.nickname)) {
+                        this.defaultAddress = address
                         suburbId = address.suburbId ?: ""
                         placesId = address?.placesId
                         storeId = address?.storeId
@@ -651,21 +655,9 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         startShimmerView()
       //  val body = ConfirmDeliveryAddressBody(suburbId)
 
+        val  confirmLocationAddress = ConfirmLocationAddress(defaultAddress?.placesId, defaultAddress?.nickname)
 
-        /*TODO : store id */
-        val  confirmLocationAddress = ConfirmLocationAddress(placesId, nickName)
-        var body = ConfirmLocationRequest("", confirmLocationAddress, "",page = "")
-        mDelivery = if (storeId.equals("")) Delivery.STANDARD else Delivery.CNC
-        mDelivery?.let {
-            if (it.equals(Delivery.STANDARD) == true) {
-                body =
-                    ConfirmLocationRequest(Delivery.STANDARD.toString(), confirmLocationAddress, "checkout")
-            }
-            if (it.equals(Delivery.CNC) == true) {
-                body =
-                    ConfirmLocationRequest(Delivery.CNC.toString(), confirmLocationAddress, "checkout")
-            }
-        }
+        var body = ConfirmLocationRequest(Delivery.STANDARD.toString(), confirmLocationAddress, "", "checkout")
 
         checkoutAddAddressNewUserViewModel.getConfirmLocationDetails(body)
             .observe(viewLifecycleOwner, { response ->
@@ -839,27 +831,39 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 }
             }
             R.id.checkoutDeliveryDetailsLayout -> {
+
+                /*TODO : start Fullfilemnt screen from here */
+
                 /* TODO need to set request code*/
+
+                /*TODO : decide delivery type and place id */
+
+
+
                 KotlinUtils.presentEditDeliveryGeoLocationActivity(
                     requireActivity(),
-                    98989,
-                    mDelivery,
+                    SLOT_SELECTION_REQUEST_CODE,
+                    KotlinUtils.getPreferredDeliveryType(),
                     placesId,
                     true,
-                    true
+                    true,
+                    savedAddress,
+                    defaultAddress
                 )
-//                baseFragBundle?.putString(
-//                    CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY,
-//                    Utils.toJson(confirmDeliveryAddressResponse)
-//                )
-//                baseFragBundle?.putBoolean(
-//                    IS_DELIVERY,
-//                    (tvNativeCheckoutDeliveringTitle.text == getString(R.string.native_checkout_delivering_to_title))
-//                )
-//                view?.findNavController()?.navigate(
-//                    R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutAddressConfirmationFragment,
-//                    baseFragBundle
-//                )
+
+/*
+                baseFragBundle?.putString(
+                    CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY,
+                    Utils.toJson(confirmDeliveryAddressResponse)
+                )
+                baseFragBundle?.putBoolean(
+                    IS_DELIVERY,
+                    (tvNativeCheckoutDeliveringTitle.text == getString(R.string.native_checkout_delivering_to_title))
+                )
+                view?.findNavController()?.navigate(
+                    R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutAddressConfirmationFragment,
+                    baseFragBundle
+                )*/
             }
             R.id.txtContinueToPayment -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_CONTINUE_TO_PAYMENT,
@@ -1218,6 +1222,14 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     }
                 }
             }
+
+            SLOT_SELECTION_REQUEST_CODE -> {
+                if (data?.hasExtra(EditDeliveryLocationActivity.DEFAULT_ADDRESS) == true) {
+                    this.defaultAddress = data?.getSerializableExtra(EditDeliveryLocationActivity.DEFAULT_ADDRESS) as Address
+                }
+            }
+
+
         }
     }
 

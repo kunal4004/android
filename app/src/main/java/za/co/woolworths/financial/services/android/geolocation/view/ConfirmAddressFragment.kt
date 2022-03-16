@@ -36,9 +36,11 @@ import za.co.woolworths.financial.services.android.geolocation.network.apihelper
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.SavedAddressAdapter
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
+import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment.Companion.DEPARTMENT_LOGIN_REQUEST
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.*
 
 class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected,
@@ -48,6 +50,9 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var mLastLocation: Location? = null
     private var selectedAddress = Address()
+    private var bundle: Bundle? = null
+    private var isComingFromCheckout: Boolean = false
+    private var deliveryType: String? = null
 
     companion object {
         fun newInstance() = ConfirmAddressFragment()
@@ -58,7 +63,13 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        bundle = arguments?.getBundle("bundle")
+        bundle?.apply {
+            isComingFromCheckout = this.getBoolean(
+                EditDeliveryLocationActivity.IS_COMING_FROM_CHECKOUT, false)
+            deliveryType =  this.getString(
+                EditDeliveryLocationActivity.DELIVERY_TYPE, "")
+        }
         hideBottomNav()
     }
 
@@ -231,15 +242,16 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                     && tvConfirmAddress.text == getString(R.string.confirm))
                 {
                     selectedAddress.let {
-                        if (it.latitude != null && it.longitude != null && it.placesId != null) {
+                        if (it.placesId != null) {
 
-                            val bundle = Bundle()
-
-                            bundle.putString(
+                            bundle?.putString(
                                 DeliveryAddressConfirmationFragment.KEY_PLACE_ID, selectedAddress.placesId)
 
-                            bundle.putString(
+                            bundle?.putString(
                                 DeliveryAddressConfirmationFragment.ADDRESS, selectedAddress.address1)
+
+                            bundle?.putSerializable(
+                                EditDeliveryLocationActivity.DEFAULT_ADDRESS, selectedAddress)
 
                             findNavController().navigate(
                                 R.id.actionToDeliveryAddressConfirmationFragment,
@@ -253,25 +265,20 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             }
             R.id.inCurrentLocation -> {
 
-                val getMapData =
-                    getDataForMapView(mLastLocation?.latitude, mLastLocation?.longitude, false)
-                val directions =
-                    ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
-                        getMapData
-                    )
-                findNavController().navigate(directions)
-
-//                if (KotlinUtils.IS_COMING_FROM_CHECKOUT) {
-//                    navigateToAddAddress(savedAddressResponse)
-//                } else {
-//                    val getMapData =
-//                        getDataForMapView(mLastLocation?.latitude, mLastLocation?.longitude, false)
-//                    val directions =
-//                        ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
-//                            getMapData
-//                        )
-//                    findNavController().navigate(directions)
-//                }
+                if (isComingFromCheckout && deliveryType == Delivery.STANDARD.toString()) {
+                    navigateToAddAddress(savedAddressResponse)
+                } else if (isComingFromCheckout && deliveryType == Delivery.CNC.toString()) {
+                    //Navigate to map screen with delivery type or checkout type
+                }
+                else {
+                    val getMapData =
+                        getDataForMapView(mLastLocation?.latitude, mLastLocation?.longitude, false)
+                    val directions =
+                        ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
+                            getMapData
+                        )
+                    findNavController().navigate(directions)
+                }
             }
             R.id.inSavedAddress -> {
                 ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
@@ -280,25 +287,20 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 activity?.onBackPressed()
             }
             R.id.enterNewAddress -> {
-                val getMapData =
-                    getDataForMapView(0.0, 0.0, true)
-                val directions =
-                    ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
-                        getMapData
-                    )
-                findNavController().navigate(directions)
 
-//                if (KotlinUtils.IS_COMING_FROM_CHECKOUT) {
-//                    navigateToAddAddress(savedAddressResponse)
-//                } else {
-//                    val getMapData =
-//                        getDataForMapView(0.0, 0.0, true)
-//                    val directions =
-//                        ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
-//                            getMapData
-//                        )
-//                    findNavController().navigate(directions)
-//                }
+                if (isComingFromCheckout && deliveryType == Delivery.STANDARD.toString()) {
+                    navigateToAddAddress(savedAddressResponse)
+                } else if (isComingFromCheckout && deliveryType == Delivery.CNC.toString()) {
+                    //Navigate to map screen with delivery type or checkout type
+                } else {
+                    val getMapData =
+                        getDataForMapView(0.0, 0.0, true)
+                    val directions =
+                        ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
+                            getMapData
+                        )
+                    findNavController().navigate(directions)
+                }
             }
         }
     }

@@ -12,6 +12,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_checkout.*
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.GEO_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.IS_DELIVERY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.baseFragBundle
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -34,6 +35,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     private var geoSlotSelection: Boolean? = false
     private var navHostFrag = NavHostFragment()
     var savedAddressResponse: SavedAddressResponse? = null
+    var whoIsCollectingString: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,11 +43,16 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         setActionBar()
         intent?.extras?.apply {
             savedAddressResponse = getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
-            geoSlotSelection = getBoolean(SAVED_ADDRESS_KEY , false)
+            geoSlotSelection = getBoolean(GEO_SLOT_SELECTION , false)
+            whoIsCollectingString = getString(CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS, "");
             baseFragBundle = Bundle()
             baseFragBundle?.putString(
                 SAVED_ADDRESS_KEY,
                 Utils.toJson(savedAddressResponse)
+            )
+            baseFragBundle?.putString(
+                CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS,
+                whoIsCollectingString
             )
             baseFragBundle?.putBoolean(IS_DELIVERY, if (containsKey(IS_DELIVERY)) getBoolean(IS_DELIVERY) else true)
         }
@@ -120,6 +127,10 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
             navHostFrag.navController.navInflater.inflate(R.navigation.nav_graph_checkout)
 
         graph.startDestination = when {
+
+            whoIsCollectingString.isNullOrEmpty() == false -> {
+                R.id.checkoutReturningUserCollectionFragment
+            }
 
             geoSlotSelection == true -> {
                 R.id.CheckoutAddAddressReturningUserFragment

@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.geolocation.view
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,11 +14,19 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.geo_location_delivery_address.*
 import kotlinx.android.synthetic.main.layout_laocation_not_available.view.*
 import kotlinx.android.synthetic.main.no_collection_store_fragment.view.*
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import za.co.woolworths.financial.services.android.checkout.service.network.Address
+import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.checkout.view.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.COLLECTION_SLOT_SLECTION_REQUEST_CODE
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_IS_WHO_IS_COLLECTING
+import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
@@ -31,12 +40,14 @@ import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
+import za.co.woolworths.financial.services.android.models.network.StorePickupInfoBody
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -49,6 +60,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
     private var isUnSellableItemsRemoved: Boolean? = false
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     private var placeId: String? = null
+    private var isComingFromSlotSelection: Boolean = false
+    private var isComingFromCheckout: Boolean = false
     private var latitude: String? = null
     private var longitude: String? = null
     private  var validateLocationResponse: ValidateLocationResponse? = null
@@ -56,6 +69,9 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
     private var mStoreName: String? = null
     private var mStoreId: String? = null
     private var bundle: Bundle? = null
+    private var defaultAddress: Address? = null
+    private var savedAddressResponse: SavedAddressResponse? = null
+    private var whoIsCollecting: WhoIsCollectingDetails? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -79,6 +95,23 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
             latitude = getString(KEY_LATITUDE, "")
             longitude = this.getString(KEY_LONGITUDE, "")
             placeId = this.getString(KEY_PLACE_ID, "")
+            isComingFromSlotSelection = this.getBoolean(EditDeliveryLocationActivity.IS_COMING_FROM_SLOT_SELECTION, false)
+            isComingFromCheckout = this.getBoolean(EditDeliveryLocationActivity.IS_COMING_FROM_CHECKOUT, false)
+            deliveryType = this.getString(EditDeliveryLocationActivity.DELIVERY_TYPE, Delivery.STANDARD.toString())
+            getString(CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS)?.let {
+                whoIsCollecting =
+                    Gson().fromJson(it, object : TypeToken<WhoIsCollectingDetails>() {}.type)
+            }
+            if (this.containsKey(EditDeliveryLocationActivity.DEFAULT_ADDRESS)
+                &&  this.getSerializable(EditDeliveryLocationActivity.DEFAULT_ADDRESS) != null) {
+                defaultAddress =
+                    this.getSerializable(EditDeliveryLocationActivity.DEFAULT_ADDRESS) as Address
+            }
+
+            if (bundle?.containsKey(EditDeliveryLocationActivity.SAVED_ADDRESS_RESPONSE) == true
+                && this.getSerializable(EditDeliveryLocationActivity.SAVED_ADDRESS_RESPONSE) != null) {
+                savedAddressResponse =  this.getSerializable(EditDeliveryLocationActivity.SAVED_ADDRESS_RESPONSE) as SavedAddressResponse
+            }
         }
     }
 
@@ -86,12 +119,9 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
         when (v?.id) {
             R.id.imgDelBack -> {
                 activity?.onBackPressed()
-                deliveryType = AppConstant.EMPTY_STRING
             }
             R.id.editDelivery -> {
-
-                if (deliveryType.equals(CLICK_AND_COLLECT)) {
-
+                if (deliveryType.equals(Delivery.CNC.toString(), true)) {
                     bundle?.putSerializable(
                         VALIDATE_RESPONSE, validateLocationResponse)
 
@@ -102,7 +132,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
                     return
                 }
 
-                if (deliveryType.equals(STANDARD_DELIVERY)) {
+                if (deliveryType.equals(Delivery.STANDARD.toString(), true)) {
                     navigateToConfirmAddressScreen()
                     return
                 }
@@ -112,19 +142,10 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
                     // sign in user :  make confirm api call and store response in cache navigate to shop tab
                     sendConfirmLocation()
                 } else {
-                    /*  not sign in user
-                      Don’t make confirm place API
-                      Cache placeDetails and Store objects from validate place API
-                       Next time when user logins from anywhere in app
-                       and if above data available in cache make confirm place API
-                       using using above details
-                       And clear the cache then navigate to shop tab
-                      */
-
                     // navigate to shop tab
                     (activity as? BottomNavigationActivity)?.clearStack()
                     (activity as? BottomNavigationActivity)?.getBottomNavigationById()
-                        ?.setCurrentItem(INDEX_PRODUCT);
+                        ?.setCurrentItem(INDEX_PRODUCT)
                 }
             }
 
@@ -140,14 +161,14 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
                 (activity as? BottomNavigationActivity)?.popFragment()
             }
             R.id.geoCollectTab -> {
-                deliveryType = CLICK_AND_COLLECT
+                deliveryType = Delivery.CNC.toString()
                 if (progressBar?.visibility == View.VISIBLE)
                     return
                 else
                     openCollectionTab()
             }
             R.id.geoDeliveryTab -> {
-                deliveryType = STANDARD_DELIVERY
+                deliveryType = Delivery.STANDARD.toString()
                 if (progressBar?.visibility == View.VISIBLE)
                     return
                 else
@@ -157,8 +178,11 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
     }
 
     private fun navigateToConfirmAddressScreen() {
+        bundle?.putBoolean(EditDeliveryLocationActivity.IS_COMING_FROM_CHECKOUT, isComingFromCheckout)
+        bundle?.putString(EditDeliveryLocationActivity.DELIVERY_TYPE, deliveryType)
         findNavController().navigate(
-            R.id.action_deliveryAddressConfirmationFragment_to_confirmDeliveryLocationFragment
+            R.id.action_deliveryAddressConfirmationFragment_to_confirmDeliveryLocationFragment,
+            bundleOf("bundle" to bundle)
         )
     }
 
@@ -177,12 +201,12 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
               return
           }
           val confirmLocationAddress = ConfirmLocationAddress(placeId)
-          var confirmLocationRequest = ConfirmLocationRequest("", confirmLocationAddress, "",)
-          if (deliveryType.equals(STANDARD_DELIVERY)) {
+          var confirmLocationRequest = ConfirmLocationRequest("", confirmLocationAddress, "")
+          if (deliveryType.equals(Delivery.STANDARD.toString())) {
               confirmLocationRequest =
                   ConfirmLocationRequest(STANDARD, confirmLocationAddress)
           }
-          if (deliveryType.equals(CLICK_AND_COLLECT)) {
+          if (deliveryType.equals(Delivery.CNC.toString())) {
               confirmLocationRequest =
                   ConfirmLocationRequest(CNC, confirmLocationAddress, mStoreId)
           }
@@ -206,22 +230,64 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
                                   )
                               }
 
-                            if (KotlinUtils.IS_COMING_FROM_CHECKOUT) {
+                            savedAddressResponse?.defaultAddressNickname = defaultAddress?.nickname
 
-                                /*now refactor UI from here to selct tab*/
+                            if (isComingFromCheckout) {
+                                if (deliveryType == Delivery.STANDARD.toString()) {
+                                    if (isComingFromSlotSelection) {
+                                        /*Naviagate to slot selection page with updated saved address*/
 
+                                        val checkoutActivityIntent = Intent(
+                                            activity,
+                                            CheckoutActivity::class.java
+                                        )
+                                        checkoutActivityIntent.putExtra(
+                                            CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
+                                            savedAddressResponse
+                                        )
+                                        checkoutActivityIntent.putExtra(
+                                            CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION,
+                                            true
+                                        )
+                                        activity?.apply {
+                                            startActivityForResult(
+                                                checkoutActivityIntent,
+                                                FULLFILLMENT_REQUEST_CODE
+                                            )
 
-
+                                            overridePendingTransition(
+                                                R.anim.slide_from_right,
+                                                R.anim.slide_out_to_left
+                                            )
+                                        }
+                                    }
+                                } else {
+                                    if (isComingFromSlotSelection) {
+                                        if (whoIsCollecting!=null) {
+                                            StorePickupInfoBody().apply {
+                                                firstName = whoIsCollecting?.recipientName
+                                                primaryContactNo = whoIsCollecting?.phoneNumber
+                                                storeId = mStoreId
+                                                vehicleModel = whoIsCollecting?.vehicleModel ?: ""
+                                                vehicleColour = whoIsCollecting?.vehicleColor ?: ""
+                                                vehicleRegistration = whoIsCollecting?.vehicleRegistration ?: ""
+                                                taxiOpted = whoIsCollecting?.isMyVehicle != true
+                                                deliveryType = Delivery.CNC.toString()
+                                                address = ConfirmLocationAddress(validateLocationResponse?.validatePlace?.placeDetails?.placeId)
+                                            }
+                                            startCheckoutActivity(Utils.toJson(whoIsCollecting))
+                                        } else {
+                                                // Navaigate to who is collecting
+                                            findNavController().navigate(
+                                                R.id.action_deliveryAddressConfirmationFragment_to_geoCheckoutCollectingFragment)
+                                        }
+                                    }
+                                }
                             } else {
-                                    // navigate to shop/list/cart tab
+                                // navigate to shop/list/cart tab
                                 activity?.setResult(KotlinUtils.GEO_REQUEST_CODE)
                                 activity?.finish()
                             }
-                          }
-                          else -> {
-                              // navigate to shop tab with error sceanario
-                              activity?.setResult(EditDeliveryLocationActivity.REQUEST_CODE)
-                              activity?.finish()
                           }
                       }
                   }
@@ -236,17 +302,36 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
       }
     }
 
+    private fun startCheckoutActivity(toJson: String) {
+        val checkoutActivityIntent = Intent(activity, CheckoutActivity::class.java)
+        checkoutActivityIntent.putExtra(
+            CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS,
+            toJson
+        )
+        activity?.let {
+            startActivityForResult(
+                checkoutActivityIntent,
+                CartFragment.REQUEST_PAYMENT_STATUS
+            )
+
+            it.overridePendingTransition(
+                R.anim.slide_from_right,
+                R.anim.slide_out_to_left
+            )
+        }
+    }
+
     companion object {
         val KEY_LATITUDE = "latitude"
         val KEY_LONGITUDE = "longitude"
         val KEY_PLACE_ID = "placeId"
-        val DELIVERY_TYPE = "deliveryType"
         val ADDRESS = "address"
         val VALIDATE_RESPONSE = "ValidateResponse"
         private const val STANDARD_DELIVERY = "StandardDelivery"
         private const val CLICK_AND_COLLECT = "CLICKANDCOLLECT"
         private const val STANDARD = "Standard"
         private const val CNC = "CnC"
+        var FULLFILLMENT_REQUEST_CODE = 8765
 
         fun newInstance(latitude: String, longitude: String, placesId: String) =
             DeliveryAddressConfirmationFragment().withArgs {
@@ -259,7 +344,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
         fun newInstance(placesId: String?, deliveryType: Delivery? = Delivery.STANDARD) =
             DeliveryAddressConfirmationFragment().withArgs {
                 putString(KEY_PLACE_ID, placesId)
-                putString(DELIVERY_TYPE, deliveryType.toString())
+                putString(EditDeliveryLocationActivity.DELIVERY_TYPE, deliveryType.toString())
             }
     }
 
@@ -324,7 +409,11 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
                 if (validateLocationResponse != null) {
                     when (validateLocationResponse?.httpCode) {
                         HTTP_OK -> {
-                            opengeoDeliveryTab()
+                            if (deliveryType.equals(Delivery.STANDARD.toString(), true)) {
+                                opengeoDeliveryTab()
+                            } else {
+                                openCollectionTab()
+                            }
                         }
                         else -> {
                             /*TODO Error sceanario*/

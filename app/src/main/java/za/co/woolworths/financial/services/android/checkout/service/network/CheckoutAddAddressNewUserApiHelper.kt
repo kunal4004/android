@@ -5,10 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import retrofit2.Response
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
-import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocation
+import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationResponse
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse
 import za.co.woolworths.financial.services.android.models.network.*
+import za.co.woolworths.financial.services.android.util.wenum.ConfirmLocation
 
 /**
  * Created by Kunal Uttarwar on 04/06/21.
@@ -177,8 +178,8 @@ class CheckoutAddAddressNewUserApiHelper : RetrofitConfig() {
     fun getConfirmLocationDetails(body: ConfirmLocationRequest): LiveData<Any> {
         val confirmDeliveryAddress = MutableLiveData<Any>()
         OneAppService.getConfirmDeliveryAddressDetails(body).enqueue(CompletionHandler(object :
-            IResponseListener<ConfirmLocation> {
-            override fun onSuccess(confirmDeliveryAddressResponse: ConfirmLocation?) {
+            IResponseListener<ConfirmLocationResponse> {
+            override fun onSuccess(confirmDeliveryAddressResponse: ConfirmLocationResponse?) {
                 confirmDeliveryAddress.value = confirmDeliveryAddressResponse ?: null
             }
 
@@ -188,7 +189,7 @@ class CheckoutAddAddressNewUserApiHelper : RetrofitConfig() {
                 }
             }
 
-        }, ConfirmLocation::class.java))
+        }, ConfirmLocationResponse::class.java))
         return confirmDeliveryAddress
     }
 }

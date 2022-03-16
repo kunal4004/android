@@ -23,7 +23,6 @@ class GeoLocationApiHelper : RetrofitConfig() {
             "",
             getSessionToken(),
             getDeviceIdentityToken(),
-            "SIT2",
             confirmLocationRequest
             ).await()
 
@@ -32,7 +31,6 @@ class GeoLocationApiHelper : RetrofitConfig() {
             "",
             getSessionToken(),
             getDeviceIdentityToken(),
-            "SIT2",
             saveAddressLocationRequest
         ).await()
 
@@ -41,7 +39,6 @@ class GeoLocationApiHelper : RetrofitConfig() {
             "",
             getSessionToken(),
             getDeviceIdentityToken(),
-            "SIT2",
             confirmLocationRequest
         )
 }

@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
 import android.animation.ObjectAnimator
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +24,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.regex.Pattern
 
@@ -156,7 +158,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
             isMyVehicle
         )
 
-        val bundle = Bundle()
+      /*  val bundle = Bundle()
         bundle.apply {
             putString(
                 KEY_COLLECTING_DETAILS,
@@ -164,6 +166,27 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
             )
         }
         navController?.navigate(R.id.checkoutReturningUserCollectionFragment, bundle)
+        */
+        startCheckoutActivity(Utils.toJson(whoIsCollectingDetails))
+    }
+
+    private fun startCheckoutActivity(toJson: String) {
+        val checkoutActivityIntent = Intent(activity, CheckoutActivity::class.java)
+        checkoutActivityIntent.putExtra(
+            KEY_COLLECTING_DETAILS,
+            toJson
+        )
+        activity?.let {
+            startActivityForResult(
+                checkoutActivityIntent,
+                CartFragment.REQUEST_PAYMENT_STATUS
+            )
+
+            it.overridePendingTransition(
+                R.anim.slide_from_right,
+                R.anim.slide_out_to_left
+            )
+        }
     }
 
     private fun isErrorInputFields(listOfInputFields: List<View>): Boolean {

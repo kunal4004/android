@@ -587,7 +587,7 @@ interface ApiInterface {
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body suburbRequest: SetDeliveryLocationSuburbRequest): Call<SetDeliveryLocationSuburbResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "environment: www-win-dev2")
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/cartV2")
     fun getShoppingCart(
 
@@ -595,7 +595,7 @@ interface ApiInterface {
             @Header("deviceIdentityToken") deviceIdentityToken: String,
     ): Call<ShoppingCartResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "environment: www-win-dev2")
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/cart/{deliveryType}/itemV2")
     fun addItemToCart(
 
@@ -1267,7 +1267,6 @@ interface ApiInterface {
         @Header("userAgentVersion") userAgentVersion: String,
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
-        @Header("environment") String: String,
         @Body confirmLocationRequest: ConfirmLocationRequest
     ): Call<ConfirmLocationResponse>
 
@@ -1278,7 +1277,6 @@ interface ApiInterface {
         @Header("userAgentVersion") userAgentVersion: String,
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
-        @Header("environment") String: String,
         @Body saveAddressLocationRequest: SaveAddressLocationRequest
     ): Call<GenericResponse>
 }

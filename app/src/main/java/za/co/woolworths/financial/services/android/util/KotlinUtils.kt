@@ -33,14 +33,15 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import com.awfs.coordination.R
-import com.google.android.gms.common.util.CrashUtils
 import com.google.common.reflect.TypeToken
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.crashlytics.internal.common.CrashlyticsCore
 import com.google.firebase.installations.FirebaseInstallations
 import com.google.gson.Gson
 import kotlinx.coroutines.GlobalScope
 import org.json.JSONObject
+import za.co.woolworths.financial.services.android.checkout.service.network.Address
+import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_COLLECTING_DETAILS
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -83,11 +84,11 @@ class KotlinUtils {
         const val TREATMENT_PLAN = "treamentPlan"
         const val RESULT_CODE_CLOSE_VIEW = 2203
         var GEO_REQUEST_CODE = -1
-        @JvmField
-        var IS_COMING_FROM_CHECKOUT: Boolean = false
+
         var IS_COMING_FROM_CNC_SLOT_SELECTION: Boolean = false
         var IS_COMING_FROM_DEL_SLOT_SELECTION: Boolean = false
         var IS_COMING_FROM_SLOT_SELECTION: Boolean = false
+        var IS_COMING_FROM_CHECKOUT: Boolean = false
 
 
         fun highlightTextInDesc(
@@ -362,29 +363,29 @@ class KotlinUtils {
             return SimpleDateFormat("dd-MM-yyy").format(date)
         }
 
-
         fun presentEditDeliveryGeoLocationActivity(
             activity: Activity?,
             requestCode: Int,
-            delivery: Delivery? = null,
+            delivery: Delivery? = Delivery.STANDARD,
             placeId: String? = null,
             isComingFromCheckout: Boolean = false,
-            isComingSlotSelection: Boolean = false
+            isComingFromSlotSelection: Boolean = false,
+            savedAddressResposne: SavedAddressResponse? = null,
+            defaultAddress: Address? = null,
+            whoISCollecting: String? = null
         ) {
-            KotlinUtils.IS_COMING_FROM_CHECKOUT = isComingFromCheckout
-            KotlinUtils.IS_COMING_FROM_SLOT_SELECTION = isComingSlotSelection
-            var type = delivery
-            if (type == null) {
-                if (Utils.getPreferredDeliveryLocation() != null) {
-                    type =  if (getPreferredDeliveryType() == Delivery.CNC) Delivery.CNC else Delivery.STANDARD
 
-                }
-            }
             activity?.apply {
                 val mIntent = Intent(this, EditDeliveryLocationActivity::class.java)
                 val mBundle = Bundle()
-                mBundle.putString(EditDeliveryLocationActivity.DELIVERY_TYPE, type?.name)
+                mBundle.putString(EditDeliveryLocationActivity.DELIVERY_TYPE, delivery.toString())
                 mBundle.putString(EditDeliveryLocationActivity.PLACE_ID, placeId)
+                mBundle.putBoolean(EditDeliveryLocationActivity.IS_COMING_FROM_CHECKOUT, isComingFromCheckout)
+                mBundle.putBoolean(EditDeliveryLocationActivity.IS_COMING_FROM_SLOT_SELECTION, isComingFromSlotSelection)
+                mBundle.putSerializable(EditDeliveryLocationActivity.SAVED_ADDRESS_RESPONSE, savedAddressResposne)
+                mBundle.putSerializable(EditDeliveryLocationActivity.DEFAULT_ADDRESS, defaultAddress)
+                mBundle.putSerializable(EditDeliveryLocationActivity.DEFAULT_ADDRESS, defaultAddress)
+                mBundle.putString(KEY_COLLECTING_DETAILS, whoISCollecting)
                 mIntent.putExtra("bundle", mBundle)
                 GEO_REQUEST_CODE = requestCode
                 startActivityForResult(mIntent, requestCode)

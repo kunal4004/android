@@ -40,6 +40,7 @@ import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.NetworkManager
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.*
 import javax.inject.Inject
 
@@ -62,6 +63,9 @@ class ConfirmAddressMapFragment() :
     private var longitude: Double? = null
     private var suburb: String? = null
     private var isAddAddress: Boolean? = false
+    private var isComingFromCheckout: Boolean = false
+    private var deliveryType: String? = null
+
 
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     @Inject
@@ -143,21 +147,13 @@ class ConfirmAddressMapFragment() :
 
         confirmAddress?.setOnClickListener {
 
-            if(KotlinUtils.IS_COMING_FROM_CHECKOUT) {
-                if (KotlinUtils.IS_COMING_FROM_DEL_SLOT_SELECTION) {
-                    /*TODO need to test*/
-                    // where we are delivering to screen
+            if(isComingFromCheckout) {
+                if (deliveryType == Delivery.STANDARD.toString()) {
                     findNavController().navigate(
                         R.id.action_confirmAddressMapFragment_to_checkoutAddAddressNewUserFragment)
-                } else  if (KotlinUtils.IS_COMING_FROM_CNC_SLOT_SELECTION) {
-                    /*TODO need to test*/
-                    // where we are collecting from screen
+                } else  {
                     findNavController().navigate(
                         R.id.action_confirmAddressMapFragment_to_checkoutCollectingFragment)
-                } else {
-                    // where we are delivering
-                    findNavController().navigate(
-                        R.id.action_confirmAddressMapFragment_to_checkoutAddAddressNewUserFragment)
                 }
             } else {
                 // normal geo flow
@@ -281,13 +277,17 @@ class ConfirmAddressMapFragment() :
         }
     }
 
+
+    private fun getAdrress1(mAddress: String?) =
+        mAddress?.split(",")?.getOrNull(0)
+
     private fun getAddressFromLatLng(latitude: Double, longitude: Double) {
         try {
             val geocoder = Geocoder(requireActivity(), Locale.getDefault())
             val address: MutableList<Address> = geocoder.getFromLocation(latitude, longitude, 1)
             address.let {
                 mAddress = it[0].getAddressLine(0)
-                address1 = it[0].subAdminArea
+                address1 = getAdrress1(mAddress)
                 city = it[0].locality
                 state = it[0].adminArea
                 country = it[0].countryName
