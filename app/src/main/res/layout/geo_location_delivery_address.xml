@@ -234,9 +234,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/earliestFashionDeliveryDateValue"
-        style="@style/myriad_pro_regular"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        style="@style/myriad_pro_semi_bold"
         android:layout_marginStart="@dimen/_10sdp"
         android:ellipsize="end"
         android:gravity="end"
@@ -265,9 +263,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/earliestDeliveryDateValue"
-        style="@style/myriad_pro_regular"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        style="@style/myriad_pro_semi_bold"
         android:layout_marginStart="@dimen/_10sdp"
         android:layout_marginBottom="@dimen/_2sdp"
         android:ellipsize="end"
@@ -297,9 +293,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/feeValue"
-        style="@style/myriad_pro_regular"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        style="@style/myriad_pro_semi_bold"
         android:layout_marginStart="@dimen/_10sdp"
         android:layout_marginBottom="@dimen/_2sdp"
         android:ellipsize="end"
@@ -329,9 +323,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/itemLimitValue"
-        style="@style/myriad_pro_regular"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        style="@style/myriad_pro_semi_bold"
         android:layout_marginStart="@dimen/_10sdp"
         android:layout_marginBottom="@dimen/_2sdp"
         android:ellipsize="end"
@@ -362,9 +354,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/productsAvailableValue"
-        style="@style/myriad_pro_regular"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        style="@style/myriad_pro_semi_bold"
         android:layout_marginStart="@dimen/_10sdp"
         android:layout_marginBottom="@dimen/_2sdp"
         android:ellipsize="end"
