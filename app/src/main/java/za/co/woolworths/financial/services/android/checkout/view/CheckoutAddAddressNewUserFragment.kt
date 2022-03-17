@@ -1386,7 +1386,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
         bundle.putInt(ERROR_TYPE, type)
         view?.findNavController()?.navigate(
-            R.id.action_checkoutAddAddressNewUserFragment_to_errorHandlerBottomSheetDialog,
+            R.id.actionOpenErrorHandlerBottomSheetDialog,
             bundle
         )
     }
