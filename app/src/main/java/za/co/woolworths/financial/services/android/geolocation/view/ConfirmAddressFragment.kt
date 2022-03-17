@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,7 +55,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
 
     companion object {
         fun newInstance() = ConfirmAddressFragment()
-        var SAVED_ADDRESS_RESPONSE = "SavedAddressResponse"
+
     }
 
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
@@ -147,7 +146,6 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                         hideCurrentLocation()
                     }
                 } else {
-                    Log.w("TAG", "getLastLocation:exception", task.exception)
                     hideCurrentLocation()
                 }
             }
@@ -173,7 +171,6 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             } catch (e: HttpException) {
                 FirebaseManager.logException(e)
                 progressBar?.visibility = View.GONE
-                /*TODO:  Error sceanrio*/
             }
 
         }

@@ -168,7 +168,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 if (progressBar?.visibility == View.VISIBLE)
                     return
                 else
-                    opengeoDeliveryTab()
+                    openGeoDeliveryTab()
             }
         }
     }
@@ -324,10 +324,9 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         val ADDRESS = "address"
         val VALIDATE_RESPONSE = "ValidateResponse"
         private const val STANDARD_DELIVERY = "StandardDelivery"
-        private const val CLICK_AND_COLLECT = "CLICKANDCOLLECT"
         private const val STANDARD = "Standard"
         private const val CNC = "CnC"
-        var FULLFILLMENT_REQUEST_CODE = 8765
+        private val FULLFILLMENT_REQUEST_CODE = 8765
 
         fun newInstance(latitude: String, longitude: String, placesId: String) =
             DeliveryAddressConfirmationFragment().withArgs {
@@ -370,7 +369,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             getDeliveryDetailsFromValidateLocation(it) }
     }
 
-    private fun opengeoDeliveryTab() {
+    private fun openGeoDeliveryTab() {
         geoDeliveryTab?.setBackgroundResource(R.drawable.bg_geo_selected_tab)
         geoDeliveryTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
         geoCollectTab?.setBackgroundResource(R.drawable.bg_geo_unselected_tab)
@@ -406,7 +405,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     when (validateLocationResponse?.httpCode) {
                         HTTP_OK -> {
                             if (deliveryType.equals(Delivery.STANDARD.toString(), true)) {
-                                opengeoDeliveryTab()
+                                openGeoDeliveryTab()
                             } else {
                                 openCollectionTab()
                             }
