@@ -52,6 +52,7 @@ class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.On
                 ELITE_PLAN -> when (state) {
                     ApplyNowState.STORE_CARD, ApplyNowState.PERSONAL_LOAN -> {
                         visibility = VISIBLE
+                        payNowButton.text = bindString(R.string.pay_now)
                     }
                     else -> {
                         visibility = GONE
@@ -62,14 +63,17 @@ class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.On
         payNowButton?.apply {
             setOnClickListener(this@RemoveBlockOnCollectionDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
-            when (eligibilityPlan?.actionText) {
-                ActionText.VIEW_ELITE_PLAN.value -> {
-                    payNowButton.text = bindString(R.string.view_your_payment_plan)
-                }
-                ActionText.START_NEW_ELITE_PLAN.value -> {
-                    payNowButton.text = bindString(R.string.get_help_repayment)
+            if (enableElitePlanForCC()) {
+                when (eligibilityPlan?.actionText) {
+                    ActionText.VIEW_ELITE_PLAN.value -> {
+                        payNowButton.text = bindString(R.string.view_your_payment_plan)
+                    }
+                    ActionText.START_NEW_ELITE_PLAN.value -> {
+                        payNowButton.text = bindString(R.string.get_help_repayment)
+                    }
                 }
             }
+
         }
 
         closeIconImageButton?.apply {
@@ -81,7 +85,7 @@ class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.On
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.payNowButton -> {
-                if (eligibilityPlan?.planType.equals(ELITE_PLAN) && (state != ApplyNowState.PERSONAL_LOAN || state != ApplyNowState.STORE_CARD)) {
+                if (enableElitePlanForCC()) {
                     cannotAffordClickHandler()
                 } else {
                     dismiss()
@@ -96,7 +100,7 @@ class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.On
         }
     }
 
-    fun cannotAffordClickHandler(){
+    fun cannotAffordClickHandler() {
         activity?.apply {
             state?.let {
                 TakeUpPlanUtil.takeUpPlanEventLog(it, this)
@@ -111,6 +115,7 @@ class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.On
         )
         openSetupPaymentPlanPage()
     }
+
     private fun openSetupPaymentPlanPage() {
         activity?.apply {
             val intent = Intent(context, GetAPaymentPlanActivity::class.java)
@@ -120,5 +125,9 @@ class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.On
         }
     }
 
+    private fun enableElitePlanForCC(): Boolean {
+        return eligibilityPlan?.planType.equals(ELITE_PLAN) &&
+                (state != ApplyNowState.PERSONAL_LOAN && state != ApplyNowState.STORE_CARD)
+    }
 
 }
