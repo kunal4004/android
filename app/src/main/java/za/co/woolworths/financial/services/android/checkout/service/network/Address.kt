@@ -41,10 +41,10 @@ class Address : Serializable {
     var addressType: String? = null
 
     @SerializedName("latitude")
-    var latitude: String? = null
+    var latitude: Double? = null
 
     @SerializedName("longitude")
-    var longitude: String? = null
+    var longitude: Double? = null
 
     @SerializedName("verified")
     var verified: Boolean = false

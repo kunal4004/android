@@ -59,8 +59,7 @@
                 style="@style/futura_semi_bold_black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/fourteen_sp"
-                android:paddingStart="@dimen/two_dp" />
+                android:textSize="@dimen/fourteen_sp"/>
         </LinearLayout>
     </LinearLayout>
 

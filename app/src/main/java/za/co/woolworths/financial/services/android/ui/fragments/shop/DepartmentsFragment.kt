@@ -318,8 +318,10 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
         return when (rootCategory.hasChildren) {
             // navigate to drill down of categories
             true -> {
-                bundle.putString("ROOT_CATEGORY", Utils.toJson(rootCategory))
-                bundle.putString("VERSION", version)
+                bundle.putString(SubCategoryFragment.KEY_ARGS_ROOT_CATEGORY, Utils.toJson(rootCategory))
+                bundle.putString(SubCategoryFragment.KEY_ARGS_VERSION, version)
+                bundle.putBoolean(SubCategoryFragment.KEY_ARGS_IS_LOCATION_ENABLED, if (context != null) Utils.isLocationEnabled(context) else false)
+                location?.let { bundle.putParcelable(SubCategoryFragment.KEY_ARGS_LOCATION, it) }
                 drillDownCategoryFragment.arguments = bundle
                 return drillDownCategoryFragment
             }

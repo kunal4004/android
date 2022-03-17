@@ -559,8 +559,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             val googlePlacesName = place.name
             address1 =
                 if (googlePlacesName.isNullOrEmpty()) tempAddress1 else if (googlePlacesName.length > 50) tempAddress1 else googlePlacesName
-            latitude = place.latLng?.latitude.toString()
-            longitude = place.latLng?.longitude.toString()
+            latitude = place.latLng?.latitude
+            longitude = place.latLng?.longitude
             placesId = place.id
         }
 
@@ -571,8 +571,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             val geocoder = Geocoder(context, Locale.getDefault())
             val addresses =
                 geocoder.getFromLocation(
-                    selectedAddress.savedAddress.latitude!!.toDouble(),
-                    selectedAddress.savedAddress.longitude!!.toDouble(),
+                    selectedAddress.savedAddress.latitude!!,
+                    selectedAddress.savedAddress.longitude!!,
                     1
                 )
             if (!addresses[0]?.postalCode.isNullOrEmpty())
