@@ -392,8 +392,8 @@
         feeValue,feeLabel,earliestDeliveryDateValue,
         earliestDeliveryDateLabel,earliestFashionDeliveryDateValue,
         earliestFashionDeliveryDateLabel,btnConfirmAddress,
-        imgDelBack,deliveryBagIcon,geoDeliveryTab,geoDivider,
-        editDelivery,geoCollectTab,imgDelIcon,geoDeliveryText,
+        deliveryBagIcon,geoDivider,
+        editDelivery,imgDelIcon,geoDeliveryText,
         txtNewFeature" />
 
 
