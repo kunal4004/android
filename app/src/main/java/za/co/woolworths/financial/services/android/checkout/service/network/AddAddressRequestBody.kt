@@ -17,8 +17,8 @@ data class AddAddressRequestBody(
     val suburb: String,
     val specialInstructions: String,
     val defaultAddress: Boolean,
-    val latitude: String?,
-    val longitude: String?,
+    val latitude: Double?,
+    val longitude: Double?,
     val placesId: String,
     val addressType: String
 )
