@@ -15,7 +15,6 @@ import kotlinx.android.synthetic.main.fragment_click_and_collect_stores.*
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.StoreListAdapter
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
 import com.google.android.gms.maps.SupportMapFragment
@@ -29,7 +28,6 @@ import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController

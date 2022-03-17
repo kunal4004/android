@@ -168,7 +168,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 if (progressBar?.visibility == View.VISIBLE)
                     return
                 else
-                    opengeoDeliveryTab()
+                    openGeoDeliveryTab()
             }
         }
     }
@@ -324,10 +324,9 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         val ADDRESS = "address"
         val VALIDATE_RESPONSE = "ValidateResponse"
         private const val STANDARD_DELIVERY = "StandardDelivery"
-        private const val CLICK_AND_COLLECT = "CLICKANDCOLLECT"
         private const val STANDARD = "Standard"
         private const val CNC = "CnC"
-        var FULLFILLMENT_REQUEST_CODE = 8765
+        private val FULLFILLMENT_REQUEST_CODE = 8765
 
         fun newInstance(latitude: String, longitude: String, placesId: String) =
             DeliveryAddressConfirmationFragment().withArgs {
@@ -370,7 +369,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             getDeliveryDetailsFromValidateLocation(it) }
     }
 
-    private fun opengeoDeliveryTab() {
+    private fun openGeoDeliveryTab() {
         geoDeliveryTab?.setBackgroundResource(R.drawable.bg_geo_selected_tab)
         geoDeliveryTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
         geoCollectTab?.setBackgroundResource(R.drawable.bg_geo_unselected_tab)
@@ -406,7 +405,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     when (validateLocationResponse?.httpCode) {
                         HTTP_OK -> {
                             if (deliveryType.equals(Delivery.STANDARD.toString(), true)) {
-                                opengeoDeliveryTab()
+                                openGeoDeliveryTab()
                             } else {
                                 openCollectionTab()
                             }
@@ -474,25 +473,9 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 WFormatter.getFullMonthWithDate(earliestFashionDate)
             earliestFashionDeliveryDateLabel?.visibility = View.VISIBLE
             earliestFashionDeliveryDateValue?.visibility = View.VISIBLE
+        }
+        itemLimitValue?.text = bindString(R.string.unlimited)
 
-        }
-        if (!earliestFoodDate.isNullOrEmpty() && !earliestFashionDate.isNullOrEmpty()) {
-            itemLimitValue?.text = bindString(R.string.unlimited)
-        }
-
-        if (earliestFoodDate.isNullOrEmpty() && !earliestFashionDate.isNullOrEmpty()) {
-            val otherMaxQuantity =
-                validateLocationResponse?.validatePlace?.quantityLimit?.otherMaximumQuantity?.toString()
-            if (otherMaxQuantity.isNullOrEmpty())
-                itemLimitValue?.text = bindString(R.string.unlimited)
-            else
-                itemLimitValue?.text = otherMaxQuantity
-        }
-
-        if (!earliestFoodDate.isNullOrEmpty() && earliestFashionDate.isNullOrEmpty()) {
-            itemLimitValue?.text =
-                validateLocationResponse?.validatePlace?.quantityLimit?.foodMaximumQuantity?.toString()
-        }
     }
 
     private fun setProductStatus() {
@@ -573,31 +556,41 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 )
             )
         } else if (Utils.getPreferredDeliveryLocation().fulfillmentDetails?.address != null) {
+
             Utils.getPreferredDeliveryLocation().fulfillmentDetails?.let {
-                geoDeliveryText?.text = HtmlCompat.fromHtml(
-                    getString(R.string.collecting_from_geo, it.storeName),
-                    HtmlCompat.FROM_HTML_MODE_LEGACY
-                )
-                editDelivery?.text = bindString(R.string.edit)
-                btnConfirmAddress?.isEnabled = true
-                btnConfirmAddress?.setBackgroundColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.black
+                if (it.storeName.equals("null") || it.storeName.isNullOrEmpty()) {
+                    whereToCollect()
+                } else {
+                    geoDeliveryText?.text = HtmlCompat.fromHtml(
+                        getString(R.string.collecting_from_geo, it.storeName),
+                        HtmlCompat.FROM_HTML_MODE_LEGACY
                     )
-                )
+                    editDelivery?.text = bindString(R.string.edit)
+                    btnConfirmAddress?.isEnabled = true
+                    btnConfirmAddress?.setBackgroundColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.black
+                        )
+                    )
+                }
             }
         } else {
-            geoDeliveryText?.text = bindString(R.string.where_do_you_want_to_collect)
-            editDelivery?.text = bindString(R.string.choose)
-            btnConfirmAddress?.isEnabled = false
-            btnConfirmAddress?.setBackgroundColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.color_A9A9A9
-                )
-            )
+            whereToCollect()
         }
+    }
+
+    private fun whereToCollect() {
+        geoDeliveryText?.text = bindString(R.string.where_do_you_want_to_collect)
+        editDelivery?.text = bindString(R.string.choose)
+        btnConfirmAddress?.isEnabled = false
+        btnConfirmAddress?.setBackgroundColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.color_A9A9A9
+            )
+        )
+
     }
 
     private fun getNearestStore(stores: List<Store>?): String? {

@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.geolocation.viewmodel
 
 
 import androidx.lifecycle.ViewModel
-import retrofit2.await
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
