@@ -110,10 +110,13 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 updateTabIconUI(position)
                 activity?.apply {
                     when (position) {
-                        0 -> Utils.triggerFireBaseEvents(
-                            FirebaseManagerAnalyticsProperties.SHOP_CATEGORIES,
-                            this
-                        )
+                        0 -> {
+                            Utils.triggerFireBaseEvents(
+                                FirebaseManagerAnalyticsProperties.SHOP_CATEGORIES,
+                                this
+                            )
+                            showBlackToolTip(Delivery_Types.STANDARD)
+                        }
                         1 -> {
                             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS,
                                 this)
@@ -475,7 +478,13 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun showBlackToolTip(deliveryType: Delivery_Types) {
-        blackToolTipDialog = activity?.let { activity -> Dialog(activity) }
+        if (blackToolTipDialog != null && blackToolTipDialog!!.isShowing) {
+            blackToolTipDialog!!.dismiss()
+        }
+        blackToolTipDialog = activity?.let { activity ->
+            Dialog(activity,
+                android.R.style.ThemeOverlay_DeviceDefault_Accent_DayNight)
+        }
         blackToolTipDialog?.apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             val view = layoutInflater.inflate(R.layout.black_tool_tip_layout, null)
@@ -502,11 +511,14 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     WindowManager.LayoutParams.WRAP_CONTENT
                 )
                 setBackgroundDrawableResource(R.color.transparent)
+                setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL)
+                clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
                 setGravity(Gravity.TOP)
             }
 
             setTitle(null)
-            setCancelable(true)
+            setCanceledOnTouchOutside(true)
             show()
         }
     }
