@@ -37,7 +37,6 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listene
 import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
-import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.*
@@ -97,8 +96,6 @@ class ConfirmAddressMapFragment :
     }
 
     private fun showErrorDialog() {
-
-
         requireActivity().resources?.apply {
             vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
                 this@ConfirmAddressMapFragment,
@@ -194,16 +191,7 @@ class ConfirmAddressMapFragment :
             autoCompleteTextView?.apply {
                 setAdapter(placesAdapter)
             }
-            LocationErrorLiveData.observe(viewLifecycleOwner, { isResult ->
-                if (isResult) {
-                    errorMassageDivider?.visibility = View.VISIBLE
-                    errorMessage?.visibility = View.VISIBLE
-                } else {
-                    errorMassageDivider?.visibility = View.GONE
-                    errorMessage?.visibility = View.GONE
-                }
-            })
-
+            showLocationErrorBanner()
             autoCompleteTextView?.onItemClickListener =
                 AdapterView.OnItemClickListener { parent, _, position, _ ->
                     val item = parent.getItemAtPosition(position) as? PlaceAutocomplete
@@ -233,7 +221,7 @@ class ConfirmAddressMapFragment :
                                     try {
                                         val geocoder = Geocoder(context)
                                         addressList = geocoder.getFromLocationName(location, 1)
-                                        val address = addressList?.get(0)
+                                        val address = addressList?.getOrNull(0)
                                         latLng = address?.latitude?.let {
                                             LatLng(it, address.longitude)
                                         }
@@ -248,6 +236,18 @@ class ConfirmAddressMapFragment :
                     }
                 }
         }
+    }
+
+    private fun showLocationErrorBanner() {
+        LocationErrorLiveData.observe(viewLifecycleOwner, { isResult ->
+            if (isResult) {
+                errorMassageDivider?.visibility = View.VISIBLE
+                errorMessage?.visibility = View.VISIBLE
+            } else {
+                errorMassageDivider?.visibility = View.GONE
+                errorMessage?.visibility = View.GONE
+            }
+        })
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -289,7 +289,7 @@ class ConfirmAddressMapFragment :
     }
 
 
-    private fun getAdrress1(mAddress: String?) =
+    private fun getAddressOne(mAddress: String?) =
         mAddress?.split(",")?.getOrNull(0)
 
     private fun getAddressFromLatLng(latitude: Double, longitude: Double) {
@@ -297,13 +297,14 @@ class ConfirmAddressMapFragment :
             val geocoder = Geocoder(requireActivity(), Locale.getDefault())
             val address: MutableList<Address> = geocoder.getFromLocation(latitude, longitude, 1)
             address.let {
-                mAddress = it[0].getAddressLine(0)
-                address1 = getAdrress1(mAddress)
-                city = it[0].locality
-                state = it[0].adminArea
-                country = it[0].countryName
-                postalCode = it[0].postalCode
-                suburb = it[0].subLocality
+
+                mAddress = it.getOrNull(0)?.getAddressLine(0)
+                address1 = getAddressOne(mAddress)
+                city = it.getOrNull(0)?.locality
+                state = it.getOrNull(0)?.adminArea
+                country = it.getOrNull(0)?.countryName
+                postalCode = it.getOrNull(0)?.postalCode
+                suburb = it.getOrNull(0)?.subLocality
             }
 
         } catch (e: Exception) {
@@ -328,7 +329,7 @@ class ConfirmAddressMapFragment :
                     )
                 }
             }).await()
-        placeId = results[0].placeId.toString()
+        placeId = results.getOrNull(0)?.placeId.toString()
       sendAddressData()
     }
 
