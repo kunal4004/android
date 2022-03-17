@@ -847,7 +847,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         otherSKUsByGroupKey.size.let {
             if (it > spanCount) {
-                moreColor?.text = "+ " + (it - spanCount) + " More"
+                val moreColorCount = otherSKUsByGroupKey.size - spanCount
+                moreColor?.text = requireContext().getString(R.string.product_details_color_count, moreColorCount)
                 moreColor?.visibility = View.VISIBLE
             }
         }
