@@ -18,15 +18,12 @@ import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.contracts.IShoppingList
-import za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressFragment
-import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ViewShoppingListAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
@@ -193,8 +190,6 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     }
 
     private fun locationSelectionClicked() {
-//        activity?.apply {
-//            KotlinUtils.presentEditDeliveryGeoLocationActivity(this, 0) }
         KotlinUtils.IS_COMING_FROM_CHECKOUT = false
         KotlinUtils.presentEditDeliveryGeoLocationActivity(
             requireActivity(),

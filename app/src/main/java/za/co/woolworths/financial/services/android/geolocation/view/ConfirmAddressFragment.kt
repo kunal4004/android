@@ -173,7 +173,6 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             } catch (e: HttpException) {
                 FirebaseManager.logException(e)
                 progressBar?.visibility = View.GONE
-                /*TODO:  Error sceanrio*/
             }
 
         }
