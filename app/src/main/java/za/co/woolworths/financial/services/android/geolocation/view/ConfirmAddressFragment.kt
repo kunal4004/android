@@ -224,7 +224,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 if (progressBar.visibility == View.GONE && selectedAddress != null && tvConfirmAddress.text == getString(R.string.confirm))
                 {
                     selectedAddress.let {
-                        if (it.latitude != null && it.longitude != null && it.placesId != null) {
+                        if (it.placesId != null) {
                             (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
                                 DeliveryAddressConfirmationFragment.newInstance(
                                     selectedAddress.latitude.toString()!!,

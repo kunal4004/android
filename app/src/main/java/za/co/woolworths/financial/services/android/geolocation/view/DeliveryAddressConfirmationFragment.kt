@@ -92,18 +92,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
             }
             R.id.btnConfirmAddress -> {
                 if (SessionUtilities.getInstance().isUserAuthenticated) {
-                    // sign in user :  make confirm api call and store response in cache navigate to shop tab
                     sendConfirmLocation()
                 } else {
-                    /*  not sign in user
-                      Don’t make confirm place API
-                      Cache placeDetails and Store objects from validate place API
-                       Next time when user logins from anywhere in app
-                       and if above data available in cache make confirm place API
-                       using using above details
-                       And clear the cache then navigate to shop tab
-                      */
-
                     // navigate to shop tab
                     (activity as? BottomNavigationActivity)?.clearStack()
                     (activity as? BottomNavigationActivity)?.getBottomNavigationById()
