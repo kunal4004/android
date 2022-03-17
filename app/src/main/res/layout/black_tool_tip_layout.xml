@@ -9,7 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/sixteen_dp"
-        android:layout_marginTop="@dimen/one_twenty_dp"
         android:layout_marginRight="@dimen/sixteen_dp"
         app:bl_arrowDirection="top"
         app:bl_arrowHeight="@dimen/ten_dp"

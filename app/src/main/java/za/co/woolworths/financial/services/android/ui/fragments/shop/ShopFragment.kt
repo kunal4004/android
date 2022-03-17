@@ -492,6 +492,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
             setContentView(view)
             window?.apply {
+                var attributesParams = WindowManager.LayoutParams()
+                attributesParams.y = 420
+                attributes = attributesParams
                 setLayout(
                     WindowManager.LayoutParams.MATCH_PARENT,
                     WindowManager.LayoutParams.WRAP_CONTENT
