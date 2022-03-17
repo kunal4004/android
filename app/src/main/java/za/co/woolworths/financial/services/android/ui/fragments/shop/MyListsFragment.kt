@@ -213,7 +213,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
 
     private fun showEmptyShoppingListView() {
         clSignOutTemplate.visibility = VISIBLE
-        imEmptyIcon.setImageResource(R.drawable.emptylists)
+        imEmptyIcon.setImageResource(R.drawable.empty_list_icon)
         imEmptyIcon.alpha = 1.0f
         txtEmptyStateTitle.text = getString(R.string.title_no_shopping_lists)
         txtEmptyStateDesc.text = getString(R.string.description_no_shopping_lists)

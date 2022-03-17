@@ -491,9 +491,9 @@
     <string name="title_empty_shopping_list">Your Shopping List Is Empty.</string>
     <string name="description_empty_shopping_list">Search for your favourite Woolies products \n to add to your shopping lists.</string>
     <string name="button_empty_shopping_list">ADD ITEMS</string>
-    <string name="title_no_shopping_lists">You have no lists</string>
-    <string name="description_no_shopping_lists">Shopping lists makes it easier and faster to get your favourite Woolworths products.</string>
-    <string name="button_no_shopping_lists">create a list</string>
+    <string name="title_no_shopping_lists">You Don’t Have Any Shopping Lists Yet.</string>
+    <string name="description_no_shopping_lists">Shopping lists make it quick and easy to get your favourite Woolies products.</string>
+    <string name="button_no_shopping_lists">create list</string>
     <string name="shopping_list">shopping list</string>
     <string name="select">select</string>
     <string name="product_unavailable">product unavailable</string>
