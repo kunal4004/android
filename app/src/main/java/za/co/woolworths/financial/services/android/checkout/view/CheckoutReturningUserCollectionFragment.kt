@@ -52,6 +52,7 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAd
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
@@ -409,6 +410,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         vehicleColour = whoIsCollectingDetails?.vehicleColor ?: ""
         vehicleRegistration = whoIsCollectingDetails?.vehicleRegistration ?: ""
         taxiOpted = whoIsCollectingDetails?.isMyVehicle != true
+        deliveryType = KotlinUtils.getPreferredDeliveryType().toString()
+        address = ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
     }
 
     private fun showEmptyCart() {

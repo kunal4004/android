@@ -1228,8 +1228,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             suburbEditText?.text.toString(),
             "",
             false,
-            selectedAddress.savedAddress.latitude,
-            selectedAddress.savedAddress.longitude,
+            selectedAddress.savedAddress.latitude?.toDouble(),
+            selectedAddress.savedAddress.longitude?.toDouble(),
             selectedAddress.savedAddress.placesId ?: "",
             selectedDeliveryAddressType.toString()
         )

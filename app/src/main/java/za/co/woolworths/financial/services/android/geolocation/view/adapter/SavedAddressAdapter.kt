@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.address_row_layout.view.*
+import kotlinx.android.synthetic.main.address_row_layout.view.tvAddress
+import kotlinx.android.synthetic.main.address_row_layout.view.tvAddressNickName
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
 
 class SavedAddressAdapter(
@@ -27,7 +29,15 @@ class SavedAddressAdapter(
 
     override fun onBindViewHolder(holder: SavedAddressViewHolder, position: Int) {
         holder.tvAddressNickname.text = addressList[position].nickname
-        holder.rbAddressSelector.isChecked = selectedPosition == position
+
+        if (selectedPosition == position) {
+            holder.rbAddressSelector?.isChecked = true
+            holder.view?.setBackgroundResource(R.drawable.bg_select_store)
+        } else {
+            holder.rbAddressSelector?.isChecked = false
+            holder.view?.setBackgroundResource(R.color.white)
+        }
+
         holder.view.setOnClickListener {
             selectedPosition = position
             listener.onAddressSelected(addressList[position])

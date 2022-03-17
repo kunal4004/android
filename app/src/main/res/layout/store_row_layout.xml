@@ -2,22 +2,54 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/storeSelectorLayout"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context="za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog">
 
-    <RadioButton
-        android:id="@+id/imgAddressSelector"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineEnd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/_14sdp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/_14sdp" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/_14sdp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/_14sdp" />
+
+
+    <RadioButton
+        android:id="@+id/imgAddressSelector"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_32sdp"
         android:layout_marginEnd="16dp"
         android:button="@drawable/address_selector_background"
         android:padding="@dimen/two_dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:clickable="false"
+        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
         app:layout_constraintEnd_toStartOf="@+id/tvAddressNickName"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toTopOf="@id/guidelineTop" />
 
     <TextView
         android:id="@+id/tvAddressNickName"
@@ -27,10 +59,12 @@
         android:layout_marginEnd="@dimen/sixteen_dp"
         android:maxWidth="@dimen/two_hundred_ten_dp"
         android:maxLines="1"
+        android:translationY="-1sp"
+        android:lineSpacingExtra="@dimen/_2sdp"
         app:layout_constraintBottom_toTopOf="@+id/tvAddress"
-        app:layout_constraintEnd_toStartOf="@+id/cardView2"
+        app:layout_constraintEnd_toStartOf="@+id/txtStoreDistance"
         app:layout_constraintStart_toStartOf="@+id/tvAddress"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@id/guidelineTop"
         tools:text="Constantia Emporium" />
 
     <TextView
@@ -42,34 +76,32 @@
         android:layout_marginEnd="16dp"
         android:ellipsize="end"
         android:maxLines="2"
+        android:translationY="-1.1sp"
+        android:layout_marginTop="@dimen/_2sdp"
+        android:lineSpacingExtra="@dimen/_2sdp"
         android:textColor="@color/color_444444"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/cardView2"
+        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
+        app:layout_constraintEnd_toStartOf="@+id/txtStoreDistance"
         app:layout_constraintStart_toEndOf="@+id/imgAddressSelector"
         app:layout_constraintTop_toBottomOf="@+id/tvAddressNickName"
         tools:text="Constantia Emporium, Ladies Mile Rd, Constantia, Cape Town, 7806" />
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="@dimen/twelve_dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.31">
 
         <TextView
             android:id="@+id/txtStoreDistance"
             style="@style/futura_semi_bold_white_12_text_style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/light_blue"
+            android:background="@drawable/bg_km_badge"
             android:paddingStart="@dimen/twelve_dp"
             android:paddingTop="@dimen/seven_dp"
             android:paddingEnd="@dimen/twelve_dp"
             android:paddingBottom="@dimen/seven_dp"
-            tools:text="400 m" />
-    </androidx.cardview.widget.CardView>
+            app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintTop_toTopOf="@id/guidelineTop"
+            app:layout_constraintVertical_bias="0.31"
+            tools:text="400m" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

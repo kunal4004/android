@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -21,8 +23,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.geolocation_confirm_address.*
 import kotlinx.android.synthetic.main.geolocation_confirm_address.autoCompleteTextView
 import kotlinx.android.synthetic.main.geolocation_deliv_click_collect.*
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
+import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
+import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
@@ -43,6 +50,13 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?,va
     private var latLng: LatLng? = null
     private var mLatitude: String? = null
     private var mLongitude: String? = null
+    private var address1: String? = null
+    private var city: String? = null
+    private var state: String? = null
+    private var country: String? = null
+    private var postalCode: String? = null
+    private var suburb: String? = null
+    private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
 
@@ -60,6 +74,7 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?,va
             showErrorDialog()
 
         }
+        setUpViewModel()
         clearAddress()
         confirmAddressClick()
 
@@ -110,10 +125,10 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?,va
     }
 
     private fun confirmAddressClick() {
-        btnConfirmAddress?.setOnClickListener {
+        confirmAddress?.setOnClickListener {
             if (mLatitude != null && mLongitude != null && placeId != null) {
                 (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                    GeolocationDeliveryAddressConfirmationFragment.newInstance(mLatitude!!,
+                    DeliveryAddressConfirmationFragment.newInstance(mLatitude!!,
                         mLongitude!!,
                         placeId!!))
             }
@@ -137,6 +152,8 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?,va
                 AdapterView.OnItemClickListener { parent, _, position, _ ->
                     val item = parent.getItemAtPosition(position) as? PlaceAutocomplete
                     placeId = item?.placeId.toString()
+                    val placeName = item?.primaryText.toString()
+                    autoCompleteTextView?.setText(placeName)
                     val placeFields: MutableList<Place.Field> = mutableListOf(
                         Place.Field.ID,
                         Place.Field.NAME,
@@ -160,7 +177,6 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?,va
                                     try {
                                         val geocoder = Geocoder(context)
                                         addressList = geocoder.getFromLocationName(location, 1)
-                                        autoCompleteTextView?.setText("")
                                         val address = addressList?.get(0)
                                         latLng = address?.latitude?.let {
                                             LatLng(it, address.longitude)
@@ -222,7 +238,14 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?,va
             val address: MutableList<Address> = geocoder.getFromLocation(latitude, longitude, 1)
             address.let {
                 mAddress = it[0].getAddressLine(0)
+                address1 = it[0].subAdminArea
+                city = it[0].locality
+                state = it[0].adminArea
+                country = it[0].countryName
+                postalCode = it[0].postalCode
+                suburb = it[0].subLocality
             }
+
         } catch (e: Exception) {
             FirebaseManager.logException(e)
         }
@@ -246,6 +269,7 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?,va
                 }
             }).await()
         placeId = results[0].placeId.toString()
+      sendAddressData()
     }
 
     companion object {
@@ -255,6 +279,29 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?,va
 
     override fun tryAgain() {
         //Do nothing
+    }
+
+    private fun setUpViewModel() {
+        confirmAddressViewModel = ViewModelProvider(
+            this,
+            GeoLocationViewModelFactory(GeoLocationApiHelper())
+        ).get(ConfirmAddressViewModel::class.java)
+    }
+
+    private fun sendAddressData() {
+        val saveAddressLocationRequest = SaveAddressLocationRequest(address1,
+            city,
+            country,
+            mAddress,
+            mLatitude,
+            mLongitude,
+            placeId,
+            postalCode,
+            state,
+            suburb)
+        viewLifecycleOwner.lifecycleScope.launch {
+            confirmAddressViewModel.postSaveAddress(saveAddressLocationRequest)
+        }
     }
 
 }

@@ -29,13 +29,15 @@ import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.text.TextWatcher
-import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.widget.addTextChangedListener
-import androidx.databinding.adapters.TextViewBindingAdapter
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.maps.CameraUpdateFactory
 
 import com.google.android.gms.maps.model.BitmapDescriptor
+import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.StoreLiveData
 
 
 class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
@@ -43,7 +45,8 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
 
     private lateinit var mapFragment: SupportMapFragment
     private var mValidateLocationResponse: ValidateLocationResponse? = null
-    private var mStore: Store? = null
+    private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
+    private var dataStore: Store? = null
 
     companion object {
 
@@ -65,6 +68,14 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
         }
     }
 
+    private fun setUpViewModel() {
+        confirmAddressViewModel = ViewModelProvider(
+            this,
+            GeoLocationViewModelFactory(GeoLocationApiHelper())
+        ).get(ConfirmAddressViewModel::class.java)
+    }
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -74,6 +85,8 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setUpViewModel()
+        tvConfirmStore.setOnClickListener(this)
         ivCross.setOnClickListener {
             (activity as? BottomNavigationActivity)?.popFragment()
         }
@@ -85,12 +98,13 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
     }
 
     override fun onMapReady(googleMap: GoogleMap?) {
-        googleMap?.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+        googleMap?.uiSettings?.setAllGesturesEnabled(false)
         val addressStorList = mValidateLocationResponse?.validatePlace?.stores
         showFirstFourLocationInMap(addressStorList, googleMap)
     }
 
     private fun showFirstFourLocationInMap(addressStorList: List<Store>?, googleMap: GoogleMap?) {
+
         addressStorList?.let {
             for (i in 0..3) {
                 googleMap?.addMarker(
@@ -101,11 +115,10 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
                         )
                     ).icon(BitmapFromVector(requireContext(), R.drawable.pin))
                 )
-                googleMap?.animateCamera(CameraUpdateFactory.zoomTo(18.0f))
-                googleMap?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(
+                googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(
                     addressStorList.get(i)?.latitude!!,
                     addressStorList.get(i)?.longitude!!
-                )));
+                 ), 11f));
             }
         }
     }
@@ -163,24 +176,25 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
         rvStoreList.adapter?.notifyDataSetChanged()
     }
 
-    override fun onStoreSelected(store: Store?) {
-        this.mStore = store
+    override fun onStoreSelected(mStore: Store?) {
+        dataStore = mStore
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.tvConfirmStore -> {
-              /*TODO : start GeoLocationDeliveryAddressCnfirmation Fragment with mStore object */
+                dataStore?.let { StoreLiveData.value = it }
+                (activity as? BottomNavigationActivity)?.popFragment()
             }
         }
     }
 
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
+        // not required
     }
 
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
+        // not required
     }
 
     override fun afterTextChanged(s: Editable?) {
@@ -193,7 +207,6 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
             }
         }
         setStoreList(list)
-
     }
 
 }

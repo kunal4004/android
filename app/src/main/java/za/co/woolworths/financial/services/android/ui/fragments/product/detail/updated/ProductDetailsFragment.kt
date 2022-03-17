@@ -56,13 +56,12 @@ import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
-import za.co.woolworths.financial.services.android.geolocation.view.GeolocationDeliveryAddressConfirmationFragment
+import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigQuickShopDefaultValues
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity
@@ -75,7 +74,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductColorSelec
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeSelectorAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter.MultipleImageInterface
-import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.extension.underline
@@ -1368,7 +1366,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         val placeId: String? = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
         val deliveryType = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType
         (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-            GeolocationDeliveryAddressConfirmationFragment.newInstance(placeId, deliveryType))
+            DeliveryAddressConfirmationFragment.newInstance(placeId, KotlinUtils.getPreferredDeliveryType()))
     }
 
     private fun updateStockAvailability(isDefaultRequest: Boolean) {
