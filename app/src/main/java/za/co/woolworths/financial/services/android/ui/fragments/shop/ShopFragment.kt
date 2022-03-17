@@ -464,6 +464,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun showBlackToolTip(deliveryType: Delivery_Types) {
+        if (blackToolTipDialog != null && blackToolTipDialog!!.isShowing) {
+            blackToolTipDialog!!.dismiss()
+        }
         blackToolTipDialog = activity?.let { activity ->
             Dialog(activity,
                 android.R.style.ThemeOverlay_DeviceDefault_Accent_DayNight)
@@ -494,6 +497,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     WindowManager.LayoutParams.WRAP_CONTENT
                 )
                 setBackgroundDrawableResource(R.color.transparent)
+                setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL)
+                clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
                 setGravity(Gravity.TOP)
             }
 
