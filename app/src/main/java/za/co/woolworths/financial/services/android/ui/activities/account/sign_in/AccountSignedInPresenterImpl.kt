@@ -35,7 +35,7 @@ class AccountSignedInPresenterImpl(
     private var mDeepLinkingData: String? = null
     private var eligibilityPlan: EligibilityPlan? = null
     var isAccountInArrearsState: Boolean = false
-    lateinit var eligibilityImpl: EligibilityImpl
+    var eligibilityImpl: EligibilityImpl? = null
 
     companion object {
         const val MY_ACCOUNT_RESPONSE = "MY_ACCOUNT_RESPONSE"
@@ -149,7 +149,7 @@ class AccountSignedInPresenterImpl(
             ApplyNowState.PERSONAL_LOAN -> ProductGroupCode.PL
             else -> ProductGroupCode.CC
         }
-        eligibilityImpl.eligibilityResponse(response.eligibilityPlan)
+        eligibilityImpl?.eligibilityResponse(response.eligibilityPlan)
         eligibilityPlan = response.eligibilityPlan
 
         if (eligibilityPlan?.productGroupCode == eligibleState) {

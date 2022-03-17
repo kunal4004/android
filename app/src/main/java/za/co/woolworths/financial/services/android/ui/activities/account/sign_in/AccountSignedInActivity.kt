@@ -33,6 +33,7 @@ import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl.Companion.ELITE_PLAN
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl.Companion.ELITE_PLAN_MODEL
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAYMENT_DETAIL_CARD_UPDATE
@@ -235,27 +236,33 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
                 ApplyNowState.STORE_CARD, ApplyNowState.PERSONAL_LOAN -> {
                     navigationController?.graph?.startDestination = R.id.removeBlockDCFragment
                     navigationController?.setGraph(navigationController.graph, bundleOf())
-                    val bundle = Bundle()
-                    bundle.putSerializable(
-                        ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN,
-                        getEligibilityPlan()
-                    )
-                    bundle.putSerializable(
-                        ViewTreatmentPlanDialogFragment.APPLY_NOW_STATE,
-                        payMyAccountViewModel.getApplyNowState()
-                    )
-                    navigationController?.navigate(
-                        R.id.removeBlockOnCollectionDialogFragment,
-                        bundle
-                    )
+                    sixMonthsPopUP(navigationController,getEligibilityPlan())
                 }
                 else -> {
                     window?.decorView?.fitsSystemWindows = true
                     Utils.updateStatusBarBackground(this@AccountSignedInActivity)
                     setAccountSixMonthInArrears(navigationController)
+                    when(getEligibilityPlan()?.planType) {
+                        ELITE_PLAN ->{sixMonthsPopUP(navigationController,getEligibilityPlan())}
+                    }
                 }
             }
         }
+    }
+    private fun sixMonthsPopUP(navigationController:NavController?,eligibilityPlan: EligibilityPlan?){
+        val bundle = Bundle()
+        bundle.putSerializable(
+            ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN,
+            eligibilityPlan
+        )
+        bundle.putSerializable(
+            ViewTreatmentPlanDialogFragment.APPLY_NOW_STATE,
+            payMyAccountViewModel.getApplyNowState()
+        )
+        navigationController?.navigate(
+            R.id.removeBlockOnCollectionDialogFragment,
+            bundle
+        )
     }
 
     override fun bottomSheetIsExpanded(): Boolean {
