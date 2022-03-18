@@ -2,13 +2,13 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.do
 
 import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplication
 import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOptions
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOptionsScreenUI
 import javax.inject.Inject
 
 interface IBalanceProtectionInsurance {
     fun getBalanceProtectionInsuranceLead(): BpiInsuranceApplication?
     fun isInsuranceCovered(): Boolean
-    fun balanceProtectionInsuranceTag(): AccountOptions.BalanceProtectionInsurance
+    fun balanceProtectionInsuranceTag(): AccountOptionsScreenUI.BalanceProtectionInsurance
 }
 
 class BalanceProtectionInsuranceImpl @Inject constructor(private val product: AccountProductLandingDao?) :
@@ -22,7 +22,7 @@ class BalanceProtectionInsuranceImpl @Inject constructor(private val product: Ac
         return product?.getAccountProduct()?.insuranceCovered ?: false
     }
 
-    override fun balanceProtectionInsuranceTag(): AccountOptions.BalanceProtectionInsurance {
+    override fun balanceProtectionInsuranceTag(): AccountOptionsScreenUI.BalanceProtectionInsurance {
         val insuranceLeadGen = getBalanceProtectionInsuranceLead()
         val isInsuranceCovered = isInsuranceCovered()
         var leadGen: BpiInsuranceApplication? = null
@@ -44,6 +44,6 @@ class BalanceProtectionInsuranceImpl @Inject constructor(private val product: Ac
                 }
             }
         }
-        return AccountOptions.BalanceProtectionInsurance(status, leadGen)
+        return AccountOptionsScreenUI.BalanceProtectionInsurance(status, leadGen)
     }
 }

@@ -529,7 +529,7 @@
             android:screenOrientation="portrait" />
 
         <activity android:name="za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:theme="@style/storeCardActivityTheme"
             android:screenOrientation="portrait"/>
 
     </application>

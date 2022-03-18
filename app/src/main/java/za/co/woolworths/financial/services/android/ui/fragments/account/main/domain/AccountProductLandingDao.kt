@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.domain
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.view.View
+import com.awfs.coordination.R
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
@@ -13,15 +13,20 @@ import za.co.woolworths.financial.services.android.util.Utils.getSessionDaoValue
 import javax.inject.Inject
 
 interface IAccountProductLandingDao {
-    val account: LiveData<Account>
+    val product : Account?
     fun saveAccount(product: String?)
     fun getAccountProduct(): Account?
-    fun getProductGroupCode(): ProductLandingGroupCode
+    fun getProductByProductGroupCode(): ProductLandingGroupCode
+    fun isProductInGoodStanding(): Boolean
+    fun isProductChargedOff(): Boolean
+    fun isUiVisible() : Int
+    fun getTitleId() : Int
+    fun getBackgroundDrawableId():Int
 }
 
 class AccountProductLandingDao @Inject constructor() : IAccountProductLandingDao {
 
-    override val account by lazy { MutableLiveData<Account>() }
+    override val product : Account? = getAccountProduct()
 
     override fun saveAccount(product: String?) {
         product ?: return
@@ -31,22 +36,50 @@ class AccountProductLandingDao @Inject constructor() : IAccountProductLandingDao
     override fun getAccountProduct(): Account? {
         val payload = getSessionDaoValue(SessionDao.KEY.ACCOUNT_PRODUCT_PAYLOAD)
         val gSon = Gson()
-        val product = gSon.fromJson<Account?>(payload)
-        account.postValue(product)
-        return product
+        return gSon.fromJson(payload)
     }
 
-    override fun getProductGroupCode(): ProductLandingGroupCode {
-        val payload = account.value
-        return when (payload?.productGroupCode) {
+    override fun getProductByProductGroupCode(): ProductLandingGroupCode {
+        val account = getAccountProduct()
+        return when (account?.productGroupCode) {
             ProductLandingGroupCode.StoreCard().name -> ProductLandingGroupCode.StoreCard()
             ProductLandingGroupCode.PersonalLoan().name -> ProductLandingGroupCode.PersonalLoan()
-            ProductLandingGroupCode.CreditCard().name -> when (payload.accountNumberBin) {
-                CreditCardType.BLACK_CARD.card -> ProductLandingGroupCode.BlackCreditCard
-                CreditCardType.SILVER_CARD.card -> ProductLandingGroupCode.SilverCard
-                else -> ProductLandingGroupCode.GoldCreditCard
+            ProductLandingGroupCode.CreditCard().name -> when (account.accountNumberBin) {
+                CreditCardType.BLACK_CARD.card -> ProductLandingGroupCode.BlackCreditCard()
+                CreditCardType.SILVER_CARD.card -> ProductLandingGroupCode.SilverCreditCard()
+                else -> ProductLandingGroupCode.GoldCreditCard()
             }
             else -> ProductLandingGroupCode.UnsupportedProductGroupCode
+        }
+    }
+
+    override fun isProductInGoodStanding(): Boolean = product?.productOfferingGoodStanding == true
+
+    override fun isProductChargedOff(): Boolean = product?.productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)
+
+    override fun isUiVisible(): Int = if (isProductInGoodStanding()) View.GONE else View.VISIBLE
+
+    override fun getTitleId(): Int {
+        return when (val productGroupCode = getProductByProductGroupCode()) {
+            is ProductLandingGroupCode.PersonalLoan -> productGroupCode.title
+            is ProductLandingGroupCode.StoreCard -> productGroupCode.title
+            is ProductLandingGroupCode.BlackCreditCard -> productGroupCode.title
+            is ProductLandingGroupCode.GoldCreditCard -> productGroupCode.title
+            is ProductLandingGroupCode.SilverCreditCard -> productGroupCode.title
+            is ProductLandingGroupCode.CreditCard,
+            is ProductLandingGroupCode.UnsupportedProductGroupCode -> R.string.app_name
+        }
+    }
+
+    override fun getBackgroundDrawableId(): Int {
+        return when (val productGroupCode = getProductByProductGroupCode()) {
+            is ProductLandingGroupCode.PersonalLoan -> productGroupCode.background
+            is ProductLandingGroupCode.StoreCard -> productGroupCode.background
+            is ProductLandingGroupCode.BlackCreditCard -> productGroupCode.background
+            is ProductLandingGroupCode.GoldCreditCard -> productGroupCode.background
+            is ProductLandingGroupCode.SilverCreditCard -> productGroupCode.background
+            is ProductLandingGroupCode.CreditCard,
+            is ProductLandingGroupCode.UnsupportedProductGroupCode -> R.drawable.store_card_background
         }
     }
 }

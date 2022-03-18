@@ -24,8 +24,8 @@ object AccountProductsLandingModule {
     fun provideNavigationGraph(): INavigationGraph = NavigationGraph()
 
     @Provides
-    fun provideBottomSheetBehaviour(@ApplicationContext context: Context): IBottomSheetBehaviour =
-        WBottomSheetBehaviour(context)
+    fun provideBottomSheetBehaviour(@ApplicationContext context: Context, accountDao: AccountProductLandingDao): IBottomSheetBehaviour =
+        WBottomSheetBehaviour(context,accountDao)
 
     @Provides
     fun provideAccountProductLiveEvent(): IAccountProductLandingDao =

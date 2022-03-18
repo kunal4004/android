@@ -2,22 +2,21 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.do
 
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOfferingState
-import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 interface IAccountProductLandingScreen {
     fun getStartDestinationIdScreen(): Int
     fun getPopupDialogStatus(status: (AccountOfferingState) -> Unit)
-    fun isProductChargedOff(): Boolean
 }
 
-class AccountProductLandingScreenStatus @Inject constructor(treatmentPlanImpl: TreatmentPlanImpl) :
+class AccountProductLandingScreenStatus @Inject constructor(private val treatmentPlanImpl: TreatmentPlanImpl) :
     IAccountProductLandingScreen, ITreatmentPlan by treatmentPlanImpl {
 
-    private val isProductChargedOff = isProductChargedOff()
+    private val isProductChargedOff = treatmentPlanImpl.isProductChargedOff()
+    private val isAccountInArrears = treatmentPlanImpl.isProductInGoodStanding()
 
     override fun getStartDestinationIdScreen(): Int {
-        return when (product?.productOfferingGoodStanding ?: false) {
+        return when (isAccountInArrears) {
             true -> R.id.accountProductsHomeFragment
             false -> when (isProductChargedOff) {
                 true -> R.id.removeBlockOnCollectionFragment2
@@ -39,7 +38,4 @@ class AccountProductLandingScreenStatus @Inject constructor(treatmentPlanImpl: T
         )
     }
 
-    override fun isProductChargedOff(): Boolean {
-        return product?.productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)
-    }
 }
