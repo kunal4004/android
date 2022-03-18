@@ -14,9 +14,9 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import za.co.wigroup.androidutils.Util
-import za.co.woolworths.financial.services.android.models.network.CommonHeaderInterceptor
 import za.co.woolworths.financial.services.android.models.network.RetrofitConfig
 import za.co.woolworths.financial.services.android.models.network.WfsApiInterceptor
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.data.remote.interceptors.CommonHeaderInterceptor
 import java.util.concurrent.TimeUnit
 
 @Module
@@ -25,24 +25,20 @@ object RetrofitModule {
     @Singleton
     @Provides
     fun provideRetrofit( httpBuilder: OkHttpClient.Builder) : Retrofit  = Retrofit.Builder()
-        .baseUrl(BuildConfig.HOST + "/")
+        .baseUrl("${BuildConfig.HOST}/")
         .addConverterFactory(GsonConverterFactory.create())
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .client(httpBuilder.build())
         .build()
 
     @Provides
-    fun provideHttpBuilder(logging: HttpLoggingInterceptor) :OkHttpClient.Builder{
-        val httpBuilder = OkHttpClient.Builder()
-        with(httpBuilder) {
+    fun provideHttpBuilder(logging: HttpLoggingInterceptor) :OkHttpClient.Builder = OkHttpClient.Builder().apply {
             addInterceptor(WfsApiInterceptor())
             addInterceptor(CommonHeaderInterceptor())
             readTimeout(if (BuildConfig.ENV.equals("qa", true)) RetrofitConfig.READ_CONNECT_TIMEOUT_UNIT_QA else RetrofitConfig.READ_CONNECT_TIMEOUT_UNIT, TimeUnit.SECONDS)
             connectTimeout(if (BuildConfig.ENV.equals("qa", true)) RetrofitConfig.READ_CONNECT_TIMEOUT_UNIT_QA else RetrofitConfig.READ_CONNECT_TIMEOUT_UNIT, TimeUnit.SECONDS)
             writeTimeout(if (BuildConfig.ENV.equals("qa", true)) RetrofitConfig.READ_CONNECT_TIMEOUT_UNIT_QA else RetrofitConfig.READ_CONNECT_TIMEOUT_UNIT, TimeUnit.SECONDS)
             interceptors().add(logging)
-        }
-        return httpBuilder
     }
 
     @Provides

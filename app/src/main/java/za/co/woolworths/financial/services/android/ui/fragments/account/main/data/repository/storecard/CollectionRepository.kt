@@ -17,7 +17,8 @@ class CollectionRepository @Inject constructor(private val collectionRemoteDataS
 
     override suspend fun queryServiceCheckCustomerEligibilityPlan(productGroupCode: String?): Flow<AccountApiResult<EligibilityPlanResponse>?>? {
         productGroupCode ?: return null
-        return collectionRemoteDataSource.queryServiceCheckCustomerEligibilityPlan(productGroupCode)
+        return null
+       // return collectionRemoteDataSource.queryServiceCheckCustomerEligibilityPlan(productGroupCode)
     }
 
 }

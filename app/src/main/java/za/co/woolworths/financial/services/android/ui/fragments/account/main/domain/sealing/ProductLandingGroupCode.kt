@@ -1,23 +1,46 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing
 
-sealed class ProductLandingGroupCode {
-    data class PersonalLoan(val name: String = AccountCardType.PERSONAL_LOAN.type) :
-        ProductLandingGroupCode()
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import com.awfs.coordination.R
 
-    data class StoreCard(val name: String = AccountCardType.STORE_CARD.type) :
-        ProductLandingGroupCode()
+sealed class ProductLandingGroupCode {
+    data class PersonalLoan(
+        val name: String = AccountCardType.PERSONAL_LOAN.type,
+        @DrawableRes val background: Int = R.drawable.personal_loan_background,
+        @StringRes val title: Int = R.string.personal_loan_card_title
+    ) : ProductLandingGroupCode()
+
+    data class StoreCard(
+        val name: String = AccountCardType.STORE_CARD.type,
+        @DrawableRes val background: Int = R.drawable.store_card_background,
+        @StringRes val title: Int = R.string.store_card_title
+    ) : ProductLandingGroupCode()
 
     data class CreditCard(
         val name: String = AccountCardType.CREDIT_CARD.type,
+        @DrawableRes val background: Int = R.drawable.store_card_background,
+        @StringRes val title: Int = R.string.store_card_title,
         val type: CreditCardType = CreditCardType.GOLD_CARD
     ) : ProductLandingGroupCode()
 
-    object BlackCreditCard : ProductLandingGroupCode()
-    object SilverCard : ProductLandingGroupCode()
-    object GoldCreditCard : ProductLandingGroupCode()
+    data class BlackCreditCard(
+        @DrawableRes val background: Int = R.drawable.black_credit_card_background,
+        @StringRes val title: Int = R.string.black_credit_card_title
+    ) : ProductLandingGroupCode()
+
+    data class SilverCreditCard(
+        @DrawableRes val background: Int = R.drawable.silver_credit_card_background,
+        @StringRes val title: Int = R.string.silver_credit_card_title
+    ) : ProductLandingGroupCode()
+
+    data class GoldCreditCard(
+        @DrawableRes val background: Int = R.drawable.gold_credit_card_background,
+        @StringRes val title: Int = R.string.gold_credit_card_title
+    ) : ProductLandingGroupCode()
+
     object UnsupportedProductGroupCode : ProductLandingGroupCode()
 }
-
 
 enum class AccountCardType(val type: String) {
     STORE_CARD("SC"),

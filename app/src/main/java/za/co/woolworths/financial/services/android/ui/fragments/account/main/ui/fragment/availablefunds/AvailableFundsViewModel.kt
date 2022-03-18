@@ -2,15 +2,25 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 
 import androidx.annotation.IdRes
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDirections
 import com.awfs.coordination.R
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
 import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.getViewStateFlowForNetworkCall
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.repository.storecard.StoreCardRepository
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountProductLandingDao
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.IAccountProductLandingDao
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.creditcard.CreditCardDataSource
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.creditcard.ICreditCardDataSource
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
 import java.net.ConnectException
@@ -18,18 +28,34 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AvailableFundsViewModel @Inject constructor(
-    private val repository: StoreCardRepository,
-    private val availableFunds: AvailableFundsImpl
-) : PayMyAccountViewModel(), IAvailableFundsImpl by availableFunds {
-    val creditCardService by lazy {
-        repository.getCreditCardToken()
+    repository: StoreCardRepository,
+    private val availableFunds: AvailableFundsImpl,
+    private val creditCardDataSource: CreditCardDataSource
+    ) : PayMyAccountViewModel(), IAvailableFundsImpl by availableFunds,
+    ICreditCardDataSource by creditCardDataSource {
+
+    /**
+     * [MutableLiveData] to notify the Popular photos list view with the list of photos
+     */
+    val creditCardTokenLiveData: MutableLiveData<ViewState<CreditCardTokenResponse>> by lazy {
+        MutableLiveData<ViewState<CreditCardTokenResponse>>()
     }
+
+    fun collectCreditCardToken() {
+        viewModelScope.launch {
+            getViewStateFlowForNetworkCall {
+                queryServiceCreditCardToken()
+            }.collect { creditCardTokenLiveData.postValue(it) }
+        }
+    }
+
     val paymentPAYUService = repository.getPaymentPAYUMethod()
     val mAccountPair: MutableLiveData<Pair<ApplyNowState, Account>> = MutableLiveData()
 
     init {
+
         // must fixed
-        mAccountPair.value = Pair(ApplyNowState.STORE_CARD, product!!)
+        //  mAccountPair.value = Pair(ApplyNowState.STORE_CARD, product)
     }
 
     fun queryServicePayUPaymentMethod() {
@@ -48,7 +74,7 @@ class AvailableFundsViewModel @Inject constructor(
                 val card =
                     PMACardPopupModel(
                         amountEntered,
-                        paymentMethodList,mAccountPair.value,
+                        paymentMethodList, mAccountPair.value,
                         payUMethodType
                     )
                 setPMACardInfo(card)

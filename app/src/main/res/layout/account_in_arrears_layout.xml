@@ -36,7 +36,6 @@
         android:id="@+id/infoIconImageView"
         android:layout_width="@dimen/_24sdp"
         android:layout_height="@dimen/_24sdp"
-        android:layout_marginEnd="@dimen/_7sdp"
         android:background="@null"
         android:padding="@dimen/_3sdp"
         app:layout_constraintBottom_toBottomOf="parent"

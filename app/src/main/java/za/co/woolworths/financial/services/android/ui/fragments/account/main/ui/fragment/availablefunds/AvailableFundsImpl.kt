@@ -5,20 +5,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials
 import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.Card
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountProductLandingDao
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.creditcard.CreditCardImpl
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.creditcard.ICreditCard
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.SingleLiveEvent
-import za.co.woolworths.financial.services.android.util.CurrencyFormatter
-import za.co.woolworths.financial.services.android.util.FontHyperTextParser
-import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.WFormatter
 import javax.inject.Inject
 
-
 interface IAvailableFundsImpl {
-    val product: Account?
-//    val viewState: LiveData<MutableList<AccountOptions>>
+     val product : Account?
+//    val viewState: LiveData<MutableList<AccountOptionsScreenUI>>
 
     fun getEligibilityPlan()
     fun handleUserCreditCardToken(creditCardTokenResponse: CreditCardTokenResponse)
@@ -27,21 +22,25 @@ interface IAvailableFundsImpl {
 }
 
 class AvailableFundsImpl @Inject constructor(
-    val accountProductLandingDao: AccountProductLandingDao
-) : IAvailableFundsImpl {
-    override val product: Account?
-        get() = accountProductLandingDao.getAccountProduct()
+    private val balanceFormat: UserAccountBalance,
+    private val creditCard: CreditCardImpl) : IAvailableFundsImpl, IUserAccountBalance by balanceFormat,
+    ICreditCard by creditCard  {
 
     private var _creditCardNumber: MutableLiveData<String> = MutableLiveData()
     override val creditCardNumber: LiveData<String>
         get() = _creditCardNumber
     override val command = SingleLiveEvent<AvailableFundsCommand>()
 
+   // val balanceflow : StateFlow<AvailableFundsCommand> = MutableStateFlow(AvailableFundsCommand())
+
     init {
         setUpView()
     }
+
+    override val product: Account?
+        get() = balanceFormat.product
+
     override fun getEligibilityPlan() {
-        accountProductLandingDao.getAccountProduct()
     }
 
     override fun handleUserCreditCardToken(creditCardTokenResponse: CreditCardTokenResponse) {
@@ -68,50 +67,16 @@ class AvailableFundsImpl @Inject constructor(
         }
     }
 
-    private fun getCreditCardNumber(cards: ArrayList<Card>?): String? {
-        return cards?.takeIf { it.isNotEmpty() }?.let { it[0].absaCardToken }
-    }
     private fun setUpView() {
-        product?.apply {
-            val availableFund = Utils.removeNegativeSymbol(
-                FontHyperTextParser.getSpannable(
-                    CurrencyFormatter.formatAmountToRandAndCentNoSpace(availableFunds), 1
-                )
+        command.postValue(
+            AvailableFundsCommand.SetViewDetails(
+                getAvailableFunds(),
+                getCurrentBalance(),
+                getCreditLimit(),
+                getTotalAmountDue(),
+                getPaymentDueDate(),
+                getAmountOverdue()
             )
-            val currentBalance = Utils.removeNegativeSymbol(
-                CurrencyFormatter.formatAmountToRandAndCentWithSpace(currentBalance)
-            )
-            val creditLimit = Utils.removeNegativeSymbol(
-                FontHyperTextParser.getSpannable(
-                    CurrencyFormatter.formatAmountToRandAndCentWithSpace(creditLimit), 1
-                )
-            )
-            val paymentDueDate = paymentDueDate?.let { paymentDueDate ->
-                WFormatter.addSpaceToDate(
-                    WFormatter.newDateFormat(paymentDueDate)
-                )
-            }
-                ?: "N/A"
-            val amountOverdue = Utils.removeNegativeSymbol(
-                FontHyperTextParser.getSpannable(
-                    CurrencyFormatter.formatAmountToRandAndCentWithSpace(amountOverdue), 1
-                )
-            )
-
-            val totalAmountDueAmount = Utils.removeNegativeSymbol(
-                CurrencyFormatter.formatAmountToRandAndCentWithSpace(totalAmountDue)
-            )
-            command.postValue(
-                AvailableFundsCommand.SetViewDetails(
-                    availableFund,
-                    currentBalance,
-                    creditLimit,
-                    totalAmountDueAmount,
-                    paymentDueDate,
-                    amountOverdue
-                )
-            )
-
-        }
+        )
     }
 }

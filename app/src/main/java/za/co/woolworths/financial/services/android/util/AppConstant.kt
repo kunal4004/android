@@ -76,6 +76,8 @@ class AppConstant {
         const val ORDER_ID: String = "ORDER_ID"
         const val REQUEST_CODE_ORDER_DETAILS_PAGE = 1989
         const val NAVIGATED_FROM_MY_ACCOUNTS = "NAVIGATED_FROM_MY_ACCOUNTS"
+
+        const val RED_HEX_COLOR ="#ff0000"
     }
 
     enum class DashDetailsViewType(val value: Int) { HEADER_TITLE(0), APP_FEATURE_LIST(1), TERMS_AND_CONDITION(2) }
