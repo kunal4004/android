@@ -36,19 +36,45 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery) {
             return
         }
 
-        if (viewModel.isCategoriesAvailable.value == true) {
-            // set data to views
-            layoutDashSetAddress?.visibility = View.GONE
-            setupRecyclerView()
-            viewModel.categories.value?.peekContent()?.let { resource ->
-                dashDeliveryAdapter.categoryList =
-                    resource.data?.rootCategories ?: ArrayList(0)
+        setupRecyclerView()
+
+        when {
+            // Both API data available
+            viewModel.isDashCategoriesAvailable.value == true &&
+                    viewModel.isOnDemandCategoriesAvailable.value == true -> {
+                // set data to views
+                layoutDashSetAddress?.visibility = View.GONE
+                dashDeliveryAdapter.setData(
+                    viewModel.onDemandCategories.value?.peekContent()?.data?.onDemandCategories,
+                    viewModel.dashCategories.value?.peekContent()?.data?.productCatalogues
+                )
             }
-        } else {
-            viewModel.getDashCategories()
+            // Either of API data available
+            viewModel.isDashCategoriesAvailable.value == true ||
+                    viewModel.isOnDemandCategoriesAvailable.value == true -> {
+                // set data to views
+                layoutDashSetAddress?.visibility = View.GONE
+
+                // Data will be set in observers when api successful/failure
+                when (viewModel.isDashCategoriesAvailable.value) {
+                    true -> viewModel.getOnDemandCategories()
+                    else -> viewModel.getDashCategories()
+                }
+            }
+            else -> {
+                viewModel.getOnDemandCategories()
+                viewModel.getDashCategories()
+            }
         }
 
-        viewModel.categories.observe(viewLifecycleOwner, {
+        subscribeToObservers()
+
+    }
+
+    private fun subscribeToObservers() {
+
+        //Dash API.
+        viewModel.dashCategories.observe(viewLifecycleOwner, {
             it.getContentIfNotHandled()?.let { resource ->
                 when (resource.status) {
                     Status.LOADING -> {
@@ -56,9 +82,35 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery) {
                     }
                     Status.SUCCESS -> {
                         layoutDashSetAddress?.visibility = View.GONE
-                        setupRecyclerView()
-                        dashDeliveryAdapter.categoryList =
-                            resource.data?.rootCategories ?: ArrayList(0)
+                        if (viewModel.isOnDemandCategoriesAvailable.value == true) {
+                            dashDeliveryAdapter.setData(
+                                viewModel.onDemandCategories.value?.peekContent()?.data?.onDemandCategories,
+                                resource.data?.productCatalogues
+                            )
+                        }
+                    }
+                    Status.ERROR -> {
+                        showErrorView(resource.message, resource.data)
+                    }
+                }
+            }
+        })
+
+        // Root Category API
+        viewModel.onDemandCategories.observe(viewLifecycleOwner, {
+            it.getContentIfNotHandled()?.let { resource ->
+                when (resource.status) {
+                    Status.LOADING -> {
+                        //Do Nothing
+                    }
+                    Status.SUCCESS -> {
+                        layoutDashSetAddress?.visibility = View.GONE
+                        if (viewModel.isDashCategoriesAvailable.value == true) {
+                            dashDeliveryAdapter.setData(
+                                resource.data?.onDemandCategories,
+                                viewModel.dashCategories.value?.peekContent()?.data?.productCatalogues,
+                            )
+                        }
                     }
                     Status.ERROR -> {
                         showErrorView(resource.message, resource.data)
@@ -71,7 +123,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery) {
     private fun setupRecyclerView() {
         rvDashDelivery?.apply {
             adapter = dashDeliveryAdapter
-            layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
+            layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
         }
     }
 

@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.models.dto;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RootCategories {
@@ -10,6 +11,9 @@ public class RootCategories {
     @SerializedName("rootCategories")
     @Expose
     public List<RootCategory> rootCategories = null;
+    @SerializedName("onDemandCategories")
+    @Expose
+    public ArrayList<RootCategory> onDemandCategories = null;
     @SerializedName("response")
     @Expose
     public Response response;

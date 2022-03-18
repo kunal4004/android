@@ -7,30 +7,52 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.item_dash_category.view.*
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
-import za.co.woolworths.financial.services.android.util.ImageManager
+import za.co.woolworths.financial.services.android.models.dto.shop.ProductCatalogue
+import java.util.*
 
 class DashDeliveryAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val diffCallback = object : DiffUtil.ItemCallback<RootCategory>() {
-        override fun areItemsTheSame(oldItem: RootCategory, newItem: RootCategory): Boolean {
-            return oldItem.categoryId == newItem.categoryId
+    companion object {
+        private const val TYPE_ON_DEMAND_CATEGORIES = 0
+        private const val TYPE_DASH_CATEGORIES = 1
+    }
+
+    private val diffCallback = object : DiffUtil.ItemCallback<Any?>() {
+
+        override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
+            return when {
+                oldItem is ProductCatalogue && newItem is ProductCatalogue -> {
+                    oldItem.headerText == newItem.headerText
+                }
+                oldItem is List<*> && newItem is List<*> -> {
+                    true
+                }
+                else -> false
+            }
         }
 
-        override fun areContentsTheSame(oldItem: RootCategory, newItem: RootCategory): Boolean {
-            return oldItem.hashCode() == newItem.hashCode()
+        override fun areContentsTheSame(oldItem: Any, newItem: Any): Boolean {
+            return when {
+                oldItem is ProductCatalogue && newItem is ProductCatalogue -> {
+                    (oldItem as ProductCatalogue).hashCode() == (newItem as ProductCatalogue).hashCode()
+                }
+                oldItem is List<*> && newItem is List<*> -> {
+                    (oldItem as List<RootCategory>).hashCode() == (newItem as List<RootCategory>).hashCode()
+                }
+                else -> false
+            }
         }
     }
 
     private val differ = AsyncListDiffer(this, diffCallback)
 
-    var categoryList: List<RootCategory>
+    private var categoryList: List<Any?>
         get() = differ.currentList
         set(value) = differ.submitList(value)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return CategoryItemViewHolder(
+        return OnDemandCategoryItemViewHolder(
             LayoutInflater.from(parent.context).inflate(
                 R.layout.item_dash_category,
                 parent,
@@ -41,9 +63,18 @@ class DashDeliveryAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is CategoryItemViewHolder -> {
-                holder.bindView(position, categoryList.get(position))
+            is OnDemandCategoryItemViewHolder -> {
+//                holder.bindView(position, categoryList[position] as List<RootCategory>)
             }
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when {
+            categoryList[position] is List<*> -> {
+                TYPE_ON_DEMAND_CATEGORIES
+            }
+            else -> -1
         }
     }
 
@@ -51,14 +82,27 @@ class DashDeliveryAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         return categoryList.size
     }
 
+    fun setData(
+        onDemandCategories: List<RootCategory>?,
+        dashCategories: ArrayList<ProductCatalogue>?
+    ) {
+        val list = ArrayList<Any?>(0)
+        list.apply {
+            add(onDemandCategories)
+            dashCategories?.let {
+                addAll(it)
+            }
+        }
+        categoryList = list
+    }
 }
 
-class CategoryItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class OnDemandCategoryItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    fun bindView(position: Int, categoryItem: RootCategory) {
-        itemView.apply {
+    fun bindView(position: Int, onDemandCategories: List<RootCategory>?) {
+        /*itemView.apply {
             ImageManager.loadImage(imgCategory, categoryItem.imgUrl)
             txtCategoryName?.text = categoryItem.categoryName
-        }
+        }*/
     }
 }
