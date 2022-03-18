@@ -3,14 +3,14 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.do
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOptions
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOptionsScreenUI
 import javax.inject.Inject
 
 interface IAccountOptions {
     fun balanceProtectionInsurance()
     fun isDebitOrderActive()
-    fun accountOptionsList(): MutableList<AccountOptions>
-    val viewState: LiveData<MutableList<AccountOptions>>
+    fun accountOptionsList(): MutableList<AccountOptionsScreenUI>
+    val viewState: LiveData<MutableList<AccountOptionsScreenUI>>
 }
 
 class AccountOptionsImpl @Inject constructor(
@@ -18,8 +18,8 @@ class AccountOptionsImpl @Inject constructor(
     private val bpi: BalanceProtectionInsuranceImpl
 ) : IAccountOptions {
 
-    private var _viewState: MutableLiveData<MutableList<AccountOptions>> = MutableLiveData()
-    override val viewState: LiveData<MutableList<AccountOptions>>
+    private var _viewState: MutableLiveData<MutableList<AccountOptionsScreenUI>> = MutableLiveData()
+    override val viewState: LiveData<MutableList<AccountOptionsScreenUI>>
         get() = _viewState
 
     var accountList = accountOptionsList()
@@ -32,16 +32,16 @@ class AccountOptionsImpl @Inject constructor(
 
     override fun isDebitOrderActive() {
         val isActive = account?.getAccountProduct()?.debitOrder?.debitOrderActive ?: false
-        accountList.add(5, AccountOptions.DebitOrder(isActive))
+        accountList.add(5, AccountOptionsScreenUI.DebitOrder(isActive))
         _viewState.postValue(accountList)
     }
 
     override fun accountOptionsList() = mutableListOf(
-        AccountOptions.ViewTreatmentPlan(false),
-        AccountOptions.SetUpAPaymentPlan(false),
-        AccountOptions.BalanceProtectionInsurance(BpiInsuranceApplicationStatusType.NOT_COVERED),
-        AccountOptions.PaymentOptions(false), // mandatory
-        AccountOptions.WithdrawCashNow(false),   // Withdraw cash now is not applicable for store card
-        AccountOptions.DebitOrder(false)
+        AccountOptionsScreenUI.ViewTreatmentPlan(false),
+        AccountOptionsScreenUI.SetUpAPaymentPlan(false),
+        AccountOptionsScreenUI.BalanceProtectionInsurance(BpiInsuranceApplicationStatusType.NOT_COVERED),
+        AccountOptionsScreenUI.PaymentOptionsScreenUI(false), // mandatory
+        AccountOptionsScreenUI.WithdrawCashNow(false),   // Withdraw cash now is not applicable for store card
+        AccountOptionsScreenUI.DebitOrder(false)
     )
 }

@@ -9,10 +9,8 @@ import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 interface ITreatmentPlan {
-
     val product: Account?
     val configAccountOptions: ConfigAccountOptions?
-
     fun minimumViewTreatmentDelinquencyCycle(): Int?
     fun minimumTakeUpTreatmentDelinquencyCycle(): Int?
     fun isViewTreatmentPlanSupported(): Boolean
@@ -22,10 +20,7 @@ interface ITreatmentPlan {
 }
 
 class TreatmentPlanImpl @Inject constructor(private val accountProductLandingDao: AccountProductLandingDao) :
-    ITreatmentPlan {
-
-    override val product: Account?
-        get() = accountProductLandingDao.getAccountProduct()
+    ITreatmentPlan, IAccountProductLandingDao by accountProductLandingDao {
 
     override val configAccountOptions: ConfigAccountOptions?
         get() = AppConfigSingleton.accountOptions
@@ -74,7 +69,6 @@ class TreatmentPlanImpl @Inject constructor(private val accountProductLandingDao
     companion object {
         const val MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT = 999
         val productGroupCodeSc: String = AccountsProductGroupCode.STORE_CARD.groupCode.lowercase()
-        val productGroupCodePl: String =
-            AccountsProductGroupCode.PERSONAL_LOAN.groupCode.lowercase()
+        val productGroupCodePl: String = AccountsProductGroupCode.PERSONAL_LOAN.groupCode.lowercase()
     }
 }
