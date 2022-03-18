@@ -28,7 +28,6 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IAvailableFundsContract
 import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
@@ -40,6 +39,7 @@ import za.co.woolworths.financial.services.android.ui.activities.WTransactionsAc
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 
 import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
@@ -49,6 +49,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.c
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorMessageDialogWithTitleFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_CHAT_TO_US_BUTTON
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_PAY_NOW_BUTTON
@@ -279,8 +280,16 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         if (fragmentAlreadyAdded()) return
         if ((activity as? AccountSignedInActivity)?.bottomSheetIsExpanded() == true) return
         try {
-            val accountsErrorHandlerFragment = activity?.resources?.getString(R.string.credit_card_statement_unavailable)?.let { AccountsErrorHandlerFragment.newInstance(it) }
-            activity?.supportFragmentManager?.let { supportFragmentManager -> accountsErrorHandlerFragment?.show(supportFragmentManager, AccountsErrorHandlerFragment::class.java.simpleName) }
+            activity?.apply {
+                val dialog =
+                    ErrorMessageDialogWithTitleFragment.newInstance(
+                        title = bindString(R.string.credit_card_statement_unavailable_title),
+                        description = bindString(R.string.credit_card_statement_unavailable_description),
+                        actionButtonTitle = bindString(R.string.got_it),
+                        shouldFinishActivity = false
+                    )
+                dialog?.show(supportFragmentManager.beginTransaction(), ErrorMessageDialogWithTitleFragment::class.java.simpleName)
+            }
         } catch (ex: IllegalStateException) {
             FirebaseManager.logException(ex)
         }
