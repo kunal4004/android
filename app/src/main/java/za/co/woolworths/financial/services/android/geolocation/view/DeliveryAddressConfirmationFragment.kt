@@ -128,7 +128,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 if (deliveryType.equals(Delivery.CNC.toString(), true)) {
                     bundle?.putSerializable(
                         VALIDATE_RESPONSE, validateLocationResponse)
-
+                    bundle?.putBoolean(
+                        ConfirmAddressFragment.IS_COMING_CONFIRM_ADD, false)
                     findNavController().navigate(
                         R.id.action_deliveryAddressConfirmationFragment_to_clickAndCollectStoresFragment,
                         bundleOf("bundle" to bundle)

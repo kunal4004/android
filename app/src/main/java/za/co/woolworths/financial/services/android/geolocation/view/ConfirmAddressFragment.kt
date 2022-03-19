@@ -55,7 +55,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
 
     companion object {
         fun newInstance() = ConfirmAddressFragment()
-
+        var IS_COMING_CONFIRM_ADD = "conform_add"
     }
 
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
@@ -244,22 +244,33 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                     && selectedAddress != null
                     && tvConfirmAddress.text == getString(R.string.confirm))
                 {
-                    selectedAddress.let {
+                    selectedAddress?.let {
                         if (it.placesId != null) {
 
                             bundle?.putString(
-                                DeliveryAddressConfirmationFragment.KEY_PLACE_ID, selectedAddress.placesId)
+                                DeliveryAddressConfirmationFragment.KEY_PLACE_ID, it.placesId)
 
                             bundle?.putString(
-                                DeliveryAddressConfirmationFragment.ADDRESS, selectedAddress.address1)
+                                DeliveryAddressConfirmationFragment.ADDRESS, it.address1)
 
                             bundle?.putSerializable(
-                                EditDeliveryLocationActivity.DEFAULT_ADDRESS, selectedAddress)
+                                EditDeliveryLocationActivity.DEFAULT_ADDRESS, it)
 
-                            findNavController().navigate(
-                                R.id.actionToDeliveryAddressConfirmationFragment,
-                                bundleOf("bundle" to bundle)
-                            )
+                            bundle?.putBoolean(
+                                IS_COMING_CONFIRM_ADD, true)
+
+                            if (ClickAndCollectStoresFragment.IS_FROM_STORE_LOCATOR) {
+                                findNavController().navigate(
+                                    R.id.actionClickAndCollectStoresFragment,
+                                    bundleOf("bundle" to bundle)
+                                )
+                            } else {
+                                findNavController().navigate(
+                                    R.id.actionToDeliveryAddressConfirmationFragment,
+                                    bundleOf("bundle" to bundle)
+                                )
+                            }
+
                         }
                         else
                             return
