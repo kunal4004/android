@@ -26,7 +26,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        dashDeliveryAdapter = DashDeliveryAdapter()
+        dashDeliveryAdapter = DashDeliveryAdapter(requireContext())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

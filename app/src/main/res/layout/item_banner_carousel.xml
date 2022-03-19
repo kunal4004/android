@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/ten_dp"
+    android:layout_marginTop="@dimen/fifteen_dp"
+    android:clipChildren="true"
+    android:minWidth="@dimen/hundred_and_fifty_dp"
+    android:minHeight="@dimen/hundred_and_sixty_four_dp">
+
+    <TextView
+        android:id="@+id/tvCategoryTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fifteen_dp"
+        android:background="@color/transparent"
+        android:fontFamily="@font/futura_semi_bold"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fourteen_sp"
+        android:translationZ="@dimen/fifty_dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Vegan" />
+
+    <ImageView
+        android:id="@+id/imgCategoryImage"
+        android:layout_width="@dimen/hundred_and_fifty_dp"
+        android:layout_height="@dimen/hundred_and_sixty_four_dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
