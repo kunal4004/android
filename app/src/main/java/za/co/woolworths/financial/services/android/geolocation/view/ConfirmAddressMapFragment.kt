@@ -63,7 +63,7 @@ class ConfirmAddressMapFragment :
     private var isAddAddress: Boolean? = false
     private var isComingFromCheckout: Boolean = false
     private var deliveryType: String? = null
-
+    private var isAddressFromSearch: Boolean = false
 
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     @Inject
@@ -198,6 +198,7 @@ class ConfirmAddressMapFragment :
                     placeId = item?.placeId.toString()
                     val placeName = item?.primaryText.toString()
                     autoCompleteTextView?.setText(placeName)
+                    isAddressFromSearch = true
                     val placeFields: MutableList<Place.Field> = mutableListOf(
                         Place.Field.ID,
                         Place.Field.NAME,
@@ -271,7 +272,6 @@ class ConfirmAddressMapFragment :
         isAddAddress = false
         mMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18f))
         mMap?.setOnCameraMoveListener {
-
             mMap?.setOnCameraIdleListener {
                 val latLng = mMap?.cameraPosition?.target
                 val latitude = latLng?.latitude
@@ -311,7 +311,10 @@ class ConfirmAddressMapFragment :
             FirebaseManager.logException(e)
         }
         mAddress.let {
-            autoCompleteTextView?.setText(it)
+            if (!isAddressFromSearch) {
+                autoCompleteTextView?.setText(it)
+            }
+            isAddressFromSearch = false
             autoCompleteTextView.dismissDropDown()
         }
 
