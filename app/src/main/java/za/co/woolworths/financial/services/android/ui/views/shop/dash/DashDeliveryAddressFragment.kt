@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.views.shop.dash
 
+import android.location.Location
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -11,12 +12,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_dash_delivery.*
+import za.co.woolworths.financial.services.android.contracts.IProductListing
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
+import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.ui.adapters.shop.dash.DashDeliveryAdapter
 import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 import za.co.woolworths.financial.services.android.models.network.Status
 
 @AndroidEntryPoint
-class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery) {
+class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), IProductListing {
 
     private val viewModel: ShopViewModel by viewModels(
         ownerProducer = { requireParentFragment() }
@@ -129,5 +133,30 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery) {
 
     private fun showErrorView(message: String?, data: Any?) {
         //TODO: get error screens from UI/UX team
+    }
+
+    // Product Items interface
+    override fun openProductDetailView(productList: ProductList) {
+
+    }
+
+    override fun queryInventoryForStore(
+        fulfilmentTypeId: String,
+        addItemToCart: AddItemToCart?,
+        productList: ProductList
+    ) {
+        TODO("Not yet implemented")
+    }
+
+    override fun addFoodProductTypeToCart(addItemToCart: AddItemToCart?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun queryStoreFinderProductByFusedLocation(location: Location?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun showLiquorDialog() {
+        TODO("Not yet implemented")
     }
 }
