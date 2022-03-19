@@ -556,9 +556,9 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     R.color.black
                 )
             )
-        } else if (Utils.getPreferredDeliveryLocation().fulfillmentDetails?.address != null) {
+        } else if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address != null) {
 
-            Utils.getPreferredDeliveryLocation().fulfillmentDetails?.let {
+            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
                 if (it.storeName.equals("null") || it.storeName.isNullOrEmpty()) {
                     whereToCollect()
                 } else {
