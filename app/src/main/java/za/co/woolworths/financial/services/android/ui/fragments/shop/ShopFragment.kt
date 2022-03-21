@@ -7,6 +7,7 @@ import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Handler
 import android.view.Gravity
 import android.view.View
@@ -21,6 +22,7 @@ import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_shop.*
 import kotlinx.android.synthetic.main.shop_custom_tab.view.*
+import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
@@ -36,11 +38,13 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ShopPagerAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment.Companion.DEPARTMENT_LOGIN_REQUEST
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.DISPLAY_TOAST_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_3000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_ORDER_DETAILS_PAGE
 import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE
 
@@ -133,8 +137,10 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         tabs_main?.setupWithViewPager(viewpager_main)
         updateTabIconUI(0)
         showShopFeatureWalkThrough()
-        showBlackToolTip(Delivery_Types.STANDARD)
         setupToolbar(0)
+        GlobalScope.doAfterDelay(DELAY_3000_MS) {
+            showBlackToolTip(Delivery_Types.STANDARD)
+        }
     }
 
     private fun setupToolbar(tabPosition: Int) {
@@ -508,6 +514,12 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             setCanceledOnTouchOutside(true)
             show()
         }
+        object : CountDownTimer(DELAY_3000_MS, 500) {
+            override fun onTick(millisUntilFinished: Long) {}
+            override fun onFinish() {
+                blackToolTipDialog?.dismiss()
+            }
+        }.start()
     }
 
     private fun showStandardDeliveryToolTip(view: View) {
