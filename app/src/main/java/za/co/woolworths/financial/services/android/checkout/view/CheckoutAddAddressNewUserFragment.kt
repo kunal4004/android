@@ -55,6 +55,7 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAd
 import za.co.woolworths.financial.services.android.checkout.viewmodel.SelectedPlacesAddress
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getSelectedDefaultName
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
@@ -95,8 +96,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     private var selectedAddressId = ""
     private var isAddNewAddress = false
     private var provinceSuburbEnableType: ProvinceSuburbType? = null
-
     private var bundle: Bundle? = null
+    private var selectedAddressPosition: Int = -1
 
     companion object {
         const val PROVINCE_SELECTION_BACK_PRESSED = "5645"
@@ -137,6 +138,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                         SavedAddressResponse::class.java
                     ) as? SavedAddressResponse)
                     baseFragBundle?.putString(SAVED_ADDRESS_KEY, Utils.toJson(savedAddressResponse))
+                    selectedAddressPosition = getInt(EDIT_ADDRESS_POSITION_KEY,-1)
                     val savedAddress =
                         savedAddressResponse?.addresses?.get(getInt(EDIT_ADDRESS_POSITION_KEY))
                     selectedAddressId = savedAddress?.id.toString()
@@ -256,12 +258,15 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     savedAddressResponse?.addresses?.get(it)?.nickname
                 }
             ) {
-                // Do Nothing
-            } else if (savedAddressResponse?.addresses?.size!! > 1) {
-                deleteTextView.visibility = View.VISIBLE
-                deleteTextView.setOnClickListener(this)
+
+            } else if (savedAddressResponse?.addresses?.size!! > 1
+                && (!getSelectedDefaultName(savedAddressResponse,selectedAddressPosition))) {
+                deleteTextView?.visibility = View.VISIBLE
+                deleteTextView?.setOnClickListener(this)
+            } else if (getSelectedDefaultName(savedAddressResponse,selectedAddressPosition)) {
+                deleteTextView?.visibility = View.GONE
             }
-            saveAddress.text = bindString(R.string.change_details)
+            saveAddress?.text = bindString(R.string.change_details)
         }
         if (activity is CheckoutActivity) {
             (activity as? CheckoutActivity)?.apply {

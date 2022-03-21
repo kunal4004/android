@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.geolocation
 
+
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -23,5 +24,17 @@ class GeoUtils {
             }
             return  ""
         }
+
+        fun getSelectedDefaultName(
+            savedAddresses: SavedAddressResponse?,
+            selectedAddressPosition: Int,
+        ): Boolean {
+            if (savedAddresses?.addresses?.getOrNull(selectedAddressPosition)?.nickname.equals(savedAddresses?.defaultAddressNickname,true)
+            ) {
+                return true
+            }
+            return false
+        }
+
     }
 }
