@@ -464,9 +464,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun showBlackToolTip(deliveryType: Delivery_Types) {
-        if (blackToolTipDialog != null && blackToolTipDialog!!.isShowing) {
-            blackToolTipDialog!!.dismiss()
-        }
+        blackToolTipDialog?.dismiss()
         blackToolTipDialog = activity?.let { activity ->
             Dialog(activity,
                 android.R.style.ThemeOverlay_DeviceDefault_Accent_DayNight)
