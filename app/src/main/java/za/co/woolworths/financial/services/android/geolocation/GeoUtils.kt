@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.geolocation
 
-
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -35,6 +34,5 @@ class GeoUtils {
             }
             return false
         }
-
     }
 }
