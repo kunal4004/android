@@ -89,8 +89,6 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
     }
 
     private fun onEditDeliveryLocation() {
-
-        /*TODO : need to refactor this condition*/
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.editAddressNavHost) as NavHostFragment
         val navController = navHostFragment.navController

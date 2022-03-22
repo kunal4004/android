@@ -23,7 +23,7 @@ open class ConfirmLocation {
                     if (SessionUtilities.getInstance().isUserAuthenticated) {
                         Utils.savePreferredDeliveryLocation(
                             ShoppingDeliveryLocation(
-                                confirmLocationResponse.orderSummary.fulfillmentDetails
+                                confirmLocationResponse?.orderSummary?.fulfillmentDetails
                             )
                         )
                         if (KotlinUtils.getAnonymousUserLocationDetails() != null)
@@ -31,7 +31,7 @@ open class ConfirmLocation {
                     } else {
                         KotlinUtils.saveAnonymousUserLocationDetails(
                             ShoppingDeliveryLocation(
-                                confirmLocationResponse.orderSummary.fulfillmentDetails
+                                confirmLocationResponse?.orderSummary?.fulfillmentDetails
                             )
                         )
                     }

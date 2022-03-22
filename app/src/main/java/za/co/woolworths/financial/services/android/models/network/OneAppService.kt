@@ -235,11 +235,6 @@ object OneAppService : RetrofitConfig() {
             getDeviceIdentityToken())
     }
 
-    /*fun getConfirmDeliveryAddressDetails(body: ConfirmDeliveryAddressBody): Call<ConfirmDeliveryAddressResponse>{
-        return mApiInterface.getConfirmDeliveryAddressDetails("", "", getSessionToken(),
-        getDeviceIdentityToken(), body)
-    }*/
-
     fun getShippingDetails(body: ShippingDetailsBody): Call<ShippingDetailsResponse>{
         return mApiInterface.getShippingDetails("", "", getSessionToken(),
         getDeviceIdentityToken(), body)

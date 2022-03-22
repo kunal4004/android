@@ -7,6 +7,7 @@
     android:background="@color/white">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clickAndCollectLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:context="za.co.woolworths.financial.services.android.geolocation.view.ClickAndCollectStoresFragment">
@@ -196,6 +197,17 @@
             android:textSize="@dimen/twelve_sp"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent" />
+
+
+
+        <include
+            android:id="@+id/noClickAndCollectConnectionLayout"
+            layout="@layout/no_connection"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
