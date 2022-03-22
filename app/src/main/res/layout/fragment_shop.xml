@@ -78,30 +78,30 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/shopToolbar">
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabs_main"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/eight_dp"
-        android:layout_marginBottom="@dimen/sixteen_dp"
-        android:layout_marginStart="@dimen/sixteen_dp"
-        android:layout_marginEnd="@dimen/sixteen_dp"
-        android:elevation="@dimen/zero_dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tabBackground="@drawable/shop_tab_color_selector"
-        app:tabGravity="fill"
-        android:tabStripEnabled = "false"
-        app:tabIndicatorHeight="0dp"
-        app:tabIndicatorColor="@null"
-        app:tabMode="fixed"
-        app:tabPaddingEnd="@dimen/two_dp"
-        app:tabPaddingStart="@dimen/two_dp"
-        app:tabRippleColor="@null"
-        app:tabSelectedTextColor="@color/black"
-        app:tabTextColor="@color/drawer_color" />
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabs_main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/sixteen_dp"
+            android:layout_marginTop="@dimen/eight_dp"
+            android:layout_marginEnd="@dimen/sixteen_dp"
+            android:layout_marginBottom="@dimen/sixteen_dp"
+            android:elevation="@dimen/zero_dp"
+            android:tabStripEnabled="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tabBackground="@drawable/shop_tab_color_selector"
+            app:tabGravity="fill"
+            app:tabIndicatorColor="@null"
+            app:tabIndicatorHeight="0dp"
+            app:tabMode="fixed"
+            app:tabPaddingEnd="@dimen/two_dp"
+            app:tabPaddingStart="@dimen/two_dp"
+            app:tabRippleColor="@null"
+            app:tabSelectedTextColor="@color/black"
+            app:tabTextColor="@color/drawer_color" />
 
         <TextView
             android:id="@+id/foodOnlyText"
@@ -136,11 +136,19 @@
             android:paddingBottom="@dimen/three_dp"
             android:text="@string/food_only"
             android:textAlignment="center"
-            android:textSize="@dimen/seven_sp"
             android:textColor="@color/white"
+            android:textSize="@dimen/seven_sp"
             app:layout_constraintEnd_toStartOf="@+id/foodOnlyText"
             app:layout_constraintStart_toStartOf="@+id/tvSearchProduct"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <include
+            android:id="@+id/blackToolTipLayout"
+            layout="@layout/black_tool_tip_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tabs_main" />
 
         <TextView
             android:id="@+id/tvSearchProduct"
@@ -166,7 +174,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tabs_main" />
+            app:layout_constraintTop_toBottomOf="@+id/blackToolTipLayout" />
 
         <ImageView
             android:id="@+id/imBarcodeScanner"
