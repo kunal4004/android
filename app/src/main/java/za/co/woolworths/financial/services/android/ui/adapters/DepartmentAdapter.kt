@@ -114,8 +114,8 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
             itemView.locationSelectedLayout.setOnClickListener { onEditDeliveryLocation() }
             if (Utils.getPreferredDeliveryLocation() == null || !SessionUtilities.getInstance().isUserAuthenticated) {
                 KotlinUtils.getAnonymousUserLocationDetails()?.let {
-                    itemView.iconCaretRight.visibility = View.GONE
-                    itemView.editLocation.visibility = View.VISIBLE
+                    itemView.iconCaretRight?.visibility = View.GONE
+                    itemView.editLocation?.visibility = View.VISIBLE
                     KotlinUtils.setDeliveryAddressView(
                         itemView.context as Activity,
                         it,
@@ -125,14 +125,14 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
                     )
                     return
                 }
-                itemView.tvDeliveringTo.text =
+                itemView.tvDeliveringTo?.text =
                     itemView.context.resources.getString(R.string.delivery_or_collection)
-                itemView.tvDeliveryLocation.visibility = View.GONE
-                itemView.iconCaretRight.visibility = View.VISIBLE
-                itemView.editLocation.visibility = View.INVISIBLE
+                itemView.tvDeliveryLocation?.visibility = View.GONE
+                itemView.iconCaretRight?.visibility = View.VISIBLE
+                itemView.editLocation?.visibility = View.INVISIBLE
             } else {
-                itemView.iconCaretRight.visibility = View.GONE
-                itemView.editLocation.visibility = View.VISIBLE
+                itemView.iconCaretRight?.visibility = View.GONE
+                itemView.editLocation?.visibility = View.VISIBLE
                 KotlinUtils.setDeliveryAddressView(
                     itemView.context as Activity,
                     Utils.getPreferredDeliveryLocation(),

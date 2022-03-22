@@ -97,7 +97,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
         tvConfirmStore?.setOnClickListener(this)
         ivCross?.setOnClickListener(this)
         btChange?.setOnClickListener(this)
-        etEnterNewAddress.addTextChangedListener(this)
+        etEnterNewAddress?.addTextChangedListener(this)
         dialog?.window
             ?.attributes?.windowAnimations = R.style.DialogFragmentAnimation
         mapFragment = childFragmentManager
@@ -173,8 +173,8 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
         address: List<Store>?,
         mValidateLocationResponse: ValidateLocationResponse?
     ) {
-        tvStoresNearMe.text = resources.getString(R.string.near_stores, address?.size)
-        tvAddress.text = mValidateLocationResponse?.validatePlace?.placeDetails?.address1
+        tvStoresNearMe?.text = resources.getString(R.string.near_stores, address?.size)
+        tvAddress?.text = mValidateLocationResponse?.validatePlace?.placeDetails?.address1
         setStoreList(address)
     }
 
