@@ -6,6 +6,7 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -79,7 +80,7 @@ class DashCategoryAdapter(
             DashDeliveryAdapter.TYPE_DASH_CATEGORIES_PRODUCT_CAROUSEL -> {
                 ProductCarouselItemViewHolder(
                     LayoutInflater.from(context)
-                        .inflate(R.layout.chanel_products_horizontal_item_cell, parent, false)
+                        .inflate(R.layout.item_product_carousel_list, parent, false)
                 )
             }
             else -> EmptyViewHolder(View(context))
@@ -172,6 +173,9 @@ class ProductCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(it
         val nextProduct = if (position % 2 != 0) list.getOrNull(position + 1) else null
         val previousProduct = if (position % 2 == 0) list.getOrNull(position - 1) else null
         val navigator = context as? IProductListing
+
+        itemView.constProductContainer?.background = ContextCompat.getDrawable(context, R.color.color_separator_light_grey)
+
         with(productList) {
             setProductImage(this)
             setPromotionalImage(promotionImages, virtualTryOn)
