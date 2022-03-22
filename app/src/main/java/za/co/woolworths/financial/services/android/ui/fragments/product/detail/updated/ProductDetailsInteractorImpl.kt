@@ -33,7 +33,7 @@ class ProductDetailsInteractorImpl() : ProductDetailsContract.ProductDetailsInte
 
     override fun getLocationItems(otherSkus: OtherSkus?, onFinishListener: ProductDetailsContract.ProductDetailsInteractor.OnFinishListener) {
         WoolworthsApplication.getInstance().wGlobalState?.let {mWGlobalState->
-            otherSkus?.let { OneAppService.getLocationsItem(it.sku, mWGlobalState.startRadius.toString(), mWGlobalState.endRadius.toString()) }?.let { request(it,onFinishListener) }
+            otherSkus?.let { it.sku?.let { it1 -> OneAppService.getLocationsItem(it1, mWGlobalState.startRadius.toString(), mWGlobalState.endRadius.toString()) } }?.let { request(it,onFinishListener) }
         }
     }
 

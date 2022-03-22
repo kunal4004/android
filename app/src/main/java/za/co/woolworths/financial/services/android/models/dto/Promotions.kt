@@ -1,17 +1,17 @@
 package za.co.woolworths.financial.services.android.models.dto
 
-import com.google.gson.annotations.Expose
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
 /**
  * Created by Kunal Uttarwar on 15/3/21.
  */
-class Promotions {
+@Parcelize
+data class Promotions(
     @SerializedName("promotionalText")
-    @Expose
-    var promotionalText: String? = null
+    var promotionalText: String? = null,
 
     @SerializedName("searchTerm")
-    @Expose
     var searchTerm: String? = null
-}
+) : Parcelable

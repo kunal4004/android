@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.dash.view
+package za.co.woolworths.financial.services.android.ui.views.shop.dash
 
 import android.Manifest
 import android.annotation.SuppressLint
