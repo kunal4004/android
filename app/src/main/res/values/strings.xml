@@ -796,6 +796,7 @@
     <string name="chat_end_session_dialog_action_text">yes, end session</string>
     <string name="rooted_phone_desc">Your phone is rooted. Unauthorised access.</string>
     <string name="rooted_phone_title">Access Restricted</string>
+    <string name="sideloaded_app_title">Error opening app</string>
     <string name="sideloaded_app_desc">The app installed is missing some required components. Please reinstall from either Google Play Store or Huawei AppGallery.</string>
     <string name="no_statements_title">No Statements Available</string>
     <string name="absa_no_statement_desc">You have no statements available. If this is \n incorrect please call us.</string>
