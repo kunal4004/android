@@ -395,8 +395,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     private fun getCategoryNameAndSetTitle() {
-//        if (!mSubCategoryName.isNullOrEmpty())
-//            setTitle()
+        if (!mSubCategoryName.isNullOrEmpty())
+            setTitle()
     }
 
     override fun unhandledResponseCode(response: Response) {
