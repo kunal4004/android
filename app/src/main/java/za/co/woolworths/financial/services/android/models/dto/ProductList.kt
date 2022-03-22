@@ -9,67 +9,49 @@ import java.util.*
 @Parcelize
 data class ProductList(
     @JvmField
-    @SerializedName("productId")
     var productId: String? = null,
 
     @JvmField
     var productName: String? = null,
 
     @JvmField
-    @SerializedName("externalImageRefV2")
     var externalImageRefV2: String? = null,
 
-    @SerializedName("imagePath")
     var imagePath: String? = null,
 
     @JvmField
-    @SerializedName("fromPrice")
     var fromPrice: Float? = null,
 
     @JvmField
-    @SerializedName("sku")
     var sku: String? = null,
 
     @JvmField
-    @SerializedName("productType")
     var productType: String? = null,
 
-    @SerializedName("promotionImages")
     var promotionImages: PromotionImages? = null,
 
     @JvmField
-    @SerializedName("otherSkus")
     var otherSkus: List<OtherSkus>? = null,
 
-    @SerializedName("promotions")
     var promotionsList: ArrayList<Promotions>? = null,
 
     @JvmField
-    @SerializedName("saveText")
     var saveText: String? = null,
 
-    @SerializedName("priceType")
     var priceType: String? = null,
 
-    @SerializedName("kilogramPrice")
     var kilogramPrice: Float? = null,
 
-    @SerializedName("price")
     var price: Float? = null,
 
-    @SerializedName("wasPrice")
     var wasPrice: Float? = null,
 
-    @SerializedName("brandText")
     var brandText: String? = null,
 
-    @SerializedName("productVariants")
     var productVariants: String? = null,
 
-    @SerializedName("isLiquor")
     var isLiquor: Boolean? = null,
 
-    @SerializedName("virtualTryOn")
     var virtualTryOn: String? = null,
 
     @JvmField
