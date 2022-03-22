@@ -435,10 +435,6 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         }
 
         if (SessionUtilities.getInstance().isUserAuthenticated) {
-            /* if (Utils.getPreferredDeliveryLocation() != null) {
-                 activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, if (Utils.getPreferredDeliveryLocation().suburb.storePickup) DeliveryType.STORE_PICKUP else DeliveryType.DELIVERY) }
-             } else*/
-
             activity?.apply {
                 KotlinUtils.presentEditDeliveryGeoLocationActivity(
                     this,

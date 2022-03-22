@@ -107,8 +107,6 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
                 /*CANCEl button */
                 UnSellableItemsLiveData.value = false
                 confirmRemoveItems()
-//                setFragmentResult(CheckoutAddressConfirmationFragment.UNSELLABLE_CHANGE_STORE_REQUEST_KEY, Bundle())
-//                navController?.navigateUp()
             }
             //R.id.removeItems ->  executeSetSuburb()
             R.id.removeItems -> {
