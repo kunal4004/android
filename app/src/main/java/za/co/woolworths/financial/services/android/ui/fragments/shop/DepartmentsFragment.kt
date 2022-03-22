@@ -69,12 +69,10 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
     private var localStoreId: String? = null
     private var isValidateSelectedSuburbCallStopped = true
 
-
     companion object {
         var DEPARTMENT_LOGIN_REQUEST = 1717
         const val REQUEST_CODE_FINE_GPS = 4771
     }
-
 
     init {
         isDashEnabled =
