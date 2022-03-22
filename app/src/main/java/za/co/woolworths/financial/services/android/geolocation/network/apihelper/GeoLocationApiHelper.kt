@@ -1,9 +1,11 @@
 package za.co.woolworths.financial.services.android.geolocation.network.apihelper
 
+import android.content.Context
 import retrofit2.await
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
 import za.co.woolworths.financial.services.android.models.network.RetrofitConfig
+import za.co.woolworths.financial.services.android.util.NetworkManager
 
 class GeoLocationApiHelper : RetrofitConfig() {
 
@@ -41,4 +43,6 @@ class GeoLocationApiHelper : RetrofitConfig() {
             getDeviceIdentityToken(),
             confirmLocationRequest
         )
+
+    fun isConnectedToInternet(context: Context) = NetworkManager.getInstance().isConnectedToNetwork(context)
 }

@@ -24,6 +24,7 @@ import com.google.maps.GeocodingApi
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.geolocation_confirm_address.*
 import kotlinx.android.synthetic.main.geolocation_confirm_address.autoCompleteTextView
+import kotlinx.android.synthetic.main.no_connection.view.*
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
@@ -37,7 +38,6 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listene
 import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
-import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.*
 import javax.inject.Inject
@@ -79,19 +79,19 @@ class ConfirmAddressMapFragment :
         latitude = args.mapData.latitude
         longitude = args.mapData.longitude
         isAddAddress = args.mapData.isAddAddress
+        setUpViewModel()
+        clearAddress()
+        confirmAddressClick()
 
-        if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
+        if (confirmAddressViewModel.isConnectedToInternet(requireActivity())) {
             initMap()
         } else {
             mapFrameLayout?.visibility = View.GONE
             imgMapMarker?.visibility = View.GONE
             autoCompleteTextView?.isEnabled = false
-            showErrorDialog()
+            noMapConnectionLayout?.no_connection_layout?.visibility = View.VISIBLE
 
         }
-        setUpViewModel()
-        clearAddress()
-        confirmAddressClick()
 
     }
 
@@ -111,6 +111,7 @@ class ConfirmAddressMapFragment :
         activity?.let {
             ConnectivityLiveData.observe(viewLifecycleOwner, { isNetworkAvailable ->
                 if (isNetworkAvailable) {
+                    noMapConnectionLayout?.no_connection_layout?.visibility = View.GONE
                     mapFragment?.view?.visibility = View.VISIBLE
                     mapFrameLayout?.visibility = View.VISIBLE
                     imgMapMarker?.visibility = View.VISIBLE
@@ -122,11 +123,12 @@ class ConfirmAddressMapFragment :
 
                     }
                 } else {
+                    noMapConnectionLayout?.no_connection_layout?.visibility = View.VISIBLE
                     mapFragment?.view?.visibility = View.GONE
                     imgMapMarker?.visibility = View.GONE
                     autoCompleteTextView?.isEnabled = false
                     confirmAddress?.isEnabled = false
-                    showErrorDialog()
+
                 }
 
             })

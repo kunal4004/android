@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.geolocation.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.geo_location_delivery_address.*
 import kotlinx.android.synthetic.main.layout_laocation_not_available.view.*
 import kotlinx.android.synthetic.main.no_collection_store_fragment.view.*
+import kotlinx.android.synthetic.main.no_connection.*
+import kotlinx.android.synthetic.main.no_connection_layout.view.*
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
@@ -43,6 +46,7 @@ import za.co.woolworths.financial.services.android.models.network.StorePickupInf
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.extension.isConnectedToNetwork
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment
@@ -171,6 +175,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 else
                     openGeoDeliveryTab()
             }
+
         }
     }
 
@@ -367,7 +372,17 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         })
         isUnSellableItemsRemoved()
         placeId?.let {
-            getDeliveryDetailsFromValidateLocation(it) }
+            if (confirmAddressViewModel.isConnectedToInternet(requireActivity())){
+                getDeliveryDetailsFromValidateLocation(it)
+                connectionLayout?.no_connection_layout?.visibility = View.GONE
+            }
+            else {
+                connectionLayout?.no_connection_layout?.visibility = View.VISIBLE
+        }
+        }
+        no_connection_layout?.btnRetry?.setOnClickListener{
+            initView()
+        }
     }
 
     private fun openGeoDeliveryTab() {
