@@ -60,10 +60,9 @@
                 android:letterSpacing="0.2"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="PLP Toolbar"
                 android:textAllCaps="true"
                 android:textColor="@color/black"
-                android:textSize="12sp" />
+                android:textSize="@dimen/twelve_sp" />
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 

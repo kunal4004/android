@@ -161,10 +161,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
             hideToolbar()
             setSupportActionBar(findViewById(R.id.toolbarPLP))
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            supportActionBar?.setHomeButtonEnabled(true)
-            supportActionBar?.setDisplayShowHomeEnabled(true)
-            toolbarPLP?.navigationIcon = ContextCompat.getDrawable(requireContext(), R.drawable.back24)
+            supportActionBar?.apply {
+                setDisplayHomeAsUpEnabled(true)
+                setHomeButtonEnabled(true)
+                setDisplayShowHomeEnabled(true)
+            }
+            toolbarPLP?.navigationIcon =
+                ContextCompat.getDrawable(requireContext(), R.drawable.back24)
             showBottomNavigationMenu()
 
             toolbar?.setNavigationOnClickListener { popFragment() }
@@ -274,7 +277,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         if (!isAdded || !isVisible) {
             return
         }
-        toolbarPLPTitle.text = if (mSubCategoryName?.isEmpty() == true) mSearchTerm else mSubCategoryName
+        toolbarPLPTitle.text =
+            if (mSubCategoryName?.isEmpty() == true) mSearchTerm else mSubCategoryName
     }
 
     override fun onLoadProductSuccess(response: ProductView, loadMoreData: Boolean) {
