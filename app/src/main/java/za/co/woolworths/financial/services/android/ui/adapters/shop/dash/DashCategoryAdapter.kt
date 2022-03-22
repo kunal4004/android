@@ -195,8 +195,8 @@ class ProductCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(it
     }
 
     private fun setProductName(productList: ProductList?) = with(itemView) {
-        tvProductName.maxLines = 3
-        tvProductName.minLines = 1
+        tvProductName?.maxLines = 3
+        tvProductName?.minLines = 1
         tvProductName?.text = productList?.productName ?: ""
     }
 

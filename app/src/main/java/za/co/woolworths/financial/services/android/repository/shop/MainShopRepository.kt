@@ -8,6 +8,7 @@ import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.shop.DashCategories
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Resource
+import za.co.woolworths.financial.services.android.util.FirebaseManager
 import java.io.IOException
 
 class MainShopRepository : ShopRepository {
@@ -220,6 +221,7 @@ class MainShopRepository : ShopRepository {
             }*/
         } catch (e: IOException) {
             Log.e("EXCEPTION", "EXCEPTION:", e)
+            FirebaseManager.logException(e)
             Resource.error("Couldn't reach the server. Check your internet connection", null)
         }
     }
@@ -307,6 +309,7 @@ class MainShopRepository : ShopRepository {
             }*/
         } catch (e: IOException) {
             Log.e("EXCEPTION", "EXCEPTION:", e)
+            FirebaseManager.logException(e)
             Resource.error("Couldn't reach the server. Check your internet connection", null)
         }
     }

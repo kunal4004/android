@@ -6,15 +6,11 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Banner(
-    @SerializedName("displayName")
     var displayName: String? = null,
 
-    @SerializedName("navigationState")
     var navigationState: String? = null,
 
-    @SerializedName("externalImageRefV2")
     var externalImageRefV2: String? = null,
 
-    @SerializedName("filterContent")
     var filterContent: Boolean? = null
 ): Parcelable

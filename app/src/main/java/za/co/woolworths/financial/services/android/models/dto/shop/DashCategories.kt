@@ -8,12 +8,9 @@ import java.util.*
 
 @Parcelize
 data class DashCategories(
-    @SerializedName("productCatalogues")
     val productCatalogues: ArrayList<ProductCatalogue>? = null,
 
-    @SerializedName("response")
     var response: Response? = null,
 
-    @SerializedName("httpCode")
     var httpCode: Int? = null
 ) : Parcelable
