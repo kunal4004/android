@@ -412,11 +412,6 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     private fun getStorePickupInfoBody() = StorePickupInfoBody().apply {
-
-        /*TODO : "deliveryType": "CnC",
-                "address": {
-                    "placeId": "EiRMb3R1cyBSaXZlciwgQ2FwZSBUb3duLCBTb3V0aCBBZnJpY2EiLiosChQKEgm7_uOL90PMHRGhcHCGx9_rrRIUChIJ1-4miA9QzB0Rh6ooKPzhf2g"
-         }*/
         firstName = whoIsCollectingDetails?.recipientName
         primaryContactNo = whoIsCollectingDetails?.phoneNumber
         storeId = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeId ?: ""
@@ -675,13 +670,6 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                     null,
                      Utils.toJson(whoIsCollectingDetails)
                 )
-
-//                val bundle = Bundle()
-//                bundle.putBoolean(KEY_IS_WHO_IS_COLLECTING, true)
-//                navController?.navigate(
-//                    R.id.action_checkoutReturningUserCollectionFragment_to_checkoutAddressConfirmationFragment,
-//                    bundle
-//                )
             }
             R.id.checkoutCollectingUserInfoLayout -> {
                 val bundle = Bundle()

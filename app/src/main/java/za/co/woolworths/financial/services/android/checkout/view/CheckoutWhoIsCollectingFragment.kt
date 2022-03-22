@@ -157,16 +157,6 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
             if (isMyVehicle) vehicleRegistrationEditText.text.toString() else "",
             isMyVehicle
         )
-
-      /*  val bundle = Bundle()
-        bundle.apply {
-            putString(
-                KEY_COLLECTING_DETAILS,
-                Utils.toJson(whoIsCollectingDetails)
-            )
-        }
-        navController?.navigate(R.id.checkoutReturningUserCollectionFragment, bundle)
-        */
         startCheckoutActivity(Utils.toJson(whoIsCollectingDetails))
     }
 

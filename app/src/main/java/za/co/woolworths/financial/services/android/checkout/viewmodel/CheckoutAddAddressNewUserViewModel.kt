@@ -10,7 +10,6 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Conf
 import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsBody
 import za.co.woolworths.financial.services.android.checkout.utils.NativeCheckoutResource
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
-import za.co.woolworths.financial.services.android.models.network.ConfirmDeliveryAddressBody
 import za.co.woolworths.financial.services.android.models.network.StorePickupInfoBody
 
 /**
@@ -64,10 +63,6 @@ class CheckoutAddAddressNewUserViewModel(private val checkoutAddAddressNewUserIn
     fun deleteAddress(addressId: String): LiveData<Any> {
         return checkoutAddAddressNewUserInteractor.deleteAddress(addressId)
     }
-
-   /* fun getConfirmDeliveryAddressDetails(body: ConfirmDeliveryAddressBody): LiveData<Any> {
-        return checkoutAddAddressNewUserInteractor.getConfirmDeliveryAddressDetails(body)
-    }*/
 
     fun changeAddress(nickName: String): LiveData<Any> {
         return checkoutAddAddressNewUserInteractor.changeAddress(nickName)

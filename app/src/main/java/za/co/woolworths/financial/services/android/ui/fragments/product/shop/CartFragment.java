@@ -527,15 +527,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
     private void navigateToCheckout(SavedAddressResponse response) {
         Activity activity = getActivity();
-
-      /*  CART - checkout
-            SavedAddress
-        if(Standard && default address available)
-            - CNAV : chekclit activity
-        Else
-         - GNAV
-        CNC or No Address or no default address*/
-
         if (KotlinUtils.Companion
                 .getPreferredDeliveryType().equals(Delivery.STANDARD)
                 &&  !TextUtils.isEmpty(response.getDefaultAddressNickname())
