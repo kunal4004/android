@@ -218,11 +218,18 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                       when (confirmLocationResponse.httpCode) {
                           HTTP_OK -> {
                               // save details in cache
-
-                              confirmLocationResponse?.orderSummary?.fulfillmentDetails?.let {
+                              if (SessionUtilities.getInstance().isUserAuthenticated) {
                                   Utils.savePreferredDeliveryLocation(
                                       ShoppingDeliveryLocation(
-                                          confirmLocationResponse?.orderSummary?.fulfillmentDetails
+                                          confirmLocationResponse.orderSummary.fulfillmentDetails
+                                      )
+                                  )
+                                  if (KotlinUtils.getAnonymousUserLocationDetails() != null)
+                                      KotlinUtils.clearAnonymousUserLocationDetails()
+                              } else {
+                                  KotlinUtils.saveAnonymousUserLocationDetails(
+                                      ShoppingDeliveryLocation(
+                                          confirmLocationResponse.orderSummary.fulfillmentDetails
                                       )
                                   )
                               }

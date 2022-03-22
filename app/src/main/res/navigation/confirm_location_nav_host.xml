@@ -166,10 +166,7 @@
         <action
             android:id="@+id/action_checkoutAddAddressNewUserFragment_to_confirmAddressLocationFragment"
             app:destination="@id/confirmAddressLocationFragment"
-            app:enterAnim="@anim/slide_in_from_right"
-            app:exitAnim="@anim/slide_to_left"
-            app:popEnterAnim="@anim/slide_from_left"
-            app:popExitAnim="@anim/slide_to_right"/>
+            />
         <action
             android:id="@+id/action_checkoutAddAddressNewUserFragment_to_geoSuburbNotDeliverableBottomsheetDialogFragment"
             app:destination="@id/geoSuburbNotDeliverableBottomsheetDialogFragment"
@@ -180,6 +177,13 @@
         <action
             android:id="@+id/action_checkoutAddAddressNewUserFragment_to_geoUnsellableItemsFragment"
             app:destination="@id/geoUnsellableItemsFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
+        <action
+            android:id="@+id/action_checkoutAddAddressNewUserFragment_to_deliveryAddressConfirmationFragment"
+            app:destination="@id/deliveryAddressConfirmationFragment"
             app:enterAnim="@anim/slide_in_from_right"
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"

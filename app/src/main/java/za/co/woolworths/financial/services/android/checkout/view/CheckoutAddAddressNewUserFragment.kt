@@ -1,13 +1,11 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
 import android.animation.ObjectAnimator
-import android.content.Context
 import android.content.Intent
 import android.location.Geocoder
 import android.os.Bundle
 import android.view.*
 import android.widget.*
-import androidx.annotation.NonNull
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -19,6 +17,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.google.android.gms.common.api.ApiException
 import com.google.android.libraries.places.api.Places
@@ -30,7 +29,6 @@ import kotlinx.android.synthetic.main.checkout_new_user_recipient_details.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.ProvinceSuburbType.*
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.ADD_A_NEW_ADDRESS_REQUEST_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.ADD_NEW_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.DELETE_SAVED_ADDRESS_REQUEST_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
@@ -56,9 +54,9 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.SelectedPl
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getSelectedDefaultName
+import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
@@ -373,21 +371,21 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             // We use a String here, but any type that can be put in a Bundle is supported
             val result = bundle.getString("Suburb")
             val suburb: Suburb? = Utils.strToJson(result, Suburb::class.java) as? Suburb
-            onSuburbSelected(suburb)
+            //onSuburbSelected(suburb)
         }
         // Use the Kotlin extension in the fragment-ktx artifact
         setFragmentResultListener(EditDeliveryLocationFragment.PROVINCE_SELECTOR_REQUEST_CODE) { _, bundle ->
             // We use a String here, but any type that can be put in a Bundle is supported
             val result = bundle.getString("Province")
             val province: Province? = Utils.strToJson(result, Province::class.java) as? Province
-            onProvinceSelected(province)
+          //  onProvinceSelected(province)
         }
 
         setFragmentResultListener(RESULT_ERROR_CODE_SUBURB_NOT_FOUND) { _, _ ->
             if (selectedAddress.provinceName.isNullOrEmpty()) return@setFragmentResultListener
             provinceSuburbEnableType = ONLY_SUBURB
            // enableEditText()
-            getSuburbs()
+           // getSuburbs()
         }
         setFragmentResultListener(RESULT_ERROR_CODE_RETRY) { _, bundle ->
             when (bundle.getInt("bundle")) {
@@ -447,13 +445,13 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         }
     }
 
-    fun onProvinceSelected(province: Province?) {
+ /*   fun onProvinceSelected(province: Province?) {
         selectedAddress.apply {
             provinceName = province?.name.toString()
             savedAddress.region = province?.id.toString()
         }
         provinceAutocompleteEditText?.setText(province?.name)
-    }
+    }*/
 
     fun resetSuburbSelection() {
         selectedAddress.savedAddress.apply {
@@ -465,7 +463,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         suburbEditText?.text?.clear()
     }
 
-    fun onSuburbSelected(onSelectedSuburb: Suburb?) {
+    /*fun onSuburbSelected(onSelectedSuburb: Suburb?) {
         if (deliveryType == DeliveryType.DELIVERY) {
             selectedAddress.savedAddress.apply {
                 suburb = onSelectedSuburb?.name.toString()
@@ -490,7 +488,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         if (!onSelectedSuburb?.postalCode.isNullOrEmpty()) {
             postalCode?.setText(onSelectedSuburb?.postalCode)
         }
-    }
+    }*/
 
     private fun setAddress(place: Place) {
         enableDisableUserInputEditText(
@@ -755,7 +753,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             })
     }
 
-    private fun getSuburbs() {
+   /* private fun getSuburbs() {
         selectedAddress.savedAddress.region?.let { provinceId ->
             checkoutAddAddressNewUserViewModel.initGetSuburbs(provinceId)
                 .observe(viewLifecycleOwner, {
@@ -774,9 +772,9 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     }
                 })
         }
-    }
+    }*/
 
-    private fun navigateToSuburbSelection(suburbs: List<Suburb>) {
+   /* private fun navigateToSuburbSelection(suburbs: List<Suburb>) {
         activity?.let {
             // TODO:: WOP-9342 - Handle Transaction too large exception android nougat
             //  and remove share preference temp fix
@@ -798,7 +796,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             )
         }
     }
-
+*/
 
     fun onSaveAddressClicked() {
         if (selectedAddress.savedAddress.address1.isNullOrEmpty()) {
@@ -852,9 +850,10 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                                         Utils.toJson(savedAddressResponse)
                                     )
                                     response.address.nickname?.let { nickName ->
-                                        onAddNewAddress(
-                                            nickName
-                                        )
+                                       navigateToAddressConfirmation(response.address.placesId)
+//                                        onAddNewAddress(
+//                                            nickName
+//                                        )
                                     }
                                 }
 
@@ -929,7 +928,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
      *
      * @param nickName  unique address name used to identify individual address
      */
-    private fun onAddNewAddress(@NonNull nickName: String) {
+
+    /*private fun onAddNewAddress(@NonNull nickName: String) {
         loadingProgressBar.visibility = View.VISIBLE
         checkoutAddAddressNewUserViewModel.changeAddress(
             nickName
@@ -995,7 +995,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             }
         })
     }
-
+*/
     private fun showErrorScreen(errorType: Int, errorMessage: String?) {
         activity?.apply {
             val intent = Intent(this, ErrorHandlerActivity::class.java)
@@ -1260,10 +1260,11 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             }
     }
 
-    private fun navigateToAddressConfirmation() {
-        navController?.navigate(
-            R.id.action_checkoutAddAddressNewUserFragment_to_confirmAddressLocationFragment,
-            baseFragBundle
+    private fun navigateToAddressConfirmation(placesId: String?) {
+        baseFragBundle?.putString(KEY_PLACE_ID, placesId)
+        findNavController().navigate(
+            R.id.action_checkoutAddAddressNewUserFragment_to_deliveryAddressConfirmationFragment,
+            bundleOf("bundle" to baseFragBundle)
         )
     }
 

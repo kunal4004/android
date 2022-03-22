@@ -998,7 +998,6 @@ interface ApiInterface {
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
-            @Header("environment") environment: String,
             @Query("placeId") placeId: String): Call<ValidateLocationResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")

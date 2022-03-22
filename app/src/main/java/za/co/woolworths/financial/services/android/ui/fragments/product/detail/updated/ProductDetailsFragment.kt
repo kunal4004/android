@@ -588,7 +588,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         if (Utils.getPreferredDeliveryLocation() == null) {
             activity?.apply {
-                KotlinUtils.presentEditDeliveryLocationActivity(
+                KotlinUtils.presentEditDeliveryGeoLocationActivity(
                     this,
                     REQUEST_SUBURB_CHANGE
                 )
@@ -1324,7 +1324,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         if (Utils.isCartSummarySuburbIDEmpty(cartSummaryResponse)) {
             activity?.apply {
-                KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE)
+                KotlinUtils.presentEditDeliveryGeoLocationActivity(this, REQUEST_SUBURB_CHANGE)
             }
         } else confirmDeliveryLocation()
     }
@@ -1471,7 +1471,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     }
                     SET_DELIVERY_LOCATION_REQUEST_CODE -> {
                         activity?.apply {
-                            KotlinUtils.presentEditDeliveryLocationActivity(
+                            KotlinUtils.presentEditDeliveryGeoLocationActivity(
                                 this,
                                 REQUEST_SUBURB_CHANGE
                             )
@@ -1569,7 +1569,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     }
                     SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK -> {
                         activity?.apply {
-                            KotlinUtils.presentEditDeliveryLocationActivity(
+                            KotlinUtils.presentEditDeliveryGeoLocationActivity(
                                 this,
                                 REQUEST_SUBURB_CHANGE_FOR_STOCK
                             )
@@ -1577,10 +1577,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     }
                     LOGIN_REQUEST_SUBURB_CHANGE -> {
                         activity?.apply {
-                            KotlinUtils.presentEditDeliveryLocationActivity(
+                            KotlinUtils.presentEditDeliveryGeoLocationActivity(
                                 this,
-                                REQUEST_SUBURB_CHANGE_FOR_LIQUOR,
-                                DeliveryType.DELIVERY_LIQUOR
+                                REQUEST_SUBURB_CHANGE_FOR_LIQUOR
                             )
                         }
                     }
@@ -1909,7 +1908,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun updateDeliveryLocation() {
         activity?.apply {
             when (SessionUtilities.getInstance().isUserAuthenticated) {
-                true -> KotlinUtils.presentEditDeliveryLocationActivity(
+                true -> KotlinUtils.presentEditDeliveryGeoLocationActivity(
                     this,
                     REQUEST_SUBURB_CHANGE_FOR_STOCK
                 )
@@ -2197,19 +2196,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
     }
 
-    override fun onDeliveryOptionSelected(deliveryType: DeliveryType) {
-        if (SessionUtilities.getInstance().isUserAuthenticated) {
+        override fun onDeliveryOptionSelected(deliveryType: Delivery) {
             activity?.apply {
-                KotlinUtils.presentEditDeliveryLocationActivity(
+                KotlinUtils.presentEditDeliveryGeoLocationActivity(
                     this,
                     REQUEST_SUBURB_CHANGE,
                     deliveryType
                 )
             }
-        } else {
-            ScreenManager.presentSSOSignin(activity, EDIT_LOCATION_LOGIN_REQUEST)
         }
-    }
 
     override fun clearSelectedOnLocationChange() {
         if (!(!hasColor && !hasSize)) {
@@ -2297,10 +2292,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     ScreenManager.presentSSOSignin(activity, LOGIN_REQUEST_SUBURB_CHANGE)
                 } else {
                     activity?.apply {
-                        KotlinUtils.presentEditDeliveryLocationActivity(
+                        KotlinUtils.presentEditDeliveryGeoLocationActivity(
                             this,
-                            REQUEST_SUBURB_CHANGE_FOR_LIQUOR,
-                            DeliveryType.DELIVERY_LIQUOR
+                            REQUEST_SUBURB_CHANGE_FOR_LIQUOR
                         )
                     }
                 }

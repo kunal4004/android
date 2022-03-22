@@ -77,6 +77,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.net.ConnectException
 import java.net.UnknownHostException
 import java.util.*
@@ -340,10 +341,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     ScreenManager.presentSSOSignin(activity, LOGIN_REQUEST_SUBURB_CHANGE)
                 } else {
                     activity?.apply {
-                        KotlinUtils.presentEditDeliveryLocationActivity(
+                        KotlinUtils.presentEditDeliveryGeoLocationActivity(
                             this,
-                            LOGIN_REQUEST_SUBURB_CHANGE,
-                            DeliveryType.DELIVERY_LIQUOR
+                            LOGIN_REQUEST_SUBURB_CHANGE
                         )
                     }
                 }
@@ -775,10 +775,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             LOGIN_REQUEST_SUBURB_CHANGE -> {
                 if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
                     activity?.apply {
-                        KotlinUtils.presentEditDeliveryLocationActivity(
+                        KotlinUtils.presentEditDeliveryGeoLocationActivity(
                             this,
-                            LOGIN_REQUEST_SUBURB_CHANGE,
-                            DeliveryType.DELIVERY_LIQUOR
+                            LOGIN_REQUEST_SUBURB_CHANGE
                         )
                     }
                 } else if (resultCode == RESULT_OK) {
@@ -1074,7 +1073,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
                         HTTP_EXPECTATION_FAILED_417 -> resources?.let {
                             activity?.apply {
-                                KotlinUtils.presentEditDeliveryLocationActivity(
+                                KotlinUtils.presentEditDeliveryGeoLocationActivity(
                                     this,
                                     SET_DELIVERY_LOCATION_REQUEST_CODE
                                 )
@@ -1295,19 +1294,16 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
     }
 
-    override fun onDeliveryOptionSelected(deliveryType: DeliveryType) {
-        if (SessionUtilities.getInstance().isUserAuthenticated) {
-            activity?.apply {
-                KotlinUtils.presentEditDeliveryLocationActivity(
-                    this,
-                    EditDeliveryLocationActivity.REQUEST_CODE,
-                    deliveryType
-                )
-            }
-        } else {
-            ScreenManager.presentSSOSignin(activity, EDIT_LOCATION_LOGIN_REQUEST)
+    override fun onDeliveryOptionSelected(deliveryType: Delivery) {
+        activity?.apply {
+            KotlinUtils.presentEditDeliveryGeoLocationActivity(
+                this,
+                EditDeliveryLocationActivity.REQUEST_CODE,
+                deliveryType
+            )
         }
     }
+
 
     private fun requestCartSummary() {
         showProgressBar()
@@ -1319,7 +1315,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     HTTP_OK -> {
                         if (Utils.isCartSummarySuburbIDEmpty(response)) {
                             activity?.apply {
-                                KotlinUtils.presentEditDeliveryLocationActivity(
+                                KotlinUtils.presentEditDeliveryGeoLocationActivity(
                                     this,
                                     SET_DELIVERY_LOCATION_REQUEST_CODE
                                 )
