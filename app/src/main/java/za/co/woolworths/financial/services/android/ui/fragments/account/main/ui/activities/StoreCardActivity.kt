@@ -21,6 +21,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.com
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import javax.inject.Inject
 
+@Suppress("DEPRECATION")
 @AndroidEntryPoint
 class StoreCardActivity : AppCompatActivity() {
 
@@ -33,46 +34,55 @@ class StoreCardActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setTransparentStatusBar()
         binding = AccountProductLandingActivityBinding.inflate(layoutInflater)
+        setTransparentStatusBar()
         setContentView(binding.root)
         setupView()
     }
 
     private fun setTransparentStatusBar() {
         window?.apply {
-            if (Build.VERSION.SDK_INT in 21..29) {
-                statusBarColor = Color.TRANSPARENT
-                clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-                addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-                decorView.systemUiVisibility =
-                    SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or SYSTEM_UI_FLAG_LAYOUT_STABLE
-            } else { //if (Build.VERSION.SDK_INT >= 30)
-                statusBarColor = Color.TRANSPARENT
-                // Making status bar overlaps with the activity
-                WindowCompat.setDecorFitsSystemWindows(window, false)
-                // Root ViewGroup of my activity
-                val root = findViewById<CoordinatorLayout>(R.id.rootContainer)
-                ViewCompat.setOnApplyWindowInsetsListener(root) { view, windowInsets ->
+            when {
+                Build.VERSION.SDK_INT in 21..29 -> {
+                    statusBarColor = Color.TRANSPARENT
+                    clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+                    addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                    decorView.systemUiVisibility =
+                            SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or SYSTEM_UI_FLAG_LAYOUT_STABLE
+                }
+                Build.VERSION.SDK_INT >= 32 -> {
+                    WindowCompat.setDecorFitsSystemWindows(window, false)
+                    ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { _, _ ->
+                        WindowInsetsCompat.CONSUMED
+                    }
+                }
+                else -> {
+                    statusBarColor = Color.TRANSPARENT
+                    // Making status bar overlaps with the activity
+                    WindowCompat.setDecorFitsSystemWindows(window, false)
+                    // Root ViewGroup of my activity
+                    val root = findViewById<CoordinatorLayout>(R.id.rootContainer)
+                    ViewCompat.setOnApplyWindowInsetsListener(root) { view, windowInsets ->
 
-                    val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+                        val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
 
-                    // Apply the insets as a margin to the view. Here the system is setting
-                    // only the bottom, left, and right dimensions, but apply whichever insets are
-                    // appropriate to your layout. You can also update the view padding
-                    // if that's more appropriate.
+                        // Apply the insets as a margin to the view. Here the system is setting
+                        // only the bottom, left, and right dimensions, but apply whichever insets are
+                        // appropriate to your layout. You can also update the view padding
+                        // if that's more appropriate.
 
-                    view.layoutParams =  (view.layoutParams as FrameLayout.LayoutParams).apply {
-                        leftMargin = insets.left
-                        bottomMargin = insets.bottom
-                        rightMargin = insets.right
+                        view.layoutParams =  (view.layoutParams as FrameLayout.LayoutParams).apply {
+                            leftMargin = insets.left
+                            bottomMargin = insets.bottom
+                            rightMargin = insets.right
+                        }
+
+                        // Return CONSUMED if you don't want want the window insets to keep being
+                        // passed down to descendant views.
+                        WindowInsetsCompat.CONSUMED
                     }
 
-                    // Return CONSUMED if you don't want want the window insets to keep being
-                    // passed down to descendant views.
-                    WindowInsetsCompat.CONSUMED
                 }
-
             }
         }
     }

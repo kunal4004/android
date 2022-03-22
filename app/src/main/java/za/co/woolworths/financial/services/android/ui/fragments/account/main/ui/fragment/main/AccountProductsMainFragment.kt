@@ -11,6 +11,7 @@ import androidx.core.view.WindowCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountProductLandingMainFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,6 +19,7 @@ import kotlinx.android.synthetic.main.bpi_covered_tag_layout.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.NavigationGraph
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOfferingState
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RED_HEX_COLOR
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
@@ -74,39 +76,39 @@ class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMai
             )
 
             val account = getAccountProduct()
-            //findNavController().navigate(AccountProductsMainFragmentDirections.actionAccountProductsMainFragmentToAccountInArrearsLandingDialogFragment(account))
+            findNavController().navigate(AccountProductsMainFragmentDirections.actionAccountProductsMainFragmentToAccountInArrearsLandingDialogFragment(account))
 
-//            val popupId = getPopupDialogStatus{ state ->
-//                when (state) {
-//                    /* when productOfferingGoodStanding == true
-//                   hideAccountInArrears(account)
-//                   showAccountHelp(getCardProductInformation(false))
-//                    */
-//                    is AccountOfferingState.AccountInGoodStanding -> null
-//
-//                    is AccountOfferingState.AccountIsInArrears -> {
-//                        // showAccountInArrears(account)
-//                    }
-//
-//                    is AccountOfferingState.AccountIsChargedOff -> {
-//
-//                        // account is in arrears for more than 6 months
-//                        // removeBlocksOnCollectionCustomer()
-//                    }
-//
-//                    is AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff -> {
-//
-//                    }
-//
-//                    is AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig -> {
-//
-//                    }
-//
-//                    is AccountOfferingState.MakeGetEligibilityCall -> {
-//                        viewModel.queryServiceCheckCustomerEligibilityPlan()
-//                    }
-//                }
-//            }
+            val popupId = getPopupDialogStatus{ state ->
+                when (state) {
+                    /* when productOfferingGoodStanding == true
+                   hideAccountInArrears(account)
+                   showAccountHelp(getCardProductInformation(false))
+                    */
+                    is AccountOfferingState.AccountInGoodStanding -> null
+
+                    is AccountOfferingState.AccountIsInArrears -> {
+                        // showAccountInArrears(account)
+                    }
+
+                    is AccountOfferingState.AccountIsChargedOff -> {
+
+                        // account is in arrears for more than 6 months
+                        // removeBlocksOnCollectionCustomer()
+                    }
+
+                    is AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff -> {
+
+                    }
+
+                    is AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig -> {
+
+                    }
+
+                    is AccountOfferingState.MakeGetEligibilityCall -> {
+                        viewModel.queryServiceCheckCustomerEligibilityPlan()
+                    }
+                }
+            }
         }
     }
 

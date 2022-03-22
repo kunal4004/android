@@ -14,9 +14,6 @@
             android:id="@+id/action_accountProductsMainFragment_to_accountProductsHomeFragment"
             app:destination="@id/accountProductsHomeFragment" />
         <action
-            android:id="@+id/action_accountProductsMainFragment_to_removeBlockOnCollectionFragment"
-            app:destination="@id/removeBlockOnCollectionFragment" />
-        <action
             android:id="@+id/action_accountProductsMainFragment_to_accountInArrearsLandingDialogFragment"
             app:destination="@id/accountInArrearsLandingDialogFragment" />
         <action
@@ -28,11 +25,6 @@
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeFragment"
         android:label="AccountProductsHomeFragment"
         tools:layout="@layout/account_products_home_fragment" />
-    <fragment
-        android:id="@+id/removeBlockOnCollectionFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.remove_dc_block.RemoveBlockOnCollectionFragment"
-        android:label="RemoveBlockOnCollectionFragment"
-        tools:layout="@layout/remove_block_dc_fragment" />
 
     <dialog
         android:id="@+id/accountInArrearsLandingDialogFragment"
