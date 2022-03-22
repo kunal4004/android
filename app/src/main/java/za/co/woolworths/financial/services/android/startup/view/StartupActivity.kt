@@ -63,7 +63,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
         try {
             // Try to get a drawable, to make sure the app has not
-            // been sideloaded to a device with different specs
+            // been sideloaded to a device with a different pixel density
             AppCompatResources.getDrawable(this, R.drawable.splash_w_logo)
 
             setSupportActionBar(mToolbar)
