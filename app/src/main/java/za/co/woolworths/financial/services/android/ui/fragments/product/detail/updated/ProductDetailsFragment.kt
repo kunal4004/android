@@ -713,7 +713,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 false -> {
                     showProductDetailsLoading()
                     val multiSKUs =
-                        productDetails?.otherSkus.joinToString(separator = "-") { it.sku }
+                        productDetails?.otherSkus.joinToString(separator = "-") { it.sku.toString() }
                     productDetailsPresenter?.loadStockAvailability(
                         storeIdForInventory!!,
                         multiSKUs,
@@ -893,11 +893,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         for (otherSkuObj in otherSKUsList) {
             var groupKey =
                 if (TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(otherSkuObj.size)) {
-                    otherSkuObj.size.trim()
+                    otherSkuObj.size?.trim()
                 } else if (!TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(otherSkuObj.size)) {
-                    otherSkuObj.colour.trim()
+                    otherSkuObj.colour?.trim()
                 } else {
-                    otherSkuObj.colour.trim()
+                    otherSkuObj.colour?.trim()
                 }
 
             if (variant == ColourSizeVariants.NO_COLOUR_SIZE_VARIANT) {
@@ -905,7 +905,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 groupKey = "N/A"
             }
 
-            if (!otherSKUsByGroupKey.containsKey(groupKey)) {
+            if (!otherSKUsByGroupKey.containsKey(groupKey) && !groupKey.isNullOrEmpty()) {
                 this.otherSKUsByGroupKey[groupKey] = ArrayList()
             }
             if (!otherSKUsByGroupKey[groupKey]!!.any { it.sku == otherSkuObj.sku }) this.otherSKUsByGroupKey[groupKey]!!.add(
@@ -1352,7 +1352,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             false -> {
                 productDetails?.apply {
                     otherSkus?.let { list ->
-                        val multiSKUs = list.joinToString(separator = "-") { it.sku }
+                        val multiSKUs = list.joinToString(separator = "-") { it.sku.toString() }
                         productDetailsPresenter?.loadStockAvailability(
                             storeIdForInventory!!,
                             multiSKUs,
@@ -1959,11 +1959,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         val images = ArrayList<String>()
         activity?.apply {
             productDetails?.promotionImages?.let {
-                if (!it.save.isNullOrEmpty()) images.add(it.save)
-                if (!it.wRewards.isNullOrEmpty()) images.add(it.wRewards)
-                if (!it.vitality.isNullOrEmpty()) images.add(it.vitality)
-                if (!it.newImage.isNullOrEmpty()) images.add(it.newImage)
-                if (!it.reduced.isNullOrEmpty()) images.add(it.reduced)
+                if (!it.save.isNullOrEmpty()) images.add(it.save ?: "")
+                if (!it.wRewards.isNullOrEmpty()) images.add(it.wRewards ?: "")
+                if (!it.vitality.isNullOrEmpty()) images.add(it.vitality ?: "")
+                if (!it.newImage.isNullOrEmpty()) images.add(it.newImage ?: "")
+                if (!it.reduced.isNullOrEmpty()) images.add(it.reduced ?: "")
 
             }
 

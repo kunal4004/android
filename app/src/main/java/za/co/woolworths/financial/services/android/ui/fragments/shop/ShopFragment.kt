@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
-
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.Intent
@@ -14,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.black_tool_tip_layout.*
 import kotlinx.android.synthetic.main.fragment_shop.*
 import kotlinx.android.synthetic.main.shop_custom_tab.view.*
@@ -49,6 +49,7 @@ import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_L
  * A simple [Fragment] subclass.
  *
  */
+@AndroidEntryPoint
 class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     OnChildFragmentEvents,
     WMaterialShowcaseView.IWalkthroughActionListener {
@@ -85,9 +86,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
         tvSearchProduct?.setOnClickListener { navigateToProductSearch() }
         imBarcodeScanner?.setOnClickListener { checkCameraPermission() }
-        activity?.supportFragmentManager?.let {
-            shopPagerAdapter = ShopPagerAdapter(it, mTabTitle, this)
-        }
+        shopPagerAdapter = ShopPagerAdapter(childFragmentManager, mTabTitle, this)
         viewpager_main?.offscreenPageLimit = 2
         viewpager_main?.adapter = shopPagerAdapter
         viewpager_main?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {

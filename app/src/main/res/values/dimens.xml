@@ -235,5 +235,6 @@
     <dimen name="product_close_image_size">35sp</dimen>
     <dimen name="vto_count_txt_size">90sp</dimen>
     <dimen name="vto_preview_size">380dp</dimen>
+    <dimen name="hundred_and_ninety_five_dp">195dp</dimen>
 </resources>
 
