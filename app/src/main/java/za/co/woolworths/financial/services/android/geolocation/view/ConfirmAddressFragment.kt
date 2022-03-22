@@ -23,6 +23,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.android.synthetic.main.confirm_address_bottom_sheet_dialog.*
 import kotlinx.android.synthetic.main.current_location_row_layout.*
+import kotlinx.android.synthetic.main.no_connection.view.*
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
@@ -40,6 +41,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment.Companion.DEPARTMENT_LOGIN_REQUEST
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import java.io.IOException
 import java.util.*
 
 class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected,
@@ -122,12 +124,20 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             inSavedAddress?.visibility = View.GONE
             tvConfirmAddress?.visibility = View.VISIBLE
-            fetchAddress()
+            if (confirmAddressViewModel.isConnectedToInternet(requireActivity()))
+                fetchAddress()
+            else{
+                noAddressConnectionLayout?.no_connection_layout?.visibility = View.VISIBLE
+            }
         } else {
             inSavedAddress?.visibility = View.VISIBLE
             tvConfirmAddress?.visibility = View.GONE
         }
         setButtonUI(false)
+        noAddressConnectionLayout?.no_connection_layout?.btnRetry?.setOnClickListener {
+            initViews()
+        }
+
     }
 
     @SuppressLint("MissingPermission")
@@ -136,13 +146,18 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             .addOnCompleteListener(activity as Activity) { task ->
                 if (task.isSuccessful) {
                     mLastLocation = task.result
-                    if (mLastLocation != null) {
-                        val addresses = Geocoder(
-                            activity,
-                            Locale.getDefault()
-                        ).getFromLocation(mLastLocation!!.latitude, mLastLocation!!.longitude, 1)
-                        tvCurrentLocation.text = addresses[0].getAddressLine(0)
-                    } else {
+                    mLastLocation?.let {
+                        try {
+                            val addresses = Geocoder(
+                                activity,
+                                Locale.getDefault()
+                            ).getFromLocation(it.latitude, it.longitude, 1)
+                            tvCurrentLocation.text = addresses[0].getAddressLine(0)
+                        } catch (io: IOException) {
+                            FirebaseManager.logException(io)
+                        }
+                    }
+                    if (mLastLocation == null) {
                         hideCurrentLocation()
                     }
                 } else {

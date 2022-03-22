@@ -34,6 +34,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.BitmapDescriptor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.geo_location_delivery_address.*
+import kotlinx.android.synthetic.main.no_connection.view.*
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
@@ -103,7 +104,14 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
             .findFragmentById(R.id.mapView) as SupportMapFragment
         mapFragment.getMapAsync(this)
         if (isComingFromConfirmAddress == true) {
-            placeId?.let { getDeliveryDetailsFromValidateLocation(it) }
+            placeId?.let {
+                if (confirmAddressViewModel.isConnectedToInternet(requireActivity())) {
+                    getDeliveryDetailsFromValidateLocation(it)
+                    noClickAndCollectConnectionLayout?.no_connection_layout?.visibility = View.GONE
+                } else {
+                    noClickAndCollectConnectionLayout?.no_connection_layout?.visibility = View.VISIBLE
+                }
+            }
         } else {
             setAddressUI(mValidateLocationResponse?.validatePlace?.stores,
                 mValidateLocationResponse)
@@ -131,7 +139,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
                 googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(
                     addressStorList.get(i)?.latitude!!,
                     addressStorList.get(i)?.longitude!!
-                 ), 11f));
+                 ), 11f))
             }
         }
     }
@@ -288,6 +296,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
         }
     }
     override fun tryAgain() {
+        if(confirmAddressViewModel.isConnectedToInternet(requireActivity()))
         placeId?.let { getDeliveryDetailsFromValidateLocation(it) }
     }
 
