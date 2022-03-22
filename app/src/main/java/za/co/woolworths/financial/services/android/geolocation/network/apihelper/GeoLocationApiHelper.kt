@@ -15,7 +15,6 @@ class GeoLocationApiHelper : RetrofitConfig() {
             "",
             getSessionToken(),
             getDeviceIdentityToken(),
-            "SIT2",
             placeId).await()
 
     suspend fun postConfirmLocation(confirmLocationRequest: ConfirmLocationRequest) =
