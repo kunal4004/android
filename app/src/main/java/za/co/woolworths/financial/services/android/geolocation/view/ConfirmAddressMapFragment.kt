@@ -312,12 +312,12 @@ class ConfirmAddressMapFragment :
         } catch (e: Exception) {
             FirebaseManager.logException(e)
         }
-        mAddress.let {
+        mAddress?.let {
             if (!isAddressFromSearch) {
-                autoCompleteTextView?.setText(it)
+                autoCompleteTextView?.setText(getString(R.string.geo_map_address,address1,city,state))
             }
             isAddressFromSearch = false
-            autoCompleteTextView.dismissDropDown()
+            autoCompleteTextView?.dismissDropDown()
         }
 
     }
