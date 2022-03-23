@@ -42,6 +42,7 @@ class AccountSignedInPresenterImpl(
         const val APPLY_NOW_STATE = "APPLY_NOW_STATE"
         const val DEEP_LINKING_PARAMS = "DEEP_LINKING_PARAMS"
         const val ELITE_PLAN ="Elite Plan"
+        const val VIP_PLAN ="VIP Plan"
         const val ELITE_PLAN_MODEL: String = "ELITE_PLAN_MODEL"
         fun getProductCode(applyNowState: ApplyNowState): String {
             return when (applyNowState) {
@@ -170,8 +171,8 @@ class AccountSignedInPresenterImpl(
                         getAccount()?.let { mainView?.showAccountInArrears(account = it) }
                     }
                 }
-                //,ActionText.VIEW_ELITE_PLAN.value
-                ActionText.VIEW_TREATMENT_PLAN.value -> {
+
+                ActionText.VIEW_TREATMENT_PLAN.value ,ActionText.VIEW_ELITE_PLAN.value-> {
                     if (productOffering.isViewTreatmentPlanSupported()) {
                         mainView?.showPlanButton(state, response.eligibilityPlan)
                         if (showPopupIfNeeded) {
