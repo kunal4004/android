@@ -2447,6 +2447,7 @@
     <string name="all_products_available">All Products Available</string>
     <string name="next_dash_delivery_timeslot_text">Next Dash Delivery timeslot</string>
     <string name="my_shopping_lists">My Shopping Lists</string>
+    <string name="hi">HI&#160;</string>
 
 
     <string name="product_listing_price_from">From</string>

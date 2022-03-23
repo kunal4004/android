@@ -327,7 +327,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         TextView txtEmptyStateTitle = view.findViewById(R.id.txt_dash_title);
         if (SessionUtilities.getInstance().isUserAuthenticated()) {
             String firstName = SessionUtilities.getInstance().getJwt().name.get(0);
-            txtEmptyStateTitle.setText("HI " + firstName + "," + System.getProperty("line.separator") + getString(R.string.empty_cart_text));
+            txtEmptyStateTitle.setText(getString(R.string.hi) + firstName + "," + System.getProperty("line.separator") + getString(R.string.empty_cart_text));
         }
 
         Button btnGoToProduct = view.findViewById(R.id.btn_dash_set_address);
@@ -387,7 +387,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         String firstName = SessionUtilities.getInstance().getJwt().name.get(0);
         view.findViewById(R.id.empty_state_template).setVisibility(View.VISIBLE);
         TextView txtEmptyStateTitle = view.findViewById(R.id.txt_dash_title);
-        txtEmptyStateTitle.setText("HI " + firstName + "," + System.getProperty("line.separator") + getString(R.string.empty_cart_text));
+        txtEmptyStateTitle.setText(getString(R.string.hi) + firstName + "," + System.getProperty("line.separator") + getString(R.string.empty_cart_text));
     }
 
     public void onRemoveItem(boolean visibility) {
