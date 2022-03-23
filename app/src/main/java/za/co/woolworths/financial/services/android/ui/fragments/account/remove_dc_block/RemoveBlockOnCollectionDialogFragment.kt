@@ -52,7 +52,6 @@ class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.On
                 ELITE_PLAN -> when (state) {
                     ApplyNowState.STORE_CARD, ApplyNowState.PERSONAL_LOAN -> {
                         visibility = VISIBLE
-                        payNowButton.text = bindString(R.string.pay_now)
                     }
                     else -> {
                         visibility = GONE
