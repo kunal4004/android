@@ -38,7 +38,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.Departments
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.DISPLAY_TOAST_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
-import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashCollectionStoreFragment
+import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFullfilmentCollectionStoreFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_3000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_4000_MS
@@ -282,7 +282,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             val fragment = viewpager_main?.adapter?.instantiateItem(
                 viewpager_main,
                 viewpager_main.currentItem
-            ) as? DashCollectionStoreFragment
+            ) as? ChangeFullfilmentCollectionStoreFragment
             callOnActivityResult(grantResults, fragment, requestCode)
         }
         permissionUtils?.onRequestPermissionsResult(requestCode, permissions, grantResults)

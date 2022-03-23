@@ -123,7 +123,7 @@ import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
-import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashCollectionStoreFragment;
+import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFullfilmentCollectionStoreFragment;
 import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.DeepLinkingUtils;
@@ -990,7 +990,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
         } else if (fragment instanceof ProductDetailsFragment) {
             fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        } else if (fragment instanceof DashCollectionStoreFragment) {
+        } else if (fragment instanceof ChangeFullfilmentCollectionStoreFragment) {
             fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 

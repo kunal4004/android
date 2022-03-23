@@ -165,7 +165,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     private ArrayList<CartItemGroup> cartItems;
 
     public ConstraintLayout itemLimitsBanner;
-    private RelativeLayout orderTotalLayout, rlLocationSelectedLayout, parentLayout;
+    private RelativeLayout orderTotalLayout, locationSelectedRelativeLayout, parentLayout;
     public TextView itemLimitsMessage, itemLimitsCounter, upSellMessageTextView, orderTotal;
     private ImageView deliverLocationIcon, deliverLocationRightArrow;
     private NestedScrollView nestedScrollView;
@@ -297,7 +297,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         rlCheckOut = view.findViewById(R.id.rlCheckOut);
         parentLayout = view.findViewById(R.id.parentLayout);
         pBar = view.findViewById(R.id.loadingBar);
-        rlLocationSelectedLayout = view.findViewById(R.id.locationSelectedLayout);
+        locationSelectedRelativeLayout = view.findViewById(R.id.locationSelectedLayout);
         upSellMessageTextView = view.findViewById(R.id.upSellMessageTextView);
         tvDeliveryLocation = view.findViewById(R.id.tvDeliveryLocation);
         tvDeliveringToText = view.findViewById(R.id.tvDeliveringTo);
@@ -317,7 +317,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
         btnCheckOut.setOnClickListener(this);
         orderTotalLayout.setOnClickListener(this);
-        rlLocationSelectedLayout.setOnClickListener(this);
+        locationSelectedRelativeLayout.setOnClickListener(this);
 
         //Empty cart UI
         view.findViewById(R.id.empty_state_template).setVisibility(View.VISIBLE);
@@ -666,7 +666,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             rlCheckOut.setVisibility(View.GONE);
             onRemoveSuccess();
             getView().findViewById(R.id.empty_state_template).setVisibility(View.VISIBLE);
-            Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
+            Utils.deliveryLocationEnabled(getActivity(), true, locationSelectedRelativeLayout);
             resetToolBarIcons();
             isMaterialPopUpClosed = true;
             showEditDeliveryLocationFeatureWalkthrough();
@@ -730,7 +730,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             rlCheckOut.setVisibility(View.GONE);
             rvCartList.setVisibility(View.GONE);
             getView().findViewById(R.id.empty_state_template).setVisibility(View.VISIBLE);
-            Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
+            Utils.deliveryLocationEnabled(getActivity(), true, locationSelectedRelativeLayout);
         }
 
         if (productCountMap != null) {
@@ -896,7 +896,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 
     private Call<ShoppingCartResponse> loadShoppingCart(final boolean onItemRemove) {
-        Utils.deliveryLocationEnabled(getActivity(), false, rlLocationSelectedLayout);
+        Utils.deliveryLocationEnabled(getActivity(), false, locationSelectedRelativeLayout);
         rlCheckOut.setEnabled(onItemRemove ? false : true);
         rlCheckOut.setVisibility(onItemRemove ? View.VISIBLE : View.GONE);
         pBar.setVisibility(View.VISIBLE);
@@ -922,7 +922,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                             if (onItemRemove) {
                                 cartProductAdapter.setEditMode(true);
                             }
-                            Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
+                            Utils.deliveryLocationEnabled(getActivity(), true, locationSelectedRelativeLayout);
                             Suburb suburb = new Suburb();
                             if (shoppingCartResponse.data[0].suburbId.contains("st")) {
                                 suburb.id = shoppingCartResponse.data[0].suburbId.replace("st", "");
@@ -942,12 +942,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                             onChangeQuantityComplete();
                             break;
                         default:
-                            Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
+                            Utils.deliveryLocationEnabled(getActivity(), true, locationSelectedRelativeLayout);
                             if (shoppingCartResponse.response != null)
                                 Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, shoppingCartResponse.response.desc, true);
                             break;
                     }
-                    Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
+                    Utils.deliveryLocationEnabled(getActivity(), true, locationSelectedRelativeLayout);
                 } catch (Exception ex) {
                     FirebaseManager.Companion.logException(ex);
                 }
@@ -961,7 +961,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                         @Override
                         public void run() {
                             if (!onItemRemove) {
-                                Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
+                                Utils.deliveryLocationEnabled(getActivity(), true, locationSelectedRelativeLayout);
                                 rvCartList.setVisibility(View.GONE);
                                 rlCheckOut.setVisibility(View.GONE);
                                 if (pBar != null)
@@ -1090,7 +1090,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     } else {
                         onRemoveItem(false);
                     }
-                    Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
+                    Utils.deliveryLocationEnabled(getActivity(), true, locationSelectedRelativeLayout);
                 } catch (Exception ex) {
                     if (ex.getMessage() != null)
                         Log.e(TAG, ex.getMessage());
@@ -1642,7 +1642,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     }
 
     public void deliveryLocationEnabled(boolean isEditMode) {
-        Utils.deliveryLocationEnabled(getActivity(), isEditMode, rlLocationSelectedLayout);
+        Utils.deliveryLocationEnabled(getActivity(), isEditMode, locationSelectedRelativeLayout);
     }
 
     @Override
@@ -1725,7 +1725,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     @Override
     public void onWalkthroughActionButtonClick(WMaterialShowcaseView.Feature feature) {
         if (feature == WMaterialShowcaseView.Feature.DELIVERY_LOCATION)
-            this.onClick(rlLocationSelectedLayout);
+            this.onClick(locationSelectedRelativeLayout);
     }
 
     @Override

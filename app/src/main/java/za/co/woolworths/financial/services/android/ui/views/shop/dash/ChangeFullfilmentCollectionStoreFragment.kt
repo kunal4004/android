@@ -22,7 +22,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.Departments
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1
 import za.co.woolworths.financial.services.android.util.Utils
 
-class DashCollectionStoreFragment : Fragment(R.layout.layout_dash_collection_store) {
+class ChangeFullfilmentCollectionStoreFragment : Fragment(R.layout.layout_dash_collection_store) {
 
     private var fusedLocationClient: FusedLocationProviderClient? = null
     private var isLocationModalShown: Boolean = false
@@ -49,7 +49,7 @@ class DashCollectionStoreFragment : Fragment(R.layout.layout_dash_collection_sto
 
         if (isPermissionGranted && Utils.isLocationEnabled(context)) {
             fusedLocationClient?.lastLocation?.addOnSuccessListener {
-                this@DashCollectionStoreFragment.location = it
+                this@ChangeFullfilmentCollectionStoreFragment.location = it
 
             }
         } else {
@@ -130,7 +130,7 @@ class DashCollectionStoreFragment : Fragment(R.layout.layout_dash_collection_sto
         override fun onLocationResult(locationResult: LocationResult?) {
             locationResult ?: return
             for (location in locationResult.locations) {
-                this@DashCollectionStoreFragment.location = location
+                this@ChangeFullfilmentCollectionStoreFragment.location = location
                 hideLocationDisabledUi()
                 stopLocationUpdates()
                 break
