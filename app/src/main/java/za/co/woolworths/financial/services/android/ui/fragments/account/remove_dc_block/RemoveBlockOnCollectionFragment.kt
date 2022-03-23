@@ -14,13 +14,14 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.account_in_arrears_layout.*
 import kotlinx.android.synthetic.main.remove_block_dc_fragment.*
 import kotlinx.android.synthetic.main.view_pay_my_account_button.*
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.Account
@@ -355,8 +356,11 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, Eligib
                     helpWithPayment.text = bindString(R.string.view_your_payment_plan)
                 }
             }
-            helpWithPaymentView.visibility =
-                if (it?.planType.equals(ELITE_PLAN)) VISIBLE else GONE
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(AppConstant.DELAY_1000_MS)
+                helpWithPaymentView.visibility =
+                    if (it?.planType.equals(ELITE_PLAN)) VISIBLE else GONE
+            }
         }
     }
 }
