@@ -295,7 +295,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun setUpToolBar() {
         (activity as? BottomNavigationActivity)?.apply {
             hideBottomNavigationMenu()
-            Handler().postDelayed({ hideToolbar() }, DELAY_300_MS)
+            // Animation delay
+            Handler().postDelayed({ hideToolbar() }, DELAY_500_MS)
         }
     }
 
@@ -1776,7 +1777,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun hideProductDetailsLoading() {
         activity?.apply {
             hideProgressBar()
-            viewsToHideOnProductLoading.visibility = View.VISIBLE
+            viewsToHideOnProductLoading?.visibility = View.VISIBLE
             updateAddToCartButtonForSelectedSKU()
         }
 
