@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.google.android.gms.maps.GoogleMap
@@ -78,8 +77,11 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
         bundle?.apply {
             placeId = this.getString(DeliveryAddressConfirmationFragment.KEY_PLACE_ID, "")
             isComingFromConfirmAddress = getBoolean(ConfirmAddressFragment.IS_COMING_CONFIRM_ADD,false)
-            mValidateLocationResponse =
-                getSerializable(VALIDATE_RESPONSE) as ValidateLocationResponse
+            if(containsKey(VALIDATE_RESPONSE)){
+                mValidateLocationResponse =
+                    getSerializable(VALIDATE_RESPONSE) as ValidateLocationResponse
+            }
+
         }
     }
 

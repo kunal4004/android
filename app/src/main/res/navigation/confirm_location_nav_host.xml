@@ -60,22 +60,9 @@
             app:popEnterAnim="@anim/slide_from_left"
             app:popExitAnim="@anim/slide_to_right" />
         <action
-            android:id="@+id/action_confirmAddressMapFragment_to_checkoutAddAddressNewUserFragment"
-            app:destination="@id/checkoutAddAddressNewUserFragment"
-            app:enterAnim="@anim/slide_in_from_right"
-            app:exitAnim="@anim/slide_to_left"
-            app:popEnterAnim="@anim/slide_from_left"
-            app:popExitAnim="@anim/slide_to_right"/>
-        <action
-            android:id="@+id/action_confirmAddressMapFragment_to_checkoutCollectingFragment"
-            app:destination="@id/geoCheckoutCollectingFragment"
-            app:enterAnim="@anim/slide_in_from_right"
-            app:exitAnim="@anim/slide_to_left"
-            app:popEnterAnim="@anim/slide_from_left"
-            app:popExitAnim="@anim/slide_to_right"/>
-        <action
-            android:id="@+id/action_confirmAddressMapFragment2_to_geoCheckoutCollectingFragment"
-            app:destination="@id/geoCheckoutCollectingFragment" />
+            android:id="@+id/actionClickAndCollectStoresFragment"
+            app:destination="@id/clickAndCollectStoresFragment" />
+
 
     </fragment>
 
