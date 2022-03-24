@@ -2,6 +2,8 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.shop;
 
 import static android.app.Activity.RESULT_OK;
 import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY;
+import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.DELIVERY_TYPE;
+import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION;
 import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.IS_DELIVERY;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
@@ -64,10 +66,12 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
+import za.co.woolworths.financial.services.android.checkout.service.network.Address;
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse;
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils;
 import za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressFragment;
 import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
@@ -523,13 +527,40 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
     private void navigateToCheckout(SavedAddressResponse response) {
         Activity activity = getActivity();
-        if (activity != null) {
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT, getActivity());
+        if (KotlinUtils.Companion
+                .getPreferredDeliveryType().equals(Delivery.STANDARD)
+                &&  !TextUtils.isEmpty(response.getDefaultAddressNickname())
+        )  {
+           //   - CNAV : Checkout  activity
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT,
+                    getActivity());
             Intent checkoutActivityIntent = new Intent(getActivity(), CheckoutActivity.class);
             checkoutActivityIntent.putExtra(SAVED_ADDRESS_KEY, response);
-            checkoutActivityIntent.putExtra(IS_DELIVERY, KotlinUtils.Companion.getPreferredDeliveryType());
-            activity.startActivityForResult(checkoutActivityIntent, REQUEST_PAYMENT_STATUS);
-            activity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_to_left);
+            checkoutActivityIntent.putExtra(GEO_SLOT_SELECTION, true);
+            activity.startActivityForResult(checkoutActivityIntent,
+                    REQUEST_PAYMENT_STATUS);
+            activity.overridePendingTransition(R.anim.slide_from_right,
+                    R.anim.slide_out_to_left);
+        } else {
+//            - GNAV
+//            CNC or No Address or no default address*/
+            String placeId = "";
+            if (GeoUtils.Companion.getDelivertyType() == Delivery.CNC) {
+                placeId = GeoUtils.Companion.getPlaceId();
+            } else {
+                placeId = GeoUtils.Companion.getSelectedPlaceId(response);
+            }
+
+            KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
+                    requireActivity(),
+                    CartFragment.REQUEST_PAYMENT_STATUS,
+                    GeoUtils.Companion.getDelivertyType(),
+                    placeId,
+                    true,
+                    false,
+                    response,
+                    null,
+                    "");
         }
     }
 
@@ -624,22 +655,24 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
     private void locationSelectionClicked() {
         Activity activity = getActivity();
-//        if (activity != null) {
-  //         KotlinUtils.Companion.presentEditDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE, null);
-//        }
 
-        BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
-
-        if (bottomNavigationActivity instanceof BottomNavigationActivity) {
+        if (activity != null) {
+            String placeId = "";
             if (Utils.getPreferredDeliveryLocation() != null) {
-                bottomNavigationActivity.pushFragmentSlideUp(
-                        DeliveryAddressConfirmationFragment.newInstance(
-                                Utils.getPreferredDeliveryLocation().fulfillmentDetails.getAddress().getPlaceId(),
-                                KotlinUtils.Companion.getPreferredDeliveryType()));
-
-            } else {
-                bottomNavigationActivity.pushFragmentSlideUp(ConfirmAddressFragment.Companion.newInstance());
+                if (Utils.getPreferredDeliveryLocation().fulfillmentDetails.getAddress() != null) {
+                    placeId = Utils.getPreferredDeliveryLocation().fulfillmentDetails.getAddress().getPlaceId();
+                }
             }
+            KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
+                    activity, REQUEST_SUBURB_CHANGE,
+                    KotlinUtils.Companion.getPreferredDeliveryType(),
+                    placeId,
+                    false,
+                    false,
+                    null,
+                    null,
+                    ""
+            );
         }
     }
 

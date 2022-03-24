@@ -3,9 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clickAndCollectLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:context="za.co.woolworths.financial.services.android.geolocation.view.ClickAndCollectStoresFragment">
@@ -77,8 +79,6 @@
         </androidx.cardview.widget.CardView>
 
         <TextView
-            android:textStyle="normal"
-            android:textColor="@color/black"
             android:id="@+id/tvStoresNearMe"
             style="@style/myriad_pro_semi_bold_black_15_text_style"
             android:layout_width="0dp"
@@ -86,11 +86,15 @@
             android:layout_marginStart="@dimen/twenty_four_dp"
             android:layout_marginTop="@dimen/twenty_four_dp"
             android:layout_marginEnd="@dimen/twenty_four_dp"
-            tools:text="18 Strores near me"
+            android:ellipsize="end"
             android:lineSpacingExtra="@dimen/_2sdp"
-            app:layout_constraintEnd_toEndOf="@id/btChange"
+            android:maxLines="1"
+            android:textColor="@color/black"
+            android:textStyle="normal"
+            app:layout_constraintEnd_toStartOf="@id/btChange"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cvMapView" />
+            app:layout_constraintTop_toBottomOf="@id/cvMapView"
+            tools:text="18 Strores near me" />
 
         <TextView
             android:id="@+id/tvAddress"
@@ -100,15 +104,15 @@
             android:layout_marginStart="@dimen/twenty_four_dp"
             android:layout_marginTop="@dimen/two_dp"
             android:layout_marginEnd="@dimen/_5sdp"
-            android:lineSpacingExtra="@dimen/_2sdp"
             android:ellipsize="end"
+            android:lineSpacingExtra="@dimen/_2sdp"
             android:minLines="1"
-            android:translationY="-1sp"
-            tools:text="28 Eastlake Island Drive"
             android:textColor="@color/color_444444"
-            app:layout_constraintEnd_toEndOf="@id/btChange"
+            android:translationY="-1sp"
+            app:layout_constraintEnd_toStartOf="@id/btChange"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvStoresNearMe" />
+            app:layout_constraintTop_toBottomOf="@id/tvStoresNearMe"
+            tools:text="28 Eastlake Island Drive" />
 
         <Button
             android:id="@+id/btChange"
@@ -162,18 +166,18 @@
             tools:listitem="@layout/store_row_layout" />
 
         <ProgressBar
-            android:id="@+id/progressBar"
+            android:id="@+id/clickCollectProgress"
             style="?android:attr/progressBarStyle"
             android:layout_width="@dimen/fourty_dp"
             android:layout_height="@dimen/fourty_dp"
             android:indeterminate="true"
+            android:visibility="gone"
             android:indeterminateTint="@color/black"
             android:indeterminateTintMode="src_atop"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cvMapView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+         />
 
         <TextView
             android:id="@+id/tvConfirmStore"
@@ -193,6 +197,17 @@
             android:textSize="@dimen/twelve_sp"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent" />
+
+
+
+        <include
+            android:id="@+id/noClickAndCollectConnectionLayout"
+            layout="@layout/no_connection"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

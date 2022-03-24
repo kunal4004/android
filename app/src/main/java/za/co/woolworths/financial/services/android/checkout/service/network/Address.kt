@@ -49,4 +49,16 @@ class Address : Serializable {
     @SerializedName("verified")
     var verified: Boolean = false
 
+    @SerializedName("newAddress")
+    var newAddress: Boolean = false
+
+    @SerializedName("updateAddressInfo")
+    var updateAddressInfo: Boolean = false
+
+    @SerializedName("storeAddress")
+    var storeAddress: Boolean = false
+
+    @SerializedName("storeId")
+    var storeId: String? = null
+
 }

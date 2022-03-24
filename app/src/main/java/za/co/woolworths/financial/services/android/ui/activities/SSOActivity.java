@@ -44,11 +44,14 @@ import java.util.Map;
 import java.util.UUID;
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest;
+import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -60,6 +63,7 @@ import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
 import za.co.woolworths.financial.services.android.util.ServiceTools;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.wenum.ConfirmLocation;
 
 public class SSOActivity extends WebViewActivity {
 
@@ -644,6 +648,9 @@ public class SSOActivity extends WebViewActivity {
 
 					NotificationUtils.getInstance().sendRegistrationToServer();
 					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.ACTIVE);
+					if (KotlinUtils.Companion.getAnonymousUserLocationDetails() != null) {
+						new ConfirmLocation().postRequest(KotlinUtils.Companion.getAnonymousUserLocationDetails());
+					}
 					QueryBadgeCounter.getInstance().queryBadgeCount();
 
 					setUserATGId(jwtDecodedModel);

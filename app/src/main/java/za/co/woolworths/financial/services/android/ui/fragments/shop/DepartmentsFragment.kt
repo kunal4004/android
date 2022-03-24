@@ -49,6 +49,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.sub_cate
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 class DepartmentsFragment : DepartmentExtensionFragment(),
     DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection {
@@ -239,32 +240,26 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
     }
 
     private fun onEditDeliveryLocation() {
+        var deliveryType: Delivery? = Delivery.STANDARD
+        var placeId = ""
         if (SessionUtilities.getInstance().isUserAuthenticated) {
-            if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address != null) {
-                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.let {
-                    (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                        DeliveryAddressConfirmationFragment.newInstance(
-                            it?.placeId,
-                            KotlinUtils.getPreferredDeliveryType()
-                        )
-                    )
-                }
-            } else {
-                (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(ConfirmAddressFragment.newInstance())
+            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
+                deliveryType = Delivery.getType(it.deliveryType)
+                placeId = it.address?.placeId ?: ""
             }
         } else {
-            ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
+            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let {
+                deliveryType = Delivery.getType(it.deliveryType)
+                placeId = it.address?.placeId ?: ""
+            }
         }
 
-//       activity?.apply {
-//            if (!ConfirmAddressDialog.dialogInstance.isVisible)
-//                ConfirmAddressDialog.newInstance().show(
-//                    this@DepartmentsFragment.childFragmentManager,
-//                    ConfirmAddressDialog::class.java.simpleName
-//                )
-//        }
-
-
+        KotlinUtils.presentEditDeliveryGeoLocationActivity(
+            requireActivity(),
+            EditDeliveryLocationActivity.REQUEST_CODE,
+            deliveryType,
+            placeId
+        )
     }
 
 

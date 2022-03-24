@@ -1,41 +1,40 @@
 package za.co.woolworths.financial.services.android.geolocation.network.model
 
 import com.google.gson.annotations.SerializedName
+import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
+import java.io.Serializable
 
-class ValidatePlace {
+data class ValidatePlace (
     @SerializedName("hasDeliverySlotReservations")
-    var hasDeliverySlotReservations: Boolean? = null
+    var hasDeliverySlotReservations: Boolean? = null,
 
     @SerializedName("unDeliverableCommerceItems")
-    var unDeliverableCommerceItems: List<Any>? = null
+    var unDeliverableCommerceItems: List<Any>? = null,
 
     @SerializedName("stores")
-    var stores: List<Store>? = null
+    var stores: List<Store>? = null,
 
     @SerializedName("quantityLimit")
-    var quantityLimit: QuantityLimit? = null
+    var quantityLimit: QuantityLimit? = null,
 
     @SerializedName("deliverable")
-    var deliverable: Boolean? = null
+    var deliverable: Boolean? = null,
 
     @SerializedName("links")
-    var links: List<Any>? = null
+    var links: List<Any>? = null,
 
     @SerializedName("deliverySlotsDetails")
-    var deliverySlotsDetails: String? = null
+    var deliverySlotsDetails: String? = null,
 
     @SerializedName("placeDetails")
-    var placeDetails: PlaceDetails? = null
+    var placeDetails: PlaceDetails? = null,
 
     @SerializedName("unSellableCommerceItems")
-    var unSellableCommerceItems: List<Any>? = null
-
-    @SerializedName("deliveryStatus")
-    var deliveryStatus: DeliveryStatus? = null
+    var unSellableCommerceItems: MutableList<UnSellableCommerceItem>? = null,
 
     @SerializedName("firstAvailableFoodDeliveryDate")
-    var firstAvailableFoodDeliveryDate: String? = null
+    var firstAvailableFoodDeliveryDate: String? = null,
 
     @SerializedName("firstAvailableOtherDeliveryDate")
-    var firstAvailableOtherDeliveryDate: String? = null
-}
+    var firstAvailableOtherDeliveryDate: String? = null,
+): Serializable

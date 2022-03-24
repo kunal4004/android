@@ -1,23 +1,24 @@
 package za.co.woolworths.financial.services.android.geolocation.network.model
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
-class PlaceDetails {
+data class PlaceDetails (
     @SerializedName("address1")
-    var address1: String? = null
+    var address1: String? = null,
 
     @SerializedName("latitude")
-    var latitude: Double? = null
+    var latitude: Double? = null,
 
     @SerializedName("nickname")
-    var nickname: String? = null
+    var nickname: String? = null,
 
     @SerializedName("placeId")
-    var placeId: String? = null
+    var placeId: String? = null,
 
     @SerializedName("id")
-    var id: String? = null
+    var id: String? = null,
 
     @SerializedName("longitude")
-    var longitude: Double? = null
-}
+    var longitude: Double? = null,
+):Serializable

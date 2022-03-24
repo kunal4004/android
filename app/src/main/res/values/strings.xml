@@ -504,6 +504,7 @@
     <string name="favourite_delivery_location_description">In order to improve your shopping experience you can set your favourite delivery location. We will use this as your default delivery location.</string>
     <string name="product_unavailable_desc">Sorry, this product is unavailable in your delivery location</string>
     <string name="delivering_to">Delivering to</string>
+    <string name="delivering_to_geo"> <![CDATA[Delivering to <font color=\'#000000\'><b>%s</b></font>]]></string>
     <string name="delivering_location_popup_message">Your Delivery Location must match your Delivery Address in Checkout. Changing your Delivery Location can affect the product availability of items in your cart.</string>
     <string name="confirm_size_range_desc">size range</string>
     <string name="set_up_device_biometrics_title">BIOMETRICS&#47;PIN</string>
@@ -1575,6 +1576,7 @@
     <string name="select_a_store">Select a Store</string>
     <string name="delivery_or_collection">Delivery or Collection?</string>
     <string name="collecting_from">Collecting from</string>
+    <string name="collecting_from_geo"> <![CDATA[Collecting from <font color=\'#000000\'><b>%s</b></font>]]></string>
     <string name="select_your_collection_store">Select your collection store:</string>
     <string name="select_your_delivery_location">Select your delivery location:</string>
     <string name="remove_these_items_continue">remove these items &amp; continue</string>
@@ -2307,9 +2309,9 @@
     <string name="my_address_details">My Address Details</string>
     <string name="address_nickname_text_view">Address Nickname: *</string>
     <string name="unit_complex_floor_text_view">Unit No/Complex/Floor/Building:</string>
-    <string name="suburb_colon_text_view">Suburb: *</string>
-    <string name="province_colon_text_view">Province: *</string>
-    <string name="postal_code_colon_text_view">Postal Code: *</string>
+    <string name="suburb_colon_text_view">Suburb:</string>
+    <string name="province_colon_text_view">Province:</string>
+    <string name="postal_code_colon_text_view">Postal Code:</string>
     <string name="optional_hint">Optional</string>
     <string name="places_autocomplete_tv_hint">Enter a new address</string>
     <string name="add_a_new_address">Add A New Address</string>
@@ -2432,9 +2434,7 @@
     <string name="unlimited">Unlimited</string>
     <string name="food">Food</string>
     <string name="fashion_beauty">Fashion and Beauty</string>
-
     <string name="geoloc_ClickNCollectValue">28 Eastlake Isla...</string>
-
     <string name="collection_store_title">There Are No Collection Stores Available Near You</string>
     <string name="change_location">CHANGE LOCATION</string>
     <string name="enter_your_street_number_and_name">Enter your street number and name</string>
@@ -2446,14 +2446,13 @@
     <string name="confirm_collection_location_desc">Your current collection store is set to </string>
     <string name="confirm_btn">Confirm</string>
     <string name="edt_location">EDIT LOCATION </string>
-
-
     <string name="please_select_the_store_you_are_collecting_from">Please select the store you\nare collecting from.</string>
     <string name="search_by_store_or_location">Search by store or location</string>
     <string name="change">change</string>
     <string name="near_stores">%d Strores near me.</string>
     <string name="where_do_you_want_to_collect">Where do you want to collect?.</string>
-
-
     <string name="product_listing_price_from">From</string>
+    <string name="geo_loc_error_msg">We can’t seem to find you. Please enter number and name of your street ,or drag the pin to your exact location.</string>
+    <string name="fashion_beauty_geo">Fashion,Beauty,Home</string>
+
 </resources>

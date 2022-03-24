@@ -12,10 +12,10 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_checkout.*
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.GEO_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.IS_DELIVERY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.baseFragBundle
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.ProvinceSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.SuburbSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
@@ -32,8 +32,10 @@ import za.co.woolworths.financial.services.android.util.Utils
  */
 class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
 
+    private var geoSlotSelection: Boolean? = false
     private var navHostFrag = NavHostFragment()
     var savedAddressResponse: SavedAddressResponse? = null
+    var whoIsCollectingString: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,13 +43,18 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         setActionBar()
         intent?.extras?.apply {
             savedAddressResponse = getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
+            geoSlotSelection = getBoolean(GEO_SLOT_SELECTION , false)
+            whoIsCollectingString = getString(CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS, "");
             baseFragBundle = Bundle()
             baseFragBundle?.putString(
                 SAVED_ADDRESS_KEY,
                 Utils.toJson(savedAddressResponse)
             )
+            baseFragBundle?.putString(
+                CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS,
+                whoIsCollectingString
+            )
             baseFragBundle?.putBoolean(IS_DELIVERY, if (containsKey(IS_DELIVERY)) getBoolean(IS_DELIVERY) else true)
-            baseFragBundle?.putBoolean(ConfirmAddressFragment.IS_COMING_FROM_CONFIRM_ADDRESS, true)
         }
         loadNavHostFragment()
     }
@@ -121,13 +128,16 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
 
         graph.startDestination = when {
 
-            baseFragBundle?.containsKey(IS_DELIVERY) == true && baseFragBundle?.getBoolean(IS_DELIVERY) == false -> {
-                R.id.checkoutWhoIsCollectingFragment
+            whoIsCollectingString.isNullOrEmpty() == false -> {
+                R.id.checkoutReturningUserCollectionFragment
             }
 
-            baseFragBundle?.containsKey(ConfirmAddressFragment.IS_COMING_FROM_CONFIRM_ADDRESS)==true
-                    && baseFragBundle?.getBoolean(ConfirmAddressFragment.IS_COMING_FROM_CONFIRM_ADDRESS) == true -> {
-                R.id.CheckoutAddAddressNewUserFragment
+            geoSlotSelection == true -> {
+                R.id.CheckoutAddAddressReturningUserFragment
+            }
+
+            baseFragBundle?.containsKey(IS_DELIVERY) == true && baseFragBundle?.getBoolean(IS_DELIVERY) == false -> {
+                R.id.checkoutWhoIsCollectingFragment
             }
 
             savedAddressResponse?.addresses.isNullOrEmpty() -> {

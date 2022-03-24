@@ -21,6 +21,7 @@ import kotlinx.android.synthetic.main.unsellable_items_fragment.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -103,14 +104,23 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.changeStore -> {
-                setFragmentResult(CheckoutAddressConfirmationFragment.UNSELLABLE_CHANGE_STORE_REQUEST_KEY, Bundle())
-                navController?.navigateUp()
+                /*CANCEl button */
+                UnSellableItemsLiveData.value = false
+                confirmRemoveItems()
             }
-            R.id.removeItems -> executeSetSuburb()
+            //R.id.removeItems ->  executeSetSuburb()
+            R.id.removeItems -> {
+                UnSellableItemsLiveData.value = true
+                confirmRemoveItems()
+            }
         }
     }
 
-    private fun executeSetSuburb() {
+    private fun confirmRemoveItems() {
+         navController?.navigateUp()
+    }
+
+    /*private fun executeSetSuburb() {
 
         showSetSuburbProgressBar()
         selectedSuburb?.let {
@@ -147,9 +157,9 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
                 }
             }, SetDeliveryLocationSuburbResponse::class.java))
         }
-    }
+    }*/
 
-    fun navigateToSuburbConfirmationFragment() {
+    /*fun navigateToSuburbConfirmationFragment() {
         bundle?.apply {
             putString(EditDeliveryLocationActivity.DELIVERY_TYPE, deliveryType?.name)
             putString("SUBURB", Utils.toJson(selectedSuburb))
@@ -178,5 +188,5 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
             window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         }
-    }
+    }*/
 }

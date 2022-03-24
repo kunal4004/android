@@ -33,16 +33,15 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import com.awfs.coordination.R
-import com.google.android.gms.tasks.Task
 import com.google.common.reflect.TypeToken
-import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.installations.FirebaseInstallations
-import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.layout_link_device_validate_otp.*
 import kotlinx.coroutines.GlobalScope
 import org.json.JSONObject
+import za.co.woolworths.financial.services.android.checkout.service.network.Address
+import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_COLLECTING_DETAILS
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -84,6 +83,13 @@ class KotlinUtils {
         const val COLLECTIONS_EXIT_URL = "collectionsExitUrl"
         const val TREATMENT_PLAN = "treamentPlan"
         const val RESULT_CODE_CLOSE_VIEW = 2203
+        var GEO_REQUEST_CODE = -1
+
+        var IS_COMING_FROM_CNC_SLOT_SELECTION: Boolean = false
+        var IS_COMING_FROM_DEL_SLOT_SELECTION: Boolean = false
+        var IS_COMING_FROM_SLOT_SELECTION: Boolean = false
+        var IS_COMING_FROM_CHECKOUT: Boolean = false
+
 
         fun highlightTextInDesc(
             context: Context?,
@@ -357,6 +363,36 @@ class KotlinUtils {
             return SimpleDateFormat("dd-MM-yyy").format(date)
         }
 
+        fun presentEditDeliveryGeoLocationActivity(
+            activity: Activity?,
+            requestCode: Int,
+            delivery: Delivery? = Delivery.STANDARD,
+            placeId: String? = null,
+            isComingFromCheckout: Boolean = false,
+            isComingFromSlotSelection: Boolean = false,
+            savedAddressResposne: SavedAddressResponse? = null,
+            defaultAddress: Address? = null,
+            whoISCollecting: String? = null
+        ) {
+
+            activity?.apply {
+                val mIntent = Intent(this, EditDeliveryLocationActivity::class.java)
+                val mBundle = Bundle()
+                mBundle.putString(EditDeliveryLocationActivity.DELIVERY_TYPE, delivery.toString())
+                mBundle.putString(EditDeliveryLocationActivity.PLACE_ID, placeId)
+                mBundle.putBoolean(EditDeliveryLocationActivity.IS_COMING_FROM_CHECKOUT, isComingFromCheckout)
+                mBundle.putBoolean(EditDeliveryLocationActivity.IS_COMING_FROM_SLOT_SELECTION, isComingFromSlotSelection)
+                mBundle.putSerializable(EditDeliveryLocationActivity.SAVED_ADDRESS_RESPONSE, savedAddressResposne)
+                mBundle.putSerializable(EditDeliveryLocationActivity.DEFAULT_ADDRESS, defaultAddress)
+                mBundle.putSerializable(EditDeliveryLocationActivity.DEFAULT_ADDRESS, defaultAddress)
+                mBundle.putString(KEY_COLLECTING_DETAILS, whoISCollecting)
+                mIntent.putExtra("bundle", mBundle)
+                GEO_REQUEST_CODE = requestCode
+                startActivityForResult(mIntent, requestCode)
+                overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+            }
+        }
+
         fun presentEditDeliveryLocationActivity(
             activity: Activity?,
             requestCode: Int,
@@ -386,15 +422,15 @@ class KotlinUtils {
             tvDeliveryLocation: WTextView,
             deliverLocationIcon: ImageView?
         ) {
-            with(shoppingDeliveryLocation.fulfillmentDetails) {
-                when (Delivery.getType(deliveryType)) {
+            with(shoppingDeliveryLocation?.fulfillmentDetails) {
+                when (Delivery?.getType(deliveryType)) {
                     Delivery.CNC -> {
-                        tvDeliveringTo.text =
+                        tvDeliveringTo?.text =
                             context?.resources?.getString(R.string.collecting_from)
-                        tvDeliveryLocation.text =
+                        tvDeliveryLocation?.text =
                                 context?.resources?.getString(R.string.store) + storeName?:""
 
-                        tvDeliveryLocation.visibility = View.VISIBLE
+                        tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setBackgroundResource(R.drawable.icon_basket)
                     }
                     Delivery.STANDARD -> {
@@ -941,6 +977,26 @@ class KotlinUtils {
                     }
                 }
             )
+        }
+
+        fun saveAnonymousUserLocationDetails(shoppingDeliveryLocation: ShoppingDeliveryLocation){
+            Utils.sessionDaoSave(KEY.ANONYMOUS_USER_LOCATION_DETAILS,Utils.objectToJson(shoppingDeliveryLocation))
+        }
+
+        fun getAnonymousUserLocationDetails(): ShoppingDeliveryLocation? {
+            var location: ShoppingDeliveryLocation? = null
+            try {
+                SessionDao.getByKey(KEY.ANONYMOUS_USER_LOCATION_DETAILS).value?.let {
+                    location = Utils.strToJson(it, ShoppingDeliveryLocation::class.java) as ShoppingDeliveryLocation?
+                }
+            }catch (e:Exception){
+                FirebaseManager.logException(e)
+            }
+            return location
+        }
+
+        fun clearAnonymousUserLocationDetails(){
+            Utils.removeFromDb(KEY.ANONYMOUS_USER_LOCATION_DETAILS)
         }
     }
 

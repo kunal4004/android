@@ -10,4 +10,4 @@ data class ValidateLocationResponse (
     var response: Response? = null,
     @SerializedName("httpCode")
     var httpCode: Int? = null
-): Serializable
+):Serializable

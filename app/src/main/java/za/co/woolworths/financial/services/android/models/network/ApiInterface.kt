@@ -7,7 +7,7 @@ import retrofit2.Callback
 import retrofit2.http.*
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
-import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocation
+import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
@@ -337,8 +337,7 @@ interface ApiInterface {
             @Header("latitude") lat: Double?,
             @Header("longitude") long: Double?,
             @Query("suburbId") suburbId: String?,
-            @Query("storeId") storeId: String?,
-            @Query("fulFillmentStoreId01") fulFillmentStoreId01: String?
+            @Query("storeId") storeId: String?
     ): Call<RootCategories>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "Accept-Encoding: gzip")
@@ -350,8 +349,7 @@ interface ApiInterface {
             @Query("version") version: String,
             //Optional params
             @Query("suburbId") suburbId: String?,
-            @Query("storeId") storeId: String?,
-            @Query("fulFillmentStoreId01") fulFillmentStoreId01: String?
+            @Query("storeId") storeId: String?
     ): Call<SubCategories>
 
 
@@ -595,7 +593,7 @@ interface ApiInterface {
             @Header("deviceIdentityToken") deviceIdentityToken: String,
     ): Call<ShoppingCartResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "environment: www-win-dev2")
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/cart/{deliveryType}/itemV2")
     fun addItemToCart(
 
@@ -1000,9 +998,6 @@ interface ApiInterface {
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
-            @Header("environment") environment: String,
-            @Header("latitude") latitude: Double?,
-            @Header("longitude") longitude: Double?,
             @Query("placeId") placeId: String): Call<ValidateLocationResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -1269,9 +1264,8 @@ interface ApiInterface {
         @Header("userAgentVersion") userAgentVersion: String,
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
-        @Header("environment") String: String,
         @Body confirmLocationRequest: ConfirmLocationRequest
-    ): Call<ConfirmLocation>
+    ): Call<ConfirmLocationResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/locationItems/saveLocation")
@@ -1280,7 +1274,6 @@ interface ApiInterface {
         @Header("userAgentVersion") userAgentVersion: String,
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
-        @Header("environment") String: String,
         @Body saveAddressLocationRequest: SaveAddressLocationRequest
     ): Call<GenericResponse>
 }

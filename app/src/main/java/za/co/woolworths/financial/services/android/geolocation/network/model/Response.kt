@@ -1,11 +1,12 @@
 package za.co.woolworths.financial.services.android.geolocation.network.model
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
-class Response {
+data class Response(
     @SerializedName("code")
-    var code: String? = null
-
+    var code: String? = null,
     @SerializedName("desc")
-    var desc: String? = null
-}
+    var desc: String? = null,
+
+) : Serializable

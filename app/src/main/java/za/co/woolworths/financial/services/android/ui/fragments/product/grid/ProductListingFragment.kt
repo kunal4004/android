@@ -36,6 +36,7 @@ import kotlinx.android.synthetic.main.try_it_on_banner.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -1357,11 +1358,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun onSetNewLocation() {
-        /*   start GeolocationDelivery Address Confirmation Fragment */
-        // place id :  take from cache
-        // delivery type : take from cache
-        val placeId: String? = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
-        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-            DeliveryAddressConfirmationFragment.newInstance(placeId, KotlinUtils.getPreferredDeliveryType()))
+        activity?.apply {
+            KotlinUtils.presentEditDeliveryGeoLocationActivity(
+                this,
+                SET_DELIVERY_LOCATION_REQUEST_CODE,
+                KotlinUtils.getPreferredDeliveryType(),
+                GeoUtils.getPlaceId()
+            )
+        }
     }
+
 }

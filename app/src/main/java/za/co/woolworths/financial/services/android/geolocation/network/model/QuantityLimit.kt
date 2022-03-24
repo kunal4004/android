@@ -1,23 +1,24 @@
 package za.co.woolworths.financial.services.android.geolocation.network.model
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
-class QuantityLimit {
+data class QuantityLimit (
     @SerializedName("foodMaximumQuantity")
-    var foodMaximumQuantity: Int? = null
+    var foodMaximumQuantity: Int? = null,
 
     @SerializedName("other")
-    var other: Int? = null
+    var other: Int? = null,
 
     @SerializedName("foodLayoutColour")
-    var foodLayoutColour: String? = null
+    var foodLayoutColour: String? = null,
 
     @SerializedName("otherLayoutColour")
-    var otherLayoutColour: String? = null
+    var otherLayoutColour: String? = null,
 
     @SerializedName("food")
-    var food: Int? = null
+    var food: Int? = null,
 
     @SerializedName("otherMaximumQuantity")
-    var otherMaximumQuantity: Int? = null
-}
+    var otherMaximumQuantity: Int? = null,
+):Serializable
