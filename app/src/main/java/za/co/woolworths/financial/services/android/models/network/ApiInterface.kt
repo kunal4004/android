@@ -7,7 +7,6 @@ import retrofit2.Callback
 import retrofit2.http.*
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
-import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
@@ -1265,7 +1264,7 @@ interface ApiInterface {
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body confirmLocationRequest: ConfirmLocationRequest
-    ): Call<ConfirmLocationResponse>
+    ): Call<ConfirmDeliveryAddressResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/locationItems/saveLocation")

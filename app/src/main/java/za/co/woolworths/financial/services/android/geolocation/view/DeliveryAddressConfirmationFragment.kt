@@ -225,7 +225,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                               if (SessionUtilities.getInstance().isUserAuthenticated) {
                                   Utils.savePreferredDeliveryLocation(
                                       ShoppingDeliveryLocation(
-                                          confirmLocationResponse.orderSummary.fulfillmentDetails
+                                          confirmLocationResponse.orderSummary?.fulfillmentDetails
                                       )
                                   )
                                   if (KotlinUtils.getAnonymousUserLocationDetails() != null)
@@ -233,7 +233,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                               } else {
                                   KotlinUtils.saveAnonymousUserLocationDetails(
                                       ShoppingDeliveryLocation(
-                                          confirmLocationResponse.orderSummary.fulfillmentDetails
+                                          confirmLocationResponse.orderSummary?.fulfillmentDetails
                                       )
                                   )
                               }
