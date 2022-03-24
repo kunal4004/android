@@ -195,6 +195,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
 
     override fun onStoreSelected(mStore: Store?) {
         dataStore = mStore
+        tvConfirmStore?.isEnabled = true
     }
 
     override fun onClick(v: View?) {
