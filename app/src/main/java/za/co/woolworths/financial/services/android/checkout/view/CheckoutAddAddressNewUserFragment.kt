@@ -1115,7 +1115,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                                                 Utils.toJson(savedAddressResponse)
                                             )
                                         }
-                                    response.address?.nickname?.let { callChangeAddressApi(it) }
+                                    navController?.navigateUp()
                                 }
                             }
                             AppConstant.HTTP_SESSION_TIMEOUT_400, AppConstant.HTTP_EXPECTATION_FAILED_502 -> {

@@ -375,6 +375,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             btnConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
             mStoreName = it?.storeName.toString()
             mStoreId = it?.storeId.toString()
+            itemLimitValue?.text  = it?.quantityLimit?.foodMaximumQuantity.toString()
         })
         isUnSellableItemsRemoved()
         placeId?.let {
@@ -559,8 +560,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         }
         earliestFashionDeliveryDateLabel?.visibility = View.GONE
         earliestFashionDeliveryDateValue?.visibility = View.GONE
-        itemLimitValue?.text =
-            validateLocationResponse?.validatePlace?.quantityLimit?.foodMaximumQuantity?.toString()
+        itemLimitValue?.text = getNearestStoreItemLimit(validateLocationResponse?.validatePlace?.stores)
     }
 
     private fun setGeoDeliveryTextForCnc() {
@@ -603,13 +603,16 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     private fun whereToCollect() {
-        geoDeliveryText?.text = bindString(R.string.where_do_you_want_to_collect)
-        editDelivery?.text = bindString(R.string.choose)
-        btnConfirmAddress?.isEnabled = false
+        geoDeliveryText?.text = HtmlCompat.fromHtml(
+            getString(R.string.collecting_from_geo, getNearestStore(validateLocationResponse?.validatePlace?.stores)),
+            HtmlCompat.FROM_HTML_MODE_LEGACY
+        )
+        editDelivery?.text = bindString(R.string.edit)
+        btnConfirmAddress?.isEnabled = true
         btnConfirmAddress?.setBackgroundColor(
             ContextCompat.getColor(
                 requireContext(),
-                R.color.color_A9A9A9
+                R.color.black
             )
         )
 
@@ -623,6 +626,16 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             }
         }
         return shortestDistance?.storeName
+    }
+
+    private fun getNearestStoreItemLimit(stores: List<Store>?): String? {
+        var shortestDistance: Store? = null
+        if (!stores.isNullOrEmpty()) {
+            shortestDistance = stores.minByOrNull {
+                it.distance!!
+            }
+        }
+        return shortestDistance?.quantityLimit?.foodMaximumQuantity.toString()
     }
 
     override fun onStop() {
