@@ -377,14 +377,11 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             // We use a String here, but any type that can be put in a Bundle is supported
             val result = bundle.getString("Province")
             val province: Province? = Utils.strToJson(result, Province::class.java) as? Province
-          //  onProvinceSelected(province)
         }
 
         setFragmentResultListener(RESULT_ERROR_CODE_SUBURB_NOT_FOUND) { _, _ ->
             if (selectedAddress.provinceName.isNullOrEmpty()) return@setFragmentResultListener
             provinceSuburbEnableType = ONLY_SUBURB
-           // enableEditText()
-           // getSuburbs()
         }
         setFragmentResultListener(RESULT_ERROR_CODE_RETRY) { _, bundle ->
             when (bundle.getInt("bundle")) {
@@ -444,14 +441,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         }
     }
 
- /*   fun onProvinceSelected(province: Province?) {
-        selectedAddress.apply {
-            provinceName = province?.name.toString()
-            savedAddress.region = province?.id.toString()
-        }
-        provinceAutocompleteEditText?.setText(province?.name)
-    }*/
-
     fun resetSuburbSelection() {
         selectedAddress.savedAddress.apply {
             suburb = ""
@@ -462,32 +451,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         suburbEditText?.text?.clear()
     }
 
-    /*fun onSuburbSelected(onSelectedSuburb: Suburb?) {
-        if (deliveryType == DeliveryType.DELIVERY) {
-            selectedAddress.savedAddress.apply {
-                suburb = onSelectedSuburb?.name.toString()
-                suburbId = onSelectedSuburb?.id.toString()
-            }
-        } else {
-            selectedAddress.store = onSelectedSuburb?.name.toString()
-            selectedAddress.storeId = onSelectedSuburb?.id.toString()
-        }
-        selectedAddress.savedAddress.postalCode = onSelectedSuburb?.postalCode.toString()
-        enableDisableUserInputEditText(
-            addressNicknameEditText,
-            true,
-            addressNicknameErrorMsg?.isVisible == true
-        )
-        enableDisableUserInputEditText(
-            unitComplexFloorEditText,
-            isEnable = true,
-            isErrorScreen = false
-        )
-        suburbEditText?.setText(onSelectedSuburb?.name)
-        if (!onSelectedSuburb?.postalCode.isNullOrEmpty()) {
-            postalCode?.setText(onSelectedSuburb?.postalCode)
-        }
-    }*/
 
     private fun setAddress(place: Place) {
         enableDisableUserInputEditText(
@@ -751,51 +714,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                 }
             })
     }
-
-   /* private fun getSuburbs() {
-        selectedAddress.savedAddress.region?.let { provinceId ->
-            checkoutAddAddressNewUserViewModel.initGetSuburbs(provinceId)
-                .observe(viewLifecycleOwner, {
-                    when (it.responseStatus) {
-                        ResponseStatus.SUCCESS -> {
-                            if ((it?.data as? SuburbsResponse)?.suburbs.isNullOrEmpty()) {
-                            } else {
-                                (it?.data as? SuburbsResponse)?.suburbs?.let { it1 ->
-                                    navigateToSuburbSelection(
-                                        it1
-                                    )
-                                }
-                            }
-                        }
-
-                    }
-                })
-        }
-    }*/
-
-   /* private fun navigateToSuburbSelection(suburbs: List<Suburb>) {
-        activity?.let {
-            // TODO:: WOP-9342 - Handle Transaction too large exception android nougat
-            //  and remove share preference temp fix
-            val sharedPreferences = it.getSharedPreferences(
-                EditDeliveryLocationFragment.SHARED_PREFS,
-                Context.MODE_PRIVATE
-            )
-            val editor = sharedPreferences?.edit()
-            editor?.putString(EditDeliveryLocationFragment.SUBURB_LIST, Utils.toJson(suburbs))
-            editor?.apply()
-            val bundle = Bundle()
-            bundle.apply {
-                putString("SuburbList", Utils.toJson(suburbs))
-                putSerializable("deliveryType", deliveryType)
-            }
-            navController?.navigate(
-                R.id.action_to_suburbSelectorFragment,
-                bundleOf("bundle" to bundle)
-            )
-        }
-    }
-*/
 
     fun onSaveAddressClicked() {
         if (selectedAddress.savedAddress.address1.isNullOrEmpty()) {
