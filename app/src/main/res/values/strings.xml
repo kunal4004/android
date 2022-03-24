@@ -2442,6 +2442,7 @@
     <string name="dash_delivery_msg">Set your address to \n start shopping.</string>
     <string name="all_products_available">All Products Available</string>
     <string name="next_dash_delivery_timeslot_text">Next Dash Delivery timeslot</string>
+    <string name="tip_your_dash_driver">Tip Your Dash Driver</string>
 
 
     <string name="product_listing_price_from">From</string>

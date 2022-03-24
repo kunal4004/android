@@ -11,6 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResultListener
@@ -56,6 +58,7 @@ import za.co.woolworths.financial.services.android.models.dto.app_config.native_
 import za.co.woolworths.financial.services.android.models.network.ConfirmDeliveryAddressBody
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity.Companion.ERROR_TYPE_EMPTY_CART
+import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_EMPTY_CART
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART
@@ -82,6 +85,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     private var oddSelectedPosition: Int = -1
     private var suburbId: String = ""
     private var selectedShoppingBagType: Double? = null
+    private var driverTipOptionsList: ArrayList<String>? = null
+    private var selectedDriverTipValue: String? = null
 
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -161,6 +166,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         addFragmentListner()
         initializeDeliveringToView()
         initializeDeliveryFoodOtherItems()
+        initializeDriverTipView()
 
         expandableGrid.apply {
             disablePreviousBtnFood()
@@ -458,6 +464,81 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         nextImgBtnFood.setOnClickListener(this)
         previousImgBtnOther.setOnClickListener(this)
         nextImgBtnOther.setOnClickListener(this)
+    }
+
+    private fun initializeDriverTipView() {
+        //Todo This value will come from Config once it is available.
+        driverTipOptionsList = ArrayList()
+        driverTipOptionsList!!.add("R10")
+        driverTipOptionsList!!.add("R20")
+        driverTipOptionsList!!.add("R30")
+        driverTipOptionsList!!.add("Own Amount")
+        showDriverTipView()
+    }
+
+    private fun showDriverTipView() {
+        if (!driverTipOptionsList.isNullOrEmpty()) {
+            layoutDriverTip.visibility = VISIBLE
+            for ((index, options) in driverTipOptionsList!!.withIndex()) {
+                val view = inflate(context, R.layout.where_are_we_delivering_items, null)
+                val titleTextView: TextView? = view?.findViewById(R.id.titleTv)
+                titleTextView?.tag = index
+                titleTextView?.text = options
+                if (!selectedDriverTipValue.isNullOrEmpty() && selectedDriverTipValue.equals(
+                        options
+                    )
+                ) {
+                    titleTextView?.background =
+                        bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
+                    titleTextView?.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.white
+                        )
+                    )
+                }
+                titleTextView?.setOnClickListener {
+                    val isSameSelection = resetAllDriverTip(it.tag as Int)
+                    selectedDriverTipValue = (it as TextView).text as? String
+                    if (!isSameSelection) {
+                        // change background of selected textView
+                        it.background =
+                            bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
+                        it.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.white
+                            )
+                        )
+                    }
+                }
+                delivering_layout?.addView(view)
+            }
+        }
+    }
+
+    private fun resetAllDriverTip(selectedTag: Int): Boolean {
+        //change background of unselected textview
+        var sameSelection = false
+        for ((index) in driverTipOptionsList!!.withIndex()) {
+            val titleTextView: TextView? = view?.findViewWithTag(index)
+            if (titleTextView?.textColors?.defaultColor?.equals(ContextCompat.getColor(
+                    requireContext(),
+                    R.color.white)) == true && titleTextView.tag.equals(
+                    selectedTag)
+            ) {
+                sameSelection = true
+            }
+            titleTextView?.background =
+                bindDrawable(R.drawable.checkout_delivering_title_round_button)
+            titleTextView?.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.checkout_delivering_title
+                )
+            )
+        }
+        return sameSelection
     }
 
     /**
@@ -1128,7 +1209,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
     override fun selectedShoppingBagType(
         shoppingBagsOptionsList: ConfigShoppingBagsOptions,
-        position: Int
+        position: Int,
     ) {
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_SHOPPING_BAGS_INFO,
             hashMapOf(
