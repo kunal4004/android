@@ -1,52 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="@dimen/three_twenty_dp"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:layout_margin="@dimen/fifteen_dp"
-    android:minWidth="@dimen/three_twenty_dp">
+    android:layout_gravity="center">
 
-    <ImageView
-        android:id="@+id/imgLongBannerItem"
-        android:layout_width="@dimen/three_twenty_dp"
-        android:layout_height="@dimen/hundred_and_fifty_dp"
-        android:scaleType="fitXY"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tvLongBannerTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/fifteen_dp"
-        android:ellipsize="end"
-        android:fontFamily="@font/futura_semi_bold"
-        android:maxLines="1"
-        android:textAlignment="textStart"
-        android:textColor="@color/black"
-        android:textSize="@dimen/fifteen_sp"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintStart_toStartOf="@id/imgLongBannerItem"
-        app:layout_constraintTop_toBottomOf="@id/imgLongBannerItem"
-        tools:text="Make it Sizzle" />
-
-    <TextView
-        android:id="@+id/tvLongBannerSubtitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/five_dp"
-        android:ellipsize="end"
-        android:fontFamily="@font/myriad_pro_regular"
-        android:maxLines="1"
-        android:textAlignment="textStart"
-        android:textColor="@color/black"
-        android:textSize="@dimen/twelve_sp"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintStart_toStartOf="@id/tvLongBannerTitle"
-        app:layout_constraintTop_toBottomOf="@id/tvLongBannerTitle"
-        tools:text="Everything you need for the ultimate Braai." />
-
+    <include layout="@layout/item_long_banner_list" />
 </androidx.constraintlayout.widget.ConstraintLayout>

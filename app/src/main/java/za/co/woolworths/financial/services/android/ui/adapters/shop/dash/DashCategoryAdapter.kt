@@ -18,6 +18,7 @@ import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import kotlinx.android.synthetic.main.item_banner_carousel.view.*
 import kotlinx.android.synthetic.main.item_long_banner_carousel.view.*
+import kotlinx.android.synthetic.main.item_long_banner_list.view.*
 import kotlinx.android.synthetic.main.product_listing_page_row.view.*
 import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
 import kotlinx.android.synthetic.main.product_listing_promotional_images.view.*
@@ -98,7 +99,7 @@ class DashCategoryAdapter(
             DashDeliveryAdapter.TYPE_DASH_CATEGORIES_LONG_BANNER_LIST -> {
                 LongBannerListItemViewHolder(
                     LayoutInflater.from(context)
-                        .inflate(R.layout.item_long_banner_carousel, parent, false)
+                        .inflate(R.layout.item_long_banner_list, parent, false)
                 )
             }
             else -> EmptyViewHolder(View(context))
@@ -181,9 +182,6 @@ class BannerCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
 class BannerGridItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun bind(context: Context, position: Int, banner: Banner) {
-        // No text
-//        itemView.tvCategoryTitle?.text = ""
-
         Glide.with(context)
             .load(banner.externalImageRefV2)
             .format(DecodeFormat.PREFER_ARGB_8888)
