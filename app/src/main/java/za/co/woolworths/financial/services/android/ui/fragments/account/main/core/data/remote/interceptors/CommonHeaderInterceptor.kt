@@ -17,7 +17,8 @@ class CommonHeaderInterceptor : NetworkConfig(), Interceptor {
             .addHeader(CommonHeaderUtils.NETWORK, getNetworkCarrier())
             .addHeader(CommonHeaderUtils.OS, getOS())
             .addHeader(CommonHeaderUtils.OS_VERSION, getOsVersion())
-            .addHeader(CommonHeaderUtils.USER_AGENT, getUserAgent())
+                //Adding getUserAgent() cause failure on checkeligibility
+            .addHeader(CommonHeaderUtils.USER_AGENT, "")
             .addHeader(CommonHeaderUtils.USER_AGENT_VERSION, "")
             .addHeader(CommonHeaderUtils.SESSION_TOKEN, getSessionToken())
            // put back .addHeader(CommonHeaderUtils.DEVICE_IDENTITY_TOKEN, getDeviceIdentityToken())

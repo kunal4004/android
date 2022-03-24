@@ -16,19 +16,23 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountProductLandingMainFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.bpi_covered_tag_layout.*
+import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.NavigationGraph
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOfferingState
+import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AccountApiResult
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RED_HEX_COLOR
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 @AndroidEntryPoint
-class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMainFragmentBinding>() {
+class AccountProductsMainFragment :
+    ViewBindingFragment<AccountProductLandingMainFragmentBinding>() {
 
     private var childNavController: NavController? = null
     val viewModel by viewModels<AccountProductsHomeViewModel>()
-    var navigationGraph : NavigationGraph = NavigationGraph()
+    var navigationGraph: NavigationGraph = NavigationGraph()
 
     override fun inflateViewBinding(
         inflater: LayoutInflater,
@@ -63,7 +67,8 @@ class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMai
     }
 
     private fun setupLandingScreen() {
-        val navHostFragment = childFragmentManager.findFragmentById(R.id.productNavigationView) as NavHostFragment
+        val navHostFragment =
+            childFragmentManager.findFragmentById(R.id.productNavigationView) as NavHostFragment
         childNavController = navHostFragment.navController
 
         with(viewModel) {
@@ -75,10 +80,8 @@ class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMai
                 bundleOf()
             )
 
-            val account = getAccountProduct()
-            findNavController().navigate(AccountProductsMainFragmentDirections.actionAccountProductsMainFragmentToAccountInArrearsLandingDialogFragment(account))
 
-            val popupId = getPopupDialogStatus{ state ->
+            val popupId = getPopupDialogStatus { state ->
                 when (state) {
                     /* when productOfferingGoodStanding == true
                    hideAccountInArrears(account)
@@ -105,7 +108,7 @@ class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMai
                     }
 
                     is AccountOfferingState.MakeGetEligibilityCall -> {
-                        viewModel.queryServiceCheckCustomerEligibilityPlan()
+                        viewModel.eligibilityPlanResponse()
                     }
                 }
             }
@@ -113,14 +116,32 @@ class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMai
     }
 
     private fun setupObservers() {
-//        with(viewModel) {
-//            eligibilityPlanResponse.observe(viewLifecycleOwner) { response ->
-//                when (response) {
-//                    is AccountApiResult.Success -> {}
-//                    is AccountApiResult.Error -> {}
-//                    is AccountApiResult.Loading -> {}
-//                }
-//            }
-//        }
+        with(viewModel) {
+            eligibilityPlanResponseLiveData.observe(viewLifecycleOwner) { response ->
+                when (response) {
+                    is ViewState.RenderSuccess -> {
+                        displayPopUp(response.output.eligibilityPlan)
+                    }
+                    is ViewState.RenderFailure -> {
+                        displayPopUp()
+                    }
+                    is ViewState.Loading -> {
+                    }
+                }
+            }
+        }
+    }
+
+    fun displayPopUp(eligibilityPlan: EligibilityPlan? = null) {
+        viewModel.apply {
+            val account = getAccountProduct()
+            findNavController().navigate(
+                AccountProductsMainFragmentDirections.actionAccountProductsMainFragmentToAccountLandingDialogFragment(
+                    account,
+                    viewModel.getPopUpData(eligibilityPlan), eligibilityPlan
+                )
+            )
+        }
+
     }
 }

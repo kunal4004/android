@@ -6,6 +6,6 @@ import javax.inject.Inject
 class CollectionRemoteDataSource @Inject constructor(private val collectionRemoteApiService: CollectionRemoteApiService) :
     BaseDataSource() {
 
- //   suspend fun queryServiceCheckCustomerEligibilityPlan(productGroupCode: String) = collectionRemoteApiService.queryServiceCheckCustomerEligibilityPlan(productGroupCode)
+    suspend fun queryServiceCheckCustomerEligibilityPlan(productGroupCode: String) = collectionRemoteApiService.queryServiceCheckCustomerEligibilityPlan(productGroupCode)
 
 }

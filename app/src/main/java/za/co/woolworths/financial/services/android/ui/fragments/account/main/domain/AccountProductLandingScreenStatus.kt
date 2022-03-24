@@ -30,8 +30,7 @@ class AccountProductLandingScreenStatus @Inject constructor(private val treatmen
             when (product?.productOfferingGoodStanding ?: false) {
                 true -> AccountOfferingState.AccountInGoodStanding
                 false -> when {
-                    !isProductChargedOff && isTakeUpTreatmentPlanJourneyEnabled() -> AccountOfferingState.MakeGetEligibilityCall
-                    isViewTreatmentPlanSupported() -> if (isProductChargedOff) AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff else AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig
+                    isViewTreatmentPlanSupported() || isTakeUpTreatmentPlanJourneyEnabled() ->  if (isProductChargedOff) AccountOfferingState.MakeGetEligibilityCall else AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig
                     else -> if (isProductChargedOff) AccountOfferingState.AccountIsChargedOff else AccountOfferingState.AccountIsInArrears
                 }
             }
