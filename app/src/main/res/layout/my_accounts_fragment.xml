@@ -439,6 +439,17 @@
                         android:textColor="@color/color_app_info"
                         android:fontFamily="@font/myriad_pro_regular_otf"
                         android:paddingTop="@dimen/sixteen_dp"/>
+
+                    <TextView
+                        android:id="@+id/fspNumberInfoTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="@dimen/fifteen_sp"
+                        android:visibility="gone"
+                        android:textColor="@color/color_app_info"
+                        android:fontFamily="@font/myriad_pro_regular_otf"
+                        android:paddingTop="@dimen/eight_dp"/>
                 </LinearLayout>
 
             </androidx.core.widget.NestedScrollView>
