@@ -1359,15 +1359,14 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onSetNewLocation() {
-    /*
-        start GeolocationDelivery Address Confirmation Fragment
-        // place id :  take from cache
-        // delivery type : take from cache
-    */
-        val placeId: String? = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
-        val deliveryType = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType
-        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-            DeliveryAddressConfirmationFragment.newInstance(placeId, KotlinUtils.getPreferredDeliveryType()))
+        activity?.apply {
+            KotlinUtils.presentEditDeliveryGeoLocationActivity(
+                this,
+                REQUEST_SUBURB_CHANGE,
+                KotlinUtils.getPreferredDeliveryType(),
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
+            )
+        }
     }
 
     private fun updateStockAvailability(isDefaultRequest: Boolean) {

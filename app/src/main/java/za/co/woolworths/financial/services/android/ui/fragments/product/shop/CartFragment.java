@@ -1387,6 +1387,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             }
         }
 
+        if (requestCode == REQUEST_SUBURB_CHANGE) {
+            loadShoppingCartAndSetDeliveryLocation();
+        }
+
         if (requestCode == CART_LAUNCH_VALUE && resultCode == SSOActivity.SSOActivityResult.STATE_MISMATCH.rawValue()) {
             // login screen opens on cart and user closes it without login then move tab to last opened tab.
             Activity activity = getActivity();

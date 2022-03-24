@@ -23,7 +23,6 @@ import kotlinx.android.synthetic.main.link_card_fragment.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
-import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice

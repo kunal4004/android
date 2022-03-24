@@ -198,7 +198,8 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             SavedAddressAdapter(
                 activity,
                 address,
-                this
+                savedAddressResponse?.defaultAddressNickname,
+                this,
             )
         }
     }
