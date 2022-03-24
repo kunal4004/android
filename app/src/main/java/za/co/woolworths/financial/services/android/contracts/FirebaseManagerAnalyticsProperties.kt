@@ -358,6 +358,10 @@ open class FirebaseManagerAnalyticsProperties {
         const val CC_BPI_OPT_IN_START: String = "cc_bpi_optin_start"
         const val CC_BPI_OPT_IN_CONFIRM: String = "cc_bpi_optin_confirm"
         const val CC_BPI_OPT_IN_SEND_EMAIL: String = "cc_bpi_send_email"
+
+        const val VIEW_ITEM_LIST: String = "view_item_list"
+        const val VIEW_ITEM_EVENT: String = "view_item"
+        const val SELECT_ITEM_EVENT: String = "select_item"
     }
 
     class PropertyNames {
@@ -427,6 +431,10 @@ open class FirebaseManagerAnalyticsProperties {
             const val linkDeviceConfirmed = "OTP entered and confirmed to link device"
             const val linkDeviceViewList = "View linked devices"
             const val linkDeviceDelete = "Device unlinked / deleted"
+
+            const val CURRENCY = "currency"
+            const val ITEM_LIST_NAME = "item_list_name"
+            const val ITEM_BRAND = "item_brand"
         }
     }
 
@@ -496,6 +504,8 @@ open class FirebaseManagerAnalyticsProperties {
                 "Customer selected one of the Ride-along options"
             const val ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_CONFIRM_DETAILS: String =
                 "Customer confirms their added Click & Collect details"
+
+            const val CURRENCY_VALUE: String = "ZAR"
 
         }
     }

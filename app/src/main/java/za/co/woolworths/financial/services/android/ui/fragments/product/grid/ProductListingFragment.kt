@@ -203,6 +203,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             )
         }
 
+        val arguments = HashMap<String, String>()
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_LIST_NAME] = mSubCategoryName!!
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST,arguments, activity)
+
         if (activity is BottomNavigationActivity && (activity as BottomNavigationActivity).currentFragment is ProductListingFragment) {
             val currentSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
             val currentStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
@@ -872,9 +876,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun openProductDetailView(productList: ProductList) {
+        val arguments = HashMap<String, String>()
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_LIST_NAME] = mSubCategoryName!!
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_BRAND] = productList.brandText
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SELECT_ITEM_EVENT, arguments, activity)
+
         val title = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
         (activity as? BottomNavigationActivity)?.openProductDetailFragment(title, productList)
-
     }
 
     override fun queryInventoryForStore(
