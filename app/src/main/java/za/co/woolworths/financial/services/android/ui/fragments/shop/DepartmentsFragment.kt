@@ -28,7 +28,6 @@ import kotlinx.android.synthetic.main.fragment_shop_department.*
 import kotlinx.android.synthetic.main.no_connection_layout.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
-import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse
@@ -66,7 +65,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
     private var fusedLocationClient: FusedLocationProviderClient? = null
     private var locationRequest: LocationRequest? = createLocationRequest()
     private var localPlaceId: String? = null
-    private var isValidateSelectedSuburbCallStopped = true
+
 
 
     companion object {
@@ -383,13 +382,12 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == DEPARTMENT_LOGIN_REQUEST && resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-            if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address != null) {
-                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.let {
-                    (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                        DeliveryAddressConfirmationFragment.newInstance(
-                            it.placeId,
-                            KotlinUtils.getPreferredDeliveryType()
-                        )
+            if (Utils.getPreferredDeliveryLocation() != null) {
+                activity?.apply {
+                    KotlinUtils.presentEditDeliveryGeoLocationActivity(
+                        this,
+                        EditDeliveryLocationActivity.REQUEST_CODE,
+                        KotlinUtils.getPreferredDeliveryType()
                     )
                 }
             } else {
