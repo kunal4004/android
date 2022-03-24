@@ -38,11 +38,12 @@ class SavedAddressAdapter(
             holder.view?.setBackgroundResource(R.color.white)
         }
 
-        if (selectedPosition == position && addressList[position].verified) {
-            holder.imgEditAddress?.visibility = View.VISIBLE
-        } else {
-            holder.imgEditAddress?.visibility = View.GONE
-        }
+
+        holder.imgEditAddress?.visibility =
+            if (selectedPosition == position && addressList[position].verified)
+                View.VISIBLE
+            else
+                View.GONE
 
         holder.view.setOnClickListener {
             selectedPosition = position
@@ -53,11 +54,12 @@ class SavedAddressAdapter(
             listener.onEditAddress(addressList[position], position)
         }
 
-        if (addressList[position].verified) {
-            holder.tvUpdateAddress?.visibility = View.GONE
-        } else {
-            holder.tvUpdateAddress?.visibility = View.VISIBLE
-        }
+        holder.tvUpdateAddress.visibility =
+            if (addressList[position].verified)
+                View.GONE
+            else
+                View.VISIBLE
+
         holder.tvAddress?.text = addressList[position].address1
     }
 
