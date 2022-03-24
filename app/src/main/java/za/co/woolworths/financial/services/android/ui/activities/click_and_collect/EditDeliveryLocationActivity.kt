@@ -79,11 +79,6 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onBackPressed() {
-        setResult(Activity.RESULT_CANCELED)
-        finish()
-        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)}
-
     private fun loadNavHostFragment() {
         onEditDeliveryLocation()
     }

@@ -52,6 +52,8 @@ import java.net.HttpURLConnection
 
 /**
  * Created by Kunal Uttarwar on 16/06/21.
+ *
+ * not usefull now
  */
 class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragment(),
     View.OnClickListener,
@@ -165,7 +167,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                         // This is when user clicks on collection journey.
                         if (btnAddressConfirmation.text.equals(getString(R.string.change_suburb))) {
                             //Zero stores and user clicks on change suburb.
-                            getSuburb(selectedProvince)
+                           // getSuburb(selectedProvince)
                         } else if (selectedSuburb.storeAddress != null) {
                             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_CONFIRM_NEW_STORE,
                                 hashMapOf(
@@ -655,7 +657,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     private fun fetchStoreListFromValidateSelectedSuburb(suburbId: String?) {
         if (suburbId.equals(DEFAULT_STORE_ID)) {
             // This means collection tab clicked for the first time.
-            getSuburb(selectedProvince)
+           // getSuburb(selectedProvince)
         } else if (suburbId.isNullOrEmpty()) {
             clickNCollectTitleLayout.visibility = View.VISIBLE
             addressConfirmationClicknCollect.visibility = View.VISIBLE
@@ -706,7 +708,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         }
     }
 
-    private fun showSuburbSelectionView(suburbList: MutableList<Suburb>) {
+   /* private fun showSuburbSelectionView(suburbList: MutableList<Suburb>) {
         removeMarginToStoreListView()
         suburbSelectionLayout.visibility = View.VISIBLE
         suburbSelectionTitle.visibility = View.VISIBLE
@@ -727,9 +729,9 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             layoutManager = activity?.let { LinearLayoutManager(it) }
             suburbListAdapter?.let { adapter = it }
         }
-    }
+    }*/
 
-    private fun getSuburb(province: Province?) {
+   /* private fun getSuburb(province: Province?) {
         clickNCollectTitleLayout.visibility = View.GONE
         addressConfirmationClicknCollect.visibility = View.GONE
         province?.id?.let {
@@ -743,7 +745,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                             } else {
                                 (it?.data as? SuburbsResponse)?.suburbs?.let { it1 ->
                                     showSuburbSelectionView(it1)
-                                    /*val bundle = Bundle()
+                                    *//*val bundle = Bundle()
                                     bundle.apply {
                                         putString("SuburbList", Utils.toJson(it1))
                                         putSerializable("deliveryType", DeliveryType.DELIVERY)
@@ -751,7 +753,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                     navController?.navigate(
                                         R.id.action_getSuburb_suburbSelectorFragment,
                                         bundleOf("bundle" to bundle)
-                                    )*/
+                                    )*//*
                                 }
                             }
                         }
@@ -766,7 +768,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 })
             }
         }
-    }
+    }*/
 
     private fun setMarginToStoreListView() {
         btnConfirmLayout.visibility = View.VISIBLE

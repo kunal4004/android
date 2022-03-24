@@ -85,10 +85,6 @@ class KotlinUtils {
         const val RESULT_CODE_CLOSE_VIEW = 2203
         var GEO_REQUEST_CODE = -1
 
-        var IS_COMING_FROM_CNC_SLOT_SELECTION: Boolean = false
-        var IS_COMING_FROM_DEL_SLOT_SELECTION: Boolean = false
-        var IS_COMING_FROM_SLOT_SELECTION: Boolean = false
-        var IS_COMING_FROM_CHECKOUT: Boolean = false
 
 
         fun highlightTextInDesc(

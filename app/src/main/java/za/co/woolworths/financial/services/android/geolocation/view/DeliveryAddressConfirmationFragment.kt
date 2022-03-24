@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.geolocation.view
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +28,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Addr
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.*
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
+import za.co.woolworths.financial.services.android.geolocation.model.MapData
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
@@ -46,7 +46,6 @@ import za.co.woolworths.financial.services.android.models.network.StorePickupInf
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.extension.isConnectedToNetwork
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment
@@ -223,11 +222,18 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                       when (confirmLocationResponse.httpCode) {
                           HTTP_OK -> {
                               // save details in cache
-
-                              confirmLocationResponse?.orderSummary?.fulfillmentDetails?.let {
+                              if (SessionUtilities.getInstance().isUserAuthenticated) {
                                   Utils.savePreferredDeliveryLocation(
                                       ShoppingDeliveryLocation(
-                                          confirmLocationResponse?.orderSummary?.fulfillmentDetails
+                                          confirmLocationResponse.orderSummary.fulfillmentDetails
+                                      )
+                                  )
+                                  if (KotlinUtils.getAnonymousUserLocationDetails() != null)
+                                      KotlinUtils.clearAnonymousUserLocationDetails()
+                              } else {
+                                  KotlinUtils.saveAnonymousUserLocationDetails(
+                                      ShoppingDeliveryLocation(
+                                          confirmLocationResponse.orderSummary.fulfillmentDetails
                                       )
                                   )
                               }
@@ -369,6 +375,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             btnConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
             mStoreName = it?.storeName.toString()
             mStoreId = it?.storeId.toString()
+            itemLimitValue?.text  = it?.quantityLimit?.foodMaximumQuantity.toString()
         })
         isUnSellableItemsRemoved()
         placeId?.let {
@@ -553,8 +560,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         }
         earliestFashionDeliveryDateLabel?.visibility = View.GONE
         earliestFashionDeliveryDateValue?.visibility = View.GONE
-        itemLimitValue?.text =
-            validateLocationResponse?.validatePlace?.quantityLimit?.foodMaximumQuantity?.toString()
+        itemLimitValue?.text = getNearestStoreItemLimit(validateLocationResponse?.validatePlace?.stores)
     }
 
     private fun setGeoDeliveryTextForCnc() {
@@ -597,13 +603,16 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     private fun whereToCollect() {
-        geoDeliveryText?.text = bindString(R.string.where_do_you_want_to_collect)
-        editDelivery?.text = bindString(R.string.choose)
-        btnConfirmAddress?.isEnabled = false
+        geoDeliveryText?.text = HtmlCompat.fromHtml(
+            getString(R.string.collecting_from_geo, getNearestStore(validateLocationResponse?.validatePlace?.stores)),
+            HtmlCompat.FROM_HTML_MODE_LEGACY
+        )
+        editDelivery?.text = bindString(R.string.edit)
+        btnConfirmAddress?.isEnabled = true
         btnConfirmAddress?.setBackgroundColor(
             ContextCompat.getColor(
                 requireContext(),
-                R.color.color_A9A9A9
+                R.color.black
             )
         )
 
@@ -617,6 +626,16 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             }
         }
         return shortestDistance?.storeName
+    }
+
+    private fun getNearestStoreItemLimit(stores: List<Store>?): String? {
+        var shortestDistance: Store? = null
+        if (!stores.isNullOrEmpty()) {
+            shortestDistance = stores.minByOrNull {
+                it.distance!!
+            }
+        }
+        return shortestDistance?.quantityLimit?.foodMaximumQuantity.toString()
     }
 
     override fun onStop() {

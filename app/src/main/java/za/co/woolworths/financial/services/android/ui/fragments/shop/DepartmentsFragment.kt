@@ -28,7 +28,6 @@ import kotlinx.android.synthetic.main.fragment_shop_department.*
 import kotlinx.android.synthetic.main.no_connection_layout.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
-import za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressFragment
 import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -63,7 +62,6 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
     private var isFragmentVisible: Boolean = false
     private var parentFragment: ShopFragment? = null
     private var version: String? = ""
-    private var deliveryType: DeliveryType = DeliveryType.DELIVERY
     private var isDashEnabled = false
     private var fusedLocationClient: FusedLocationProviderClient? = null
     private var locationRequest: LocationRequest? = createLocationRequest()
@@ -372,19 +370,14 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
         rclDepartment?.scrollToPosition(0)
     }
 
-    override fun onDeliveryOptionSelected(deliveryType: DeliveryType) {
-        if (SessionUtilities.getInstance().isUserAuthenticated) {
+    override fun onDeliveryOptionSelected(deliveryType: Delivery) {
             activity?.apply {
-                KotlinUtils.presentEditDeliveryLocationActivity(
+                KotlinUtils.presentEditDeliveryGeoLocationActivity(
                     this,
                     EditDeliveryLocationActivity.REQUEST_CODE,
                     deliveryType
                 )
             }
-        } else {
-            this.deliveryType = deliveryType
-            ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -3,7 +3,9 @@ package za.co.woolworths.financial.services.android.geolocation.view
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -11,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.GeolocationConfirmAddressBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -38,13 +41,12 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listene
 import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
-import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class ConfirmAddressMapFragment :
-    Fragment(R.layout.geolocation_confirm_address), OnMapReadyCallback, VtoTryAgainListener {
+    Fragment(), OnMapReadyCallback, VtoTryAgainListener {
 
     private var mMap: GoogleMap? = null
     private var mAddress: String? = null
@@ -61,38 +63,50 @@ class ConfirmAddressMapFragment :
     private var longitude: Double? = null
     private var suburb: String? = null
     private var isAddAddress: Boolean? = false
-    private var isComingFromCheckout: Boolean = false
-    private var deliveryType: String? = null
+    private var isComingFromCheckout: Boolean? = false
     private var isAddressFromSearch: Boolean = false
-
+    private var isMoveMapCameraFirstTime: Boolean? = true
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
+
+    private var _binding: GeolocationConfirmAddressBinding? = null
+    private val binding get() = _binding
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = GeolocationConfirmAddressBinding.inflate(inflater, container, false)
+        return binding?.root
+    }
+
 
     override fun onViewCreated(
         view: View, savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
+        if (savedInstanceState == null) {
+            val bundle = arguments ?: return
+            val args = ConfirmAddressMapFragmentArgs.fromBundle(bundle)
+            latitude = args.mapData.latitude
+            longitude = args.mapData.longitude
+            isAddAddress = args.mapData.isAddAddress
+            isComingFromCheckout = args.mapData.isComingFromCheckout
+            setUpViewModel()
+            clearAddress()
+            confirmAddressClick()
 
-        val bundle = arguments ?: return
-        val args = ConfirmAddressMapFragmentArgs.fromBundle(bundle)
-        latitude = args.mapData.latitude
-        longitude = args.mapData.longitude
-        isAddAddress = args.mapData.isAddAddress
-        setUpViewModel()
-        clearAddress()
-        confirmAddressClick()
+            if (confirmAddressViewModel.isConnectedToInternet(requireActivity())) {
+                initMap()
+            } else {
+                binding?.mapFrameLayout?.visibility = View.GONE
+                binding?.imgMapMarker?.visibility = View.GONE
+                binding?.autoCompleteTextView?.isEnabled = false
+                noMapConnectionLayout?.no_connection_layout?.visibility = View.VISIBLE
 
-        if (confirmAddressViewModel.isConnectedToInternet(requireActivity())) {
-            initMap()
-        } else {
-            mapFrameLayout?.visibility = View.GONE
-            imgMapMarker?.visibility = View.GONE
-            autoCompleteTextView?.isEnabled = false
-            noMapConnectionLayout?.no_connection_layout?.visibility = View.VISIBLE
-
+            }
         }
-
     }
 
     private fun showErrorDialog() {
@@ -113,21 +127,21 @@ class ConfirmAddressMapFragment :
                 if (isNetworkAvailable) {
                     noMapConnectionLayout?.no_connection_layout?.visibility = View.GONE
                     mapFragment?.view?.visibility = View.VISIBLE
-                    mapFrameLayout?.visibility = View.VISIBLE
-                    imgMapMarker?.visibility = View.VISIBLE
-                    autoCompleteTextView?.isEnabled = true
-                    confirmAddress?.isEnabled = true
+                    binding?.mapFrameLayout?.visibility = View.VISIBLE
+                    binding?.imgMapMarker?.visibility = View.VISIBLE
+                    binding?.autoCompleteTextView?.isEnabled = true
+                    binding?.confirmAddress?.isEnabled = true
                     if(isAddAddress!!){
-                        confirmAddress?.isEnabled = false
-                        imgMapMarker?.visibility = View.GONE
+                        binding?.confirmAddress?.isEnabled = false
+                        binding?.imgMapMarker?.visibility = View.GONE
 
                     }
                 } else {
                     noMapConnectionLayout?.no_connection_layout?.visibility = View.VISIBLE
                     mapFragment?.view?.visibility = View.GONE
-                    imgMapMarker?.visibility = View.GONE
-                    autoCompleteTextView?.isEnabled = false
-                    confirmAddress?.isEnabled = false
+                    binding?.imgMapMarker?.visibility = View.GONE
+                    binding?.autoCompleteTextView?.isEnabled = false
+                    binding?.confirmAddress?.isEnabled = false
 
                 }
 
@@ -136,29 +150,33 @@ class ConfirmAddressMapFragment :
     }
 
     private fun clearAddress() {
-        imgRemoveAddress?.setOnClickListener {
-            autoCompleteTextView?.setText("")
-            errorMassageDivider?.visibility = View.GONE
-            errorMessage?.visibility = View.GONE
+        binding?.imgRemoveAddress?.setOnClickListener {
+            binding?.autoCompleteTextView?.setText("")
+            binding?.errorMassageDivider?.visibility = View.GONE
+            binding?.errorMessage?.visibility = View.GONE
         }
     }
 
     private fun confirmAddressClick() {
 
-        confirmAddress?.setOnClickListener {
-
-            if(isComingFromCheckout) {
-                if (deliveryType == Delivery.STANDARD.toString()) {
+        binding?.confirmAddress?.setOnClickListener {
+            val bundle = Bundle()
+            if(isComingFromCheckout==true) {
+                bundle?.apply {
+                    putString(
+                        DeliveryAddressConfirmationFragment.KEY_PLACE_ID, placeId
+                    )
+                    putBoolean(
+                        ConfirmAddressFragment.IS_COMING_CONFIRM_ADD, true)
                     findNavController().navigate(
-                        R.id.action_confirmAddressMapFragment_to_checkoutAddAddressNewUserFragment)
-                } else  {
-                    findNavController().navigate(
-                        R.id.action_confirmAddressMapFragment_to_checkoutCollectingFragment)
+                        R.id.actionClickAndCollectStoresFragment,
+                        bundleOf("bundle" to bundle)
+                    )
                 }
             } else {
                 // normal geo flow
                 if (mLatitude != null && mLongitude != null && placeId != null) {
-                    val bundle = Bundle()
+
                     bundle?.apply {
                         putString(
                             DeliveryAddressConfirmationFragment.KEY_LATITUDE, mLatitude
@@ -190,16 +208,16 @@ class ConfirmAddressMapFragment :
             val placesClient = Places.createClient(context)
             val placesAdapter =
                 GooglePlacesAdapter(requireActivity(), placesClient)
-            autoCompleteTextView?.apply {
+            binding?.autoCompleteTextView?.apply {
                 setAdapter(placesAdapter)
             }
             showLocationErrorBanner()
-            autoCompleteTextView?.onItemClickListener =
+            binding?.autoCompleteTextView?.onItemClickListener =
                 AdapterView.OnItemClickListener { parent, _, position, _ ->
                     val item = parent.getItemAtPosition(position) as? PlaceAutocomplete
                     placeId = item?.placeId.toString()
                     val placeName = item?.primaryText.toString()
-                    autoCompleteTextView?.setText(placeName)
+                    binding?.autoCompleteTextView?.setText(placeName)
                     isAddressFromSearch = true
                     val placeFields: MutableList<Place.Field> = mutableListOf(
                         Place.Field.ID,
@@ -244,11 +262,11 @@ class ConfirmAddressMapFragment :
     private fun showLocationErrorBanner() {
         LocationErrorLiveData.observe(viewLifecycleOwner, { isResult ->
             if (isResult) {
-                errorMassageDivider?.visibility = View.VISIBLE
-                errorMessage?.visibility = View.VISIBLE
+                binding?.errorMassageDivider?.visibility = View.VISIBLE
+                binding?.errorMessage?.visibility = View.VISIBLE
             } else {
-                errorMassageDivider?.visibility = View.GONE
-                errorMessage?.visibility = View.GONE
+                binding?.errorMassageDivider?.visibility = View.GONE
+                binding?.errorMessage?.visibility = View.GONE
             }
         })
     }
@@ -258,10 +276,13 @@ class ConfirmAddressMapFragment :
         if (!isAddAddress!!) {
             mMap?.uiSettings?.setAllGesturesEnabled(true)
             latLng = longitude?.let { latitude?.let { it1 -> LatLng(it1, it) } }
-            moveMapCamera(latLng)
+            if (isMoveMapCameraFirstTime == true){
+                moveMapCamera(latLng)
+            }
+
         } else {
-            imgMapMarker?.visibility = View.GONE
-            confirmAddress?.isEnabled = false
+            binding?.imgMapMarker?.visibility = View.GONE
+            binding?.confirmAddress?.isEnabled = false
             mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE), 10f))
 
         }
@@ -269,8 +290,8 @@ class ConfirmAddressMapFragment :
     }
 
     private fun moveMapCamera(latLng: LatLng?) {
-        imgMapMarker?.visibility = View.VISIBLE
-        confirmAddress?.isEnabled = true
+        binding?.imgMapMarker?.visibility = View.VISIBLE
+        binding?.confirmAddress?.isEnabled = true
         isAddAddress = false
         mMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18f))
         mMap?.setOnCameraMoveListener {
@@ -312,12 +333,12 @@ class ConfirmAddressMapFragment :
         } catch (e: Exception) {
             FirebaseManager.logException(e)
         }
-        mAddress.let {
+        mAddress?.let {
             if (!isAddressFromSearch) {
-                autoCompleteTextView?.setText(it)
+                binding?.autoCompleteTextView?.setText(getString(R.string.geo_map_address,address1,city,state))
             }
             isAddressFromSearch = false
-            autoCompleteTextView.dismissDropDown()
+            binding?.autoCompleteTextView?.dismissDropDown()
         }
 
     }
@@ -355,7 +376,7 @@ class ConfirmAddressMapFragment :
     }
 
     private fun sendAddressData() {
-        val saveAddressLocationRequest = SaveAddressLocationRequest(address1,
+        val saveAddressLocationRequest = SaveAddressLocationRequest("$address1 $city",
             city,
             country,
             mAddress,
@@ -373,6 +394,18 @@ class ConfirmAddressMapFragment :
     override fun onDestroy() {
         super.onDestroy()
         LocationErrorLiveData.value = false
+        _binding = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mLatitude?.let {
+            val latLng =
+                LatLng(it.toDouble(), mLongitude?.toDouble()!!)
+            isMoveMapCameraFirstTime = false
+            moveMapCamera(latLng)
+        }
+
     }
 }
 
