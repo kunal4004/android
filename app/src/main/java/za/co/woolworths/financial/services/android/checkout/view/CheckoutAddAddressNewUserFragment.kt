@@ -247,24 +247,23 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     private fun initView() {
-
-        if (savedAddressResponse?.addresses?.size!! > 1
-            && (getSelectedDefaultName(savedAddressResponse, selectedAddressPosition))
-        ) {
-            deleteTextView?.visibility = View.GONE
-        } else {
-            deleteTextView?.visibility = View.VISIBLE
-            deleteTextView?.setOnClickListener(this)
-        }
-
         if (selectedAddressId.isNotEmpty()) {
             //it's not empty means it's a edit address call.
-            if (savedAddressResponse?.defaultAddressNickname == arguments?.getInt(
+            var bundle = arguments?.getBundle("bundle")
+            if (savedAddressResponse?.defaultAddressNickname == bundle?.getInt(
                     EDIT_ADDRESS_POSITION_KEY
                 )?.let {
                     savedAddressResponse?.addresses?.get(it)?.nickname
                 }
-            )
+            ) {
+
+            } else if (savedAddressResponse?.addresses?.size!! > 1
+                && (!getSelectedDefaultName(savedAddressResponse,selectedAddressPosition))) {
+                deleteTextView?.visibility = View.VISIBLE
+                deleteTextView?.setOnClickListener(this)
+            } else if (getSelectedDefaultName(savedAddressResponse,selectedAddressPosition)) {
+                deleteTextView?.visibility = View.GONE
+            }
             saveAddress?.text = bindString(R.string.change_details)
         }
         if (activity is CheckoutActivity) {

@@ -296,6 +296,7 @@
             android:name="za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan"
+            android:launchMode="singleTask"
             android:theme="@style/Cart" />
 
         <activity
