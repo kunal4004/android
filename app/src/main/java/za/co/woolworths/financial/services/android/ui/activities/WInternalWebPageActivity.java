@@ -167,6 +167,13 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 			public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
 				super.doUpdateVisitedHistory(view, url, isReload);
 				if (treatmentPlan && url.contains(collectionsExitUrl)) {
+
+					if (url.endsWith("Scope=back")){
+					finish();
+					overridePendingTransition(0,0);
+					return;
+					}
+
 					Uri uri = Uri.parse(url);
 					String urlToOpen = uri.getQueryParameter("nburl");
 
