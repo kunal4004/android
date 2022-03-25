@@ -198,7 +198,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         editButtonVisibility();
         view.findViewById(R.id.btnRetry).setOnClickListener(this);
         EmptyCartView emptyCartView = new EmptyCartView(view, this);
-        emptyCartView.setView(getString(R.string.title_empty_shopping_list), getString(R.string.description_empty_shopping_list), getString(R.string.button_empty_shopping_list), R.drawable.emptyshoppinglist);
+        emptyCartView.setView(getString(R.string.title_empty_shopping_list), getString(R.string.description_empty_shopping_list), getString(R.string.button_empty_shopping_list), R.drawable.empty_list_icon);
 
         // Show Bottom Navigation Menu
         Activity activity = getActivity();

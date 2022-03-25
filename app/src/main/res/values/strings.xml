@@ -488,12 +488,12 @@
     <string name="enter_list_name">Enter list name</string>
     <string name="select_all">SELECT ALL</string>
     <string name="deselect_all">DESELECT ALL</string>
-    <string name="title_empty_shopping_list">Shopping list is empty</string>
-    <string name="description_empty_shopping_list">Search for products to start adding \n items to this list.</string>
-    <string name="button_empty_shopping_list">Search Products</string>
-    <string name="title_no_shopping_lists">You have no lists</string>
-    <string name="description_no_shopping_lists">Shopping lists makes it easier and faster to get your favourite Woolworths products.</string>
-    <string name="button_no_shopping_lists">create a list</string>
+    <string name="title_empty_shopping_list">Your Shopping List Is Empty.</string>
+    <string name="description_empty_shopping_list">Search for your favourite Woolies products \n to add to your shopping lists.</string>
+    <string name="button_empty_shopping_list">ADD ITEMS</string>
+    <string name="title_no_shopping_lists">You Don’t Have Any Shopping Lists Yet.</string>
+    <string name="description_no_shopping_lists">Shopping lists make it quick and easy to get your favourite Woolies products.</string>
+    <string name="button_no_shopping_lists">create list</string>
     <string name="shopping_list">shopping list</string>
     <string name="select">select</string>
     <string name="product_unavailable">product unavailable</string>
@@ -2187,6 +2187,7 @@
     <string name="pma_amount_overdue_popup_desc">The amount that is outstanding from the previous billing due date</string>
     <string name="collection_remove_block_current_balance_popup_desc">Balance as at the current date.</string>
     <string name="empty_cart_title">Your Cart Is Empty</string>
+    <string name="empty_cart_text">Your Cart Is Empty.</string>
     <string name="removed_items_empty_cart_desc">When you made changes to your location, your cart was updated, and all items were removed.</string>
 
 
@@ -2440,8 +2441,13 @@
     <string name="set_address">SET ADDRESS</string>
     <string name="dash_delivery_title">To view and shop with Woolies Dash,\n we need your address.</string>
     <string name="dash_delivery_msg">Set your address to \n start shopping.</string>
+    <string name="device_location_service_disabled">Your Device’s Location Services Are Disabled.</string>
+    <string name="device_location_service_disabled_subTitle">We use your location to show available Click &amp; Collect stores near you.</string>
+    <string name="btn_turn_on_location_text">Turn location on</string>
     <string name="all_products_available">All Products Available</string>
     <string name="next_dash_delivery_timeslot_text">Next Dash Delivery timeslot</string>
+    <string name="my_shopping_lists">My Shopping Lists</string>
+    <string name="hi">HI&#160;</string>
 
 
     <string name="product_listing_price_from">From</string>
