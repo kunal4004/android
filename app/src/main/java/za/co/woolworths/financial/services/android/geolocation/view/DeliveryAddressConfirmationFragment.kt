@@ -450,19 +450,10 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     private fun updateDeliveryDetails() {
-
-        if (validateLocationResponse?.validatePlace?.stores?.isEmpty() == true) {
-            no_conn_layout?.visibility = View.VISIBLE
-            geoDeliveryView?.visibility = View.GONE
-            no_loc_layout?.visibility = View.GONE
-            no_conn_layout?.img_close?.setOnClickListener(this)
-            no_conn_layout?.btn_change_location?.setOnClickListener(this)
-            return
-        }
-
         if (validateLocationResponse?.validatePlace?.deliverable == false) {
             no_loc_layout?.visibility = View.VISIBLE
             geoDeliveryView?.visibility = View.GONE
+            no_loc_layout?.txt_no_loc_title?.text  = getString(R.string.no_location_delivery)
             no_loc_layout?.img_no_loc?.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.ic_delivery_truck))
             no_loc_layout?.btn_no_loc_change_location?.setOnClickListener(this)
             return
@@ -529,8 +520,22 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     private fun updateCollectionDetails() {
+
+        if (validateLocationResponse?.validatePlace?.stores?.isEmpty() == true) {
+            no_conn_layout?.visibility = View.VISIBLE
+            geoDeliveryView?.visibility = View.GONE
+            no_loc_layout?.visibility = View.GONE
+            no_loc_layout?.txt_no_loc_title?.text  = getString(R.string.no_location_collection)
+            geoCollectTab?.visibility = View.GONE
+            geoDeliveryTab?.visibility = View.GONE
+            no_conn_layout?.img_close?.setOnClickListener(this)
+            no_conn_layout?.btn_change_location?.setOnClickListener(this)
+            return
+        }
+
         if (validateLocationResponse?.validatePlace?.deliverable == false) {
             no_loc_layout?.visibility = View.VISIBLE
+            no_loc_layout?.txt_no_loc_title?.text  = getString(R.string.no_location_collection)
             geoDeliveryView?.visibility = View.GONE
             no_loc_layout?.img_no_loc?.setImageDrawable(
                 ContextCompat.getDrawable(
