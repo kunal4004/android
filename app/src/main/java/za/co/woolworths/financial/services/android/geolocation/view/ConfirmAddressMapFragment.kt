@@ -328,6 +328,12 @@ class ConfirmAddressMapFragment :
                 country = it.getOrNull(0)?.countryName
                 postalCode = it.getOrNull(0)?.postalCode
                 suburb = it.getOrNull(0)?.subLocality
+                val streetName = it.getOrNull(0)?.thoroughfare
+                if (streetName.isNullOrEmpty()) {
+                    binding?.errorMessage?.visibility = View.VISIBLE
+                } else {
+                    binding?.errorMessage?.visibility = View.GONE
+                }
             }
 
         } catch (e: Exception) {
