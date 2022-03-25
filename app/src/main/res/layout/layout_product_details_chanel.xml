@@ -56,7 +56,7 @@
         app:layout_constraintTop_toBottomOf="@+id/brand_pdp_logo_header"
         tools:srcCompat="@tools:sample/avatars"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scaleType="centerCrop" />
+        android:padding="@dimen/fifteen_dp"
+        android:layout_height="wrap_content" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

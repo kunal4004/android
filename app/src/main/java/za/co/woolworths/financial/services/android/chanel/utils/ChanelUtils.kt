@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.chanel.utils
 
 import android.text.TextUtils
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.brandLandingPage
+import za.co.woolworths.financial.services.android.models.dto.app_config.BrandCategory
 
 class ChanelUtils {
 
@@ -11,9 +12,9 @@ class ChanelUtils {
             if (brandLandingPage == null || !brandLandingPage.isEnabled) {
                 return false
             }
-            for (categoryNameFromList in brandLandingPage.categoryName) {
+            for (brandCategory in brandLandingPage.brandCategories) {
                 if (!TextUtils.isEmpty(categoryName) && categoryName.equals(
-                        categoryNameFromList,
+                        brandCategory.brandName,
                         ignoreCase = true
                     )
                 ) {
@@ -21,6 +22,18 @@ class ChanelUtils {
                 }
             }
             return false
+        }
+
+        fun getBrandCategory(categoryName: String?): BrandCategory? {
+            if (TextUtils.isEmpty(categoryName)) {
+                return null
+            }
+            for (brandCategory in brandLandingPage?.brandCategories ?: ArrayList(0)) {
+                if (categoryName.equals(brandCategory.brandName, ignoreCase = true)) {
+                    return brandCategory
+                }
+            }
+            return null
         }
     }
 }

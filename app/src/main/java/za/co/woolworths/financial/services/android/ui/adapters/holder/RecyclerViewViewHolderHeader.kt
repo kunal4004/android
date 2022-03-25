@@ -38,7 +38,7 @@ class RecyclerViewViewHolderHeader(parent: ViewGroup) : RecyclerViewViewHolder(
                 }
             } else {
                 itemView.chanel_img_banner.visibility = View.VISIBLE
-                ImageManager.setPicture(itemView.chanel_img_banner, mBannerImage)
+                ImageManager.loadImage(itemView.chanel_img_banner, mBannerImage)
                 itemView.chanel_img_banner?.setOnClickListener {
                     navigator?.openBrandLandingPage()
                 }
