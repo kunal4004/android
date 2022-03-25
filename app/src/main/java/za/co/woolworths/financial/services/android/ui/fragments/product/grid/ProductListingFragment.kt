@@ -343,7 +343,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     activity?.apply {
                         KotlinUtils.presentEditDeliveryGeoLocationActivity(
                             this,
-                            LOGIN_REQUEST_SUBURB_CHANGE
+                            LOGIN_REQUEST_SUBURB_CHANGE,
+                            KotlinUtils.getPreferredDeliveryType(),
+                            Utils.getPreferredDeliveryLocation().fulfillmentDetails?.address?.placeId
                         )
                     }
                 }
@@ -777,7 +779,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     activity?.apply {
                         KotlinUtils.presentEditDeliveryGeoLocationActivity(
                             this,
-                            LOGIN_REQUEST_SUBURB_CHANGE
+                            LOGIN_REQUEST_SUBURB_CHANGE,
+                            KotlinUtils.getPreferredDeliveryType(),
+                            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                         )
                     }
                 } else if (resultCode == RESULT_OK) {
@@ -1075,7 +1079,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                             activity?.apply {
                                 KotlinUtils.presentEditDeliveryGeoLocationActivity(
                                     this,
-                                    SET_DELIVERY_LOCATION_REQUEST_CODE
+                                    SET_DELIVERY_LOCATION_REQUEST_CODE,
+                                    KotlinUtils.getPreferredDeliveryType(),
+                                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                                 )
                             }
                         }
@@ -1299,7 +1305,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             KotlinUtils.presentEditDeliveryGeoLocationActivity(
                 this,
                 EditDeliveryLocationActivity.REQUEST_CODE,
-                deliveryType
+                deliveryType,
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
             )
         }
     }
@@ -1313,14 +1320,16 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
                 when (response?.httpCode) {
                     HTTP_OK -> {
-                        if (Utils.isCartSummarySuburbIDEmpty(response)) {
-                            activity?.apply {
-                                KotlinUtils.presentEditDeliveryGeoLocationActivity(
-                                    this,
-                                    SET_DELIVERY_LOCATION_REQUEST_CODE
-                                )
-                            }
-                        } else confirmDeliveryLocation()
+
+                        confirmDeliveryLocation()
+//                        if (Utils.isCartSummarySuburbIDEmpty(response)) {
+//                            activity?.apply {
+//                                KotlinUtils.presentEditDeliveryGeoLocationActivity(
+//                                    this,
+//                                    SET_DELIVERY_LOCATION_REQUEST_CODE
+//                                )
+//                            }
+//                        } else confirmDeliveryLocation()
                     }
                 }
             }

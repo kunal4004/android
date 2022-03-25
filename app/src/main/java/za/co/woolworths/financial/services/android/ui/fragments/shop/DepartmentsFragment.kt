@@ -25,9 +25,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.google.android.gms.location.*
 import kotlinx.android.synthetic.main.fragment_shop_department.*
+import kotlinx.android.synthetic.main.geo_location_delivery_address.*
 import kotlinx.android.synthetic.main.no_connection_layout.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse
@@ -65,6 +68,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
     private var fusedLocationClient: FusedLocationProviderClient? = null
     private var locationRequest: LocationRequest? = createLocationRequest()
     private var localPlaceId: String? = null
+    private var isValidateSelectedSuburbCallStopped = true
+
 
 
 
@@ -374,7 +379,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
                 KotlinUtils.presentEditDeliveryGeoLocationActivity(
                     this,
                     EditDeliveryLocationActivity.REQUEST_CODE,
-                    deliveryType
+                    deliveryType,
+                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                 )
             }
     }
@@ -387,7 +393,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
                     KotlinUtils.presentEditDeliveryGeoLocationActivity(
                         this,
                         EditDeliveryLocationActivity.REQUEST_CODE,
-                        KotlinUtils.getPreferredDeliveryType()
+                        KotlinUtils.getPreferredDeliveryType(),
+                        Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                     )
                 }
             } else {
@@ -474,14 +481,23 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
 
     private fun executeValidateSuburb() {
 
-        /*TODO :  */
-        /*Utils.getPreferredDeliveryLocation().let {
+        var placeId:String? = null
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
+                placeId = it.address?.placeId
+            }
+        } else {
+            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let {
+                placeId = it.address?.placeId
+            }
+        }
+
+        placeId.let {
             if (it == null) {
                 mDepartmentAdapter?.hideDeliveryDates()
             } else {
-                val storeOrSuburbId = if (it.storePickup) it.store.id else it.suburb.id
-                if (storeOrSuburbId.equals(
-                        WoolworthsApplication.getValidatedSuburbProducts()?.suburbId,
+                if (placeId.equals(
+                        WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId,
                         true
                     ) || !isLocationChanged()
                 ) {
@@ -490,60 +506,46 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
                     when (isValidateSelectedSuburbCallStopped) {
                         true -> {
                             mDepartmentAdapter?.showDeliveryDatesProgress(true)
-                            storeOrSuburbId?.let { it1 ->
-                                isValidateSelectedSuburbCallStopped = false
-                                OneAppService.validateSelectedSuburb(it1, it.storePickup)
-                                    .enqueue(CompletionHandler(object :
-                                        IResponseListener<ValidateSelectedSuburbResponse> {
-                                        override fun onSuccess(response: ValidateSelectedSuburbResponse?) {
-                                            isValidateSelectedSuburbCallStopped = true
-                                            when (response?.httpCode) {
-                                                200 -> response.validatedSuburbProducts?.let { it1 ->
-                                                    it1.suburbId = storeOrSuburbId
+                            isValidateSelectedSuburbCallStopped = false
+                            GeoLocationApiHelper().validateLocation(it)
+                                .enqueue(CompletionHandler(object :
+                                    IResponseListener<ValidateLocationResponse> {
+                                    override fun onSuccess(response: ValidateLocationResponse?) {
+                                        isValidateSelectedSuburbCallStopped = true
+                                        when (response?.httpCode) {
+                                            200 -> response.validatePlace?.let { it1 ->
+                                                if (it1.deliverable == true) {
                                                     WoolworthsApplication.setValidatedSuburbProducts(
                                                         it1
                                                     )
-                                                    updateDeliveryDates()
                                                 }
-                                                else -> mDepartmentAdapter?.hideDeliveryDates()
+                                                updateDeliveryDates()
                                             }
+                                            else -> mDepartmentAdapter?.hideDeliveryDates()
                                         }
+                                    }
 
-                                        override fun onFailure(error: Throwable?) {
-                                            isValidateSelectedSuburbCallStopped = true
-                                            mDepartmentAdapter?.hideDeliveryDates()
-                                        }
-                                    }, ValidateSelectedSuburbResponse::class.java))
-                            }
+                                    override fun onFailure(error: Throwable?) {
+                                        isValidateSelectedSuburbCallStopped = true
+                                        mDepartmentAdapter?.hideDeliveryDates()
+                                    }
+                                }, ValidateLocationResponse::class.java))
+
                         }
                         false -> {
                             // Don't make new request.
                         }
                     }
                 }
+
             }
-        }*/
-    }
-
-    fun updateDeliveryDates() {
-        mDepartmentAdapter?.updateDeliveryDate(WoolworthsApplication.getValidatedSuburbProducts())
-    }
-
-/*
-    override fun onLocationChanged(location: Location?) {
-
-    }
-
-    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-        //Do nothing
-    }
-
-    override fun onProviderEnabled(provider: String?) {
-        if (isDashEnabled) {
-            executeDepartmentRequest()
         }
     }
-*/
+
+
+    fun updateDeliveryDates() {
+        mDepartmentAdapter?.updateDeliveryDate(WoolworthsApplication.getValidatePlaceDetails())
+    }
 
     private fun onProviderDisabled() {
         location = null

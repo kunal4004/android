@@ -43,5 +43,12 @@ class GeoLocationApiHelper : RetrofitConfig() {
             confirmLocationRequest
         )
 
+    fun validateLocation(placeId: String) =
+        mApiInterface.validateLocation("",
+            "",
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            placeId)
+
     fun isConnectedToInternet(context: Context) = NetworkManager.getInstance().isConnectedToNetwork(context)
 }

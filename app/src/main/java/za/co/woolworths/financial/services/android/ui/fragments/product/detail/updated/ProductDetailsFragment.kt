@@ -591,7 +591,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             activity?.apply {
                 KotlinUtils.presentEditDeliveryGeoLocationActivity(
                     this,
-                    REQUEST_SUBURB_CHANGE
+                    REQUEST_SUBURB_CHANGE,
+                    KotlinUtils.getPreferredDeliveryType(),
+                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                 )
             }
             return
@@ -1323,9 +1325,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onCartSummarySuccess(cartSummaryResponse: CartSummaryResponse) {
 
-        if (Utils.isCartSummarySuburbIDEmpty(cartSummaryResponse)) {
+
+        if (Utils.getPreferredDeliveryLocation() == null) {
             activity?.apply {
-                KotlinUtils.presentEditDeliveryGeoLocationActivity(this, REQUEST_SUBURB_CHANGE)
+                KotlinUtils.presentEditDeliveryGeoLocationActivity(
+                    this,
+                    REQUEST_SUBURB_CHANGE
+                )
             }
         } else confirmDeliveryLocation()
     }
@@ -1473,7 +1479,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         activity?.apply {
                             KotlinUtils.presentEditDeliveryGeoLocationActivity(
                                 this,
-                                REQUEST_SUBURB_CHANGE
+                                REQUEST_SUBURB_CHANGE,
+                                KotlinUtils.getPreferredDeliveryType(),
+                                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                             )
                         }
                     }
@@ -1571,7 +1579,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         activity?.apply {
                             KotlinUtils.presentEditDeliveryGeoLocationActivity(
                                 this,
-                                REQUEST_SUBURB_CHANGE_FOR_STOCK
+                                REQUEST_SUBURB_CHANGE_FOR_STOCK,
+                                KotlinUtils.getPreferredDeliveryType(),
+                                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                             )
                         }
                     }
@@ -1579,7 +1589,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         activity?.apply {
                             KotlinUtils.presentEditDeliveryGeoLocationActivity(
                                 this,
-                                REQUEST_SUBURB_CHANGE_FOR_LIQUOR
+                                REQUEST_SUBURB_CHANGE_FOR_LIQUOR,
+                                KotlinUtils.getPreferredDeliveryType(),
+                                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                             )
                         }
                     }
@@ -1910,7 +1922,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             when (SessionUtilities.getInstance().isUserAuthenticated) {
                 true -> KotlinUtils.presentEditDeliveryGeoLocationActivity(
                     this,
-                    REQUEST_SUBURB_CHANGE_FOR_STOCK
+                    REQUEST_SUBURB_CHANGE_FOR_STOCK,
+                    KotlinUtils.getPreferredDeliveryType(),
+                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                 )
                 false -> ScreenManager.presentSSOSignin(this, SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK)
             }
@@ -2201,7 +2215,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 KotlinUtils.presentEditDeliveryGeoLocationActivity(
                     this,
                     REQUEST_SUBURB_CHANGE,
-                    deliveryType
+                    deliveryType,
+                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                 )
             }
         }
@@ -2294,7 +2309,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     activity?.apply {
                         KotlinUtils.presentEditDeliveryGeoLocationActivity(
                             this,
-                            REQUEST_SUBURB_CHANGE_FOR_LIQUOR
+                            REQUEST_SUBURB_CHANGE_FOR_LIQUOR,
+                            KotlinUtils.getPreferredDeliveryType(),
+                            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                         )
                     }
                 }
