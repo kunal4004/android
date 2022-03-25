@@ -267,6 +267,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                                 R.anim.slide_from_right,
                                                 R.anim.slide_out_to_left
                                             )
+                                            finish()
                                         }
                                     }
                                 } else {
