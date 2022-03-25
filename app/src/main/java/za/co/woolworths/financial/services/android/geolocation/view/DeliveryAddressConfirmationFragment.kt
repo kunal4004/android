@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.geolocation.view
 
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -292,7 +293,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                 }
                             } else {
                                 // navigate to shop/list/cart tab
-                                activity?.setResult(KotlinUtils.GEO_REQUEST_CODE)
+                                activity?.setResult(Activity.RESULT_OK)
                                 activity?.finish()
                             }
                           }
