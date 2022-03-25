@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
@@ -39,12 +40,10 @@ class AccountProductsHomeViewModel @Inject constructor(
         MutableLiveData<ViewState<EligibilityPlanResponse>>()
     }
 
-    fun eligibilityPlanResponse() {
-        viewModelScope.launch {
-            getViewStateFlowForNetworkCall {
-                val productGroupCode = getAccountProduct()?.productGroupCode
-                queryServiceCheckCustomerEligibilityPlan(productGroupCode!!)
-            }.collect { eligibilityPlanResponseLiveData.value = it}
+    suspend fun eligibilityPlanResponse(): Flow<ViewState<EligibilityPlanResponse>> {
+        return getViewStateFlowForNetworkCall {
+            val productGroupCode = getAccountProduct()?.productGroupCode
+            queryServiceCheckCustomerEligibilityPlan(productGroupCode!!)
         }
     }
 }

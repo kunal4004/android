@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -16,6 +18,8 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountProductLandingMainFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.bpi_covered_tag_layout.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
@@ -108,7 +112,21 @@ class AccountProductsMainFragment :
                     }
 
                     is AccountOfferingState.MakeGetEligibilityCall -> {
-                        viewModel.eligibilityPlanResponse()
+                        lifecycleScope.launchWhenStarted {
+                            viewModel.eligibilityPlanResponse().collect { response ->
+                                when (response) {
+                                    is ViewState.RenderSuccess -> {
+                                        displayPopUp(response.output.eligibilityPlan)
+                                    }
+                                    is ViewState.RenderFailure -> {
+                                        displayPopUp()
+                                    }
+                                    is ViewState.Loading -> {
+                                    }
+                                }
+                            }
+                        }
+
                     }
                 }
             }
@@ -118,16 +136,7 @@ class AccountProductsMainFragment :
     private fun setupObservers() {
         with(viewModel) {
             eligibilityPlanResponseLiveData.observe(viewLifecycleOwner) { response ->
-                when (response) {
-                    is ViewState.RenderSuccess -> {
-                        displayPopUp(response.output.eligibilityPlan)
-                    }
-                    is ViewState.RenderFailure -> {
-                        displayPopUp()
-                    }
-                    is ViewState.Loading -> {
-                    }
-                }
+
             }
         }
     }
