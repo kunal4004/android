@@ -340,9 +340,7 @@ class ConfirmAddressMapFragment :
                 if (streetName.isNullOrEmpty() && binding?.errorMassageDivider?.visibility == View.GONE) {
                     showSelectedLocationError(true)
                 }
-//                else {
-//                    showSelectedLocationError(false)
-//                }
+
             }
 
         } catch (e: Exception) {
