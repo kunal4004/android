@@ -267,11 +267,11 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                                 R.anim.slide_from_right,
                                                 R.anim.slide_out_to_left
                                             )
-                                            finish()
+
                                         }
+                                        activity?.finish()
                                     }
-                                } else {
-                                    if (isComingFromSlotSelection) {
+                                } else if (isComingFromSlotSelection) {
                                         if (whoIsCollecting!=null) {
                                             StorePickupInfoBody().apply {
                                                 firstName = whoIsCollecting?.recipientName
@@ -287,11 +287,15 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                             startCheckoutActivity(Utils.toJson(whoIsCollecting))
                                         } else {
                                                 // Navaigate to who is collecting
+                                            bundle?.putBoolean(
+                                               IS_COMING_FROM_CNC_SELETION, true)
                                             findNavController().navigate(
-                                                R.id.action_deliveryAddressConfirmationFragment_to_geoCheckoutCollectingFragment)
+                                                R.id.action_deliveryAddressConfirmationFragment_to_geoCheckoutCollectingFragment,
+                                            bundleOf("bundle" to bundle))
+
                                         }
                                     }
-                                }
+
                             } else {
                                 // navigate to shop/list/cart tab
                                 activity?.setResult(Activity.RESULT_OK)
@@ -328,6 +332,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 R.anim.slide_out_to_left
             )
         }
+        activity?.finish()
     }
 
     companion object {
@@ -336,6 +341,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         val KEY_PLACE_ID = "placeId"
         val ADDRESS = "address"
         val VALIDATE_RESPONSE = "ValidateResponse"
+        val IS_COMING_FROM_CNC_SELETION = "cnc_slection"
         private const val STANDARD_DELIVERY = "StandardDelivery"
         private const val STANDARD = "Standard"
         private const val CNC = "CnC"

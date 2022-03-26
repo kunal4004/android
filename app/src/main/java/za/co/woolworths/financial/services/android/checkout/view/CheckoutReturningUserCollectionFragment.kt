@@ -670,6 +670,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                     null,
                      Utils.toJson(whoIsCollectingDetails)
                 )
+                activity?.finish()
             }
             R.id.checkoutCollectingUserInfoLayout -> {
                 val bundle = Bundle()

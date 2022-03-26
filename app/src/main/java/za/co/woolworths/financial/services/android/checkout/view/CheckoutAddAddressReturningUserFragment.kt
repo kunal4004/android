@@ -820,6 +820,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     savedAddress,
                     defaultAddress
                 )
+                activity?.finish()
             }
             R.id.txtContinueToPayment -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_CONTINUE_TO_PAYMENT,

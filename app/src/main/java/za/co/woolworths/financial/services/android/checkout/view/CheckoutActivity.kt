@@ -16,6 +16,7 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.IS_DELIVERY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.baseFragBundle
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.ProvinceSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.SuburbSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
@@ -34,8 +35,9 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
 
     private var geoSlotSelection: Boolean? = false
     private var navHostFrag = NavHostFragment()
-    var savedAddressResponse: SavedAddressResponse? = null
-    var whoIsCollectingString: String? = null
+    private var savedAddressResponse: SavedAddressResponse? = null
+    private var whoIsCollectingString: String? = null
+    private var isComingFromCnc: Boolean? = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +46,8 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         intent?.extras?.apply {
             savedAddressResponse = getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
             geoSlotSelection = getBoolean(GEO_SLOT_SELECTION , false)
-            whoIsCollectingString = getString(CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS, "");
+            whoIsCollectingString = getString(CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS, "")
+            isComingFromCnc = getBoolean(DeliveryAddressConfirmationFragment.IS_COMING_FROM_CNC_SELETION , false)
             baseFragBundle = Bundle()
             baseFragBundle?.putString(
                 SAVED_ADDRESS_KEY,
@@ -128,7 +131,8 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
 
         graph.startDestination = when {
 
-            whoIsCollectingString.isNullOrEmpty() == false -> {
+
+            whoIsCollectingString.isNullOrEmpty() == false || isComingFromCnc==true -> {
                 R.id.checkoutReturningUserCollectionFragment
             }
 

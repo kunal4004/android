@@ -66,6 +66,7 @@ class ConfirmAddressMapFragment :
     private var isComingFromCheckout: Boolean? = false
     private var isAddressFromSearch: Boolean = false
     private var isMoveMapCameraFirstTime: Boolean? = true
+
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
@@ -261,14 +262,21 @@ class ConfirmAddressMapFragment :
 
     private fun showLocationErrorBanner() {
         LocationErrorLiveData.observe(viewLifecycleOwner, { isResult ->
-            if (isResult) {
-                binding?.errorMassageDivider?.visibility = View.VISIBLE
-                binding?.errorMessage?.visibility = View.VISIBLE
-            } else {
-                binding?.errorMassageDivider?.visibility = View.GONE
-                binding?.errorMessage?.visibility = View.GONE
-            }
+            showSelectedLocationError(isResult)
         })
+    }
+
+    private fun showSelectedLocationError(result: Boolean?) {
+        if (result==true) {
+            binding?.errorMassageDivider?.visibility = View.VISIBLE
+            binding?.errorMessage?.visibility = View.VISIBLE
+            binding?.confirmAddress?.isEnabled = false
+        } else {
+            binding?.errorMassageDivider?.visibility = View.GONE
+            binding?.errorMessage?.visibility = View.GONE
+            binding?.confirmAddress?.isEnabled = true
+        }
+
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -329,11 +337,12 @@ class ConfirmAddressMapFragment :
                 postalCode = it.getOrNull(0)?.postalCode
                 suburb = it.getOrNull(0)?.subLocality
                 val streetName = it.getOrNull(0)?.thoroughfare
-                if (streetName.isNullOrEmpty()) {
-                    binding?.errorMessage?.visibility = View.VISIBLE
-                } else {
-                    binding?.errorMessage?.visibility = View.GONE
+                if (streetName.isNullOrEmpty() && binding?.errorMassageDivider?.visibility == View.GONE) {
+                    showSelectedLocationError(true)
                 }
+//                else {
+//                    showSelectedLocationError(false)
+//                }
             }
 
         } catch (e: Exception) {
