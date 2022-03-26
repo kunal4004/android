@@ -37,6 +37,8 @@ import za.co.woolworths.financial.services.android.geolocation.view.adapter.Save
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
+import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity.Companion.IS_COMING_FROM_CHECKOUT
+import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity.Companion.IS_COMING_FROM_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment.Companion.DEPARTMENT_LOGIN_REQUEST
 import za.co.woolworths.financial.services.android.util.*
@@ -53,6 +55,8 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
     private var selectedAddress = Address()
     private var bundle: Bundle? = null
     private var isComingFromCheckout: Boolean = false
+    private var isComingFromSlotSelection: Boolean = false
+
     private var deliveryType: String? = null
 
     companion object {
@@ -67,7 +71,9 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         bundle = arguments?.getBundle("bundle")
         bundle?.apply {
             isComingFromCheckout = this.getBoolean(
-                EditDeliveryLocationActivity.IS_COMING_FROM_CHECKOUT, false)
+                IS_COMING_FROM_CHECKOUT, false)
+            isComingFromSlotSelection = this.getBoolean(
+                IS_COMING_FROM_SLOT_SELECTION, false)
             deliveryType =  this.getString(
                 EditDeliveryLocationActivity.DELIVERY_TYPE, "")
         }
@@ -391,13 +397,18 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
             Utils.toJson(savedAddressResponse)
         )
-        CheckoutAddressManagementBaseFragment.baseFragBundle?.putString(
-            CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY, Utils.toJson(savedAddressResponse)
+        IS_COMING_FROM_SLOT_SELECTION
+        bundle.putBoolean(
+            IS_COMING_FROM_CHECKOUT,
+            isComingFromCheckout
         )
-
+        bundle.putBoolean(
+            IS_COMING_FROM_SLOT_SELECTION,
+            isComingFromSlotSelection
+        )
         findNavController()?.navigate(
             R.id.action_confirmAddressLocationFragment_to_checkoutAddAddressNewUserFragment,
-            bundle
+            bundleOf("bundle" to bundle)
         )
     }
 }

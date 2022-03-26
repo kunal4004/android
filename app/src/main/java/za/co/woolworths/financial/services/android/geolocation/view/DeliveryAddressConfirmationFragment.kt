@@ -180,6 +180,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     private fun navigateToConfirmAddressScreen() {
         bundle?.putBoolean(EditDeliveryLocationActivity.IS_COMING_FROM_CHECKOUT, isComingFromCheckout)
+        bundle?.putBoolean(EditDeliveryLocationActivity.IS_COMING_FROM_SLOT_SELECTION, isComingFromSlotSelection)
         bundle?.putString(EditDeliveryLocationActivity.DELIVERY_TYPE, deliveryType)
         findNavController().navigate(
             R.id.action_deliveryAddressConfirmationFragment_to_confirmDeliveryLocationFragment,
@@ -621,6 +622,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             getString(R.string.collecting_from_geo, getNearestStore(validateLocationResponse?.validatePlace?.stores)),
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
+        mStoreId = getNearestStoreId(validateLocationResponse?.validatePlace?.stores)
         editDelivery?.text = bindString(R.string.edit)
         btnConfirmAddress?.isEnabled = true
         btnConfirmAddress?.setBackgroundColor(
@@ -640,6 +642,16 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             }
         }
         return shortestDistance?.storeName
+    }
+
+    private fun getNearestStoreId(stores: List<Store>?): String? {
+        var shortestDistance: Store? = null
+        if (!stores.isNullOrEmpty()) {
+            shortestDistance = stores.minByOrNull {
+                it.distance!!
+            }
+        }
+        return shortestDistance?.storeId
     }
 
     private fun getNearestStoreItemLimit(stores: List<Store>?): String? {

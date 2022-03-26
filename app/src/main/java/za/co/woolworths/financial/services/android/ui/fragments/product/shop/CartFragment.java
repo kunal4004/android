@@ -207,12 +207,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         hideEditCart();
         localCartCount = QueryBadgeCounter.getInstance().getCartItemCount();
 
-        ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
-        if (lastDeliveryLocation != null) {
-            setDeliveryLocation(lastDeliveryLocation);
-        }
-
-        ShoppingDeliveryLocation location = Utils.getPreferredDeliveryLocation();
         mChangeQuantityList = new ArrayList<>(0);
         mChangeQuantity = new ChangeQuantity();
         mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
@@ -1258,6 +1252,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.CART_LIST);
         if (activity != null) {
             activity.registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+        }
+        ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
+        if (lastDeliveryLocation != null) {
+            setDeliveryLocation(lastDeliveryLocation);
         }
     }
 

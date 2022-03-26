@@ -96,6 +96,9 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     private var provinceSuburbEnableType: ProvinceSuburbType? = null
     private var bundle: Bundle? = null
     private var selectedAddressPosition: Int = -1
+    private var isComingFromCheckout: Boolean = false
+    private var isComingFromSlotSelection: Boolean = false
+
 
     companion object {
         const val PROVINCE_SELECTION_BACK_PRESSED = "5645"
@@ -127,6 +130,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     fun handleBundleResponse() {
         bundle = arguments?.getBundle("bundle")
         bundle?.apply {
+           isComingFromCheckout = getBoolean(EditDeliveryLocationActivity.IS_COMING_FROM_CHECKOUT, false)
+            isComingFromSlotSelection = getBoolean(EditDeliveryLocationActivity.IS_COMING_FROM_SLOT_SELECTION, false)
             if (containsKey(EDIT_SAVED_ADDRESS_RESPONSE_KEY)) {
                 //Edit new Address from delivery
                 val editSavedAddress = getString(EDIT_SAVED_ADDRESS_RESPONSE_KEY)
@@ -1179,6 +1184,12 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
     private fun navigateToAddressConfirmation(placesId: String?) {
         baseFragBundle?.putString(KEY_PLACE_ID, placesId)
+        baseFragBundle?.putBoolean(EditDeliveryLocationActivity.IS_COMING_FROM_CHECKOUT,
+            isComingFromCheckout)
+        baseFragBundle?.putBoolean(EditDeliveryLocationActivity.IS_COMING_FROM_SLOT_SELECTION,
+            isComingFromSlotSelection)
+        baseFragBundle?.putSerializable(EditDeliveryLocationActivity.SAVED_ADDRESS_RESPONSE,
+            savedAddressResponse)
         findNavController().navigate(
             R.id.action_checkoutAddAddressNewUserFragment_to_deliveryAddressConfirmationFragment,
             bundleOf("bundle" to baseFragBundle)
