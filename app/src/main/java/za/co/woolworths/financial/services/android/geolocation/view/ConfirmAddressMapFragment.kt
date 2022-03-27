@@ -28,6 +28,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.geolocation_confirm_address.*
 import kotlinx.android.synthetic.main.geolocation_confirm_address.autoCompleteTextView
 import kotlinx.android.synthetic.main.no_connection.view.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
@@ -38,6 +39,7 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLoca
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.LocationErrorLiveData
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
@@ -66,7 +68,7 @@ class ConfirmAddressMapFragment :
     private var isComingFromCheckout: Boolean? = false
     private var isAddressFromSearch: Boolean = false
     private var isMoveMapCameraFirstTime: Boolean? = true
-
+    private var isLocationErrorShowing: Boolean? = true
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
@@ -262,6 +264,7 @@ class ConfirmAddressMapFragment :
 
     private fun showLocationErrorBanner() {
         LocationErrorLiveData.observe(viewLifecycleOwner, { isResult ->
+            isLocationErrorShowing = isResult
             showSelectedLocationError(isResult)
         })
     }
@@ -337,10 +340,11 @@ class ConfirmAddressMapFragment :
                 postalCode = it.getOrNull(0)?.postalCode
                 suburb = it.getOrNull(0)?.subLocality
                 val streetName = it.getOrNull(0)?.thoroughfare
-                if (streetName.isNullOrEmpty() && binding?.errorMassageDivider?.visibility == View.GONE) {
-                    showSelectedLocationError(true)
-                } else {
-                    showSelectedLocationError(false)
+                viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                    delay(AppConstant.DELAY_1000_MS)
+                    if (streetName.isNullOrEmpty() && isLocationErrorShowing==false) {
+                        showSelectedLocationError(true)
+                    }
                 }
             }
 
