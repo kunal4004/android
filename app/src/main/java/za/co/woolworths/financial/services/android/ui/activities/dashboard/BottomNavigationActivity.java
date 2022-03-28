@@ -650,10 +650,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     return true;
 
                 case R.id.navigate_to_shop:
-                    replaceAccountIcon(item);
-                    setCurrentSection(R.id.navigate_to_shop);
-                    switchTab(INDEX_PRODUCT);
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMENU, BottomNavigationActivity.this);
+                    onShopTabSelected(item);
                     return true;
 
                 case R.id.navigate_to_cart:
@@ -699,6 +696,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             return false;
         }
     };
+
+    public void onShopTabSelected(MenuItem item) {
+        replaceAccountIcon(item);
+        setCurrentSection(R.id.navigate_to_shop);
+        switchTab(INDEX_PRODUCT);
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMENU, BottomNavigationActivity.this);
+    }
 
     private void replaceAccountIcon(@NonNull MenuItem item) {
         if (accountNavigationView != null) {

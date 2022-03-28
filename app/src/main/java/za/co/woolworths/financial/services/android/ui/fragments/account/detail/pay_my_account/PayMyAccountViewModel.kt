@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.BeginPayMyAccountJourneyActionImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.PMATrackFirebaseEvent
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.PayMyAccountPresenter
+import za.co.woolworths.financial.services.android.util.eliteplan.ElitePlanModel
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.wenum.PMAVendorCardEnum
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
@@ -43,6 +44,7 @@ class PayMyAccountViewModel : ViewModel() {
     var isAddNewCardFormLoaded = false
     var mSelectExpiredPaymentMethod : GetPaymentMethod? = null
     var isQueryPayUPaymentMethodComplete :Boolean = false
+    var elitePlanModel : ElitePlanModel? = null
 
     var pmaCardPopupModel: MutableLiveData<PMACardPopupModel?> = MutableLiveData()
     var queryPaymentMethod: MutableLiveData<Boolean> = MutableLiveData()
@@ -242,6 +244,13 @@ class PayMyAccountViewModel : ViewModel() {
         return getAccount()?.currentBalance?.let { formatAndRemoveNegativeSymbol(it) }?.replace("R  ","R ")
     }
 
+    fun getSavedAmount(): String? {
+        return  "R " + elitePlanModel?.discountAmount
+    }
+    fun getDiscountAmount(): String? {
+        return  "R " + elitePlanModel?.settlementAmount
+    }
+
     private fun formatAndRemoveNegativeSymbol(amount: Int): String? {
         return Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.formatAmountToRandAndCent(amount), 1))
     }
@@ -410,13 +419,6 @@ class PayMyAccountViewModel : ViewModel() {
     fun convertRandFormatToInt(item: String?): Int {
         val number: String? = item?.replace("[,.R$ ]".toRegex(), "")
         return if (number.isNullOrEmpty()) 0 else number.toInt()
-    }
-
-    fun getAmountEnteredAfterTextChanged(item: String?): String? {
-        val account = getAccount()
-        val inputAmount = convertRandFormatToInt(item)
-        val enteredAmount = account?.amountOverdue?.minus(inputAmount) ?: 0
-        return Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(if (enteredAmount < 0) 0 else enteredAmount))
     }
 
     fun validateAmountEntered(amount: Double, minAmount: () -> Unit, maxAmount: () -> Unit, validAmount: () -> Unit) {

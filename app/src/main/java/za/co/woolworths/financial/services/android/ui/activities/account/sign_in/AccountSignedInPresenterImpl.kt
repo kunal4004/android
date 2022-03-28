@@ -19,8 +19,10 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.ProductOfferingStatus
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.extension.deviceHeight
+import za.co.woolworths.financial.services.android.util.eliteplan.EligibilityImpl
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+
 
 class AccountSignedInPresenterImpl(
     private var mainView: IAccountSignedInContract.MyAccountView?,
@@ -31,13 +33,17 @@ class AccountSignedInPresenterImpl(
     private var mAccountResponse: AccountsResponse? = null
     private var mProductGroupCode: String? = null
     private var mDeepLinkingData: String? = null
+    private var eligibilityPlan: EligibilityPlan? = null
     var isAccountInArrearsState: Boolean = false
+    var eligibilityImpl: EligibilityImpl? = null
 
     companion object {
         const val MY_ACCOUNT_RESPONSE = "MY_ACCOUNT_RESPONSE"
         const val APPLY_NOW_STATE = "APPLY_NOW_STATE"
         const val DEEP_LINKING_PARAMS = "DEEP_LINKING_PARAMS"
-
+        const val ELITE_PLAN ="Elite Plan"
+        const val VIP_PLAN ="VIP Plan"
+        const val ELITE_PLAN_MODEL: String = "ELITE_PLAN_MODEL"
         fun getProductCode(applyNowState: ApplyNowState): String {
             return when (applyNowState) {
                 ApplyNowState.STORE_CARD -> AccountsProductGroupCode.STORE_CARD.groupCode
@@ -50,7 +56,8 @@ class AccountSignedInPresenterImpl(
     }
 
     override fun getAccountBundle(bundle: Bundle?): Pair<ApplyNowState?, AccountsResponse?> {
-        mApplyNowState = bundle?.getSerializable(APPLY_NOW_STATE) as? ApplyNowState ?: ApplyNowState.STORE_CARD
+        mApplyNowState =
+            bundle?.getSerializable(APPLY_NOW_STATE) as? ApplyNowState ?: ApplyNowState.STORE_CARD
         val accountResponseString = bundle?.getString(MY_ACCOUNT_RESPONSE, "")
         mDeepLinkingData = bundle?.getString(DEEP_LINKING_PARAMS, "")
         mAccountResponse = Gson().fromJson(accountResponseString, AccountsResponse::class.java)
@@ -130,7 +137,11 @@ class AccountSignedInPresenterImpl(
         }
     }
 
-    private fun checkEligibility(response: EligibilityPlanResponse, state: ApplyNowState, showPopupIfNeeded: Boolean) {
+    private fun checkEligibility(
+        response: EligibilityPlanResponse,
+        state: ApplyNowState,
+        showPopupIfNeeded: Boolean
+    ) {
 
         val account = getAccount()
         val productOffering = ProductOfferingStatus(account)
@@ -139,12 +150,20 @@ class AccountSignedInPresenterImpl(
             ApplyNowState.PERSONAL_LOAN -> ProductGroupCode.PL
             else -> ProductGroupCode.CC
         }
+        eligibilityImpl?.eligibilityResponse(response.eligibilityPlan)
+        eligibilityPlan = response.eligibilityPlan
 
-        if (response.eligibilityPlan?.productGroupCode == eligibleState) {
-            when (response.eligibilityPlan.actionText) {
+        if (eligibilityPlan?.productGroupCode == eligibleState) {
+            when (eligibilityPlan?.actionText) {
+                ActionText.START_NEW_ELITE_PLAN.value -> {
+                    if (eligibilityPlan?.planType.equals(ELITE_PLAN) && showPopupIfNeeded) {
+                        mainView?.removeBlocksOnCollectionCustomer()
+                    }
+                }
                 ActionText.TAKE_UP_TREATMENT_PLAN.value -> {
                     if (productOffering.isTakeUpTreatmentPlanJourneyEnabled()) {
                         mainView?.showPlanButton(state, response.eligibilityPlan)
+
                         if (showPopupIfNeeded) {
                             mainView?.showViewTreatmentPlan(state, response.eligibilityPlan)!!
                         }
@@ -152,7 +171,8 @@ class AccountSignedInPresenterImpl(
                         getAccount()?.let { mainView?.showAccountInArrears(account = it) }
                     }
                 }
-                ActionText.VIEW_TREATMENT_PLAN.value -> {
+
+                ActionText.VIEW_TREATMENT_PLAN.value ,ActionText.VIEW_ELITE_PLAN.value-> {
                     if (productOffering.isViewTreatmentPlanSupported()) {
                         mainView?.showPlanButton(state, response.eligibilityPlan)
                         if (showPopupIfNeeded) {
@@ -175,12 +195,12 @@ class AccountSignedInPresenterImpl(
                                 }
                             }
                         }
-                    }else {
+                    } else {
                         getAccount()?.let { mainView?.showAccountInArrears(account = it) }
                     }
                 }
             }
-        }else {
+        } else {
             showAccountInArrears(account)
         }
     }
@@ -213,12 +233,12 @@ class AccountSignedInPresenterImpl(
 
                         AccountOfferingState.AccountIsChargedOff -> {
                             // account is in arrears for more than 6 months
-                            removeBlocksOnCollectionCustomer()
+//                            removeBlocksOnCollectionCustomer(response.eligibilityPlan)
                         }
 
                         AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff -> {
-                            removeBlocksWhenChargedOff(true)
-                            when (productGroupCode()){
+                            removeBlocksWhenChargedOff()
+                            when (productGroupCode()) {
                                 ProductOfferingStatus.productGroupCodeSc, ProductOfferingStatus.productGroupCodePl -> {
                                     showViewTreatmentPlan(true)
                                 }
@@ -230,9 +250,16 @@ class AccountSignedInPresenterImpl(
                         }
 
                         AccountOfferingState.MakeGetEligibilityCall -> {
+                            removeBlocksWhenChargedOff()
                             val productGroupCode = productGroupCode() ?: return@state
                             myAccountsViewModel.fetchCheckEligibilityTreatmentPlan(productGroupCode,
-                                { eligibilityPlanResponse -> checkEligibility(eligibilityPlanResponse, state, showPopupIfNeeded) },
+                                { eligibilityPlanResponse ->
+                                    checkEligibility(
+                                        eligibilityPlanResponse,
+                                        state,
+                                        showPopupIfNeeded
+                                    )
+                                },
                                 { if (showPopupIfNeeded) showAccountInArrears(account) })
                         }
                     }
@@ -286,6 +313,10 @@ class AccountSignedInPresenterImpl(
 
     override fun getDeepLinkData(): JsonObject? {
         return Gson().fromJson(mDeepLinkingData, JsonObject::class.java)
+    }
+
+    override fun getEligibilityPlan(): EligibilityPlan? {
+        return eligibilityPlan
     }
 
     override fun deleteDeepLinkData() {
