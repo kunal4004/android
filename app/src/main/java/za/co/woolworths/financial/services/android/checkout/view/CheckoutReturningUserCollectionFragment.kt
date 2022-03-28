@@ -26,11 +26,9 @@ import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.checkout_add_address_new_user.*
+import kotlinx.android.synthetic.main.checkout_add_address_new_user.delivering_layout
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.loadingBar
-import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
-import kotlinx.android.synthetic.main.checkout_how_would_you_delivered.*
 import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.*
 import kotlinx.android.synthetic.main.layout_collection_time_details.*
 import kotlinx.android.synthetic.main.layout_collection_user_information.*
@@ -38,6 +36,7 @@ import kotlinx.android.synthetic.main.layout_delivering_to_details.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_order_summary.*
+import kotlinx.android.synthetic.main.layout_native_checkout_driver_tip.*
 import kotlinx.android.synthetic.main.new_shopping_bags_layout.*
 import kotlinx.android.synthetic.main.where_are_we_delivering_items.view.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
@@ -136,7 +135,6 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         initializeCollectingFromView()
         initializeCollectingDetailsView()
         initializeCollectionTimeSlots()
-        initializeDriverTipView()
         callStorePickupInfoAPI()
         txtContinueToPaymentCollection?.setOnClickListener(this)
         setFragmentResults()
@@ -253,6 +251,14 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             Pair<ShimmerFrameLayout, View>(
                 imageViewCaretForwardCollectionShimmerFrameLayout,
                 imageViewCaretForwardCollection
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                tipDashDriverTitleShimmerFrameLayout,
+                tipDashDriverTitle
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                tipOptionScrollViewShimmerFrameLayout,
+                tipOptionScrollView
             )
         )
         startShimmerView()
@@ -284,6 +290,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
         initializeFoodSubstitution()
         initializeDeliveryInstructions()
+        initializeDriverTipView()
     }
 
     private fun setupViewModel() {
@@ -297,11 +304,11 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         ).get(CheckoutAddAddressNewUserViewModel::class.java)
     }
 
-    fun callStorePickupInfoAPI() {
+    private fun callStorePickupInfoAPI() {
         initShimmerView()
 
         checkoutAddAddressNewUserViewModel?.getStorePickupInfo(getStorePickupInfoBody())
-            .observe(viewLifecycleOwner, { response ->
+            .observe(viewLifecycleOwner) { response ->
                 stopShimmerView()
                 when (response) {
                     is ConfirmDeliveryAddressResponse -> {
@@ -351,7 +358,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                         )
                     }
                 }
-            })
+            }
     }
 
     private fun initializeDatesAndTimeSlots(selectedWeekSlot: Week?) {
@@ -827,7 +834,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         loadingBar?.visibility = View.VISIBLE
         setScreenClickEvents(false)
         checkoutAddAddressNewUserViewModel.getShippingDetails(body)
-            .observe(viewLifecycleOwner, { response ->
+            .observe(viewLifecycleOwner) { response ->
                 loadingBar.visibility = View.GONE
                 setScreenClickEvents(true)
                 when (response) {
@@ -850,7 +857,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                         )
                     }
                 }
-            })
+            }
     }
 
     private fun presentErrorDialog(title: String, subTitle: String, errorType: Int) {
