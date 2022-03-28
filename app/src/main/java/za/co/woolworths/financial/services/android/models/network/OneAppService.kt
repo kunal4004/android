@@ -6,7 +6,6 @@ import retrofit2.Call
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
-import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationResponse
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.Response
@@ -39,7 +38,6 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.wenum.ConfirmLocation
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.net.URLEncoder
 
@@ -684,7 +682,7 @@ object OneAppService : RetrofitConfig() {
     }
 
 
-    fun getConfirmDeliveryAddressDetails(body: ConfirmLocationRequest): Call<ConfirmLocationResponse>{
+    fun getConfirmDeliveryAddressDetails(body: ConfirmLocationRequest): Call<ConfirmDeliveryAddressResponse>{
         return mApiInterface.confirmLocation("",
             "",
             getSessionToken(),

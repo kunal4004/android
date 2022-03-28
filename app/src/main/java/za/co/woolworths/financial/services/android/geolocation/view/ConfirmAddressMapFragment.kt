@@ -27,7 +27,9 @@ import com.google.maps.GeocodingApi
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.geolocation_confirm_address.*
 import kotlinx.android.synthetic.main.geolocation_confirm_address.autoCompleteTextView
+import kotlinx.android.synthetic.main.no_connection.*
 import kotlinx.android.synthetic.main.no_connection.view.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
@@ -38,6 +40,12 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLoca
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.LocationErrorLiveData
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
+import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_CONFIRM_ADD
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LATITUDE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LONGITUDE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
@@ -66,6 +74,7 @@ class ConfirmAddressMapFragment :
     private var isComingFromCheckout: Boolean? = false
     private var isAddressFromSearch: Boolean = false
     private var isMoveMapCameraFirstTime: Boolean? = true
+    private var isLocationErrorShowing: Boolean? = true
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
@@ -100,11 +109,12 @@ class ConfirmAddressMapFragment :
             if (confirmAddressViewModel.isConnectedToInternet(requireActivity())) {
                 initMap()
             } else {
-                binding?.mapFrameLayout?.visibility = View.GONE
-                binding?.imgMapMarker?.visibility = View.GONE
-                binding?.autoCompleteTextView?.isEnabled = false
-                noMapConnectionLayout?.no_connection_layout?.visibility = View.VISIBLE
-
+                binding?.apply {
+                    mapFrameLayout.visibility = View.GONE
+                    imgMapMarker.visibility = View.GONE
+                    autoCompleteTextView.isEnabled = false
+                    no_connection_layout?.visibility = View.VISIBLE
+                }
             }
         }
     }
@@ -124,36 +134,39 @@ class ConfirmAddressMapFragment :
     private fun checkNetwork(mapFragment: SupportMapFragment?) {
         activity?.let {
             ConnectivityLiveData.observe(viewLifecycleOwner, { isNetworkAvailable ->
-                if (isNetworkAvailable) {
-                    noMapConnectionLayout?.no_connection_layout?.visibility = View.GONE
-                    mapFragment?.view?.visibility = View.VISIBLE
-                    binding?.mapFrameLayout?.visibility = View.VISIBLE
-                    binding?.imgMapMarker?.visibility = View.VISIBLE
-                    binding?.autoCompleteTextView?.isEnabled = true
-                    binding?.confirmAddress?.isEnabled = true
-                    if(isAddAddress!!){
-                        binding?.confirmAddress?.isEnabled = false
-                        binding?.imgMapMarker?.visibility = View.GONE
+                binding?.apply {
+                    if (isNetworkAvailable) {
+                        no_connection_layout?.visibility = View.GONE
+                        mapFragment?.view?.visibility = View.VISIBLE
+                        mapFrameLayout.visibility = View.VISIBLE
+                        imgMapMarker.visibility = View.VISIBLE
+                        autoCompleteTextView.isEnabled = true
+                        confirmAddress.isEnabled = true
+                        if (isAddAddress!!) {
+                            confirmAddress.isEnabled = false
+                            imgMapMarker?.visibility = View.GONE
+
+                        }
+                    } else {
+                        no_connection_layout?.visibility = View.VISIBLE
+                        mapFragment?.view?.visibility = View.GONE
+                        imgMapMarker.visibility = View.GONE
+                        autoCompleteTextView.isEnabled = false
+                        confirmAddress.isEnabled = false
 
                     }
-                } else {
-                    noMapConnectionLayout?.no_connection_layout?.visibility = View.VISIBLE
-                    mapFragment?.view?.visibility = View.GONE
-                    binding?.imgMapMarker?.visibility = View.GONE
-                    binding?.autoCompleteTextView?.isEnabled = false
-                    binding?.confirmAddress?.isEnabled = false
-
                 }
-
             })
         }
     }
 
     private fun clearAddress() {
-        binding?.imgRemoveAddress?.setOnClickListener {
-            binding?.autoCompleteTextView?.setText("")
-            binding?.errorMassageDivider?.visibility = View.GONE
-            binding?.errorMessage?.visibility = View.GONE
+        binding?.apply {
+            imgRemoveAddress.setOnClickListener {
+                autoCompleteTextView.setText("")
+                errorMassageDivider.visibility = View.GONE
+                errorMessage.visibility = View.GONE
+            }
         }
     }
 
@@ -164,13 +177,13 @@ class ConfirmAddressMapFragment :
             if(isComingFromCheckout==true) {
                 bundle?.apply {
                     putString(
-                        DeliveryAddressConfirmationFragment.KEY_PLACE_ID, placeId
+                        KEY_PLACE_ID, placeId
                     )
                     putBoolean(
-                        ConfirmAddressFragment.IS_COMING_CONFIRM_ADD, true)
+                        IS_COMING_CONFIRM_ADD, true)
                     findNavController().navigate(
                         R.id.actionClickAndCollectStoresFragment,
-                        bundleOf("bundle" to bundle)
+                        bundleOf(BUNDLE to bundle)
                     )
                 }
             } else {
@@ -179,18 +192,18 @@ class ConfirmAddressMapFragment :
 
                     bundle?.apply {
                         putString(
-                            DeliveryAddressConfirmationFragment.KEY_LATITUDE, mLatitude
+                           KEY_LATITUDE, mLatitude
                         )
                         putString(
-                            DeliveryAddressConfirmationFragment.KEY_LONGITUDE, mLongitude
+                            KEY_LONGITUDE, mLongitude
                         )
                         putString(
-                            DeliveryAddressConfirmationFragment.KEY_PLACE_ID, placeId
+                           KEY_PLACE_ID, placeId
                         )
                     }
                     findNavController().navigate(
                         R.id.action_confirmAddressMapFragment_to_deliveryAddressConfirmationFragment,
-                        bundleOf("bundle" to bundle)
+                        bundleOf(BUNDLE to bundle)
                     )
                 }
             }
@@ -261,14 +274,23 @@ class ConfirmAddressMapFragment :
 
     private fun showLocationErrorBanner() {
         LocationErrorLiveData.observe(viewLifecycleOwner, { isResult ->
-            if (isResult) {
-                binding?.errorMassageDivider?.visibility = View.VISIBLE
-                binding?.errorMessage?.visibility = View.VISIBLE
-            } else {
-                binding?.errorMassageDivider?.visibility = View.GONE
-                binding?.errorMessage?.visibility = View.GONE
-            }
+            isLocationErrorShowing = isResult
+            showSelectedLocationError(isResult)
         })
+    }
+
+    private fun showSelectedLocationError(result: Boolean?) {
+        binding?.apply {
+            if (result == true) {
+                errorMassageDivider.visibility = View.VISIBLE
+                errorMessage.visibility = View.VISIBLE
+                confirmAddress.isEnabled = false
+            } else {
+                errorMassageDivider.visibility = View.GONE
+                errorMessage.visibility = View.GONE
+                confirmAddress.isEnabled = true
+            }
+        }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -328,6 +350,13 @@ class ConfirmAddressMapFragment :
                 country = it.getOrNull(0)?.countryName
                 postalCode = it.getOrNull(0)?.postalCode
                 suburb = it.getOrNull(0)?.subLocality
+                val streetName = it.getOrNull(0)?.thoroughfare
+                viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                    delay(AppConstant.DELAY_1000_MS)
+                    if (streetName.isNullOrEmpty() && isLocationErrorShowing==false) {
+                        showSelectedLocationError(true)
+                    }
+                }
             }
 
         } catch (e: Exception) {

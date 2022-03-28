@@ -54,11 +54,9 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.SelectedPl
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getSelectedDefaultName
-import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
-import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -71,6 +69,12 @@ import za.co.woolworths.financial.services.android.ui.fragments.click_and_collec
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CHECKOUT
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
 import java.net.HttpURLConnection.HTTP_OK
 import java.util.*
 import java.util.regex.Pattern
@@ -96,6 +100,9 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     private var provinceSuburbEnableType: ProvinceSuburbType? = null
     private var bundle: Bundle? = null
     private var selectedAddressPosition: Int = -1
+    private var isComingFromCheckout: Boolean = false
+    private var isComingFromSlotSelection: Boolean = false
+
 
     companion object {
         const val PROVINCE_SELECTION_BACK_PRESSED = "5645"
@@ -125,8 +132,10 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     fun handleBundleResponse() {
-        bundle = arguments?.getBundle("bundle")
+        bundle = arguments?.getBundle(BUNDLE)
         bundle?.apply {
+           isComingFromCheckout = getBoolean(IS_COMING_FROM_CHECKOUT, false)
+            isComingFromSlotSelection = getBoolean(IS_COMING_FROM_SLOT_SELECTION, false)
             if (containsKey(EDIT_SAVED_ADDRESS_RESPONSE_KEY)) {
                 //Edit new Address from delivery
                 val editSavedAddress = getString(EDIT_SAVED_ADDRESS_RESPONSE_KEY)
@@ -249,7 +258,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     private fun initView() {
         if (selectedAddressId.isNotEmpty()) {
             //it's not empty means it's a edit address call.
-            if (savedAddressResponse?.defaultAddressNickname == arguments?.getInt(
+            var bundle = arguments?.getBundle(BUNDLE)
+            if (savedAddressResponse?.defaultAddressNickname == bundle?.getInt(
                     EDIT_ADDRESS_POSITION_KEY
                 )?.let {
                     savedAddressResponse?.addresses?.get(it)?.nickname
@@ -384,7 +394,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             provinceSuburbEnableType = ONLY_SUBURB
         }
         setFragmentResultListener(RESULT_ERROR_CODE_RETRY) { _, bundle ->
-            when (bundle.getInt("bundle")) {
+            when (bundle.getInt(BUNDLE)) {
                 ERROR_TYPE_ADD_ADDRESS -> {
                     onSaveAddressClicked()
                 }
@@ -974,7 +984,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             bundleOf(
                 KEY_ARGS_BUNDLE to bundleOf(
                     SAVED_ADDRESS_KEY to savedAddressResponse,
-                    EditDeliveryLocationActivity.DELIVERY_TYPE to DeliveryType.DELIVERY.name,
+                   DELIVERY_TYPE to DeliveryType.DELIVERY.name,
                     KEY_ARGS_SUBURB to Utils.toJson(suburb),
                     KEY_ARGS_PROVINCE to Utils.toJson(province),
                     KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS to Utils.toJson(unSellableCommerceItems),
@@ -1178,9 +1188,15 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
     private fun navigateToAddressConfirmation(placesId: String?) {
         baseFragBundle?.putString(KEY_PLACE_ID, placesId)
+        baseFragBundle?.putBoolean(IS_COMING_FROM_CHECKOUT,
+            isComingFromCheckout)
+        baseFragBundle?.putBoolean(IS_COMING_FROM_SLOT_SELECTION,
+            isComingFromSlotSelection)
+        baseFragBundle?.putSerializable(SAVED_ADDRESS_RESPONSE,
+            savedAddressResponse)
         findNavController().navigate(
             R.id.action_checkoutAddAddressNewUserFragment_to_deliveryAddressConfirmationFragment,
-            bundleOf("bundle" to baseFragBundle)
+            bundleOf(BUNDLE to baseFragBundle)
         )
     }
 

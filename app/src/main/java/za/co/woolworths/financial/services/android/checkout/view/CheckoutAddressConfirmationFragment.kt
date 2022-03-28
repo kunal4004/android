@@ -39,13 +39,13 @@ import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburb
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
-import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.SuburbListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.extension.setDivider
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import java.net.HttpURLConnection
 
@@ -335,7 +335,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         }
         navController?.navigate(
             R.id.action_provinceSelectorFragment,
-            bundleOf("bundle" to bundle)
+            bundleOf(BUNDLE to bundle)
         )
     }
 
@@ -708,68 +708,6 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         }
     }
 
-   /* private fun showSuburbSelectionView(suburbList: MutableList<Suburb>) {
-        removeMarginToStoreListView()
-        suburbSelectionLayout.visibility = View.VISIBLE
-        suburbSelectionTitle.visibility = View.VISIBLE
-        suburbSelectionSubTitle.visibility = View.VISIBLE
-        suburbInputValue.setHint(R.string.hint_search_for_your_suburb)
-        suburbInputValue?.apply {
-            addTextChangedListener {
-                suburbListAdapter?.filter?.filter(it.toString())
-            }
-        }
-        rcvSuburbList?.apply {
-            suburbListAdapter = SuburbListAdapter(
-                suburbList as ArrayList<Suburb>,
-                this@CheckoutAddressConfirmationFragment,
-                DeliveryType.DELIVERY
-            )
-            setDivider(R.drawable.recycler_view_divider_gray_1dp)
-            layoutManager = activity?.let { LinearLayoutManager(it) }
-            suburbListAdapter?.let { adapter = it }
-        }
-    }*/
-
-   /* private fun getSuburb(province: Province?) {
-        clickNCollectTitleLayout.visibility = View.GONE
-        addressConfirmationClicknCollect.visibility = View.GONE
-        province?.id?.let {
-            with(checkoutAddAddressNewUserViewModel) {
-                initGetSuburbs(it).observe(viewLifecycleOwner, {
-                    when (it.responseStatus) {
-                        ResponseStatus.SUCCESS -> {
-                            loadingProgressBar.visibility = View.GONE
-                            if ((it?.data as? SuburbsResponse)?.suburbs.isNullOrEmpty()) {
-                                //showNoStoresError()
-                            } else {
-                                (it?.data as? SuburbsResponse)?.suburbs?.let { it1 ->
-                                    showSuburbSelectionView(it1)
-                                    *//*val bundle = Bundle()
-                                    bundle.apply {
-                                        putString("SuburbList", Utils.toJson(it1))
-                                        putSerializable("deliveryType", DeliveryType.DELIVERY)
-                                    }
-                                    navController?.navigate(
-                                        R.id.action_getSuburb_suburbSelectorFragment,
-                                        bundleOf("bundle" to bundle)
-                                    )*//*
-                                }
-                            }
-                        }
-                        ResponseStatus.LOADING -> {
-                            loadingProgressBar.visibility = View.VISIBLE
-                            removeMarginToStoreListView()
-                        }
-                        ResponseStatus.ERROR -> {
-                            loadingProgressBar.visibility = View.GONE
-                        }
-                    }
-                })
-            }
-        }
-    }*/
-
     private fun setMarginToStoreListView() {
         btnConfirmLayout.visibility = View.VISIBLE
         val param = addressConfirmationClicknCollect.layoutParams as ViewGroup.MarginLayoutParams
@@ -880,14 +818,14 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         }
         val bundle = Bundle()
         bundle.apply {
-            putString(EditDeliveryLocationActivity.DELIVERY_TYPE, deliveryType.name)
+            putString(DELIVERY_TYPE, deliveryType.name)
             putString("SUBURB", Utils.toJson(suburb))
             putString("PROVINCE", Utils.toJson(province))
             putString("UnSellableCommerceItems", Utils.toJson(unSellableCommerceItems))
         }
         navController?.navigate(
             R.id.action_to_unsellableItemsFragment,
-            bundleOf("bundle" to bundle)
+            bundleOf(BUNDLE to bundle)
         )
     }
 

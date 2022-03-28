@@ -37,7 +37,6 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
-import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
@@ -49,7 +48,6 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
-import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.*
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
@@ -77,6 +75,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.net.ConnectException
 import java.net.UnknownHostException
@@ -343,7 +342,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     activity?.apply {
                         KotlinUtils.presentEditDeliveryGeoLocationActivity(
                             this,
-                            LOGIN_REQUEST_SUBURB_CHANGE
+                            LOGIN_REQUEST_SUBURB_CHANGE,
+                            KotlinUtils.getPreferredDeliveryType(),
+                            Utils.getPreferredDeliveryLocation().fulfillmentDetails?.address?.placeId
                         )
                     }
                 }
@@ -777,7 +778,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     activity?.apply {
                         KotlinUtils.presentEditDeliveryGeoLocationActivity(
                             this,
-                            LOGIN_REQUEST_SUBURB_CHANGE
+                            LOGIN_REQUEST_SUBURB_CHANGE,
+                            KotlinUtils.getPreferredDeliveryType(),
+                            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                         )
                     }
                 } else if (resultCode == RESULT_OK) {
@@ -1075,7 +1078,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                             activity?.apply {
                                 KotlinUtils.presentEditDeliveryGeoLocationActivity(
                                     this,
-                                    SET_DELIVERY_LOCATION_REQUEST_CODE
+                                    SET_DELIVERY_LOCATION_REQUEST_CODE,
+                                    KotlinUtils.getPreferredDeliveryType(),
+                                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                                 )
                             }
                         }
@@ -1298,8 +1303,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         activity?.apply {
             KotlinUtils.presentEditDeliveryGeoLocationActivity(
                 this,
-                EditDeliveryLocationActivity.REQUEST_CODE,
-                deliveryType
+                REQUEST_CODE,
+                deliveryType,
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
             )
         }
     }
@@ -1313,14 +1319,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
                 when (response?.httpCode) {
                     HTTP_OK -> {
-                        if (Utils.isCartSummarySuburbIDEmpty(response)) {
-                            activity?.apply {
-                                KotlinUtils.presentEditDeliveryGeoLocationActivity(
-                                    this,
-                                    SET_DELIVERY_LOCATION_REQUEST_CODE
-                                )
-                            }
-                        } else confirmDeliveryLocation()
+                        confirmDeliveryLocation()
                     }
                 }
             }
