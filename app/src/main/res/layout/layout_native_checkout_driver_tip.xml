@@ -11,41 +11,56 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/whereWeDeliveringTitle"
-            style="@style/futura_semi_bold_black"
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/tipDashDriverTitleShimmerFrameLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/twenty_dp"
             android:layout_marginTop="@dimen/five_dp"
-            android:paddingTop="@dimen/ten_dp"
-            android:paddingBottom="@dimen/two_dp"
-            android:text="@string/tip_your_dash_driver"
-            android:textSize="@dimen/eighteen_sp"
+            android:background="@color/shimmer_view_background"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <HorizontalScrollView
-            android:id="@+id/scrollView"
+            <TextView
+                android:id="@+id/tipDashDriverTitle"
+                style="@style/futura_semi_bold_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:paddingTop="@dimen/ten_dp"
+                android:paddingBottom="@dimen/two_dp"
+                android:text="@string/tip_your_dash_driver"
+                android:textSize="@dimen/eighteen_sp" />
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/tipOptionScrollViewShimmerFrameLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/ten_dp"
             android:layout_marginTop="@dimen/twenty_dp"
             android:layout_marginEnd="@dimen/twenty_dp"
-            android:scrollbars="none"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/whereWeDeliveringTitle">
+            app:layout_constraintTop_toBottomOf="@+id/tipDashDriverTitleShimmerFrameLayout">
 
-            <LinearLayout
-                android:id="@+id/delivering_layout"
-                android:layout_width="wrap_content"
+            <HorizontalScrollView
+                android:id="@+id/tipOptionScrollView"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingStart="@dimen/twenty_dp"
-                android:paddingEnd="@dimen/twelve_dp"
-                android:paddingBottom="@dimen/five_dp" />
-        </HorizontalScrollView>
+                android:background="@color/white"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/delivering_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/twenty_dp"
+                    android:paddingEnd="@dimen/twelve_dp"
+                    android:paddingBottom="@dimen/five_dp" />
+            </HorizontalScrollView>
+        </com.facebook.shimmer.ShimmerFrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
