@@ -1,12 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.core
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.retryWhen
 import retrofit2.Response
+import retrofit2.http.*
 import za.co.woolworths.financial.services.android.models.network.NetworkConfig
+import za.co.woolworths.financial.services.android.models.network.RetrofitException
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Result
 import java.io.IOException
 import javax.inject.Inject
@@ -22,6 +21,7 @@ open class CoreDataSource @Inject constructor() : NetworkConfig() {
     sealed class IOTaskResult<out DTO : Any> {
         data class OnSuccess<out DTO : Any>(val data: DTO) : IOTaskResult<DTO>()
         data class OnFailed(val throwable: Throwable) : IOTaskResult<Nothing>()
+        object Empty : IOTaskResult<Nothing>()
     }
 
     /**
@@ -36,43 +36,35 @@ open class CoreDataSource @Inject constructor() : NetworkConfig() {
      */
 
     suspend fun <T : Any> performSafeNetworkApiCall(
-        messageInCaseOfError: String = "Network error",
-        allowRetries: Boolean = true,
-        numberOfRetries: Int = 2,
         networkApiCall: NetworkAPIInvoke<T>
     ): Flow<IOTaskResult<T>> {
-        var delayDuration = 1000L
-        val delayFactor = 2
         return flow {
-            val response = networkApiCall()
-            if (response.isSuccessful) {
-                response.body()?.let {
-                    emit(IOTaskResult.OnSuccess(it))
+            with(networkApiCall()) {
+                when (isSuccessful) {
+                    true -> {body()?.let {
+                            emit(IOTaskResult.OnSuccess(it))
+                        } ?:  emit(IOTaskResult.Empty)
+                    }
+                    false -> {
+                        emit(
+                            IOTaskResult.OnFailed(
+                                IOException(
+                                    "API call failed with error - ${
+                                        errorBody()
+                                            ?.string() ?: "Network error"
+                                    }"
+                                )
+                            )
+                        )
+                    }
                 }
-                    ?: emit(IOTaskResult.OnFailed(IOException("API call successful but empty response body")))
-                return@flow
             }
-            emit(
-                IOTaskResult.OnFailed(
-                    IOException(
-                        "API call failed with error - ${
-                            response.errorBody()
-                                ?.string() ?: messageInCaseOfError
-                        }"
-                    )
-                )
-            )
-            return@flow
         }.catch { e ->
             emit(IOTaskResult.OnFailed(IOException("Exception during network API call: ${e.message}")))
             return@catch
-        }.retryWhen { cause, attempt ->
-            if (!allowRetries || attempt > numberOfRetries || cause !is IOException) return@retryWhen false
-            delay(delayDuration)
-            delayDuration *= delayFactor
-            return@retryWhen true
-        }.flowOn(Dispatchers.IO)
+        }
     }
+
 
     private fun <T> error(apiError: za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.ApiError, data: T? = null): Result<T> { return Result.error(apiError, data) }
 
@@ -105,3 +97,5 @@ enum class ApiError(val value: String) {
  * Readable naming convention for Network call lambda
  */
 typealias NetworkAPIInvoke<T> = suspend () -> Response<T>
+
+private fun <T> displayMaintenanceScreenIfNeeded(url:String, response: Response<T>): Boolean = RetrofitException(url, response.code()).show()

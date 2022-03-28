@@ -16,17 +16,13 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MyStoreCardFragment @Inject constructor() : ViewBindingFragment<FragmentAvailableFundBinding>() {
+class MyStoreCardFragment @Inject constructor() : ViewBindingFragment<FragmentAvailableFundBinding>(FragmentAvailableFundBinding::inflate) {
 
     private val viewModel by viewModels<AvailableFundsViewModel>()
     private val homeViewModel by viewModels<AccountProductsHomeViewModel>()
 
     @Inject
     lateinit var  bottomSheet: WBottomSheetBehaviour
-
-    override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentAvailableFundBinding {
-        return FragmentAvailableFundBinding.inflate(inflater, container, false)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

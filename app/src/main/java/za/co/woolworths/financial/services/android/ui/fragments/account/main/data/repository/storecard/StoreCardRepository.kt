@@ -8,11 +8,11 @@ class StoreCardRepository @Inject constructor(
     private val storeCardDataSource: StoreCardDataSource
 ) {
 
-    fun getCreditCardToken() = performGetOperation(
-        networkCall = { storeCardDataSource.getCreditCardToken() }
-    )
-    fun getPaymentPAYUMethod() = performGetOperation(
-        networkCall = { storeCardDataSource.getPaymentPAYUMethod() }
-    )
+//    fun getCreditCardToken() = performGetOperation(
+//      //  networkCall = { storeCardDataSource.getCreditCardToken() }
+//    )
+//    fun getPaymentPAYUMethod() = performGetOperation(
+//        networkCall = { storeCardDataSource.getPaymentPAYUMethod() }
+//    )
 
 }

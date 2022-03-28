@@ -31,7 +31,7 @@ class AccountOptionsImpl @Inject constructor(
     }
 
     override fun isDebitOrderActive() {
-        val isActive = account?.getAccountProduct()?.debitOrder?.debitOrderActive ?: false
+        val isActive = account?.product?.debitOrder?.debitOrderActive ?: false
         accountList.add(5, AccountOptionsScreenUI.DebitOrder(isActive))
         _viewState.postValue(accountList)
     }

@@ -8,18 +8,21 @@ import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.autoCleared
 
-abstract class ViewBindingFragment<VB : ViewBinding> : Fragment() {
+abstract class ViewBindingFragment<VB : ViewBinding>(private val inflate: Inflate<VB>) : Fragment() {
 
     private var _binding: VB by autoCleared()
 
     val binding: VB
         get() = _binding
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        _binding = inflateViewBinding(inflater, container)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = inflate.invoke(inflater, container, false)
         return binding.root
     }
-
-    abstract fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?): VB
 }
+
+typealias Inflate<T> = (LayoutInflater, ViewGroup?, Boolean) -> T

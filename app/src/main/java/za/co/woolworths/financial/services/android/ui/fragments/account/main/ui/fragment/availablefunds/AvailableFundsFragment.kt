@@ -3,15 +3,12 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.TypedValue
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Guideline
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
@@ -39,8 +36,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.ApiError
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Result
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.loadingState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.openActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.openActivityForResult
@@ -51,16 +46,12 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 @AndroidEntryPoint
-open class AvailableFundsFragment : ViewBindingFragment<AvailableFundsFragmentBinding>() {
+open class AvailableFundsFragment : ViewBindingFragment<AvailableFundsFragmentBinding>(AvailableFundsFragmentBinding::inflate) {
 
     val viewModel by viewModels<AvailableFundsViewModel>()
     val payMyAccountViewModel by viewModels<PayMyAccountViewModel>()
 
     lateinit var navController: NavController
-
-    override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?): AvailableFundsFragmentBinding {
-        return AvailableFundsFragmentBinding.inflate(inflater, container, false)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -206,35 +197,32 @@ open class AvailableFundsFragment : ViewBindingFragment<AvailableFundsFragmentBi
         }
     }
 
-
     fun queryPaymentMethod() {
         initShimmer(true)
         viewModel.queryServicePayUPaymentMethod()
-        viewModel.let { viewModel->
-            viewModel.paymentPAYUService.observe(viewLifecycleOwner, Observer {
-                when (it.status) {
-                    Result.Status.SUCCESS -> {
-                        it.data?.let { tokenResponse ->
-
-                        }
-                    }
-                    Result.Status.ERROR -> {
-                        when (it.apiError) {
-                            ApiError.SessionTimeOut -> it.data?.response?.stsParams?.let { stsParams ->
-                                handleSessionTimeOut(
-                                    stsParams
-                                )
-                            }
-                            ApiError.SomethingWrong -> onABSACreditCardFailureHandler()
-                            else -> handleUnknownHttpResponse(it.apiError?.value)
-                        }
-                    }
-
-                }
-            })
-        }
+//        viewModel.let { viewModel->
+//            viewModel.paymentPAYUService.observe(viewLifecycleOwner, Observer {
+//                when (it.status) {
+//                    Result.Status.SUCCESS -> {
+//                        it.data?.let { tokenResponse ->
+//
+//                        }
+//                    }
+//                    Result.Status.ERROR -> {
+//                        when (it.apiError) {
+//                            ApiError.SessionTimeOut -> it.data?.response?.stsParams?.let { stsParams ->
+//                                handleSessionTimeOut(
+//                                    stsParams
+//                                )
+//                            }
+//                            ApiError.SomethingWrong -> onABSACreditCardFailureHandler()
+//                            else -> handleUnknownHttpResponse(it.apiError?.value)
+//                        }
+//                    }
+//                }
+//            })
+//        }
     }
-
 
     fun setPushViewDownAnimation() {
         AnimationUtilExtension.animateViewPushDown(binding.incRecentTransactionButton.root)

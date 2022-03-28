@@ -17,8 +17,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.p
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.getViewStateFlowForNetworkCall
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.repository.storecard.StoreCardRepository
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountProductLandingDao
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.IAccountProductLandingDao
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.creditcard.CreditCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.creditcard.ICreditCardDataSource
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
@@ -45,11 +43,11 @@ class AvailableFundsViewModel @Inject constructor(
         viewModelScope.launch {
             getViewStateFlowForNetworkCall {
                 queryServiceCreditCardToken()
-            }.collect { creditCardTokenLiveData.postValue(it) }
+            }.collect {  }
         }
     }
 
-    val paymentPAYUService = repository.getPaymentPAYUMethod()
+    //val paymentPAYUService = repository.getPaymentPAYUMethod()
     val mAccountPair: MutableLiveData<Pair<ApplyNowState, Account>> = MutableLiveData()
 
     init {
@@ -146,6 +144,5 @@ class AvailableFundsViewModel @Inject constructor(
             }
         }
     }
-
 }
 

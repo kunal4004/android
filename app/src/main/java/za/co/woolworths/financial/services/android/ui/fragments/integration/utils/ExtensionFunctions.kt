@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.integration.utils
 
+import android.content.res.Resources
 import android.os.Build
 import android.util.Base64
 import android.view.View
@@ -8,14 +9,13 @@ import androidx.annotation.ColorRes
 import androidx.annotation.NavigationRes
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.transform
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import retrofit2.HttpException
 import za.co.absa.openbankingapi.AsymmetricCryptoHelper
 import za.co.absa.openbankingapi.DecryptionFailureException
@@ -181,4 +181,12 @@ sealed class AccountApiResult <out T> (val status: ApiStatus, val data: T?, val 
         data = _data,
         message = null
     )
+}
+
+//as extension function
+fun ViewPager2.disableNestedScrolling() {
+    (getChildAt(0) as? RecyclerView)?.apply {
+        isNestedScrollingEnabled = false
+        overScrollMode = View.OVER_SCROLL_NEVER
+    }
 }
