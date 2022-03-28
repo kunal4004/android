@@ -9,6 +9,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -25,10 +26,9 @@ import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.android.synthetic.main.checkout_add_address_new_user.delivering_layout
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.loadingBar
-import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
-import kotlinx.android.synthetic.main.checkout_how_would_you_delivered.*
 import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.*
 import kotlinx.android.synthetic.main.layout_collection_time_details.*
 import kotlinx.android.synthetic.main.layout_collection_user_information.*
@@ -36,6 +36,7 @@ import kotlinx.android.synthetic.main.layout_delivering_to_details.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_order_summary.*
+import kotlinx.android.synthetic.main.layout_native_checkout_driver_tip.*
 import kotlinx.android.synthetic.main.new_shopping_bags_layout.*
 import kotlinx.android.synthetic.main.where_are_we_delivering_items.view.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
@@ -57,6 +58,7 @@ import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
 import za.co.woolworths.financial.services.android.models.network.StorePickupInfoBody
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
@@ -79,6 +81,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     private var whoIsCollectingDetails: WhoIsCollectingDetails? = null
     private var shimmerComponentArray: List<Pair<ShimmerFrameLayout, View>> = ArrayList()
     private var navController: NavController? = null
+    private var driverTipOptionsList: ArrayList<String>? = null
+    private var selectedDriverTipValue: String? = null
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun afterTextChanged(s: Editable?) {
@@ -110,7 +114,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(
@@ -247,6 +251,14 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             Pair<ShimmerFrameLayout, View>(
                 imageViewCaretForwardCollectionShimmerFrameLayout,
                 imageViewCaretForwardCollection
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                tipDashDriverTitleShimmerFrameLayout,
+                tipDashDriverTitle
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                tipOptionScrollViewShimmerFrameLayout,
+                tipOptionScrollView
             )
         )
         startShimmerView()
@@ -278,6 +290,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
         initializeFoodSubstitution()
         initializeDeliveryInstructions()
+        initializeDriverTipView()
     }
 
     private fun setupViewModel() {
@@ -291,11 +304,11 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         ).get(CheckoutAddAddressNewUserViewModel::class.java)
     }
 
-    fun callStorePickupInfoAPI() {
+    private fun callStorePickupInfoAPI() {
         initShimmerView()
 
         checkoutAddAddressNewUserViewModel?.getStorePickupInfo(getStorePickupInfoBody())
-            .observe(viewLifecycleOwner, { response ->
+            .observe(viewLifecycleOwner) { response ->
                 stopShimmerView()
                 when (response) {
                     is ConfirmDeliveryAddressResponse -> {
@@ -345,7 +358,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                         )
                     }
                 }
-            })
+            }
     }
 
     private fun initializeDatesAndTimeSlots(selectedWeekSlot: Week?) {
@@ -443,6 +456,81 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 }
             }
         }
+    }
+
+    private fun initializeDriverTipView() {
+        //Todo This value will come from Config once it is available.
+        driverTipOptionsList = ArrayList()
+        driverTipOptionsList!!.add("R10")
+        driverTipOptionsList!!.add("R20")
+        driverTipOptionsList!!.add("R30")
+        driverTipOptionsList!!.add("Own Amount")
+        showDriverTipView()
+    }
+
+    private fun showDriverTipView() {
+        if (!driverTipOptionsList.isNullOrEmpty()) {
+            layoutDriverTip.visibility = View.VISIBLE
+            for ((index, options) in driverTipOptionsList!!.withIndex()) {
+                val view = View.inflate(context, R.layout.where_are_we_delivering_items, null)
+                val titleTextView: TextView? = view?.findViewById(R.id.titleTv)
+                titleTextView?.tag = index
+                titleTextView?.text = options
+                if (!selectedDriverTipValue.isNullOrEmpty() && selectedDriverTipValue.equals(
+                        options
+                    )
+                ) {
+                    titleTextView?.background =
+                        bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
+                    titleTextView?.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.white
+                        )
+                    )
+                }
+                titleTextView?.setOnClickListener {
+                    val isSameSelection = resetAllDriverTip(it.tag as Int)
+                    selectedDriverTipValue = (it as TextView).text as? String
+                    if (!isSameSelection) {
+                        // change background of selected textView
+                        it.background =
+                            bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
+                        it.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.white
+                            )
+                        )
+                    }
+                }
+                delivering_layout?.addView(view)
+            }
+        }
+    }
+
+    private fun resetAllDriverTip(selectedTag: Int): Boolean {
+        //change background of unselected textview
+        var sameSelection = false
+        for ((index) in driverTipOptionsList!!.withIndex()) {
+            val titleTextView: TextView? = view?.findViewWithTag(index)
+            if (titleTextView?.textColors?.defaultColor?.equals(ContextCompat.getColor(
+                    requireContext(),
+                    R.color.white)) == true && titleTextView.tag.equals(
+                    selectedTag)
+            ) {
+                sameSelection = true
+            }
+            titleTextView?.background =
+                bindDrawable(R.drawable.checkout_delivering_title_round_button)
+            titleTextView?.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.checkout_delivering_title
+                )
+            )
+        }
+        return sameSelection
     }
 
     private fun clearSelectedTimeSlot() {
@@ -635,7 +723,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
     override fun selectedShoppingBagType(
         shoppingBagsOptionsList: ConfigShoppingBagsOptions,
-        position: Int
+        position: Int,
     ) {
         selectedShoppingBagType = shoppingBagsOptionsList.shoppingBagType
     }
@@ -644,10 +732,12 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         when (v?.id) {
             R.id.checkoutCollectingFromLayout -> {
 
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_COLLECTION_USER_EDIT, hashMapOf(
-                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                            FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_EDIT_USER_DETAILS
-                ), activity)
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_COLLECTION_USER_EDIT,
+                    hashMapOf(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_EDIT_USER_DETAILS
+                    ),
+                    activity)
                 val bundle = Bundle()
                 bundle.putBoolean(KEY_IS_WHO_IS_COLLECTING, true)
                 navController?.navigate(
@@ -744,7 +834,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         loadingBar?.visibility = View.VISIBLE
         setScreenClickEvents(false)
         checkoutAddAddressNewUserViewModel.getShippingDetails(body)
-            .observe(viewLifecycleOwner, { response ->
+            .observe(viewLifecycleOwner) { response ->
                 loadingBar.visibility = View.GONE
                 setScreenClickEvents(true)
                 when (response) {
@@ -767,7 +857,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                         )
                     }
                 }
-            })
+            }
     }
 
     private fun presentErrorDialog(title: String, subTitle: String, errorType: Int) {
