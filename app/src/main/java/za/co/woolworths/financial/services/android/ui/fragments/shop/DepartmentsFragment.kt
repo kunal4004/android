@@ -25,11 +25,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.google.android.gms.location.*
 import kotlinx.android.synthetic.main.fragment_shop_department.*
+import kotlinx.android.synthetic.main.geo_location_delivery_address.*
 import kotlinx.android.synthetic.main.no_connection_layout.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
@@ -39,7 +41,6 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.DashDetailsActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
-import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.DepartmentAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
@@ -48,6 +49,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.sub_cate
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 class DepartmentsFragment : DepartmentExtensionFragment(),
     DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection {
@@ -61,13 +64,13 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
     private var isFragmentVisible: Boolean = false
     private var parentFragment: ShopFragment? = null
     private var version: String? = ""
-    private var deliveryType: DeliveryType = DeliveryType.DELIVERY
     private var isDashEnabled = false
     private var fusedLocationClient: FusedLocationProviderClient? = null
     private var locationRequest: LocationRequest? = createLocationRequest()
-    private var localSuburbId: String? = null
-    private var localStoreId: String? = null
+    private var localPlaceId: String? = null
     private var isValidateSelectedSuburbCallStopped = true
+
+
 
 
     companion object {
@@ -106,8 +109,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         setUpRecyclerView(mutableListOf())
         setListener()
-        localSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
-        localStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
+        localPlaceId = KotlinUtils.getPreferredPlaceId()
 
         var isPermissionGranted = false
         activity?.apply {
@@ -240,19 +242,26 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
     }
 
     private fun onEditDeliveryLocation() {
+        var deliveryType: Delivery? = Delivery.STANDARD
+        var placeId = ""
         if (SessionUtilities.getInstance().isUserAuthenticated) {
-            /* if (Utils.getPreferredDeliveryLocation() != null) {
-                 activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, if (Utils.getPreferredDeliveryLocation().suburb.storePickup) DeliveryType.STORE_PICKUP else DeliveryType.DELIVERY) }
-             } else*/
-            activity?.apply {
-                KotlinUtils.presentEditDeliveryLocationActivity(
-                    this,
-                    EditDeliveryLocationActivity.REQUEST_CODE
-                )
+            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
+                deliveryType = Delivery.getType(it.deliveryType)
+                placeId = it.address?.placeId ?: ""
             }
         } else {
-            ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
+            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let {
+                deliveryType = Delivery.getType(it.deliveryType)
+                placeId = it.address?.placeId ?: ""
+            }
         }
+
+        KotlinUtils.presentEditDeliveryGeoLocationActivity(
+            requireActivity(),
+            REQUEST_CODE,
+            deliveryType,
+            placeId
+        )
     }
 
 
@@ -365,19 +374,15 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
         rclDepartment?.scrollToPosition(0)
     }
 
-    override fun onDeliveryOptionSelected(deliveryType: DeliveryType) {
-        if (SessionUtilities.getInstance().isUserAuthenticated) {
+    override fun onDeliveryOptionSelected(deliveryType: Delivery) {
             activity?.apply {
-                KotlinUtils.presentEditDeliveryLocationActivity(
+                KotlinUtils.presentEditDeliveryGeoLocationActivity(
                     this,
-                    EditDeliveryLocationActivity.REQUEST_CODE,
-                    deliveryType
+                    REQUEST_CODE,
+                    deliveryType,
+                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                 )
             }
-        } else {
-            this.deliveryType = deliveryType
-            ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -385,10 +390,11 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
         if (requestCode == DEPARTMENT_LOGIN_REQUEST && resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             if (Utils.getPreferredDeliveryLocation() != null) {
                 activity?.apply {
-                    KotlinUtils.presentEditDeliveryLocationActivity(
+                    KotlinUtils.presentEditDeliveryGeoLocationActivity(
                         this,
-                        EditDeliveryLocationActivity.REQUEST_CODE,
-                        deliveryType
+                        REQUEST_CODE,
+                        KotlinUtils.getPreferredDeliveryType(),
+                        Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                     )
                 }
             } else {
@@ -426,10 +432,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
                 when (response?.httpCode) {
                     AppConstant.HTTP_OK -> {
                         activity?.apply {
-                            KotlinUtils.presentEditDeliveryLocationActivity(
-                                this,
-                                ProductListingFragment.SET_DELIVERY_LOCATION_REQUEST_CODE
-                            )
+                            onEditDeliveryLocation()
                         }
                     }
                 }
@@ -466,30 +469,35 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
     }
 
     private fun isLocationChanged(): Boolean {
-        val currentSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
-        val currentStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
-        if (currentStoreId == null && currentSuburbId == null) {
+        val currentPlaceId = KotlinUtils.getPreferredPlaceId()
+        if (currentPlaceId == null) {
             return false
-        } else if (currentSuburbId == null && !(currentStoreId?.equals(localStoreId))!!) {
-            localStoreId = currentStoreId
-            localSuburbId = null
-            return true
-        } else if (currentStoreId == null && !(localSuburbId.equals(currentSuburbId))) {
-            localSuburbId = currentSuburbId
-            localStoreId = null
+        } else if (!(currentPlaceId?.equals(localPlaceId))!!) {
+            localPlaceId = currentPlaceId
             return true
         }
         return true
     }
 
     private fun executeValidateSuburb() {
-        Utils.getPreferredDeliveryLocation().let {
+
+        var placeId:String? = null
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
+                placeId = it.address?.placeId
+            }
+        } else {
+            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let {
+                placeId = it.address?.placeId
+            }
+        }
+
+        placeId.let {
             if (it == null) {
                 mDepartmentAdapter?.hideDeliveryDates()
             } else {
-                val storeOrSuburbId = if (it.storePickup) it.store.id else it.suburb.id
-                if (storeOrSuburbId.equals(
-                        WoolworthsApplication.getValidatedSuburbProducts()?.suburbId,
+                if (placeId.equals(
+                        WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId,
                         true
                     ) || !isLocationChanged()
                 ) {
@@ -498,60 +506,46 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
                     when (isValidateSelectedSuburbCallStopped) {
                         true -> {
                             mDepartmentAdapter?.showDeliveryDatesProgress(true)
-                            storeOrSuburbId?.let { it1 ->
-                                isValidateSelectedSuburbCallStopped = false
-                                OneAppService.validateSelectedSuburb(it1, it.storePickup)
-                                    .enqueue(CompletionHandler(object :
-                                        IResponseListener<ValidateSelectedSuburbResponse> {
-                                        override fun onSuccess(response: ValidateSelectedSuburbResponse?) {
-                                            isValidateSelectedSuburbCallStopped = true
-                                            when (response?.httpCode) {
-                                                200 -> response.validatedSuburbProducts?.let { it1 ->
-                                                    it1.suburbId = storeOrSuburbId
+                            isValidateSelectedSuburbCallStopped = false
+                            GeoLocationApiHelper().validateLocation(it)
+                                .enqueue(CompletionHandler(object :
+                                    IResponseListener<ValidateLocationResponse> {
+                                    override fun onSuccess(response: ValidateLocationResponse?) {
+                                        isValidateSelectedSuburbCallStopped = true
+                                        when (response?.httpCode) {
+                                            200 -> response.validatePlace?.let { it1 ->
+                                                if (it1.deliverable == true) {
                                                     WoolworthsApplication.setValidatedSuburbProducts(
                                                         it1
                                                     )
-                                                    updateDeliveryDates()
                                                 }
-                                                else -> mDepartmentAdapter?.hideDeliveryDates()
+                                                updateDeliveryDates()
                                             }
+                                            else -> mDepartmentAdapter?.hideDeliveryDates()
                                         }
+                                    }
 
-                                        override fun onFailure(error: Throwable?) {
-                                            isValidateSelectedSuburbCallStopped = true
-                                            mDepartmentAdapter?.hideDeliveryDates()
-                                        }
-                                    }, ValidateSelectedSuburbResponse::class.java))
-                            }
+                                    override fun onFailure(error: Throwable?) {
+                                        isValidateSelectedSuburbCallStopped = true
+                                        mDepartmentAdapter?.hideDeliveryDates()
+                                    }
+                                }, ValidateLocationResponse::class.java))
+
                         }
                         false -> {
                             // Don't make new request.
                         }
                     }
                 }
+
             }
         }
     }
 
+
     fun updateDeliveryDates() {
-        mDepartmentAdapter?.updateDeliveryDate(WoolworthsApplication.getValidatedSuburbProducts())
+        mDepartmentAdapter?.updateDeliveryDate(WoolworthsApplication.getValidatePlaceDetails())
     }
-
-/*
-    override fun onLocationChanged(location: Location?) {
-
-    }
-
-    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-        //Do nothing
-    }
-
-    override fun onProviderEnabled(provider: String?) {
-        if (isDashEnabled) {
-            executeDepartmentRequest()
-        }
-    }
-*/
 
     private fun onProviderDisabled() {
         location = null
