@@ -2452,4 +2452,5 @@
 
 
     <string name="product_listing_price_from">From</string>
+    <string name="product_details_color_count">+ %d More</string>
 </resources>
