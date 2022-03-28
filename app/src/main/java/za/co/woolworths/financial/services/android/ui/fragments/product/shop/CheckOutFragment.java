@@ -46,10 +46,12 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLo
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.wenum.ConfirmLocation;
 
 public class CheckOutFragment extends Fragment {
 
@@ -295,17 +297,6 @@ public class CheckOutFragment extends Fragment {
 
     public void initPostCheckout() {
         QueryBadgeCounter.getInstance().setCartCount(0);
-        ShoppingDeliveryLocation preferredDeliveryLocation = Utils.getPreferredDeliveryLocation();
-        /*Call<Void> checkoutSuccess = OneAppService.INSTANCE.postCheckoutSuccess(new CheckoutSuccess(preferredDeliveryLocation.storePickup ? preferredDeliveryLocation.store.getId() : preferredDeliveryLocation.suburb.id));
-        checkoutSuccess.enqueue(new CompletionHandler<>(new IResponseListener<Void>() {
-            @Override
-            public void onSuccess(Void response) {
-            }
-
-            @Override
-            public void onFailure(Throwable error) {
-
-            }
-        }, Void.class));*/
+        new ConfirmLocation().postRequest(Utils.getPreferredDeliveryLocation());
     }
 }

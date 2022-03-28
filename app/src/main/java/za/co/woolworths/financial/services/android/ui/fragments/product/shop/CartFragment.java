@@ -1291,6 +1291,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                             cartProductAdapter.clear();
                         }
                         hideEditCart();
+                        //TODO: need to refactor
                        /* Call<SetDeliveryLocationSuburbResponse> setDeliveryLocationSuburb = OneAppService.INSTANCE.setSuburb(lastDeliveryLocation.storePickup ? lastDeliveryLocation.store.getId() : lastDeliveryLocation.suburb.id);
                         setDeliveryLocationSuburb.enqueue(new CompletionHandler<>(new IResponseListener<SetDeliveryLocationSuburbResponse>() {
                             @Override
@@ -1403,6 +1404,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     }
 
     private void checkLocationChangeAndReload() {
+        //TODO: need to refactor
        /* ShoppingDeliveryLocation deliveryLocation = Utils.getPreferredDeliveryLocation();
         String currentSuburbId = null;
         String currentStoreId = null;

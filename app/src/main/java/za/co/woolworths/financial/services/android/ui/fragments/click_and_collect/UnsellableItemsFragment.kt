@@ -93,7 +93,7 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
                 UnSellableItemsLiveData.value = false
                 confirmRemoveItems()
             }
-            //R.id.removeItems ->  executeSetSuburb()
+
             R.id.removeItems -> {
                 UnSellableItemsLiveData.value = true
                 confirmRemoveItems()
