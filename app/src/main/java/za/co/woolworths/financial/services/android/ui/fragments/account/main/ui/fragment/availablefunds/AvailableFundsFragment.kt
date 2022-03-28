@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.availablefunds
 
-import android.content.Context
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.TypedValue
@@ -10,8 +9,6 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Guideline
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -20,14 +17,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
-import com.awfs.coordination.databinding.AccountProductsHomeFragmentBinding
 import com.awfs.coordination.databinding.AvailableFundsFragmentBinding
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
@@ -46,7 +41,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.p
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.ApiError
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Result
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.autoCleared
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.loadingState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.openActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.openActivityForResult
@@ -58,23 +52,14 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 
 @AndroidEntryPoint
 open class AvailableFundsFragment : ViewBindingFragment<AvailableFundsFragmentBinding>() {
-    val viewModel: AvailableFundsViewModel by viewModels()
-    lateinit var navController: NavController
-    val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
-//    private lateinit var bottomSheetBehaviourPeekHeightListener: IBottomSheetBehaviourPeekHeightListener
 
+    val viewModel by viewModels<AvailableFundsViewModel>()
+    val payMyAccountViewModel by viewModels<PayMyAccountViewModel>()
+
+    lateinit var navController: NavController
 
     override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?): AvailableFundsFragmentBinding {
         return AvailableFundsFragmentBinding.inflate(inflater, container, false)
-    }
-    @Throws(RuntimeException::class)
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-//        if (context is IBottomSheetBehaviourPeekHeightListener) {
-//            bottomSheetBehaviourPeekHeightListener = context
-//        } else {
-//            throw RuntimeException("AvailableFundsFragment context value $context must implement BottomSheetBehaviourPeekHeightListener")
-//        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -83,7 +68,7 @@ open class AvailableFundsFragment : ViewBindingFragment<AvailableFundsFragmentBi
         setPushViewDownAnimation()
         setupCommandObservers()
         bottomViewSetup(view)
-        connectionBroadCastReciver()
+        connectionBroadCastReceiver()
 
         viewModel.getNavigationResult().observe(viewLifecycleOwner) { result ->
             when (result) {
@@ -98,7 +83,7 @@ open class AvailableFundsFragment : ViewBindingFragment<AvailableFundsFragmentBi
         }
     }
 
-    private fun connectionBroadCastReciver() {
+    private fun connectionBroadCastReceiver() {
         activity?.let { act ->
             ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(
                 act,
@@ -116,7 +101,7 @@ open class AvailableFundsFragment : ViewBindingFragment<AvailableFundsFragmentBi
     }
 
     /*TODO: should be deleted after dimi's work*/
-    fun bottomViewSetup(view: View) {
+    private fun bottomViewSetup(view: View) {
         val bottomViewGuideline = view.findViewById<Guideline>(R.id.bottomSliderGuideline)
         val constParam: ConstraintLayout.LayoutParams =
             bottomViewGuideline.layoutParams as ConstraintLayout.LayoutParams
@@ -310,8 +295,10 @@ open class AvailableFundsFragment : ViewBindingFragment<AvailableFundsFragmentBi
     fun displayCardNumberNotFound() {
         if ((activity as? AccountSignedInActivity)?.bottomSheetIsExpanded() == true) return
         try {
+
+            //credit_card_statement_unavailable ??
             val accountsErrorHandlerFragment =
-                activity?.resources?.getString(R.string.credit_card_statement_unavailable)
+                activity?.resources?.getString(R.string.credit_card_statement_unavailable_title)
                     ?.let { AccountsErrorHandlerFragment.newInstance(it) }
             activity?.supportFragmentManager?.let { supportFragmentManager ->
                 accountsErrorHandlerFragment?.show(

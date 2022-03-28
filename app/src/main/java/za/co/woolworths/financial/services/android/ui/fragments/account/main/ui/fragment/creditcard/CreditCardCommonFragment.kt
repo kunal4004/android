@@ -1,12 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.creditcard
 
-import android.view.View
-import androidx.lifecycle.Observer
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.ApiError
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.availablefunds.AvailableFundsFragment
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Result
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.NetworkManager
 
@@ -26,37 +25,30 @@ class CreditCardCommonFragment: AvailableFundsFragment() {
             }
         }
     }
-    fun getABSAServiceGetUserCreditCardToken() {
-        viewModel.creditCardService.observe(viewLifecycleOwner, Observer {
-            when (it.status) {
-                Result.Status.SUCCESS -> {
-                    it.data?.let { tokenResponse ->
-                        viewModel.handleUserCreditCardToken(
-                            tokenResponse
-                        )
-                    }
-                    binding.incViewStatementButton.statementProgressBarGroup.visibility = View.GONE
-                }
-                Result.Status.ERROR -> {
-                    // Dimi suggestion , sealed class
-                    when (it.apiError) {
-                        ApiError.SessionTimeOut -> it.data?.response?.stsParams?.let { stsParams ->
-                            handleSessionTimeOut(
-                                stsParams
-                            )
-                        }
-                        ApiError.SomethingWrong -> onABSACreditCardFailureHandler()
-                        else -> handleUnknownHttpResponse(it.apiError?.value)
-                    }
-                    binding.incViewStatementButton.statementProgressBarGroup.visibility = View.GONE
-                }
 
-                Result.Status.LOADING ->
-                    binding.incViewStatementButton.statementProgressBarGroup.visibility =
-                        View.VISIBLE
+    private fun getABSAServiceGetUserCreditCardToken() {
+        viewModel.creditCardTokenLiveData.observe(viewLifecycleOwner) { data ->
+            when (data) {
+                is ViewState.Loading -> setProgress(data)
+                is ViewState.RenderSuccess -> viewModel.handleUserCreditCardToken(data.output)
+                is ViewState.RenderFailure -> {
+                    when (data.throwable) {
+
+//                        is ApiError.SessionTimeOut -> it.data?.response?.stsParams?.let { stsParams ->
+//                            handleSessionTimeOut(
+//                                stsParams
+//                            )
+//                        }
+//                       is  ApiError.SomethingWrong -> onABSACreditCardFailureHandler()
+//                        else -> handleUnknownHttpResponse(it.apiError?.value)
+                    }
+                }
             }
-        })
+        }
     }
 
-
+    private fun setProgress(response: ViewState.Loading) {
+        binding.incViewStatementButton.statementProgressBarGroup.visibility =
+            if (response.isLoading) VISIBLE else GONE
+    }
 }

@@ -63,13 +63,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/accountInArrearsTitleTextView" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/payNowButton"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/_40sdp"
         android:layout_marginStart="@dimen/_24sdp"
         android:layout_marginTop="@dimen/_36sdp"
         android:layout_marginEnd="@dimen/_24sdp"
+        android:gravity="center"
         android:background="@color/black"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:letterSpacing="0.02"
@@ -94,11 +95,11 @@
         app:layout_constraintTop_toBottomOf="@+id/payNowButton" />
 
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/chatToUsButton"
         style="@style/whiteButtonBackgroundStyle"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/_40sdp"
         android:layout_marginStart="@dimen/_24sdp"
         android:layout_marginEnd="@dimen/_24sdp"
         android:background="@color/white"

@@ -21,7 +21,6 @@ interface IAccountProductLandingDao {
     fun isProductChargedOff(): Boolean
     fun isUiVisible() : Int
     fun getTitleId() : Int
-    fun getBackgroundDrawableId():Int
 }
 
 class AccountProductLandingDao @Inject constructor() : IAccountProductLandingDao {
@@ -68,18 +67,6 @@ class AccountProductLandingDao @Inject constructor() : IAccountProductLandingDao
             is ProductLandingGroupCode.SilverCreditCard -> productGroupCode.title
             is ProductLandingGroupCode.CreditCard,
             is ProductLandingGroupCode.UnsupportedProductGroupCode -> R.string.app_name
-        }
-    }
-
-    override fun getBackgroundDrawableId(): Int {
-        return when (val productGroupCode = getProductByProductGroupCode()) {
-            is ProductLandingGroupCode.PersonalLoan -> productGroupCode.background
-            is ProductLandingGroupCode.StoreCard -> productGroupCode.background
-            is ProductLandingGroupCode.BlackCreditCard -> productGroupCode.background
-            is ProductLandingGroupCode.GoldCreditCard -> productGroupCode.background
-            is ProductLandingGroupCode.SilverCreditCard -> productGroupCode.background
-            is ProductLandingGroupCode.CreditCard,
-            is ProductLandingGroupCode.UnsupportedProductGroupCode -> R.drawable.store_card_background
         }
     }
 }

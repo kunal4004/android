@@ -6,13 +6,13 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.StoreCardAccountOptionsFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOptions
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOptionsScreenUI
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants
 
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -20,7 +20,7 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 @AndroidEntryPoint
 class StoreCardAccountOptionsFragment : ViewBindingFragment<StoreCardAccountOptionsFragmentBinding>() {
 
-    val viewModel: StoreCardAccountOptionsViewModel by activityViewModels()
+    val viewModel by viewModels<StoreCardAccountOptionsViewModel>()
 
     override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?): StoreCardAccountOptionsFragmentBinding {
         return StoreCardAccountOptionsFragmentBinding.inflate(inflater, container, false)
@@ -36,12 +36,12 @@ class StoreCardAccountOptionsFragment : ViewBindingFragment<StoreCardAccountOpti
             viewModel.viewState.observe(viewLifecycleOwner) { items ->
                 items?.forEach { item ->
                     when (item) {
-                        is AccountOptions.ViewTreatmentPlan -> {}
-                        is AccountOptions.SetUpAPaymentPlan -> {}
-                        is AccountOptions.PaymentOptions -> {}
-                        is AccountOptions.BalanceProtectionInsurance -> showBalanceProtectionInsuranceTag(item)
-                        is AccountOptions.WithdrawCashNow -> hideLoanWithdrawal()
-                        is AccountOptions.DebitOrder -> showDebitOrder(item.isActive)
+                        is AccountOptionsScreenUI.ViewTreatmentPlan -> {}
+                        is AccountOptionsScreenUI.SetUpAPaymentPlan -> {}
+                        is AccountOptionsScreenUI.PaymentOptionsScreenUI -> {}
+                        is AccountOptionsScreenUI.BalanceProtectionInsurance -> showBalanceProtectionInsuranceTag(item)
+                        is AccountOptionsScreenUI.WithdrawCashNow -> hideLoanWithdrawal()
+                        is AccountOptionsScreenUI.DebitOrder -> showDebitOrder(item.isActive)
                     }
                 }
             }
@@ -53,7 +53,7 @@ class StoreCardAccountOptionsFragment : ViewBindingFragment<StoreCardAccountOpti
     }
 
     private fun StoreCardAccountOptionsFragmentBinding.showBalanceProtectionInsuranceTag(
-        bpi: AccountOptions.BalanceProtectionInsurance
+        bpi: AccountOptionsScreenUI.BalanceProtectionInsurance
     ) {
         when (bpi.status) {
             BpiInsuranceApplicationStatusType.INSURANCE_COVERED -> {

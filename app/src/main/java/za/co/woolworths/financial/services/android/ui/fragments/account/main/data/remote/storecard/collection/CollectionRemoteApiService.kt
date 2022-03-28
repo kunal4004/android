@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.account.storecard.data.remote.collection
+package za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.collection
 
 import retrofit2.Response
 import retrofit2.http.GET
@@ -16,10 +16,6 @@ interface CollectionRemoteApiService {
     )
     @GET("wfs/app/v4/accounts/collections/checkEligibility")
     suspend fun queryServiceCheckCustomerEligibilityPlan(
-        @Header("userAgent") userAgent: String,
-        @Header("userAgentVersion") userAgentVersion: String,
-        @Header("sessionToken") sessionToken: String,
-        @Query("productGroupCode") productGroupCode: String,
-        @Header("deviceIdentityToken") deviceIdentityToken: String
+        @Query("productGroupCode") productGroupCode: String
     ): Response<EligibilityPlanResponse>
 }

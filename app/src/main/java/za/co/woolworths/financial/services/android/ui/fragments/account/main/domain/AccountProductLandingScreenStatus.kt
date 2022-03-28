@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.do
 
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOfferingState
+import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 interface IAccountProductLandingScreen {
@@ -29,12 +30,28 @@ class AccountProductLandingScreenStatus @Inject constructor(private val treatmen
         status(
             when (product?.productOfferingGoodStanding ?: false) {
                 true -> AccountOfferingState.AccountInGoodStanding
-                false -> when {
-                    !isProductChargedOff && isTakeUpTreatmentPlanJourneyEnabled() -> AccountOfferingState.MakeGetEligibilityCall
-                    isViewTreatmentPlanSupported() -> if (isProductChargedOff) AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff else AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig
-                    else -> if (isProductChargedOff) AccountOfferingState.AccountIsChargedOff else AccountOfferingState.AccountIsInArrears
+                false -> when (isChargedOff()) {
+                    true -> {
+                        AccountOfferingState.MakeGetEligibilityCall
+                    }
+                    false -> {
+                        when {
+                            isTakeUpTreatmentPlanJourneyEnabled() -> AccountOfferingState.MakeGetEligibilityCall
+                            isViewTreatmentPlanSupported() -> AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig
+                            else -> AccountOfferingState.AccountIsInArrears
+                        }
+                    }
+
                 }
             }
+        )
+
+    }
+
+    private fun isChargedOff(): Boolean {
+        return product?.productOfferingStatus.equals(
+            Utils.ACCOUNT_CHARGED_OFF,
+            ignoreCase = true
         )
     }
 
