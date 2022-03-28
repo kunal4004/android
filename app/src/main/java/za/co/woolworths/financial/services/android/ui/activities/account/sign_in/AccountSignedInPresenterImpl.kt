@@ -227,7 +227,7 @@ class AccountSignedInPresenterImpl(
 
                         AccountOfferingState.AccountIsChargedOff -> {
                             // account is in arrears for more than 6 months
-//                            removeBlocksOnCollectionCustomer(response.eligibilityPlan)
+                            removeBlocksOnCollectionCustomer()
                         }
 
                         AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff -> {
