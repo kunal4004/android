@@ -1,9 +1,9 @@
 package za.co.woolworths.financial.services.android.util.wenum
 
+import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmDeliveryAddressResponse
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
-import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
@@ -17,8 +17,8 @@ open class ConfirmLocation {
     ) {
         val postConfirmLocation = GeoLocationApiHelper().initConfirmLocation(confirmLocationRequest)
         postConfirmLocation.enqueue(CompletionHandler(object :
-            IResponseListener<ConfirmLocationResponse> {
-            override fun onSuccess(confirmLocationResponse: ConfirmLocationResponse?) {
+            IResponseListener<ConfirmDeliveryAddressResponse> {
+            override fun onSuccess(confirmLocationResponse: ConfirmDeliveryAddressResponse?) {
                 confirmLocationResponse?.orderSummary?.fulfillmentDetails?.deliveryType?.let {
                     if (SessionUtilities.getInstance().isUserAuthenticated) {
                         Utils.savePreferredDeliveryLocation(
@@ -40,7 +40,7 @@ open class ConfirmLocation {
 
             override fun onFailure(error: Throwable?) {
             }
-        }, ConfirmLocationResponse::class.java))
+        }, ConfirmDeliveryAddressResponse::class.java))
     }
 
     fun postRequest(shoppingDeliveryLocation: ShoppingDeliveryLocation) {

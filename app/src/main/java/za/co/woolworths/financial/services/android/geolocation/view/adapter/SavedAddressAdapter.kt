@@ -14,9 +14,13 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Addr
 class SavedAddressAdapter(
     val context: Context,
     val addressList: ArrayList<Address>,
+    val defaultAddressNickName: String?,
     val listener: OnAddressSelected
 ) : RecyclerView.Adapter<SavedAddressAdapter.SavedAddressViewHolder>() {
-    var selectedPosition = -1;
+
+     var selectedPosition = -1
+     var addressSelected = false
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SavedAddressViewHolder {
         return SavedAddressViewHolder(
             LayoutInflater.from(context).inflate(R.layout.address_row_layout, parent, false)
@@ -30,14 +34,18 @@ class SavedAddressAdapter(
     override fun onBindViewHolder(holder: SavedAddressViewHolder, position: Int) {
         holder.tvAddressNickname.text = addressList[position].nickname
 
-        if (selectedPosition == position) {
+        if (addressList[position].nickname.equals(defaultAddressNickName, true)
+            && !addressSelected) {
+            selectedPosition = position
             holder.rbAddressSelector?.isChecked = true
             holder.view?.setBackgroundResource(R.drawable.bg_select_store)
+            listener.onAddressSelected(addressList[position], position)
         } else {
             holder.rbAddressSelector?.isChecked = false
             holder.view?.setBackgroundResource(R.color.white)
         }
 
+        showSelectedAddress(position, holder)
 
         holder.imgEditAddress?.visibility =
             if (selectedPosition == position && addressList[position].verified)
@@ -46,6 +54,7 @@ class SavedAddressAdapter(
                 View.GONE
 
         holder.view.setOnClickListener {
+            addressSelected = true
             selectedPosition = position
             listener.onAddressSelected(addressList[position], position)
             notifyDataSetChanged()
@@ -61,6 +70,16 @@ class SavedAddressAdapter(
                 View.VISIBLE
 
         holder.tvAddress?.text = addressList[position].address1
+    }
+
+    private fun showSelectedAddress(position: Int, holder: SavedAddressViewHolder) {
+        if (selectedPosition == position) {
+            holder.rbAddressSelector?.isChecked = true
+            holder.view?.setBackgroundResource(R.drawable.bg_select_store)
+        } else {
+            holder.rbAddressSelector?.isChecked = false
+            holder.view?.setBackgroundResource(R.color.white)
+        }
     }
 
     inner class SavedAddressViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

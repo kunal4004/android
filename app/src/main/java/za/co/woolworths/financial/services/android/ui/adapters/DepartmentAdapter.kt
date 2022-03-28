@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.app.Activity
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,9 +9,9 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.department_dash_banner.view.*
 import kotlinx.android.synthetic.main.department_header_delivery_location.view.*
 import kotlinx.android.synthetic.main.department_row.view.*
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
 import za.co.woolworths.financial.services.android.models.dto.Dash
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
-import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts
 import za.co.woolworths.financial.services.android.ui.adapters.holder.DepartmentsBaseViewHolder
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RootCategoryViewType
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -20,7 +19,7 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 
-internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootCategory>?, private val clickListener: (RootCategory) -> Unit, private val onEditDeliveryLocation: () -> Unit, private val onDashBannerClick: () -> Unit, var validatedSuburbProducts: ValidatedSuburbProducts? = null)
+internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootCategory>?, private val clickListener: (RootCategory) -> Unit, private val onEditDeliveryLocation: () -> Unit, private val onDashBannerClick: () -> Unit, var validatePlace: ValidatePlace? = null)
     : RecyclerView.Adapter<DepartmentsBaseViewHolder>() {
     var isValidateSuburbRequestInProgress = false
     private var mDashBanner: Dash? = null
@@ -142,10 +141,10 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
                 )
             }
             itemView.deliveryDatesProgressPlaceHolder.visibility = if (isValidateSuburbRequestInProgress) View.VISIBLE else View.GONE
-            if (validatedSuburbProducts == null) {
+            if (validatePlace == null) {
                 itemView.deliveryDateLayout.visibility = View.GONE
             } else {
-                validatedSuburbProducts?.let { it ->
+                validatePlace?.let { it ->
                     itemView.apply {
                         when (KotlinUtils.getPreferredDeliveryType()) {
                             Delivery.CNC -> {
@@ -185,14 +184,14 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
         return mlRootCategories?.get(position)?.viewType!!.value
     }
 
-    fun updateDeliveryDate(validatedSuburbProducts: ValidatedSuburbProducts) {
-        this.validatedSuburbProducts = validatedSuburbProducts
+    fun updateDeliveryDate(validatePlace: ValidatePlace) {
+        this.validatePlace = validatePlace
         showDeliveryDatesProgress(false)
         notifyDataSetChanged()
     }
 
     fun hideDeliveryDates() {
-        this.validatedSuburbProducts = null
+        this.validatePlace = null
         showDeliveryDatesProgress(false)
         notifyDataSetChanged()
     }
@@ -200,7 +199,7 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
     fun showDeliveryDatesProgress(isInProgress: Boolean) {
         isValidateSuburbRequestInProgress = isInProgress
         if (isInProgress)
-            this.validatedSuburbProducts = null
+            this.validatePlace = null
         notifyDataSetChanged()
     }
 
