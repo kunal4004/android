@@ -48,7 +48,6 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
-import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.*
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
@@ -76,6 +75,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.net.ConnectException
 import java.net.UnknownHostException
@@ -1303,7 +1303,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         activity?.apply {
             KotlinUtils.presentEditDeliveryGeoLocationActivity(
                 this,
-                EditDeliveryLocationActivity.REQUEST_CODE,
+                REQUEST_CODE,
                 deliveryType,
                 Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
             )

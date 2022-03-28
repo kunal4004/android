@@ -66,6 +66,13 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccoun
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DEFAULT_ADDRESS
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CHECKOUT
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.PLACE_ID
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import java.io.*
@@ -374,38 +381,15 @@ class KotlinUtils {
             activity?.apply {
                 val mIntent = Intent(this, EditDeliveryLocationActivity::class.java)
                 val mBundle = Bundle()
-                mBundle.putString(EditDeliveryLocationActivity.DELIVERY_TYPE, delivery.toString())
-                mBundle.putString(EditDeliveryLocationActivity.PLACE_ID, placeId)
-                mBundle.putBoolean(EditDeliveryLocationActivity.IS_COMING_FROM_CHECKOUT, isComingFromCheckout)
-                mBundle.putBoolean(EditDeliveryLocationActivity.IS_COMING_FROM_SLOT_SELECTION, isComingFromSlotSelection)
-                mBundle.putSerializable(EditDeliveryLocationActivity.SAVED_ADDRESS_RESPONSE, savedAddressResposne)
-                mBundle.putSerializable(EditDeliveryLocationActivity.DEFAULT_ADDRESS, defaultAddress)
-                mBundle.putSerializable(EditDeliveryLocationActivity.DEFAULT_ADDRESS, defaultAddress)
+                mBundle.putString(DELIVERY_TYPE, delivery.toString())
+                mBundle.putString(PLACE_ID, placeId)
+                mBundle.putBoolean(IS_COMING_FROM_CHECKOUT, isComingFromCheckout)
+                mBundle.putBoolean(IS_COMING_FROM_SLOT_SELECTION, isComingFromSlotSelection)
+                mBundle.putSerializable(SAVED_ADDRESS_RESPONSE, savedAddressResposne)
+                mBundle.putSerializable(DEFAULT_ADDRESS, defaultAddress)
                 mBundle.putString(KEY_COLLECTING_DETAILS, whoISCollecting)
-                mIntent.putExtra("bundle", mBundle)
+                mIntent.putExtra(BUNDLE, mBundle)
                 GEO_REQUEST_CODE = requestCode
-                startActivityForResult(mIntent, requestCode)
-                overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-            }
-        }
-
-        fun presentEditDeliveryLocationActivity(
-            activity: Activity?,
-            requestCode: Int,
-            deliveryType: DeliveryType? = null
-        ) {
-            var type = deliveryType
-            if (type == null) {
-                if (Utils.getPreferredDeliveryLocation() != null) {
-                    type =  if (getPreferredDeliveryType() == Delivery.CNC) DeliveryType.STORE_PICKUP else DeliveryType.DELIVERY
-
-                }
-            }
-            activity?.apply {
-                val mIntent = Intent(this, EditDeliveryLocationActivity::class.java)
-                val mBundle = Bundle()
-                mBundle.putString(EditDeliveryLocationActivity.DELIVERY_TYPE, type?.name)
-                mIntent.putExtra("bundle", mBundle)
                 startActivityForResult(mIntent, requestCode)
                 overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
             }

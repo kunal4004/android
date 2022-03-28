@@ -63,6 +63,7 @@ import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerAct
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.regex.Pattern
@@ -143,7 +144,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     private fun setFragmentResults() {
 
         setFragmentResultListener(ErrorHandlerBottomSheetDialog.RESULT_ERROR_CODE_RETRY) { _, args ->
-            when (args?.get("bundle")) {
+            when (args?.get(BUNDLE)) {
                 ERROR_TYPE_CONFIRM_COLLECTION_ADDRESS -> {
                     callStorePickupInfoAPI()
                 }

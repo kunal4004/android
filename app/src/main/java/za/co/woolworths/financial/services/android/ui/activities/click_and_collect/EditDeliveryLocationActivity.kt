@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities.click_and_collect
 
 
-import android.app.Activity
+
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
@@ -14,9 +14,15 @@ import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.edit_delivery_location_activity.toolbar
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
-import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CHECKOUT
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.PLACE_ID
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 @AndroidEntryPoint
@@ -29,16 +35,7 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
    private var isComingFromSlotSelection: Boolean = false
    private var savedAddressResponse: SavedAddressResponse? = null
 
-    companion object {
-        var REQUEST_CODE = 1515
-        var DELIVERY_TYPE = "DELIVERY_TYPE"
-        var IS_COMING_FROM_CHECKOUT = "isComingFromCheckout"
-        var IS_COMING_FROM_SLOT_SELECTION = "isComingFromSlotSelection"
-        var SAVED_ADDRESS_RESPONSE = "savedAddressResponse"
-        var DEFAULT_ADDRESS = "defaultAddress"
-        var PLACE_ID = "placeId"
-        var IS_LIQUOR = "IS_LIQUOR"
-    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,13 +103,13 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
                     navController.graph = navGraph
                     bundle?.apply {
                         putString(
-                            DeliveryAddressConfirmationFragment.KEY_PLACE_ID, placeId
+                            KEY_PLACE_ID, placeId
                         )
                     }
                     navController
                         .setGraph(
                             navGraph,
-                            bundleOf("bundle" to bundle)
+                            bundleOf(BUNDLE to bundle)
                         )
                 } else if (deliveryType == Delivery.CNC) {
                     //  collection screen
@@ -121,7 +118,7 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
                     navController
                         .setGraph(
                             navGraph,
-                            bundleOf("bundle" to bundle)
+                            bundleOf(BUNDLE to bundle)
                         )
                 } else {
                     // STANDARD
@@ -132,7 +129,7 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
                         navController
                             .setGraph(
                                 navGraph,
-                                bundleOf("bundle" to bundle)
+                                bundleOf(BUNDLE to bundle)
                             )
                     } else if (savedAddressResponse?.addresses?.isEmpty() == true) {
                         // add address
@@ -141,7 +138,7 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
                         navController
                             .setGraph(
                                 navGraph,
-                                bundleOf("bundle" to bundle)
+                                bundleOf(BUNDLE to bundle)
                         )
                     }
                 }
@@ -151,13 +148,13 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
                 navController.graph = navGraph
                 bundle?.apply {
                     putString(
-                        DeliveryAddressConfirmationFragment.KEY_PLACE_ID, placeId
+                       KEY_PLACE_ID, placeId
                     )
                 }
                 navController
                     .setGraph(
                         navGraph,
-                        bundleOf("bundle" to bundle)
+                        bundleOf(BUNDLE to bundle)
                     )
             }
         }

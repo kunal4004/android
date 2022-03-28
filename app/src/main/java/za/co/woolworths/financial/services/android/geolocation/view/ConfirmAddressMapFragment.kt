@@ -41,6 +41,11 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.Locatio
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_CONFIRM_ADD
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LATITUDE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LONGITUDE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
@@ -172,13 +177,13 @@ class ConfirmAddressMapFragment :
             if(isComingFromCheckout==true) {
                 bundle?.apply {
                     putString(
-                        DeliveryAddressConfirmationFragment.KEY_PLACE_ID, placeId
+                        KEY_PLACE_ID, placeId
                     )
                     putBoolean(
-                        ConfirmAddressFragment.IS_COMING_CONFIRM_ADD, true)
+                        IS_COMING_CONFIRM_ADD, true)
                     findNavController().navigate(
                         R.id.actionClickAndCollectStoresFragment,
-                        bundleOf("bundle" to bundle)
+                        bundleOf(BUNDLE to bundle)
                     )
                 }
             } else {
@@ -187,18 +192,18 @@ class ConfirmAddressMapFragment :
 
                     bundle?.apply {
                         putString(
-                            DeliveryAddressConfirmationFragment.KEY_LATITUDE, mLatitude
+                           KEY_LATITUDE, mLatitude
                         )
                         putString(
-                            DeliveryAddressConfirmationFragment.KEY_LONGITUDE, mLongitude
+                            KEY_LONGITUDE, mLongitude
                         )
                         putString(
-                            DeliveryAddressConfirmationFragment.KEY_PLACE_ID, placeId
+                           KEY_PLACE_ID, placeId
                         )
                     }
                     findNavController().navigate(
                         R.id.action_confirmAddressMapFragment_to_deliveryAddressConfirmationFragment,
-                        bundleOf("bundle" to bundle)
+                        bundleOf(BUNDLE to bundle)
                     )
                 }
             }

@@ -2,9 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.shop;
 
 import static android.app.Activity.RESULT_OK;
 import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY;
-import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.DELIVERY_TYPE;
 import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION;
-import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.IS_DELIVERY;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;

@@ -29,19 +29,24 @@ import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
 import za.co.woolworths.financial.services.android.geolocation.model.MapData
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.SavedAddressAdapter
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
-import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
-import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity.Companion.IS_COMING_FROM_CHECKOUT
-import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity.Companion.IS_COMING_FROM_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment.Companion.DEPARTMENT_LOGIN_REQUEST
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.ADDRESS
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DEFAULT_ADDRESS
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_CONFIRM_ADD
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CHECKOUT
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_STORE_LOCATOR
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.io.IOException
 import java.util.*
@@ -56,26 +61,25 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
     private var bundle: Bundle? = null
     private var isComingFromCheckout: Boolean = false
     private var isComingFromSlotSelection: Boolean = false
-
     private var deliveryType: String? = null
 
     companion object {
         fun newInstance() = ConfirmAddressFragment()
-        var IS_COMING_CONFIRM_ADD = "conform_add"
+
     }
 
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        bundle = arguments?.getBundle("bundle")
+        bundle = arguments?.getBundle(BUNDLE)
         bundle?.apply {
             isComingFromCheckout = this.getBoolean(
                 IS_COMING_FROM_CHECKOUT, false)
             isComingFromSlotSelection = this.getBoolean(
                 IS_COMING_FROM_SLOT_SELECTION, false)
             deliveryType =  this.getString(
-                EditDeliveryLocationActivity.DELIVERY_TYPE, "")
+                DELIVERY_TYPE, "")
         }
         hideBottomNav()
     }
@@ -270,26 +274,26 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                         if (it.placesId != null) {
 
                             bundle?.putString(
-                                DeliveryAddressConfirmationFragment.KEY_PLACE_ID, it.placesId)
+                               KEY_PLACE_ID, it.placesId)
 
                             bundle?.putString(
-                                DeliveryAddressConfirmationFragment.ADDRESS, it.address1)
+                                ADDRESS, it.address1)
 
                             bundle?.putSerializable(
-                                EditDeliveryLocationActivity.DEFAULT_ADDRESS, it)
+                                DEFAULT_ADDRESS, it)
 
                             bundle?.putBoolean(
                                 IS_COMING_CONFIRM_ADD, true)
 
-                            if (ClickAndCollectStoresFragment.IS_FROM_STORE_LOCATOR) {
+                            if (IS_FROM_STORE_LOCATOR) {
                                 findNavController().navigate(
                                     R.id.actionClickAndCollectStoresFragment,
-                                    bundleOf("bundle" to bundle)
+                                    bundleOf(BUNDLE to bundle)
                                 )
                             } else {
                                 findNavController().navigate(
                                     R.id.actionToDeliveryAddressConfirmationFragment,
-                                    bundleOf("bundle" to bundle)
+                                    bundleOf(BUNDLE to bundle)
                                 )
                             }
 
@@ -384,7 +388,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
 
         findNavController().navigate(
             R.id.action_confirmAddressLocationFragment_to_checkoutAddAddressNewUserFragment,
-            bundleOf("bundle" to bundle)
+            bundleOf(BUNDLE to bundle)
         )
     }
 
@@ -408,7 +412,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         )
         findNavController()?.navigate(
             R.id.action_confirmAddressLocationFragment_to_checkoutAddAddressNewUserFragment,
-            bundleOf("bundle" to bundle)
+            bundleOf(BUNDLE to bundle)
         )
     }
 }

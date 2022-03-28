@@ -15,7 +15,6 @@ open class CheckoutAddressManagementBaseFragment : Fragment() {
         var baseFragBundle: Bundle? = Bundle()
         var baseFragSavedAddressResponse: SavedAddressResponse? = null
         const val IS_DELIVERY = "isDelivery"
-        const val DELIVERY_TYPE = "Delivery_type"
         const val GEO_SLOT_SELECTION =  "geo_slot_selection"
     }
 

@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.click_and_collec
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.OrderConfirmationFragment
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CNC_SELETION
 import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -47,7 +48,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
             savedAddressResponse = getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
             geoSlotSelection = getBoolean(GEO_SLOT_SELECTION , false)
             whoIsCollectingString = getString(CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS, "")
-            isComingFromCnc = getBoolean(DeliveryAddressConfirmationFragment.IS_COMING_FROM_CNC_SELETION , false)
+            isComingFromCnc = getBoolean(IS_COMING_FROM_CNC_SELETION , false)
             baseFragBundle = Bundle()
             baseFragBundle?.putString(
                 SAVED_ADDRESS_KEY,

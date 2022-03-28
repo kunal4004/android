@@ -37,13 +37,17 @@ import kotlinx.android.synthetic.main.no_connection.view.*
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
-import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment.Companion.VALIDATE_RESPONSE
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.StoreLiveData
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_CONFIRM_ADD
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_STORE_LOCATOR
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.VALIDATE_RESPONSE
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import javax.inject.Inject
 
@@ -67,16 +71,16 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
             ClickAndCollectStoresFragment().withArgs {
                 putSerializable(VALIDATE_RESPONSE, validateLocationResponse)
             }
-        var IS_FROM_STORE_LOCATOR = false
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setStyle(STYLE_NO_TITLE, android.R.style.Theme_Material_Light_NoActionBar_Fullscreen)
         super.onCreate(savedInstanceState)
-        bundle = arguments?.getBundle("bundle")
+        bundle = arguments?.getBundle(BUNDLE)
         bundle?.apply {
-            placeId = this.getString(DeliveryAddressConfirmationFragment.KEY_PLACE_ID, "")
-            isComingFromConfirmAddress = getBoolean(ConfirmAddressFragment.IS_COMING_CONFIRM_ADD,false)
+            placeId = this.getString(KEY_PLACE_ID, "")
+            isComingFromConfirmAddress = getBoolean(IS_COMING_CONFIRM_ADD,false)
             if(containsKey(VALIDATE_RESPONSE)){
                 mValidateLocationResponse =
                     getSerializable(VALIDATE_RESPONSE) as ValidateLocationResponse
@@ -210,7 +214,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
                 IS_FROM_STORE_LOCATOR = true
                 findNavController().navigate(
                     R.id.action_clickAndCollectStoresFragment_to_confirmAddressLocationFragment,
-                    bundleOf("bundle" to bundle)
+                    bundleOf(BUNDLE to bundle)
                 )
             }
         }
@@ -220,11 +224,11 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
         if (IS_FROM_STORE_LOCATOR) {
             dataStore?.let { StoreLiveData.value = it }
             bundle?.putString(
-                DeliveryAddressConfirmationFragment.KEY_PLACE_ID, placeId)
+               KEY_PLACE_ID, placeId)
             IS_FROM_STORE_LOCATOR = false
             findNavController().navigate(
                 R.id.action_clickAndCollectStoresFragment_to_deliveryAddressConfirmationFragment,
-                bundleOf("bundle" to bundle)
+                bundleOf(BUNDLE to bundle)
             )
         } else {
             dataStore?.let { StoreLiveData.value = it }

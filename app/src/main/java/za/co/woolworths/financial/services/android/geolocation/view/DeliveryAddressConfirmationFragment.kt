@@ -43,7 +43,6 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLo
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.models.network.StorePickupInfoBody
-import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
@@ -53,6 +52,23 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErro
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.CNC
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DEFAULT_ADDRESS
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.FULLFILLMENT_REQUEST_CODE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_CONFIRM_ADD
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CHECKOUT
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CNC_SELETION
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LATITUDE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LONGITUDE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.STANDARD
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.STANDARD_DELIVERY
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.VALIDATE_RESPONSE
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
 
@@ -96,28 +112,28 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        bundle = arguments?.getBundle("bundle")
+        bundle = arguments?.getBundle(BUNDLE)
 
         bundle?.apply {
             latitude = getString(KEY_LATITUDE, "")
             longitude = this.getString(KEY_LONGITUDE, "")
             placeId = this.getString(KEY_PLACE_ID, "")
-            isComingFromSlotSelection = this.getBoolean(EditDeliveryLocationActivity.IS_COMING_FROM_SLOT_SELECTION, false)
-            isComingFromCheckout = this.getBoolean(EditDeliveryLocationActivity.IS_COMING_FROM_CHECKOUT, false)
-            deliveryType = this.getString(EditDeliveryLocationActivity.DELIVERY_TYPE, Delivery.STANDARD.toString())
+            isComingFromSlotSelection = this.getBoolean(IS_COMING_FROM_SLOT_SELECTION, false)
+            isComingFromCheckout = this.getBoolean(IS_COMING_FROM_CHECKOUT, false)
+            deliveryType = this.getString(DELIVERY_TYPE, Delivery.STANDARD.toString())
             getString(CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS)?.let {
                 whoIsCollecting =
                     Gson().fromJson(it, object : TypeToken<WhoIsCollectingDetails>() {}.type)
             }
-            if (this.containsKey(EditDeliveryLocationActivity.DEFAULT_ADDRESS)
-                &&  this.getSerializable(EditDeliveryLocationActivity.DEFAULT_ADDRESS) != null) {
+            if (this.containsKey(DEFAULT_ADDRESS)
+                &&  this.getSerializable(DEFAULT_ADDRESS) != null) {
                 defaultAddress =
-                    this.getSerializable(EditDeliveryLocationActivity.DEFAULT_ADDRESS) as Address
+                    this.getSerializable(DEFAULT_ADDRESS) as Address
             }
 
-            if (bundle?.containsKey(EditDeliveryLocationActivity.SAVED_ADDRESS_RESPONSE) == true
-                && this.getSerializable(EditDeliveryLocationActivity.SAVED_ADDRESS_RESPONSE) != null) {
-                savedAddressResponse =  this.getSerializable(EditDeliveryLocationActivity.SAVED_ADDRESS_RESPONSE) as SavedAddressResponse
+            if (bundle?.containsKey(SAVED_ADDRESS_RESPONSE) == true
+                && this.getSerializable(SAVED_ADDRESS_RESPONSE) != null) {
+                savedAddressResponse =  this.getSerializable(SAVED_ADDRESS_RESPONSE) as SavedAddressResponse
             }
         }
     }
@@ -132,10 +148,10 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     bundle?.putSerializable(
                         VALIDATE_RESPONSE, validateLocationResponse)
                     bundle?.putBoolean(
-                        ConfirmAddressFragment.IS_COMING_CONFIRM_ADD, false)
+                        IS_COMING_CONFIRM_ADD, false)
                     findNavController().navigate(
                         R.id.action_deliveryAddressConfirmationFragment_to_clickAndCollectStoresFragment,
-                        bundleOf("bundle" to bundle)
+                        bundleOf(BUNDLE to bundle)
                     )
                     return
                 }
@@ -179,12 +195,12 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     private fun navigateToConfirmAddressScreen() {
-        bundle?.putBoolean(EditDeliveryLocationActivity.IS_COMING_FROM_CHECKOUT, isComingFromCheckout)
-        bundle?.putBoolean(EditDeliveryLocationActivity.IS_COMING_FROM_SLOT_SELECTION, isComingFromSlotSelection)
-        bundle?.putString(EditDeliveryLocationActivity.DELIVERY_TYPE, deliveryType)
+        bundle?.putBoolean(IS_COMING_FROM_CHECKOUT, isComingFromCheckout)
+        bundle?.putBoolean(IS_COMING_FROM_SLOT_SELECTION, isComingFromSlotSelection)
+        bundle?.putString(DELIVERY_TYPE, deliveryType)
         findNavController().navigate(
             R.id.action_deliveryAddressConfirmationFragment_to_confirmDeliveryLocationFragment,
-            bundleOf("bundle" to bundle)
+            bundleOf(BUNDLE to bundle)
         )
     }
 
@@ -292,7 +308,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                                IS_COMING_FROM_CNC_SELETION, true)
                                             findNavController().navigate(
                                                 R.id.action_deliveryAddressConfirmationFragment_to_geoCheckoutCollectingFragment,
-                                            bundleOf("bundle" to bundle))
+                                            bundleOf(BUNDLE to bundle))
 
                                         }
                                     }
@@ -309,7 +325,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                   e.printStackTrace()
                   progressBar?.visibility = View.GONE
                   // navigate to shop tab with error sceanario
-                  activity?.setResult(EditDeliveryLocationActivity.REQUEST_CODE)
+                  activity?.setResult(REQUEST_CODE)
                   activity?.finish()
               }
           }
@@ -337,16 +353,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     companion object {
-        val KEY_LATITUDE = "latitude"
-        val KEY_LONGITUDE = "longitude"
-        val KEY_PLACE_ID = "placeId"
-        val ADDRESS = "address"
-        val VALIDATE_RESPONSE = "ValidateResponse"
-        val IS_COMING_FROM_CNC_SELETION = "cnc_slection"
-        private const val STANDARD_DELIVERY = "StandardDelivery"
-        private const val STANDARD = "Standard"
-        private const val CNC = "CnC"
-        private val FULLFILLMENT_REQUEST_CODE = 8765
 
         fun newInstance(latitude: String, longitude: String, placesId: String) =
             DeliveryAddressConfirmationFragment().withArgs {
@@ -359,7 +365,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         fun newInstance(placesId: String?, deliveryType: Delivery? = Delivery.STANDARD) =
             DeliveryAddressConfirmationFragment().withArgs {
                 putString(KEY_PLACE_ID, placesId)
-                putString(EditDeliveryLocationActivity.DELIVERY_TYPE, deliveryType.toString())
+                putString(DELIVERY_TYPE, deliveryType.toString())
             }
     }
 

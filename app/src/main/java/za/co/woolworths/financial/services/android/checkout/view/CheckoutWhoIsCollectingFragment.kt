@@ -26,6 +26,8 @@ import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CNC_SELETION
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.regex.Pattern
 
@@ -56,9 +58,9 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
         super.onViewCreated(view, savedInstanceState)
         if (navController == null)
             navController = Navigation.findNavController(view)
-        val bundle = arguments?.getBundle("bundle")
+        val bundle = arguments?.getBundle(BUNDLE)
         bundle?.apply {
-            isComingFromCnc = getBoolean(DeliveryAddressConfirmationFragment.IS_COMING_FROM_CNC_SELETION, false)}
+            isComingFromCnc = getBoolean(IS_COMING_FROM_CNC_SELETION, false)}
 
         initView()
     }
@@ -172,7 +174,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
             toJson
         )
         checkoutActivityIntent.putExtra(
-            DeliveryAddressConfirmationFragment.IS_COMING_FROM_CNC_SELETION,
+            IS_COMING_FROM_CNC_SELETION,
             isComingFromCnc
         )
         activity?.let {

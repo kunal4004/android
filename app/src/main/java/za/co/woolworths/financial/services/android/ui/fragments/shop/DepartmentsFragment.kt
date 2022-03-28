@@ -41,7 +41,6 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.DashDetailsActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
-import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.DepartmentAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
@@ -50,6 +49,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.sub_cate
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 class DepartmentsFragment : DepartmentExtensionFragment(),
@@ -258,7 +258,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
 
         KotlinUtils.presentEditDeliveryGeoLocationActivity(
             requireActivity(),
-            EditDeliveryLocationActivity.REQUEST_CODE,
+            REQUEST_CODE,
             deliveryType,
             placeId
         )
@@ -378,7 +378,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
             activity?.apply {
                 KotlinUtils.presentEditDeliveryGeoLocationActivity(
                     this,
-                    EditDeliveryLocationActivity.REQUEST_CODE,
+                    REQUEST_CODE,
                     deliveryType,
                     Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                 )
@@ -392,7 +392,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
                 activity?.apply {
                     KotlinUtils.presentEditDeliveryGeoLocationActivity(
                         this,
-                        EditDeliveryLocationActivity.REQUEST_CODE,
+                        REQUEST_CODE,
                         KotlinUtils.getPreferredDeliveryType(),
                         Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                     )
