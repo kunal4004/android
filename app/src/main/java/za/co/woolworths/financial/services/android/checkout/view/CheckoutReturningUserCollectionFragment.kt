@@ -26,7 +26,6 @@ import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.checkout_add_address_new_user.delivering_layout
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.loadingBar
 import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.*
@@ -491,11 +490,12 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                             R.color.white
                         )
                     )
+                    tipNoteTextView?.visibility = View.VISIBLE
                 }
                 titleTextView?.setOnClickListener {
-                    var isSameSelection = resetAllDriverTip(it.tag as Int)
+                    var isSameSelection =
+                        true // Because we want to change this view after the value entered from user.
                     if (it.tag == driverTipOptionsList!!.lastIndex) {
-                        isSameSelection = false
                         val tipValue = if (titleTextView.text.toString()
                                 .equals(driverTipOptionsList!!.lastOrNull())
                         ) getString(R.string.empty) else removeRandFromAmount(titleTextView.text.toString()
@@ -505,6 +505,10 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                             getString(R.string.enter_your_own_amount), tipValue, this)
                         customDriverTipDialog.show(requireFragmentManager(),
                             CustomDriverTipBottomSheetDialog::class.java.simpleName)
+                    } else {
+                        isSameSelection = resetAllDriverTip(it.tag as Int)
+                        if (isSameSelection)
+                            tipNoteTextView?.visibility = View.GONE
                     }
                     selectedDriverTipValue = (it as TextView).text as? String
                     if (!isSameSelection) {
@@ -517,9 +521,10 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                 R.color.white
                             )
                         )
+                        tipNoteTextView?.visibility = View.VISIBLE
                     }
                 }
-                delivering_layout?.addView(driverTipTextView)
+                tip_options_layout?.addView(driverTipTextView)
             }
         }
     }
@@ -535,6 +540,10 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                     selectedTag)
             ) {
                 sameSelection = true
+            }
+            if (index == driverTipOptionsList?.size?.minus(1) ?: null) {
+                titleTextView?.setText(driverTipOptionsList?.lastOrNull())
+                titleTextView?.setCompoundDrawables(null, null, null, null)
             }
             titleTextView?.background =
                 bindDrawable(R.drawable.checkout_delivering_title_round_button)
@@ -999,9 +1008,19 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     override fun onConfirmClick(tipValue: String) {
         val titleTextView: TextView? =
             driverTipTextView?.findViewWithTag(driverTipOptionsList?.lastIndex)
-        titleTextView?.text = "R$tipValue" + " "
+        driverTipOptionsList?.lastIndex?.let { resetAllDriverTip(it) }
+        titleTextView?.text = "R$tipValue "
         val image = context?.resources?.getDrawable(R.drawable.edit_icon_white)
         image?.setBounds(0, 0, image.intrinsicWidth, image.intrinsicHeight)
         titleTextView?.setCompoundDrawables(null, null, image, null)
+        titleTextView?.background =
+            bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
+        titleTextView?.setTextColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.white
+            )
+        )
+        tipNoteTextView?.visibility = View.VISIBLE
     }
 }

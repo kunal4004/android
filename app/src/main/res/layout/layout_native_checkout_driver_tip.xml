@@ -52,7 +52,7 @@
                 android:scrollbars="none">
 
                 <LinearLayout
-                    android:id="@+id/delivering_layout"
+                    android:id="@+id/tip_options_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -61,6 +61,24 @@
                     android:paddingBottom="@dimen/five_dp" />
             </HorizontalScrollView>
         </com.facebook.shimmer.ShimmerFrameLayout>
+
+        <TextView
+            android:id="@+id/tipNoteTextView"
+            style="@style/myriad_pro_regular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/twenty_dp"
+            android:layout_marginTop="@dimen/ten_dp"
+            android:background="@color/white"
+            android:paddingTop="@dimen/one_dp"
+            android:paddingBottom="@dimen/one_dp"
+            android:text="@string/driver_tip_note"
+            android:textSize="@dimen/twelve_sp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tipOptionScrollViewShimmerFrameLayout" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
