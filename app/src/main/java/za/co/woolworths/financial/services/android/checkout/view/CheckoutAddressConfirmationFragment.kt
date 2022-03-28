@@ -167,7 +167,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                         // This is when user clicks on collection journey.
                         if (btnAddressConfirmation.text.equals(getString(R.string.change_suburb))) {
                             //Zero stores and user clicks on change suburb.
-                           // getSuburb(selectedProvince)
+
                         } else if (selectedSuburb.storeAddress != null) {
                             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_CONFIRM_NEW_STORE,
                                 hashMapOf(
@@ -280,15 +280,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                             suburb.storeAddress.address1
                                         )
                                     }
-                                    /*val shoppingDeliveryLocation = ShoppingDeliveryLocation(
-                                        selectedProvince,
-                                        null,
-                                        store
-                                    )
-                                    shoppingDeliveryLocation.storePickup = true
-                                    Utils.savePreferredDeliveryLocation(
-                                        shoppingDeliveryLocation
-                                    )*/
+
                                     if (isDeliverySelected != null && !isDeliverySelected!!) {
                                         // check if it's from collection Change Fullfilments or delivery Change Fullfilments. if collection then nav up else who is collecting.
                                         if (arguments?.containsKey(KEY_IS_WHO_IS_COLLECTING) == true && arguments?.getBoolean(
@@ -473,7 +465,6 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     }
 
     private fun initView() {
-       // selectedProvince = Utils.getPreferredDeliveryLocation().province
         if (arguments?.containsKey(KEY_IS_WHO_IS_COLLECTING) == true && arguments?.getBoolean(
                 KEY_IS_WHO_IS_COLLECTING
             ) == true
@@ -657,7 +648,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     private fun fetchStoreListFromValidateSelectedSuburb(suburbId: String?) {
         if (suburbId.equals(DEFAULT_STORE_ID)) {
             // This means collection tab clicked for the first time.
-           // getSuburb(selectedProvince)
+
         } else if (suburbId.isNullOrEmpty()) {
             clickNCollectTitleLayout.visibility = View.VISIBLE
             addressConfirmationClicknCollect.visibility = View.VISIBLE
@@ -906,21 +897,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                         )
                                         return@observe
                                     }
-                                    // Update location in cache/shared prefs when Confirmed a delivery address
-                                    /*Utils.savePreferredDeliveryLocation(
-                                        ShoppingDeliveryLocation(
-                                            Province().apply {
-                                                id = selectedAddress?.region ?: ""
-                                                name =
-                                                    getProvinceName(selectedAddress?.region ?: "")
-                                            }, Suburb().apply {
-                                                id = selectedAddress?.suburbId ?: ""
-                                                name = selectedAddress?.suburb ?: ""
-                                                postalCode = selectedAddress?.postalCode ?: ""
-                                                suburbDeliverable = response.deliverable ?: false
-                                            }, null
-                                        )
-                                    )*/
+
                                     navigateToReturningUser()
                                 }
                                 else -> {

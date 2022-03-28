@@ -380,7 +380,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             // We use a String here, but any type that can be put in a Bundle is supported
             val result = bundle.getString("Suburb")
             val suburb: Suburb? = Utils.strToJson(result, Suburb::class.java) as? Suburb
-            //onSuburbSelected(suburb)
+
         }
         // Use the Kotlin extension in the fragment-ktx artifact
         setFragmentResultListener(EditDeliveryLocationFragment.PROVINCE_SELECTOR_REQUEST_CODE) { _, bundle ->
@@ -778,9 +778,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                                     )
                                     response.address.nickname?.let { nickName ->
                                        navigateToAddressConfirmation(response.address.placesId)
-//                                        onAddNewAddress(
-//                                            nickName
-//                                        )
+
                                     }
                                 }
 
@@ -841,88 +839,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         }
     }
 
-    /**
-     * This function should perform following tasks:
-     * On successful add address,
-     * - request the API  GET [{base_url}/changeAddress/{nickname}]. Use [@param nickName] of newly added address
-     * - If Change Address comes back with deliverable: [false] then Display an info dialog
-     *  with message “we don't deliver to this suburb, please add a different address “ as per design.
-     * - Don't allow user to navigate to Checkout page when deliverable : [false].
-     * - Check if any unSellableCommerceItems[ ] > 0 display the items in modal as per the design
-     * ( Reference :  We use  similar kind of functionality on edit delivery location when user switches
-     * from delivery to CNC or vice versa).
-     * - User selects REMOVE AND CONTINUE navigate to Checkout page
-     *
-     * @param nickName  unique address name used to identify individual address
-     */
 
-    /*private fun onAddNewAddress(@NonNull nickName: String) {
-        loadingProgressBar.visibility = View.VISIBLE
-        checkoutAddAddressNewUserViewModel.changeAddress(
-            nickName
-        ).observe(viewLifecycleOwner, { response ->
-            loadingProgressBar.visibility = View.GONE
-            when (response) {
-                is ChangeAddressResponse -> {
-                    when (response.httpCode) {
-                        HTTP_OK, HTTP_OK_201 -> {
-
-                            if (response.deliverable == null) {
-                                showErrorScreen(
-                                    ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                                    getString(R.string.common_error_message_without_contact_info)
-                                )
-                                return@observe
-                            }
-
-                            // If deliverable false then show cant deliver popup
-                            // Don't allow user to navigate to Checkout page when deliverable : [false].
-                            if (response.deliverable == false) {
-                                showSuburbNotDeliverableBottomSheetDialog(
-                                    ERROR_CODE_SUBURB_NOT_DELIVERABLE
-                                )
-                                return@observe
-                            }
-
-                            // Check if any unSellableCommerceItems[ ] > 0 display the items in modal as per the design
-                            if (!response.unSellableCommerceItems.isNullOrEmpty()) {
-                                navigateToUnsellableItemsFragment(
-                                    response.unSellableCommerceItems,
-                                    response.deliverable ?: false,
-                                    SCREEN_NAME_ADD_NEW_ADDRESS
-                                )
-                                return@observe
-                            }
-
-                            // else functionality complete.
-                            if (isAddNewAddress) {
-                                setFragmentResult(
-                                    ADD_A_NEW_ADDRESS_REQUEST_KEY, bundleOf(
-                                        SAVED_ADDRESS_KEY to savedAddressResponse
-                                    )
-                                )
-                                navController?.navigateUp()
-                            } else
-                                navigateToAddressConfirmation()
-                        }
-                        else -> {
-                            showErrorScreen(
-                                ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                                getString(R.string.common_error_message_without_contact_info)
-                            )
-                        }
-                    }
-                }
-                is Throwable -> {
-                    showErrorScreen(
-                        ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                        getString(R.string.common_error_message_without_contact_info)
-                    )
-                }
-            }
-        })
-    }
-*/
     private fun showErrorScreen(errorType: Int, errorMessage: String?) {
         activity?.apply {
             val intent = Intent(this, ErrorHandlerActivity::class.java)

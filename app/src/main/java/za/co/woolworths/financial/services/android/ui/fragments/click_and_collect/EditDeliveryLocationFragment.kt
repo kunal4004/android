@@ -334,17 +334,9 @@ class EditDeliveryLocationFragment : Fragment(),
     override fun onSetSuburbSuccess() {
         hideSetSuburbProgressBar()
         when (deliveryType) {
-            DeliveryType.DELIVERY -> {
-                /*Utils.savePreferredDeliveryLocation(
-                    ShoppingDeliveryLocation(
-                        selectedProvince,
-                        selectedSuburb,
-                        null
-                    )
-                )*/
-            }
+
             DeliveryType.STORE_PICKUP -> {
-                val store = selectedStore?.let {
+                 selectedStore?.let {
                     Store(
                         it.id,
                         it.name,
