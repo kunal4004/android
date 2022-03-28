@@ -37,7 +37,6 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
-import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
@@ -1320,16 +1319,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
                 when (response?.httpCode) {
                     HTTP_OK -> {
-
                         confirmDeliveryLocation()
-//                        if (Utils.isCartSummarySuburbIDEmpty(response)) {
-//                            activity?.apply {
-//                                KotlinUtils.presentEditDeliveryGeoLocationActivity(
-//                                    this,
-//                                    SET_DELIVERY_LOCATION_REQUEST_CODE
-//                                )
-//                            }
-//                        } else confirmDeliveryLocation()
                     }
                 }
             }
