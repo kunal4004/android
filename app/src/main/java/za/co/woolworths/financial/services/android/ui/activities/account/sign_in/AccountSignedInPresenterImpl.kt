@@ -41,8 +41,8 @@ class AccountSignedInPresenterImpl(
         const val MY_ACCOUNT_RESPONSE = "MY_ACCOUNT_RESPONSE"
         const val APPLY_NOW_STATE = "APPLY_NOW_STATE"
         const val DEEP_LINKING_PARAMS = "DEEP_LINKING_PARAMS"
-        const val ELITE_PLAN ="Elite Plan"
-        const val VIP_PLAN ="VIP Plan"
+        const val ELITE_PLAN = "Elite Plan"
+        const val VIP_PLAN = "VIP Plan"
         const val ELITE_PLAN_MODEL: String = "ELITE_PLAN_MODEL"
         fun getProductCode(applyNowState: ApplyNowState): String {
             return when (applyNowState) {
@@ -172,28 +172,22 @@ class AccountSignedInPresenterImpl(
                     }
                 }
 
-                ActionText.VIEW_TREATMENT_PLAN.value ,ActionText.VIEW_ELITE_PLAN.value-> {
+                ActionText.VIEW_TREATMENT_PLAN.value, ActionText.VIEW_ELITE_PLAN.value -> {
                     if (productOffering.isViewTreatmentPlanSupported()) {
                         mainView?.showPlanButton(state, response.eligibilityPlan)
                         if (showPopupIfNeeded) {
-                            when (state) {
-                                ApplyNowState.PERSONAL_LOAN,
-                                ApplyNowState.STORE_CARD ->
-                                    mainView?.showViewTreatmentPlan(
-                                        state,
-                                        response.eligibilityPlan
-                                    )!!
-
-                                ApplyNowState.GOLD_CREDIT_CARD,
-                                ApplyNowState.BLACK_CREDIT_CARD,
-                                ApplyNowState.SILVER_CREDIT_CARD -> {
-                                    //display treatment plan popup with view payment options for CC
-                                    mainView?.showViewTreatmentPlan(
-                                        state,
-                                        response.eligibilityPlan
-                                    )
+                            if (eligibilityPlan?.planType.equals(ELITE_PLAN)){
+                                when(state){
+                                    ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD -> {
+                                        mainView?.removeBlocksOnCollectionCustomer()
+                                        return
+                                    }
                                 }
                             }
+                            mainView?.showViewTreatmentPlan(
+                                state,
+                                response.eligibilityPlan
+                            )
                         }
                     } else {
                         getAccount()?.let { mainView?.showAccountInArrears(account = it) }
@@ -250,7 +244,9 @@ class AccountSignedInPresenterImpl(
                         }
 
                         AccountOfferingState.MakeGetEligibilityCall -> {
-                            removeBlocksWhenChargedOff()
+                            if (isChargedOff()) {
+                                removeBlocksWhenChargedOff()
+                            }
                             val productGroupCode = productGroupCode() ?: return@state
                             myAccountsViewModel.fetchCheckEligibilityTreatmentPlan(productGroupCode,
                                 { eligibilityPlanResponse ->
