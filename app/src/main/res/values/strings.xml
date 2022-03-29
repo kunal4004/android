@@ -2452,6 +2452,7 @@
     <string name="enter_your_own_amount">Enter your own amount</string>
     <string name="driver_tip_note">* Your tip will reflect in the order total value before payment.</string>
     <string name="adding_driver_tip_text">Adding Your Tip</string>
+    <string name="amt_tip_added">R%1$s Tip Added</string>
 
 
     <string name="product_listing_price_from">From</string>

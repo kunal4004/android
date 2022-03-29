@@ -4,10 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.adding_tip_progress_dialog.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp.ProgressIndicator
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.util.AppConstant
 
 /**
  * Created by Kunal Uttarwar on 28/03/22.
@@ -16,7 +22,7 @@ class CustomProgressBottomSheetDialog : WBottomSheetDialogFragment() {
 
     private var mTitle: String? = null
     private var mSubTitle: String? = null
-    private var mTipValue: String? = null
+    private lateinit var mTipValue: String
 
 
     interface ClickListner {
@@ -57,12 +63,33 @@ class CustomProgressBottomSheetDialog : WBottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        showProgressBar()
         progressTitleTextView?.text = mTitle
         progressDescriptionTextView?.text = mSubTitle
-        gotItActionButton.visibility = View.VISIBLE
-        gotItActionButton?.setOnClickListener {
-            dismiss()
-            mTipValue?.let { it1 -> clickListner?.onConfirmClick(it1) }
+    }
+
+    private fun showProgressBar() {
+        val circularProgressIndicator =
+            ProgressIndicator(circularProgressIndicator, success_frame, imFailureIcon, success_tick)
+        circularProgressIndicator?.apply {
+            // To show as processing
+            animationStatus = ProgressIndicator.AnimationStatus.InProgress
+            progressIndicatorListener {}
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            delay(AppConstant.DELAY_2000_MS)
+            circularProgressIndicator?.apply {
+                stopSpinning()
+                animationStatus = ProgressIndicator.AnimationStatus.Success
+            }
+            gotItActionButton?.visibility = View.VISIBLE
+            gotItActionButton?.setOnClickListener {
+                // dismiss dialog and pass the value to original fragment
+                dismiss()
+                clickListner?.onConfirmClick(mTipValue)
+            }
+            progressTitleTextView?.text = bindString(R.string.amt_tip_added, mTipValue)
+            progressDescriptionTextView?.visibility = View.GONE
         }
     }
 }
