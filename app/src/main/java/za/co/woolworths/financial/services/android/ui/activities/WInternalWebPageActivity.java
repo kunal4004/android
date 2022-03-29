@@ -175,6 +175,10 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 					if (parameters.containsKey("Scope") ){
 						if (parameters.get("Scope").equals("paynow")){
 							finishActivityForElite(parameters);
+						}else if (parameters.get("Scope").equals("back") &&
+								url.contains(collectionsExitUrl)){
+							finish();
+							overridePendingTransition(0,0);
 						}
 					}else if (url.contains(collectionsExitUrl)){
 						Uri uri = Uri.parse(url);
