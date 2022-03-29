@@ -43,7 +43,7 @@
         android:layout_marginTop="@dimen/thirty_dp"
         android:drawableStart="@drawable/rand_text"
         android:drawablePadding="@dimen/ten_dp"
-        android:inputType="number"
+        android:inputType="numberDecimal"
         android:textSize="@dimen/fourty_five_sp"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
