@@ -492,6 +492,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
                 txtOrderTotalValue.text =
                     CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.total)
+
+                val arguments = HashMap<String, String>()
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CURRENCY] = FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ORDER_TOTAL_VALUE] = CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.total)
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.BEGIN_CHECKOUT_CONFIRM,arguments, activity)
             }
         }
     }

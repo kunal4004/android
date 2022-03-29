@@ -362,6 +362,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val VIEW_ITEM_LIST: String = "view_item_list"
         const val VIEW_ITEM_EVENT: String = "view_item"
         const val SELECT_ITEM_EVENT: String = "select_item"
+        const val BEGIN_CHECKOUT_CONFIRM: String = "begin_checkout"
     }
 
     class PropertyNames {
@@ -435,6 +436,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val CURRENCY = "currency"
             const val ITEM_LIST_NAME = "item_list_name"
             const val ITEM_BRAND = "item_brand"
+            const val ORDER_TOTAL_VALUE = "order_total"
         }
     }
 
