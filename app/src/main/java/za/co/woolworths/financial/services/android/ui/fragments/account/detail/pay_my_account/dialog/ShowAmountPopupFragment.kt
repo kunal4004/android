@@ -81,10 +81,10 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                     false -> {
                         //ElitePlan
                         pmaAmountEnteredTextView?.text = getDiscountAmount()
-                        savedAmountTextView.text = getString(R.string.you_saved,getSavedAmount())
-                        savedAmountTextView.visibility = VISIBLE
-                        editAmountImageView.visibility = GONE
-                        tvTitle.text = getString(R.string.amount_payable)
+                        savedAmountTextView?.text = getString(R.string.you_saved,getSavedAmount())
+                        savedAmountTextView?.visibility = VISIBLE
+                        editAmountImageView?.visibility = GONE
+                        tvTitle?.text = getString(R.string.amount_payable)
                     }
                     true -> {
                         //WOP-9291 - Prevent user from paying amount less than R 1. For
