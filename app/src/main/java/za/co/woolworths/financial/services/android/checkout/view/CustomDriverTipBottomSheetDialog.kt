@@ -18,20 +18,20 @@ class CustomDriverTipBottomSheetDialog : WBottomSheetDialogFragment() {
 
     private var mTitle: String? = null
     private var mSubTitle: String? = null
-    private var mTipValue: String? = null
-
-
-    interface ClickListner {
-        fun onConfirmClick(tipValue: String)
-    }
+    private lateinit var mTipValue: String
 
     companion object {
         private const val TITLE = "TITLE"
         private const val SUB_TITLE = "SUB_TITLE"
         private const val TIP_VALUE = "TIP_VALUE"
-        private var clickListner: ClickListner? = null
+        private lateinit var clickListner: CustomProgressBottomSheetDialog.ClickListner
 
-        fun newInstance(title: String, subTitle: String, tipValue: String, listner: ClickListner) =
+        fun newInstance(
+            title: String,
+            subTitle: String,
+            tipValue: String,
+            listner: CustomProgressBottomSheetDialog.ClickListner,
+        ) =
             CustomDriverTipBottomSheetDialog().withArgs {
                 putString(TITLE, title)
                 putString(SUB_TITLE, subTitle)
@@ -68,10 +68,13 @@ class CustomDriverTipBottomSheetDialog : WBottomSheetDialogFragment() {
             Utils.fadeInFadeOutAnimation(buttonConfirm, it.isNullOrEmpty())
         }
         buttonConfirm?.setOnClickListener {
-            if (!driverTipAmtEditText.text.isNullOrEmpty()) {
-                dismiss()
-                clickListner?.onConfirmClick(driverTipAmtEditText.text.toString())
-            }
+            dismiss()
+            mTipValue = driverTipAmtEditText?.text.toString()
+            val customProgressBottomSheetDialog = CustomProgressBottomSheetDialog.newInstance(
+                getString(R.string.adding_driver_tip_text),
+                getString(R.string.processing_your_request_desc), mTipValue, clickListner)
+            customProgressBottomSheetDialog.show(requireFragmentManager(),
+                CustomProgressBottomSheetDialog::class.java.simpleName)
         }
     }
 }

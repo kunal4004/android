@@ -69,7 +69,7 @@ import java.util.regex.Pattern
 
 class CheckoutReturningUserCollectionFragment : Fragment(),
     ShoppingBagsRadioGroupAdapter.EventListner, View.OnClickListener, CollectionTimeSlotsListener,
-    CustomDriverTipBottomSheetDialog.ClickListner {
+    CustomProgressBottomSheetDialog.ClickListner {
 
     private var selectedTimeSlot: Slot? = null
     private var selectedPosition: Int = 0
