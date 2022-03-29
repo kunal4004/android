@@ -150,14 +150,20 @@ class AccountSignedInPresenterImpl(
             ApplyNowState.PERSONAL_LOAN -> ProductGroupCode.PL
             else -> ProductGroupCode.CC
         }
-        eligibilityImpl?.eligibilityResponse(response.eligibilityPlan)
+        if (productOffering.isTakeUpTreatmentPlanJourneyEnabled() || productOffering.isViewTreatmentPlanSupported()) {
+            eligibilityImpl?.eligibilityResponse(response.eligibilityPlan)
+        }
         eligibilityPlan = response.eligibilityPlan
 
         if (eligibilityPlan?.productGroupCode == eligibleState) {
             when (eligibilityPlan?.actionText) {
                 ActionText.START_NEW_ELITE_PLAN.value -> {
-                    if (eligibilityPlan?.planType.equals(ELITE_PLAN) && showPopupIfNeeded) {
-                        mainView?.removeBlocksOnCollectionCustomer()
+                    if (productOffering.isTakeUpTreatmentPlanJourneyEnabled()) {
+                        if (eligibilityPlan?.planType.equals(ELITE_PLAN) && showPopupIfNeeded) {
+                            mainView?.removeBlocksOnCollectionCustomer()
+                        }
+                    }else {
+                        getAccount()?.let { mainView?.showAccountInArrears(account = it) }
                     }
                 }
                 ActionText.TAKE_UP_TREATMENT_PLAN.value -> {
@@ -176,8 +182,8 @@ class AccountSignedInPresenterImpl(
                     if (productOffering.isViewTreatmentPlanSupported()) {
                         mainView?.showPlanButton(state, response.eligibilityPlan)
                         if (showPopupIfNeeded) {
-                            if (eligibilityPlan?.planType.equals(ELITE_PLAN)){
-                                when(state){
+                            if (eligibilityPlan?.planType.equals(ELITE_PLAN)) {
+                                when (state) {
                                     ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD -> {
                                         mainView?.removeBlocksOnCollectionCustomer()
                                         return
