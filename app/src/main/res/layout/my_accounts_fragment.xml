@@ -456,9 +456,24 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/myriad_pro_regular_otf"
                         android:gravity="center"
+                        android:paddingLeft="@dimen/sixteen_dp"
                         android:paddingTop="@dimen/sixteen_dp"
+                        android:paddingRight="@dimen/sixteen_dp"
                         android:textColor="@color/color_app_info"
-                        android:textSize="@dimen/fifteen_sp"
+                        android:textSize="@dimen/twelve_sp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/fspNumberInfoTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/myriad_pro_regular_otf"
+                        android:gravity="center"
+                        android:paddingLeft="@dimen/sixteen_dp"
+                        android:paddingTop="@dimen/four_dp_"
+                        android:paddingRight="@dimen/sixteen_dp"
+                        android:textColor="@color/color_app_info"
+                        android:textSize="@dimen/twelve_sp"
                         android:visibility="gone" />
                 </LinearLayout>
 

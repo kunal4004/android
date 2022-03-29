@@ -56,12 +56,12 @@ import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
+import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigQuickShopDefaultValues
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity
@@ -74,7 +74,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductColorSelec
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeSelectorAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter.MultipleImageInterface
-import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.extension.underline
@@ -117,6 +116,8 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VT
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageFileContract
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageGalleryContract
 import java.io.File
+import android.graphics.Bitmap
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
 import kotlin.collections.set
 
@@ -509,6 +510,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun onQuantitySelector() {
+
+        if (!SessionUtilities.getInstance().isUserAuthenticated || Utils.getPreferredDeliveryLocation() == null) {
+            addItemToCart()
+        }
+
         activity?.supportFragmentManager?.apply {
             if (getSelectedSku() == null) {
                 requestSelectSize()
@@ -578,6 +584,23 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     fun addItemToCart() {
 
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSignin(activity, SSO_REQUEST_ADD_TO_CART)
+            return
+        }
+
+        if (Utils.getPreferredDeliveryLocation() == null) {
+            activity?.apply {
+                KotlinUtils.presentEditDeliveryGeoLocationActivity(
+                    this,
+                    REQUEST_SUBURB_CHANGE,
+                    KotlinUtils.getPreferredDeliveryType(),
+                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
+                )
+            }
+            return
+        }
+
         if (getSelectedSku() == null) {
             if (getSelectedGroupKey().isNullOrEmpty())
                 requestSelectColor()
@@ -588,17 +611,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         if (!Utils.isDeliverySelectionModalShown()) {
             showDeliveryOptionDialog()
-            return
-        }
-
-        if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            ScreenManager.presentSSOSignin(activity, SSO_REQUEST_ADD_TO_CART)
-            return
-        }
-
-        val deliveryLocation = Utils.getPreferredDeliveryLocation()
-        if (deliveryLocation == null) {
-            productDetailsPresenter?.loadCartSummary()
             return
         }
 
@@ -617,10 +629,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             when (TextUtils.isEmpty(Utils.retrieveStoreId(productDetails?.fulfillmentType))) {
                 true -> {
                     title = getString(R.string.product_unavailable)
-                    message =
-                        getString(
+                    message = getString(
                             R.string.unavailable_item,
-                            if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name
+                            KotlinUtils.getPreferredDeliveryAddressOrStoreName()
                         )
                 }
                 else -> {
@@ -628,9 +639,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     message =
                         getString(
                             R.string.out_of_stock_item,
-                            if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name
+                            KotlinUtils.getPreferredDeliveryAddressOrStoreName()
                         )
-
                 }
             }
             activity?.apply {
@@ -703,7 +713,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             if (!this.productDetails?.productType.equals(
                     getString(R.string.food_product_type),
                     ignoreCase = true
-                ) && it?.storePickup
+                ) && KotlinUtils.getPreferredDeliveryType() == Delivery.CNC
             ) {
                 showProductUnavailable()
                 showProductNotAvailableForCollection()
@@ -712,8 +722,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
 
         if (!this.productDetails?.otherSkus.isNullOrEmpty()) {
+            //If user is not signed in or User dosen't have any location set then don't make inventory
+            if(!SessionUtilities.getInstance().isUserAuthenticated || Utils.getPreferredDeliveryLocation() == null)
+            {
+                updateDefaultUI(false)
+                hideProductDetailsLoading()
+                return
+            }
+
             storeIdForInventory =
-                RecyclerViewViewHolderItems.getFulFillmentStoreId(productDetails?.fulfillmentType)
+                Utils.retrieveStoreId(productDetails?.fulfillmentType)
 
             when (storeIdForInventory.isNullOrEmpty()) {
                 true -> showProductUnavailable()
@@ -926,7 +944,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun updateDefaultUI(isInventoryCalled: Boolean) {
-        loadSizeAndColor()
+        if (isInventoryCalled)
+            loadSizeAndColor()
         loadPromotionalImages()
         updateAuxiliaryImages(getAuxiliaryImagesByGroupKey())
         if (!TextUtils.isEmpty(this.productDetails?.ingredients))
@@ -1207,7 +1226,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         toCartAndFindInStoreLayout?.visibility = View.VISIBLE
         groupAddToCartAction?.visibility = View.VISIBLE
         findInStoreAction?.visibility = View.GONE
-        if (isAllProductsOutOfStock()) {
+        if (isAllProductsOutOfStock() && SessionUtilities.getInstance().isUserAuthenticated && Utils.getPreferredDeliveryLocation() != null) {
             showFindInStore()
         }
     }
@@ -1311,9 +1330,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onCartSummarySuccess(cartSummaryResponse: CartSummaryResponse) {
 
-        if (Utils.isCartSummarySuburbIDEmpty(cartSummaryResponse)) {
+
+        if (Utils.getPreferredDeliveryLocation() == null) {
             activity?.apply {
-                KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE)
+                KotlinUtils.presentEditDeliveryGeoLocationActivity(
+                    this,
+                    REQUEST_SUBURB_CHANGE
+                )
             }
         } else confirmDeliveryLocation()
     }
@@ -1348,9 +1371,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onSetNewLocation() {
         activity?.apply {
-            KotlinUtils.presentEditDeliveryLocationActivity(
+            KotlinUtils.presentEditDeliveryGeoLocationActivity(
                 this,
-                REQUEST_SUBURB_CHANGE
+                REQUEST_SUBURB_CHANGE,
+                KotlinUtils.getPreferredDeliveryType(),
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
             )
         }
     }
@@ -1459,9 +1484,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     }
                     SET_DELIVERY_LOCATION_REQUEST_CODE -> {
                         activity?.apply {
-                            KotlinUtils.presentEditDeliveryLocationActivity(
+                            KotlinUtils.presentEditDeliveryGeoLocationActivity(
                                 this,
-                                REQUEST_SUBURB_CHANGE
+                                REQUEST_SUBURB_CHANGE,
+                                KotlinUtils.getPreferredDeliveryType(),
+                                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                             )
                         }
                     }
@@ -1476,7 +1503,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             if (!this.productDetails?.productType.equals(
                                     getString(R.string.food_product_type),
                                     ignoreCase = true
-                                ) && it.storePickup
+                                ) && KotlinUtils.getPreferredDeliveryType() == Delivery.CNC
                             ) {
                                 storeIdForInventory = ""
                                 clearStockAvailability()
@@ -1513,7 +1540,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             if (!this.productDetails?.productType.equals(
                                     getString(R.string.food_product_type),
                                     ignoreCase = true
-                                ) && it.storePickup
+                                ) && KotlinUtils.getPreferredDeliveryType() == Delivery.CNC
                             ) {
                                 storeIdForInventory = ""
                                 clearStockAvailability()
@@ -1548,7 +1575,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 updateStockAvailabilityLocation()
                 when (requestCode) {
                     SSO_REQUEST_ADD_TO_CART, EDIT_LOCATION_LOGIN_REQUEST -> {
-                        addItemToCart()
+                        productDetailsPresenter?.loadCartSummary()
                     }
                     SSO_REQUEST_ADD_TO_SHOPPING_LIST -> {
                         addItemToShoppingList()
@@ -1557,18 +1584,21 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     }
                     SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK -> {
                         activity?.apply {
-                            KotlinUtils.presentEditDeliveryLocationActivity(
+                            KotlinUtils.presentEditDeliveryGeoLocationActivity(
                                 this,
-                                REQUEST_SUBURB_CHANGE_FOR_STOCK
+                                REQUEST_SUBURB_CHANGE_FOR_STOCK,
+                                KotlinUtils.getPreferredDeliveryType(),
+                                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                             )
                         }
                     }
                     LOGIN_REQUEST_SUBURB_CHANGE -> {
                         activity?.apply {
-                            KotlinUtils.presentEditDeliveryLocationActivity(
+                            KotlinUtils.presentEditDeliveryGeoLocationActivity(
                                 this,
                                 REQUEST_SUBURB_CHANGE_FOR_LIQUOR,
-                                DeliveryType.DELIVERY_LIQUOR
+                                KotlinUtils.getPreferredDeliveryType(),
+                                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                             )
                         }
                     }
@@ -1901,9 +1931,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun updateDeliveryLocation() {
         activity?.apply {
             when (SessionUtilities.getInstance().isUserAuthenticated) {
-                true -> KotlinUtils.presentEditDeliveryLocationActivity(
+                true -> KotlinUtils.presentEditDeliveryGeoLocationActivity(
                     this,
-                    REQUEST_SUBURB_CHANGE_FOR_STOCK
+                    REQUEST_SUBURB_CHANGE_FOR_STOCK,
+                    KotlinUtils.getPreferredDeliveryType(),
+                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                 )
                 false -> ScreenManager.presentSSOSignin(this, SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK)
             }
@@ -1912,27 +1944,31 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun updateStockAvailabilityLocation() {
-        getDeliveryLocation()?.let {
-            when (it) {
-                is ShoppingDeliveryLocation -> {
-                    when (it.storePickup) {
-                        true -> {
-                            currentDeliveryLocation?.text =
-                                resources?.getString(R.string.store) + it.store?.name
-                            defaultLocationPlaceholder?.text =
-                                getString(R.string.collecting_from) + " "
-                        }
-                        else -> {
-                            currentDeliveryLocation?.text =
-                                it.suburb?.name + "," + it.province?.name
-                            defaultLocationPlaceholder?.text =
-                                getString(R.string.delivering_to_pdp)
-                        }
+        activity?.apply {
+            //If user is not authenticated or Preferred DeliveryAddress is not available hide this view
+            if (!SessionUtilities.getInstance().isUserAuthenticated || getDeliveryLocation() == null) {
+                deliveryLocationLayout.visibility = View.GONE
+                return
+            } else
+                deliveryLocationLayout.visibility = View.VISIBLE
+
+            getDeliveryLocation()?.fulfillmentDetails?.let {
+                when (Delivery.getType(it.deliveryType)) {
+                    Delivery.CNC -> {
+                        currentDeliveryLocation.text =
+                            resources?.getString(R.string.store) + it.storeName ?: ""
+                        defaultLocationPlaceholder.text =
+                            getString(R.string.collecting_from) + " "
                     }
-                }
-                is ConfigQuickShopDefaultValues -> {
-                    currentDeliveryLocation?.text = it.suburb.name
-                    defaultLocationPlaceholder?.text = getString(R.string.set_to_default)
+                    Delivery.STANDARD -> {
+                        currentDeliveryLocation.text =
+                            it.address?.address1 ?: ""
+                        defaultLocationPlaceholder.text =
+                            getString(R.string.delivering_to_pdp)
+                    }
+                    else -> {
+                    }
+
                 }
             }
         }
@@ -2077,14 +2113,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         if (!isOutOfStockFragmentAdded) {
             isOutOfStockFragmentAdded = true
             activity?.apply {
-                getDeliveryLocation()?.let {
-                    val suburbName = when (it) {
-                        is ShoppingDeliveryLocation -> if (it.storePickup) it.store?.name else it.suburb?.name
-                        is ConfigQuickShopDefaultValues -> it.suburb.name
-                        else -> ""
-                    }
+                getDeliveryLocation()?.fulfillmentDetails?.let {
                     val message =
-                        bindString(R.string.product_details_out_of_stock, suburbName ?: "")
+                        bindString(
+                            R.string.product_details_out_of_stock,
+                            KotlinUtils.getPreferredDeliveryAddressOrStoreName()
+                        )
                     OutOfStockMessageDialogFragment.newInstance(message).show(
                         this@ProductDetailsFragment.childFragmentManager,
                         OutOfStockMessageDialogFragment::class.java.simpleName
@@ -2095,10 +2129,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    private fun getDeliveryLocation(): Any? {
-        val userLocation = Utils.getPreferredDeliveryLocation()
-        val defaultLocation = AppConfigSingleton.quickShopDefaultValues
-        return if (userLocation != null && SessionUtilities.getInstance().isUserAuthenticated) userLocation else defaultLocation
+    private fun getDeliveryLocation(): ShoppingDeliveryLocation? {
+        var userLocation: ShoppingDeliveryLocation? = null
+        if (SessionUtilities.getInstance().isUserAuthenticated)
+            userLocation = Utils.getPreferredDeliveryLocation()
+        return userLocation
     }
 
     override fun onOutOfStockDialogDismiss() {
@@ -2186,19 +2221,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
     }
 
-    override fun onDeliveryOptionSelected(deliveryType: DeliveryType) {
-        if (SessionUtilities.getInstance().isUserAuthenticated) {
+        override fun onDeliveryOptionSelected(deliveryType: Delivery) {
             activity?.apply {
-                KotlinUtils.presentEditDeliveryLocationActivity(
+                KotlinUtils.presentEditDeliveryGeoLocationActivity(
                     this,
                     REQUEST_SUBURB_CHANGE,
-                    deliveryType
+                    deliveryType,
+                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                 )
             }
-        } else {
-            ScreenManager.presentSSOSignin(activity, EDIT_LOCATION_LOGIN_REQUEST)
         }
-    }
 
     override fun clearSelectedOnLocationChange() {
         if (!(!hasColor && !hasSize)) {
@@ -2286,10 +2318,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     ScreenManager.presentSSOSignin(activity, LOGIN_REQUEST_SUBURB_CHANGE)
                 } else {
                     activity?.apply {
-                        KotlinUtils.presentEditDeliveryLocationActivity(
+                        KotlinUtils.presentEditDeliveryGeoLocationActivity(
                             this,
                             REQUEST_SUBURB_CHANGE_FOR_LIQUOR,
-                            DeliveryType.DELIVERY_LIQUOR
+                            KotlinUtils.getPreferredDeliveryType(),
+                            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                         )
                     }
                 }

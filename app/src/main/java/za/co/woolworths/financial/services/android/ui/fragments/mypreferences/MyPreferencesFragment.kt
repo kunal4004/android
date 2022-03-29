@@ -32,14 +32,11 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.repository.AppStateRepository
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
-import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
-import za.co.woolworths.financial.services.android.util.AuthenticateUtils
-import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment
+import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS
-import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAddressView
-import za.co.woolworths.financial.services.android.util.Utils
 
 
 class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchListener {
@@ -428,7 +425,25 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
     }
 
     private fun locationSelectionClicked() {
-        presentEditDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE, null)
+        activity?.apply {
+            if (this is MyPreferencesInterface) {
+                hideToolbar()
+            }
+        }
+
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            activity?.apply {
+                KotlinUtils.presentEditDeliveryGeoLocationActivity(
+                    this,
+                    REQUEST_CODE,
+                    KotlinUtils.getPreferredDeliveryType(),
+                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
+                )
+            }
+        } else {
+            ScreenManager.presentSSOSignin(activity, DepartmentsFragment.DEPARTMENT_LOGIN_REQUEST)
+        }
+
     }
 
     override fun onTouch(view: View, motionEvent: MotionEvent): Boolean {

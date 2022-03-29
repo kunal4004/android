@@ -33,16 +33,15 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import com.awfs.coordination.R
-import com.google.android.gms.tasks.Task
 import com.google.common.reflect.TypeToken
-import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.installations.FirebaseInstallations
-import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.layout_link_device_validate_otp.*
 import kotlinx.coroutines.GlobalScope
 import org.json.JSONObject
+import za.co.woolworths.financial.services.android.checkout.service.network.Address
+import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_COLLECTING_DETAILS
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -50,6 +49,8 @@ import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
+import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.Transaction
@@ -67,6 +68,14 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccoun
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DEFAULT_ADDRESS
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CHECKOUT
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.PLACE_ID
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import java.io.*
 import java.text.NumberFormat
@@ -83,6 +92,9 @@ class KotlinUtils {
         const val COLLECTIONS_EXIT_URL = "collectionsExitUrl"
         const val TREATMENT_PLAN = "treamentPlan"
         const val RESULT_CODE_CLOSE_VIEW = 2203
+        var GEO_REQUEST_CODE = -1
+
+
 
         fun highlightTextInDesc(
             context: Context?,
@@ -356,23 +368,30 @@ class KotlinUtils {
             return SimpleDateFormat("dd-MM-yyy").format(date)
         }
 
-        fun presentEditDeliveryLocationActivity(
+        fun presentEditDeliveryGeoLocationActivity(
             activity: Activity?,
             requestCode: Int,
-            deliveryType: DeliveryType? = null
+            delivery: Delivery? = Delivery.STANDARD,
+            placeId: String? = null,
+            isComingFromCheckout: Boolean = false,
+            isComingFromSlotSelection: Boolean = false,
+            savedAddressResposne: SavedAddressResponse? = null,
+            defaultAddress: Address? = null,
+            whoISCollecting: String? = null
         ) {
-            var type = deliveryType
-            if (type == null) {
-                if (Utils.getPreferredDeliveryLocation() != null) {
-                    type =
-                        if (Utils.getPreferredDeliveryLocation().storePickup) DeliveryType.STORE_PICKUP else DeliveryType.DELIVERY
-                }
-            }
+
             activity?.apply {
                 val mIntent = Intent(this, EditDeliveryLocationActivity::class.java)
                 val mBundle = Bundle()
-                mBundle.putString(EditDeliveryLocationActivity.DELIVERY_TYPE, type?.name)
-                mIntent.putExtra("bundle", mBundle)
+                mBundle.putString(DELIVERY_TYPE, delivery.toString())
+                mBundle.putString(PLACE_ID, placeId)
+                mBundle.putBoolean(IS_COMING_FROM_CHECKOUT, isComingFromCheckout)
+                mBundle.putBoolean(IS_COMING_FROM_SLOT_SELECTION, isComingFromSlotSelection)
+                mBundle.putSerializable(SAVED_ADDRESS_RESPONSE, savedAddressResposne)
+                mBundle.putSerializable(DEFAULT_ADDRESS, defaultAddress)
+                mBundle.putString(KEY_COLLECTING_DETAILS, whoISCollecting)
+                mIntent.putExtra(BUNDLE, mBundle)
+                GEO_REQUEST_CODE = requestCode
                 startActivityForResult(mIntent, requestCode)
                 overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
             }
@@ -385,23 +404,26 @@ class KotlinUtils {
             tvDeliveryLocation: WTextView,
             deliverLocationIcon: ImageView?
         ) {
-            with(shoppingDeliveryLocation) {
-                when (storePickup) {
-                    true -> {
-                        tvDeliveringTo.text =
+            with(shoppingDeliveryLocation?.fulfillmentDetails) {
+                when (Delivery?.getType(deliveryType)) {
+                    Delivery.CNC -> {
+                        tvDeliveringTo?.text =
                             context?.resources?.getString(R.string.collecting_from)
-                        tvDeliveryLocation.text =
-                            context?.resources?.getString(R.string.store) + store?.name
-                        tvDeliveryLocation.visibility = View.VISIBLE
+                        tvDeliveryLocation?.text =
+                                context?.resources?.getString(R.string.store) + storeName?:""
+
+                        tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setBackgroundResource(R.drawable.icon_basket)
                     }
-                    false -> {
+                    Delivery.STANDARD -> {
                         tvDeliveringTo.text = context?.resources?.getString(R.string.delivering_to)
                         tvDeliveryLocation.text =
-                            suburb.name + if (province?.name.isNullOrEmpty()) "" else ", " + province.name
+                                address?.address1?:""
+
                         tvDeliveryLocation.visibility = View.VISIBLE
                         deliverLocationIcon?.setBackgroundResource(R.drawable.icon_delivery)
                     }
+                    else ->{ }
                 }
             }
         }
@@ -692,7 +714,7 @@ class KotlinUtils {
         }
 
         fun isDeliveryOptionClickAndCollect(): Boolean {
-            return Utils.getPreferredDeliveryLocation()?.storePickup == true
+            return getPreferredDeliveryType() == Delivery.CNC
         }
 
         @SuppressLint("MissingPermission")
@@ -794,12 +816,7 @@ class KotlinUtils {
          * @see [za.co.woolworths.financial.services.android.models.dao.AppInstanceObject.User.preferredShoppingDeliveryLocation]
          */
         fun isCurrentSuburbDeliversLiquor(): Boolean {
-            Utils.getPreferredDeliveryLocation()?.apply {
-                return (!storePickup && suburb != null && AppConfigSingleton.liquor?.suburbs?.contains(
-                    suburb.id
-                ) == true)
-            }
-            return false
+            return Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.liquorDeliverable == true
         }
 
         /**
@@ -845,6 +862,35 @@ class KotlinUtils {
                 }
             }
         }
+        fun openTreatmenPlanUrl(activity: Activity?,eligibilityPlan: EligibilityPlan?){
+            var collectionsUrl: String? = ""
+            var exitUrl: String? = ""
+            val accountOptions = AppConfigSingleton.accountOptions
+
+            when (eligibilityPlan?.productGroupCode) {
+                ProductGroupCode.SC -> {
+                    collectionsUrl =accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
+                    exitUrl = accountOptions?.showTreatmentPlanJourney?.storeCard?.exitUrl
+                }
+
+                ProductGroupCode.PL -> {
+                    collectionsUrl = accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
+                    exitUrl = accountOptions?.showTreatmentPlanJourney?.personalLoan?.exitUrl
+                }
+
+                ProductGroupCode.CC -> {
+                    collectionsUrl = accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
+                    exitUrl = accountOptions?.collectionsStartNewPlanJourney?.creditCard?.exitUrl
+                }
+            }
+            val url =  collectionsUrl + eligibilityPlan?.appGuid
+            openLinkInInternalWebView(
+                activity,
+                url,
+                true,
+                exitUrl
+            )
+        }
 
         fun linkDeviceIfNecessary(
             activity: Activity?,
@@ -865,6 +911,49 @@ class KotlinUtils {
             } else {
                 elseJob()
             }
+        }
+
+        fun getPreferredDeliveryType(): Delivery? {
+            return Delivery.getType(
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType ?: ""
+            )
+        }
+
+        fun getPreferredPlaceId(): String {
+            return Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId ?: ""
+        }
+
+        fun getPreferredStoreName(): String {
+            return Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName ?: ""
+        }
+
+        fun getPreferredDeliveryAddress(): String {
+            return Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.address1 ?: ""
+        }
+
+        fun getPreferredDeliveryAddressOrStoreName(): String {
+            return when (getPreferredDeliveryType()) {
+                Delivery.CNC ->
+                    getPreferredStoreName()
+                Delivery.STANDARD ->
+                    getPreferredStoreName()
+                else -> ""
+            }
+        }
+
+        fun retrieveFulfillmentStoreId(fulFillmentTypeId: String): String {
+            var fulFillmentStoreId: String = ""
+            var typeId = fulFillmentTypeId
+            if (typeId.length == 1)
+                typeId = "0$typeId"
+            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.fulfillmentStores?.let {
+                val details = Gson().fromJson<Map<String, String>>(
+                    it,
+                    object : com.google.gson.reflect.TypeToken<Map<String, String>>() {}.type
+                )
+                fulFillmentStoreId = details?.get(typeId) ?: ""
+            }
+            return fulFillmentStoreId
         }
 
         fun getUniqueDeviceID(result: (String?) -> Unit) {
@@ -899,6 +988,26 @@ class KotlinUtils {
                     }
                 }
             )
+        }
+
+        fun saveAnonymousUserLocationDetails(shoppingDeliveryLocation: ShoppingDeliveryLocation){
+            Utils.sessionDaoSave(KEY.ANONYMOUS_USER_LOCATION_DETAILS,Utils.objectToJson(shoppingDeliveryLocation))
+        }
+
+        fun getAnonymousUserLocationDetails(): ShoppingDeliveryLocation? {
+            var location: ShoppingDeliveryLocation? = null
+            try {
+                SessionDao.getByKey(KEY.ANONYMOUS_USER_LOCATION_DETAILS).value?.let {
+                    location = Utils.strToJson(it, ShoppingDeliveryLocation::class.java) as ShoppingDeliveryLocation?
+                }
+            }catch (e:Exception){
+                FirebaseManager.logException(e)
+            }
+            return location
+        }
+
+        fun clearAnonymousUserLocationDetails(){
+            Utils.removeFromDb(KEY.ANONYMOUS_USER_LOCATION_DETAILS)
         }
     }
 

@@ -54,6 +54,8 @@ import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils;
+import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
@@ -91,6 +93,7 @@ import za.co.woolworths.financial.services.android.util.PostItemToCart;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.wenum.Delivery;
 
 public class ShoppingListDetailFragment extends Fragment implements View.OnClickListener, EmptyCartView.EmptyCartInterface, NetworkChangeListener, ToastUtils.ToastInterface, ShoppingListItemsNavigator, IToastInterface, IOnConfirmDeliveryLocationActionListener {
 
@@ -502,7 +505,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             }
         } else {
             // else display shopping list toast
-            if (KotlinUtils.Companion.isDeliveryOptionClickAndCollect() && addItemToCartResponse.data.get(0).productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
+            if (KotlinUtils.Companion.getPreferredDeliveryType() == Delivery.CNC && addItemToCartResponse.data.get(0).productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
                 ToastFactory.Companion.showItemsLimitToastOnAddToCart(rlCheckOut, addItemToCartResponse.data.get(0).productCountMap, activity, size, true);
             } else {
                 ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
@@ -1011,7 +1014,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             ProductCountMap productCountMap = (ProductCountMap) Utils.jsonStringToObject(data.getStringExtra("ProductCountMap"), ProductCountMap.class);
             int itemsCount = data.getIntExtra("ItemsCount", 0);
 
-            if (KotlinUtils.Companion.isDeliveryOptionClickAndCollect() && productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
+            if (KotlinUtils.Companion.getPreferredDeliveryType() == Delivery.CNC && productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
                 ToastFactory.Companion.showItemsLimitToastOnAddToCart(rlCheckOut, productCountMap, activity, itemsCount, true);
             } else {
                 ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
@@ -1022,15 +1025,18 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     private void deliverySelectionIntent(int resultCode) {
         Activity activity = getActivity();
         if (activity == null) return;
-        KotlinUtils.Companion.presentEditDeliveryLocationActivity(activity, resultCode, null);
+        KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
+                activity, resultCode, null, null, false, false, null, null, null);
     }
 
     private void startActivityToSelectDeliveryLocation(boolean addItemToCartOnFinished) {
         if (getActivity() != null) {
             if (addItemToCartOnFinished) {
-                KotlinUtils.Companion.presentEditDeliveryLocationActivity(getActivity(), REQUEST_SUBURB_CHANGE, null);
+                KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
+                        getActivity(), REQUEST_SUBURB_CHANGE, null, null, false, false, null, null, null);
             } else {
-                KotlinUtils.Companion.presentEditDeliveryLocationActivity(getActivity(), 0, null);
+                KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
+                        getActivity(), 0, null, null, false, false , null, null, null );
             }
             getActivity().overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
         }
@@ -1149,7 +1155,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
 
     public boolean shouldUserSetSuburb() {
         ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation();
-        return (shoppingDeliveryLocation.suburb == null && shoppingDeliveryLocation.store == null);
+        return (shoppingDeliveryLocation == null);
     }
 
     public void toggleEditButton(String name) {
@@ -1222,7 +1228,17 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
 
     @Override
     public void onSetNewLocation() {
-        KotlinUtils.Companion.presentEditDeliveryLocationActivity(this.getActivity(), REQUEST_SUBURB_CHANGE, null);
+        KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
+                this.getActivity(),
+                REQUEST_SUBURB_CHANGE,
+                KotlinUtils.Companion.getPreferredDeliveryType(),
+                GeoUtils.Companion.getPlaceId(),
+                false,
+                false,
+                null,
+                null,
+                null
+                );
     }
 
     public int getTotalItemQuantity(List<AddItemToCart> addItemToCart) {

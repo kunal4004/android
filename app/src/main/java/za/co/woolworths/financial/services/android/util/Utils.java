@@ -858,7 +858,6 @@ public class Utils {
     }
 
     public static void savePreferredDeliveryLocation(ShoppingDeliveryLocation shoppingDeliveryLocation) {
-        shoppingDeliveryLocation.storePickup = shoppingDeliveryLocation.store != null;
         AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
         currentUserObject.preferredShoppingDeliveryLocation = shoppingDeliveryLocation;
         currentUserObject.save();
@@ -993,47 +992,9 @@ public class Utils {
 
     @Nullable
     public static String retrieveStoreId(String fulFillmentType) {
-        JsonParser parser = new JsonParser();
-        ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation();
-        String fulfillmentStore = "";
-        if (shoppingDeliveryLocation == null) return "";
-        if (shoppingDeliveryLocation.storePickup) {
-            if (shoppingDeliveryLocation.store != null && shoppingDeliveryLocation.store.getFulfillmentStores() != null)
-                fulfillmentStore = Utils.toJson(shoppingDeliveryLocation.store.getFulfillmentStores());
-            else return "";
-        } else {
-            if (shoppingDeliveryLocation.suburb != null && shoppingDeliveryLocation.suburb.fulfillmentStores != null)
-                fulfillmentStore = Utils.toJson(shoppingDeliveryLocation.suburb.fulfillmentStores);
-            else return "";
-        }
-        String swapFulFillmentStore = TextUtils.isEmpty(fulfillmentStore.replaceAll("null", "")) ? "" : fulfillmentStore;
-        JsonElement suburbFulfillment = parser.parse(swapFulFillmentStore);
-        String storeId = "";
-        if (!suburbFulfillment.isJsonNull()) {
-            if (suburbFulfillment.isJsonArray()) {
-                JsonArray suburbFulfillmentArray = suburbFulfillment.getAsJsonArray();
-                for (JsonElement jsonElement : suburbFulfillmentArray) {
-                    JsonObject fulfillmentObj = jsonElement.getAsJsonObject();
-                    JsonElement fulFillmentTypeId = fulfillmentObj.get("fulFillmentTypeId");
-                    if (!fulFillmentTypeId.isJsonNull()) {
-                        if (!TextUtils.isEmpty(fulFillmentTypeId.getAsString()) && !TextUtils.isEmpty(fulFillmentType)) {
-                            if (Integer.valueOf(fulFillmentTypeId.getAsString()) == Integer.valueOf(fulFillmentType)) {
-                                JsonElement fulFillmentStoreId = fulfillmentObj.get("fulFillmentStoreId");
-                                if (fulFillmentStoreId != null)
-                                    storeId = fulfillmentObj.get("fulFillmentStoreId").getAsString();
-                            }
-                        }
-                    }
-                }
-            } else {
-                if (fulFillmentType.length() == 1)
-                    fulFillmentType = "0" + fulFillmentType;
-                JsonObject jsSuburbFulfillment = suburbFulfillment.getAsJsonObject();
-                if (jsSuburbFulfillment.has(fulFillmentType))
-                    storeId = jsSuburbFulfillment.get(fulFillmentType).getAsString();
-            }
-        }
-        return storeId;
+        if (fulFillmentType.length() == 1)
+            fulFillmentType = "0" + fulFillmentType;
+        return KotlinUtils.Companion.retrieveFulfillmentStoreId(fulFillmentType);
     }
 
     public static void toggleStatusBarColor(final Activity activity, int color) {
