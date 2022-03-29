@@ -87,6 +87,23 @@
         tools:ignore="HardcodedText"
         tools:text="R 10 000.00" />
 
+
+    <TextView
+        android:id="@+id/savedAmountTextView"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginEnd="@dimen/_20sdp"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:text="@string/placeholder"
+        android:textColor="@color/violet"
+        android:textSize="@dimen/_10ssp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pmaAmountEnteredTextView" />
+
     <ImageView
         android:id="@+id/editAmountImageView"
         android:layout_width="wrap_content"

@@ -2421,4 +2421,14 @@
 
     <string name="product_listing_price_from">From</string>
     <string name="product_details_color_count">+ %d More</string>
+
+    <!--Elite Plan -->
+    <string name="amount_payable">Amount Payable</string>
+    <string name="you_saved">You Save %1$s</string>
+    <string name="amount_you_save">Amount You Save</string>
+    <string name="get_help_repayment">GET HELP WITH YOUR REPAYMENTS</string>
+    <string name="view_your_payment_plan">VIEW YOUR PAYMENT PLAN</string>
+    <string name="total_amount_you_saving">This is the total amount you are saving as agreed \n upon in your settlement plan</string>
+    <string name="pay_now">PAY NOW</string>
+
 </resources>

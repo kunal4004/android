@@ -48,7 +48,7 @@ class GetAPaymentPlanActivity : AppCompatActivity(){
         if(requestCode == KotlinUtils.RESULT_CODE_CLOSE_VIEW){
             when (resultCode){
                     RESULT_OK -> {
-                        setResult(RESULT_OK)
+                        setResult(RESULT_OK,data)
                         finish()
                         overridePendingTransition(0,0)}
                     else -> Unit
