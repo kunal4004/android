@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.app.Activity
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,16 +9,17 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.department_dash_banner.view.*
 import kotlinx.android.synthetic.main.department_header_delivery_location.view.*
 import kotlinx.android.synthetic.main.department_row.view.*
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
 import za.co.woolworths.financial.services.android.models.dto.Dash
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
-import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts
 import za.co.woolworths.financial.services.android.ui.adapters.holder.DepartmentsBaseViewHolder
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RootCategoryViewType
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 
-internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootCategory>?, private val clickListener: (RootCategory) -> Unit, private val onEditDeliveryLocation: () -> Unit, private val onDashBannerClick: () -> Unit, var validatedSuburbProducts: ValidatedSuburbProducts? = null)
+internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootCategory>?, private val clickListener: (RootCategory) -> Unit, private val onEditDeliveryLocation: () -> Unit, private val onDashBannerClick: () -> Unit, var validatePlace: ValidatePlace? = null)
     : RecyclerView.Adapter<DepartmentsBaseViewHolder>() {
     var isValidateSuburbRequestInProgress = false
     private var mDashBanner: Dash? = null
@@ -112,29 +112,48 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
         override fun bind(position: Int) {
             itemView.locationSelectedLayout.setOnClickListener { onEditDeliveryLocation() }
             if (Utils.getPreferredDeliveryLocation() == null || !SessionUtilities.getInstance().isUserAuthenticated) {
-                itemView.tvDeliveringTo.text = itemView.context.resources.getString(R.string.delivery_or_collection)
-                itemView.tvDeliveryLocation.visibility = View.GONE
-                itemView.iconCaretRight.visibility = View.VISIBLE
-                itemView.editLocation.visibility = View.INVISIBLE
+                KotlinUtils.getAnonymousUserLocationDetails()?.let {
+                    itemView.iconCaretRight?.visibility = View.GONE
+                    itemView.editLocation?.visibility = View.VISIBLE
+                    KotlinUtils.setDeliveryAddressView(
+                        itemView.context as Activity,
+                        it,
+                        itemView.tvDeliveringTo,
+                        itemView.tvDeliveryLocation,
+                        itemView.deliverLocationIcon
+                    )
+                    return
+                }
+                itemView.tvDeliveringTo?.text =
+                    itemView.context.resources.getString(R.string.delivery_or_collection)
+                itemView.tvDeliveryLocation?.visibility = View.GONE
+                itemView.iconCaretRight?.visibility = View.VISIBLE
+                itemView.editLocation?.visibility = View.INVISIBLE
             } else {
-                itemView.iconCaretRight.visibility = View.GONE
-                itemView.editLocation.visibility = View.VISIBLE
-                KotlinUtils.setDeliveryAddressView(itemView.context as Activity, Utils.getPreferredDeliveryLocation(), itemView.tvDeliveringTo, itemView.tvDeliveryLocation, itemView.deliverLocationIcon)
+                itemView.iconCaretRight?.visibility = View.GONE
+                itemView.editLocation?.visibility = View.VISIBLE
+                KotlinUtils.setDeliveryAddressView(
+                    itemView.context as Activity,
+                    Utils.getPreferredDeliveryLocation(),
+                    itemView.tvDeliveringTo,
+                    itemView.tvDeliveryLocation,
+                    itemView.deliverLocationIcon
+                )
             }
             itemView.deliveryDatesProgressPlaceHolder.visibility = if (isValidateSuburbRequestInProgress) View.VISIBLE else View.GONE
-            if (validatedSuburbProducts == null) {
+            if (validatePlace == null) {
                 itemView.deliveryDateLayout.visibility = View.GONE
             } else {
-                validatedSuburbProducts?.let { it ->
+                validatePlace?.let { it ->
                     itemView.apply {
-                        when (Utils.getPreferredDeliveryLocation()?.storePickup) {
-                            true -> {
+                        when (KotlinUtils.getPreferredDeliveryType()) {
+                            Delivery.CNC -> {
                                 earliestDateValue?.text = it.firstAvailableFoodDeliveryDate ?: ""
                                 earliestDateValue?.visibility = View.VISIBLE
                                 foodItemsDeliveryDateLayout?.visibility = View.GONE
                                 otherItemsDeliveryDateLayout?.visibility = View.GONE
                             }
-                            false -> {
+                            Delivery.STANDARD -> {
                                 foodItemsDeliveryDate?.text = it.firstAvailableFoodDeliveryDate
                                         ?: ""
                                 otherItemsDeliveryDate?.text = it.firstAvailableOtherDeliveryDate
@@ -144,7 +163,7 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
                                 otherItemsDeliveryDateLayout?.visibility = if (it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
                             }
                         }
-                        earliestDateTitle?.text = bindString(if (Utils.getPreferredDeliveryLocation()?.storePickup == false) R.string.earliest_delivery_date else R.string.earliest_collection_date)
+                        earliestDateTitle?.text = bindString(if (KotlinUtils.getPreferredDeliveryType() == Delivery.STANDARD) R.string.earliest_delivery_date else R.string.earliest_collection_date)
                         deliveryDateLayout?.visibility = if (!it.firstAvailableFoodDeliveryDate.isNullOrEmpty() || !it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.VISIBLE else View.GONE
                     }
                 }
@@ -165,14 +184,14 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
         return mlRootCategories?.get(position)?.viewType!!.value
     }
 
-    fun updateDeliveryDate(validatedSuburbProducts: ValidatedSuburbProducts) {
-        this.validatedSuburbProducts = validatedSuburbProducts
+    fun updateDeliveryDate(validatePlace: ValidatePlace) {
+        this.validatePlace = validatePlace
         showDeliveryDatesProgress(false)
         notifyDataSetChanged()
     }
 
     fun hideDeliveryDates() {
-        this.validatedSuburbProducts = null
+        this.validatePlace = null
         showDeliveryDatesProgress(false)
         notifyDataSetChanged()
     }
@@ -180,7 +199,7 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
     fun showDeliveryDatesProgress(isInProgress: Boolean) {
         isValidateSuburbRequestInProgress = isInProgress
         if (isInProgress)
-            this.validatedSuburbProducts = null
+            this.validatePlace = null
         notifyDataSetChanged()
     }
 

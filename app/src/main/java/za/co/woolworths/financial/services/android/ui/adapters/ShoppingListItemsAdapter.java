@@ -413,9 +413,7 @@ holder.price.setAlpha(1f);
 	}
 
 	public boolean userShouldSetSuburb() {
-		ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation();
-		if (shoppingDeliveryLocation == null) return true;
-		return (shoppingDeliveryLocation.suburb == null && shoppingDeliveryLocation.store == null);
+		return Utils.getPreferredDeliveryLocation() == null;
 	}
 
 	public void resetSelection() {
