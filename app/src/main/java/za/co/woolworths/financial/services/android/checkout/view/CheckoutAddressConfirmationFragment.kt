@@ -39,19 +39,21 @@ import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburb
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
-import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.SuburbListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.extension.setDivider
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import java.net.HttpURLConnection
 
 
 /**
  * Created by Kunal Uttarwar on 16/06/21.
+ *
+ * not usefull now
  */
 class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragment(),
     View.OnClickListener,
@@ -165,7 +167,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                         // This is when user clicks on collection journey.
                         if (btnAddressConfirmation.text.equals(getString(R.string.change_suburb))) {
                             //Zero stores and user clicks on change suburb.
-                            getSuburb(selectedProvince)
+
                         } else if (selectedSuburb.storeAddress != null) {
                             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_CONFIRM_NEW_STORE,
                                 hashMapOf(
@@ -278,15 +280,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                             suburb.storeAddress.address1
                                         )
                                     }
-                                    val shoppingDeliveryLocation = ShoppingDeliveryLocation(
-                                        selectedProvince,
-                                        null,
-                                        store
-                                    )
-                                    shoppingDeliveryLocation.storePickup = true
-                                    Utils.savePreferredDeliveryLocation(
-                                        shoppingDeliveryLocation
-                                    )
+
                                     if (isDeliverySelected != null && !isDeliverySelected!!) {
                                         // check if it's from collection Change Fullfilments or delivery Change Fullfilments. if collection then nav up else who is collecting.
                                         if (arguments?.containsKey(KEY_IS_WHO_IS_COLLECTING) == true && arguments?.getBoolean(
@@ -333,7 +327,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         }
         navController?.navigate(
             R.id.action_provinceSelectorFragment,
-            bundleOf("bundle" to bundle)
+            bundleOf(BUNDLE to bundle)
         )
     }
 
@@ -471,9 +465,6 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     }
 
     private fun initView() {
-        selectedProvince = Utils.getPreferredDeliveryLocation().let {
-            if (it != null) it.province else Province()
-        }
         if (arguments?.containsKey(KEY_IS_WHO_IS_COLLECTING) == true && arguments?.getBoolean(
                 KEY_IS_WHO_IS_COLLECTING
             ) == true
@@ -657,7 +648,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     private fun fetchStoreListFromValidateSelectedSuburb(suburbId: String?) {
         if (suburbId.equals(DEFAULT_STORE_ID)) {
             // This means collection tab clicked for the first time.
-            getSuburb(selectedProvince)
+
         } else if (suburbId.isNullOrEmpty()) {
             clickNCollectTitleLayout.visibility = View.VISIBLE
             addressConfirmationClicknCollect.visibility = View.VISIBLE
@@ -705,68 +696,6 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             clickNCollectTitleLayout.visibility = View.VISIBLE
             addressConfirmationClicknCollect.visibility = View.VISIBLE
             showStoreList()
-        }
-    }
-
-    private fun showSuburbSelectionView(suburbList: MutableList<Suburb>) {
-        removeMarginToStoreListView()
-        suburbSelectionLayout.visibility = View.VISIBLE
-        suburbSelectionTitle.visibility = View.VISIBLE
-        suburbSelectionSubTitle.visibility = View.VISIBLE
-        suburbInputValue.setHint(R.string.hint_search_for_your_suburb)
-        suburbInputValue?.apply {
-            addTextChangedListener {
-                suburbListAdapter?.filter?.filter(it.toString())
-            }
-        }
-        rcvSuburbList?.apply {
-            suburbListAdapter = SuburbListAdapter(
-                suburbList as ArrayList<Suburb>,
-                this@CheckoutAddressConfirmationFragment,
-                DeliveryType.DELIVERY
-            )
-            setDivider(R.drawable.recycler_view_divider_gray_1dp)
-            layoutManager = activity?.let { LinearLayoutManager(it) }
-            suburbListAdapter?.let { adapter = it }
-        }
-    }
-
-    private fun getSuburb(province: Province?) {
-        clickNCollectTitleLayout.visibility = View.GONE
-        addressConfirmationClicknCollect.visibility = View.GONE
-        province?.id?.let {
-            with(checkoutAddAddressNewUserViewModel) {
-                initGetSuburbs(it).observe(viewLifecycleOwner, {
-                    when (it.responseStatus) {
-                        ResponseStatus.SUCCESS -> {
-                            loadingProgressBar.visibility = View.GONE
-                            if ((it?.data as? SuburbsResponse)?.suburbs.isNullOrEmpty()) {
-                                //showNoStoresError()
-                            } else {
-                                (it?.data as? SuburbsResponse)?.suburbs?.let { it1 ->
-                                    showSuburbSelectionView(it1)
-                                    /*val bundle = Bundle()
-                                    bundle.apply {
-                                        putString("SuburbList", Utils.toJson(it1))
-                                        putSerializable("deliveryType", DeliveryType.DELIVERY)
-                                    }
-                                    navController?.navigate(
-                                        R.id.action_getSuburb_suburbSelectorFragment,
-                                        bundleOf("bundle" to bundle)
-                                    )*/
-                                }
-                            }
-                        }
-                        ResponseStatus.LOADING -> {
-                            loadingProgressBar.visibility = View.VISIBLE
-                            removeMarginToStoreListView()
-                        }
-                        ResponseStatus.ERROR -> {
-                            loadingProgressBar.visibility = View.GONE
-                        }
-                    }
-                })
-            }
         }
     }
 
@@ -880,14 +809,14 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         }
         val bundle = Bundle()
         bundle.apply {
-            putString(EditDeliveryLocationActivity.DELIVERY_TYPE, deliveryType.name)
+            putString(DELIVERY_TYPE, deliveryType.name)
             putString("SUBURB", Utils.toJson(suburb))
             putString("PROVINCE", Utils.toJson(province))
             putString("UnSellableCommerceItems", Utils.toJson(unSellableCommerceItems))
         }
         navController?.navigate(
             R.id.action_to_unsellableItemsFragment,
-            bundleOf("bundle" to bundle)
+            bundleOf(BUNDLE to bundle)
         )
     }
 
@@ -968,21 +897,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                         )
                                         return@observe
                                     }
-                                    // Update location in cache/shared prefs when Confirmed a delivery address
-                                    Utils.savePreferredDeliveryLocation(
-                                        ShoppingDeliveryLocation(
-                                            Province().apply {
-                                                id = selectedAddress?.region ?: ""
-                                                name =
-                                                    getProvinceName(selectedAddress?.region ?: "")
-                                            }, Suburb().apply {
-                                                id = selectedAddress?.suburbId ?: ""
-                                                name = selectedAddress?.suburb ?: ""
-                                                postalCode = selectedAddress?.postalCode ?: ""
-                                                suburbDeliverable = response.deliverable ?: false
-                                            }, null
-                                        )
-                                    )
+
                                     navigateToReturningUser()
                                 }
                                 else -> {
