@@ -244,6 +244,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
     private fun onEditDeliveryLocation() {
         var deliveryType: Delivery? = Delivery.STANDARD
         var placeId = ""
+
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
                 deliveryType = Delivery.getType(it.deliveryType)

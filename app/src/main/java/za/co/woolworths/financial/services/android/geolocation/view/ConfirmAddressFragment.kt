@@ -260,6 +260,14 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         when (v?.id) {
 
             R.id.tvConfirmAddress -> {
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.SHOP_CONFIRM_LOCATION,
+                    hashMapOf(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_CONFIRM_LOCATION
+                    ),
+                    activity)
+
                 if (progressBar.visibility == View.GONE
                     && selectedAddress != null
                     && tvConfirmAddress.text == getString(R.string.update_address)){
@@ -323,6 +331,13 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 }
             }
             R.id.inSavedAddress -> {
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.SHOP_SAVED_PLACES,
+                    hashMapOf(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_SAVED_PLACES
+                    ),
+                    activity)
                 ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
             }
             R.id.backButton -> {
