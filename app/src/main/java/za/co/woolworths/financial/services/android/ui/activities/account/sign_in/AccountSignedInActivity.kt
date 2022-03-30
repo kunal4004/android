@@ -193,7 +193,9 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
             ShowTreatmentPlanDialogFragment.VIEW_PAYMENT_OPTIONS_VISIBILITY,
             viewPaymentOptions
         )
-        bundle.putString(ViewTreatmentPlanDialogFragment.APPLY_NOW_STATE, mAccountSignedInPresenter?.getAccount()?.productGroupCode)
+        if(payMyAccountViewModel.isAccountChargedOff()){
+            bundle.putString(ViewTreatmentPlanDialogFragment.APPLY_NOW_STATE, mAccountSignedInPresenter?.getAccount()?.productGroupCode)
+        }
 
         mAvailableFundsNavHost?.navController?.navigate(
             R.id.showTreatmentPlanDialogFragment,
