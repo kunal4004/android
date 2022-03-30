@@ -233,7 +233,9 @@ class AccountSignedInPresenterImpl(
 
                         AccountOfferingState.AccountIsChargedOff -> {
                             // account is in arrears for more than 6 months
-                            removeBlocksOnCollectionCustomer()
+                            // with showTreatmentPlanJourney and collectionsStartNewPlanJourney disabled
+                            removeBlocksWhenChargedOff()
+                            getAccount()?.let { mainView?.showAccountInArrears(account = it) }
                         }
 
                         AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff -> {

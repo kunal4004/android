@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.account_in_arrears_alert_dialog_fragment.*
 import kotlinx.android.synthetic.main.account_in_arrears_fragment_dialog.accountInArrearsDescriptionTextView
 import za.co.woolworths.financial.services.android.contracts.IShowChatBubble
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
@@ -64,6 +65,14 @@ class AccountInArrearsDialogFragment : AppCompatDialogFragment(), View.OnClickLi
         chatToUsButton?.apply {
             setOnClickListener(this@AccountInArrearsDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
+        }
+        handleChargedOff()
+    }
+
+    private fun handleChargedOff() {
+        if(payMyAccountViewModel.isAccountChargedOff()){
+            accountInArrearsTitleTextView.text = bindString(R.string.remove_block_on_collection_dialog_title)
+            accountInArrearsDescriptionTextView.text = bindString(R.string.remove_block_on_collection_dialog_desc)
         }
     }
 
