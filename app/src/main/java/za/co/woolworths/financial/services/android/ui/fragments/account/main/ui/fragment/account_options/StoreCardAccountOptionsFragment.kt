@@ -18,13 +18,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.uti
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 @AndroidEntryPoint
-class StoreCardAccountOptionsFragment : ViewBindingFragment<StoreCardAccountOptionsFragmentBinding>() {
+class StoreCardAccountOptionsFragment : ViewBindingFragment<StoreCardAccountOptionsFragmentBinding>(StoreCardAccountOptionsFragmentBinding::inflate) {
 
     val viewModel by viewModels<StoreCardAccountOptionsViewModel>()
-
-    override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?): StoreCardAccountOptionsFragmentBinding {
-        return StoreCardAccountOptionsFragmentBinding.inflate(inflater, container, false)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

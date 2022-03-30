@@ -396,7 +396,5 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
             mainView?.showBalanceProtectionInsuranceLead(balanceProtectionInsurance)
         else
             mainView?.showBalanceProtectionInsurance(account?.insuranceCovered)
-
     }
-
 }

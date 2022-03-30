@@ -1,11 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.core
 
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.ApiError
 
 /**
  * Lets the UI act on a controlled bound of states that can be defined here
  */
-sealed class ViewState<out T : Any> {
+sealed class ViewState<out T> where T : Any? {
 
     /**
      * Represents UI state where the UI should be showing a loading UX to the user
@@ -18,7 +17,7 @@ sealed class ViewState<out T : Any> {
      * and the output of type [T] as asked by the UI has been provided to it
      * @param output result object of [T] type representing the fruit of the successful operation
      */
-    data class RenderSuccess<out T : Any>(val output: T) : ViewState<T>()
+    data class RenderSuccess<T>(val output: T) : ViewState<T>()
 
     /**
      * Represents the UI state where the operation requested by the UI has failed to complete
@@ -27,4 +26,56 @@ sealed class ViewState<out T : Any> {
      * @param throwable [Throwable] instance containing the root cause of the failure in a [String]
      */
     data class RenderFailure(val throwable: Throwable) : ViewState<Nothing>()
+
+    object RenderEmpty : ViewState<Nothing>()
+
+}
+
+infix fun <T> ViewState<T>.renderSuccess(onSuccess: ViewState.RenderSuccess<T>.() -> Unit): ViewState<T> {
+    return when (this) {
+        is ViewState.RenderSuccess -> {
+            onSuccess(this)
+            this
+        }
+        else -> {
+            this
+        }
+    }
+}
+
+infix fun <T> ViewState<T>.renderFailure(onError: ViewState.RenderFailure.() -> Unit): ViewState<T> {
+    return when (this) {
+        is ViewState.RenderFailure -> {
+            onError(this)
+            this
+        }
+        else -> {
+            this
+        }
+    }
+}
+
+
+infix fun <T> ViewState<T>.renderEmpty(onEmpty: ViewState.RenderEmpty.() -> Unit): ViewState<T> {
+    return when (this) {
+        is ViewState.RenderEmpty -> {
+            onEmpty(this)
+            this
+        }
+        else -> {
+            this
+        }
+    }
+}
+
+infix fun <T> ViewState<T>.renderLoading(onLoading: ViewState.Loading.() -> Unit): ViewState<T> {
+    return when (this) {
+        is ViewState.Loading -> {
+            onLoading(this)
+            this
+        }
+        else -> {
+            this
+        }
+    }
 }

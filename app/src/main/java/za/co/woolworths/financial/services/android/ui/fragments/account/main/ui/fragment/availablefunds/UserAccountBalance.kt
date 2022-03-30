@@ -27,15 +27,11 @@ class UserAccountBalance @Inject constructor(accountDao: AccountProductLandingDa
     override fun getPaymentDueDate(): String = formatDate(product?.paymentDueDate)
 
     private fun formatCurrency(amount: Int?): String {
-        return Utils.removeNegativeSymbol(
-            CurrencyFormatter.formatAmountToRandAndCentWithSpace(amount)
-        )
+        return Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCentWithSpace(amount))
     }
 
     private fun formatDate(date: String?): String {
         date ?: return "N/A"
-        return WFormatter.addSpaceToDate(
-            WFormatter.newDateFormat(date)
-        )
+        return WFormatter.addSpaceToDate(WFormatter.newDateFormat(date))
     }
 }

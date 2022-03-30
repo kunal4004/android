@@ -11,15 +11,15 @@ interface IBalanceProtectionInsurance {
     fun balanceProtectionInsuranceTag(): AccountOptionsScreenUI.BalanceProtectionInsurance
 }
 
-class BalanceProtectionInsuranceImpl @Inject constructor(private val product: AccountProductLandingDao?) :
+class BalanceProtectionInsuranceImpl @Inject constructor(private val accountDao: AccountProductLandingDao?) :
     IBalanceProtectionInsurance {
 
     override fun getBalanceProtectionInsuranceLead(): BpiInsuranceApplication? {
-        return product?.getAccountProduct()?.bpiInsuranceApplication
+        return accountDao?.product?.bpiInsuranceApplication
     }
 
     override fun isInsuranceCovered(): Boolean {
-        return product?.getAccountProduct()?.insuranceCovered ?: false
+        return accountDao?.product?.insuranceCovered ?: false
     }
 
     override fun balanceProtectionInsuranceTag(): AccountOptionsScreenUI.BalanceProtectionInsurance {

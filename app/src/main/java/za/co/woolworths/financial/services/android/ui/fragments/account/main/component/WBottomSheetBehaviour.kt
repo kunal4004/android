@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.component
 
 import android.content.Context
+import android.os.Build
 import android.util.TypedValue
 import android.view.View
 import androidx.annotation.DimenRes
@@ -36,6 +37,8 @@ class WBottomSheetBehaviour @Inject constructor(
 
     private lateinit var sheetBehavior: BottomSheetBehavior<*>
 
+    val statusBarHeight = statusBarHeight()
+
     override val deviceHeight: Int
         get() = deviceHeight()
 
@@ -48,7 +51,7 @@ class WBottomSheetBehaviour @Inject constructor(
     override val buttonsBottomGuideline: Float
         get() = getDimension(if (isProductGoodStanding) R.dimen.account_good_standing_button_end_guideline else R.dimen.account_not_good_standing_end_guideline)
 
-    override val bottomGuidelinePercent : Float
+    override val bottomGuidelinePercent: Float
         get() = getDimension(if (isProductGoodStanding) R.dimen.peek_height_good_standing else R.dimen.peek_height_not_good_standing)
 
     override fun init(bottomSheetBehaviourView: ConstraintLayout?): BottomSheetBehavior<*> {
@@ -63,9 +66,11 @@ class WBottomSheetBehaviour @Inject constructor(
 
     override fun peekHeight(): Int = deviceHeight - (deviceHeight * bottomGuidelinePercent).toInt()
 
-    override fun expandedHeight() = deviceHeight - statusBarHeight()
+    override fun expandedHeight() =
+        deviceHeight - if (Build.VERSION.SDK_INT >= 30) statusBarHeight * 6 else statusBarHeight
 
-    override fun statusBarHeight(): Int = context.resources?.getDimensionPixelSize(R.dimen._4sdp) ?: 0
+    override fun statusBarHeight(): Int =
+        context.resources?.getDimensionPixelSize(R.dimen._4sdp) ?: 0
 
     override fun callback(offset: (Float) -> Unit): BottomSheetBehavior.BottomSheetCallback {
         return object : BottomSheetBehavior.BottomSheetCallback() {

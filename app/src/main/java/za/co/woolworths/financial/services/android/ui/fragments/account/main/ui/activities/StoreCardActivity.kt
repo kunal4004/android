@@ -6,10 +6,8 @@ import android.os.Bundle
 import android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 import android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 import android.view.WindowManager
-import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -34,54 +32,33 @@ class StoreCardActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = AccountProductLandingActivityBinding.inflate(layoutInflater)
         setTransparentStatusBar()
+        binding = AccountProductLandingActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setupView()
     }
 
     private fun setTransparentStatusBar() {
         window?.apply {
-            when {
-                Build.VERSION.SDK_INT in 21..29 -> {
+            when (Build.VERSION.SDK_INT) {
+                in 22..29 -> {
                     statusBarColor = Color.TRANSPARENT
                     clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
                     addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                     decorView.systemUiVisibility =
-                            SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or SYSTEM_UI_FLAG_LAYOUT_STABLE
-                }
-                Build.VERSION.SDK_INT >= 32 -> {
-                    WindowCompat.setDecorFitsSystemWindows(window, false)
-                    ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { _, _ ->
-                        WindowInsetsCompat.CONSUMED
-                    }
+                        SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or SYSTEM_UI_FLAG_LAYOUT_STABLE
                 }
                 else -> {
                     statusBarColor = Color.TRANSPARENT
                     // Making status bar overlaps with the activity
                     WindowCompat.setDecorFitsSystemWindows(window, false)
                     // Root ViewGroup of my activity
-                    val root = findViewById<CoordinatorLayout>(R.id.rootContainer)
-                    ViewCompat.setOnApplyWindowInsetsListener(root) { view, windowInsets ->
-
-                        val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-
-                        // Apply the insets as a margin to the view. Here the system is setting
-                        // only the bottom, left, and right dimensions, but apply whichever insets are
-                        // appropriate to your layout. You can also update the view padding
-                        // if that's more appropriate.
-
-                        view.layoutParams =  (view.layoutParams as FrameLayout.LayoutParams).apply {
-                            leftMargin = insets.left
-                            bottomMargin = insets.bottom
-                            rightMargin = insets.right
-                        }
+                    ViewCompat.setOnApplyWindowInsetsListener(window.decorView){ _, _ ->
 
                         // Return CONSUMED if you don't want want the window insets to keep being
                         // passed down to descendant views.
                         WindowInsetsCompat.CONSUMED
                     }
-
                 }
             }
         }

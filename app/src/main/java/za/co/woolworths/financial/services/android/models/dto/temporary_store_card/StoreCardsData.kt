@@ -5,7 +5,7 @@ data class StoreCardsData (
     val virtualCard: StoreCard?,
     val isStaffMember: Boolean,
     val virtualCardStaffMemberMessage: VirtualCardStaffMemberMessage?,
-    val primaryCards: List<StoreCard>?,
+    val primaryCards: MutableList<StoreCard>?,
     val secondaryCards: List<StoreCard>?)
 {
     var visionAccountNumber: String = ""
