@@ -89,12 +89,10 @@ android {
 
         String env = ""
 
-        if (host.contains("-qa") || host.contains("-staging")) {
+        if (host.contains("-qa") || host.contains("-staging") || host.contains("-dev")) {
             defaultConfig.applicationIdSuffix = ".qa"
             defaultConfig.manifestPlaceholders = [appLabel: "Woolworths Q", app_links_host: "www-win-qa.woolworths.co.za"]
             env = "QA"
-        } else if (host.contains("-staging")) {
-            jobNumber = 1
         } else {
             //assume prod
             jobNumber = 176
