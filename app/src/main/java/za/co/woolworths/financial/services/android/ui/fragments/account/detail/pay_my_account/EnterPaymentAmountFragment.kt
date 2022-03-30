@@ -69,21 +69,13 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
         with(payMyAccountViewModel) {
             totalAmountDueValueTextView?.text = getTotalAmountDue()
-            if (isAccountChargedOff()) {
-                paymentAmountInputEditText?.setText(getAmountEntered())
-
-                if (elitePlanModel?.scope.isNullOrEmpty()) {
-                    amountOverdueLabelTextView?.text = getString(R.string.overdue_amount_label)
-                    amountOutstandingValueTextView?.text = getCurrentBalance()
-                } else {
-                    setViewsForElitePlan(this)
-                }
-
-            } else {
+            paymentAmountInputEditText?.setText(getAmountEntered())
+            if (elitePlanModel?.scope.isNullOrEmpty()) {
                 amountOverdueLabelTextView?.text = getString(R.string.overdue_amount_label)
-                amountOutstandingValueTextView?.text = getOverdueAmount()
+                amountOutstandingValueTextView?.text = getCurrentBalance()
+            } else {
+                setViewsForElitePlan(this)
             }
-
         }
 
         setFragmentResultListener(InfoDialogFragment::class.java.simpleName) { _, _ ->
