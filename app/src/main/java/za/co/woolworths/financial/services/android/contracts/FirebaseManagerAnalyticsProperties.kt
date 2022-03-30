@@ -370,16 +370,13 @@ open class FirebaseManagerAnalyticsProperties {
         const val SHOP_CONFIRM_ADDRESS = "shop_cnfrm_adrs"
         const val SHOP_CONFIRM_DELIVERY_ADDRESS = "shop_cnfrm_delvry_adrs"
         const val SHOP_EDIT_DELIVERY_ADDRESS = "shop_edit_delvry_adrs"
-        const val SHOP_GOT_IT_CONFIRM_ADDRESS = "shop_got_it_cnfrm_adrs"
         const val SHOP_CLICK_COLLECT = "shop_clk_cllct"
         const val SHOP_STANDARD_EDIT = "shop_stnd_edt"
         const val SHOP_STANDARD_CONFIRM = "shop_stnd_cnfrm"
         const val SHOP_DELIVERY = "shop_delvry"
         const val SHOP_CLICK_COLLECT_EDIT = "shop_clck_cllct_edt"
         const val SHOP_STANDARD_CLICK_COLLECT_CONFIRM = "shop_stnd_cnfrm"
-        const val SHOP_EDIT = "shop_edit"
         const val SHOP_CONFIRM_STORE = "shop_cnfrm_store"
-        const val SHOP_GOT_IT_CONFIRM_STORE = "shop_got_it_cnfrm_stre"
         const val SHOP_EDIT_LOCATION = "shop_edit_locatn"
 
 
@@ -551,16 +548,13 @@ open class FirebaseManagerAnalyticsProperties {
             const val ACTION_VALUE_SHOP_CONFIRM_ADDRESS: String = "Customer selects to confirm their address on the map view screen after selecting their address"
             const val ACTION_VALUE_SHOP_CONFIRM_DELIVERY_ADDRESS: String = "Customer has saved addresses, signs in and pop up is displayed, customer selects to ‘Confirm’ their saved address"
             const val ACTION_VALUE_SHOP_EDIT_DELIVERY_ADDRESS : String = "Customer has saved addresses, signs in and pop up is displayed, customer selects to ‘Edit Location' their saved address"
-            const val ACTION_VALUE_SHOP_GOT_IT_CONFIRM_ADDRESS: String = "Customer updates and confirms their address - a pop up / toast message is displayed and customer selects ‘Got it’."
             const val ACTION_VALUE_SHOP_CLICK_COLLECT: String = "Customer is defaulted to the Standard Delivery tab - selects “Click & Collect' at the top"
             const val ACTION_VALUE_SHOP_STANDARD_EDIT: String = "Customer is defaulted to the Standard Delivery tab - selects to ‘Edit’ their address"
             const val ACTION_VALUE_SHOP_STANDARD_CONFIRM: String = "Customer is defaulted to the Standard Delivery tab - selects to Confirm all the details of their selection"
             const val ACTION_VALUE_SHOP_DELIVERY: String = "Customer has selected the Click and Collect option but chooses to select the Delivery option again at the top"
             const val ACTION_VALUE_SHOP_CLICK_COLLECT_EDIT: String = "Customer selects to ‘Edit’ their province / store for Click and Collect"
             const val ACTION_VALUE_SHOP_STANDARD_CLICK_COLLECT_CONFIRM: String = "Customer selects to Confirm all the details of their Click and Collect selection"
-            const val ACTION_VALUE_SHOP_EDIT: String = "Customer has entered and address before or has selected a Click and Collect store. Chooses ‘Edit’ on the shop default screen"
             const val ACTION_VALUE_SHOP_CONFIRM_STORE: String = "Customer selects to change / edit their store, selects a new store and selects to ‘Confirm’ their store"
-            const val ACTION_VALUE_SHOP_GOT_IT_CONFIRM_STORE: String = "Customer updates and confirms their store - a pop up / toast message is displayed and customer selects ‘Got it’."
             const val ACTION_VALUE_SHOP_EDIT_LOCATION: String = "Customer has saved store, signs in and pop up is displayed, customer selects to ‘Edit location' in the pop up that is displayed"
 
 
