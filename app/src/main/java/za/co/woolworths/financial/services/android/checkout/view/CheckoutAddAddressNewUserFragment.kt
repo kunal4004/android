@@ -607,18 +607,10 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                 val titleTextView: TextView? = view?.findViewById(R.id.titleTv)
                 titleTextView?.tag = index
                 titleTextView?.text = options
-                //chckout_adrs_dtls_hme
                 if (!selectedDeliveryAddressType.isNullOrEmpty() && selectedDeliveryAddressType.equals(
                         options
                     )
                 ) {
-                    Utils.triggerFireBaseEvents(
-                        FirebaseManagerAnalyticsProperties.SHOP_STANDARD_CLICK_COLLECT_CONFIRM,
-                        hashMapOf(
-                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_STANDARD_CLICK_COLLECT_CONFIRM
-                        ),
-                        activity)
                     selectedAddress.savedAddress.addressType = selectedDeliveryAddressType
                     titleTextView?.background =
                         bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
@@ -630,7 +622,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     )
                 }
                 titleTextView?.setOnClickListener {
-                    setFirebaseEvents(titleTextView.text.toString())
+                    setFirebaseEvents(titleTextView?.text.toString())
                     resetOtherDeliveringTitle(it.tag as Int)
                     selectedDeliveryAddressType = (it as TextView).text as? String
                     selectedAddress.savedAddress.addressType = selectedDeliveryAddressType
