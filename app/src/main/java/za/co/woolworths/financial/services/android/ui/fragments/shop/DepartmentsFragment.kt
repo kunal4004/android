@@ -28,6 +28,7 @@ import kotlinx.android.synthetic.main.fragment_shop_department.*
 import kotlinx.android.synthetic.main.geo_location_delivery_address.*
 import kotlinx.android.synthetic.main.no_connection_layout.*
 import retrofit2.Call
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
@@ -256,6 +257,15 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
                 placeId = it.address?.placeId ?: ""
             }
         }
+
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.SHOP_DELIVERY_CLICK_COLLECT,
+            hashMapOf(
+                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_DELIVERY_CLICK_COLLECT
+            ),
+            activity)
+
 
         KotlinUtils.presentEditDeliveryGeoLocationActivity(
             requireActivity(),

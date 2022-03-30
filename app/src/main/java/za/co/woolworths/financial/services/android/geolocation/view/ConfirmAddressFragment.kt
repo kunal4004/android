@@ -30,6 +30,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Addr
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.model.MapData
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.SavedAddressAdapter
@@ -271,7 +272,18 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 if (progressBar.visibility == View.GONE
                     && selectedAddress != null
                     && tvConfirmAddress.text == getString(R.string.update_address)){
-                    savedAddressResponse?.let { navigateToUpdateAddress(it) }
+                    savedAddressResponse?.let {
+
+                        Utils.triggerFireBaseEvents(
+                            FirebaseManagerAnalyticsProperties.SHOP_UPDATE_ADDRESS,
+                            hashMapOf(
+                                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_UPDATE_ADDRESS
+                            ),
+                            activity)
+
+                        navigateToUpdateAddress(it)
+                    }
                     return
                 }
                 if (progressBar.visibility == View.GONE
@@ -344,6 +356,15 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 activity?.onBackPressed()
             }
             R.id.enterNewAddress -> {
+
+
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.SHOP_NEW_ADDRESS,
+                    hashMapOf(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_NEW_ADDRESS
+                    ),
+                    activity)
 
                 if (isComingFromCheckout && deliveryType == Delivery.STANDARD.toString()) {
                     navigateToAddAddress(savedAddressResponse)
