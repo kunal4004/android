@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl.Companion.ELITE_PLAN
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.OutSystemBuilder
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.ProductOfferingStatus
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
@@ -48,7 +49,6 @@ class AccountSixMonthArrearsFragment : Fragment(), EligibilityImpl {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, "")
-        isViewTreatmentPlanSupported = arguments?.getBoolean(IS_VIEW_TREATMENT_PLAN, false) ?: false
         mApplyNowAccountKeyPair =
             Gson().fromJson(account, object : TypeToken<Pair<Int, Int>>() {}.type)
     }
@@ -65,6 +65,7 @@ class AccountSixMonthArrearsFragment : Fragment(), EligibilityImpl {
         super.onViewCreated(view, savedInstanceState)
         mAccountPresenter = (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter
         mAccountPresenter?.eligibilityImpl = this
+        isViewTreatmentPlanSupported = ProductOfferingStatus(mAccountPresenter?.getAccount()).isViewTreatmentPlanSupported()
 
         hideCardTextViews()
         setTitleAndCardTypeAndButton()

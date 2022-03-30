@@ -238,11 +238,8 @@ class AccountSignedInPresenterImpl(
 
                         AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff -> {
                             removeBlocksWhenChargedOff()
-                            when (productGroupCode()) {
-                                ProductOfferingStatus.productGroupCodeSc, ProductOfferingStatus.productGroupCodePl -> {
-                                    showViewTreatmentPlan(true)
-                                }
-                            }
+                            showViewTreatmentPlan(true)
+
                         }
 
                         AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig -> {
