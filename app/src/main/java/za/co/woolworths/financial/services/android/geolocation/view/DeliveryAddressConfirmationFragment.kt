@@ -413,10 +413,12 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         geoDeliveryTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
         geoCollectTab?.setBackgroundResource(R.drawable.bg_geo_unselected_tab)
         geoCollectTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_444444))
-        deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.ic_delivery_circle))
+        deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.img_delivery_truck))
         btnConfirmAddress?.isEnabled = true
         btnConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
         editDelivery?.text = getString(R.string.edit)
+        changeFulfillmentTitleTextView?.text = bindString(R.string.standard_delivery)
+        changeFulfillmentSubTitleTextView?.text = bindString(R.string.standard_delivery_title_text)
         updateDeliveryDetails()
     }
 
@@ -425,7 +427,9 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         geoCollectTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
         geoDeliveryTab?.setBackgroundResource(R.drawable.bg_geo_unselected_tab)
         geoDeliveryTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_444444))
-        deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.ic_bag_circle))
+        deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.img_collection_bag))
+        changeFulfillmentTitleTextView?.text = bindString(R.string.click_and_collect)
+        changeFulfillmentSubTitleTextView?.text = bindString(R.string.click_and_collect_title_text)
         updateCollectionDetails()
     }
 
