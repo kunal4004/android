@@ -40,7 +40,6 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLoca
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.LocationErrorLiveData
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
-import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_CONFIRM_ADD
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LATITUDE
@@ -342,7 +341,6 @@ class ConfirmAddressMapFragment :
             val geocoder = Geocoder(requireActivity(), Locale.getDefault())
             val address: MutableList<Address> = geocoder.getFromLocation(latitude, longitude, 1)
             address.let {
-
                 mAddress = it.getOrNull(0)?.getAddressLine(0)
                 address1 = getAddressOne(mAddress)
                 city = it.getOrNull(0)?.locality
@@ -350,13 +348,7 @@ class ConfirmAddressMapFragment :
                 country = it.getOrNull(0)?.countryName
                 postalCode = it.getOrNull(0)?.postalCode
                 suburb = it.getOrNull(0)?.subLocality
-                val streetName = it.getOrNull(0)?.thoroughfare
-                viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                    delay(AppConstant.DELAY_1000_MS)
-                    if (streetName.isNullOrEmpty() && isLocationErrorShowing==false) {
-                        showSelectedLocationError(true)
-                    }
-                }
+
             }
 
         } catch (e: Exception) {
@@ -384,8 +376,52 @@ class ConfirmAddressMapFragment :
                     )
                 }
             }).await()
+
         placeId = results.getOrNull(0)?.placeId.toString()
+
+        getStreetNumberAndRoute(placeId!!)
+
       sendAddressData()
+    }
+
+    private fun getStreetNumberAndRoute(placeId: String) {
+        Places.initialize(requireActivity(), getString(R.string.maps_api_key))
+        val placesClient = Places.createClient(requireActivity())
+        val placeFields: MutableList<Place.Field> = mutableListOf(
+            Place.Field.ID,
+            Place.Field.NAME,
+            Place.Field.LAT_LNG,
+            Place.Field.ADDRESS,
+            Place.Field.ADDRESS_COMPONENTS,
+        )
+        val request =
+            placeFields.let {
+                FetchPlaceRequest.builder(placeId.toString(), it).build()
+            }
+         var streetNumber:String? = null
+         var routeName:String? = null
+        request.let { placeRequest ->
+            placesClient.fetchPlace(placeRequest)
+                .addOnSuccessListener { response ->
+                    val place = response.place
+                    val address = place.addressComponents?.asList()?.getOrNull(0)
+                    address?.types?.getOrNull(0)
+                    when (address?.types?.getOrNull(0)) {
+                        STREET_NUMBER.value -> streetNumber = address.name
+                        ROUTE.value -> routeName = address.name
+                    }
+                    viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                        delay(AppConstant.DELAY_500_MS)
+                        if (streetNumber.isNullOrEmpty() && routeName.isNullOrEmpty() && isLocationErrorShowing == false) {
+                            showSelectedLocationError(true)
+                        }
+                    }
+
+                }.addOnFailureListener {
+                    showErrorDialog()
+                }
+        }
+
     }
 
     companion object {

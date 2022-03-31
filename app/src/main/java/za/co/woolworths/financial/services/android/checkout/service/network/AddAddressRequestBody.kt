@@ -20,5 +20,6 @@ data class AddAddressRequestBody(
     val latitude: String?,
     val longitude: String?,
     val placesId: String,
-    val addressType: String
+    val addressType: String,
+    val isGeolocation: Boolean,
 )
