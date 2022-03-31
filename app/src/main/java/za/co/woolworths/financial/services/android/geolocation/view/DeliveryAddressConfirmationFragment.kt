@@ -29,6 +29,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Addr
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.*
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
@@ -145,6 +146,13 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             }
             R.id.editDelivery -> {
                 if (deliveryType.equals(Delivery.CNC.toString(), true)) {
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.SHOP_CLICK_COLLECT_EDIT,
+                        hashMapOf(
+                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_CLICK_COLLECT_EDIT
+                        ),
+                        activity)
                     bundle?.putSerializable(
                         VALIDATE_RESPONSE, validateLocationResponse)
                     bundle?.putBoolean(
@@ -157,6 +165,13 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 }
 
                 if (deliveryType.equals(Delivery.STANDARD.toString(), true)) {
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.SHOP_STANDARD_EDIT,
+                        hashMapOf(
+                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_STANDARD_EDIT
+                        ),
+                        activity)
                     navigateToConfirmAddressScreen()
                     return
                 }
@@ -256,6 +271,19 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                               }
 
                             savedAddressResponse?.defaultAddressNickname = defaultAddress?.nickname
+
+                              if (deliveryType == Delivery.STANDARD.toString()) {
+                                  Utils.triggerFireBaseEvents(
+                                      FirebaseManagerAnalyticsProperties.SHOP_STANDARD_CONFIRM,
+                                      hashMapOf(
+                                          FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                                  FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_STANDARD_CONFIRM
+                                      ),
+                                      activity)
+
+                              } else {
+
+                              }
 
                             if (isComingFromCheckout) {
                                 if (deliveryType == Delivery.STANDARD.toString()) {
@@ -409,11 +437,20 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     private fun openGeoDeliveryTab() {
+
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.SHOP_DELIVERY,
+            hashMapOf(
+                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_DELIVERY
+            ),
+            activity)
+
         geoDeliveryTab?.setBackgroundResource(R.drawable.bg_geo_selected_tab)
         geoDeliveryTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
         geoCollectTab?.setBackgroundResource(R.drawable.bg_geo_unselected_tab)
         geoCollectTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_444444))
-        deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.ic_delivery_circle))
+        deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.ic_delivery_geo_circle))
         btnConfirmAddress?.isEnabled = true
         btnConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
         editDelivery?.text = getString(R.string.edit)
@@ -421,6 +458,14 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     private fun openCollectionTab() {
+
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.SHOP_CLICK_COLLECT,
+            hashMapOf(
+                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_CLICK_COLLECT
+            ),
+            activity)
         geoCollectTab?.setBackgroundResource(R.drawable.bg_geo_selected_tab)
         geoCollectTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
         geoDeliveryTab?.setBackgroundResource(R.drawable.bg_geo_unselected_tab)

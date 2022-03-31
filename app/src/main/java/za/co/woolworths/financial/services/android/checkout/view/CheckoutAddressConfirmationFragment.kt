@@ -121,7 +121,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_DELIVERY,
                         hashMapOf(
                             FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_DELIVERY
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.  ACTION_VALUE_NATIVE_CHECKOUT_DELIVERY
                         ),
                         activity)
                     showDeliveryTab()

@@ -68,7 +68,7 @@
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintTop_toTopOf="@id/geoCollectTab"
-        app:srcCompat="@drawable/ic_delivery_circle" />
+        app:srcCompat="@drawable/ic_delivery_geo_circle" />
 
 
     <androidx.appcompat.widget.AppCompatTextView

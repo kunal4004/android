@@ -53,6 +53,10 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAd
 import za.co.woolworths.financial.services.android.checkout.viewmodel.SelectedPlacesAddress
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.ADDRESS_APARTMENT
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.ADDRESS_COMPLEX_ESTATE
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.ADDRESS_HOME
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.ADDRESS_OFFICE
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getSelectedDefaultName
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.*
@@ -618,6 +622,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     )
                 }
                 titleTextView?.setOnClickListener {
+                    setFirebaseEvents(titleTextView?.text.toString())
                     resetOtherDeliveringTitle(it.tag as Int)
                     selectedDeliveryAddressType = (it as TextView).text as? String
                     selectedAddress.savedAddress.addressType = selectedDeliveryAddressType
@@ -635,6 +640,58 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                 delivering_layout?.addView(view)
             }
         }
+    }
+
+    private fun setFirebaseEvents(addressType: String) {
+
+
+        val eventName = when (addressType) {
+            ADDRESS_HOME -> {
+                FirebaseManagerAnalyticsProperties.CHECKOUT_ADDRESS_DETAILS_HOME
+            }
+
+            ADDRESS_OFFICE -> {
+                FirebaseManagerAnalyticsProperties.CHECKOUT_ADDRESS_DETAILS_OFFICE
+            }
+
+            ADDRESS_COMPLEX_ESTATE -> {
+                FirebaseManagerAnalyticsProperties.CHECKOUT_ADDRESS_DETAILS_COMPLEX
+            }
+
+            ADDRESS_APARTMENT -> {
+                FirebaseManagerAnalyticsProperties.CHECKOUT_ADDRESS_DETAILS_APARTMENT
+            }
+            else -> "default"
+        }
+
+        val eventProperty =
+            when (addressType) {
+                ADDRESS_HOME -> {
+                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_CHECKOUT_ADDRESS_DETAILS_HOME
+                }
+
+                ADDRESS_OFFICE -> {
+                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_CHECKOUT_ADDRESS_DETAILS_OFFICE
+                }
+
+                ADDRESS_COMPLEX_ESTATE -> {
+                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_CHECKOUT_ADDRESS_DETAILS_COMPLEX
+                }
+
+                ADDRESS_APARTMENT -> {
+                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_CHECKOUT_ADDRESS_DETAILS_APARTMENT
+                }
+                else -> "default"
+            }
+
+        Utils.triggerFireBaseEvents(
+            eventName,
+            hashMapOf(
+                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                        eventProperty
+            ),
+            activity
+        )
     }
 
     private fun resetOtherDeliveringTitle(selectedTag: Int) {
@@ -737,6 +794,13 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             ), activity
         )
 
+
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.CHECKOUT_ADDRESS_SAVE_ADDRESS, hashMapOf(
+                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_CHECKOUT_ADDRESS_SAVE_ADDRESS
+            ), activity
+        )
         if (cellphoneNumberEditText?.text.toString().trim().isNotEmpty()
             && cellphoneNumberEditText?.text.toString().trim().length < 10
         ) {
