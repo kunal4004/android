@@ -2484,6 +2484,8 @@
     <string name="my_shopping_lists">My Shopping Lists</string>
     <string name="hi">HI&#160;</string>
     <string name="tip_your_dash_driver">Tip Your Dash Driver</string>
+    <string name="address_type">Address Type:</string>
+    <string name="add_street_address">Street Address:</string>
 
 
     <string name="product_listing_price_from">From</string>
@@ -2505,10 +2507,8 @@
 
 
 
-    <!--DASH-->
 
-    <string name="address_type">Address Type:</string>
-    <string name="add_street_address">Street Address:</string>
+
 
 
 
