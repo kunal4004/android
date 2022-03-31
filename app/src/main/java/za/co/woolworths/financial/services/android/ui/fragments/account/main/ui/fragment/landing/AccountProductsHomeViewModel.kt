@@ -36,9 +36,6 @@ class AccountProductsHomeViewModel @Inject constructor(
     IEligibilityImpl by eligibilityImpl,
     ICollectionRepository by collectionRepository {
 
-    val eligibilityPlanResponseLiveData: MutableLiveData<ViewState<EligibilityPlanResponse>> by lazy {
-        MutableLiveData<ViewState<EligibilityPlanResponse>>()
-    }
 
     suspend fun eligibilityPlanResponse(): Flow<ViewState<EligibilityPlanResponse>> {
         return getViewStateFlowForNetworkCall {
