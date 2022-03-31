@@ -11,6 +11,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomS
 import za.co.woolworths.financial.services.android.util.Utils
 
 import com.awfs.coordination.R
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
@@ -38,10 +39,46 @@ class ConfirmDeliveryLocationFragment : WBottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         btnDefaultLocation.setOnClickListener {
+            if (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) {
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.SHOP_CONFIRM_DELIVERY_ADDRESS,
+                    hashMapOf(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_CONFIRM_DELIVERY_ADDRESS
+                    ),
+                    activity)
+            } else {
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.SHOP_CONFIRM_DELIVERY_ADDRESS,
+                    hashMapOf(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_CONFIRM_DELIVERY_ADDRESS
+                    ),
+                    activity)
+            }
+
             listener?.onConfirmLocation()
             dismissAllowingStateLoss()
         }
         btnSetNewLocation.setOnClickListener {
+            if (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) {
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.SHOP_EDIT_LOCATION,
+                    hashMapOf(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_EDIT_LOCATION
+                    ),
+                    activity)
+            } else {
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.SHOP_EDIT_DELIVERY_ADDRESS,
+                    hashMapOf(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_EDIT_DELIVERY_ADDRESS
+                    ),
+                    activity)
+            }
+
             listener?.onSetNewLocation()
             dismissAllowingStateLoss()
         }
