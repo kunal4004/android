@@ -235,7 +235,11 @@ class AccountSignedInPresenterImpl(
                             // account is in arrears for more than 6 months
                             // with showTreatmentPlanJourney and collectionsStartNewPlanJourney disabled
                             removeBlocksWhenChargedOff()
-                            getAccount()?.let { mainView?.showAccountInArrears(account = it) }
+                            when (productGroupCode()){
+                                ProductOfferingStatus.productGroupCodeSc, ProductOfferingStatus.productGroupCodePl -> {
+                                    getAccount()?.let { mainView?.showAccountInArrears(account = it) }
+                                }
+                            }
                         }
 
                         AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff -> {
