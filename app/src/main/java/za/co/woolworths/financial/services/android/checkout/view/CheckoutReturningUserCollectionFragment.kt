@@ -824,7 +824,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         foodDeliverySlotId = selectedTimeSlot?.slotId
         otherDeliverySlotId = ""
         oddDeliverySlotId = ""
-        foodDeliveryStartHour = selectedTimeSlot?.initHourFrom?.toLong() ?: 0
+        foodDeliveryStartHour = selectedTimeSlot?.intHourFrom?.toLong() ?: 0
         otherDeliveryStartHour = 0
         substituesAllowed = selectedFoodSubstitution.rgb
         plasticBags = switchNeedBags?.isChecked ?: false

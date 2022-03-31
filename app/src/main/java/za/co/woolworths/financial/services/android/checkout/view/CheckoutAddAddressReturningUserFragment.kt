@@ -1025,7 +1025,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     foodDeliverySlotId = selectedFoodSlot?.slotId
                     otherDeliverySlotId = ""
                     oddDeliverySlotId = ""
-                    foodDeliveryStartHour = selectedFoodSlot.initHourFrom?.toLong() ?: 0
+                    foodDeliveryStartHour = selectedFoodSlot?.intHourFrom?.toLong() ?: 0
                     otherDeliveryStartHour = 0
                 }
             }
@@ -1045,7 +1045,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     } else {
                         otherShipOnDate = selectedOtherSlot?.stringShipOnDate
                         otherDeliverySlotId = selectedOtherSlot?.slotId
-                        otherDeliveryStartHour = selectedOtherSlot?.initHourFrom?.toLong() ?: 0
+                        otherDeliveryStartHour = selectedOtherSlot?.intHourFrom?.toLong() ?: 0
                         oddDeliverySlotId = ""
                     }
                 }
@@ -1059,15 +1059,15 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         otherShipOnDate = selectedOtherSlot?.stringShipOnDate
                         foodDeliverySlotId = selectedFoodSlot?.slotId
                         otherDeliverySlotId = selectedOtherSlot?.slotId
-                        foodDeliveryStartHour = selectedFoodSlot.initHourFrom?.toLong() ?: 0
-                        otherDeliveryStartHour = selectedOtherSlot.initHourFrom?.toLong() ?: 0
+                        foodDeliveryStartHour = selectedFoodSlot?.intHourFrom?.toLong() ?: 0
+                        otherDeliveryStartHour = selectedOtherSlot?.intHourFrom?.toLong() ?: 0
                         oddDeliverySlotId = ""
                     } else {
                         foodShipOnDate = selectedFoodSlot?.stringShipOnDate
                         otherShipOnDate = ""
                         foodDeliverySlotId = selectedFoodSlot?.slotId
                         otherDeliverySlotId = ""
-                        foodDeliveryStartHour = selectedFoodSlot.initHourFrom?.toLong() ?: 0
+                        foodDeliveryStartHour = selectedFoodSlot?.intHourFrom?.toLong() ?: 0
                         otherDeliveryStartHour = 0
                         oddDeliverySlotId = selectedOpenDayDeliverySlot?.deliverySlotId
                     }

@@ -36,5 +36,5 @@ class Slot : Serializable {
     var hourSlot: String? = null
 
     @SerializedName("intHourFrom")
-    var initHourFrom: String? = null
+    var intHourFrom: Int? = null
 }
