@@ -13,4 +13,8 @@ class ApplicationInfoImpl : ApplicationInfoInterface {
             BuildConfig.VERSION_CODE.toString()
         )
     }
+
+    override fun fspNumberInfo(): String {
+        return bindString(R.string.fsp_number_info)
+    }
 }
