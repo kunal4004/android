@@ -50,6 +50,8 @@ import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.*
+import za.co.woolworths.financial.services.android.util.AppConstant
 import java.util.*
 import javax.inject.Inject
 
