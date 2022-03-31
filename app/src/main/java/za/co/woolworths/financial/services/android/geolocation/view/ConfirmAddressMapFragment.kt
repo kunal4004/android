@@ -379,12 +379,12 @@ class ConfirmAddressMapFragment :
 
         placeId = results.getOrNull(0)?.placeId.toString()
 
-        getStreetNumberAndRoute(placeId!!)
+        getStreetNumberAndRoute(placeId)
 
       sendAddressData()
     }
 
-    private fun getStreetNumberAndRoute(placeId: String) {
+    private fun getStreetNumberAndRoute(placeId: String?) {
         Places.initialize(requireActivity(), getString(R.string.maps_api_key))
         val placesClient = Places.createClient(requireActivity())
         val placeFields: MutableList<Place.Field> = mutableListOf(
