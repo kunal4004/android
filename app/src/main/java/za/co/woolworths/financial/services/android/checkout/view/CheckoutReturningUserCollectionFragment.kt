@@ -59,10 +59,7 @@ import za.co.woolworths.financial.services.android.models.network.StorePickupInf
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
-import za.co.woolworths.financial.services.android.util.AppConstant
-import za.co.woolworths.financial.services.android.util.CurrencyFormatter
-import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.WFormatter
+import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
 import java.util.regex.Pattern
 
@@ -363,6 +360,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 DATE_FORMAT_EEEE_COMMA_dd_MMMM
             )
         } catch (e: Exception) {
+            FirebaseManager.logException(e)
             ""
         }
         context?.let { context ->
