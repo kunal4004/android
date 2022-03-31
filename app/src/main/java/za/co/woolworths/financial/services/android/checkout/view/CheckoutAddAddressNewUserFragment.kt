@@ -281,6 +281,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             }
         }
         saveAddress?.setOnClickListener(this)
+        imgDelBack?.setOnClickListener(this)
         autoCompleteTextView?.apply {
             afterTextChanged {
                 if (it.isNotEmpty())
@@ -659,6 +660,10 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         when (v?.id) {
             R.id.saveAddress -> {
                 onSaveAddressClicked()
+            }
+
+            R.id.imgDelBack -> {
+                activity?.onBackPressed()
             }
 
             R.id.deleteTextView -> {
