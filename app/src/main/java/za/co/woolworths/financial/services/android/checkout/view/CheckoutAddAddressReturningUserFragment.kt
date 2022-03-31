@@ -636,7 +636,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
         val  confirmLocationAddress = ConfirmLocationAddress(defaultAddress?.placesId, defaultAddress?.nickname)
 
-        var body = ConfirmLocationRequest(Delivery.STANDARD.toString(), confirmLocationAddress, "", "checkout")
+        var body = ConfirmLocationRequest(Delivery.STANDARD.name, confirmLocationAddress, "", "checkout")
 
         checkoutAddAddressNewUserViewModel.getConfirmLocationDetails(body)
             .observe(viewLifecycleOwner, { response ->

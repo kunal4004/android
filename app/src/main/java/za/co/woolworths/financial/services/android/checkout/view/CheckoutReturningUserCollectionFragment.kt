@@ -420,7 +420,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         vehicleColour = whoIsCollectingDetails?.vehicleColor ?: ""
         vehicleRegistration = whoIsCollectingDetails?.vehicleRegistration ?: ""
         taxiOpted = whoIsCollectingDetails?.isMyVehicle != true
-        deliveryType = Delivery.CNC.toString()
+        deliveryType = Delivery.CNC.name
         address = ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
     }
 

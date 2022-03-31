@@ -121,7 +121,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             placeId = this.getString(KEY_PLACE_ID, "")
             isComingFromSlotSelection = this.getBoolean(IS_COMING_FROM_SLOT_SELECTION, false)
             isComingFromCheckout = this.getBoolean(IS_COMING_FROM_CHECKOUT, false)
-            deliveryType = this.getString(DELIVERY_TYPE, Delivery.STANDARD.toString())
+            deliveryType = this.getString(DELIVERY_TYPE, Delivery.STANDARD.name)
             getString(CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS)?.let {
                 whoIsCollecting =
                     Gson().fromJson(it, object : TypeToken<WhoIsCollectingDetails>() {}.type)
@@ -145,7 +145,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 activity?.onBackPressed()
             }
             R.id.editDelivery -> {
-                if (deliveryType.equals(Delivery.CNC.toString(), true)) {
+                if (deliveryType.equals(Delivery.CNC.name, true)) {
                     Utils.triggerFireBaseEvents(
                         FirebaseManagerAnalyticsProperties.SHOP_CLICK_COLLECT_EDIT,
                         hashMapOf(
@@ -164,7 +164,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     return
                 }
 
-                if (deliveryType.equals(Delivery.STANDARD.toString(), true)) {
+                if (deliveryType.equals(Delivery.STANDARD.name, true)) {
                     Utils.triggerFireBaseEvents(
                         FirebaseManagerAnalyticsProperties.SHOP_STANDARD_EDIT,
                         hashMapOf(
@@ -192,14 +192,14 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 (activity as? BottomNavigationActivity)?.popFragment()
             }
             R.id.geoCollectTab -> {
-                deliveryType = Delivery.CNC.toString()
+                deliveryType = Delivery.CNC.name
                 if (progressBar?.visibility == View.VISIBLE)
                     return
                 else
                     openCollectionTab()
             }
             R.id.geoDeliveryTab -> {
-                deliveryType = Delivery.STANDARD.toString()
+                deliveryType = Delivery.STANDARD.name
                 if (progressBar?.visibility == View.VISIBLE)
                     return
                 else
@@ -235,11 +235,11 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
           }
           val confirmLocationAddress = ConfirmLocationAddress(placeId)
           var confirmLocationRequest = ConfirmLocationRequest("", confirmLocationAddress, "")
-          if (deliveryType.equals(Delivery.STANDARD.toString())) {
+          if (deliveryType.equals(Delivery.STANDARD.name)) {
               confirmLocationRequest =
                   ConfirmLocationRequest(STANDARD, confirmLocationAddress)
           }
-          if (deliveryType.equals(Delivery.CNC.toString())) {
+          if (deliveryType.equals(Delivery.CNC.name)) {
               confirmLocationRequest =
                   ConfirmLocationRequest(CNC, confirmLocationAddress, mStoreId)
           }
@@ -272,7 +272,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
                             savedAddressResponse?.defaultAddressNickname = defaultAddress?.nickname
 
-                              if (deliveryType == Delivery.STANDARD.toString()) {
+                              if (deliveryType == Delivery.STANDARD.name) {
                                   Utils.triggerFireBaseEvents(
                                       FirebaseManagerAnalyticsProperties.SHOP_STANDARD_CONFIRM,
                                       hashMapOf(
@@ -286,7 +286,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                               }
 
                             if (isComingFromCheckout) {
-                                if (deliveryType == Delivery.STANDARD.toString()) {
+                                if (deliveryType == Delivery.STANDARD.name) {
                                     if (isComingFromSlotSelection) {
                                         /*Naviagate to slot selection page with updated saved address*/
 
@@ -326,7 +326,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                                 vehicleColour = whoIsCollecting?.vehicleColor ?: ""
                                                 vehicleRegistration = whoIsCollecting?.vehicleRegistration ?: ""
                                                 taxiOpted = whoIsCollecting?.isMyVehicle != true
-                                                deliveryType = Delivery.CNC.toString()
+                                                deliveryType = Delivery.CNC.name
                                                 address = ConfirmLocationAddress(validateLocationResponse?.validatePlace?.placeDetails?.placeId)
                                             }
                                             startCheckoutActivity(Utils.toJson(whoIsCollecting))
@@ -488,7 +488,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 if (validateLocationResponse != null) {
                     when (validateLocationResponse?.httpCode) {
                         HTTP_OK -> {
-                            if (deliveryType.equals(Delivery.STANDARD.toString(), true)) {
+                            if (deliveryType.equals(Delivery.STANDARD.name, true)) {
                                 openGeoDeliveryTab()
                             } else {
                                 openCollectionTab()
@@ -555,7 +555,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     private fun setProductStatus() {
         productsAvailableValue?.apply {
-            if (deliveryType == Delivery.STANDARD.toString()) {
+            if (deliveryType == Delivery.STANDARD.name) {
                 validateLocationResponse?.validatePlace?.let {
                     when {
                         !it.firstAvailableFoodDeliveryDate.isNullOrEmpty()
