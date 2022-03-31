@@ -33,6 +33,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
@@ -49,6 +50,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
+import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
 import javax.inject.Inject
 
@@ -173,6 +175,15 @@ class ConfirmAddressMapFragment :
     private fun confirmAddressClick() {
 
         binding?.confirmAddress?.setOnClickListener {
+
+            Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.SHOP_CONFIRM_ADDRESS,
+                hashMapOf(
+                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                            FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_CONFIRM_ADDRESS
+                ),
+                activity)
+
             val bundle = Bundle()
             if(isComingFromCheckout==true) {
                 bundle?.apply {
