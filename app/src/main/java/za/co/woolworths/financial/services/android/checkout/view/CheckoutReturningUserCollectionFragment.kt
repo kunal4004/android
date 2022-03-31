@@ -26,7 +26,6 @@ import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.checkout_add_address_new_user.delivering_layout
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.loadingBar
 import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.*
