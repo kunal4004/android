@@ -86,7 +86,7 @@
         android:layout_marginEnd="@dimen/thirty_two_dp"
         android:layout_marginBottom="@dimen/eight_dp"
         android:gravity="center"
-        android:text="@string/adding_driver_tip_text" />
+        android:text="@string/amt_tip_added" />
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/progressDescriptionTextView"
@@ -100,7 +100,8 @@
         android:layout_marginEnd="@dimen/thirty_two_dp"
         android:background="@color/white"
         android:gravity="center"
-        android:text="@string/processing_your_request_desc" />
+        android:text="@string/processing_your_request_desc"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/actionsLayout"

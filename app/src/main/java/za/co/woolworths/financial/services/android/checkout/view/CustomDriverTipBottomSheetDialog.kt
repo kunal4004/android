@@ -65,14 +65,22 @@ class CustomDriverTipBottomSheetDialog : WBottomSheetDialogFragment() {
         if (driverTipAmtEditText?.text.isNullOrEmpty())
             Utils.fadeInFadeOutAnimation(buttonConfirm, true)
         driverTipAmtEditText.addTextChangedListener {
-            Utils.fadeInFadeOutAnimation(buttonConfirm, it.isNullOrEmpty())
+            if (it.isNullOrEmpty()) {
+                Utils.fadeInFadeOutAnimation(buttonConfirm, true)
+            } else if (it.toString() != null && it.toString().toDouble() >= 5) {
+                // Driver tip should always be greater than R5
+                driverTipErrorText?.visibility = View.GONE
+                Utils.fadeInFadeOutAnimation(buttonConfirm, false)
+            } else {
+                Utils.fadeInFadeOutAnimation(buttonConfirm, true)
+                driverTipErrorText?.visibility = View.VISIBLE
+            }
         }
         buttonConfirm?.setOnClickListener {
             dismiss()
             mTipValue = driverTipAmtEditText?.text.toString()
-            val customProgressBottomSheetDialog = CustomProgressBottomSheetDialog.newInstance(
-                getString(R.string.adding_driver_tip_text),
-                getString(R.string.processing_your_request_desc), mTipValue, clickListner)
+            val customProgressBottomSheetDialog =
+                CustomProgressBottomSheetDialog.newInstance(mTipValue, clickListner)
             customProgressBottomSheetDialog.show(requireFragmentManager(),
                 CustomProgressBottomSheetDialog::class.java.simpleName)
         }
