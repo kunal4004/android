@@ -10,7 +10,9 @@ enum class ProductGroupCode(val value: String) {
 
 enum class ActionText(val value: String) {
     VIEW_TREATMENT_PLAN("collectionsViewExistingPlan"),
-    TAKE_UP_TREATMENT_PLAN("collectionsStartNewPlan")
+    TAKE_UP_TREATMENT_PLAN("collectionsStartNewPlan"),
+    VIEW_ELITE_PLAN("collectionsViewElitePlan"),
+    START_NEW_ELITE_PLAN("collectionsStartNewElitePlan")
 }
 
 class EligibilityPlan(

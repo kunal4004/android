@@ -74,7 +74,7 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
 
         makePaymentButton?.apply {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            visibility = if(eligibilityPlan?.actionText == ActionText.VIEW_TREATMENT_PLAN.value &&
+            visibility = if(isViewTreatmentPlan() &&
                 (state == ApplyNowState.PERSONAL_LOAN ||
                         state == ApplyNowState.STORE_CARD))
             View.VISIBLE else View.GONE
@@ -84,7 +84,7 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
 
         viewPaymentOptionsButton?.apply {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            visibility = if(eligibilityPlan?.actionText == ActionText.VIEW_TREATMENT_PLAN.value &&
+            visibility = if(isViewTreatmentPlan() &&
                 (state == ApplyNowState.GOLD_CREDIT_CARD ||
                         state == ApplyNowState.BLACK_CREDIT_CARD ||
                         state == ApplyNowState.SILVER_CREDIT_CARD))
@@ -139,7 +139,7 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
                         }
                     }
 
-                    ActionText.VIEW_TREATMENT_PLAN.value -> bindString(R.string.view_treatment_plan_description)
+                    ActionText.VIEW_TREATMENT_PLAN.value ,ActionText.VIEW_ELITE_PLAN.value-> bindString(R.string.view_treatment_plan_description)
 
                     else -> ""
                 }
@@ -150,6 +150,9 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
         }
     }
 
+    fun isViewTreatmentPlan():Boolean{
+        return eligibilityPlan?.actionText == ActionText.VIEW_TREATMENT_PLAN.value || eligibilityPlan?.actionText == ActionText.VIEW_ELITE_PLAN.value
+    }
     override fun onClick(view: View?) {
         KotlinUtils.avoidDoubleClicks(view)
         when (view?.id) {

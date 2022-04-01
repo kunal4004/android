@@ -437,18 +437,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
     }
 
-    override fun openBrandLandingPage() {
-        (activity as? BottomNavigationActivity)?.apply {
-            pushFragment(
-                newInstance(
-                    ProductsRequestParams.SearchType.SEARCH,
-                    AppConstant.EMPTY_STRING,
-                    (arguments?.getSerializable(BRAND_NAVIGATION_DETAILS) as? BrandNavigationDetails)?.brandText
-                )
-            )
-        }
-    }
-
     private fun getCategoryNameAndSetTitle() {
         if (!mSubCategoryName.isNullOrEmpty()) {
             toolbarTitleText = mSubCategoryName
@@ -1544,6 +1532,30 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         productList?.let { openProductDetailView(it, bannerLabel, bannerImage) }
     }
 
+    override fun openBrandLandingPage() {
+        (activity as? BottomNavigationActivity)?.apply {
+            Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.BRAND_LANDING_PAGE_LOGO_IMAGE,
+                hashMapOf(
+                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_BRAND_LANDING_PAGE_LOGO_IMAGE
+                ),
+                activity
+            )
+            val brandNavigationDetails = BrandNavigationDetails()
+            brandNavigationDetails.brandText =
+                (arguments?.getSerializable(BRAND_NAVIGATION_DETAILS) as? BrandNavigationDetails)?.brandText
+            pushFragment(
+                newInstance(
+                    ProductsRequestParams.SearchType.NAVIGATE,
+                    searchTerm = brandNavigationDetails.brandText,
+                    "",
+                    brandNavigationDetails
+                )
+            )
+        }
+    }
+
     override fun clickCategoryListViewCell(
         navigation: Navigation?,
         bannerImage: String?,
@@ -1552,8 +1564,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     ) {
         // From Chanel Vertical Category click
         (activity as? BottomNavigationActivity)?.apply {
-            val isBrandLandingPage = (arguments?.getSerializable(BRAND_NAVIGATION_DETAILS) as? BrandNavigationDetails)
-                ?.isBrandLandingPage ?: false
+            val isBrandLandingPage =
+                (arguments?.getSerializable(BRAND_NAVIGATION_DETAILS) as? BrandNavigationDetails)
+                    ?.isBrandLandingPage ?: false
 
             Utils.triggerFireBaseEvents(
                 if (isBrandLandingPage)
