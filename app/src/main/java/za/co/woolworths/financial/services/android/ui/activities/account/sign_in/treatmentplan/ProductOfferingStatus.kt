@@ -88,6 +88,9 @@ class ProductOfferingStatus(private val account: Account?) : IProductOffering {
             ignoreCase = true
         )
     }
+    fun isChargedOffCC() :Boolean{
+        return productGroupCode() != productGroupCodeSc && productGroupCode() != productGroupCodePl && isChargedOff()
+    }
 
     companion object {
         const val MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT = 999

@@ -162,7 +162,7 @@ class AccountSignedInPresenterImpl(
                         if (eligibilityPlan?.planType.equals(ELITE_PLAN) && showPopupIfNeeded) {
                             mainView?.removeBlocksOnCollectionCustomer()
                         }
-                    }else {
+                    } else {
                         getAccount()?.let { mainView?.showAccountInArrears(account = it) }
                     }
                 }
@@ -201,12 +201,16 @@ class AccountSignedInPresenterImpl(
                 }
             }
         } else {
+            eligibilityImpl?.eligibilityFailed()
             showAccountInArrears(account)
         }
     }
 
     private fun showAccountInArrears(account: Account?) {
         account ?: return
+        if (ProductOfferingStatus(account).isChargedOffCC()) {
+            return
+        }
         mainView?.showAccountInArrears(account)
         mainView?.showAccountHelp(getCardProductInformation(true))
     }
@@ -235,7 +239,7 @@ class AccountSignedInPresenterImpl(
                             // account is in arrears for more than 6 months
                             // with showTreatmentPlanJourney and collectionsStartNewPlanJourney disabled
                             removeBlocksWhenChargedOff()
-                            when (productGroupCode()){
+                            when (productGroupCode()) {
                                 ProductOfferingStatus.productGroupCodeSc, ProductOfferingStatus.productGroupCodePl -> {
                                     getAccount()?.let { mainView?.showAccountInArrears(account = it) }
                                 }
@@ -243,7 +247,7 @@ class AccountSignedInPresenterImpl(
                         }
 
                         AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff -> {
-                            removeBlocksWhenChargedOff()
+                            removeBlocksWhenChargedOff(true)
                             showViewTreatmentPlan(true)
 
                         }
@@ -265,7 +269,12 @@ class AccountSignedInPresenterImpl(
                                         showPopupIfNeeded
                                     )
                                 },
-                                { if (showPopupIfNeeded) showAccountInArrears(account) })
+                                {
+                                    eligibilityImpl?.eligibilityFailed()
+                                    if (showPopupIfNeeded && !isChargedOffCC()) showAccountInArrears(
+                                        account
+                                    )
+                                })
                         }
                     }
                 }

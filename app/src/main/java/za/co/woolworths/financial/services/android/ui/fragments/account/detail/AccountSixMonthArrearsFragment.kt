@@ -51,6 +51,8 @@ class AccountSixMonthArrearsFragment : Fragment(), EligibilityImpl {
         val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, "")
         mApplyNowAccountKeyPair =
             Gson().fromJson(account, object : TypeToken<Pair<Int, Int>>() {}.type)
+        isViewTreatmentPlanSupported = arguments?.getBoolean(IS_VIEW_TREATMENT_PLAN, false) ?: false
+
     }
 
     override fun onCreateView(
@@ -65,8 +67,6 @@ class AccountSixMonthArrearsFragment : Fragment(), EligibilityImpl {
         super.onViewCreated(view, savedInstanceState)
         mAccountPresenter = (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter
         mAccountPresenter?.eligibilityImpl = this
-        isViewTreatmentPlanSupported = ProductOfferingStatus(mAccountPresenter?.getAccount()).isViewTreatmentPlanSupported()
-
         hideCardTextViews()
         setTitleAndCardTypeAndButton()
 
@@ -133,25 +133,33 @@ class AccountSixMonthArrearsFragment : Fragment(), EligibilityImpl {
                     visibility = VISIBLE
                 }
             } else {
-                arrearsDescTextView?.text =
-                    activity?.resources?.getString(R.string.account_arrears_description)
-                callTheCallCenterButton?.visibility = VISIBLE
-                viewTreatmentPlansButton?.visibility = GONE
-                callTheCallCenterUnderlinedButton?.visibility = GONE
+                showCallUsButton()
             }
         }
     }
 
     override fun eligibilityResponse(eligibilityPlan: EligibilityPlan?) {
         eligibilityPlan.let {
-            if (it?.planType.equals(AccountSignedInPresenterImpl.ELITE_PLAN)) {
+            if (it?.planType.equals(ELITE_PLAN)) {
                 setElitePlanViews(eligibilityPlan)
             }
         }
     }
 
+    override fun eligibilityFailed() {
+        showCallUsButton()
+    }
+
+    fun showCallUsButton() {
+        arrearsDescTextView?.text =
+            activity?.resources?.getString(R.string.account_arrears_description)
+        callTheCallCenterButton?.visibility = VISIBLE
+        viewTreatmentPlansButton?.visibility = GONE
+        callTheCallCenterUnderlinedButton?.visibility = GONE
+    }
+
     fun setElitePlanViews(eligibilityPlan: EligibilityPlan?) {
-        arrearsDescTextView?.text =bindString(R.string.account_arrears_description)
+        arrearsDescTextView?.text = bindString(R.string.account_arrears_description)
         callTheCallCenterButton?.visibility = GONE
         viewTreatmentPlansButton.visibility = VISIBLE
         callTheCallCenterUnderlinedButton?.apply {
