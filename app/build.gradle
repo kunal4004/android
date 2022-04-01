@@ -161,10 +161,22 @@ android {
         applicationVariants.all { variant ->
             if (variant.name == assembleTaskAliasVariant) {
 
-                if (variant.name.contains("QaRelease")){
-                    assembleTaskAliasName = "qaRelease"
-                } else if (variant.name.contains("ProductionRelease")){
-                    assembleTaskAliasName = "productionRelease"
+                // Multiple flavor dimensions not supported by App Center yet.
+                // Workaround is, from App Center's perspective, "debug" would mean QA release,
+                // while "release" would mean Production release.
+                // Only provider dimension will be handled on App Center.
+                // Code to be removed once App Center implements a proper solution: https://github.com/microsoft/appcenter/issues/32
+                switch (variant.name) {
+                    case "googleDebug":
+                        assembleTaskAliasName = "googleQaRelease"
+                    case "googleRelease":
+                        assembleTaskAliasName = "googleProductionRelease"
+                    case "huaweiDebug":
+                        assembleTaskAliasName = "huaweiQaRelease"
+                    case "huaweiRelease":
+                        assembleTaskAliasName = "huaweiProductionRelease"
+                    default:
+                        break
                 }
 
                 println("Creating alias $assembleTaskAliasName for $assembleTaskAliasVariant")
