@@ -157,8 +157,10 @@ android {
     if(isAppCenter){
         def assembleTaskAliasName = "" // whatever "build variant" you are able to select in the Build Configuration web GUI
         def assembleTaskAliasVariant = System.env.ANDROID_PRODUCT_FLAVOR.toString() // an actual flavor (can contain multiple dimensions)
+        println("assembleTaskAliasVariant: $assembleTaskAliasVariant")
 
         applicationVariants.all { variant ->
+            println("applicationVariants.all - variant.name: ${variant.name}")
             if (variant.name == assembleTaskAliasVariant) {
 
                 // Multiple flavor dimensions not supported by App Center yet.
@@ -178,6 +180,12 @@ android {
                     default:
                         break
                 }
+
+//                if (variant.name.contains("QaRelease")){
+//                    assembleTaskAliasName = "qaRelease"
+//                } else if (variant.name.contains("ProductionRelease")){
+//                    assembleTaskAliasName = "productionRelease"
+//                }
 
                 println("Creating alias $assembleTaskAliasName for $assembleTaskAliasVariant")
                 def aliasTaskName = "assemble${assembleTaskAliasName.capitalize()}"
