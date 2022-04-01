@@ -5,6 +5,9 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.DynamicBanner;
 
 public class ProductView {
 
@@ -29,5 +32,14 @@ public class ProductView {
     @SerializedName("history")
     @Expose
     public RefinementHistory history;
+    @SerializedName("isBanners")
+    @Expose
+    public Boolean isBanners;
+    @SerializedName("pageHeading")
+    @Expose
+    public String pageHeading;
+    @SerializedName("dynamicBanners")
+    @Expose
+    public List<DynamicBanner> dynamicBanners;
 
 }
