@@ -420,7 +420,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         vehicleColour = whoIsCollectingDetails?.vehicleColor ?: ""
         vehicleRegistration = whoIsCollectingDetails?.vehicleRegistration ?: ""
         taxiOpted = whoIsCollectingDetails?.isMyVehicle != true
-        deliveryType = Delivery.CNC.toString()
+        deliveryType = Delivery.CNC.name
         address = ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
     }
 
@@ -824,7 +824,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         foodDeliverySlotId = selectedTimeSlot?.slotId
         otherDeliverySlotId = ""
         oddDeliverySlotId = ""
-        foodDeliveryStartHour = selectedTimeSlot?.hourFrom?.toLong() ?: 0
+        foodDeliveryStartHour = selectedTimeSlot?.intHourFrom?.toLong() ?: 0
         otherDeliveryStartHour = 0
         substituesAllowed = selectedFoodSubstitution.rgb
         plasticBags = switchNeedBags?.isChecked ?: false

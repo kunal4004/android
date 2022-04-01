@@ -993,7 +993,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             selectedAddress.savedAddress.latitude?.toString(),
             selectedAddress.savedAddress.longitude?.toString(),
             selectedAddress.savedAddress.placesId ?: "",
-            selectedDeliveryAddressType.toString()
+            selectedDeliveryAddressType.toString(),
+            true
         )
     }
 
