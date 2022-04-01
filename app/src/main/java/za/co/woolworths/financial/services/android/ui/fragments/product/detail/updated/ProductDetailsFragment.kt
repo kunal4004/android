@@ -972,6 +972,17 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             onlinePromotionalTextView3?.text = Html.fromHtml(editedPromotionalText)
                         }
                     }
+                    val arguments = HashMap<String, String>()
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_ID] = productDetails?.productId
+                            ?: ""
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_NAME] = productDetails?.productName
+                            ?: ""
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_PRICE] = productDetails?.price
+                            ?: ""
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CREATIVE_NAME] = FirebaseManagerAnalyticsProperties.PropertyValues.CREATIVE_NAME_VALUE
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.PROMOTION_NAME] = Html.fromHtml(editedPromotionalText).toString()
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.INDEX] = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SELECT_PROMOTION, arguments, activity)
                 }
             } else {
                 onlinePromotionalTextView1?.text = ""
@@ -1382,6 +1393,20 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             intent)
                     }
                 }
+                val arguments = HashMap<String, String>()
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_ID] = productDetails?.productId?: ""
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CURRENCY] = FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_NAME] = productDetails?.productName?: ""
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.COUPON] = " "
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.DISCOUNT] = " "
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.INDEX] = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.AFFILIATION] = FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_BRAND] = productDetails?.brandText?: ""
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_CATEGORY] = productDetails?.categoryName?: ""
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_VARIANT] = productDetails?.colourSizeVariants?: ""
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_PRICE] = productDetails?.price?: ""
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CART_TOTAL_VALUE] = " "
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ADD_TO_CART_PDP,arguments, activity)
             }
         }
     }
@@ -1422,6 +1447,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 scrollView?.fullScroll(View.FOCUS_UP)
                 NavigateToShoppingList.openShoppingList(activity, listOfItems, "", false)
             }
+            val arguments = HashMap<String, String>()
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CURRENCY] = FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_VALUE] = productDetails?.price?: ""
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ADD_TO_WISHLIST,arguments, activity)
 
         } else {
             // Select size to continue

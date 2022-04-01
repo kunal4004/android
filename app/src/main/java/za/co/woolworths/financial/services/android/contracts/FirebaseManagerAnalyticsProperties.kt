@@ -363,6 +363,12 @@ open class FirebaseManagerAnalyticsProperties {
         const val VIEW_ITEM_EVENT: String = "view_item"
         const val SELECT_ITEM_EVENT: String = "select_item"
         const val BEGIN_CHECKOUT_CONFIRM: String = "begin_checkout"
+        const val ADD_TO_CART_PDP: String = "add_to_cart"
+        const val VIEW_CART: String = "view_cart"
+        const val ADD_TO_WISHLIST: String = "add_to_wish_list"
+        const val VIEW_PROMOTION: String = "view_promotion"
+        const val SELECT_PROMOTION: String = "select_promotion"
+
     }
 
     class PropertyNames {
@@ -437,6 +443,22 @@ open class FirebaseManagerAnalyticsProperties {
             const val ITEM_LIST_NAME = "item_list_name"
             const val ITEM_BRAND = "item_brand"
             const val ORDER_TOTAL_VALUE = "order_total"
+
+            const val ITEM_ID = "item_id"
+            const val ITEM_NAME = "item_name"
+            const val COUPON = "coupon"
+            const val DISCOUNT = "DISCOUNT"
+            const val INDEX = "index"
+            const val AFFILIATION = "affiliation"
+            const val ITEM_VARIANT = "item_variant"
+            const val ITEM_CATEGORY = "item_category"
+            const val ITEM_PRICE = "price"
+            const val CART_TOTAL_VALUE = "cart_total_value"
+            const val CART_ORDER_TOTAL = "total_value"
+            const val ITEM_VALUE = "item_value"
+            const val CREATIVE_NAME = "creative_name"
+            const val PROMOTION_NAME = "promotion_name"
+
         }
     }
 
@@ -508,6 +530,9 @@ open class FirebaseManagerAnalyticsProperties {
                 "Customer confirms their added Click & Collect details"
 
             const val CURRENCY_VALUE: String = "ZAR"
+            const val INDEX_VALUE: String = "1"
+            const val AFFILIATION_VALUE: String = "WWOneApp"
+            const val CREATIVE_NAME_VALUE: String = "Product List"
 
         }
     }
