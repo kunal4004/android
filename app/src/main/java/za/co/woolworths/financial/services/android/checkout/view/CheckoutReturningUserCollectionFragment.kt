@@ -65,6 +65,7 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.removeRandFromAmount
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.regex.Pattern
@@ -564,13 +565,6 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             )
         }
         return sameSelection
-    }
-
-    private fun removeRandFromAmount(amount: String): String {
-        if (amount.contains("R")) {
-            return amount.substring(1)
-        }
-        return amount
     }
 
     private fun clearSelectedTimeSlot() {
