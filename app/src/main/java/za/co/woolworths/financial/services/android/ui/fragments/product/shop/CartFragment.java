@@ -1050,6 +1050,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 } catch (Exception ex) {
                     FirebaseManager.Companion.logException(ex);
                 }
+                Map<String, String> arguments = new HashMap<>();
+                arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE);
+                arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_VALUE, String.valueOf(commerceItem.getPriceInfo().amount));
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.REMOVE_FROM_CART, arguments, getActivity());
             }
 
             @Override

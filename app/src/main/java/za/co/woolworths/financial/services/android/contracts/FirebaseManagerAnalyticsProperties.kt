@@ -368,6 +368,8 @@ open class FirebaseManagerAnalyticsProperties {
         const val ADD_TO_WISHLIST: String = "add_to_wish_list"
         const val VIEW_PROMOTION: String = "view_promotion"
         const val SELECT_PROMOTION: String = "select_promotion"
+        const val IN_STORE_AVAILABILITY: String ="in_store_availability"
+        const val REMOVE_FROM_CART: String = "remove_from_cart"
 
     }
 

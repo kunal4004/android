@@ -1634,7 +1634,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         getSelectedSku()?.let {
             startLocationUpdates()
         }
-
+        val arguments = HashMap<String, String>()
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_ID] = productDetails?.productId
+                ?: ""
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_NAME] = productDetails?.productName
+                ?: ""
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.IN_STORE_AVAILABILITY, arguments, activity)
     }
 
 
