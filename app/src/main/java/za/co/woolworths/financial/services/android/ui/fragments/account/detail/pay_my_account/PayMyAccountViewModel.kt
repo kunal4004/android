@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.BeginPayMyAccountJourneyActionImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.PMATrackFirebaseEvent
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.PayMyAccountPresenter
+import za.co.woolworths.financial.services.android.util.eliteplan.ElitePlanModel
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.wenum.PMAVendorCardEnum
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
@@ -43,6 +44,7 @@ class PayMyAccountViewModel : ViewModel() {
     var isAddNewCardFormLoaded = false
     var mSelectExpiredPaymentMethod : GetPaymentMethod? = null
     var isQueryPayUPaymentMethodComplete :Boolean = false
+    var elitePlanModel : ElitePlanModel? = null
 
     var pmaCardPopupModel: MutableLiveData<PMACardPopupModel?> = MutableLiveData()
     var queryPaymentMethod: MutableLiveData<Boolean> = MutableLiveData()
@@ -240,6 +242,13 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun getCurrentBalance(): String? {
         return getAccount()?.currentBalance?.let { formatAndRemoveNegativeSymbol(it) }?.replace("R  ","R ")
+    }
+
+    fun getSavedAmount(): String? {
+        return  "R " + elitePlanModel?.discountAmount
+    }
+    fun getDiscountAmount(): String? {
+        return  "R " + elitePlanModel?.settlementAmount
     }
 
     private fun formatAndRemoveNegativeSymbol(amount: Int): String? {
