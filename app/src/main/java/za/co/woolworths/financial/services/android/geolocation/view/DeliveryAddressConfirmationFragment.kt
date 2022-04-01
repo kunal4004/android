@@ -86,7 +86,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     private var isComingFromCheckout: Boolean = false
     private var latitude: String? = null
     private var longitude: String? = null
-    private  var validateLocationResponse: ValidateLocationResponse? = null
+    private var validateLocationResponse: ValidateLocationResponse? = null
     private var deliveryType: String? = STANDARD_DELIVERY
     private var mStoreName: String? = null
     private var mStoreId: String? = null
@@ -94,6 +94,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     private var defaultAddress: Address? = null
     private var savedAddressResponse: SavedAddressResponse? = null
     private var whoIsCollecting: WhoIsCollectingDetails? = null
+
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
 
@@ -127,14 +128,17 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     Gson().fromJson(it, object : TypeToken<WhoIsCollectingDetails>() {}.type)
             }
             if (this.containsKey(DEFAULT_ADDRESS)
-                &&  this.getSerializable(DEFAULT_ADDRESS) != null) {
+                && this.getSerializable(DEFAULT_ADDRESS) != null
+            ) {
                 defaultAddress =
                     this.getSerializable(DEFAULT_ADDRESS) as Address
             }
 
             if (bundle?.containsKey(SAVED_ADDRESS_RESPONSE) == true
-                && this.getSerializable(SAVED_ADDRESS_RESPONSE) != null) {
-                savedAddressResponse =  this.getSerializable(SAVED_ADDRESS_RESPONSE) as SavedAddressResponse
+                && this.getSerializable(SAVED_ADDRESS_RESPONSE) != null
+            ) {
+                savedAddressResponse =
+                    this.getSerializable(SAVED_ADDRESS_RESPONSE) as SavedAddressResponse
             }
         }
     }
@@ -221,143 +225,146 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     private fun sendConfirmLocation() {
 
-      if (validateLocationResponse?.validatePlace?.unSellableCommerceItems?.isEmpty() == false) {
+        if (validateLocationResponse?.validatePlace?.unSellableCommerceItems?.isEmpty() == false) {
             // show unsellable items
-          validateLocationResponse?.validatePlace?.unSellableCommerceItems?.let {
-              navigateToUnsellableItemsFragment(it)
-              if (isUnSellableItemsRemoved == false) {
-                  return
-              }
-          }
-      } else {
-          if (placeId == null) {
-              return
-          }
-          val confirmLocationAddress = ConfirmLocationAddress(placeId)
-          var confirmLocationRequest = ConfirmLocationRequest("", confirmLocationAddress, "")
-          if (deliveryType.equals(Delivery.STANDARD.toString())) {
-              confirmLocationRequest =
-                  ConfirmLocationRequest(STANDARD, confirmLocationAddress)
-          }
-          if (deliveryType.equals(Delivery.CNC.toString())) {
-              confirmLocationRequest =
-                  ConfirmLocationRequest(CNC, confirmLocationAddress, mStoreId)
-          }
+            validateLocationResponse?.validatePlace?.unSellableCommerceItems?.let {
+                navigateToUnsellableItemsFragment(it)
+                if (isUnSellableItemsRemoved == false) {
+                    return
+                }
+            }
+        } else {
+            if (placeId == null) {
+                return
+            }
+            val confirmLocationAddress = ConfirmLocationAddress(placeId)
+            var confirmLocationRequest = ConfirmLocationRequest("", confirmLocationAddress, "")
+            if (deliveryType.equals(Delivery.STANDARD.toString())) {
+                confirmLocationRequest =
+                    ConfirmLocationRequest(STANDARD, confirmLocationAddress)
+            }
+            if (deliveryType.equals(Delivery.CNC.toString())) {
+                confirmLocationRequest =
+                    ConfirmLocationRequest(CNC, confirmLocationAddress, mStoreId)
+            }
 
-          lifecycleScope.launch {
-              progressBar?.visibility = View.VISIBLE
-              try {
-                  val confirmLocationResponse =
-                      confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
-                  progressBar?.visibility = View.GONE
-                  if (confirmLocationResponse != null) {
-                      when (confirmLocationResponse.httpCode) {
-                          HTTP_OK -> {
-                              // save details in cache
-                              if (SessionUtilities.getInstance().isUserAuthenticated) {
-                                  Utils.savePreferredDeliveryLocation(
-                                      ShoppingDeliveryLocation(
-                                          confirmLocationResponse.orderSummary?.fulfillmentDetails
-                                      )
-                                  )
-                                  if (KotlinUtils.getAnonymousUserLocationDetails() != null)
-                                      KotlinUtils.clearAnonymousUserLocationDetails()
-                              } else {
-                                  KotlinUtils.saveAnonymousUserLocationDetails(
-                                      ShoppingDeliveryLocation(
-                                          confirmLocationResponse.orderSummary?.fulfillmentDetails
-                                      )
-                                  )
-                              }
+            lifecycleScope.launch {
+                progressBar?.visibility = View.VISIBLE
+                try {
+                    val confirmLocationResponse =
+                        confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
+                    progressBar?.visibility = View.GONE
+                    if (confirmLocationResponse != null) {
+                        when (confirmLocationResponse.httpCode) {
+                            HTTP_OK -> {
+                                // save details in cache
+                                if (SessionUtilities.getInstance().isUserAuthenticated) {
+                                    Utils.savePreferredDeliveryLocation(
+                                        ShoppingDeliveryLocation(
+                                            confirmLocationResponse.orderSummary?.fulfillmentDetails
+                                        )
+                                    )
+                                    if (KotlinUtils.getAnonymousUserLocationDetails() != null)
+                                        KotlinUtils.clearAnonymousUserLocationDetails()
+                                } else {
+                                    KotlinUtils.saveAnonymousUserLocationDetails(
+                                        ShoppingDeliveryLocation(
+                                            confirmLocationResponse.orderSummary?.fulfillmentDetails
+                                        )
+                                    )
+                                }
 
-                            savedAddressResponse?.defaultAddressNickname = defaultAddress?.nickname
+                                savedAddressResponse?.defaultAddressNickname =
+                                    defaultAddress?.nickname
 
-                              if (deliveryType == Delivery.STANDARD.toString()) {
-                                  Utils.triggerFireBaseEvents(
-                                      FirebaseManagerAnalyticsProperties.SHOP_STANDARD_CONFIRM,
-                                      hashMapOf(
-                                          FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                                  FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_STANDARD_CONFIRM
-                                      ),
-                                      activity)
-
-                              } else {
-
-                              }
-
-                            if (isComingFromCheckout) {
                                 if (deliveryType == Delivery.STANDARD.toString()) {
-                                    if (isComingFromSlotSelection) {
-                                        /*Naviagate to slot selection page with updated saved address*/
+                                    Utils.triggerFireBaseEvents(
+                                        FirebaseManagerAnalyticsProperties.SHOP_STANDARD_CONFIRM,
+                                        hashMapOf(
+                                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_STANDARD_CONFIRM
+                                        ),
+                                        activity)
 
-                                        val checkoutActivityIntent = Intent(
-                                            activity,
-                                            CheckoutActivity::class.java
-                                        )
-                                        checkoutActivityIntent.putExtra(
-                                            CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
-                                            savedAddressResponse
-                                        )
-                                        checkoutActivityIntent.putExtra(
-                                            CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION,
-                                            true
-                                        )
-                                        activity?.apply {
-                                            startActivityForResult(
-                                                checkoutActivityIntent,
-                                                FULLFILLMENT_REQUEST_CODE
+                                } else {
+
+                                }
+
+                                if (isComingFromCheckout) {
+                                    if (deliveryType == Delivery.STANDARD.toString()) {
+                                        if (isComingFromSlotSelection) {
+                                            /*Navigate to slot selection page with updated saved address*/
+
+                                            val checkoutActivityIntent = Intent(
+                                                activity,
+                                                CheckoutActivity::class.java
                                             )
-
-                                            overridePendingTransition(
-                                                R.anim.slide_from_right,
-                                                R.anim.slide_out_to_left
+                                            checkoutActivityIntent.putExtra(
+                                                CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
+                                                savedAddressResponse
                                             )
+                                            checkoutActivityIntent.putExtra(
+                                                CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION,
+                                                true
+                                            )
+                                            activity?.apply {
+                                                startActivityForResult(
+                                                    checkoutActivityIntent,
+                                                    FULLFILLMENT_REQUEST_CODE
+                                                )
 
+                                                overridePendingTransition(
+                                                    R.anim.slide_from_right,
+                                                    R.anim.slide_out_to_left
+                                                )
+
+                                            }
+                                            activity?.finish()
                                         }
-                                        activity?.finish()
-                                    }
-                                } else if (isComingFromSlotSelection) {
-                                        if (whoIsCollecting!=null) {
+                                    } else if (isComingFromSlotSelection) {
+                                        if (whoIsCollecting != null) {
                                             StorePickupInfoBody().apply {
                                                 firstName = whoIsCollecting?.recipientName
                                                 primaryContactNo = whoIsCollecting?.phoneNumber
                                                 storeId = mStoreId
                                                 vehicleModel = whoIsCollecting?.vehicleModel ?: ""
                                                 vehicleColour = whoIsCollecting?.vehicleColor ?: ""
-                                                vehicleRegistration = whoIsCollecting?.vehicleRegistration ?: ""
+                                                vehicleRegistration =
+                                                    whoIsCollecting?.vehicleRegistration ?: ""
                                                 taxiOpted = whoIsCollecting?.isMyVehicle != true
                                                 deliveryType = Delivery.CNC.toString()
-                                                address = ConfirmLocationAddress(validateLocationResponse?.validatePlace?.placeDetails?.placeId)
+                                                address =
+                                                    ConfirmLocationAddress(validateLocationResponse?.validatePlace?.placeDetails?.placeId)
                                             }
                                             startCheckoutActivity(Utils.toJson(whoIsCollecting))
                                         } else {
-                                                // Navaigate to who is collecting
+                                            // Navigate to who is collecting
                                             bundle?.putBoolean(
-                                               IS_COMING_FROM_CNC_SELETION, true)
+                                                IS_COMING_FROM_CNC_SELETION, true)
                                             findNavController().navigate(
                                                 R.id.action_deliveryAddressConfirmationFragment_to_geoCheckoutCollectingFragment,
-                                            bundleOf(BUNDLE to bundle))
+                                                bundleOf(BUNDLE to bundle))
 
                                         }
                                     }
 
-                            } else {
-                                // navigate to shop/list/cart tab
-                                activity?.setResult(Activity.RESULT_OK)
-                                activity?.finish()
+                                } else {
+                                    // navigate to shop/list/cart tab
+                                    activity?.setResult(Activity.RESULT_OK)
+                                    activity?.finish()
+                                }
                             }
-                          }
-                      }
-                  }
-              } catch (e: HttpException) {
-                  e.printStackTrace()
-                  progressBar?.visibility = View.GONE
-                  // navigate to shop tab with error sceanario
-                  activity?.setResult(REQUEST_CODE)
-                  activity?.finish()
-              }
-          }
-      }
+                        }
+                    }
+                } catch (e: HttpException) {
+                    e.printStackTrace()
+                    progressBar?.visibility = View.GONE
+                    // navigate to shop tab with error scenario
+                    activity?.setResult(REQUEST_CODE)
+                    activity?.finish()
+                }
+            }
+        }
     }
 
     private fun startCheckoutActivity(toJson: String) {
@@ -412,26 +419,27 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         geoCollectTab?.setOnClickListener(this)
         geoDeliveryTab?.isEnabled = true
         geoCollectTab?.isEnabled = true
-        StoreLiveData.observe(viewLifecycleOwner,{
-            geoDeliveryText?.text = HtmlCompat.fromHtml(getString(R.string.collecting_from_geo,it?.storeName), HtmlCompat.FROM_HTML_MODE_LEGACY)
+        StoreLiveData.observe(viewLifecycleOwner) {
+            geoDeliveryText?.text =
+                HtmlCompat.fromHtml(getString(R.string.collecting_from_geo, it?.storeName),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY)
             editDelivery?.text = bindString(R.string.edit)
             btnConfirmAddress?.isEnabled = true
-            btnConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
+            btnConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireContext(),
+                R.color.black))
             mStoreName = it?.storeName.toString()
             mStoreId = it?.storeId.toString()
-            itemLimitValue?.text  = it?.quantityLimit?.foodMaximumQuantity.toString()
-        })
+        }
         isUnSellableItemsRemoved()
         placeId?.let {
-            if (confirmAddressViewModel.isConnectedToInternet(requireActivity())){
+            if (confirmAddressViewModel.isConnectedToInternet(requireActivity())) {
                 getDeliveryDetailsFromValidateLocation(it)
                 connectionLayout?.no_connection_layout?.visibility = View.GONE
-            }
-            else {
+            } else {
                 connectionLayout?.no_connection_layout?.visibility = View.VISIBLE
+            }
         }
-        }
-        no_connection_layout?.btnRetry?.setOnClickListener{
+        no_connection_layout?.btnRetry?.setOnClickListener {
             initView()
         }
     }
@@ -450,9 +458,11 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         geoDeliveryTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
         geoCollectTab?.setBackgroundResource(R.drawable.bg_geo_unselected_tab)
         geoCollectTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_444444))
-        deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.img_delivery_truck))
+        deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
+            R.drawable.img_delivery_truck))
         btnConfirmAddress?.isEnabled = true
-        btnConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
+        btnConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireContext(),
+            R.color.black))
         editDelivery?.text = getString(R.string.edit)
         changeFulfillmentTitleTextView?.text = bindString(R.string.standard_delivery)
         changeFulfillmentSubTitleTextView?.text = bindString(R.string.standard_delivery_title_text)
@@ -472,7 +482,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         geoCollectTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
         geoDeliveryTab?.setBackgroundResource(R.drawable.bg_geo_unselected_tab)
         geoDeliveryTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_444444))
-        deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.img_collection_bag))
+        deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
+            R.drawable.img_collection_bag))
         changeFulfillmentTitleTextView?.text = bindString(R.string.click_and_collect)
         changeFulfillmentSubTitleTextView?.text = bindString(R.string.click_and_collect_title_text)
         updateCollectionDetails()
@@ -516,20 +527,19 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         if (validateLocationResponse?.validatePlace?.deliverable == false) {
             no_loc_layout?.visibility = View.VISIBLE
             geoDeliveryView?.visibility = View.GONE
-            no_loc_layout?.txt_no_loc_title?.text  = getString(R.string.no_location_delivery)
-            no_loc_layout?.img_no_loc?.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.ic_delivery_truck))
+            no_loc_layout?.txt_no_loc_title?.text = getString(R.string.no_location_delivery)
+            no_loc_layout?.img_no_loc?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
+                R.drawable.ic_delivery_truck))
             no_loc_layout?.btn_no_loc_change_location?.setOnClickListener(this)
             return
         }
         geoDeliveryView?.visibility = View.VISIBLE
-        geoDeliveryText?.text = HtmlCompat.fromHtml(getString(R.string.delivering_to_geo,validateLocationResponse?.validatePlace?.placeDetails?.address1), HtmlCompat.FROM_HTML_MODE_LEGACY)
+        geoDeliveryText?.text = HtmlCompat.fromHtml(getString(R.string.delivering_to_geo,
+            validateLocationResponse?.validatePlace?.placeDetails?.address1),
+            HtmlCompat.FROM_HTML_MODE_LEGACY)
         imgDelIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
             R.drawable.ic_delivery_geo))
-        setProductStatus()
 
-        feeLabel?.visibility = View.GONE
-        feeValue?.visibility = View.GONE
-        feeValue?.text = ""
         val earliestFoodDate =
             validateLocationResponse?.validatePlace?.firstAvailableFoodDeliveryDate
         if (earliestFoodDate.isNullOrEmpty()) {
@@ -553,33 +563,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             earliestFashionDeliveryDateLabel?.visibility = View.VISIBLE
             earliestFashionDeliveryDateValue?.visibility = View.VISIBLE
         }
-        itemLimitValue?.text = bindString(R.string.unlimited)
 
-    }
-
-    private fun setProductStatus() {
-        productsAvailableValue?.apply {
-            if (deliveryType == Delivery.STANDARD.toString()) {
-                validateLocationResponse?.validatePlace?.let {
-                    when {
-                        !it.firstAvailableFoodDeliveryDate.isNullOrEmpty()
-                                && it.firstAvailableOtherDeliveryDate.isNullOrEmpty() -> {
-                            this.text = getString(R.string.food)
-
-                        }
-                        it.firstAvailableFoodDeliveryDate.isNullOrEmpty()
-                                && !it.firstAvailableOtherDeliveryDate.isNullOrEmpty() -> {
-                            this.text = getString(R.string.fashion_beauty_geo)
-                        }
-                        else -> {
-                            this.text = getString(R.string.all)
-                        }
-                    }
-                }
-            } else {
-                this.text = getString(R.string.food)
-            }
-        }
     }
 
     private fun updateCollectionDetails() {
@@ -588,7 +572,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             no_conn_layout?.visibility = View.VISIBLE
             geoDeliveryView?.visibility = View.GONE
             no_loc_layout?.visibility = View.GONE
-            no_loc_layout?.txt_no_loc_title?.text  = getString(R.string.no_location_collection)
+            no_loc_layout?.txt_no_loc_title?.text = getString(R.string.no_location_collection)
             geoCollectTab?.visibility = View.GONE
             geoDeliveryTab?.visibility = View.GONE
             no_conn_layout?.img_close?.setOnClickListener(this)
@@ -598,7 +582,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
         if (validateLocationResponse?.validatePlace?.deliverable == false) {
             no_loc_layout?.visibility = View.VISIBLE
-            no_loc_layout?.txt_no_loc_title?.text  = getString(R.string.no_location_collection)
+            no_loc_layout?.txt_no_loc_title?.text = getString(R.string.no_location_collection)
             geoDeliveryView?.visibility = View.GONE
             no_loc_layout?.img_no_loc?.setImageDrawable(
                 ContextCompat.getDrawable(
@@ -611,11 +595,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         }
 
         geoDeliveryView?.visibility = View.VISIBLE
-        imgDelIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.ic_basket))
-        setProductStatus()
-        feeLabel?.visibility = View.GONE
-        feeValue?.visibility = View.GONE
-        feeValue?.text = ""
+        imgDelIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
+            R.drawable.ic_basket))
         setGeoDeliveryTextForCnc()
 
         val earliestFoodDate =
@@ -630,7 +611,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         }
         earliestFashionDeliveryDateLabel?.visibility = View.GONE
         earliestFashionDeliveryDateValue?.visibility = View.GONE
-        itemLimitValue?.text = getNearestStoreItemLimit(validateLocationResponse?.validatePlace?.stores)
     }
 
     private fun setGeoDeliveryTextForCnc() {
@@ -674,7 +654,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     private fun whereToCollect() {
         geoDeliveryText?.text = HtmlCompat.fromHtml(
-            getString(R.string.collecting_from_geo, getNearestStore(validateLocationResponse?.validatePlace?.stores)),
+            getString(R.string.collecting_from_geo,
+                getNearestStore(validateLocationResponse?.validatePlace?.stores)),
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
         mStoreId = getNearestStoreId(validateLocationResponse?.validatePlace?.stores)
@@ -709,16 +690,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         return shortestDistance?.storeId
     }
 
-    private fun getNearestStoreItemLimit(stores: List<Store>?): String? {
-        var shortestDistance: Store? = null
-        if (!stores.isNullOrEmpty()) {
-            shortestDistance = stores.minByOrNull {
-                it.distance!!
-            }
-        }
-        return shortestDistance?.quantityLimit?.foodMaximumQuantity.toString()
-    }
-
     override fun onStop() {
         super.onStop()
         StoreLiveData.value?.storeName = null
@@ -736,23 +707,23 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
      * @see [UnSellableCommerceItem]
      */
     private fun navigateToUnsellableItemsFragment(
-        unSellableCommerceItems: MutableList<UnSellableCommerceItem>
+        unSellableCommerceItems: MutableList<UnSellableCommerceItem>,
     ) {
         findNavController()?.navigate(
             R.id.action_deliveryAddressConfirmationFragment_to_geoUnsellableItemsFragment,
             bundleOf(
                 UnsellableItemsFragment.KEY_ARGS_BUNDLE to bundleOf(
-                    UnsellableItemsFragment.KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS to Utils.toJson(unSellableCommerceItems),
+                    UnsellableItemsFragment.KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS to Utils.toJson(
+                        unSellableCommerceItems),
                 )
             )
         )
     }
 
     private fun isUnSellableItemsRemoved() {
-        UnSellableItemsLiveData.observe(viewLifecycleOwner, {
+        UnSellableItemsLiveData.observe(viewLifecycleOwner) {
             isUnSellableItemsRemoved = it
-         }
-        )
+        }
     }
 
     private fun showErrorDialog() {
@@ -770,7 +741,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     override fun tryAgain() {
-       initView()
+        initView()
     }
 }
 

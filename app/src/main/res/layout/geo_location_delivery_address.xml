@@ -155,12 +155,12 @@
         android:id="@+id/no_conn_layout"
         layout="@layout/no_collection_store_fragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
+        app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toTopOf="@id/guidelineTop" />
+        app:layout_constraintTop_toBottomOf="@id/geoDashTab" />
 
 
     <include
@@ -169,10 +169,10 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/zero_dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
+        app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toTopOf="@id/guidelineTop" />
+        app:layout_constraintTop_toBottomOf="@id/geoDashTab" />
 
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -296,98 +296,6 @@
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toEndOf="@id/earliestDeliveryDateLabel" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/feeLabel"
-        style="@style/myriad_pro_regular"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/_2sdp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:minWidth="@dimen/_55sdp"
-        android:text="@string/geo_delivery_fee"
-        android:textColor="@color/color_666666"
-        android:textSize="@dimen/_13ssp"
-        app:layout_constraintBottom_toTopOf="@id/earliestDeliveryDateLabel"
-        app:layout_constraintEnd_toStartOf="@+id/feeValue"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/feeValue"
-        style="@style/myriad_pro_semi_bold"
-        android:layout_marginStart="@dimen/_10sdp"
-        android:layout_marginBottom="@dimen/_2sdp"
-        android:ellipsize="end"
-        android:gravity="end"
-        android:maxLines="1"
-        android:textColor="@color/black"
-        android:textSize="@dimen/_12ssp"
-        app:layout_constraintBottom_toTopOf="@id/earliestDeliveryDateLabel"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toEndOf="@id/feeLabel" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/itemLimitLabel"
-        style="@style/myriad_pro_regular"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/_2sdp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:minWidth="@dimen/_55sdp"
-        android:text="@string/item_limit"
-        android:textColor="@color/color_666666"
-        android:textSize="@dimen/_13ssp"
-        app:layout_constraintBottom_toTopOf="@id/feeLabel"
-        app:layout_constraintEnd_toStartOf="@+id/itemLimitValue"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/itemLimitValue"
-        style="@style/myriad_pro_semi_bold"
-        android:layout_marginStart="@dimen/_10sdp"
-        android:layout_marginBottom="@dimen/_2sdp"
-        android:ellipsize="end"
-        android:gravity="end"
-        android:maxLines="1"
-        android:textColor="@color/black"
-        android:textSize="@dimen/_12ssp"
-        app:layout_constraintBottom_toTopOf="@id/feeLabel"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toEndOf="@id/itemLimitLabel" />
-
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/productsAvailableTitle"
-        style="@style/myriad_pro_regular"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/_2sdp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:minWidth="@dimen/_55sdp"
-        android:text="@string/products_available_title"
-        android:textColor="@color/color_666666"
-        android:textSize="@dimen/_13ssp"
-        app:layout_constraintBottom_toTopOf="@id/itemLimitLabel"
-        app:layout_constraintEnd_toStartOf="@+id/productsAvailableValue"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/productsAvailableValue"
-        style="@style/myriad_pro_semi_bold"
-        android:layout_marginStart="@dimen/_10sdp"
-        android:layout_marginBottom="@dimen/_2sdp"
-        android:ellipsize="end"
-        android:gravity="end"
-        android:maxLines="1"
-        android:textColor="@color/black"
-        android:textSize="@dimen/_12ssp"
-        app:layout_constraintBottom_toTopOf="@id/itemLimitLabel"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toEndOf="@id/productsAvailableTitle" />
-
-
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyle"
@@ -408,9 +316,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
-        app:constraint_referenced_ids="btnConfirmAddress,productsAvailableValue,
-        productsAvailableTitle,itemLimitValue,itemLimitLabel,
-        feeValue,feeLabel,earliestDeliveryDateValue,
+        app:constraint_referenced_ids="btnConfirmAddress,earliestDeliveryDateValue,
         earliestDeliveryDateLabel,earliestFashionDeliveryDateValue,
         earliestFashionDeliveryDateLabel,btnConfirmAddress,geoDivider,
         editDelivery,imgDelIcon,geoDeliveryText,txtNewFeature,txtNewFeatureCnC" />
