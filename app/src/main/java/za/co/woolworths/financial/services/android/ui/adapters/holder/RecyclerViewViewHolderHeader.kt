@@ -34,6 +34,7 @@ class RecyclerViewViewHolderHeader(parent: ViewGroup) : RecyclerViewViewHolder(
                 itemView.chanel_logo_header?.visibility = View.VISIBLE
                 itemView.chanel_logo_header?.tv_logo_name?.text = mBannerLabel
                 itemView.chanel_logo_header?.setOnClickListener {
+
                     navigator?.openBrandLandingPage()
                 }
             } else {
