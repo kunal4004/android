@@ -4,6 +4,7 @@ data class ProductsRequestParams(var searchTerm: String, var searchType: SearchT
 
     var refinement: String = ""
     var sortOption: String = ""
+    var filterContent: Boolean = false
 
 
     enum class ResponseType(val value: String) {
