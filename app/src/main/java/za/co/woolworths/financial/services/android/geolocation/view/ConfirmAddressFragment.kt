@@ -145,7 +145,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             tvConfirmAddress?.visibility = View.GONE
         }
         setButtonUI(false)
-        noAddressConnectionLayout?.no_connection_layout?.btnRetry?.setOnClickListener {
+        noAddressConnectionLayout?.no_connection_layout?.btnRetryConnection?.setOnClickListener {
             initViews()
         }
 

@@ -10,8 +10,7 @@
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize"
         android:background="@color/recent_search_bg"
-        android:gravity="center"
-        android:visibility="gone">
+        android:gravity="center">
 
         <ImageView
             android:id="@+id/imgNoConnection"
@@ -73,7 +72,7 @@
             app:WTextView_font="myriadpro_regular" />
 
         <za.co.woolworths.financial.services.android.ui.views.WButton
-            android:id="@+id/btnRetry"
+            android:id="@+id/btnRetryConnection"
             style="@style/whiteButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="50dp"
