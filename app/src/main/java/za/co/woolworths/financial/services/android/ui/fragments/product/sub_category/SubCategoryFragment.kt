@@ -184,6 +184,9 @@ class SubCategoryFragment :
 
     override fun onChildItemClicked(subCategory: SubCategory) {
         //Navigate to product grid
+        val arguments = HashMap<String, String>()
+        if (subCategory.categoryName == "Promotions") arguments[FirebaseManagerAnalyticsProperties.PropertyNames.PROMOTION_NAME] = subCategory.getCategoryName()
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VIEW_PROMOTION,arguments, activity)
         pushFragment(
             newInstance(
                 ProductsRequestParams.SearchType.NAVIGATE,

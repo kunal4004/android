@@ -370,6 +370,8 @@ open class FirebaseManagerAnalyticsProperties {
         const val SELECT_PROMOTION: String = "select_promotion"
         const val IN_STORE_AVAILABILITY: String ="in_store_availability"
         const val REMOVE_FROM_CART: String = "remove_from_cart"
+        const val SEARCH: String = "search"
+        const val SHARE: String = "share"
 
     }
 
@@ -460,6 +462,9 @@ open class FirebaseManagerAnalyticsProperties {
             const val ITEM_VALUE = "item_value"
             const val CREATIVE_NAME = "creative_name"
             const val PROMOTION_NAME = "promotion_name"
+            const val SEARCH_TERM = "search_term"
+            const val SEARCH_TYPE = "search_type"
+            const val CONTENT_TYPE = "content_type"
 
         }
     }

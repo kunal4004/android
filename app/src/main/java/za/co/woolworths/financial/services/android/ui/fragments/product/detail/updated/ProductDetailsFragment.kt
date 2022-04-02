@@ -2282,6 +2282,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 putExtra(Intent.EXTRA_TEXT, message)
             }
             startActivity(shareIntent)
+            val arguments = HashMap<String, String>()
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_ID] =  productDetails?.productId
+                    ?: ""
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CONTENT_TYPE] = message
+
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHARE, arguments, activity)
         }
     }
 
