@@ -439,7 +439,11 @@ class PayMyAccountViewModel : ViewModel() {
     fun resetAmountEnteredToDefault() {
         val card = getCardDetail()
         if (isAccountChargedOff()) {
-            card?.amountEntered = getCurrentBalance()
+            if (elitePlanModel !=null ){
+                card?.amountEntered = elitePlanModel!!.settlementAmount
+            }else{
+                card?.amountEntered = getCurrentBalance()
+            }
         } else {
             card?.amountEntered = getOverdueAmount()
         }
