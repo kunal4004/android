@@ -179,17 +179,17 @@ class AccountSignedInPresenterImpl(
                 }
 
                 ActionText.VIEW_TREATMENT_PLAN.value, ActionText.VIEW_ELITE_PLAN.value -> {
+                    if (eligibilityPlan?.planType.equals(ELITE_PLAN)) {
+                        when (state) {
+                            ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD -> {
+                                mainView?.removeBlocksOnCollectionCustomer()
+                                return
+                            }
+                        }
+                    }
                     if (productOffering.isViewTreatmentPlanSupported()) {
                         mainView?.showPlanButton(state, response.eligibilityPlan)
                         if (showPopupIfNeeded) {
-                            if (eligibilityPlan?.planType.equals(ELITE_PLAN)) {
-                                when (state) {
-                                    ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD -> {
-                                        mainView?.removeBlocksOnCollectionCustomer()
-                                        return
-                                    }
-                                }
-                            }
                             mainView?.showViewTreatmentPlan(
                                 state,
                                 response.eligibilityPlan
