@@ -71,8 +71,8 @@ class AccountInArrearsDialogFragment : AppCompatDialogFragment(), View.OnClickLi
 
     private fun handleChargedOff() {
         if(payMyAccountViewModel.isAccountChargedOff()){
-            accountInArrearsTitleTextView.text = bindString(R.string.remove_block_on_collection_dialog_title)
-            accountInArrearsDescriptionTextView.text = bindString(R.string.remove_block_on_collection_dialog_desc)
+            accountInArrearsTitleTextView?.text = bindString(R.string.remove_block_on_collection_dialog_title)
+            accountInArrearsDescriptionTextView?.text = bindString(R.string.remove_block_on_collection_dialog_desc)
         }
     }
 
