@@ -193,7 +193,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
             ShowTreatmentPlanDialogFragment.VIEW_PAYMENT_OPTIONS_VISIBILITY,
             viewPaymentOptions
         )
-        if(payMyAccountViewModel.isAccountChargedOff()){
+        if(ProductOfferingStatus(mAccountSignedInPresenter?.getAccount()).isChargedOff()){
             bundle.putString(ViewTreatmentPlanDialogFragment.APPLY_NOW_STATE, mAccountSignedInPresenter?.getAccount()?.productGroupCode)
         }
 
