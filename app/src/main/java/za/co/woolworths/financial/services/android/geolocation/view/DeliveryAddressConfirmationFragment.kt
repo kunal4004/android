@@ -413,7 +413,11 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         geoDeliveryTab?.isEnabled = true
         geoCollectTab?.isEnabled = true
         StoreLiveData.observe(viewLifecycleOwner,{
-            geoDeliveryText?.text = HtmlCompat.fromHtml(getString(R.string.collecting_from_geo,it?.storeName), HtmlCompat.FROM_HTML_MODE_LEGACY)
+            if (it?.storeName != null) {
+                geoDeliveryText?.text =
+                    HtmlCompat.fromHtml(getString(R.string.collecting_from_geo, it?.storeName),
+                        HtmlCompat.FROM_HTML_MODE_LEGACY)
+            }
             editDelivery?.text = bindString(R.string.edit)
             btnConfirmAddress?.isEnabled = true
             btnConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
