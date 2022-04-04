@@ -59,10 +59,7 @@ import za.co.woolworths.financial.services.android.models.network.StorePickupInf
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
-import za.co.woolworths.financial.services.android.util.AppConstant
-import za.co.woolworths.financial.services.android.util.CurrencyFormatter
-import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.WFormatter
+import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
 import java.util.regex.Pattern
 
@@ -349,34 +346,41 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     private fun initializeDatesAndTimeSlots(selectedWeekSlot: Week?) {
-        selectedWeekSlot?.apply {
-            firstAvailableDateLayout?.titleTv?.text = date ?: try {
-                WFormatter.convertDateToFormat(
-                    slots?.get(0)?.stringShipOnDate,
-                    DATE_FORMAT_EEEE_COMMA_dd_MMMM
-                )
-            } catch (e: Exception) {
-                ""
-            }
-            context?.let { context ->
-                firstAvailableDateLayout?.titleTv?.setTextColor(
-                    ContextCompat.getColor(
-                        context,
-                        R.color.white
-                    )
-                )
-                firstAvailableDateLayout?.titleTv?.background =
-                    ContextCompat.getDrawable(
-                        context,
-                        R.drawable.checkout_delivering_title_round_button_pressed
-                    )
-                chooseDateLayout?.titleTv?.text = context.getString(R.string.choose_date)
-            }
-
-            setSelectedDateTimeSlots(slots)
-            chooseDateLayout?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
-            firstAvailableDateLayout?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
+        val slots = selectedWeekSlot?.slots?.filter { slot ->
+            slot.available == true
         }
+
+        if(slots.isNullOrEmpty()) {
+            return
+        }
+
+        firstAvailableDateLayout?.titleTv?.text = selectedWeekSlot?.date ?: try {
+            WFormatter.convertDateToFormat(
+                slots[0].stringShipOnDate,
+                DATE_FORMAT_EEEE_COMMA_dd_MMMM
+            )
+        } catch (e: Exception) {
+            FirebaseManager.logException(e)
+            ""
+        }
+        context?.let { context ->
+            firstAvailableDateLayout?.titleTv?.setTextColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.white
+                )
+            )
+            firstAvailableDateLayout?.titleTv?.background =
+                ContextCompat.getDrawable(
+                    context,
+                    R.drawable.checkout_delivering_title_round_button_pressed
+                )
+            chooseDateLayout?.titleTv?.text = context.getString(R.string.choose_date)
+        }
+
+        setSelectedDateTimeSlots(slots)
+        chooseDateLayout?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
+        firstAvailableDateLayout?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
     }
 
     private fun setSelectedDateTimeSlots(slots: List<Slot>?) {
@@ -644,10 +648,12 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         when (v?.id) {
             R.id.checkoutCollectingFromLayout -> {
 
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_COLLECTION_USER_EDIT, hashMapOf(
-                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                            FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_EDIT_USER_DETAILS
-                ), activity)
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.CHECKOUT_COLLECTION_USER_EDIT, hashMapOf(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_EDIT_USER_DETAILS
+                    ), activity
+                )
                 val bundle = Bundle()
                 bundle.putBoolean(KEY_IS_WHO_IS_COLLECTING, true)
                 navController?.navigate(
