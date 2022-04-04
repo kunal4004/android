@@ -55,8 +55,8 @@ class ProductOfferingStatus(private val account: Account?) : IProductOffering {
     private fun isTreatmentPlanSupported(treatmentPlan: ConfigShowTreatmentPlan?): Boolean {
         val appBuildNumber = Utils.getAppBuildNumber()
         return when (productGroupCode()) {
-            productGroupCodeSc -> appBuildNumber >= treatmentPlan?.personalLoan?.minimumSupportedAppBuildNumber ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT
-            productGroupCodePl -> appBuildNumber >= treatmentPlan?.storeCard?.minimumSupportedAppBuildNumber ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT
+            productGroupCodeSc -> appBuildNumber >= treatmentPlan?.storeCard?.minimumSupportedAppBuildNumber ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT
+            productGroupCodePl -> appBuildNumber >= treatmentPlan?.personalLoan?.minimumSupportedAppBuildNumber ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT
             else -> appBuildNumber >= treatmentPlan?.creditCard?.minimumSupportedAppBuildNumber ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT
         }
     }
@@ -73,18 +73,10 @@ class ProductOfferingStatus(private val account: Account?) : IProductOffering {
         val accountOfferingState = when (account?.productOfferingGoodStanding ?: false) {
             true -> AccountOfferingState.AccountInGoodStanding
             false -> {
-                when (isChargedOff()) {
-                    true -> {
-                        AccountOfferingState.MakeGetEligibilityCall
-                    }
-                    false -> {
-                        when{
-                            isTakeUpTreatmentPlanJourneyEnabled() -> AccountOfferingState.MakeGetEligibilityCall
-                            isViewTreatmentPlanSupported() -> AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig
-                            else ->  AccountOfferingState.AccountIsInArrears
-
-                        }
-                    }
+                when {
+                    isTakeUpTreatmentPlanJourneyEnabled() -> AccountOfferingState.MakeGetEligibilityCall
+                    isViewTreatmentPlanSupported() -> if (isChargedOff()) AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff else AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig
+                    else -> if (isChargedOff()) AccountOfferingState.AccountIsChargedOff else AccountOfferingState.AccountIsInArrears
                 }
             }
         }
