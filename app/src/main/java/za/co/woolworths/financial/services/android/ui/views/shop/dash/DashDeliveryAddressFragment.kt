@@ -159,4 +159,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     override fun showLiquorDialog() {
         TODO("Not yet implemented")
     }
+
+    override fun openBrandLandingPage() {
+        TODO("Not yet implemented")
+    }
 }

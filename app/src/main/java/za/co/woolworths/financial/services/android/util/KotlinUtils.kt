@@ -364,6 +364,13 @@ class KotlinUtils {
             return calendar.time
         }
 
+        fun removeRandFromAmount(amount: String): String {
+            if (amount.contains("R")) {
+                return amount.substring(1)
+            }
+            return amount
+        }
+
         fun toShipByDateFormat(date: Date?): String {
             return SimpleDateFormat("dd-MM-yyy").format(date)
         }

@@ -325,9 +325,9 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             }
             R.id.inCurrentLocation -> {
 
-                if (isComingFromCheckout && deliveryType == Delivery.STANDARD.toString()) {
+                if (isComingFromCheckout && deliveryType == Delivery.STANDARD.name) {
                     navigateToAddAddress(savedAddressResponse)
-                } else if (isComingFromCheckout && deliveryType == Delivery.CNC.toString()) {
+                } else if (isComingFromCheckout && deliveryType == Delivery.CNC.name) {
                     //Navigate to map screen with delivery type or checkout type
                     navigateToConfirmAddressForStoreLocator(mLastLocation?.latitude, mLastLocation?.longitude,false)
                 } else {
@@ -368,7 +368,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
 
                 if (isComingFromCheckout && deliveryType == Delivery.STANDARD.toString()) {
                     navigateToAddAddress(savedAddressResponse)
-                } else if (isComingFromCheckout && deliveryType == Delivery.CNC.toString()) {
+                } else if (isComingFromCheckout && deliveryType == Delivery.CNC.name) {
                     //Navigate to map screen with delivery type or checkout type
                     navigateToConfirmAddressForStoreLocator(0.0, 0.0,true)
 

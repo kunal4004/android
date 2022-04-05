@@ -26,7 +26,6 @@ import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.checkout_add_address_new_user.delivering_layout
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.loadingBar
 import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.*
@@ -66,12 +65,14 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.removeRandFromAmount
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.regex.Pattern
 
 class CheckoutReturningUserCollectionFragment : Fragment(),
-    ShoppingBagsRadioGroupAdapter.EventListner, View.OnClickListener, CollectionTimeSlotsListener {
+    ShoppingBagsRadioGroupAdapter.EventListner, View.OnClickListener, CollectionTimeSlotsListener,
+    CustomProgressBottomSheetDialog.ClickListner {
 
     private var selectedTimeSlot: Slot? = null
     private var selectedPosition: Int = 0
@@ -85,6 +86,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     private var navController: NavController? = null
     private var driverTipOptionsList: ArrayList<String>? = null
     private var selectedDriverTipValue: String? = null
+    private var driverTipTextView: View? = null
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun afterTextChanged(s: Editable?) {
@@ -336,9 +338,10 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                     return@observe
                                 }
                                 response.orderSummary?.fulfillmentDetails?.let {
-                                     if (!it.deliveryType.isNullOrEmpty()) {
-                                        Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(it))
-                                     }
+                                    if (!it.deliveryType.isNullOrEmpty()) {
+                                        Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(
+                                            it))
+                                    }
                                 }
                                 initializeOrderSummary(response.orderSummary)
                                 response.sortedJoinDeliverySlots?.apply {
@@ -369,34 +372,41 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     private fun initializeDatesAndTimeSlots(selectedWeekSlot: Week?) {
-        selectedWeekSlot?.apply {
-            firstAvailableDateLayout?.titleTv?.text = date ?: try {
-                WFormatter.convertDateToFormat(
-                    slots?.get(0)?.stringShipOnDate,
-                    DATE_FORMAT_EEEE_COMMA_dd_MMMM
-                )
-            } catch (e: Exception) {
-                ""
-            }
-            context?.let { context ->
-                firstAvailableDateLayout?.titleTv?.setTextColor(
-                    ContextCompat.getColor(
-                        context,
-                        R.color.white
-                    )
-                )
-                firstAvailableDateLayout?.titleTv?.background =
-                    ContextCompat.getDrawable(
-                        context,
-                        R.drawable.checkout_delivering_title_round_button_pressed
-                    )
-                chooseDateLayout?.titleTv?.text = context.getString(R.string.choose_date)
-            }
-
-            setSelectedDateTimeSlots(slots)
-            chooseDateLayout?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
-            firstAvailableDateLayout?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
+        val slots = selectedWeekSlot?.slots?.filter { slot ->
+            slot.available == true
         }
+
+        if (slots.isNullOrEmpty()) {
+            return
+        }
+
+        firstAvailableDateLayout?.titleTv?.text = selectedWeekSlot?.date ?: try {
+            WFormatter.convertDateToFormat(
+                slots[0].stringShipOnDate,
+                DATE_FORMAT_EEEE_COMMA_dd_MMMM
+            )
+        } catch (e: Exception) {
+            FirebaseManager.logException(e)
+            ""
+        }
+        context?.let { context ->
+            firstAvailableDateLayout?.titleTv?.setTextColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.white
+                )
+            )
+            firstAvailableDateLayout?.titleTv?.background =
+                ContextCompat.getDrawable(
+                    context,
+                    R.drawable.checkout_delivering_title_round_button_pressed
+                )
+            chooseDateLayout?.titleTv?.text = context.getString(R.string.choose_date)
+        }
+
+        setSelectedDateTimeSlots(slots)
+        chooseDateLayout?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
+        firstAvailableDateLayout?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
     }
 
     private fun setSelectedDateTimeSlots(slots: List<Slot>?) {
@@ -431,8 +441,9 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         vehicleColour = whoIsCollectingDetails?.vehicleColor ?: ""
         vehicleRegistration = whoIsCollectingDetails?.vehicleRegistration ?: ""
         taxiOpted = whoIsCollectingDetails?.isMyVehicle != true
-        deliveryType = Delivery.CNC.toString()
-        address = ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
+        deliveryType = Delivery.CNC.name
+        address =
+            ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
     }
 
     private fun showEmptyCart() {
@@ -481,8 +492,9 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         if (!driverTipOptionsList.isNullOrEmpty()) {
             layoutDriverTip.visibility = View.VISIBLE
             for ((index, options) in driverTipOptionsList!!.withIndex()) {
-                val view = View.inflate(context, R.layout.where_are_we_delivering_items, null)
-                val titleTextView: TextView? = view?.findViewById(R.id.titleTv)
+                driverTipTextView =
+                    View.inflate(context, R.layout.where_are_we_delivering_items, null)
+                val titleTextView: TextView? = driverTipTextView?.findViewById(R.id.titleTv)
                 titleTextView?.tag = index
                 titleTextView?.text = options
                 if (!selectedDriverTipValue.isNullOrEmpty() && selectedDriverTipValue.equals(
@@ -497,12 +509,29 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                             R.color.white
                         )
                     )
+                    tipNoteTextView?.visibility = View.VISIBLE
                 }
                 titleTextView?.setOnClickListener {
-                    val isSameSelection = resetAllDriverTip(it.tag as Int)
+                    var isSameSelection =
+                        true // Because we want to change this view after the value entered from user.
+                    if (it.tag == driverTipOptionsList!!.lastIndex) {
+                        val tipValue = if (titleTextView.text.toString()
+                                .equals(driverTipOptionsList!!.lastOrNull())
+                        ) getString(R.string.empty) else removeRandFromAmount(titleTextView.text.toString()
+                            .trim())
+                        val customDriverTipDialog = CustomDriverTipBottomSheetDialog.newInstance(
+                            getString(R.string.tip_your_dash_driver),
+                            getString(R.string.enter_your_own_amount), tipValue, this)
+                        customDriverTipDialog.show(requireFragmentManager(),
+                            CustomDriverTipBottomSheetDialog::class.java.simpleName)
+                    } else {
+                        isSameSelection = resetAllDriverTip(it.tag as Int)
+                        if (isSameSelection)
+                            tipNoteTextView?.visibility = View.GONE
+                    }
                     selectedDriverTipValue = (it as TextView).text as? String
                     if (!isSameSelection) {
-                        // change background of selected textView
+                        // Change background of selected Tip as it's not unselection.
                         it.background =
                             bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
                         it.setTextColor(
@@ -511,15 +540,16 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                 R.color.white
                             )
                         )
+                        tipNoteTextView?.visibility = View.VISIBLE
                     }
                 }
-                delivering_layout?.addView(view)
+                tip_options_layout?.addView(driverTipTextView)
             }
         }
     }
 
     private fun resetAllDriverTip(selectedTag: Int): Boolean {
-        //change background of unselected textview
+        //change background of all unselected Tip
         var sameSelection = false
         for ((index) in driverTipOptionsList!!.withIndex()) {
             val titleTextView: TextView? = view?.findViewWithTag(index)
@@ -529,6 +559,10 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                     selectedTag)
             ) {
                 sameSelection = true
+            }
+            if (index == driverTipOptionsList?.size?.minus(1) ?: null) {
+                titleTextView?.setText(driverTipOptionsList?.lastOrNull())
+                titleTextView?.setCompoundDrawables(null, null, null, null)
             }
             titleTextView?.background =
                 bindDrawable(R.drawable.checkout_delivering_title_round_button)
@@ -551,7 +585,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         val location = Utils.getPreferredDeliveryLocation()
         checkoutCollectingFromLayout.setOnClickListener(this)
         if (location != null) {
-            val selectedStore = if (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) location.fulfillmentDetails?.storeName else ""
+            val selectedStore =
+                if (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) location.fulfillmentDetails?.storeName else ""
             if (!selectedStore.isNullOrEmpty()) {
                 tvNativeCheckoutDeliveringTitle?.text =
                     context?.getString(R.string.native_checkout_collecting_from)
@@ -741,12 +776,14 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         when (v?.id) {
             R.id.checkoutCollectingFromLayout -> {
 
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_COLLECTION_USER_EDIT,
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.CHECKOUT_COLLECTION_USER_EDIT,
                     hashMapOf(
                         FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
                                 FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_EDIT_USER_DETAILS
                     ),
-                    activity)
+                    activity
+                )
 
                 KotlinUtils.presentEditDeliveryGeoLocationActivity(
                     requireActivity(),
@@ -757,7 +794,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                     true,
                     null,
                     null,
-                     Utils.toJson(whoIsCollectingDetails)
+                    Utils.toJson(whoIsCollectingDetails)
                 )
                 activity?.finish()
             }
@@ -912,7 +949,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         foodDeliverySlotId = selectedTimeSlot?.slotId
         otherDeliverySlotId = ""
         oddDeliverySlotId = ""
-        foodDeliveryStartHour = selectedTimeSlot?.hourFrom?.toLong() ?: 0
+        foodDeliveryStartHour = selectedTimeSlot?.intHourFrom?.toLong() ?: 0
         otherDeliveryStartHour = 0
         substituesAllowed = selectedFoodSubstitution.rgb
         plasticBags = switchNeedBags?.isChecked ?: false
@@ -988,5 +1025,24 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     @VisibleForTesting
     fun testSetStorePickupInfoResponse(mockStorePickupInfoResponse: ConfirmDeliveryAddressResponse) {
         storePickupInfoResponse = mockStorePickupInfoResponse
+    }
+
+    override fun onConfirmClick(tipValue: String) {
+        val titleTextView: TextView? =
+            driverTipTextView?.findViewWithTag(driverTipOptionsList?.lastIndex)
+        driverTipOptionsList?.lastIndex?.let { resetAllDriverTip(it) }
+        titleTextView?.text = "R$tipValue "
+        val image = context?.resources?.getDrawable(R.drawable.edit_icon_white)
+        image?.setBounds(0, 0, image.intrinsicWidth, image.intrinsicHeight)
+        titleTextView?.setCompoundDrawables(null, null, image, null)
+        titleTextView?.background =
+            bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
+        titleTextView?.setTextColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.white
+            )
+        )
+        tipNoteTextView?.visibility = View.VISIBLE
     }
 }

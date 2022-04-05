@@ -8,8 +8,6 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.android.synthetic.main.fragment_cli_marital_status.*
 import kotlinx.android.synthetic.main.fragment_collection_dates_bottom_sheet_dialog.*
 import za.co.woolworths.financial.services.android.checkout.service.network.Week
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.REQUEST_KEY_SELECTED_COLLECTION_DATE

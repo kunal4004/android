@@ -257,7 +257,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
         val list = ArrayList<Store>()
         mValidateLocationResponse?.validatePlace?.stores?.let {
             for (store in it) {
-                if (store.storeName?.contains(s.toString(), true) == true) {
+                if (store.storeName?.contains(s.toString(), true) == true || store.storeAddress?.contains(s.toString(), true)==true) {
                     list.add(store)
                 }
             }
