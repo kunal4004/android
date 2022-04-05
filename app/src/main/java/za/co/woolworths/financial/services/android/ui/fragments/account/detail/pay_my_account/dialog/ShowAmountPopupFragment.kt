@@ -292,7 +292,8 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                             activity,
                             cardInfo,
                             PayMyAccountStartDestinationType.MANAGE_CARD,
-                            true,payMyAccountViewModel.elitePlanModel
+                            true,
+                            payMyAccountViewModel.elitePlanModel
                         )
                     }
 
