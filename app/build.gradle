@@ -155,28 +155,21 @@ android {
     }
 
     if(isAppCenter){
-        def assembleTaskAliasName = "" // whatever "build variant" you are able to select in the Build Configuration web GUI
-        def assembleTaskAliasVariant = System.env.ANDROID_PRODUCT_FLAVOR.toString() // an actual flavor (can contain multiple dimensions)
-        def isAppBundleEnabled = System.env.IS_APP_BUNDLE_ENABLED.asBoolean()
-        def buildCommand = ""
-        if (isAppBundleEnabled) {
-            buildCommand = "bundle"
-        } else {
-            buildCommand = "assemble"
-        }
+        def bundleTaskAliasName = "" // whatever "build variant" you are able to select in the Build Configuration web GUI
+        def bundleTaskAliasVariant = System.env.ANDROID_PRODUCT_FLAVOR.toString() // an actual flavor (can contain multiple dimensions)
 
         applicationVariants.all { variant ->
-            if (variant.name == assembleTaskAliasVariant) {
+            if (variant.name == bundleTaskAliasVariant) {
                 if (variant.name.contains("QaRelease")){
-                    assembleTaskAliasName = "qaRelease"
+                    bundleTaskAliasName = "qaRelease"
                 } else if (variant.name.contains("ProductionRelease")){
-                    assembleTaskAliasName = "productionRelease"
+                    bundleTaskAliasName = "productionRelease"
                 }
 
-                def aliasTaskName = "$buildCommand${assembleTaskAliasName.capitalize()}"
+                def aliasTaskName = "bundle${bundleTaskAliasName.capitalize()}"
                 def aliasTask = task(aliasTaskName, type: Copy) {
                     from variant.outputs*.outputFile.toSet()
-                    into "build/outputs/apk/$assembleTaskAliasName"
+                    into "build/outputs/bundle/$bundleTaskAliasName"
                 }
                 variant.assemble.finalizedBy aliasTask
                 aliasTask.dependsOn variant.assemble
