@@ -51,7 +51,7 @@
             android:letterSpacing="0.15"
             android:minHeight="@dimen/fourty_dp"
             android:padding="@dimen/fifteen_dp"
-            android:text="@string/select_suburb"
+            android:text="@string/change_location"
             android:textColor="@color/white"
             android:textSize="@dimen/twelve_sp" />
 

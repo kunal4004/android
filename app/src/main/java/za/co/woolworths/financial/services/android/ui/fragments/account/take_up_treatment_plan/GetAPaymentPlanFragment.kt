@@ -7,10 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.GetAPaymentPlanFragmentBinding
-import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
-import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.setNavigationBarColor
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.updateStatusBarColor
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
@@ -34,9 +32,10 @@ class GetAPaymentPlanFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         updateStatusBarColor(R.color.white, false)
         setNavigationBarColor(R.color.white)
-        mEligibilityPlan = arguments?.getSerializable(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN) as? EligibilityPlan
+        mEligibilityPlan =
+            arguments?.getSerializable(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN) as? EligibilityPlan
 
-        when(mEligibilityPlan?.productGroupCode) {
+        when (mEligibilityPlan?.productGroupCode) {
             ProductGroupCode.SC -> {
                 binding.treatmentPlanImageView.setImageResource(R.drawable.android_store_card)
             }
@@ -50,41 +49,7 @@ class GetAPaymentPlanFragment : Fragment() {
 
         with(binding.viewPlanOptionsButton) {
             setOnClickListener {
-                var collectionsUrl: String? = ""
-                var exitUrl: String? = ""
-                val accountOptions = AppConfigSingleton.accountOptions
-
-                when (mEligibilityPlan?.productGroupCode) {
-                    ProductGroupCode.SC -> {
-                        collectionsUrl =accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
-                        exitUrl = accountOptions?.showTreatmentPlanJourney?.storeCard?.exitUrl
-                    }
-
-                    ProductGroupCode.PL -> {
-                        collectionsUrl = accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
-                        exitUrl = accountOptions?.showTreatmentPlanJourney?.personalLoan?.exitUrl
-                    }
-
-                    ProductGroupCode.CC -> {
-                        collectionsUrl = accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
-                        exitUrl = accountOptions?.collectionsStartNewPlanJourney?.creditCard?.exitUrl
-                    }
-                }
-
-                val url = collectionsUrl + mEligibilityPlan?.appGuid
-
-                when (accountOptions?.collectionsStartNewPlanJourney?.renderMode) {
-                    AvailableFundFragment.NATIVE_BROWSER ->
-                        KotlinUtils.openUrlInPhoneBrowser(url, activity)
-
-                    else ->
-                        KotlinUtils.openLinkInInternalWebView(
-                            activity,
-                            url,
-                            true,
-                            exitUrl
-                        )
-                }
+                KotlinUtils.openTreatmenPlanUrl(activity, mEligibilityPlan)
             }
         }
     }

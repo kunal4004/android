@@ -27,7 +27,6 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListsRespo
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
-import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
@@ -38,10 +37,15 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.Departments
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.DISPLAY_TOAST_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
+import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFullfilmentCollectionStoreFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_3000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_4000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_ORDER_DETAILS_PAGE
+import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
+import za.co.woolworths.financial.services.android.util.PermissionResultCallback
+import za.co.woolworths.financial.services.android.util.PermissionUtils
 import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE
 
 
@@ -276,19 +280,32 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 viewpager_main,
                 viewpager_main.currentItem
             ) as? DepartmentsFragment
-            // If request is cancelled, the result arrays are empty.
-            if (grantResults.isNotEmpty()
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED
-            ) {
-
-                // permission was granted, yay! Do the
-                // contacts-related task you need to do.
-                fragment?.onActivityResult(requestCode, RESULT_OK, null)
-            } else {
-                fragment?.onActivityResult(requestCode, RESULT_CANCELED, null)
-            }
+            callOnActivityResult(grantResults, fragment, requestCode)
+        } else if (requestCode == DepartmentsFragment.REQUEST_CODE_FINE_GPS && viewpager_main.currentItem == 1) {
+            val fragment = viewpager_main?.adapter?.instantiateItem(
+                viewpager_main,
+                viewpager_main.currentItem
+            ) as? ChangeFullfilmentCollectionStoreFragment
+            callOnActivityResult(grantResults, fragment, requestCode)
         }
         permissionUtils?.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    private fun callOnActivityResult(
+        grantResults: IntArray,
+        fragment: Fragment?,
+        requestCode: Int,
+    ) {
+        // If request is cancelled, the result arrays are empty.
+        if (grantResults.isNotEmpty()
+            && grantResults[0] == PackageManager.PERMISSION_GRANTED
+        ) {
+            // permission was granted, yay! Do the
+            // contacts-related task you need to do.
+            fragment?.onActivityResult(requestCode, RESULT_OK, null)
+        } else {
+            fragment?.onActivityResult(requestCode, RESULT_CANCELED, null)
+        }
     }
 
     private fun navigateToBarcode() {
@@ -338,7 +355,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             refreshViewPagerFragment(true)
         }
 
-        if (requestCode == EditDeliveryLocationActivity.REQUEST_CODE || requestCode == DEPARTMENT_LOGIN_REQUEST && viewpager_main.currentItem == 0) {
+        if (requestCode == REQUEST_CODE || requestCode == DEPARTMENT_LOGIN_REQUEST && viewpager_main.currentItem == 0) {
             val fragment = viewpager_main?.adapter?.instantiateItem(
                 viewpager_main,
                 viewpager_main.currentItem

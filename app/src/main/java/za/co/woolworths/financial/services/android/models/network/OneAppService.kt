@@ -7,6 +7,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.Response
@@ -38,6 +39,7 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.models.dto.voc.*
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.net.URLEncoder
@@ -175,18 +177,14 @@ object OneAppService : RetrofitConfig() {
     fun getRootCategory(locationEnabled: Boolean, location: Location?): Call<RootCategories> {
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
         // Pass storeId value of 01 fulfillment type
-        val fulFillmentStoreId01 = Utils.retrieveStoreId("01")
         var locationCord = location
         if (!locationEnabled) {
             locationCord = null
-            // Hardcoding only for testing purpose.
-//            location.latitude = -33.907630
-//            location.longitude = 18.408380
         }
 
         return mApiInterface.getRootCategories(
             getSessionToken(),
-            getDeviceIdentityToken(), locationCord?.latitude, locationCord?.longitude, suburbId, storeId, fulFillmentStoreId01)
+            getDeviceIdentityToken(), locationCord?.latitude, locationCord?.longitude, suburbId, storeId)
     }
 
     suspend fun getDashCategory(): retrofit2.Response<DashCategories> {
@@ -202,12 +200,10 @@ object OneAppService : RetrofitConfig() {
 
     fun getSubCategory(category_id: String, version: String): Call<SubCategories> {
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
-        // Pass storeId value of 01 fulfillment type
-        val fulFillmentStoreId01 = Utils.retrieveStoreId("01")
 
         return mApiInterface.getSubCategory(
             getSessionToken(), getDeviceIdentityToken(),
-            category_id, version, suburbId, storeId, fulFillmentStoreId01)
+            category_id, version, suburbId, storeId)
     }
 
     fun getProvinces(): Call<ProvincesResponse> {
@@ -246,11 +242,6 @@ object OneAppService : RetrofitConfig() {
     fun changeAddress(nickName: String): Call<ChangeAddressResponse> {
         return mApiInterface.changeAddress(nickName, "", "", getSessionToken(),
             getDeviceIdentityToken())
-    }
-
-    fun getConfirmDeliveryAddressDetails(body: ConfirmDeliveryAddressBody): Call<ConfirmDeliveryAddressResponse>{
-        return mApiInterface.getConfirmDeliveryAddressDetails("", "", getSessionToken(),
-        getDeviceIdentityToken(), body)
     }
 
     fun getShippingDetails(body: ShippingDetailsBody): Call<ShippingDetailsResponse>{
@@ -304,14 +295,6 @@ object OneAppService : RetrofitConfig() {
     private fun getSuburbOrStoreId(): Pair<String?, String?> {
         var suburbId: String? = null
         var storeId: String? = null
-        Utils.getPreferredDeliveryLocation()?.apply {
-            if (province?.id.isNullOrEmpty()) return Pair(null, null)
-            if (storePickup) {
-                storeId = store.id
-            } else {
-                suburbId = suburb?.id
-            }
-        }
         return Pair(suburbId, storeId)
     }
 
@@ -336,8 +319,11 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun addItemToCart(addToCart: MutableList<AddItemToCart>): Call<AddItemToCartResponse> {
+
+        val deliveryType = KotlinUtils.getPreferredDeliveryType()?.type ?: ""
+
         return mApiInterface.addItemToCart( "", "", getSessionToken(),
-            getDeviceIdentityToken(), addToCart)
+            getDeviceIdentityToken(),deliveryType, addToCart)
     }
 
     fun getShoppingCart(): Call<ShoppingCartResponse> {
@@ -695,6 +681,16 @@ object OneAppService : RetrofitConfig() {
             getDeviceIdentityToken(),
             insuranceType,
             insuranceTypeOptInBody
+        )
+    }
+
+
+    fun getConfirmDeliveryAddressDetails(body: ConfirmLocationRequest): Call<ConfirmDeliveryAddressResponse>{
+        return mApiInterface.confirmLocation("",
+            "",
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            body
         )
     }
 }

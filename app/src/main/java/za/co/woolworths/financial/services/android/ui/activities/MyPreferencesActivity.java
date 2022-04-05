@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -141,6 +142,14 @@ public class MyPreferencesActivity extends AppCompatActivity implements MyPrefer
         }
         TextView title = mPrefsToolbar.findViewById(R.id.toolbarText);
         title.setGravity(gravity);
+    }
+
+    @Override
+    public void hideToolbar() {
+        if (mPrefsToolbar == null) {
+            return;
+        }
+        mPrefsToolbar.setVisibility(View.GONE);
     }
 
     public void setDefaultPrimaryDevice(UserDevice defaultPrimaryDevice) {

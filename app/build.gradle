@@ -13,7 +13,7 @@ android {
     def major = "8"
     def minor = "9"
     def fix = "0"
-    def jobNumber = 564
+    def jobNumber = 12086
 
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
@@ -297,6 +297,8 @@ dependencies {
     // Hilt DI
     implementation "com.google.dagger:hilt-android:2.38.1"
     kapt "com.google.dagger:hilt-android-compiler:2.37"
+    implementation 'com.google.maps:google-maps-services:2.0.0'
+
 
 }
 
