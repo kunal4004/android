@@ -749,7 +749,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     private fun onCheckoutPaymentClick() {
-        if (isRequiredFieldsMissing() || isInstructionsMissing() || isGift()) {
+        if (isRequiredFieldsMissing() || isInstructionsMissing() || isGiftMessage()) {
             return
         }
 
@@ -840,7 +840,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         }
     }
 
-    private fun isGift(): Boolean {
+    private fun isGiftMessage(): Boolean {
         return when (switchGiftInstructions?.isChecked) {
             true -> {
                 if (TextUtils.isEmpty(edtTxtGiftInstructions?.text?.toString())) {
