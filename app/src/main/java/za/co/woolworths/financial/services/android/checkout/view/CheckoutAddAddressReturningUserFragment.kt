@@ -635,7 +635,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
         val  confirmLocationAddress = ConfirmLocationAddress(defaultAddress?.placesId, defaultAddress?.nickname)
 
-        var body = ConfirmLocationRequest(Delivery.STANDARD.toString(), confirmLocationAddress, "", "checkout")
+        var body = ConfirmLocationRequest(Delivery.STANDARD.name, confirmLocationAddress, "", "checkout")
 
         checkoutAddAddressNewUserViewModel.getConfirmLocationDetails(body)
             .observe(viewLifecycleOwner, { response ->
@@ -1024,7 +1024,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     foodDeliverySlotId = selectedFoodSlot?.slotId
                     otherDeliverySlotId = ""
                     oddDeliverySlotId = ""
-                    foodDeliveryStartHour = selectedFoodSlot?.hourFrom?.toLong() ?: 0
+                    foodDeliveryStartHour = selectedFoodSlot?.intHourFrom?.toLong() ?: 0
                     otherDeliveryStartHour = 0
                 }
             }
@@ -1044,7 +1044,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     } else {
                         otherShipOnDate = selectedOtherSlot?.stringShipOnDate
                         otherDeliverySlotId = selectedOtherSlot?.slotId
-                        otherDeliveryStartHour = selectedOtherSlot?.hourFrom?.toLong() ?: 0
+                        otherDeliveryStartHour = selectedOtherSlot?.intHourFrom?.toLong() ?: 0
                         oddDeliverySlotId = ""
                     }
                 }
@@ -1058,15 +1058,15 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         otherShipOnDate = selectedOtherSlot?.stringShipOnDate
                         foodDeliverySlotId = selectedFoodSlot?.slotId
                         otherDeliverySlotId = selectedOtherSlot?.slotId
-                        foodDeliveryStartHour = selectedFoodSlot?.hourFrom?.toLong() ?: 0
-                        otherDeliveryStartHour = selectedOtherSlot?.hourFrom?.toLong() ?: 0
+                        foodDeliveryStartHour = selectedFoodSlot?.intHourFrom?.toLong() ?: 0
+                        otherDeliveryStartHour = selectedOtherSlot?.intHourFrom?.toLong() ?: 0
                         oddDeliverySlotId = ""
                     } else {
                         foodShipOnDate = selectedFoodSlot?.stringShipOnDate
                         otherShipOnDate = ""
                         foodDeliverySlotId = selectedFoodSlot?.slotId
                         otherDeliverySlotId = ""
-                        foodDeliveryStartHour = selectedFoodSlot?.hourFrom?.toLong() ?: 0
+                        foodDeliveryStartHour = selectedFoodSlot?.intHourFrom?.toLong() ?: 0
                         otherDeliveryStartHour = 0
                         oddDeliverySlotId = selectedOpenDayDeliverySlot?.deliverySlotId
                     }
