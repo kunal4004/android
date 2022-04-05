@@ -338,9 +338,10 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                     return@observe
                                 }
                                 response.orderSummary?.fulfillmentDetails?.let {
-                                     if (!it.deliveryType.isNullOrEmpty()) {
-                                        Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(it))
-                                     }
+                                    if (!it.deliveryType.isNullOrEmpty()) {
+                                        Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(
+                                            it))
+                                    }
                                 }
                                 initializeOrderSummary(response.orderSummary)
                                 response.sortedJoinDeliverySlots?.apply {
@@ -371,34 +372,41 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     private fun initializeDatesAndTimeSlots(selectedWeekSlot: Week?) {
-        selectedWeekSlot?.apply {
-            firstAvailableDateLayout?.titleTv?.text = date ?: try {
-                WFormatter.convertDateToFormat(
-                    slots?.get(0)?.stringShipOnDate,
-                    DATE_FORMAT_EEEE_COMMA_dd_MMMM
-                )
-            } catch (e: Exception) {
-                ""
-            }
-            context?.let { context ->
-                firstAvailableDateLayout?.titleTv?.setTextColor(
-                    ContextCompat.getColor(
-                        context,
-                        R.color.white
-                    )
-                )
-                firstAvailableDateLayout?.titleTv?.background =
-                    ContextCompat.getDrawable(
-                        context,
-                        R.drawable.checkout_delivering_title_round_button_pressed
-                    )
-                chooseDateLayout?.titleTv?.text = context.getString(R.string.choose_date)
-            }
-
-            setSelectedDateTimeSlots(slots)
-            chooseDateLayout?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
-            firstAvailableDateLayout?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
+        val slots = selectedWeekSlot?.slots?.filter { slot ->
+            slot.available == true
         }
+
+        if (slots.isNullOrEmpty()) {
+            return
+        }
+
+        firstAvailableDateLayout?.titleTv?.text = selectedWeekSlot?.date ?: try {
+            WFormatter.convertDateToFormat(
+                slots[0].stringShipOnDate,
+                DATE_FORMAT_EEEE_COMMA_dd_MMMM
+            )
+        } catch (e: Exception) {
+            FirebaseManager.logException(e)
+            ""
+        }
+        context?.let { context ->
+            firstAvailableDateLayout?.titleTv?.setTextColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.white
+                )
+            )
+            firstAvailableDateLayout?.titleTv?.background =
+                ContextCompat.getDrawable(
+                    context,
+                    R.drawable.checkout_delivering_title_round_button_pressed
+                )
+            chooseDateLayout?.titleTv?.text = context.getString(R.string.choose_date)
+        }
+
+        setSelectedDateTimeSlots(slots)
+        chooseDateLayout?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
+        firstAvailableDateLayout?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
     }
 
     private fun setSelectedDateTimeSlots(slots: List<Slot>?) {
@@ -434,7 +442,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         vehicleRegistration = whoIsCollectingDetails?.vehicleRegistration ?: ""
         taxiOpted = whoIsCollectingDetails?.isMyVehicle != true
         deliveryType = Delivery.CNC.toString()
-        address = ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
+        address =
+            ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
     }
 
     private fun showEmptyCart() {
@@ -576,7 +585,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         val location = Utils.getPreferredDeliveryLocation()
         checkoutCollectingFromLayout.setOnClickListener(this)
         if (location != null) {
-            val selectedStore = if (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) location.fulfillmentDetails?.storeName else ""
+            val selectedStore =
+                if (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) location.fulfillmentDetails?.storeName else ""
             if (!selectedStore.isNullOrEmpty()) {
                 tvNativeCheckoutDeliveringTitle?.text =
                     context?.getString(R.string.native_checkout_collecting_from)
@@ -766,12 +776,14 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         when (v?.id) {
             R.id.checkoutCollectingFromLayout -> {
 
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_COLLECTION_USER_EDIT,
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.CHECKOUT_COLLECTION_USER_EDIT,
                     hashMapOf(
                         FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
                                 FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_EDIT_USER_DETAILS
                     ),
-                    activity)
+                    activity
+                )
 
                 KotlinUtils.presentEditDeliveryGeoLocationActivity(
                     requireActivity(),
@@ -782,7 +794,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                     true,
                     null,
                     null,
-                     Utils.toJson(whoIsCollectingDetails)
+                    Utils.toJson(whoIsCollectingDetails)
                 )
                 activity?.finish()
             }

@@ -28,6 +28,7 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
             setPromotionalImage(promotionImages,virtualTryOn)
             setProductName(this)
             setBrandText(this, nextProduct, previousProduct)
+            setBrandHeaderDescriptionText(this)
             setPromotionalText(this)
             val priceItem = PriceItem()
             priceItem.setPrice(productList, itemView)
@@ -109,6 +110,15 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
                 brandName?.visibility = if (productList?.brandText.isNullOrEmpty()) GONE else VISIBLE
                 brandNameFakeView?.visibility = if (productList?.brandText.isNullOrEmpty()) VISIBLE else GONE
             }
+        }
+    }
+
+    private fun setBrandHeaderDescriptionText(productList: ProductList?) = with(itemView) {
+        if(TextUtils.isEmpty(productList?.brandHeaderDescription)){
+            tvRangeName?.visibility = GONE
+        } else {
+            tvRangeName?.visibility = VISIBLE
+            tvRangeName?.text = productList?.brandHeaderDescription
         }
     }
 

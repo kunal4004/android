@@ -22,4 +22,5 @@ interface IProductListing {
      *  @see ApiInterface.getProducts
      */
     fun showLiquorDialog()
+    fun openBrandLandingPage()
 }

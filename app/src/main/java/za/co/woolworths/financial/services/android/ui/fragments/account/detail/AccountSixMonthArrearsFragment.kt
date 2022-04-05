@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl.Companion.ELITE_PLAN
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.OutSystemBuilder
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.ProductOfferingStatus
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
@@ -48,9 +49,10 @@ class AccountSixMonthArrearsFragment : Fragment(), EligibilityImpl {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, "")
-        isViewTreatmentPlanSupported = arguments?.getBoolean(IS_VIEW_TREATMENT_PLAN, false) ?: false
         mApplyNowAccountKeyPair =
             Gson().fromJson(account, object : TypeToken<Pair<Int, Int>>() {}.type)
+        isViewTreatmentPlanSupported = arguments?.getBoolean(IS_VIEW_TREATMENT_PLAN, false) ?: false
+
     }
 
     override fun onCreateView(
@@ -65,7 +67,6 @@ class AccountSixMonthArrearsFragment : Fragment(), EligibilityImpl {
         super.onViewCreated(view, savedInstanceState)
         mAccountPresenter = (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter
         mAccountPresenter?.eligibilityImpl = this
-
         hideCardTextViews()
         setTitleAndCardTypeAndButton()
 
@@ -132,25 +133,33 @@ class AccountSixMonthArrearsFragment : Fragment(), EligibilityImpl {
                     visibility = VISIBLE
                 }
             } else {
-                arrearsDescTextView?.text =
-                    activity?.resources?.getString(R.string.account_arrears_description)
-                callTheCallCenterButton?.visibility = VISIBLE
-                viewTreatmentPlansButton?.visibility = GONE
-                callTheCallCenterUnderlinedButton?.visibility = GONE
+                showCallUsButton()
             }
         }
     }
 
     override fun eligibilityResponse(eligibilityPlan: EligibilityPlan?) {
         eligibilityPlan.let {
-            if (it?.planType.equals(AccountSignedInPresenterImpl.ELITE_PLAN)) {
+            if (it?.planType.equals(ELITE_PLAN)) {
                 setElitePlanViews(eligibilityPlan)
             }
         }
     }
 
+    override fun eligibilityFailed() {
+        showCallUsButton()
+    }
+
+    fun showCallUsButton() {
+        arrearsDescTextView?.text =
+            activity?.resources?.getString(R.string.account_arrears_description)
+        callTheCallCenterButton?.visibility = VISIBLE
+        viewTreatmentPlansButton?.visibility = GONE
+        callTheCallCenterUnderlinedButton?.visibility = GONE
+    }
+
     fun setElitePlanViews(eligibilityPlan: EligibilityPlan?) {
-        arrearsDescTextView?.text =bindString(R.string.account_arrears_description)
+        arrearsDescTextView?.text = bindString(R.string.account_arrears_description)
         callTheCallCenterButton?.visibility = GONE
         viewTreatmentPlansButton.visibility = VISIBLE
         callTheCallCenterUnderlinedButton?.apply {

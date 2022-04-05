@@ -28,6 +28,9 @@ data class ProductList(
     @JvmField
     var productType: String? = null,
 
+    @JvmField
+    var brandHeaderDescription: String? = null,
+
     var promotionImages: PromotionImages? = null,
 
     @JvmField
@@ -46,6 +49,7 @@ data class ProductList(
 
     var wasPrice: Float? = null,
 
+    @JvmField
     var brandText: String? = null,
 
     var productVariants: String? = null,

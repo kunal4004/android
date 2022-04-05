@@ -768,7 +768,8 @@ interface ApiInterface {
             @Query("sortOption") sortOption: String,
             @Query("refinement") refinement: String,
             @Query("suburbId") suburbId: String?,
-            @Query("storeId") storeId: String?): Call<ProductView>
+            @Query("storeId") storeId: String?,
+            @Query("filterContent") filterContent: Boolean?): Call<ProductView>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
     @GET("wfs/app/v4/searchSortAndFilterV2")
@@ -788,7 +789,8 @@ interface ApiInterface {
             @Header("longitude") longitude: String = "",
             @Header("latitude") latitude: String = "",
             @Query("suburbId") suburbId: String?,
-            @Query("storeId") storeId: String?): Call<ProductView>
+            @Query("storeId") storeId: String?,
+            @Query("filterContent") filterContent: Boolean?): Call<ProductView>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/cart/checkoutComplete")
