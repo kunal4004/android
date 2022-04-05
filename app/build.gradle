@@ -157,10 +157,8 @@ android {
     if(isAppCenter){
         def assembleTaskAliasName = "" // whatever "build variant" you are able to select in the Build Configuration web GUI
         def assembleTaskAliasVariant = System.env.ANDROID_PRODUCT_FLAVOR.toString() // an actual flavor (can contain multiple dimensions)
-        println("assembleTaskAliasVariant: $assembleTaskAliasVariant")
 
         applicationVariants.all { variant ->
-            println("applicationVariants.all - variant.name: ${variant.name}")
             if (variant.name == assembleTaskAliasVariant) {
 
                 // Multiple flavor dimensions not supported by App Center yet.
@@ -168,26 +166,16 @@ android {
                 // while "release" would mean Production release.
                 // Only provider dimension will be handled on App Center.
                 // Code to be removed once App Center implements a proper solution: https://github.com/microsoft/appcenter/issues/32
-                switch (variant.name) {
-                    case "googleDebug":
-                        assembleTaskAliasName = "googleQaRelease"
-                    case "googleRelease":
-                        assembleTaskAliasName = "googleProductionRelease"
-                    case "huaweiDebug":
-                        assembleTaskAliasName = "huaweiQaRelease"
-                    case "huaweiRelease":
-                        assembleTaskAliasName = "huaweiProductionRelease"
-                    default:
-                        break
+                if (variant.name.contains("GoogleDebug")){
+                    assembleTaskAliasName = "googleQaRelease"
+                } else if (variant.name.contains("GoogleRelease")){
+                    assembleTaskAliasName = "googleProductionRelease"
+                } else if (variant.name.contains("HuaweiDebug")){
+                    assembleTaskAliasName = "huaweiQaRelease"
+                } else if (variant.name.contains("HuaweiRelease")){
+                    assembleTaskAliasName = "huaweiProductionRelease"
                 }
 
-//                if (variant.name.contains("QaRelease")){
-//                    assembleTaskAliasName = "qaRelease"
-//                } else if (variant.name.contains("ProductionRelease")){
-//                    assembleTaskAliasName = "productionRelease"
-//                }
-
-                println("Creating alias $assembleTaskAliasName for $assembleTaskAliasVariant")
                 def aliasTaskName = "assemble${assembleTaskAliasName.capitalize()}"
                 def aliasTask = task(aliasTaskName, type: Copy) {
                     from variant.outputs*.outputFile.toSet()
