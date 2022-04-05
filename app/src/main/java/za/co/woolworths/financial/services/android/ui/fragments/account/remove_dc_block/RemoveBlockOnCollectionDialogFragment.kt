@@ -111,7 +111,6 @@ class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.On
                         TakeUpPlanUtil.takeUpPlanEventLog(it, this)
                     }
                 }
-                dismiss()
                 setFragmentResult(
                     mClassName, bundleOf(
                         ViewTreatmentPlanDialogFragment.CANNOT_AFFORD_PAYMENT_BUTTON to ViewTreatmentPlanDialogFragment.CANNOT_AFFORD_PAYMENT_BUTTON,
@@ -121,6 +120,7 @@ class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.On
                 openSetupPaymentPlanPage()
             }
         }
+        dismiss()
     }
 
     private fun openSetupPaymentPlanPage() {
