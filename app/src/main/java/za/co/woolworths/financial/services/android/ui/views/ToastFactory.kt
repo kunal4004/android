@@ -317,7 +317,7 @@ class ToastFactory {
             productCountMap.let {
                 tvTotalProductCount?.apply {
                     text = it.totalProductCount.toString()
-                    setTextColor(Color.parseColor(it.quantityLimit?.foodLayoutColour))
+                    it.quantityLimit?.foodLayoutColour?.let { color -> setTextColor(Color.parseColor(color)) }
                 }
                 (toastView?.background as GradientDrawable).setColor(Color.parseColor(it.quantityLimit?.foodLayoutColour))
                 tvFoodLayoutMessage?.text = it.quantityLimit?.foodLayoutMessage ?: ""

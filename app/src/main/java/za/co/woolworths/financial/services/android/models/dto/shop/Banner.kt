@@ -8,6 +8,8 @@ import kotlinx.android.parcel.Parcelize
 data class Banner(
     var displayName: String? = null,
 
+    var subTitle: String? = null,
+
     var navigationState: String? = null,
 
     var externalImageRefV2: String? = null,

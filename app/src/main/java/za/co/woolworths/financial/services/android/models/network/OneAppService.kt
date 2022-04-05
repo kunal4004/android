@@ -29,6 +29,7 @@ import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPReq
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPResponse
 import za.co.woolworths.financial.services.android.models.dto.pma.DeleteResponse
 import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
+import za.co.woolworths.financial.services.android.models.dto.shop.DashCategories
 import za.co.woolworths.financial.services.android.models.dto.size_guide.SizeGuideResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.*
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
@@ -189,7 +190,7 @@ object OneAppService : RetrofitConfig() {
             getDeviceIdentityToken(), locationCord?.latitude, locationCord?.longitude, suburbId, storeId)
     }
 
-    suspend fun getDashCategory(): retrofit2.Response<RootCategories> {
+    suspend fun getDashCategory(): retrofit2.Response<DashCategories> {
         return withContext(Dispatchers.IO) {
             val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
             val fulFillmentStoreId01 = Utils.retrieveStoreId("01")
