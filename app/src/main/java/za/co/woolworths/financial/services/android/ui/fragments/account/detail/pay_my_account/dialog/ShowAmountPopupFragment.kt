@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
+import android.opengl.Visibility
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -81,8 +82,15 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                     false -> {
                         //ElitePlan
                         pmaAmountEnteredTextView?.text = getDiscountAmount()
-                        savedAmountTextView?.text = getString(R.string.you_saved,getSavedAmount())
-                        savedAmountTextView?.visibility = VISIBLE
+                        savedAmountTextView?.text = getString(R.string.you_saved, getSavedAmount())
+                        when (isAmountBelowMaxLimit(elitePlanModel?.settlementAmount)) {
+                            true -> {
+                                savedAmountTextView?.visibility = VISIBLE
+                            }
+                            false -> {
+                                savedAmountTextView?.visibility = GONE
+                            }
+                        }
                         editAmountImageView?.visibility = GONE
                         tvTitle?.text = getString(R.string.amount_payable)
                     }
@@ -105,6 +113,7 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                         setTextColor(Color.RED)
                         typeface = Typeface.DEFAULT_BOLD
                         invalidPaymentAmountTextView?.visibility = VISIBLE
+                        amountYouSave?.visibility = VISIBLE
                     } else {
                         setTextColor(Color.BLACK)
                         typeface = Typeface.DEFAULT
@@ -292,7 +301,7 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                             activity,
                             cardInfo,
                             PayMyAccountStartDestinationType.MANAGE_CARD,
-                            true,payMyAccountViewModel.elitePlanModel
+                            true, payMyAccountViewModel.elitePlanModel
                         )
                     }
 
