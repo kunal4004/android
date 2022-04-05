@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -30,8 +29,8 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Save
 import za.co.woolworths.financial.services.android.checkout.view.*
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
+import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
@@ -44,8 +43,8 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLo
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.models.network.StorePickupInfoBody
-import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment
@@ -427,9 +426,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         geoCollectTab?.isEnabled = true
         StoreLiveData.observe(viewLifecycleOwner) {
             if (it?.storeName != null) {
-                geoDeliveryText?.text =
-                    HtmlCompat.fromHtml(getString(R.string.collecting_from_geo, it?.storeName),
-                        HtmlCompat.FROM_HTML_MODE_LEGACY)
+                geoDeliveryText?.text = it?.storeName
             }
             editDelivery?.text = bindString(R.string.edit)
             btnConfirmAddress?.isEnabled = true
@@ -532,11 +529,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             return
         }
         geoDeliveryView?.visibility = View.VISIBLE
-        geoDeliveryText?.text = HtmlCompat.fromHtml(getString(R.string.delivering_to_geo,
-            validateLocationResponse?.validatePlace?.placeDetails?.address1),
-            HtmlCompat.FROM_HTML_MODE_LEGACY)
-        imgDelIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
-            R.drawable.ic_delivery_geo))
+        geoDeliveryText?.text = validateLocationResponse?.validatePlace?.placeDetails?.address1
 
         val earliestFoodDate =
             validateLocationResponse?.validatePlace?.firstAvailableFoodDeliveryDate
@@ -593,8 +586,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         }
 
         geoDeliveryView?.visibility = View.VISIBLE
-        imgDelIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
-            R.drawable.ic_basket))
         setGeoDeliveryTextForCnc()
 
         val earliestFoodDate =
@@ -613,10 +604,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     private fun setGeoDeliveryTextForCnc() {
         if (!StoreLiveData.value?.storeName.isNullOrEmpty()) {
-            geoDeliveryText?.text = HtmlCompat.fromHtml(
-                getString(R.string.collecting_from_geo, mStoreName),
-                HtmlCompat.FROM_HTML_MODE_LEGACY
-            )
+            geoDeliveryText?.text = mStoreName
             editDelivery?.text = bindString(R.string.edit)
             btnConfirmAddress?.isEnabled = true
             btnConfirmAddress?.setBackgroundColor(
@@ -631,10 +619,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 if (it.storeName.equals("null") || it.storeName.isNullOrEmpty()) {
                     whereToCollect()
                 } else {
-                    geoDeliveryText?.text = HtmlCompat.fromHtml(
-                        getString(R.string.collecting_from_geo, it.storeName),
-                        HtmlCompat.FROM_HTML_MODE_LEGACY
-                    )
+                    geoDeliveryText?.text = it.storeName
                     editDelivery?.text = bindString(R.string.edit)
                     btnConfirmAddress?.isEnabled = true
                     btnConfirmAddress?.setBackgroundColor(
@@ -651,11 +636,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     private fun whereToCollect() {
-        geoDeliveryText?.text = HtmlCompat.fromHtml(
-            getString(R.string.collecting_from_geo,
-                getNearestStore(validateLocationResponse?.validatePlace?.stores)),
-            HtmlCompat.FROM_HTML_MODE_LEGACY
-        )
+        geoDeliveryText?.text = getNearestStore(validateLocationResponse?.validatePlace?.stores)
         mStoreId = getNearestStoreId(validateLocationResponse?.validatePlace?.stores)
         editDelivery?.text = bindString(R.string.edit)
         btnConfirmAddress?.isEnabled = true
@@ -665,7 +646,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 R.color.black
             )
         )
-
     }
 
     private fun getNearestStore(stores: List<Store>?): String? {
