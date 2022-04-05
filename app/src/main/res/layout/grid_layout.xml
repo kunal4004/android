@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/default_background"
@@ -29,15 +28,15 @@
                 android:src="@drawable/ic_delivery_circle" />
 
             <TextView
-                android:layout_marginStart="@dimen/five_dp"
                 android:id="@+id/toolbarPLPAddress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/twenty_dp"
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center"
+                android:layout_marginStart="@dimen/five_dp"
                 android:fontFamily="@font/myriad_pro_regular"
                 android:gravity="center"
+                android:minHeight="@dimen/twenty_dp"
                 android:text="@string/standard_delivery"
                 android:textColor="@color/black"
                 android:textSize="@dimen/twelve_sp" />
@@ -67,9 +66,11 @@
     </androidx.appcompat.widget.Toolbar>
 
     <RelativeLayout
+        android:id="@+id/plp_relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbarPLP"
+        android:layout_marginTop="?attr/actionBarSize"
         android:background="@color/default_background"
         android:orientation="vertical">
 
@@ -123,6 +124,19 @@
             android:background="@color/recent_search_bg" />
 
     </RelativeLayout>
+
+    <include
+        android:id="@+id/chanel_layout"
+        layout="@layout/fragment_brand_landing"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/layout_error_blp"
+        layout="@layout/blp_error_layout"
+        android:visibility="gone" />
 
     <include
         android:id="@+id/incNoConnectionHandler"

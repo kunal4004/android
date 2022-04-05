@@ -237,6 +237,11 @@ open class FirebaseManagerAnalyticsProperties {
         const val CHECKOUT_COLLECTION_TAXI_SELECT = "clikcllct_taxi"
         const val CHECKOUT_COLLECTION_CONFIRM_DETAILS = "clikcllct_confrm"
 
+        // Brand Landing Page
+        const val BRAND_LANDING_PAGE_CATEGORY = "shop_brnd_lndng_cat"
+        const val BRAND_LANDING_PAGE_SUB_CATEGORY = "shop_categ_pge_lwr_cat"
+        const val BRAND_LANDING_PAGE_LOGO_IMAGE = "shop_categ_pge_imge_bnr"
+
         //PLDD
         const val personalLoanDrawdownStart = "pldd_start"
         const val personalLoanDrawdownComplete = "pldd_complete"
@@ -470,6 +475,11 @@ open class FirebaseManagerAnalyticsProperties {
     class PropertyValues {
         companion object {
             const val NOT_APPLICABLE: String = "N/A"
+
+            // Chanel
+            const val ACTION_BRAND_LANDING_PAGE_CATEGORY = "Customer selects a category which takes them to the relevant category page."
+            const val ACTION_BRAND_LANDING_PAGE_SUB_CATEGORY = "Customer selects a lower level category which opens a PLP page with all the related items"
+            const val ACTION_BRAND_LANDING_PAGE_LOGO_IMAGE = "Customer selects brand image banner and this links back to the brand landing page"
 
             const val SC_BPI_OPT_IN_START_VALUE = "Store Card Landing - BPI - Opt-in"
             const val SC_BPI_OPT_IN_CONFIRM_VALUE = "Store Card Landing - BPI - Confirm"

@@ -33,7 +33,6 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.perfectcorp.perfectlib.SkuHandler;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TimeZone;
@@ -44,25 +43,21 @@ import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace;
-import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.models.dto.bpi.BalanceProtectionInsurance;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback;
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility;
 import za.co.woolworths.financial.services.android.util.ConnectivityLiveData;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
-import static za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService.CHANNEL_ID;
-
 @HiltAndroidApp
 public class WoolworthsApplication extends Application implements Application.ActivityLifecycleCallbacks, LifecycleObserver {
 
-    private static Context context;
     private static Context mContextApplication;
     private UserManager mUserManager;
     private Tracker mTracker;
@@ -130,7 +125,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
     public void onCreate() {
         super.onCreate();
         mInstance = this;
-        WoolworthsApplication.context = this.getApplicationContext();
         this.registerActivityLifecycleCallbacks(this);
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -147,15 +141,15 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
         TimeZone.setDefault(TimeZone.getTimeZone("Africa/Johannesburg"));
 
-        ImagePipelineConfig config = ImagePipelineConfig.newBuilder(context)
+        ImagePipelineConfig config = ImagePipelineConfig.newBuilder(this)
                 .setDownsampleEnabled(true)
                 .build();
         Fresco.initialize(this, config);
         //wake up FirebaseManager that will instantiate
         //FirebaseApp
         FirebaseManager.Companion.getInstance();
-        FacebookSdk.sdkInitialize(WoolworthsApplication.this);
-        AppEventsLogger.activateApp(WoolworthsApplication.this);
+        FacebookSdk.sdkInitialize(this);
+        AppEventsLogger.activateApp(this);
         mWGlobalState = new WGlobalState();
         updateBankDetail = new UpdateBankDetail();
         // set app context
@@ -239,7 +233,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     @Override
     public void onActivityDestroyed(Activity activity) {
         if (!isAnyActivityVisible() && ChatAWSAmplify.INSTANCE.isLiveChatBackgroundServiceRunning()) {
-            Intent intentDismissService = new Intent(CHANNEL_ID);
+            Intent intentDismissService = new Intent(LiveChatService.CHANNEL_ID);
             sendBroadcast(intentDismissService);
         }
 
