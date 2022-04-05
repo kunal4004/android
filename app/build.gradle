@@ -13,7 +13,7 @@ android {
     def major = "8"
     def minor = "8"
     def fix = "0"
-    def jobNumber = 154431
+    def jobNumber = 154432
 
     dataBinding {
         enabled = true
@@ -157,6 +157,13 @@ android {
     if(isAppCenter){
         def assembleTaskAliasName = "" // whatever "build variant" you are able to select in the Build Configuration web GUI
         def assembleTaskAliasVariant = System.env.ANDROID_PRODUCT_FLAVOR.toString() // an actual flavor (can contain multiple dimensions)
+        def isAppBundleEnabled = System.env.IS_APP_BUNDLE_ENABLED.asBoolean()
+        def buildCommand = ""
+        if (isAppBundleEnabled) {
+            buildCommand = "bundle"
+        } else {
+            buildCommand = "assemble"
+        }
 
         applicationVariants.all { variant ->
             if (variant.name == assembleTaskAliasVariant) {
@@ -166,7 +173,7 @@ android {
                     assembleTaskAliasName = "productionRelease"
                 }
 
-                def aliasTaskName = "assemble${assembleTaskAliasName.capitalize()}"
+                def aliasTaskName = "$buildCommand${assembleTaskAliasName.capitalize()}"
                 def aliasTask = task(aliasTaskName, type: Copy) {
                     from variant.outputs*.outputFile.toSet()
                     into "build/outputs/apk/$assembleTaskAliasName"
