@@ -75,7 +75,7 @@ class PayMyAccountViewModel : ViewModel() {
                 ?: "", paymentMethod?.type ?: "")
         return AddCardResponse(paymentMethod?.token ?: "", pmaCard, false)
     }
-
+    fun getSelectedPosition() = getCardDetail()?.selectedCardPosition ?: 0
     fun getPaymentMethodList(): MutableList<GetPaymentMethod>? {
         val cardDetail = getCardDetail()
         val paymentList = cardDetail?.paymentMethodList
