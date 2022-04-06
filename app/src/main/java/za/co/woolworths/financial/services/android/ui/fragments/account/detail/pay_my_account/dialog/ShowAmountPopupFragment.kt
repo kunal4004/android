@@ -81,8 +81,15 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                     false -> {
                         //ElitePlan
                         pmaAmountEnteredTextView?.text = getDiscountAmount()
-                        savedAmountTextView?.text = getString(R.string.you_saved,getSavedAmount())
-                        savedAmountTextView?.visibility = VISIBLE
+                        savedAmountTextView?.text = getString(R.string.you_saved, getSavedAmount())
+                        when (isAmountBelowMaxLimit(elitePlanModel?.settlementAmount)) {
+                            true -> {
+                                savedAmountTextView?.visibility = VISIBLE
+                            }
+                            false -> {
+                                savedAmountTextView?.visibility = GONE
+                            }
+                        }
                         editAmountImageView?.visibility = GONE
                         tvTitle?.text = getString(R.string.amount_payable)
                     }
@@ -292,7 +299,8 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                             activity,
                             cardInfo,
                             PayMyAccountStartDestinationType.MANAGE_CARD,
-                            true
+                            true,
+                            payMyAccountViewModel.elitePlanModel
                         )
                     }
 

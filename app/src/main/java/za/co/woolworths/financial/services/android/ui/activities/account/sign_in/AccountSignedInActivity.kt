@@ -387,7 +387,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
                 BottomSheetBehavior.STATE_COLLAPSED
 
             REQUEST_ELITEPLAN -> {
-                //elitePlanModel is the model extracted from callback url paramters
+                //elitePlanModel is the model extracted from callback url parameters
                 if (extras?.containsKey(ELITE_PLAN_MODEL) == true) {
                     val elitePlanModel = extras.getParcelable(ELITE_PLAN_MODEL) as? Parcelable
                     ActivityIntentNavigationManager.presentPayMyAccountActivity(this, payMyAccountViewModel.getCardDetail(), PayMyAccountStartDestinationType.CREATE_USER, true,elitePlanModel)
