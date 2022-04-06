@@ -295,13 +295,15 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                     }
 
                     R.id.changeTextView -> {
-                        ActivityIntentNavigationManager.presentPayMyAccountActivity(
-                            activity,
-                            cardInfo,
-                            PayMyAccountStartDestinationType.MANAGE_CARD,
-                            true,
-                            payMyAccountViewModel.elitePlanModel
-                        )
+                        if (isAmountBelowMaxLimit(elitePlanModel?.settlementAmount)) {
+                            ActivityIntentNavigationManager.presentPayMyAccountActivity(
+                                activity,
+                                cardInfo,
+                                PayMyAccountStartDestinationType.MANAGE_CARD,
+                                true,
+                                payMyAccountViewModel.elitePlanModel
+                            )
+                        }
                     }
 
                     R.id.pmaConfirmPaymentButton -> {
@@ -325,23 +327,26 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                         )
                     }
                     R.id.changeTextView -> {
-                        if (changeTextView.text.toString()
-                                .equals(bindString(R.string.add_card_label), ignoreCase = true)
-                        ) {
-                            ActivityIntentNavigationManager.presentPayMyAccountActivity(
-                                activity,
-                                cardInfo,
-                                PayMyAccountStartDestinationType.ADD_NEW_CARD,
-                                true
-                            )
-                        } else {
-                            ActivityIntentNavigationManager.presentPayMyAccountActivity(
-                                activity,
-                                cardInfo,
-                                PayMyAccountStartDestinationType.MANAGE_CARD,
-                                true
-                            )
+                        if (isAmountBelowMaxLimit(elitePlanModel?.settlementAmount)) {
+                            if (changeTextView.text.toString()
+                                    .equals(bindString(R.string.add_card_label), ignoreCase = true)
+                            ) {
+                                ActivityIntentNavigationManager.presentPayMyAccountActivity(
+                                    activity,
+                                    cardInfo,
+                                    PayMyAccountStartDestinationType.ADD_NEW_CARD,
+                                    true
+                                )
+                            } else {
+                                ActivityIntentNavigationManager.presentPayMyAccountActivity(
+                                    activity,
+                                    cardInfo,
+                                    PayMyAccountStartDestinationType.MANAGE_CARD,
+                                    true
+                                )
+                            }
                         }
+
                     }
 
                     R.id.viewOtherPaymentOptionsTextView -> {

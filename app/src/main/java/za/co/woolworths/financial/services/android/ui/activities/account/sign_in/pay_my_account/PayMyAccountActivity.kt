@@ -18,6 +18,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.IS_DONE_BUTTON_ENABLED
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment.Companion.REQUEST_ELITEPLAN
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment.Companion.REQUEST_ELITEPLAN_SUCCESS
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.CreditAndDebitCardPaymentsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_UPDATE_CARD_RESULT_CODE
@@ -185,7 +186,9 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
             }
 
             REQUEST_ELITEPLAN->{
-                finish()
+                if (resultCode == REQUEST_ELITEPLAN_SUCCESS){
+                    finish()
+                }
             }
         }
     }
