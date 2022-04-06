@@ -157,12 +157,15 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
 
         val extras = data?.extras
         when (requestCode) {
-            PAY_MY_ACCOUNT_REQUEST_CODE -> {
+            PAY_MY_ACCOUNT_REQUEST_CODE, REQUEST_ELITEPLAN -> {
                 when (resultCode) {
                     RESULT_OK, PMA_UPDATE_CARD_RESULT_CODE -> {
                         extras?.getString(PAYMENT_DETAIL_CARD_UPDATE,"")?.apply {
                             payMyAccountViewModel.setPMACardInfo(this)
                         }
+                    }
+                    REQUEST_ELITEPLAN_SUCCESS->{
+                        finish()
                     }
 
                     PMA3DSecureProcessRequestFragment.PMA_TRANSACTION_COMPLETED_RESULT_CODE -> {
@@ -185,11 +188,6 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
                 }
             }
 
-            REQUEST_ELITEPLAN->{
-                if (resultCode == REQUEST_ELITEPLAN_SUCCESS){
-                    finish()
-                }
-            }
         }
     }
 }
