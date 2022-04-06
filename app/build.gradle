@@ -155,24 +155,36 @@ android {
     }
 
     if(isAppCenter){
-        def assembleTaskAliasName = "" // whatever "build variant" you are able to select in the Build Configuration web GUI
-        def assembleTaskAliasVariant = System.env.ANDROID_PRODUCT_FLAVOR.toString() // an actual flavor (can contain multiple dimensions)
+        def taskSuffix = "" // whatever "build variant" you are able to select in the Build Configuration web GUI
+        def selectedBuildVariant = System.env.ANDROID_PRODUCT_FLAVOR.toString() // an actual flavor (can contain multiple dimensions)
 
         applicationVariants.all { variant ->
-            if (variant.name == assembleTaskAliasVariant) {
+            if (variant.name == selectedBuildVariant) {
                 if (variant.name.contains("QaRelease")){
-                    assembleTaskAliasName = "qaRelease"
+                    taskSuffix = "qaRelease"
                 } else if (variant.name.contains("ProductionRelease")){
-                    assembleTaskAliasName = "productionRelease"
+                    taskSuffix = "productionRelease"
                 }
 
-                def aliasTaskName = "assemble${assembleTaskAliasName.capitalize()}"
-                def aliasTask = task(aliasTaskName, type: Copy) {
-                    from variant.outputs*.outputFile.toSet()
-                    into "build/outputs/apk/$assembleTaskAliasName"
+                def assembleTaskName = "assemble${taskSuffix.capitalize()}"
+                if (tasks.findByName(assembleTaskName)) {
+                    def aliasTask = task(assembleTaskName, type: Copy) {
+                        from variant.outputs*.outputFile.toSet()
+                        into "build/outputs/apk/$assembleTaskAliasName"
+                    }
+                    variant.assemble.finalizedBy aliasTask
+                    aliasTask.dependsOn variant.assemble
                 }
-                variant.assemble.finalizedBy aliasTask
-                aliasTask.dependsOn variant.assemble
+
+                def bundleTaskName = "bundle${taskSuffix.capitalize()}"
+                if (tasks.findByName(bundleTaskName)) {
+                    def aliasTask = task(bundleTaskName, type: Copy) {
+                        from variant.outputs*.outputFile.toSet()
+                        into "build/outputs/bundle/$assembleTaskAliasName"
+                    }
+                    variant.assemble.finalizedBy aliasTask
+                    aliasTask.dependsOn variant.assemble
+                }
             }
         }
     }
