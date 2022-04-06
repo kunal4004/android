@@ -582,26 +582,9 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
         val earliestFoodDate =
             validateLocationResponse?.validatePlace?.firstAvailableFoodDeliveryDate
-        if (earliestFoodDate.isNullOrEmpty()) {
-            earliestDeliveryDateLabel?.visibility = View.GONE
-            earliestDeliveryDateValue?.visibility = View.GONE
-        } else {
-            earliestDeliveryDateLabel?.visibility = View.VISIBLE
-            earliestDeliveryDateValue?.visibility = View.VISIBLE
-            earliestDeliveryDateValue?.text = WFormatter.getFullMonthWithDate(earliestFoodDate)
-        }
-
         val earliestFashionDate =
             validateLocationResponse?.validatePlace?.firstAvailableOtherDeliveryDate
-        if (earliestFashionDate.isNullOrEmpty()) {
-            earliestFashionDeliveryDateLabel?.visibility = View.GONE
-            earliestFashionDeliveryDateValue?.visibility = View.GONE
-        } else {
-            earliestFashionDeliveryDateValue?.text =
-                WFormatter.getFullMonthWithDate(earliestFashionDate)
-            earliestFashionDeliveryDateLabel?.visibility = View.VISIBLE
-            earliestFashionDeliveryDateValue?.visibility = View.VISIBLE
-        }
+        setVisibilityDeliveryDates(earliestFoodDate, earliestFashionDate, null)
     }
 
     private fun updateCollectionDetails() {
@@ -637,6 +620,21 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
         val earliestFoodDate =
             validateLocationResponse?.validatePlace?.firstAvailableFoodDeliveryDate
+        setVisibilityDeliveryDates(earliestFoodDate, null, null)
+    }
+
+    private fun updateDashDetails() {
+        val earliestDashDate =
+            validateLocationResponse?.validatePlace?.firstAvailableFoodDeliveryDate
+        setVisibilityDeliveryDates(null, null, earliestDashDate)
+
+    }
+
+    private fun setVisibilityDeliveryDates(
+        earliestFoodDate: String?,
+        earliestFashionDate: String?,
+        earliestDashDate: String?,
+    ) {
         if (earliestFoodDate.isNullOrEmpty()) {
             earliestDeliveryDateLabel?.visibility = View.GONE
             earliestDeliveryDateValue?.visibility = View.GONE
@@ -645,12 +643,24 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             earliestDeliveryDateValue?.visibility = View.VISIBLE
             earliestDeliveryDateValue?.text = WFormatter.getFullMonthWithDate(earliestFoodDate)
         }
-        earliestFashionDeliveryDateLabel?.visibility = View.GONE
-        earliestFashionDeliveryDateValue?.visibility = View.GONE
-    }
 
-    private fun updateDashDetails() {
-
+        if (earliestFashionDate.isNullOrEmpty()) {
+            earliestFashionDeliveryDateLabel?.visibility = View.GONE
+            earliestFashionDeliveryDateValue?.visibility = View.GONE
+        } else {
+            earliestFashionDeliveryDateLabel?.visibility = View.VISIBLE
+            earliestFashionDeliveryDateValue?.visibility = View.VISIBLE
+            earliestFashionDeliveryDateValue?.text =
+                WFormatter.getFullMonthWithDate(earliestFashionDate)
+        }
+        if (earliestDashDate.isNullOrEmpty()) {
+            earliestDeliveryDashLabel?.visibility = View.GONE
+            earliestDeliveryDashValue?.visibility = View.GONE
+        } else {
+            earliestDeliveryDashLabel?.visibility = View.VISIBLE
+            earliestDeliveryDashValue?.visibility = View.VISIBLE
+            earliestDeliveryDashValue?.text = WFormatter.getFullMonthWithDate(earliestDashDate)
+        }
     }
 
     private fun setGeoDeliveryTextForCnc() {

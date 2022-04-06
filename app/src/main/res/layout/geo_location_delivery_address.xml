@@ -229,6 +229,36 @@
         app:layout_constraintStart_toEndOf="@id/earliestFashionDeliveryDateLabel"
         app:layout_constraintTop_toBottomOf="@+id/earliestDeliveryDateLabel" />
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/earliestDeliveryDashLabel"
+        style="@style/myriad_pro_regular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:minWidth="@dimen/_55sdp"
+        android:text="@string/earliest_dash_delivery_timeslot"
+        android:textColor="@color/color_666666"
+        android:textSize="@dimen/_13ssp"
+        app:layout_constraintEnd_toStartOf="@+id/earliestDeliveryDashValue"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@+id/earliestFashionDeliveryDateLabel" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/earliestDeliveryDashValue"
+        style="@style/myriad_pro_semi_bold"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:ellipsize="end"
+        android:gravity="end"
+        android:maxLines="1"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_12ssp"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toEndOf="@id/earliestDeliveryDashLabel"
+        app:layout_constraintTop_toBottomOf="@+id/earliestFashionDeliveryDateLabel" />
+
     <include
         android:id="@+id/no_conn_layout"
         layout="@layout/no_collection_store_fragment"
@@ -271,7 +301,8 @@
         android:layout_height="match_parent"
         android:visibility="gone"
         app:constraint_referenced_ids="btnConfirmAddress,earliestDeliveryDateValue,
-        earliestDeliveryDateLabel,earliestFashionDeliveryDateValue,imgDelIcon,tabsDivider,geoDivider,
+        earliestDeliveryDateLabel,earliestFashionDeliveryDateValue,earliestDeliveryDashLabel,
+        earliestDeliveryDashValue, imgDelIcon,tabsDivider,geoDivider,
         earliestFashionDeliveryDateLabel,btnConfirmAddress,editDelivery,geoDeliveryText" />
 
     <View
