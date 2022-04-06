@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -181,6 +182,10 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                         navigateToConfirmAddressScreen()
                         return
                     }
+
+                    Delivery.DASH.name -> {
+
+                    }
                 }
             }
             R.id.btnConfirmAddress -> {
@@ -209,6 +214,12 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     return
                 else
                     openGeoDeliveryTab()
+            }
+            R.id.geoDashTab -> {
+                if (progressBar?.visibility == View.VISIBLE)
+                    return
+                else
+                    openDashTab()
             }
             R.id.btnRetryConnection -> {
                 initView()
@@ -422,8 +433,10 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         btnConfirmAddress?.setOnClickListener(this)
         geoDeliveryTab?.setOnClickListener(this)
         geoCollectTab?.setOnClickListener(this)
+        geoDashTab?.setOnClickListener(this)
         geoDeliveryTab?.isEnabled = true
         geoCollectTab?.isEnabled = true
+        geoDashTab?.isEnabled = true
         StoreLiveData.observe(viewLifecycleOwner) {
             if (it?.storeName != null) {
                 geoDeliveryText?.text = it?.storeName
@@ -453,10 +466,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             hashMapOf(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_DELIVERY),
             activity)
 
-        geoDeliveryTab?.setBackgroundResource(R.drawable.bg_geo_selected_tab)
-        geoDeliveryTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-        geoCollectTab?.setBackgroundResource(R.drawable.bg_geo_unselected_tab)
-        geoCollectTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_444444))
+        selectATab(geoDeliveryTab)
         deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
             R.drawable.img_delivery_truck))
         btnConfirmAddress?.isEnabled = true
@@ -473,15 +483,48 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_CLICK_COLLECT,
             hashMapOf(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_CLICK_COLLECT),
             activity)
-        geoCollectTab?.setBackgroundResource(R.drawable.bg_geo_selected_tab)
-        geoCollectTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-        geoDeliveryTab?.setBackgroundResource(R.drawable.bg_geo_unselected_tab)
-        geoDeliveryTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_444444))
+        selectATab(geoCollectTab)
         deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
             R.drawable.img_collection_bag))
         changeFulfillmentTitleTextView?.text = bindString(R.string.click_and_collect)
         changeFulfillmentSubTitleTextView?.text = bindString(R.string.click_and_collect_title_text)
         updateCollectionDetails()
+    }
+
+    private fun openDashTab() {
+        deliveryType = Delivery.DASH.name
+        selectATab(geoDashTab)
+        deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
+            R.drawable.img_dash_delivery))
+        changeFulfillmentTitleTextView?.text = bindString(R.string.dash_delivery)
+        changeFulfillmentSubTitleTextView?.text = bindString(R.string.dash_title_text)
+        updateDashDetails()
+    }
+
+    private fun selectATab(selectedTab: AppCompatTextView) {
+        selectedTab?.setBackgroundResource(R.drawable.bg_geo_selected_tab)
+        selectedTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+        when (selectedTab) {
+            geoDeliveryTab -> {
+                unSelectATab(geoCollectTab)
+                unSelectATab(geoDashTab)
+            }
+            geoCollectTab -> {
+                unSelectATab(geoDeliveryTab)
+                unSelectATab(geoDashTab)
+            }
+            geoDashTab -> {
+                unSelectATab(geoDeliveryTab)
+                unSelectATab(geoCollectTab)
+            }
+        }
+    }
+
+    private fun unSelectATab(unSelectedTab: AppCompatTextView) {
+        unSelectedTab?.apply {
+            setBackgroundResource(R.drawable.bg_geo_unselected_tab)
+            setTextColor(ContextCompat.getColor(requireContext(), R.color.color_444444))
+        }
     }
 
     private fun getDeliveryDetailsFromValidateLocation(placeId: String) {
@@ -498,10 +541,16 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 if (validateLocationResponse != null) {
                     when (validateLocationResponse?.httpCode) {
                         HTTP_OK -> {
-                            if (deliveryType.equals(Delivery.STANDARD.name, true)) {
-                                openGeoDeliveryTab()
-                            } else {
-                                openCollectionTab()
+                            when (deliveryType) {
+                                Delivery.STANDARD.name -> {
+                                    openGeoDeliveryTab()
+                                }
+                                Delivery.CNC.name -> {
+                                    openCollectionTab()
+                                }
+                                else -> {
+                                    openDashTab()
+                                }
                             }
                         }
                         else -> {
@@ -540,7 +589,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             earliestDeliveryDateLabel?.visibility = View.VISIBLE
             earliestDeliveryDateValue?.visibility = View.VISIBLE
             earliestDeliveryDateValue?.text = WFormatter.getFullMonthWithDate(earliestFoodDate)
-
         }
 
         val earliestFashionDate =
@@ -554,7 +602,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             earliestFashionDeliveryDateLabel?.visibility = View.VISIBLE
             earliestFashionDeliveryDateValue?.visibility = View.VISIBLE
         }
-
     }
 
     private fun updateCollectionDetails() {
@@ -600,6 +647,10 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         }
         earliestFashionDeliveryDateLabel?.visibility = View.GONE
         earliestFashionDeliveryDateValue?.visibility = View.GONE
+    }
+
+    private fun updateDashDetails() {
+
     }
 
     private fun setGeoDeliveryTextForCnc() {
