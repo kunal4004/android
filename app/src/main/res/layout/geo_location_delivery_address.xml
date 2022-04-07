@@ -5,49 +5,6 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineEnd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="@dimen/_16sdp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineStart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="@dimen/_16sdp" />
-
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineBottom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_end="@dimen/_16sdp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineTop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="@dimen/_10sdp" />
-
-    <Button
-        android:id="@+id/btnConfirmAddress"
-        style="@style/blackButtonStyle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@color/black"
-        android:fontFamily="@font/futura_medium"
-        android:text="@string/confirm"
-        app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
-
-
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imgDelBack"
         android:layout_width="wrap_content"
@@ -64,19 +21,45 @@
         android:id="@+id/deliveryBagIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/productsAvailableTitle"
+        android:layout_marginBottom="@dimen/ten_dp"
+        app:layout_constraintBottom_toTopOf="@id/changeFulfillmentTitleTextView"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toTopOf="@id/geoCollectTab"
-        app:srcCompat="@drawable/ic_delivery_circle" />
+        app:srcCompat="@drawable/img_delivery_truck" />
 
+    <TextView
+        android:id="@+id/changeFulfillmentTitleTextView"
+        style="@style/futura_semi_bold_black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ten_dp"
+        android:layout_marginBottom="@dimen/ten_dp"
+        android:text="@string/standard_delivery"
+        android:textSize="@dimen/twenty_sp"
+        app:layout_constraintBottom_toTopOf="@id/changeFulfillmentSubTitleTextView"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
+
+    <TextView
+        android:id="@+id/changeFulfillmentSubTitleTextView"
+        style="@style/myriad_pro_regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/thirty_five_dp"
+        android:layout_marginTop="@dimen/ten_dp"
+        android:layout_marginEnd="@dimen/thirty_five_dp"
+        android:layout_marginBottom="@dimen/fourty_dp"
+        android:gravity="center"
+        android:text="@string/standard_delivery_title_text"
+        android:textSize="@dimen/sixteen_sp"
+        app:layout_constraintBottom_toTopOf="@id/geoDeliveryTab"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/geoDeliveryTab"
         android:layout_width="0dp"
         android:layout_height="@dimen/_30sdp"
-        android:layout_marginTop="@dimen/_14sdp"
-        android:layout_marginEnd="@dimen/_5sdp"
         android:background="@drawable/bg_geo_selected_tab"
         android:fontFamily="@font/myriad_pro_regular"
         android:gravity="center"
@@ -87,16 +70,16 @@
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="@dimen/_11ssp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/geoCollectTab"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@+id/imgDelBack" />
+        app:layout_constraintTop_toBottomOf="@id/imgDelBack" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/geoCollectTab"
         android:layout_width="0dp"
         android:layout_height="@dimen/_30sdp"
         android:layout_marginStart="@dimen/_5sdp"
-        android:layout_marginTop="@dimen/_14sdp"
         android:background="@drawable/bg_geo_unselected_tab"
         android:fontFamily="@font/myriad_pro_regular"
         android:gravity="center"
@@ -107,16 +90,37 @@
         android:textAllCaps="false"
         android:textColor="@color/color_444444"
         android:textSize="@dimen/_11ssp"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/geoDashTab"
         app:layout_constraintStart_toEndOf="@+id/geoDeliveryTab"
-        app:layout_constraintTop_toBottomOf="@+id/imgDelBack" />
+        app:layout_constraintTop_toBottomOf="@id/imgDelBack" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/geoDashTab"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:background="@drawable/bg_geo_unselected_tab"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:gravity="center"
+        android:maxLines="1"
+        android:paddingStart="@dimen/_5sdp"
+        android:paddingEnd="@dimen/_5sdp"
+        android:text="@string/dash_delivery"
+        android:textAllCaps="false"
+        android:textColor="@color/color_444444"
+        android:textSize="@dimen/_11ssp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toEndOf="@+id/geoCollectTab"
+        app:layout_constraintTop_toBottomOf="@id/imgDelBack" />
 
     <TextView
-        android:id="@+id/txtNewFeature"
+        android:id="@+id/txtNewFeatureCnC"
         style="@style/futura_semi_bold"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/sixteen_dp"
-        android:layout_marginTop="@dimen/_6sdp"
+        android:layout_marginTop="@dimen/_24sdp"
         android:background="@color/color_4A9521"
         android:gravity="center"
         android:paddingStart="@dimen/five_dp"
@@ -127,8 +131,25 @@
         android:textSize="@dimen/_6ssp"
         app:layout_constraintEnd_toEndOf="@id/geoCollectTab"
         app:layout_constraintStart_toStartOf="@id/geoCollectTab"
-        app:layout_constraintTop_toBottomOf="@+id/imgDelBack" />
+        app:layout_constraintTop_toBottomOf="@+id/changeFulfillmentSubTitleTextView" />
 
+    <TextView
+        android:id="@+id/txtNewFeature"
+        style="@style/futura_semi_bold"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/sixteen_dp"
+        android:layout_marginTop="@dimen/_24sdp"
+        android:background="@color/color_yellow_FEE600"
+        android:gravity="center"
+        android:paddingStart="@dimen/five_dp"
+        android:paddingEnd="@dimen/five_dp"
+        android:text="@string/food_only"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_6ssp"
+        app:layout_constraintEnd_toEndOf="@id/geoDashTab"
+        app:layout_constraintStart_toStartOf="@id/geoDashTab"
+        app:layout_constraintTop_toBottomOf="@+id/changeFulfillmentSubTitleTextView" />
 
     <include
         android:id="@+id/no_conn_layout"
@@ -391,11 +412,8 @@
         productsAvailableTitle,itemLimitValue,itemLimitLabel,
         feeValue,feeLabel,earliestDeliveryDateValue,
         earliestDeliveryDateLabel,earliestFashionDeliveryDateValue,
-        earliestFashionDeliveryDateLabel,btnConfirmAddress,
-        deliveryBagIcon,geoDivider,
-        editDelivery,imgDelIcon,geoDeliveryText,
-        txtNewFeature" />
-
+        earliestFashionDeliveryDateLabel,btnConfirmAddress,geoDivider,
+        editDelivery,imgDelIcon,geoDeliveryText,txtNewFeature,txtNewFeatureCnC" />
 
     <include
         android:id="@+id/connectionLayout"
@@ -404,5 +422,45 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnConfirmAddress"
+        style="@style/blackButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/black"
+        android:fontFamily="@font/futura_medium"
+        android:text="@string/confirm"
+        app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/_16sdp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/_16sdp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/_16sdp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/_10sdp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,8 +14,11 @@ import com.awfs.coordination.R
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import kotlinx.android.synthetic.main.item_banner_carousel.view.*
+import kotlinx.android.synthetic.main.item_long_banner_carousel.view.*
+import kotlinx.android.synthetic.main.item_long_banner_list.view.*
 import kotlinx.android.synthetic.main.product_listing_page_row.view.*
 import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
 import kotlinx.android.synthetic.main.product_listing_promotional_images.view.*
@@ -65,15 +68,17 @@ class DashCategoryAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
+
             DashDeliveryAdapter.TYPE_DASH_CATEGORIES_BANNER_CAROUSEL ->
                 BannerCarouselItemViewHolder(
                     LayoutInflater.from(context)
                         .inflate(R.layout.item_banner_carousel, parent, false)
                 )
+
             DashDeliveryAdapter.TYPE_DASH_CATEGORIES_BANNER_GRID -> {
                 BannerGridItemViewHolder(
                     LayoutInflater.from(context)
-                        .inflate(R.layout.item_banner_carousel, parent, false)
+                        .inflate(R.layout.item_banner_grid, parent, false)
                 )
             }
 
@@ -81,6 +86,20 @@ class DashCategoryAdapter(
                 ProductCarouselItemViewHolder(
                     LayoutInflater.from(context)
                         .inflate(R.layout.item_product_carousel_list, parent, false)
+                )
+            }
+
+            DashDeliveryAdapter.TYPE_DASH_CATEGORIES_LONG_BANNER_CAROUSEL -> {
+                LongBannerCarouselItemViewHolder(
+                    LayoutInflater.from(context)
+                        .inflate(R.layout.item_long_banner_carousel, parent, false)
+                )
+            }
+
+            DashDeliveryAdapter.TYPE_DASH_CATEGORIES_LONG_BANNER_LIST -> {
+                LongBannerListItemViewHolder(
+                    LayoutInflater.from(context)
+                        .inflate(R.layout.item_long_banner_list, parent, false)
                 )
             }
             else -> EmptyViewHolder(View(context))
@@ -93,6 +112,12 @@ class DashCategoryAdapter(
                 holder.bind(context, position, list[position] as Banner)
             }
             holder is BannerGridItemViewHolder -> {
+                holder.bind(context, position, list[position] as Banner)
+            }
+            holder is LongBannerCarouselItemViewHolder -> {
+                holder.bind(context, position, list[position] as Banner)
+            }
+            holder is LongBannerListItemViewHolder -> {
                 holder.bind(context, position, list[position] as Banner)
             }
             holder is ProductCarouselItemViewHolder -> {
@@ -117,6 +142,12 @@ class DashCategoryAdapter(
             DashDeliveryAdapter.TYPE_NAME_PRODUCT_CAROUSEL.lowercase() -> {
                 DashDeliveryAdapter.TYPE_DASH_CATEGORIES_PRODUCT_CAROUSEL
             }
+            DashDeliveryAdapter.TYPE_NAME_LONG_BANNER_CAROUSEL.lowercase() -> {
+                DashDeliveryAdapter.TYPE_DASH_CATEGORIES_LONG_BANNER_CAROUSEL
+            }
+            DashDeliveryAdapter.TYPE_NAME_LONG_BANNER_LIST.lowercase() -> {
+                DashDeliveryAdapter.TYPE_DASH_CATEGORIES_LONG_BANNER_LIST
+            }
             else -> TYPE_EMPTY
         }
     }
@@ -128,7 +159,6 @@ class DashCategoryAdapter(
         productCatalogue.banners?.let { list = it }
         productCatalogue.products?.let { list = it }
     }
-
 }
 
 class BannerCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -142,7 +172,7 @@ class BannerCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
             .placeholder(R.drawable.woolworth_logo_icon)
             .transform(
                 CenterCrop(),
-                RoundedCorners(context.resources.getDimensionPixelOffset(R.dimen.fifteen_dp))
+                RoundedCorners(context.resources.getDimensionPixelOffset(R.dimen.seven_dp))
             )
             .dontAnimate()
             .into(itemView.imgCategoryImage)
@@ -152,18 +182,53 @@ class BannerCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
 class BannerGridItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun bind(context: Context, position: Int, banner: Banner) {
-        // No text
-        itemView.tvCategoryTitle?.text = ""
+        Glide.with(context)
+            .load(banner.externalImageRefV2)
+            .format(DecodeFormat.PREFER_ARGB_8888)
+            .placeholder(R.drawable.woolworth_logo_icon)
+            .transform(
+                RoundedCorners(context.resources.getDimensionPixelOffset(R.dimen.seven_dp))
+            )
+            .dontAnimate()
+            .into(itemView.imgCategoryImage)
+    }
+}
+
+class LongBannerCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+    fun bind(context: Context, position: Int, banner: Banner) {
+
+        itemView.tvLongBannerTitle?.text = banner.displayName
+        itemView.tvLongBannerSubtitle?.text = banner.subTitle
 
         Glide.with(context)
             .load(banner.externalImageRefV2)
             .format(DecodeFormat.PREFER_ARGB_8888)
             .placeholder(R.drawable.woolworth_logo_icon)
             .transform(
-                RoundedCorners(context.resources.getDimensionPixelOffset(R.dimen.fifteen_dp))
+                RoundedCorners(context.resources.getDimensionPixelOffset(R.dimen.seven_dp))
             )
             .dontAnimate()
-            .into(itemView.imgCategoryImage)
+            .into(itemView.imgLongBannerItem)
+    }
+}
+
+class LongBannerListItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+    fun bind(context: Context, position: Int, banner: Banner) {
+
+        itemView.tvLongBannerTitle?.text = banner.displayName
+        itemView.tvLongBannerSubtitle?.text = banner.subTitle
+
+        Glide.with(context)
+            .load(banner.externalImageRefV2)
+            .format(DecodeFormat.PREFER_ARGB_8888)
+            .placeholder(R.drawable.woolworth_logo_icon)
+            .transform(
+                RoundedCorners(context.resources.getDimensionPixelOffset(R.dimen.seven_dp))
+            )
+            .dontAnimate()
+            .into(itemView.imgLongBannerItem)
     }
 }
 

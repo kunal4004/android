@@ -29,6 +29,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Addr
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.*
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
@@ -120,7 +121,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             placeId = this.getString(KEY_PLACE_ID, "")
             isComingFromSlotSelection = this.getBoolean(IS_COMING_FROM_SLOT_SELECTION, false)
             isComingFromCheckout = this.getBoolean(IS_COMING_FROM_CHECKOUT, false)
-            deliveryType = this.getString(DELIVERY_TYPE, Delivery.STANDARD.toString())
+            deliveryType = this.getString(DELIVERY_TYPE, Delivery.STANDARD.name)
             getString(CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS)?.let {
                 whoIsCollecting =
                     Gson().fromJson(it, object : TypeToken<WhoIsCollectingDetails>() {}.type)
@@ -144,7 +145,14 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 activity?.onBackPressed()
             }
             R.id.editDelivery -> {
-                if (deliveryType.equals(Delivery.CNC.toString(), true)) {
+                if (deliveryType.equals(Delivery.CNC.name, true)) {
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.SHOP_CLICK_COLLECT_EDIT,
+                        hashMapOf(
+                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_CLICK_COLLECT_EDIT
+                        ),
+                        activity)
                     bundle?.putSerializable(
                         VALIDATE_RESPONSE, validateLocationResponse)
                     bundle?.putBoolean(
@@ -156,7 +164,14 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     return
                 }
 
-                if (deliveryType.equals(Delivery.STANDARD.toString(), true)) {
+                if (deliveryType.equals(Delivery.STANDARD.name, true)) {
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.SHOP_STANDARD_EDIT,
+                        hashMapOf(
+                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_STANDARD_EDIT
+                        ),
+                        activity)
                     navigateToConfirmAddressScreen()
                     return
                 }
@@ -177,14 +192,14 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 (activity as? BottomNavigationActivity)?.popFragment()
             }
             R.id.geoCollectTab -> {
-                deliveryType = Delivery.CNC.toString()
+                deliveryType = Delivery.CNC.name
                 if (progressBar?.visibility == View.VISIBLE)
                     return
                 else
                     openCollectionTab()
             }
             R.id.geoDeliveryTab -> {
-                deliveryType = Delivery.STANDARD.toString()
+                deliveryType = Delivery.STANDARD.name
                 if (progressBar?.visibility == View.VISIBLE)
                     return
                 else
@@ -220,11 +235,11 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
           }
           val confirmLocationAddress = ConfirmLocationAddress(placeId)
           var confirmLocationRequest = ConfirmLocationRequest("", confirmLocationAddress, "")
-          if (deliveryType.equals(Delivery.STANDARD.toString())) {
+          if (deliveryType.equals(Delivery.STANDARD.name)) {
               confirmLocationRequest =
                   ConfirmLocationRequest(STANDARD, confirmLocationAddress)
           }
-          if (deliveryType.equals(Delivery.CNC.toString())) {
+          if (deliveryType.equals(Delivery.CNC.name)) {
               confirmLocationRequest =
                   ConfirmLocationRequest(CNC, confirmLocationAddress, mStoreId)
           }
@@ -257,8 +272,21 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
                             savedAddressResponse?.defaultAddressNickname = defaultAddress?.nickname
 
+                              if (deliveryType == Delivery.STANDARD.name) {
+                                  Utils.triggerFireBaseEvents(
+                                      FirebaseManagerAnalyticsProperties.SHOP_STANDARD_CONFIRM,
+                                      hashMapOf(
+                                          FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                                  FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_STANDARD_CONFIRM
+                                      ),
+                                      activity)
+
+                              } else {
+
+                              }
+
                             if (isComingFromCheckout) {
-                                if (deliveryType == Delivery.STANDARD.toString()) {
+                                if (deliveryType == Delivery.STANDARD.name) {
                                     if (isComingFromSlotSelection) {
                                         /*Naviagate to slot selection page with updated saved address*/
 
@@ -298,7 +326,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                                 vehicleColour = whoIsCollecting?.vehicleColor ?: ""
                                                 vehicleRegistration = whoIsCollecting?.vehicleRegistration ?: ""
                                                 taxiOpted = whoIsCollecting?.isMyVehicle != true
-                                                deliveryType = Delivery.CNC.toString()
+                                                deliveryType = Delivery.CNC.name
                                                 address = ConfirmLocationAddress(validateLocationResponse?.validatePlace?.placeDetails?.placeId)
                                             }
                                             startCheckoutActivity(Utils.toJson(whoIsCollecting))
@@ -385,7 +413,11 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         geoDeliveryTab?.isEnabled = true
         geoCollectTab?.isEnabled = true
         StoreLiveData.observe(viewLifecycleOwner,{
-            geoDeliveryText?.text = HtmlCompat.fromHtml(getString(R.string.collecting_from_geo,it?.storeName), HtmlCompat.FROM_HTML_MODE_LEGACY)
+            if (it?.storeName != null) {
+                geoDeliveryText?.text =
+                    HtmlCompat.fromHtml(getString(R.string.collecting_from_geo, it?.storeName),
+                        HtmlCompat.FROM_HTML_MODE_LEGACY)
+            }
             editDelivery?.text = bindString(R.string.edit)
             btnConfirmAddress?.isEnabled = true
             btnConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
@@ -409,23 +441,44 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     private fun openGeoDeliveryTab() {
+
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.SHOP_DELIVERY,
+            hashMapOf(
+                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_DELIVERY
+            ),
+            activity)
+
         geoDeliveryTab?.setBackgroundResource(R.drawable.bg_geo_selected_tab)
         geoDeliveryTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
         geoCollectTab?.setBackgroundResource(R.drawable.bg_geo_unselected_tab)
         geoCollectTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_444444))
-        deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.ic_delivery_circle))
+        deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.img_delivery_truck))
         btnConfirmAddress?.isEnabled = true
         btnConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
         editDelivery?.text = getString(R.string.edit)
+        changeFulfillmentTitleTextView?.text = bindString(R.string.standard_delivery)
+        changeFulfillmentSubTitleTextView?.text = bindString(R.string.standard_delivery_title_text)
         updateDeliveryDetails()
     }
 
     private fun openCollectionTab() {
+
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.SHOP_CLICK_COLLECT,
+            hashMapOf(
+                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_CLICK_COLLECT
+            ),
+            activity)
         geoCollectTab?.setBackgroundResource(R.drawable.bg_geo_selected_tab)
         geoCollectTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
         geoDeliveryTab?.setBackgroundResource(R.drawable.bg_geo_unselected_tab)
         geoDeliveryTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_444444))
-        deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.ic_bag_circle))
+        deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.img_collection_bag))
+        changeFulfillmentTitleTextView?.text = bindString(R.string.click_and_collect)
+        changeFulfillmentSubTitleTextView?.text = bindString(R.string.click_and_collect_title_text)
         updateCollectionDetails()
     }
 
@@ -443,7 +496,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 if (validateLocationResponse != null) {
                     when (validateLocationResponse?.httpCode) {
                         HTTP_OK -> {
-                            if (deliveryType.equals(Delivery.STANDARD.toString(), true)) {
+                            if (deliveryType.equals(Delivery.STANDARD.name, true)) {
                                 openGeoDeliveryTab()
                             } else {
                                 openCollectionTab()
@@ -510,7 +563,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     private fun setProductStatus() {
         productsAvailableValue?.apply {
-            if (deliveryType == Delivery.STANDARD.toString()) {
+            if (deliveryType == Delivery.STANDARD.name) {
                 validateLocationResponse?.validatePlace?.let {
                     when {
                         !it.firstAvailableFoodDeliveryDate.isNullOrEmpty()

@@ -36,6 +36,7 @@ import kotlinx.android.synthetic.main.geo_location_delivery_address.*
 import kotlinx.android.synthetic.main.no_connection.view.*
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
@@ -49,6 +50,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.VALIDATE_RESPONSE
 import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -205,6 +207,13 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.tvConfirmStore -> {
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.SHOP_CONFIRM_STORE,
+                    hashMapOf(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_CONFIRM_STORE
+                    ),
+                    activity)
                 navigateToFulfillmentScreen()
             }
             R.id.ivCross -> {
@@ -248,7 +257,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
         val list = ArrayList<Store>()
         mValidateLocationResponse?.validatePlace?.stores?.let {
             for (store in it) {
-                if (store.storeName?.contains(s.toString(), true) == true) {
+                if (store.storeName?.contains(s.toString(), true) == true || store.storeAddress?.contains(s.toString(), true)==true) {
                     list.add(store)
                 }
             }

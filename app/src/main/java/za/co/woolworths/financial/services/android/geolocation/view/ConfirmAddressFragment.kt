@@ -30,6 +30,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Addr
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.model.MapData
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.SavedAddressAdapter
@@ -260,10 +261,29 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         when (v?.id) {
 
             R.id.tvConfirmAddress -> {
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.SHOP_CONFIRM_LOCATION,
+                    hashMapOf(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_CONFIRM_LOCATION
+                    ),
+                    activity)
+
                 if (progressBar.visibility == View.GONE
                     && selectedAddress != null
                     && tvConfirmAddress.text == getString(R.string.update_address)){
-                    savedAddressResponse?.let { navigateToUpdateAddress(it) }
+                    savedAddressResponse?.let {
+
+                        Utils.triggerFireBaseEvents(
+                            FirebaseManagerAnalyticsProperties.SHOP_UPDATE_ADDRESS,
+                            hashMapOf(
+                                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_UPDATE_ADDRESS
+                            ),
+                            activity)
+
+                        navigateToUpdateAddress(it)
+                    }
                     return
                 }
                 if (progressBar.visibility == View.GONE
@@ -305,9 +325,9 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             }
             R.id.inCurrentLocation -> {
 
-                if (isComingFromCheckout && deliveryType == Delivery.STANDARD.toString()) {
+                if (isComingFromCheckout && deliveryType == Delivery.STANDARD.name) {
                     navigateToAddAddress(savedAddressResponse)
-                } else if (isComingFromCheckout && deliveryType == Delivery.CNC.toString()) {
+                } else if (isComingFromCheckout && deliveryType == Delivery.CNC.name) {
                     //Navigate to map screen with delivery type or checkout type
                     navigateToConfirmAddressForStoreLocator(mLastLocation?.latitude, mLastLocation?.longitude,false)
                 } else {
@@ -323,6 +343,13 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 }
             }
             R.id.inSavedAddress -> {
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.SHOP_SAVED_PLACES,
+                    hashMapOf(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_SAVED_PLACES
+                    ),
+                    activity)
                 ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
             }
             R.id.backButton -> {
@@ -330,9 +357,18 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             }
             R.id.enterNewAddress -> {
 
+
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.SHOP_NEW_ADDRESS,
+                    hashMapOf(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_NEW_ADDRESS
+                    ),
+                    activity)
+
                 if (isComingFromCheckout && deliveryType == Delivery.STANDARD.toString()) {
                     navigateToAddAddress(savedAddressResponse)
-                } else if (isComingFromCheckout && deliveryType == Delivery.CNC.toString()) {
+                } else if (isComingFromCheckout && deliveryType == Delivery.CNC.name) {
                     //Navigate to map screen with delivery type or checkout type
                     navigateToConfirmAddressForStoreLocator(0.0, 0.0,true)
 
