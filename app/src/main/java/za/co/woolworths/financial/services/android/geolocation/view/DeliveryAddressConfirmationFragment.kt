@@ -667,7 +667,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         } else {
             earliestDeliveryDashLabel?.visibility = View.VISIBLE
             earliestDeliveryDashValue?.visibility = View.VISIBLE
-            earliestDeliveryDashValue?.text = WFormatter.getFullMonthWithDate(earliestDashDate)
+            earliestDeliveryDashValue?.text = earliestDashDate
         }
     }
 
