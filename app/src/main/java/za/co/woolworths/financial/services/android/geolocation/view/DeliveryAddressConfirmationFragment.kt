@@ -578,6 +578,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             return
         }
         geoDeliveryView?.visibility = View.VISIBLE
+        no_loc_layout.visibility = View.GONE
         geoDeliveryText?.text = validateLocationResponse?.validatePlace?.placeDetails?.address1
 
         val earliestFoodDate =
@@ -616,6 +617,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         }
 
         geoDeliveryView?.visibility = View.VISIBLE
+        no_loc_layout.visibility = View.GONE
         setGeoDeliveryTextForCnc()
 
         val earliestFoodDate =
@@ -624,10 +626,16 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     private fun updateDashDetails() {
-        val earliestDashDate =
-            validateLocationResponse?.validatePlace?.firstAvailableFoodDeliveryDate
-        setVisibilityDeliveryDates(null, null, earliestDashDate)
-
+        if (validateLocationResponse?.validatePlace?.onDemand?.deliverable == true) {
+            geoDeliveryView?.visibility = View.VISIBLE
+            no_loc_layout.visibility = View.GONE
+            val earliestDashDate =
+                validateLocationResponse?.validatePlace?.onDemand?.firstAvailableFoodDeliveryTime
+            setVisibilityDeliveryDates(null, null, earliestDashDate)
+        } else {
+            geoDeliveryView?.visibility = View.GONE
+            no_loc_layout.visibility = View.VISIBLE
+        }
     }
 
     private fun setVisibilityDeliveryDates(

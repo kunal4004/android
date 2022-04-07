@@ -11,6 +11,9 @@ data class ValidatePlace (
     @SerializedName("unDeliverableCommerceItems")
     var unDeliverableCommerceItems: List<Any>? = null,
 
+    @SerializedName("onDemand")
+    var onDemand: OnDemand? = null,
+
     @SerializedName("stores")
     var stores: List<Store>? = null,
 
