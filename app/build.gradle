@@ -13,7 +13,9 @@ android {
     def major = "8"
     def minor = "8"
     def fix = "0"
-    def jobNumber = 154432
+    def jobNumberProduction = 176
+    def jobNumberQa = 575
+    def jobNumberFeature = 154432
 
     dataBinding {
         enabled = true
@@ -49,7 +51,6 @@ android {
         versionName(major + "." + minor + "." + fix)
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        versionCode jobNumber
         ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
         dexOptions {
             javaMaxHeapSize "2560M"
@@ -64,7 +65,7 @@ android {
 
     def secureProps = new Properties()
     def productionKeystoreProperties = new Properties()
-    def isAppCenter = System.env.IS_APP_CENTER.asBoolean()
+    def isQaRelease = System.env.IS_QA_RELEASE.asBoolean()
 
     buildTypes {
         // MARK - Debug build types
@@ -110,38 +111,13 @@ android {
             }
 
             applicationIdSuffix ".qa"
+            versionCode isQaRelease ? jobNumberQa : jobNumberFeature
             manifestPlaceholders = [appLabel: "Woolworths Q"]
             manifestPlaceholders = [app_links_host: "www-win-qa.woolworths.co.za"]
-
             buildConfigField("String", "ENV", '"QA"')
             resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "Google Maps API Key")
         }
-        huaweiQa {
-            if (file("../secure.properties").exists()) {
-                file("../secure.properties")?.withInputStream { secureProps.load(it) }
 
-                buildConfigField("String", "HOST", '"' + secureProps['URL_QA_' + apiKey] + '"')
-                buildConfigField("String", "SHA1", '"' + secureProps['HASH_QA_' + apiKey] + '"')
-
-                signingConfigs {
-                    woolworths {
-                        keyAlias 'woneapp_qa'
-                        keyPassword 'woneapp_qa'
-                        storeFile file('key/woneapp_qa-release-key.keystore')
-                        storePassword 'woneapp_qa'
-                    }
-                }
-
-                signingConfig signingConfigs.woolworths
-            }
-
-            applicationIdSuffix ".qa"
-            manifestPlaceholders = [appLabel: "Woolworths Q"]
-            manifestPlaceholders = [app_links_host: "www-win-qa.woolworths.co.za"]
-
-            buildConfigField("String", "ENV", '"QA"')
-            resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "Huawei MapKit API Key")
-        }
         googleProduction {
             if (file("../secure.properties").exists()) {
                 file("../secure.properties")?.withInputStream { secureProps.load(it) }
@@ -165,9 +141,38 @@ android {
                 signingConfig signingConfigs.woolworths
             }
 
+            versionCode jobNumberProduction
             buildConfigField("String", "ENV", '""')
             resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "Google Maps API Key")
         }
+
+        huaweiQa {
+            if (file("../secure.properties").exists()) {
+                file("../secure.properties")?.withInputStream { secureProps.load(it) }
+
+                buildConfigField("String", "HOST", '"' + secureProps['URL_QA_' + apiKey] + '"')
+                buildConfigField("String", "SHA1", '"' + secureProps['HASH_QA_' + apiKey] + '"')
+
+                signingConfigs {
+                    woolworths {
+                        keyAlias 'woneapp_qa'
+                        keyPassword 'woneapp_qa'
+                        storeFile file('key/woneapp_qa-release-key.keystore')
+                        storePassword 'woneapp_qa'
+                    }
+                }
+
+                signingConfig signingConfigs.woolworths
+            }
+
+            applicationIdSuffix ".qa"
+            versionCode isQaRelease ? jobNumberQa : jobNumberFeature
+            manifestPlaceholders = [appLabel: "Woolworths Q"]
+            manifestPlaceholders = [app_links_host: "www-win-qa.woolworths.co.za"]
+            buildConfigField("String", "ENV", '"QA"')
+            resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "Huawei MapKit API Key")
+        }
+
         huaweiProduction {
             if (file("../secure.properties").exists()) {
                 file("../secure.properties")?.withInputStream { secureProps.load(it) }
@@ -191,41 +196,11 @@ android {
                 signingConfig signingConfigs.woolworths
             }
 
+            versionCode jobNumberProduction
             buildConfigField("String", "ENV", '""')
             resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "Huawei MapKit API Key")
         }
     }
-
-//    if(isAppCenter){
-//        def taskSuffix = "" // whatever "build variant" you are able to select in the Build Configuration web GUI
-//        def selectedBuildVariant = System.env.ANDROID_PRODUCT_FLAVOR.toString() // an actual flavor (can contain multiple dimensions)
-//
-//        applicationVariants.all { variant ->
-//            if (variant.name == selectedBuildVariant) {
-//                if (variant.name.contains("QaRelease")){
-//                    taskSuffix = "qaRelease"
-//                } else if (variant.name.contains("ProductionRelease")){
-//                    taskSuffix = "productionRelease"
-//                }
-//
-//                def assembleTaskName = "assemble${taskSuffix.capitalize()}"
-//                def assembleAliasTask = task(assembleTaskName, type: Copy) {
-//                    from variant.outputs*.outputFile.toSet()
-//                    into "build/outputs/apk/$taskSuffix"
-//                }
-//                variant.assemble.finalizedBy assembleAliasTask
-//                assembleAliasTask.dependsOn variant.assemble
-//
-//                def bundleTaskName = "bundle${taskSuffix.capitalize()}"
-//                def bundleAliasTask = task(bundleTaskName, type: Copy) {
-//                    from variant.outputs*.outputFile.toSet()
-//                    into "build/outputs/bundle/$taskSuffix"
-//                }
-//                variant.assemble.finalizedBy bundleAliasTask
-//                bundleAliasTask.dependsOn variant.assemble
-//            }
-//        }
-//    }
 
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
