@@ -1902,6 +1902,11 @@
     <string name="dash_details_woolies_app_available_desc">With this new trial app, get ready for fast, fresh delivery of all your favourite Woolworths food items.</string>
     <string name="dash_details_please_note">Please note</string>
     <string name="dash_details_what_you_ll_love">WHAT YOU’LL LOVE</string>
+    <string name="dash_help_and_support">Help and Support</string>
+    <string name="dash_experiencing_issue">Experiencing an issue? Get in touch.</string>
+    <string name="dash_call_customer_care">Call Our Call Centre</string>
+    <string name="dash_customer_care_no">+27 860 100 987</string>
+    <string name="dash_help">HELP</string>
 
     <string name="app_feature_title"></string>
     <string name="app_feature_get_delivered">Same-day delivery</string>

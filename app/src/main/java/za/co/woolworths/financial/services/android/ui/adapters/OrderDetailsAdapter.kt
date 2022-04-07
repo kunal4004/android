@@ -71,7 +71,9 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
             itemView.total.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item.orderSummary?.total!!)
             itemView.total.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
             itemView.noOfItems.text = item?.orderSummary?.totalItemsCount.toString()+if(item?.orderSummary?.totalItemsCount>1)context.getString(R.string.no_of_items) else context.getString(R.string.no_of_item)
-            itemView.deliverySuburb.text = item?.orderSummary?.suburb?.name
+            if (item?.orderSummary?.suburb?.name != null){
+                itemView.deliverySuburb.text = item?.orderSummary?.suburb?.name
+            }
             itemView.deliverySuburbLbl.text = context?.resources.getString(if(storePickup) R.string.collection_location else R.string.delivery_suburb)
             itemView.deliverySuburbLbl.contentDescription = context?.resources.getString(if(storePickup) R.string.collection_location_title else R.string.delivery_suburb)
             itemView.deliverySuburb.contentDescription = context?.resources.getString(if(storePickup) R.string.collection_location_value else R.string.delivery_suburb)

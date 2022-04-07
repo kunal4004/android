@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgDelBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:paddingTop="@dimen/five_dp"
+        app:layout_constraintTop_toBottomOf="@+id/guidelineTop"
+        app:srcCompat="@drawable/ic_back_black" />
+
+    <TextView
+        android:id="@+id/tvHelpAndSupportLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fourty_dp"
+        android:fontFamily="@font/futura_semi_bold"
+        android:text="@string/dash_help_and_support"
+        android:textColor="@color/offer_title"
+        android:textSize="@dimen/twenty_sp"
+        app:layout_constraintBottom_toTopOf="@+id/tvExperiecingLabel"
+        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@+id/imgDelBack" />
+
+    <TextView
+        android:id="@+id/tvExperiecingLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/eight_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:textColor="@color/color_444444"
+        android:text="@string/dash_experiencing_issue"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@+id/tvHelpAndSupportLabel" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvHelpAndSupport"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/eight_dp"
+        app:layout_constraintBottom_toTopOf="@+id/guidelineBottom"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@+id/tvExperiecingLabel"
+        tools:listitem="@layout/layout_help_and_support_item_cell" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/twenty_six_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/_16sdp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

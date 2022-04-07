@@ -30,6 +30,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.adapters.OrderDetailsAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.shop.helpandsupport.HelpAndSupportFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.util.AppConstant
@@ -102,11 +103,18 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
             removeToolbar()
         }
         toolbarText?.text = orderText
+        tvSelectAll?.visibility = View.VISIBLE
+        tvSelectAll?.text = getString(R.string.dash_help)
         btnBack?.setOnClickListener { activity?.onBackPressed() }
         orderDetails.layoutManager = LinearLayoutManager(activity)
         orderItemsBtn.setOnClickListener {
             (activity as? BottomNavigationActivity)?.pushFragment(
                 AddOrderToCartFragment.getInstance(orderDetailsResponse!!, order)
+            )
+        }
+        tvSelectAll.setOnClickListener {
+            (activity as? BottomNavigationActivity)?.pushFragment(
+                HelpAndSupportFragment.newInstance()
             )
         }
         order?.orderId?.let { orderId -> requestOrderDetails(orderId) }
