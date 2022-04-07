@@ -149,7 +149,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
                     requireContext(),
                     Manifest.permission.ACCESS_FINE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED
-                || Utils.isLocationEnabled(requireContext())
+                || !Utils.isLocationEnabled(requireContext())
             ) {
                 executeDepartmentRequest()
             }
