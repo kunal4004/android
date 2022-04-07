@@ -372,7 +372,8 @@ open class FirebaseManagerAnalyticsProperties {
         const val REMOVE_FROM_CART: String = "remove_from_cart"
         const val SEARCH: String = "search"
         const val SHARE: String = "share"
-
+        const val SIGN_UP: String = "sign_up"
+        const val ADD_SHIPPING_INFO: String = "add_shipping_info"
     }
 
     class PropertyNames {
@@ -458,13 +459,14 @@ open class FirebaseManagerAnalyticsProperties {
             const val ITEM_CATEGORY = "item_category"
             const val ITEM_PRICE = "price"
             const val CART_TOTAL_VALUE = "cart_total_value"
-            const val CART_ORDER_TOTAL = "total_value"
             const val ITEM_VALUE = "item_value"
             const val CREATIVE_NAME = "creative_name"
             const val PROMOTION_NAME = "promotion_name"
             const val SEARCH_TERM = "search_term"
             const val SEARCH_TYPE = "search_type"
             const val CONTENT_TYPE = "content_type"
+            const val SHIPPING_TIER = "shipping_tier"
+            const val DELIVERY_DATE = "delivery_date"
 
         }
     }
@@ -540,6 +542,9 @@ open class FirebaseManagerAnalyticsProperties {
             const val INDEX_VALUE: String = "1"
             const val AFFILIATION_VALUE: String = "WWOneApp"
             const val CREATIVE_NAME_VALUE: String = "Product List"
+            const val SHIPPING_TIER_VALUE_FOOD: String = "time slot"
+            const val SHIPPING_TIER_VALUE_MIXED: String = "time slot and value"
+            const val SHIPPING_TIER_VALUE_OTHER: String = "value type"
 
         }
     }
