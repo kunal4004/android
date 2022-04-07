@@ -201,8 +201,8 @@ class SubCategoryFragment :
         )
         pushFragment(ProductListingFragment.newInstance(
             ProductsRequestParams.SearchType.NAVIGATE,
-            subCategory.categoryName,
             subCategory.dimValId,
+            subCategory.categoryName,
             brandNavigationDetails
         ))
     }
