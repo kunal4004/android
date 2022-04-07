@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.viewmodels.shop
 
+import android.location.Location
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -31,6 +32,10 @@ class ShopViewModel @Inject constructor(
     val isDashCategoriesAvailable: LiveData<Boolean>
     get() = _isDashCategoriesAvailable
 
+    private val _location = MutableLiveData<Location?>()
+    val location: LiveData<Location?>
+    get() = _location
+
     private val _onDemandCategories = MutableLiveData<Event<Resource<RootCategories>>>()
     val onDemandCategories: LiveData<Event<Resource<RootCategories>>> = _onDemandCategories
 
@@ -49,9 +54,18 @@ class ShopViewModel @Inject constructor(
     fun getOnDemandCategories() {
         _onDemandCategories.value = Event(Resource.loading(null))
         viewModelScope.launch {
-            val response = shopRepository.fetchOnDemandCategories()
+            val response = shopRepository.fetchOnDemandCategories(location.value)
             _onDemandCategories.value = Event(response)
             _isOnDemandCategoriesAvailable.value = response.status == Status.SUCCESS
         }
+    }
+
+    fun setLocation(location: Location?) {
+        _location.value = location
+    }
+
+    fun setOnDemandCategoryData(response: RootCategories) {
+        _onDemandCategories.value = Event(Resource.success(response))
+        _isOnDemandCategoriesAvailable.value = response.onDemandCategories != null
     }
 }

@@ -21,6 +21,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.google.android.gms.location.*
@@ -52,6 +53,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNear
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 
 class DepartmentsFragment : DepartmentExtensionFragment(),
     DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection {
@@ -62,7 +64,6 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
     private var location: Location? = null
     private var rootCategoryCall: Call<RootCategories>? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
-    private var isFragmentVisible: Boolean = false
     private var parentFragment: ShopFragment? = null
     private var version: String? = ""
     private var isDashEnabled = false
@@ -70,6 +71,9 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
     private var locationRequest: LocationRequest? = createLocationRequest()
     private var localPlaceId: String? = null
     private var isValidateSelectedSuburbCallStopped = true
+    private val shopViewModel: ShopViewModel by viewModels(
+        ownerProducer = { requireParentFragment() }
+    )
 
     companion object {
         var DEPARTMENT_LOGIN_REQUEST = 1717
@@ -78,7 +82,9 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
 
     init {
         isDashEnabled =
-            Utils.isFeatureEnabled(AppConfigSingleton.dashConfig?.minimumSupportedAppBuildNumber ?: 0)
+            Utils.isFeatureEnabled(
+                AppConfigSingleton.dashConfig?.minimumSupportedAppBuildNumber ?: 0
+            )
                 ?: false
     }
 
@@ -116,10 +122,11 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
             ) == PackageManager.PERMISSION_GRANTED
         }
 
-        if (isDashEnabled && isFragmentVisible) {
+        if (isDashEnabled) {
             if (isPermissionGranted && Utils.isLocationEnabled(context)) {
                 fusedLocationClient?.lastLocation?.addOnSuccessListener {
                     this@DepartmentsFragment.location = it
+                    shopViewModel.setLocation(it)
                     initializeRootCategoryList()
                 }
             } else {
@@ -132,13 +139,21 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
                     initializeRootCategoryList()
                 }
             }
-        } else if (isFragmentVisible) {
-            initializeRootCategoryList()
         }
     }
 
     private fun initializeRootCategoryList() {
-        if (parentFragment?.getCategoryResponseData() != null) bindDepartment() else executeDepartmentRequest()
+        if (parentFragment?.getCategoryResponseData() != null) bindDepartment()
+        else {
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+                || Utils.isLocationEnabled(requireContext())
+            ) {
+                executeDepartmentRequest()
+            }
+        }
         showDeliveryOptionDialog()
     }
 
@@ -185,6 +200,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
                         200 -> {
                             version = response.response?.version
                             parentFragment?.setCategoryResponseData(response)
+                            shopViewModel.setOnDemandCategoryData(response)
                             bindDepartment()
                         }
                         else -> response?.response?.desc?.let { showErrorDialog(it) }
@@ -192,6 +208,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
                 }
 
                 override fun onFailure(error: Throwable?) {
+                    isRootCallInProgress = false
                     if (isAdded) {
                         activity?.runOnUiThread {
                             if (networkConnectionStatus())
@@ -208,7 +225,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
     private fun bindDepartment() {
         mDepartmentAdapter?.setRootCategories(parentFragment?.getCategoryResponseData()?.rootCategories)
         // Add dash banner if only present
-        if (isDashEnabled && isFragmentVisible && context != null && Utils.isLocationEnabled(context)) {
+        if (isDashEnabled && context != null && Utils.isLocationEnabled(context)) {
             mDepartmentAdapter?.setDashBanner(
                 parentFragment?.getCategoryResponseData()?.dash,
                 parentFragment?.getCategoryResponseData()?.rootCategories,
@@ -260,7 +277,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
                 FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
                         FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_DELIVERY_CLICK_COLLECT
             ),
-            activity)
+            activity
+        )
 
 
         KotlinUtils.presentEditDeliveryGeoLocationActivity(
@@ -327,9 +345,15 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
         return when (rootCategory.hasChildren) {
             // navigate to drill down of categories
             true -> {
-                bundle.putString(SubCategoryFragment.KEY_ARGS_ROOT_CATEGORY, Utils.toJson(rootCategory))
+                bundle.putString(
+                    SubCategoryFragment.KEY_ARGS_ROOT_CATEGORY,
+                    Utils.toJson(rootCategory)
+                )
                 bundle.putString(SubCategoryFragment.KEY_ARGS_VERSION, version)
-                bundle.putBoolean(SubCategoryFragment.KEY_ARGS_IS_LOCATION_ENABLED, if (context != null) Utils.isLocationEnabled(context) else false)
+                bundle.putBoolean(
+                    SubCategoryFragment.KEY_ARGS_IS_LOCATION_ENABLED,
+                    if (context != null) Utils.isLocationEnabled(context) else false
+                )
                 location?.let { bundle.putParcelable(SubCategoryFragment.KEY_ARGS_LOCATION, it) }
                 drillDownCategoryFragment.arguments = bundle
                 return drillDownCategoryFragment
@@ -358,38 +382,19 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
         }
     }
 
-
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-        isFragmentVisible = isVisibleToUser
-    }
-
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-
-        if (!hidden) {
-            activity?.apply {
-                executeValidateSuburb()
-                //When moved from My Cart to department
-                startLocationUpdates()
-                showDeliveryOptionDialog()
-            }
-        }
-    }
-
     fun scrollToTop() {
         rclDepartment?.scrollToPosition(0)
     }
 
     override fun onDeliveryOptionSelected(deliveryType: Delivery) {
-            activity?.apply {
-                KotlinUtils.presentEditDeliveryGeoLocationActivity(
-                    this,
-                    REQUEST_CODE,
-                    deliveryType,
-                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
-                )
-            }
+        activity?.apply {
+            KotlinUtils.presentEditDeliveryGeoLocationActivity(
+                this,
+                REQUEST_CODE,
+                deliveryType,
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
+            )
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -488,7 +493,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
 
     private fun executeValidateSuburb() {
 
-        var placeId:String? = null
+        var placeId: String? = null
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
                 placeId = it.address?.placeId
@@ -564,9 +569,6 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
 
     @SuppressLint("NewApi")
     private fun checkLocationPermission(): Boolean {
-        if (!isFragmentVisible) {
-            return false
-        }
 
         activity?.apply {
             val perms =
@@ -628,6 +630,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
             locationResult ?: return
             for (location in locationResult.locations) {
                 this@DepartmentsFragment.location = location
+                shopViewModel.setLocation(location)
                 executeDepartmentRequest()
                 stopLocationUpdates()
                 break
@@ -635,7 +638,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
         }
     }
 
-    public fun reloadRequest(){
+    public fun reloadRequest() {
         executeDepartmentRequest()
     }
 }

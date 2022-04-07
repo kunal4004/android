@@ -117,7 +117,15 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                         }
                     }
                     Status.ERROR -> {
-                        showErrorView(resource.message, resource.data)
+                        //Ignore error view for On Demand Categories,
+                        // Instead remove on demand category block from list
+                        // i.e. pass null in setData
+                        if (viewModel.isDashCategoriesAvailable.value == true) {
+                            dashDeliveryAdapter.setData(
+                                null,
+                                viewModel.dashCategories.value?.peekContent()?.data?.productCatalogues,
+                            )
+                        }
                     }
                 }
             }
