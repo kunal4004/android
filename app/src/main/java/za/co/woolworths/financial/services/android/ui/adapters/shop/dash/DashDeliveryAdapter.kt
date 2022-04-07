@@ -11,10 +11,12 @@ import kotlinx.android.synthetic.main.item_layout_on_demand_category.view.*
 import kotlinx.android.synthetic.main.item_layout_product_carousel.view.*
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
 import za.co.woolworths.financial.services.android.models.dto.shop.ProductCatalogue
+import za.co.woolworths.financial.services.android.ui.views.shop.dash.OnDemandNavigationListener
 import java.util.*
 
 class DashDeliveryAdapter(
-    @NonNull val context: Context
+    @NonNull val context: Context,
+    val onDemandNavigationListener: OnDemandNavigationListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -130,7 +132,12 @@ class DashDeliveryAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is OnDemandCategoryLayoutViewHolder -> {
-                holder.bindView(context, position, categoryList[position] as List<RootCategory>)
+                holder.bindView(
+                    context,
+                    position,
+                    categoryList[position] as List<RootCategory>,
+                    onDemandNavigationListener
+                )
             }
             is BannerCarouselLayoutViewHolder -> {
                 holder.bindView(context, position, categoryList[position] as ProductCatalogue)
@@ -206,11 +213,16 @@ class EmptyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
 class OnDemandCategoryLayoutViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    fun bindView(context: Context, position: Int, onDemandCategories: List<RootCategory>?) {
+    fun bindView(
+        context: Context,
+        position: Int,
+        onDemandCategories: List<RootCategory>?,
+        onDemandNavigationListener: OnDemandNavigationListener
+    ) {
 
         onDemandCategories?.let {
             itemView.rvOnDemandCategories?.apply {
-                val onDemandCategoryAdapter = OnDemandCategoryAdapter(context)
+                val onDemandCategoryAdapter = OnDemandCategoryAdapter(context, onDemandNavigationListener)
                 layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
                 adapter = onDemandCategoryAdapter
                 onDemandCategoryAdapter.setOnDemandCategoryList(it)

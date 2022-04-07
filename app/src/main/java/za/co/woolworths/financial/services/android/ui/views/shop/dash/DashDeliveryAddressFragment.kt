@@ -2,11 +2,10 @@ package za.co.woolworths.financial.services.android.ui.views.shop.dash
 
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
@@ -15,12 +14,17 @@ import kotlinx.android.synthetic.main.fragment_dash_delivery.*
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.ProductList
-import za.co.woolworths.financial.services.android.ui.adapters.shop.dash.DashDeliveryAdapter
-import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
+import za.co.woolworths.financial.services.android.models.dto.RootCategory
 import za.co.woolworths.financial.services.android.models.network.Status
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.adapters.shop.dash.DashDeliveryAdapter
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
+import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 
 @AndroidEntryPoint
-class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), IProductListing {
+class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), IProductListing,
+    OnDemandNavigationListener {
 
     private val viewModel: ShopViewModel by viewModels(
         ownerProducer = { requireParentFragment() }
@@ -30,7 +34,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        dashDeliveryAdapter = DashDeliveryAdapter(requireContext())
+        dashDeliveryAdapter = DashDeliveryAdapter(requireContext(), this)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -170,5 +174,15 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
     override fun openBrandLandingPage() {
         TODO("Not yet implemented")
+    }
+
+    override fun onDemandNavigationClicked(view: View?, categoryItem: RootCategory) {
+        (requireActivity() as? BottomNavigationActivity)?.apply {
+            pushFragment(ProductListingFragment.newInstance(
+                ProductsRequestParams.SearchType.NAVIGATE,
+                categoryItem.categoryName,
+                categoryItem.dimValId
+            ))
+        }
     }
 }

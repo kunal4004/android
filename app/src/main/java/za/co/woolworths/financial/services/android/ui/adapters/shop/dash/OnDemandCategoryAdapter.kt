@@ -11,10 +11,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.item_dash_category.view.*
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
+import za.co.woolworths.financial.services.android.ui.views.shop.dash.OnDemandNavigationListener
 import za.co.woolworths.financial.services.android.util.ImageManager
 
 class OnDemandCategoryAdapter(
-    @NonNull val context: Context
+    @NonNull val context: Context,
+    val onDemandNavigationListener: OnDemandNavigationListener
 ) : RecyclerView.Adapter<OnDemandCategoryItemHolder>() {
 
     private val diffCallback = object : DiffUtil.ItemCallback<RootCategory>() {
@@ -41,7 +43,7 @@ class OnDemandCategoryAdapter(
     }
 
     override fun onBindViewHolder(holder: OnDemandCategoryItemHolder, position: Int) {
-        holder.bindItem(position, categoryList[position])
+        holder.bindItem(position, categoryList[position], onDemandNavigationListener)
     }
 
     override fun getItemCount() = categoryList.size
@@ -52,8 +54,15 @@ class OnDemandCategoryAdapter(
 }
 
 class OnDemandCategoryItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    fun bindItem(position: Int, categoryItem: RootCategory) {
+    fun bindItem(
+        position: Int,
+        categoryItem: RootCategory,
+        onDemandNavigationListener: OnDemandNavigationListener
+    ) {
         itemView.apply {
+            itemView.setOnClickListener {
+                onDemandNavigationListener.onDemandNavigationClicked(it, categoryItem)
+            }
             ImageManager.loadImage(imgCategory, categoryItem.imgUrl)
             txtCategoryName?.text = categoryItem.categoryName
         }
