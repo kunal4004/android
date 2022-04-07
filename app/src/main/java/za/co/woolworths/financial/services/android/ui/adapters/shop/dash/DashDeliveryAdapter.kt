@@ -191,7 +191,9 @@ class DashDeliveryAdapter(
     ) {
         val list = ArrayList<Any?>(0)
         list.apply {
-            onDemandCategories?.let { add(it) }
+            onDemandCategories?.let {
+                if (it.isNotEmpty()) add(it)
+            }
             dashCategories?.let {
                 addAll(it)
             }
