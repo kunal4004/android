@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPReq
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPResponse
 import za.co.woolworths.financial.services.android.models.dto.pma.DeleteResponse
 import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
+import za.co.woolworths.financial.services.android.models.dto.shop.DashCategories
 import za.co.woolworths.financial.services.android.models.dto.size_guide.SizeGuideResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse
@@ -350,7 +351,7 @@ interface ApiInterface {
             @Query("suburbId") suburbId: String?,
             @Query("storeId") storeId: String?,
             @Query("fulFillmentStoreId01") fulFillmentStoreId01: String?
-    ): retrofit2.Response<RootCategories>
+    ): retrofit2.Response<DashCategories>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "Accept-Encoding: gzip")
     @GET("wfs/app/v4/categories/{cat}")
@@ -768,7 +769,8 @@ interface ApiInterface {
             @Query("sortOption") sortOption: String,
             @Query("refinement") refinement: String,
             @Query("suburbId") suburbId: String?,
-            @Query("storeId") storeId: String?): Call<ProductView>
+            @Query("storeId") storeId: String?,
+            @Query("filterContent") filterContent: Boolean?): Call<ProductView>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
     @GET("wfs/app/v4/searchSortAndFilterV2")
@@ -788,7 +790,8 @@ interface ApiInterface {
             @Header("longitude") longitude: String = "",
             @Header("latitude") latitude: String = "",
             @Query("suburbId") suburbId: String?,
-            @Query("storeId") storeId: String?): Call<ProductView>
+            @Query("storeId") storeId: String?,
+            @Query("filterContent") filterContent: Boolean?): Call<ProductView>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/cart/checkoutComplete")
