@@ -85,22 +85,12 @@ android {
         }
     }
 
-    flavorDimensions 'provider', 'environment'
+    // https://github.com/microsoft/appcenter/issues/32
+    // Once AppCenter supports multiple flavor dimensions,
+    // we'll be able to use provider and environment as dimensions, instead of workaround below
+    flavorDimensions 'default'
     productFlavors {
-        // MARK - Providers
-        google {
-            dimension 'provider'
-            resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "Google Maps API Key")
-        }
-        huawei {
-            dimension 'provider'
-            resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "Huawei MapKit API Key")
-        }
-
-        // MARK - Environments
-        qa {
-            dimension 'environment'
-
+        googleQa {
             if (file("../secure.properties").exists()) {
                 file("../secure.properties")?.withInputStream { secureProps.load(it) }
 
@@ -124,10 +114,35 @@ android {
             manifestPlaceholders = [app_links_host: "www-win-qa.woolworths.co.za"]
 
             buildConfigField("String", "ENV", '"QA"')
+            resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "Google Maps API Key")
         }
-        production {
-            dimension 'environment'
+        huaweiQa {
+            if (file("../secure.properties").exists()) {
+                file("../secure.properties")?.withInputStream { secureProps.load(it) }
 
+                buildConfigField("String", "HOST", '"' + secureProps['URL_QA_' + apiKey] + '"')
+                buildConfigField("String", "SHA1", '"' + secureProps['HASH_QA_' + apiKey] + '"')
+
+                signingConfigs {
+                    woolworths {
+                        keyAlias 'woneapp_qa'
+                        keyPassword 'woneapp_qa'
+                        storeFile file('key/woneapp_qa-release-key.keystore')
+                        storePassword 'woneapp_qa'
+                    }
+                }
+
+                signingConfig signingConfigs.woolworths
+            }
+
+            applicationIdSuffix ".qa"
+            manifestPlaceholders = [appLabel: "Woolworths Q"]
+            manifestPlaceholders = [app_links_host: "www-win-qa.woolworths.co.za"]
+
+            buildConfigField("String", "ENV", '"QA"')
+            resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "Huawei MapKit API Key")
+        }
+        googleProduction {
             if (file("../secure.properties").exists()) {
                 file("../secure.properties")?.withInputStream { secureProps.load(it) }
 
@@ -151,48 +166,66 @@ android {
             }
 
             buildConfigField("String", "ENV", '""')
+            resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "Google Maps API Key")
+        }
+        huaweiProduction {
+            if (file("../secure.properties").exists()) {
+                file("../secure.properties")?.withInputStream { secureProps.load(it) }
+
+                buildConfigField("String", "HOST", '"' + secureProps['URL_PROD_' + apiKey] + '"')
+                buildConfigField("String", "SHA1", '"' + secureProps['HASH_PROD_' + apiKey] + '"')
+            }
+
+            if (file("../ProductionKeystore.properties").exists()) {
+                file("../ProductionKeystore.properties").withInputStream { productionKeystoreProperties.load(it) }
+
+                signingConfigs {
+                    woolworths {
+                        keyAlias productionKeystoreProperties['keyAlias']
+                        keyPassword productionKeystoreProperties['keyPassword']
+                        storeFile file(productionKeystoreProperties['storeFile'])
+                        storePassword productionKeystoreProperties['storePassword']
+                    }
+                }
+
+                signingConfig signingConfigs.woolworths
+            }
+
+            buildConfigField("String", "ENV", '""')
+            resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "Huawei MapKit API Key")
         }
     }
 
-    if(isAppCenter){
-//        def selectedBuildVariant = System.env.ANDROID_PRODUCT_FLAVOR.toString()
-//        tasks.whenTaskAdded { task ->
-//            if (task.name.startsWith("assemble")) {
-//                task.name = "assemble${selectedBuildVariant.capitalize()}"
-//            } else if (task.name.startsWith("bundle")) {
-//                task.name = "bundle${selectedBuildVariant.capitalize()}"
+//    if(isAppCenter){
+//        def taskSuffix = "" // whatever "build variant" you are able to select in the Build Configuration web GUI
+//        def selectedBuildVariant = System.env.ANDROID_PRODUCT_FLAVOR.toString() // an actual flavor (can contain multiple dimensions)
+//
+//        applicationVariants.all { variant ->
+//            if (variant.name == selectedBuildVariant) {
+//                if (variant.name.contains("QaRelease")){
+//                    taskSuffix = "qaRelease"
+//                } else if (variant.name.contains("ProductionRelease")){
+//                    taskSuffix = "productionRelease"
+//                }
+//
+//                def assembleTaskName = "assemble${taskSuffix.capitalize()}"
+//                def assembleAliasTask = task(assembleTaskName, type: Copy) {
+//                    from variant.outputs*.outputFile.toSet()
+//                    into "build/outputs/apk/$taskSuffix"
+//                }
+//                variant.assemble.finalizedBy assembleAliasTask
+//                assembleAliasTask.dependsOn variant.assemble
+//
+//                def bundleTaskName = "bundle${taskSuffix.capitalize()}"
+//                def bundleAliasTask = task(bundleTaskName, type: Copy) {
+//                    from variant.outputs*.outputFile.toSet()
+//                    into "build/outputs/bundle/$taskSuffix"
+//                }
+//                variant.assemble.finalizedBy bundleAliasTask
+//                bundleAliasTask.dependsOn variant.assemble
 //            }
 //        }
-
-        def taskSuffix = "" // whatever "build variant" you are able to select in the Build Configuration web GUI
-        def selectedBuildVariant = System.env.ANDROID_PRODUCT_FLAVOR.toString() // an actual flavor (can contain multiple dimensions)
-
-        applicationVariants.all { variant ->
-            if (variant.name == selectedBuildVariant) {
-                if (variant.name.contains("QaRelease")){
-                    taskSuffix = "qaRelease"
-                } else if (variant.name.contains("ProductionRelease")){
-                    taskSuffix = "productionRelease"
-                }
-
-                def assembleTaskName = "assemble${taskSuffix.capitalize()}"
-                def assembleAliasTask = task(assembleTaskName, type: Copy) {
-                    from variant.outputs*.outputFile.toSet()
-                    into "build/outputs/apk/$taskSuffix"
-                }
-                variant.assemble.finalizedBy assembleAliasTask
-                assembleAliasTask.dependsOn variant.assemble
-
-                def bundleTaskName = "bundle${taskSuffix.capitalize()}"
-                def bundleAliasTask = task(bundleTaskName, type: Copy) {
-                    from variant.outputs*.outputFile.toSet()
-                    into "build/outputs/bundle/$taskSuffix"
-                }
-                variant.bundle.finalizedBy bundleAliasTask
-                bundleAliasTask.dependsOn variant.bundle
-            }
-        }
-    }
+//    }
 
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
@@ -335,7 +368,8 @@ dependencies {
     kapt "com.google.dagger:hilt-android-compiler:2.37"
 
     // Huawei
-    huaweiImplementation 'com.huawei.hms:location:5.1.0.303'
+    huaweiQaImplementation 'com.huawei.hms:location:5.1.0.303'
+    huaweiProductionImplementation 'com.huawei.hms:location:5.1.0.303'
 
 }
 
