@@ -86,9 +86,12 @@ android {
         }
     }
 
-    // https://github.com/microsoft/appcenter/issues/32
-    // Once AppCenter supports multiple flavor dimensions,
-    // we'll be able to use provider and environment as dimensions, instead of workaround below
+    // Multiple flavor dimensions wasn't used because AppCenter doesn't support it
+    // Reference: https://github.com/microsoft/appcenter/issues/32
+    // Once AppCenter supports it, we'll be able to
+    // use 'google' and 'huawei' flavors with dimension 'provider'
+    // and, 'qa' and 'production' flavors with dimension 'environment'
+    // with flavorDimensions = 'provider', 'environment'
     flavorDimensions 'default'
     productFlavors {
         googleQa {
