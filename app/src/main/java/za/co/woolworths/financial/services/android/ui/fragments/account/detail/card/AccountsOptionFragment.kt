@@ -85,6 +85,8 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         const val PLC = "PLC"
         const val REQUEST_CREDIT_CARD_ACTIVATION = 1983
         const val REQUEST_GET_PAYMENT_PLAN = 1984
+        const val REQUEST_ELITEPLAN= 9020
+        const val REQUEST_ELITEPLAN_SUCCESS= 9021
         var SHOW_CREDIT_CARD_ACTIVATION_SCREEN = false
         var CREDIT_CARD_ACTIVATION_DETAIL = false
         var SHOW_CREDIT_CARD_SHECULE_OR_MANAGE = false
@@ -436,7 +438,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     }
 
     override fun showUserOfferActiveProgress() {
-        cancelRetrofitRequest(mCardPresenterImpl?.mStoreCardCall)
+        cancelRetrofitRequest(mCardPresenterImpl?.mOfferActiveCall)
         llIncreaseLimitContainer?.isEnabled = false
         relIncreaseMyLimit?.isEnabled = false
         progressCreditLimit?.visibility = VISIBLE
