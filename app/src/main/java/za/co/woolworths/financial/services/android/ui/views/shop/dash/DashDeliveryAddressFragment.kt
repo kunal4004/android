@@ -179,9 +179,9 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     override fun onDemandNavigationClicked(view: View?, categoryItem: RootCategory) {
         (requireActivity() as? BottomNavigationActivity)?.apply {
             pushFragment(ProductListingFragment.newInstance(
-                ProductsRequestParams.SearchType.NAVIGATE,
-                categoryItem.categoryName,
-                categoryItem.dimValId
+                searchType = ProductsRequestParams.SearchType.NAVIGATE,
+                sub_category_name = categoryItem.categoryName,
+                searchTerm = categoryItem.dimValId
             ))
         }
     }
