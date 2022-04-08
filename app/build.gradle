@@ -65,7 +65,10 @@ android {
 
     def secureProps = new Properties()
     def productionKeystoreProperties = new Properties()
-    def isQaRelease = System.env.IS_QA_RELEASE.toBoolean()
+    def isQaRelease = false
+    if (System.env.IS_QA_RELEASE != null) {
+        isQaRelease = System.env.IS_QA_RELEASE.toBoolean()
+    }
 
     buildTypes {
         // MARK - Debug build types
