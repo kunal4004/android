@@ -105,7 +105,7 @@
                     android:layout_marginStart="@dimen/seven_dp">
 
                     <ImageView
-                        android:id="@+id/imgToolbarStart"
+                        android:id="@+id/imgCartDelivery"
                         android:layout_width="@dimen/thirty_two_dp"
                         android:layout_height="@dimen/thirty_two_dp"
                         android:layout_margin="@dimen/five_dp"
@@ -125,7 +125,7 @@
                         android:textColor="@color/black"
                         android:textSize="@dimen/twelve_sp"
                         app:layout_constraintBottom_toTopOf="@+id/tvDeliverySubtitle"
-                        app:layout_constraintStart_toEndOf="@id/imgToolbarStart"
+                        app:layout_constraintStart_toEndOf="@id/imgCartDelivery"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintVertical_chainStyle="packed" />
 
@@ -169,7 +169,7 @@
 
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/cartList"
+                    android:id="@+id/rvCartList"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginBottom="@dimen/one_thirty_four"
@@ -249,7 +249,7 @@
     </RelativeLayout>
 
     <ProgressBar
-        android:id="@+id/loadingBar"
+        android:id="@+id/cartProgressBar"
         style="?android:attr/progressBarStyle"
         android:layout_width="24dp"
         android:layout_height="24dp"

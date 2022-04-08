@@ -26,22 +26,21 @@ class CartUtils {
             return vouchers.filter { it.voucherApplied }.size
         }
 
-        fun updateItemLimitsBanner(productCountMap: ProductCountMap?, banner: ConstraintLayout, message: TextView, counter: TextView, isClickAndCollect: Boolean) {
-            productCountMap.let {
-                if (it != null && it.quantityLimit?.foodLayoutColour != null && isClickAndCollect && it.totalProductCount ?: 0 > 0) {
-                    message.text = it.quantityLimit.foodLayoutMessage ?: ""
-                    counter.text = it.totalProductCount.toString() + "/" + it.quantityLimit.foodMaximumQuantity?:""
+        fun updateItemLimitsBanner(productCountMap: ProductCountMap?, banner: ConstraintLayout?, message: TextView?, counter: TextView?, isClickAndCollect: Boolean) {
+            productCountMap?.let {
+                if (it.quantityLimit?.foodLayoutColour != null && isClickAndCollect && it.totalProductCount ?: 0 > 0) {
+                    message?.text = it.quantityLimit.foodLayoutMessage ?: ""
+                    counter?.text = it.totalProductCount.toString() + "/" + it.quantityLimit.foodMaximumQuantity?:""
                     if (it.quantityLimit.foodLayoutColour.isNotEmpty()) {
-                        banner.visibility = View.VISIBLE
-                        banner.setBackgroundColor(Color.parseColor(it.quantityLimit.foodLayoutColour))
+                        banner?.visibility = View.VISIBLE
+                        banner?.setBackgroundColor(Color.parseColor(it.quantityLimit.foodLayoutColour))
                     } else {
-                        banner.visibility = View.GONE
+                        banner?.visibility = View.GONE
                     }
                 } else {
-                    banner.visibility = View.GONE
+                    banner?.visibility = View.GONE
                 }
             }
         }
-
     }
 }
