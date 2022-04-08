@@ -374,6 +374,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val SHARE: String = "share"
         const val SIGN_UP: String = "sign_up"
         const val ADD_SHIPPING_INFO: String = "add_shipping_info"
+        const val SCREEN_VIEW_PLP: String = "screen_view"
     }
 
     class PropertyNames {
@@ -467,7 +468,9 @@ open class FirebaseManagerAnalyticsProperties {
             const val CONTENT_TYPE = "content_type"
             const val SHIPPING_TIER = "shipping_tier"
             const val DELIVERY_DATE = "delivery_date"
-
+            const val CATEGORY_NAME = "category"
+            const val SUB_CATEGORY_NAME = "sub_category"
+            const val SUB_SUB_CATEGORY_NAME = "sub_sub_category"
         }
     }
 
