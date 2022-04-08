@@ -14,7 +14,7 @@ class GeoLocationApiHelper : RetrofitConfig() {
 
     suspend fun getValidateLocation(placeId: String) =
         mApiInterface.geoValidateLocation("",
-            "SIT4",
+            getEnvironment(),
             "",
             getSessionToken(),
             getDeviceIdentityToken(),

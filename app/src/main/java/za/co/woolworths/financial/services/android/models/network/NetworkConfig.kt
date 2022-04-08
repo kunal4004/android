@@ -6,6 +6,7 @@ import android.os.Build
 import com.awfs.coordination.BuildConfig
 import za.co.wigroup.androidutils.Util
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.util.LocalConstant
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -20,6 +21,8 @@ open class NetworkConfig {
     fun getSha1Password(): String = BuildConfig.SHA1
 
     fun getOS(): String = "Android"
+
+    fun getEnvironment(): String = LocalConstant.environment
 
     fun getApiId(): String = WoolworthsApplication.getApiId()
 

@@ -184,7 +184,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     }
 
                     Delivery.DASH.name -> {
-
+                        // Todo this implementation will be done in separate story.
                     }
                 }
             }
@@ -294,16 +294,9 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                     defaultAddress?.nickname
 
                                 if (deliveryType == Delivery.STANDARD.name) {
-                                    Utils.triggerFireBaseEvents(
-                                        FirebaseManagerAnalyticsProperties.SHOP_STANDARD_CONFIRM,
-                                        hashMapOf(
-                                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_STANDARD_CONFIRM
-                                        ),
+                                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_STANDARD_CONFIRM,
+                                        hashMapOf(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_STANDARD_CONFIRM),
                                         activity)
-
-                                } else {
-
                                 }
 
                                 if (isComingFromCheckout) {
@@ -311,18 +304,14 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                         if (isComingFromSlotSelection) {
                                             /*Navigate to slot selection page with updated saved address*/
 
-                                            val checkoutActivityIntent = Intent(
-                                                activity,
-                                                CheckoutActivity::class.java
-                                            )
+                                            val checkoutActivityIntent =
+                                                Intent(activity, CheckoutActivity::class.java)
                                             checkoutActivityIntent.putExtra(
                                                 CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
-                                                savedAddressResponse
-                                            )
+                                                savedAddressResponse)
                                             checkoutActivityIntent.putExtra(
                                                 CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION,
-                                                true
-                                            )
+                                                true)
                                             activity?.apply {
                                                 startActivityForResult(
                                                     checkoutActivityIntent,
@@ -360,7 +349,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                             findNavController().navigate(
                                                 R.id.action_deliveryAddressConfirmationFragment_to_geoCheckoutCollectingFragment,
                                                 bundleOf(BUNDLE to bundle))
-
                                         }
                                     }
 

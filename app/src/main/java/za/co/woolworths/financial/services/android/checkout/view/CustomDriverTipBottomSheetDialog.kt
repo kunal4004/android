@@ -29,6 +29,7 @@ class CustomDriverTipBottomSheetDialog : WBottomSheetDialogFragment() {
         private const val TITLE = "TITLE"
         private const val SUB_TITLE = "SUB_TITLE"
         private const val TIP_VALUE = "TIP_VALUE"
+        private const val MIN_TIP_VALUE = "5.00" // ToDo This will be taken from config once config is ready.
         private var clickListner: ClickListner? = null
 
         fun newInstance(
@@ -79,7 +80,7 @@ class CustomDriverTipBottomSheetDialog : WBottomSheetDialogFragment() {
             } else {
                 Utils.fadeInFadeOutAnimation(buttonConfirm, true)
                 driverTipErrorText?.visibility = View.VISIBLE
-                driverTipErrorText?.text = bindString(R.string.driver_minimum_tip_amt_error, "5.00")
+                driverTipErrorText?.text = bindString(R.string.driver_minimum_tip_amt_error, MIN_TIP_VALUE)
             }
         }
         buttonConfirm?.setOnClickListener {
