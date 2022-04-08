@@ -97,22 +97,12 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <include layout="@layout/delivery_location_layout" />
-
-                <include layout="@layout/cart_item_limits_banner" />
-
-                <TextView
-                    android:id="@+id/upSellMessageTextView"
-                    style="@style/upSellMessageStyle"
-                    android:text="upSellMessage"
-                    android:visibility="gone"
-                    tools:ignore="HardcodedText" />
-
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/deliveryLocationConstLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/seven_dp"
-                    android:layout_marginBottom="@dimen/ten_dp">
+                    android:layout_marginVertical="@dimen/ten_dp"
+                    android:layout_marginStart="@dimen/seven_dp">
 
                     <ImageView
                         android:id="@+id/imgToolbarStart"
@@ -125,7 +115,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/tvToolbarTitle"
+                        android:id="@+id/tvDeliveryTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/eight_dp"
@@ -134,24 +124,24 @@
                         android:text="@string/standard_delivery"
                         android:textColor="@color/black"
                         android:textSize="@dimen/twelve_sp"
-                        app:layout_constraintBottom_toTopOf="@+id/tvToolbarSubtitle"
+                        app:layout_constraintBottom_toTopOf="@+id/tvDeliverySubtitle"
                         app:layout_constraintStart_toEndOf="@id/imgToolbarStart"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintVertical_chainStyle="packed" />
 
                     <TextView
-                        android:id="@+id/tvToolbarSubtitle"
+                        android:id="@+id/tvDeliverySubtitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/myriad_pro_semi_bold"
                         android:gravity="center"
-                        android:text="Default Location"
+                        android:text="@string/cart_default_location"
                         android:textAlignment="center"
                         android:textColor="@color/black"
                         android:textSize="@dimen/fourteen_sp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="@id/tvToolbarTitle"
-                        app:layout_constraintTop_toBottomOf="@+id/tvToolbarTitle" />
+                        app:layout_constraintStart_toStartOf="@id/tvDeliveryTitle"
+                        app:layout_constraintTop_toBottomOf="@+id/tvDeliveryTitle" />
 
                     <ImageView
                         android:id="@+id/iconLocationRight"
@@ -162,11 +152,21 @@
                         android:layout_marginStart="@dimen/twenty_dp"
                         android:layout_marginEnd="@dimen/twenty_dp"
                         android:src="@drawable/ic_caret_black"
-                        app:layout_constraintBottom_toBottomOf="@id/tvToolbarTitle"
+                        app:layout_constraintBottom_toBottomOf="@id/tvDeliveryTitle"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/tvToolbarSubtitle" />
+                        app:layout_constraintTop_toTopOf="@id/tvDeliverySubtitle" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <include layout="@layout/cart_item_limits_banner" />
+
+                <TextView
+                    android:id="@+id/upSellMessageTextView"
+                    style="@style/upSellMessageStyle"
+                    android:text="upSellMessage"
+                    android:visibility="gone"
+                    tools:ignore="HardcodedText" />
+
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/cartList"
@@ -239,7 +239,6 @@
                 <za.co.woolworths.financial.services.android.ui.views.WButton
                     android:id="@+id/btnCheckOut"
                     style="@style/blackButtonStyle"
-                    android:layout_weight="1"
                     android:background="@drawable/black_button_drawable_state"
                     android:letterSpacing="0.2"
                     android:text="@string/checkout"
