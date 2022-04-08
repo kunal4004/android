@@ -620,6 +620,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     startActivity(openSearchActivity)
                     overridePendingTransition(0, 0)
                 }
+                val arguments = HashMap<String, String>()
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SEARCH_TERM] = mSearchTerm.toString()
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SEARCH_TYPE] = mSearchType.toString()
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SEARCH, arguments, activity)
                 true
             }
             else -> false

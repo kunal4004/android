@@ -948,6 +948,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 } catch (Exception ex) {
                     FirebaseManager.Companion.logException(ex);
                 }
+
             }
 
             @Override
@@ -1050,6 +1051,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 } catch (Exception ex) {
                     FirebaseManager.Companion.logException(ex);
                 }
+                Map<String, String> arguments = new HashMap<>();
+                arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE);
+                arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_VALUE, String.valueOf(commerceItem.getPriceInfo().amount));
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.REMOVE_FROM_CART, arguments, getActivity());
             }
 
             @Override
@@ -1230,6 +1235,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         if (activity != null) {
             activity.registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
         }
+        Map<String, String> arguments = new HashMap<>();
+        arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.CURRENCY,FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE);
+        arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.CART_TOTAL_VALUE, " ");
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VIEW_CART,arguments,activity);
     }
 
     @Override

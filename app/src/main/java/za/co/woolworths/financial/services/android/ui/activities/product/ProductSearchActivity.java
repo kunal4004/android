@@ -262,6 +262,7 @@ public class ProductSearchActivity extends AppCompatActivity
         showRecentSearchHistoryView(true);
         if (mEditSearchProduct != null)
             mEditSearchProduct.requestFocus();
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SEARCH, this);
     }
 
     @Override
