@@ -834,7 +834,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     private fun onCheckoutPaymentClick() {
-        if (isRequiredFieldsMissing() || isInstructionsMissing()) {
+        if (isRequiredFieldsMissing() || isInstructionsMissing() || isGiftMessage()) {
             return
         }
 
@@ -872,11 +872,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             })
     }
 
-    private fun isInstructionsMissing(): Boolean {
-        return when {
-            switchSpecialDeliveryInstruction?.isChecked == true -> {
-                if (TextUtils.isEmpty(edtTxtSpecialDeliveryInstruction?.text.toString())) {
-                    // scroll to instructions layout
+    private fun isGiftMessage(): Boolean {
+        return when (switchGiftInstructions?.isChecked) {
+            true -> {
+                if (TextUtils.isEmpty(edtTxtGiftInstructions?.text?.toString())) {
+
                     deliverySummaryScrollView?.smoothScrollTo(
                         0,
                         layoutDeliveryInstructions?.top ?: 0
@@ -884,8 +884,14 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     true
                 } else false
             }
-            switchGiftInstructions?.isChecked == true -> {
-                if (TextUtils.isEmpty(edtTxtGiftInstructions?.text?.toString())) {
+            else -> false
+        }
+    }
+
+    private fun isInstructionsMissing(): Boolean {
+        return when (switchSpecialDeliveryInstruction?.isChecked) {
+            true -> {
+                if (TextUtils.isEmpty(edtTxtSpecialDeliveryInstruction?.text.toString())) {
                     // scroll to instructions layout
                     deliverySummaryScrollView?.smoothScrollTo(
                         0,
