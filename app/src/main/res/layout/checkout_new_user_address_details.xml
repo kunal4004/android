@@ -62,7 +62,7 @@
         android:layout_width="0dp"
         android:background="@drawable/input_box_inactive_bg"
         android:inputType="textEmailAddress"
-        android:maxLength="@integer/thirty"
+        android:maxLength="@integer/forty"
         android:layout_marginTop="@dimen/_3sdp"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
