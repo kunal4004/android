@@ -197,7 +197,7 @@ object OneAppService : RetrofitConfig() {
 
              mApiInterface.getDashCategories(
                 getSessionToken(),
-                getDeviceIdentityToken(), null, null, suburbId, storeId, fulFillmentStoreId01)
+                getDeviceIdentityToken(), null, null, suburbId, storeId)
         }
     }
 
