@@ -51,7 +51,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_four_dp"
         android:layout_marginEnd="@dimen/twenty_four_dp"
-        android:layout_marginBottom="@dimen/twenty_four_dp"
         android:lineHeight="@dimen/thirteen_dp"
         android:textColor="@color/white"
         android:textSize="@dimen/twelve_sp"
