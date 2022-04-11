@@ -39,6 +39,7 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.Confirm
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.StoreLiveData
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.Suburb
@@ -289,6 +290,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                         )
                                     )
                                 }
+
+                                WoolworthsApplication.setValidatedSuburbProducts(validateLocationResponse?.validatePlace)
 
                                 savedAddressResponse?.defaultAddressNickname =
                                     defaultAddress?.nickname

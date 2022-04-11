@@ -10,20 +10,33 @@ import android.os.Handler
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.black_tool_tip_layout.*
 import kotlinx.android.synthetic.main.fragment_shop.*
+import kotlinx.android.synthetic.main.geo_location_delivery_address.*
 import kotlinx.android.synthetic.main.shop_custom_tab.view.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
+import za.co.woolworths.financial.services.android.geolocation.network.model.Store
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
@@ -47,6 +60,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback
 import za.co.woolworths.financial.services.android.util.PermissionUtils
 import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 
 /**
@@ -66,11 +80,13 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private var ordersResponse: OrdersResponse? = null
     private var shoppingListsResponse: ShoppingListsResponse? = null
     private var user: String = ""
-
-    enum class Delivery_Types(val value: String) {
-        STANDARD("standard"),
-        CLICK_AND_COLLECT("click_and_collect"),
-        DASH("dash");
+    private var localPlaceId: String? = null
+    private var validateLocationResponse: ValidateLocationResponse? = null
+    val confirmAddressViewModel: ConfirmAddressViewModel by lazy {
+        ViewModelProvider(
+            this,
+            GeoLocationViewModelFactory(GeoLocationApiHelper())
+        ).get(ConfirmAddressViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,6 +104,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             permissionUtils = PermissionUtils(this, this@ShopFragment)
             permissions.add(android.Manifest.permission.CAMERA)
         }
+        executeValidateSuburb()
         tvSearchProduct?.setOnClickListener { navigateToProductSearch() }
         imBarcodeScanner?.setOnClickListener { checkCameraPermission() }
         shopPagerAdapter = ShopPagerAdapter(childFragmentManager, mTabTitle, this)
@@ -116,17 +133,17 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                                 FirebaseManagerAnalyticsProperties.SHOP_CATEGORIES,
                                 this
                             )
-                            showBlackToolTip(Delivery_Types.STANDARD)
+                            showBlackToolTip(Delivery.STANDARD)
                         }
                         1 -> {
                             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS,
                                 this)
-                            showBlackToolTip(Delivery_Types.CLICK_AND_COLLECT)
+                            showBlackToolTip(Delivery.CNC)
                         }
                         2 -> {
                             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYORDERS,
                                 this)
-                            showBlackToolTip(Delivery_Types.DASH)
+                            showBlackToolTip(Delivery.DASH)
                         }
                     }
                 }
@@ -138,8 +155,75 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         setupToolbar(0)
         viewLifecycleOwner.lifecycleScope.launch {
             delay(DELAY_3000_MS)
-            showBlackToolTip(Delivery_Types.STANDARD)
+            showBlackToolTip(Delivery.STANDARD)
         }
+    }
+
+    private fun executeValidateSuburb() {
+        var placeId: String? = null
+
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
+                placeId = it.address?.placeId
+            }
+        } else {
+            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let {
+                placeId = it.address?.placeId
+            }
+        }
+
+        if (placeId == null) {
+            return
+        }
+
+        placeId?.let {
+            if (placeId.equals(
+                    WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId,
+                    true
+                ) || !isLocationChanged()
+            ) {
+
+            } else {
+                lifecycleScope.launch {
+                    progressBar?.visibility = View.VISIBLE
+                    try {
+                        validateLocationResponse =
+                            confirmAddressViewModel.getValidateLocation(it)
+                        progressBar?.visibility = View.GONE
+                        geoDeliveryView?.visibility = View.VISIBLE
+                        if (validateLocationResponse != null) {
+                            when (validateLocationResponse?.httpCode) {
+                                AppConstant.HTTP_OK -> {
+                                    if (validateLocationResponse?.validatePlace?.deliverable == true) {
+                                        WoolworthsApplication.setValidatedSuburbProducts(
+                                            validateLocationResponse?.validatePlace
+                                        )
+                                    }
+                                }
+                                else -> {
+                                    /*TODO : show error screen*/
+
+                                }
+                            }
+                        }
+                    } catch (e: HttpException) {
+                        FirebaseManager.logException(e)
+                        /*TODO : show error screen*/
+                    }
+                }
+            }
+        }
+    }
+
+    private fun isLocationChanged(): Boolean {
+        val currentPlaceId = KotlinUtils.getPreferredPlaceId()
+        if (currentPlaceId == null) {
+            return false
+        } else if (!(currentPlaceId?.equals(localPlaceId))!!) {
+            localPlaceId = currentPlaceId
+            return true
+        }
+        return true
     }
 
     private fun setupToolbar(tabPosition: Int) {
@@ -481,19 +565,23 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
     }
 
-    private fun showBlackToolTip(deliveryType: Delivery_Types) {
+    private fun showBlackToolTip(deliveryType: Delivery) {
+        if (WoolworthsApplication.getValidatePlaceDetails() == null) {
+            blackToolTipLayout?.visibility = View.GONE
+            return
+        }
         blackToolTipLayout?.visibility = View.VISIBLE
         closeWhiteBtn?.setOnClickListener {
             blackToolTipLayout?.visibility = View.GONE
         }
         when (deliveryType) {
-            Delivery_Types.STANDARD -> {
+            Delivery.STANDARD -> {
                 showStandardDeliveryToolTip()
             }
-            Delivery_Types.CLICK_AND_COLLECT -> {
+            Delivery.CNC -> {
                 showClickAndCollectToolTip()
             }
-            Delivery_Types.DASH -> {
+            Delivery.DASH -> {
                 showDashToolTip()
             }
         }
@@ -507,51 +595,57 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun showStandardDeliveryToolTip() {
-        fashionItemDateText?.visibility = View.VISIBLE
-        foodItemTitle?.visibility = View.VISIBLE
-        deliveryIconLayout?.visibility = View.VISIBLE
-        fashionItemTitle?.visibility = View.VISIBLE
 
-        //ToDo: Remove this hardcoded value in WOP-15382
-        deliveryCollectionTitle?.text = getString(R.string.earliest_delivery_dates)
-        foodItemDateText?.text = "Sun, 19 Aug 1pm - 2pm"
-        fashionItemDateText?.text = "Mon, 22 Aug 10:30am - 11:30am"
-        productAvailableText?.text = "All products available"
-        deliveryFeeText?.text = "R50 Delivery Fee"
-        bubbleLayout?.arrowPosition = 200.0F
+        WoolworthsApplication.getValidatePlaceDetails()?.let {
+            fashionItemDateText?.visibility = View.VISIBLE
+            foodItemTitle?.visibility = View.VISIBLE
+            deliveryIconLayout?.visibility = View.VISIBLE
+            fashionItemTitle?.visibility = View.VISIBLE
+            deliveryIconLayout?.visibility  = View.GONE
+
+            deliveryCollectionTitle?.text = getString(R.string.earliest_delivery_dates)
+            foodItemDateText?.text = it.firstAvailableFoodDeliveryDate
+            fashionItemDateText?.text = it.firstAvailableOtherDeliveryDate
+            productAvailableText?.text = getString(R.string.all_products_available)
+            cartIcon.setImageResource(R.drawable.icon_cart_white)
+            bubbleLayout?.arrowPosition = 200.0F
+        }
     }
 
     private fun showClickAndCollectToolTip() {
-        deliveryCollectionTitle?.text = getString(R.string.earliest_collection_Date)
-        foodItemTitle?.visibility = View.GONE
-        fashionItemDateText?.visibility = View.GONE
-        deliveryIconLayout?.visibility = View.GONE
-        fashionItemTitle?.visibility = View.VISIBLE
+        WoolworthsApplication.getValidatePlaceDetails()?.let {
+            deliveryCollectionTitle?.text = getString(R.string.earliest_collection_Date)
+            foodItemTitle?.visibility = View.GONE
+            fashionItemDateText?.visibility = View.GONE
+            fashionItemTitle?.visibility = View.GONE
 
-        //ToDo: Remove this hardcoded value in WOP-15382
-        foodItemDateText?.text = "Mon, 22 Aug 10:30am - 11:30am"
-        fashionItemTitle?.text = getString(R.string.all_products_available)
-        productAvailableText?.text = "Free Collection"
-        bubbleLayout?.arrowPosition = 640.0F
-        cartIcon?.setImageResource(R.drawable.white_shopping_bag_icon)
+            foodItemDateText?.text = it.firstAvailableFoodDeliveryDate
+            productAvailableText?.text = resources.getString(R.string.dash_item_limit, it?.quantityLimit?.foodMaximumQuantity)
+            cartIcon?.setImageResource(R.drawable.icon_cart_white)
+            deliveryIcon?.setImageResource(R.drawable.white_shopping_bag_icon)
+            deliveryFeeText?.text = resources.getString(R.string.dash_free_collection)
+            bubbleLayout?.arrowPosition = 640.0F
+        }
     }
 
     private fun showDashToolTip() {
-        deliveryCollectionTitle?.text = getString(R.string.next_dash_delivery_timeslot_text)
-        foodItemTitle?.visibility = View.GONE
-        fashionItemDateText?.visibility = View.GONE
-        deliveryIconLayout?.visibility = View.VISIBLE
-        cartIconLayout?.visibility = View.VISIBLE
-        fashionItemTitle?.visibility = View.GONE
+        WoolworthsApplication.getValidatePlaceDetails()?.let {
+            deliveryCollectionTitle?.text = getString(R.string.next_dash_delivery_timeslot_text)
+            foodItemTitle?.visibility = View.GONE
+            fashionItemDateText?.visibility = View.GONE
+            deliveryIconLayout?.visibility = View.VISIBLE
+            cartIconLayout?.visibility = View.VISIBLE
+            fashionItemTitle?.visibility = View.GONE
+            deliveryIcon?.visibility = View.VISIBLE
+            deliveryFeeText?.visibility = View.VISIBLE
 
-        //ToDo: Remove this hardcoded value in WOP-15382
-        foodItemDateText?.text = "1pm - 2pm, Today"
-        cartIcon?.setImageResource(R.drawable.icon_cart_white)
-        deliveryIcon?.setImageResource(R.drawable.icon_scooter_white)
-        bubbleLayout?.arrowPosition = 1060.0F
-        productAvailableText?.text = "42 Item Limit"
-        deliveryFeeText?.text = "Free for orders over R75"
-
+            foodItemDateText?.text = it.onDemand?.firstAvailableFoodDeliveryTime
+            cartIcon?.setImageResource(R.drawable.icon_cart_white)
+            deliveryIcon?.setImageResource(R.drawable.icon_scooter_white)
+            bubbleLayout?.arrowPosition = 1060.0F
+            productAvailableText?.text = resources.getString(R.string.dash_item_limit, it?.onDemand?.quantityLimit?.foodMaximumQuantity)
+            deliveryFeeText?.text = "Free for orders over R75"
+        }
     }
 
     private fun showShopFeatureWalkThrough() {

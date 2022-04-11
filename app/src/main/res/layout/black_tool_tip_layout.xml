@@ -133,7 +133,7 @@
                     android:layout_marginStart="@dimen/ten_dp"
                     android:paddingTop="@dimen/three_dp"
                     android:paddingBottom="@dimen/three_dp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/color_D8D8D8"
                     android:textSize="@dimen/twelve_sp"
                     app:layout_constraintStart_toEndOf="@+id/cartIcon"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -166,7 +166,7 @@
                     android:layout_marginStart="@dimen/ten_dp"
                     android:paddingTop="@dimen/three_dp"
                     android:paddingBottom="@dimen/three_dp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/color_D8D8D8"
                     android:textSize="@dimen/twelve_sp"
                     app:layout_constraintStart_toEndOf="@+id/deliveryIcon"
                     app:layout_constraintTop_toTopOf="parent" />
