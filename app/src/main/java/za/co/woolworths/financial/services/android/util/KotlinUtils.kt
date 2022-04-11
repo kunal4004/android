@@ -50,6 +50,8 @@ import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
+import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.Transaction
@@ -844,6 +846,35 @@ class KotlinUtils {
                     startActivity(openInternalWebView)
                 }
             }
+        }
+        fun openTreatmenPlanUrl(activity: Activity?,eligibilityPlan: EligibilityPlan?){
+            var collectionsUrl: String? = ""
+            var exitUrl: String? = ""
+            val accountOptions = AppConfigSingleton.accountOptions
+
+            when (eligibilityPlan?.productGroupCode) {
+                ProductGroupCode.SC -> {
+                    collectionsUrl =accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
+                    exitUrl = accountOptions?.showTreatmentPlanJourney?.storeCard?.exitUrl
+                }
+
+                ProductGroupCode.PL -> {
+                    collectionsUrl = accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
+                    exitUrl = accountOptions?.showTreatmentPlanJourney?.personalLoan?.exitUrl
+                }
+
+                ProductGroupCode.CC -> {
+                    collectionsUrl = accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
+                    exitUrl = accountOptions?.collectionsStartNewPlanJourney?.creditCard?.exitUrl
+                }
+            }
+            val url =  collectionsUrl + eligibilityPlan?.appGuid
+            openLinkInInternalWebView(
+                activity,
+                url,
+                true,
+                exitUrl
+            )
         }
 
         fun linkDeviceIfNecessary(

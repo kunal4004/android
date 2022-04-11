@@ -50,6 +50,7 @@ interface IAccountSignedInContract {
         fun isAccountInDelinquencyMoreThan6Months(): Boolean
         fun chatWithCollectionAgent()
         fun getDeepLinkData(): JsonObject?
+        fun getEligibilityPlan(): EligibilityPlan?
         fun deleteDeepLinkData()
         fun isProductInGoodStanding():Boolean
         fun setAvailableFundBundleInfo(

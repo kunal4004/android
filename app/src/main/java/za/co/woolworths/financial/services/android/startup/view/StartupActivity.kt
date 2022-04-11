@@ -13,6 +13,7 @@ import android.view.View
 import android.view.WindowManager
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProviders
 import com.awfs.coordination.R
@@ -448,7 +449,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     override fun onStart() {
         super.onStart()
         if (Utils.checkForBinarySu() && CommonUtils.isRooted(this) && !Util.isDebug(
-                WoolworthsApplication.getAppContext()
+                this.applicationContext
             )
         ) {
             Utils.setScreenName(
