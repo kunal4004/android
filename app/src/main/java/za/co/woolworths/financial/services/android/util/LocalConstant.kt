@@ -7,5 +7,6 @@ class LocalConstant {
         const val phoneLabel = "086 150 2020"
         const val textLabel = "release the hold"
         const val appPinLabel = "App PIN"
+        const val environment = "SIT4"
     }
 }
