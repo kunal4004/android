@@ -184,6 +184,12 @@ class SubCategoryFragment :
 
     override fun onChildItemClicked(subCategory: SubCategory) {
         //Navigate to product grid
+        val subCategoryModel = mSubCategoryListModel?.get(mSelectedHeaderPosition)
+        val arguments = HashMap<String, String>()
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CATEGORY_NAME] = mRootCategory?.categoryName!!
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SUB_CATEGORY_NAME] = subCategoryModel?.name.toString()
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SUB_SUB_CATEGORY_NAME] =  subCategory.getCategoryName()
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SCREEN_VIEW_PLP,arguments, activity)
         pushFragment(
             newInstance(
                 ProductsRequestParams.SearchType.NAVIGATE,

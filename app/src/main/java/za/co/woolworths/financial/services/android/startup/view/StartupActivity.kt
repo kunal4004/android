@@ -490,7 +490,6 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     override fun onResume() {
         super.onResume()
-        Utils.setScreenName(FirebaseManagerAnalyticsProperties.ScreenNames.STARTUP)
         NotificationUtils.clearNotifications(this@StartupActivity)
     }
 
