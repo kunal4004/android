@@ -72,7 +72,7 @@ import java.util.regex.Pattern
 
 class CheckoutReturningUserCollectionFragment : Fragment(),
     ShoppingBagsRadioGroupAdapter.EventListner, View.OnClickListener, CollectionTimeSlotsListener,
-    CustomProgressBottomSheetDialog.ClickListner {
+    CustomDriverTipBottomSheetDialog.ClickListner {
 
     private var selectedTimeSlot: Slot? = null
     private var selectedPosition: Int = 0
@@ -874,7 +874,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     private fun onCheckoutPaymentClick() {
-        if (isRequiredFieldsMissing() || isInstructionsMissing()) {
+        if (isRequiredFieldsMissing() || isInstructionsMissing() || isGiftMessage()) {
             return
         }
 
@@ -965,20 +965,26 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         }
     }
 
-    private fun isInstructionsMissing(): Boolean {
-        return when {
-            switchSpecialDeliveryInstruction?.isChecked == true -> {
-                if (TextUtils.isEmpty(edtTxtSpecialDeliveryInstruction?.text.toString())) {
-                    // scroll to instructions layout
-                    checkoutReturningCollectionScrollView?.smoothScrollTo(
+    private fun isGiftMessage(): Boolean {
+        return when (switchGiftInstructions?.isChecked) {
+            true -> {
+                if (TextUtils.isEmpty(edtTxtGiftInstructions?.text?.toString())) {
+
+                    deliverySummaryScrollView?.smoothScrollTo(
                         0,
-                        layoutCollectionInstructions?.top ?: 0
+                        layoutDeliveryInstructions?.top ?: 0
                     )
                     true
                 } else false
             }
-            switchGiftInstructions?.isChecked == true -> {
-                if (TextUtils.isEmpty(edtTxtGiftInstructions?.text?.toString())) {
+            else -> false
+        }
+    }
+
+    private fun isInstructionsMissing(): Boolean {
+        return when (switchSpecialDeliveryInstruction?.isChecked) {
+            true -> {
+                if (TextUtils.isEmpty(edtTxtSpecialDeliveryInstruction?.text.toString())) {
                     // scroll to instructions layout
                     checkoutReturningCollectionScrollView?.smoothScrollTo(
                         0,

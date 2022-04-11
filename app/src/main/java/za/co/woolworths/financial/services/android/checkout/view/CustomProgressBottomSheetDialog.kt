@@ -18,19 +18,12 @@ class CustomProgressBottomSheetDialog : WBottomSheetDialogFragment() {
 
     private lateinit var mTipValue: String
 
-
-    interface ClickListner {
-        fun onConfirmClick(tipValue: String)
-    }
-
     companion object {
         private const val TIP_VALUE = "TIP_VALUE"
-        private var clickListner: ClickListner? = null
 
-        fun newInstance(tipValue: String, listner: ClickListner) =
+        fun newInstance(tipValue: String) =
             CustomProgressBottomSheetDialog().withArgs {
                 putString(TIP_VALUE, tipValue)
-                clickListner = listner
             }
     }
 
@@ -65,9 +58,7 @@ class CustomProgressBottomSheetDialog : WBottomSheetDialogFragment() {
             animationStatus = ProgressIndicator.AnimationStatus.Success
         }
         gotItActionButton?.setOnClickListener {
-            // dismiss dialog and pass the value to original fragment
             dismiss()
-            clickListner?.onConfirmClick(mTipValue)
         }
     }
 }

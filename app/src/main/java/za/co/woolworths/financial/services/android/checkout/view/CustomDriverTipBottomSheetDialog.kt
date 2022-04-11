@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.driver_tip_custom_dialog.*
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.Utils
@@ -20,17 +21,22 @@ class CustomDriverTipBottomSheetDialog : WBottomSheetDialogFragment() {
     private var mSubTitle: String? = null
     private lateinit var mTipValue: String
 
+    interface ClickListner {
+        fun onConfirmClick(tipValue: String)
+    }
+
     companion object {
         private const val TITLE = "TITLE"
         private const val SUB_TITLE = "SUB_TITLE"
         private const val TIP_VALUE = "TIP_VALUE"
-        private lateinit var clickListner: CustomProgressBottomSheetDialog.ClickListner
+        private const val MIN_TIP_VALUE = "5.00" // ToDo This will be taken from config once config is ready.
+        private var clickListner: ClickListner? = null
 
         fun newInstance(
             title: String,
             subTitle: String,
             tipValue: String,
-            listner: CustomProgressBottomSheetDialog.ClickListner,
+            listner: ClickListner,
         ) =
             CustomDriverTipBottomSheetDialog().withArgs {
                 putString(TITLE, title)
@@ -74,13 +80,16 @@ class CustomDriverTipBottomSheetDialog : WBottomSheetDialogFragment() {
             } else {
                 Utils.fadeInFadeOutAnimation(buttonConfirm, true)
                 driverTipErrorText?.visibility = View.VISIBLE
+                driverTipErrorText?.text = bindString(R.string.driver_minimum_tip_amt_error, MIN_TIP_VALUE)
             }
         }
         buttonConfirm?.setOnClickListener {
+            // dismiss dialog and pass the value to original fragment
             dismiss()
             mTipValue = driverTipAmtEditText?.text.toString()
+            clickListner?.onConfirmClick(mTipValue)
             val customProgressBottomSheetDialog =
-                CustomProgressBottomSheetDialog.newInstance(mTipValue, clickListner)
+                CustomProgressBottomSheetDialog.newInstance(mTipValue)
             customProgressBottomSheetDialog.show(requireFragmentManager(),
                 CustomProgressBottomSheetDialog::class.java.simpleName)
         }

@@ -1031,6 +1031,16 @@ interface ApiInterface {
             @Query("placeId") placeId: String): Call<ValidateLocationResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/locationItems/validateLocation")
+    fun geoValidateLocation(
+        @Header("userAgent") userAgent: String,
+        @Header("environment") environment: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Query("placeId") placeId: String): Call<ValidateLocationResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @DELETE("wfs/app/v4/payments/payu/methods/{paymenToken}")
     fun payURemovePaymentMethod(
 
