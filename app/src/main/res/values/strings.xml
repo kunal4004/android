@@ -2439,6 +2439,7 @@
     <string name="geo_delivery_fee">Delivery fee:</string>
     <string name="earliest_food_delivery_date">Earliest Food Delivery Date:</string>
     <string name="earliest_fashion_delivery_date">Earliest Fashion Delivery Date:</string>
+    <string name="earliest_dash_delivery_timeslot">Dash Delivery Timeslot:</string>
     <string name="all">All</string>
     <string name="unlimited">Unlimited</string>
     <string name="food">Food</string>
@@ -2475,6 +2476,7 @@
     <string name="standard_delivery_title_text">R50 Delivery Fee. Free for orders over R450.</string>
     <string name="click_and_collect">Click &amp; Collect</string>
     <string name="click_and_collect_title_text">Free Collection. \n Limited shop of 64 Items.</string>
+    <string name="dash_title_text">R35 Delivery Fee. Free for orders over R75. \n Limited shop of 42 Items.</string>
     <string name="dash_delivery">Dash Delivery</string>
     <string name="dash_product_search">Search name, product code or brand</string>
     <string name="default_location">Default Location</string>
@@ -2495,7 +2497,7 @@
     <string name="driver_tip_note">* Your tip will reflect in the order total value before payment.</string>
     <string name="amt_tip_added">R%1$s Tip Added</string>
     <string name="rand_text">R</string>
-    <string name="driver_minimum_tip_amt_error">Please enter minimum amount as R5</string>
+    <string name="driver_minimum_tip_amt_error">A minimum amount of R%1$s is required.</string>
     <string name="address_type">Address Type:</string>
     <string name="add_street_address">Street Address:</string>
 

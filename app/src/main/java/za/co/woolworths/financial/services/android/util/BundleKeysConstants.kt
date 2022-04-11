@@ -19,7 +19,8 @@ class BundleKeysConstants {
         const val IS_COMING_FROM_CNC_SELETION = "cnc_slection"
         const val STANDARD_DELIVERY = "StandardDelivery"
         const val STANDARD = "Standard"
-        const val CNC = "CnC"
+        const val CNC = "Click_And_Collect"
+        const val DASH = "Dash"
         const val FULLFILLMENT_REQUEST_CODE = 8765
         const val IS_COMING_CONFIRM_ADD = "conform_add"
         var IS_FROM_STORE_LOCATOR = false
