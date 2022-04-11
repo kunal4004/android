@@ -44,26 +44,20 @@ class MainShopRepository : ShopRepository {
 
     override suspend fun fetchOnDemandCategories(location: Location?): Resource<RootCategories> {
         return try {
-            val responseString = KotlinUtils.getJSONFileFromRAWResFolder(
-                context = WoolworthsApplication.getAppContext(),
-                R.raw.dash_category_navigation
-            )
-            val result = Gson().fromJson(responseString.toString(), RootCategories::class.java)
-            delay(2000L)
 
             val response = OneAppService.getDashCategoryNavigation(location)
             if (response.isSuccessful) {
                 response.body()?.let {
-                    it.onDemandCategories = result.onDemandCategories
-                    when(it.httpCode) {
+
+                    return when(it.httpCode) {
                         AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
-                            return Resource.success(it)
+                            Resource.success(it)
                         else ->
-                            return Resource.error("An unknown error occured", it)
+                            Resource.error("An unknown error occurred", it)
                     }
-                } ?: Resource.error("An unknown error occured", null)
+                } ?: Resource.error("An unknown error occurred", null)
             } else {
-                Resource.error("An unknown error occured", null)
+                Resource.error("An unknown error occurred", null)
             }
         } catch (e: IOException) {
             Log.e("EXCEPTION", "EXCEPTION:", e)

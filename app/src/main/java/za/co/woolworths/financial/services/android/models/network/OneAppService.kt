@@ -196,7 +196,7 @@ object OneAppService : RetrofitConfig() {
 
              mApiInterface.getDashCategoriesNavigation(
                 getSessionToken(),
-                getDeviceIdentityToken(), location?.latitude, location?.longitude, suburbId, storeId)
+                getDeviceIdentityToken(), location?.latitude, location?.longitude, suburbId, storeId, "OnDemand")
         }
     }
 
