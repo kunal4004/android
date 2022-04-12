@@ -26,32 +26,37 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.maps.GeoApiContext
 import com.google.maps.GeocodingApi
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.geo_location_delivery_address.*
 import kotlinx.android.synthetic.main.geolocation_confirm_address.*
 import kotlinx.android.synthetic.main.no_connection.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
 import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.ROUTE
 import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.STREET_NUMBER
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
+import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.LocationErrorLiveData
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
-import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_CONFIRM_ADD
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LATITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LONGITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
-import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
-import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
-import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
 import javax.inject.Inject
 
@@ -202,9 +207,7 @@ class ConfirmAddressMapFragment :
                     )
                 }
             } else if (isFromDashTab == true) {
-                // navigate to Dash home tab.
-                activity?.setResult(Activity.RESULT_OK)
-                activity?.finish()
+                validateLocation()
             } else {
                 // normal geo flow
                 if (mLatitude != null && mLongitude != null && placeId != null) {
@@ -221,6 +224,92 @@ class ConfirmAddressMapFragment :
                 }
             }
         }
+    }
+
+    private fun validateLocation() {
+        if (placeId.isNullOrEmpty())
+            return
+
+        lifecycleScope.launch {
+            binding?.progressBar?.visibility = View.VISIBLE
+            try {
+                val validateLocationResponse =
+                    confirmAddressViewModel.getValidateLocation(placeId!!)
+                binding?.progressBar?.visibility = View.GONE
+                geoDeliveryView?.visibility = View.VISIBLE
+                if (validateLocationResponse != null) {
+                    when (validateLocationResponse?.httpCode) {
+                        HTTP_OK -> {
+                            validateLocationResponse.validatePlace?.let { place ->
+                                if (place.onDemand != null && place.onDemand!!.deliverable == true) {
+                                    confirmSetAddress(validateLocationResponse)
+                                } else {
+                                    //ToDo Show popup for dash not deliverable.
+                                }
+                            }
+                        }
+                        else -> {
+                            showErrorDialog()
+                        }
+                    }
+                }
+            } catch (e: HttpException) {
+                FirebaseManager.logException(e)
+                binding?.progressBar?.visibility = View.GONE
+                showErrorDialog()
+            }
+        }
+    }
+
+    private fun confirmSetAddress(validateLocationResponse: ValidateLocationResponse) {
+        if (placeId.isNullOrEmpty())
+            return
+        WoolworthsApplication.setValidatedSuburbProducts(validateLocationResponse.validatePlace)
+
+        //make confirm Location call
+        val confirmLocationAddress = ConfirmLocationAddress(placeId)
+        val confirmLocationRequest =
+            ConfirmLocationRequest(BundleKeysConstants.DASH, confirmLocationAddress, validateLocationResponse.validatePlace?.stores?.getOrNull(0)?.storeId)
+
+        lifecycleScope.launch {
+            binding?.progressBar?.visibility = View.VISIBLE
+            try {
+                val confirmLocationResponse =
+                    confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
+                binding?.progressBar?.visibility = View.GONE
+                if (confirmLocationResponse != null) {
+                    when (confirmLocationResponse.httpCode) {
+                        HTTP_OK -> {
+                                // save details in cache
+                            if (SessionUtilities.getInstance().isUserAuthenticated) {
+                                Utils.savePreferredDeliveryLocation(
+                                    ShoppingDeliveryLocation(
+                                        confirmLocationResponse.orderSummary?.fulfillmentDetails
+                                    )
+                                )
+                                if (KotlinUtils.getAnonymousUserLocationDetails() != null)
+                                    KotlinUtils.clearAnonymousUserLocationDetails()
+                            } else {
+                                KotlinUtils.saveAnonymousUserLocationDetails(
+                                    ShoppingDeliveryLocation(
+                                        confirmLocationResponse.orderSummary?.fulfillmentDetails
+                                    )
+                                )
+                            }
+
+                            // navigate to Dash home tab.
+                            activity?.setResult(Activity.RESULT_OK)
+                            activity?.finish()
+                        }
+                    }
+                }
+            } catch (e: HttpException) {
+                binding?.progressBar?.visibility = View.GONE
+                FirebaseManager.logException(e)
+                showErrorDialog()
+            }
+        }
+
     }
 
     private fun initMap() {

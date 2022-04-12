@@ -47,7 +47,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         initViews()
     }
 
-    private fun initViews() {
+    fun initViews() {
         val validatePlace = WoolworthsApplication.getValidatePlaceDetails()
         if (validatePlace?.onDemand != null) {
             setupRecyclerView()
@@ -145,6 +145,10 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             adapter = dashDeliveryAdapter
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
         }
+    }
+
+    fun scrollToTop() {
+        rvDashDelivery?.scrollToPosition(0)
     }
 
     private fun navigateToConfirmAddressScreen() {

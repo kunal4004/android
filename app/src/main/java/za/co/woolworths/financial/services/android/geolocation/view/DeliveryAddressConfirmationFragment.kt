@@ -259,13 +259,13 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             val confirmLocationRequest = when (deliveryType) {
                 Delivery.STANDARD.name -> {
 
-                    ConfirmLocationRequest(STANDARD, confirmLocationAddress)
+                    ConfirmLocationRequest(STANDARD, confirmLocationAddress, "")
             }
             Delivery.CNC.name -> {
 
                     ConfirmLocationRequest(CNC, confirmLocationAddress, mStoreId)
             }else -> {
-                    ConfirmLocationRequest(DASH, confirmLocationAddress)
+                    ConfirmLocationRequest(DASH, confirmLocationAddress, mStoreId)
                 }
             }
 
