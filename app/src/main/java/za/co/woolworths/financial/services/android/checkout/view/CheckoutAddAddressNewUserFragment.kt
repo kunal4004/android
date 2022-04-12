@@ -64,7 +64,6 @@ import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerAct
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_BUNDLE
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_PROVINCE
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_SCREEN_NAME
@@ -379,19 +378,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     private fun addFragmentResultListener() {
-        // Use the Kotlin extension in the fragment-ktx artifact
-        setFragmentResultListener(EditDeliveryLocationFragment.SUBURB_SELECTOR_REQUEST_CODE) { _, bundle ->
-            // We use a String here, but any type that can be put in a Bundle is supported
-            val result = bundle.getString("Suburb")
-            val suburb: Suburb? = Utils.strToJson(result, Suburb::class.java) as? Suburb
-
-        }
-        // Use the Kotlin extension in the fragment-ktx artifact
-        setFragmentResultListener(EditDeliveryLocationFragment.PROVINCE_SELECTOR_REQUEST_CODE) { _, bundle ->
-            // We use a String here, but any type that can be put in a Bundle is supported
-            val result = bundle.getString("Province")
-            val province: Province? = Utils.strToJson(result, Province::class.java) as? Province
-        }
 
         setFragmentResultListener(RESULT_ERROR_CODE_SUBURB_NOT_FOUND) { _, _ ->
             if (selectedAddress.provinceName.isNullOrEmpty()) return@setFragmentResultListener

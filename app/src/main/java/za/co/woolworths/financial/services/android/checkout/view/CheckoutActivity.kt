@@ -16,8 +16,6 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.IS_DELIVERY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.baseFragBundle
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.ProvinceSelectorFragment
-import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.SuburbSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART
@@ -184,12 +182,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         when (fragmentList[0]) {
-            is ProvinceSelectorFragment -> {
-                (fragmentList[0] as ProvinceSelectorFragment).onBackPressed()
-            }
-            is SuburbSelectorFragment -> {
-                (fragmentList[0] as SuburbSelectorFragment).onBackPressed()
-            }
+
             is UnsellableItemsFragment -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_CANCEL_REMOVE_UNSELLABLE_ITEMS, hashMapOf(
                     FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to

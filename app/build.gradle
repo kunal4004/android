@@ -10,8 +10,8 @@ apply plugin: 'dagger.hilt.android.plugin'
 
 android {
 
-    def major = "8"
-    def minor = "9"
+    def major = "9"
+    def minor = "1"
     def fix = "0"
     def jobNumber = 570
 
