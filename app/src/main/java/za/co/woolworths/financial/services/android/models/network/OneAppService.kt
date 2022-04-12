@@ -41,6 +41,7 @@ import java.net.URLEncoder
 import android.text.TextUtils
 
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.account.FicaModel
 
 object OneAppService : RetrofitConfig() {
 
@@ -687,5 +688,10 @@ object OneAppService : RetrofitConfig() {
             insuranceType,
             insuranceTypeOptInBody
         )
+    }
+
+    fun getFicaResponse(): Call<FicaModel> {
+        return mApiInterface.getFica(getSessionToken(),
+            getDeviceIdentityToken())
     }
 }

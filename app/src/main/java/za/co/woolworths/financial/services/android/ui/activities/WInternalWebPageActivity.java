@@ -198,6 +198,8 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 
 					}
 
+				}else if (url.contains(collectionsExitUrl)){
+					finishActivity();
 				}
 			}
 		});

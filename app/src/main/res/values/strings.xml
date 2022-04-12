@@ -2333,7 +2333,7 @@
     <string name="product_item">item found</string>
     <string name="goldCreditCard_title">Gold Credit Card</string>
     <string name="silverCreditCard_title">Silver Credit Card</string>
-     <!--vto-->
+    <!--vto-->
     <string name="capture">Capture Image</string>
     <string name="use_live_camera">Use Live Camera</string>
     <string name="take_a_photo">Take a Photo</string>
@@ -2391,8 +2391,8 @@
     <string name="bpi_checkbox_text">I agree with the <u>Comprehensive Balance Protection Terms &amp; Conditions</u></string>
     <string name="bpi_opt_in_text">opt in</string>
     <string name="bpi_opt_in_for_balance_protection_insurance">Opt in for Balance Protection Insurance</string>
-    <string name="bpi_confirm_opt_in_desc1">You may cancel this policy at any time. If you<br/> cancel within the first 31 days after which you have<br/> received the policy terms and conditions,<br/> we will reverse any premiums paid,<br/> provided have not claimed.</string>
-    <string name="bpi_confirm_opt_in_desc2">Should you require more information, need to<br/> submit a claim, log a complaint, wish to cancel or<br/> have not received your policy wording within 30<br/> days, please contact Woolworth Financial Services<br/> on 0861502020</string>
+    <string name="bpi_confirm_opt_in_desc1">You may cancel this policy at any time. If you<br /> cancel within the first 31 days after which you have<br /> received the policy terms and conditions,<br /> we will reverse any premiums paid,<br /> provided have not claimed.</string>
+    <string name="bpi_confirm_opt_in_desc2">Should you require more information, need to<br /> submit a claim, log a complaint, wish to cancel or<br /> have not received your policy wording within 30<br /> days, please contact Woolworth Financial Services<br /> on 0861502020</string>
     <string name="bpi_confirm_opt_in_desc_call_services">0861502020</string>
     <string name="bpi_email_me_a_copy">Email me a copy</string>
     <string name="bpi_terms_conditions_title">Terms &amp; Conditions</string>
@@ -2430,5 +2430,11 @@
     <string name="view_your_payment_plan">VIEW YOUR PAYMENT PLAN</string>
     <string name="total_amount_you_saving">This is the total amount you are saving as agreed \n upon in your settlement plan</string>
     <string name="pay_now">PAY NOW</string>
+
+    <!--FICA -->
+    <string name="fica_dialog_title">We need you to confirm your personal details.</string>
+    <string name="fica_dialog_desc">As required by law we need you to submit all FICA documentation and/or to verify information requested from you. To continue enjoying all the benefits of your Woolies card, please verify your info.</string>
+    <string name="fica_dialog_verify">Verify MY DETAILS</string>
+    <string name="fica_dialog_later">maybe later</string>
 
 </resources>

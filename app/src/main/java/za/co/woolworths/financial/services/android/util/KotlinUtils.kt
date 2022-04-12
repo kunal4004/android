@@ -33,12 +33,9 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import com.awfs.coordination.R
-import com.google.android.gms.tasks.Task
 import com.google.common.reflect.TypeToken
-import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.installations.FirebaseInstallations
-import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.layout_link_device_validate_otp.*
 import kotlinx.coroutines.GlobalScope
@@ -74,6 +71,10 @@ import java.io.*
 import java.text.NumberFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.time.Duration
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -931,6 +932,38 @@ class KotlinUtils {
                 }
             )
         }
-    }
+        fun hasADayPassed(dateString:String?): Boolean {
+            // when dateString = null it means it's the first time to call api
+            if (dateString==null) return true
+            val from = LocalDateTime.parse(dateString,  DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"))
+            val today = LocalDateTime.now()
+            var period = ChronoUnit.DAYS.between(from, today)
+            return if (period>=1) {
+                Utils.sessionDaoSave(KEY.FICA_LAST_REQUEST_TIME, null)
+                true
+            }else{
+                false
+            }
+        }
 
+        fun ficaVerifyRedirect(
+                activity: Activity?,
+                url: String?,
+                isWebView: Boolean,
+                collectionsExitUrl: String?
+            ) {
+                activity?.apply {
+                    val openInternalWebView = Intent(this, WInternalWebPageActivity::class.java)
+                    openInternalWebView.putExtra("externalLink", url)
+                    if (isWebView) {
+                        openInternalWebView.putExtra(COLLECTIONS_EXIT_URL, collectionsExitUrl)
+                        startActivityForResult(openInternalWebView, RESULT_CODE_CLOSE_VIEW)
+                    }else{
+                        openUrlInPhoneBrowser(url,activity)
+                        activity.finish()
+                    }
+                }
+
+        }
+    }
 }

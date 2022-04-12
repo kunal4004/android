@@ -363,6 +363,11 @@ open class FirebaseManagerAnalyticsProperties {
         const val CC_BPI_OPT_IN_START: String = "cc_bpi_optin_start"
         const val CC_BPI_OPT_IN_CONFIRM: String = "cc_bpi_optin_confirm"
         const val CC_BPI_OPT_IN_SEND_EMAIL: String = "cc_bpi_send_email"
+
+        //FICA
+        const val FICA_VERIFY_START: String = "fica_verify_start"
+        const val FICA_VERIFY_SKIP: String = "fica_verify_skip"
+
     }
 
     class PropertyNames {
