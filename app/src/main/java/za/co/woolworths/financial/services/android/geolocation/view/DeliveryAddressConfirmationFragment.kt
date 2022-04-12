@@ -238,15 +238,19 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     private fun sendConfirmLocation() {
-
-        if (validateLocationResponse?.validatePlace?.unSellableCommerceItems?.isEmpty() == false) {
-            // show unsellable items
-            validateLocationResponse?.validatePlace?.unSellableCommerceItems?.let {
-                navigateToUnsellableItemsFragment(it)
-                if (isUnSellableItemsRemoved == false) {
-                    return
-                }
+        var unSellableCommerceItems: MutableList<UnSellableCommerceItem>? = null
+        validateLocationResponse?.validatePlace?.stores?.forEach {
+            if (it.storeName.equals(mStoreName)) {
+                unSellableCommerceItems = it.unSellableCommerceItems
             }
+        }
+        if (unSellableCommerceItems?.isNullOrEmpty() == false && isUnSellableItemsRemoved == false) {
+            // show unsellable items
+            unSellableCommerceItems?.let {
+                navigateToUnsellableItemsFragment(it)
+
+                }
+
         } else {
             if (placeId == null) {
                 return
@@ -302,9 +306,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                                     FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_STANDARD_CONFIRM),
 
                                         activity)
-
-
-
                                 }
 
                                 if (isComingFromCheckout) {
@@ -772,7 +773,10 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     private fun isUnSellableItemsRemoved() {
         UnSellableItemsLiveData.observe(viewLifecycleOwner) {
             isUnSellableItemsRemoved = it
-        }
+        if (isUnSellableItemsRemoved == true) {
+                sendConfirmLocation()
+                UnSellableItemsLiveData.value = false
+            }}
     }
 
     private fun showErrorDialog() {

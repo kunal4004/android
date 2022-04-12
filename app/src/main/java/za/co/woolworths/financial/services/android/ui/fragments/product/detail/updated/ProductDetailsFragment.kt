@@ -1002,8 +1002,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun updateDefaultUI(isInventoryCalled: Boolean) {
-        if (isInventoryCalled)
-            loadSizeAndColor()
+        loadSizeAndColor()
         loadPromotionalImages()
         updateAuxiliaryImages(getAuxiliaryImagesByGroupKey())
         if (!TextUtils.isEmpty(this.productDetails?.ingredients))
@@ -1243,6 +1242,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun updateAddToCartButtonForSelectedSKU() {
+
+        if (!SessionUtilities.getInstance().isUserAuthenticated || Utils.getPreferredDeliveryLocation() == null) {
+            showAddToCart()
+            return
+        }
 
         when (getSelectedSku()) {
             null -> showAddToCart()

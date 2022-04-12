@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.geolocation.network.model
 
 import com.google.gson.annotations.SerializedName
+import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import java.io.Serializable
 
 data class Store (
@@ -38,7 +39,7 @@ data class Store (
     var storeDeliveryType: String? = null,
 
     @SerializedName("unSellableCommerceItems")
-    var unSellableCommerceItems: List<Any>? = null,
+    var unSellableCommerceItems: MutableList<UnSellableCommerceItem>? = null,
 
 
     @SerializedName("longitude")
