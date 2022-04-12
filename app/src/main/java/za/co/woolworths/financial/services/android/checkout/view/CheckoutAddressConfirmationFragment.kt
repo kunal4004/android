@@ -41,7 +41,6 @@ import za.co.woolworths.financial.services.android.service.network.ResponseStatu
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.adapters.SuburbListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
@@ -325,10 +324,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 Utils.toJson(AppConfigSingleton.nativeCheckout?.regions)
             )
         }
-        navController?.navigate(
-            R.id.action_provinceSelectorFragment,
-            bundleOf(BUNDLE to bundle)
-        )
+
     }
 
     private fun showCollectionTab(suburbId: String?) {
@@ -405,20 +401,6 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             }
         }
 
-        setFragmentResultListener(EditDeliveryLocationFragment.SUBURB_SELECTOR_REQUEST_CODE) { _, bundle ->
-            val suburb = bundle.getString("Suburb")
-            selectedSuburb = Utils.strToJson(suburb, Suburb::class.java) as Suburb
-            selectedSuburb.id?.let {
-                storeListAdapter =
-                    null // setting null to update selected store position in list to -1
-                showCollectionTab(it)
-            }
-        }
-        setFragmentResultListener(EditDeliveryLocationFragment.PROVINCE_SELECTOR_REQUEST_CODE) { _, bundle ->
-            val province = bundle.getString("Province")
-            selectedProvince = Utils.strToJson(province, Province::class.java) as Province
-            showCollectionTab(DEFAULT_STORE_ID) // To show suburb selection list
-        }
         setFragmentResultListener(STORE_SELECTION_REQUEST_KEY) { _, bundle ->
             val result = bundle.getString(STORE_SELECTION_REQUEST_KEY)
             val validateStoreList: ValidateStoreList? =

@@ -150,7 +150,7 @@ class ConfirmAddressMapFragment :
                         confirmAddress.isEnabled = true
                         if (isAddAddress!!) {
                             confirmAddress.isEnabled = false
-                            imgMapMarker?.visibility = View.GONE
+                            imgMapMarker.visibility = View.GONE
 
                         }
                     } else {
@@ -331,9 +331,9 @@ class ConfirmAddressMapFragment :
         mMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18f))
         mMap?.setOnCameraMoveListener {
             mMap?.setOnCameraIdleListener {
-                val latLng = mMap?.cameraPosition?.target
-                val latitude = latLng?.latitude
-                val longitude = latLng?.longitude
+                val localLatLng = mMap?.cameraPosition?.target
+                val latitude = localLatLng?.latitude
+                val longitude = localLatLng?.longitude
                 latitude?.let { lat ->
                     longitude?.let { longitude ->
                         getAddressFromLatLng(lat, longitude)

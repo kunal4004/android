@@ -16,7 +16,6 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -43,7 +42,6 @@ import za.co.woolworths.financial.services.android.ui.activities.DashDetailsActi
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.DepartmentAdapter
-import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
@@ -52,8 +50,7 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
-class DepartmentsFragment : DepartmentExtensionFragment(),
-    DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection {
+class DepartmentsFragment : DepartmentExtensionFragment() {
 
     private var isFirstCallToLocationModal: Boolean = false
     private var isLocationModalShown: Boolean = false
@@ -138,7 +135,6 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
 
     private fun initializeRootCategoryList() {
         if (parentFragment?.getCategoryResponseData() != null) bindDepartment() else executeDepartmentRequest()
-        showDeliveryOptionDialog()
     }
 
     private fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -155,8 +151,6 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
         } else {
             startLocationUpdates()
         }
-
-        showDeliveryOptionDialog()
     }
 
     private fun setListener() {
@@ -371,24 +365,12 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
                 executeValidateSuburb()
                 //When moved from My Cart to department
                 startLocationUpdates()
-                showDeliveryOptionDialog()
             }
         }
     }
 
     fun scrollToTop() {
         rclDepartment?.scrollToPosition(0)
-    }
-
-    override fun onDeliveryOptionSelected(deliveryType: Delivery) {
-            activity?.apply {
-                KotlinUtils.presentEditDeliveryGeoLocationActivity(
-                    this,
-                    REQUEST_CODE,
-                    deliveryType,
-                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
-                )
-            }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -459,18 +441,6 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
             if (fragmentList.isNotEmpty() && fragmentList[fragmentList.size - 1] !is ProductListingFragment) {
                 executeValidateSuburb()
             }
-        }
-    }
-
-    private fun showDeliveryOptionDialog() {
-        if (!Utils.isDeliverySelectionModalShown()) {
-            (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()
-                ?.let { fragmentTransaction ->
-                    DeliveryOrClickAndCollectSelectorDialogFragment.newInstance(this).show(
-                        fragmentTransaction,
-                        DeliveryOrClickAndCollectSelectorDialogFragment::class.java.simpleName
-                    )
-                }
         }
     }
 

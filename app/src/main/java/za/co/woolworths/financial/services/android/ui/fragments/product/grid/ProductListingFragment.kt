@@ -18,7 +18,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -63,7 +62,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductLis
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
@@ -80,8 +78,6 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO
-import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
-import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.net.ConnectException
 import java.net.UnknownHostException
 import java.util.*
@@ -91,7 +87,6 @@ import javax.inject.Inject
 open class ProductListingFragment : ProductListingExtensionFragment(), GridNavigator,
     IProductListing, View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected,
     WMaterialShowcaseView.IWalkthroughActionListener,
-    DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection,
     IOnConfirmDeliveryLocationActionListener, ChanelNavigationClickListener {
 
     private var EDIT_LOCATION_LOGIN_REQUEST = 1919
@@ -279,7 +274,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private fun updateRequestForReload() {
         if (localProductBody.isNotEmpty()) {
             val list: HashMap<String, Any> =
-                (localProductBody.get(localProductBody.lastIndex) as HashMap<String, Any>)
+                (localProductBody[localProductBody.lastIndex] as HashMap<String, Any>)
             mSubCategoryName = list["subCategory"] as? String ?: ""
             mSearchType = list["searchType"] as? ProductsRequestParams.SearchType
             mSearchTerm = list["searchTerm"] as? String ?: ""
@@ -315,10 +310,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             mProductList = ArrayList()
         response.history?.apply {
             if (!categoryDimensions?.isNullOrEmpty()) {
-                mSubCategoryName = categoryDimensions.get(categoryDimensions.size - 1).label
+                mSubCategoryName = categoryDimensions[categoryDimensions.size - 1].label
             } else if (searchCrumbs?.isNullOrEmpty() == false) {
                 searchCrumbs?.let {
-                    mSubCategoryName = it.get(it.size - 1).terms
+                    mSubCategoryName = it[it.size - 1].terms
                 }
             }
         }
@@ -353,9 +348,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 bindRecyclerViewWithUI(productLists)
                 showFeatureWalkThrough()
                 getCategoryNameAndSetTitle()
-                if (!Utils.isDeliverySelectionModalShown()) {
-                    showDeliveryOptionDialog()
-                }
 
                 if (AppConfigSingleton.isProductItemForLiquorInventoryPending) {
                     AppConfigSingleton.productItemForLiquorInventory?.let { productList ->
@@ -581,7 +573,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             //for some reason, when we change the visibility
             //before setting the updated Adapter, the adapter still remembers
             //the results from the previous listed data. This of course may be different in sizes
-            //and therefor we can most likely expect a IndexOutOfBoundsExeption
+            //and therefore we can most likely expect a IndexOutOfBoundsException
             if (visibility == View.INVISIBLE)
                 visibility = VISIBLE
         }
@@ -1432,31 +1424,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             productsRecyclerView?.contentDescription = getString(R.string.plp_productListLayout)
         }
     }
-
-    private fun showDeliveryOptionDialog() {
-        lifecycleScope.launchWhenResumed {
-            (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()
-                ?.let { fragmentTransaction ->
-                    DeliveryOrClickAndCollectSelectorDialogFragment.newInstance(this@ProductListingFragment)
-                        .show(
-                            fragmentTransaction,
-                            DeliveryOrClickAndCollectSelectorDialogFragment::class.java.simpleName
-                        )
-                }
-        }
-    }
-
-    override fun onDeliveryOptionSelected(deliveryType: Delivery) {
-        activity?.apply {
-            KotlinUtils.presentEditDeliveryGeoLocationActivity(
-                this,
-                REQUEST_CODE,
-                deliveryType,
-                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
-            )
-        }
-    }
-
 
     private fun requestCartSummary() {
         showProgressBar()
