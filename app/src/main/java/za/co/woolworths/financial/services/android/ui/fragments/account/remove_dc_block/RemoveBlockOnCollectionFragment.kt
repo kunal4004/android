@@ -108,7 +108,8 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, Eligib
         stopProgress()
 
         setFragmentResultListener(RemoveBlockOnCollectionDialogFragment::class.java.simpleName) { _, bundle ->
-            GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+            CoroutineScope(Dispatchers.Main).launch {
+                delay(AppConstant.DELAY_100_MS)
                 when (bundle.getString(
                     RemoveBlockOnCollectionDialogFragment::class.java.simpleName,
                     "N/A"
@@ -351,10 +352,8 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, Eligib
 
     override fun eligibilityResponse(eligibilityPlan: EligibilityPlan?) {
         eligibilityPlan.let {
-            when (it?.actionText) {
-                ActionText.VIEW_ELITE_PLAN.value -> {
-                    helpWithPayment.text = bindString(R.string.view_your_payment_plan)
-                }
+            if (it?.actionText.equals(ActionText.VIEW_ELITE_PLAN.value, ignoreCase = true)) {
+                    helpWithPayment.text = bindString(if (mAccountPresenter?.isAccountInDelinquencyMoreThan6Months() == true) R.string.get_help_repayment else R.string.view_your_payment_plan)
             }
             viewLifecycleOwner.lifecycleScope.launch {
                 delay(AppConstant.DELAY_1000_MS)
