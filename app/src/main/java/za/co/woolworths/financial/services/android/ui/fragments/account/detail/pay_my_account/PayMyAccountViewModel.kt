@@ -75,7 +75,7 @@ class PayMyAccountViewModel : ViewModel() {
                 ?: "", paymentMethod?.type ?: "")
         return AddCardResponse(paymentMethod?.token ?: "", pmaCard, false)
     }
-
+    fun getSelectedPosition() = getCardDetail()?.selectedCardPosition ?: 0
     fun getPaymentMethodList(): MutableList<GetPaymentMethod>? {
         val cardDetail = getCardDetail()
         val paymentList = cardDetail?.paymentMethodList
@@ -439,7 +439,11 @@ class PayMyAccountViewModel : ViewModel() {
     fun resetAmountEnteredToDefault() {
         val card = getCardDetail()
         if (isAccountChargedOff()) {
-            card?.amountEntered = getCurrentBalance()
+            if (elitePlanModel !=null ){
+                card?.amountEntered = elitePlanModel!!.settlementAmount
+            }else{
+                card?.amountEntered = getCurrentBalance()
+            }
         } else {
             card?.amountEntered = getOverdueAmount()
         }

@@ -363,4 +363,8 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, Eligib
             }
         }
     }
+
+    override fun eligibilityFailed() {
+        helpWithPaymentView.visibility = GONE
+    }
 }
