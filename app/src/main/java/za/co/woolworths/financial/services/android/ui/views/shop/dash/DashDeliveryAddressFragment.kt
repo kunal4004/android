@@ -1,26 +1,31 @@
 package za.co.woolworths.financial.services.android.ui.views.shop.dash
 
+import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_dash_delivery.*
+import kotlinx.android.synthetic.main.layout_dash_set_address_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IProductListing
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.ProductList
-import za.co.woolworths.financial.services.android.ui.adapters.shop.dash.DashDeliveryAdapter
-import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 import za.co.woolworths.financial.services.android.models.network.Status
+import za.co.woolworths.financial.services.android.ui.adapters.shop.dash.DashDeliveryAdapter
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 
 @AndroidEntryPoint
-class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), IProductListing {
+class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), IProductListing,
+    View.OnClickListener {
 
     private val viewModel: ShopViewModel by viewModels(
         ownerProducer = { requireParentFragment() }
@@ -39,9 +44,21 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         if (!isVisible) {
             return
         }
+        initViews()
+    }
 
-        setupRecyclerView()
+    private fun initViews() {
+        val validatePlace = WoolworthsApplication.getValidatePlaceDetails()
+        if (validatePlace?.onDemand != null) {
+            setupRecyclerView()
+            initData()
+        } else {
+            layoutDashSetAddress?.visibility = View.VISIBLE
+            btn_dash_set_address?.setOnClickListener(this)
+        }
+    }
 
+    private fun initData() {
         when {
             // Both API data available
             viewModel.isDashCategoriesAvailable.value == true &&
@@ -72,13 +89,12 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         }
 
         subscribeToObservers()
-
     }
 
     private fun subscribeToObservers() {
 
         //Dash API.
-        viewModel.dashCategories.observe(viewLifecycleOwner, {
+        viewModel.dashCategories.observe(viewLifecycleOwner) {
             it.getContentIfNotHandled()?.let { resource ->
                 when (resource.status) {
                     Status.LOADING -> {
@@ -98,10 +114,10 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     }
                 }
             }
-        })
+        }
 
         // Root Category API
-        viewModel.onDemandCategories.observe(viewLifecycleOwner, {
+        viewModel.onDemandCategories.observe(viewLifecycleOwner) {
             it.getContentIfNotHandled()?.let { resource ->
                 when (resource.status) {
                     Status.LOADING -> {
@@ -121,13 +137,25 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     }
                 }
             }
-        })
+        }
     }
 
     private fun setupRecyclerView() {
         rvDashDelivery?.apply {
             adapter = dashDeliveryAdapter
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+        }
+    }
+
+    private fun navigateToConfirmAddressScreen() {
+        // navigate to confirm address screen
+        activity?.apply {
+            KotlinUtils.presentEditDeliveryGeoLocationActivity(
+                this,
+                BundleKeysConstants.DASH_SET_ADDRESS_REQUEST_CODE,
+                Delivery.DASH,
+                null
+            )
         }
     }
 
@@ -143,7 +171,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     override fun queryInventoryForStore(
         fulfilmentTypeId: String,
         addItemToCart: AddItemToCart?,
-        productList: ProductList
+        productList: ProductList,
     ) {
         TODO("Not yet implemented")
     }
@@ -162,5 +190,17 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
     override fun openBrandLandingPage() {
         TODO("Not yet implemented")
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.btn_dash_set_address -> {
+                navigateToConfirmAddressScreen()
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
     }
 }

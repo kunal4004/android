@@ -25,7 +25,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.google.android.gms.location.*
 import kotlinx.android.synthetic.main.fragment_shop_department.*
-import kotlinx.android.synthetic.main.geo_location_delivery_address.*
 import kotlinx.android.synthetic.main.no_connection_layout.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -635,7 +634,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
         }
     }
 
-    public fun reloadRequest(){
+    fun reloadRequest(){
         executeDepartmentRequest()
     }
 }

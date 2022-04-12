@@ -43,6 +43,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DE
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_4000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_ORDER_DETAILS_PAGE
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DASH_SET_ADDRESS_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback
 import za.co.woolworths.financial.services.android.util.PermissionUtils
@@ -361,6 +362,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 viewpager_main.currentItem
             ) as? DepartmentsFragment
             fragment?.onActivityResult(requestCode, resultCode, data)
+        }
+        if (requestCode == DASH_SET_ADDRESS_REQUEST_CODE){
+            refreshViewPagerFragment(true)
         }
     }
 

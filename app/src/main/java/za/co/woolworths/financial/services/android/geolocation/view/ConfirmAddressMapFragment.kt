@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.geolocation.view
 
+import android.app.Activity
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
@@ -26,13 +27,13 @@ import com.google.maps.GeoApiContext
 import com.google.maps.GeocodingApi
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.geolocation_confirm_address.*
-import kotlinx.android.synthetic.main.geolocation_confirm_address.autoCompleteTextView
 import kotlinx.android.synthetic.main.no_connection.*
-import kotlinx.android.synthetic.main.no_connection.view.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.ROUTE
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.STREET_NUMBER
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
@@ -41,6 +42,7 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLoca
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.LocationErrorLiveData
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_CONFIRM_ADD
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LATITUDE
@@ -50,8 +52,6 @@ import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
 import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.*
-import za.co.woolworths.financial.services.android.util.AppConstant
 import java.util.*
 import javax.inject.Inject
 
@@ -75,10 +75,12 @@ class ConfirmAddressMapFragment :
     private var suburb: String? = null
     private var isAddAddress: Boolean? = false
     private var isComingFromCheckout: Boolean? = false
+    private var isFromDashTab: Boolean? = false
     private var isAddressFromSearch: Boolean = false
     private var isMoveMapCameraFirstTime: Boolean? = true
     private var isLocationErrorShowing: Boolean? = true
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
+
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
 
@@ -87,7 +89,7 @@ class ConfirmAddressMapFragment :
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         _binding = GeolocationConfirmAddressBinding.inflate(inflater, container, false)
         return binding?.root
@@ -105,6 +107,7 @@ class ConfirmAddressMapFragment :
             longitude = args.mapData.longitude
             isAddAddress = args.mapData.isAddAddress
             isComingFromCheckout = args.mapData.isComingFromCheckout
+            isFromDashTab = args.mapData.isFromDashTab
             setUpViewModel()
             clearAddress()
             confirmAddressClick()
@@ -136,7 +139,7 @@ class ConfirmAddressMapFragment :
 
     private fun checkNetwork(mapFragment: SupportMapFragment?) {
         activity?.let {
-            ConnectivityLiveData.observe(viewLifecycleOwner, { isNetworkAvailable ->
+            ConnectivityLiveData.observe(viewLifecycleOwner) { isNetworkAvailable ->
                 binding?.apply {
                     if (isNetworkAvailable) {
                         no_connection_layout?.visibility = View.GONE
@@ -159,7 +162,7 @@ class ConfirmAddressMapFragment :
 
                     }
                 }
-            })
+            }
         }
     }
 
@@ -186,8 +189,8 @@ class ConfirmAddressMapFragment :
                 activity)
 
             val bundle = Bundle()
-            if(isComingFromCheckout==true) {
-                bundle?.apply {
+            if (isComingFromCheckout == true) {
+                bundle.apply {
                     putString(
                         KEY_PLACE_ID, placeId
                     )
@@ -198,20 +201,18 @@ class ConfirmAddressMapFragment :
                         bundleOf(BUNDLE to bundle)
                     )
                 }
+            } else if (isFromDashTab == true) {
+                // navigate to Dash home tab.
+                activity?.setResult(Activity.RESULT_OK)
+                activity?.finish()
             } else {
                 // normal geo flow
                 if (mLatitude != null && mLongitude != null && placeId != null) {
 
-                    bundle?.apply {
-                        putString(
-                           KEY_LATITUDE, mLatitude
-                        )
-                        putString(
-                            KEY_LONGITUDE, mLongitude
-                        )
-                        putString(
-                           KEY_PLACE_ID, placeId
-                        )
+                    bundle.apply {
+                        putString(KEY_LATITUDE, mLatitude)
+                        putString(KEY_LONGITUDE, mLongitude)
+                        putString(KEY_PLACE_ID, placeId)
                     }
                     findNavController().navigate(
                         R.id.action_confirmAddressMapFragment_to_deliveryAddressConfirmationFragment,
@@ -219,7 +220,6 @@ class ConfirmAddressMapFragment :
                     )
                 }
             }
-
         }
     }
 
@@ -285,10 +285,10 @@ class ConfirmAddressMapFragment :
     }
 
     private fun showLocationErrorBanner() {
-        LocationErrorLiveData.observe(viewLifecycleOwner, { isResult ->
+        LocationErrorLiveData.observe(viewLifecycleOwner) { isResult ->
             isLocationErrorShowing = isResult
             showSelectedLocationError(isResult)
-        })
+        }
     }
 
     private fun showSelectedLocationError(result: Boolean?) {
@@ -310,14 +310,15 @@ class ConfirmAddressMapFragment :
         if (!isAddAddress!!) {
             mMap?.uiSettings?.setAllGesturesEnabled(true)
             latLng = longitude?.let { latitude?.let { it1 -> LatLng(it1, it) } }
-            if (isMoveMapCameraFirstTime == true){
+            if (isMoveMapCameraFirstTime == true) {
                 moveMapCamera(latLng)
             }
 
         } else {
             binding?.imgMapMarker?.visibility = View.GONE
             binding?.confirmAddress?.isEnabled = false
-            mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE), 10f))
+            mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(DEFAULT_LATITUDE,
+                DEFAULT_LONGITUDE), 10f))
 
         }
 
@@ -369,7 +370,10 @@ class ConfirmAddressMapFragment :
         }
         mAddress?.let {
             if (!isAddressFromSearch) {
-                binding?.autoCompleteTextView?.setText(getString(R.string.geo_map_address,address1,city,state))
+                binding?.autoCompleteTextView?.setText(getString(R.string.geo_map_address,
+                    address1,
+                    city,
+                    state))
             }
             isAddressFromSearch = false
             binding?.autoCompleteTextView?.dismissDropDown()
@@ -394,7 +398,7 @@ class ConfirmAddressMapFragment :
 
         getStreetNumberAndRoute(placeId)
 
-      sendAddressData()
+        sendAddressData()
     }
 
     private fun getStreetNumberAndRoute(placeId: String?) {
@@ -411,8 +415,8 @@ class ConfirmAddressMapFragment :
             placeFields.let {
                 FetchPlaceRequest.builder(placeId.toString(), it).build()
             }
-         var streetNumber:String? = null
-         var routeName:String? = null
+        var streetNumber: String? = null
+        var routeName: String? = null
         request.let { placeRequest ->
             placesClient.fetchPlace(placeRequest)
                 .addOnSuccessListener { response ->

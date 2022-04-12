@@ -290,11 +290,11 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                     && selectedAddress != null
                     && tvConfirmAddress.text == getString(R.string.confirm))
                 {
-                    selectedAddress?.let {
+                    selectedAddress.let {
                         if (it.placesId != null) {
 
                             bundle?.putString(
-                               KEY_PLACE_ID, it.placesId)
+                                KEY_PLACE_ID, it.placesId)
 
                             bundle?.putString(
                                 ADDRESS, it.address1)
@@ -317,8 +317,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                                 )
                             }
 
-                        }
-                        else
+                        } else
                             return
                     }
                 }
@@ -330,11 +329,25 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 } else if (isComingFromCheckout && deliveryType == Delivery.CNC.name) {
                     //Navigate to map screen with delivery type or checkout type
                     navigateToConfirmAddressForStoreLocator(mLastLocation?.latitude, mLastLocation?.longitude,false)
-                } else {
+                } else if (!isComingFromCheckout && deliveryType == Delivery.DASH.name){
+                    // Navigate to Map screen
                     val getMapData =
                         getDataForMapView(mLastLocation?.latitude, mLastLocation?.longitude,
                             isAddAddress = false,
-                            isComingFromCheckout = false)
+                            isComingFromCheckout = false,
+                            isFromDashTab = true)
+                    val directions =
+                        ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
+                            getMapData
+                        )
+                    findNavController().navigate(directions)
+                }
+                else {
+                    val getMapData =
+                        getDataForMapView(mLastLocation?.latitude, mLastLocation?.longitude,
+                            isAddAddress = false,
+                            isComingFromCheckout = false,
+                            isFromDashTab = false)
                     val directions =
                         ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
                             getMapData
@@ -356,8 +369,6 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 activity?.onBackPressed()
             }
             R.id.enterNewAddress -> {
-
-
                 Utils.triggerFireBaseEvents(
                     FirebaseManagerAnalyticsProperties.SHOP_NEW_ADDRESS,
                     hashMapOf(
@@ -372,9 +383,19 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                     //Navigate to map screen with delivery type or checkout type
                     navigateToConfirmAddressForStoreLocator(0.0, 0.0,true)
 
-                } else {
+                } else if (!isComingFromCheckout && deliveryType == Delivery.DASH.name){
+                    // Navigate to Map screen
                     val getMapData =
-                        getDataForMapView(0.0, 0.0, true,false)
+                        getDataForMapView(0.0, 0.0, true,false, true)
+                    val directions =
+                        ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
+                            getMapData
+                        )
+                    findNavController().navigate(directions)
+                }
+                else {
+                    val getMapData =
+                        getDataForMapView(0.0, 0.0, true,false, false)
                     val directions =
                         ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
                             getMapData
@@ -389,7 +410,9 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         val getMapData =
             getDataForMapView(latitude, longitude,
                 isAddAddress = isAddAddress,
-                isComingFromCheckout = true)
+                isComingFromCheckout = true,
+                isFromDashTab = false,
+            )
         val directions =
             ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
                 getMapData
@@ -402,12 +425,14 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         longitude: Double?,
         isAddAddress: Boolean?,
         isComingFromCheckout: Boolean,
+        isFromDashTab: Boolean,
     ): MapData {
         return MapData(
             latitude = latitude,
             longitude = longitude,
             isAddAddress = isAddAddress,
-            isComingFromCheckout = isComingFromCheckout
+            isComingFromCheckout = isComingFromCheckout,
+            isFromDashTab = isFromDashTab
         )
     }
 
