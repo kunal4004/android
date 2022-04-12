@@ -11,7 +11,7 @@ import za.co.woolworths.financial.services.android.models.dto.Province
 data class ConfigNativeCheckout(
     val isNativeCheckoutEnabled: Boolean,
     val addressTypes: List<String>,
-    val regions: List<Province>,
+    var regions: List<Province>,
     val checkoutPaymentURL: String?,
     val checkoutPostPaymentURL: String?,
     val currentShoppingBag: ConfigCurrentShoppingBag,

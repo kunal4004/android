@@ -62,7 +62,6 @@ import static za.co.woolworths.financial.services.android.ui.fragments.account.c
 @HiltAndroidApp
 public class WoolworthsApplication extends Application implements Application.ActivityLifecycleCallbacks, LifecycleObserver {
 
-    private static Context context;
     private static Context mContextApplication;
     private UserManager mUserManager;
     private Tracker mTracker;
@@ -130,7 +129,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
     public void onCreate() {
         super.onCreate();
         mInstance = this;
-        WoolworthsApplication.context = this.getApplicationContext();
         this.registerActivityLifecycleCallbacks(this);
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -147,15 +145,15 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
         TimeZone.setDefault(TimeZone.getTimeZone("Africa/Johannesburg"));
 
-        ImagePipelineConfig config = ImagePipelineConfig.newBuilder(context)
+        ImagePipelineConfig config = ImagePipelineConfig.newBuilder(this)
                 .setDownsampleEnabled(true)
                 .build();
         Fresco.initialize(this, config);
         //wake up FirebaseManager that will instantiate
         //FirebaseApp
         FirebaseManager.Companion.getInstance();
-        FacebookSdk.sdkInitialize(WoolworthsApplication.this);
-        AppEventsLogger.activateApp(WoolworthsApplication.this);
+        FacebookSdk.sdkInitialize(this);
+        AppEventsLogger.activateApp(this);
         mWGlobalState = new WGlobalState();
         updateBankDetail = new UpdateBankDetail();
         // set app context

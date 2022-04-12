@@ -47,7 +47,7 @@ class AbsaPinCodeSuccessFragment : AbsaFragmentExtension() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-
+        activity?.apply { (this as ABSAOnlineBankingRegistrationActivity).setPageTitle(getString(R.string.absa_registration_title_step_1)) }
         observeAbsaResult()
     }
 

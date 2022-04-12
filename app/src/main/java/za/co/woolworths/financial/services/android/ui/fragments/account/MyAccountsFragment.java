@@ -72,10 +72,12 @@ import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
+import za.co.woolworths.financial.services.android.models.dto.Card;
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse;
 import za.co.woolworths.financial.services.android.models.dto.DebitOrder;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
+import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode;
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState;
@@ -128,6 +130,7 @@ import za.co.woolworths.financial.services.android.util.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
+import za.co.woolworths.financial.services.android.util.ProductType;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
@@ -225,6 +228,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private MyAccountsPresenter myAccountsPresenter;
     private View applyNowSpacingView;
     private TextView appVersionNameInfoTextView;
+    private TextView fspNumberInfoTextView;
 
     public MyAccountsFragment() {
         // Required empty public constructor
@@ -327,8 +331,12 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             creditReportView = view.findViewById(R.id.creditReport);
             creditReportIcon = view.findViewById(R.id.creditReportIcon);
             applyNowSpacingView = view.findViewById(R.id.applyNowSpacingView);
+
             appVersionNameInfoTextView = view.findViewById(R.id.appVersionNameInfoTextView);
             appVersionNameInfoTextView.setText(myAccountsPresenter.appVersionInfo());
+
+            fspNumberInfoTextView = view.findViewById(R.id.fspNumberInfoTextView);
+            fspNumberInfoTextView.setText(myAccountsPresenter.fspNumberInfo());
 
             retryStoreCardTextView = view.findViewById(R.id.retryStoreCardTextView);
             retryStoreCardImageView = view.findViewById(R.id.retryStoreCardImageView);
@@ -532,6 +540,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         isActivityInForeground = true;
         if (!AppInstanceObject.biometricWalkthroughIsPresented(activity))
             messageCounterRequest();
+
 
         if (getBottomNavigationActivity() != null && getBottomNavigationActivity().getCurrentFragment() != null
                 && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment
@@ -857,6 +866,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             showView(updatePasswordRelativeLayout);
             showView(preferenceRelativeLayout);
             showView(appVersionNameInfoTextView);
+            showView(fspNumberInfoTextView);
             showView(loginUserOptionsLayout);
             if (AppConfigSingleton.INSTANCE.getCreditView() != null && AppConfigSingleton.INSTANCE.getCreditView().isEnabled())
                 showView(creditReportView);
@@ -876,6 +886,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             mUpdateMyAccount.swipeToRefreshAccount(false);
             showView(loggedOutHeaderLayout);
             showView(appVersionNameInfoTextView);
+            showView(fspNumberInfoTextView);
         }
         displayViewApplicationStatus();
     }
@@ -895,6 +906,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         hideView(creditReportView);
         hideView(viewApplicationStatusRelativeLayout);
         hideView(appVersionNameInfoTextView);
+        hideView(fspNumberInfoTextView);
     }
 
     private final OnClickListener btnSignin_onClick = new OnClickListener() {
@@ -1601,8 +1613,11 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         //TODO: Comment what's actually happening here.
 
         if (resultCode == RELOAD_ACCOUNT_RESULT_CODE) {
-            loadAccounts(false);
-            return;
+            if (mUpdateMyAccount != null) {
+                mUpdateMyAccount.setRefreshType(UpdateMyAccount.RefreshAccountType.SWIPE_TO_REFRESH);
+                loadAccounts(true);
+                return;
+            }
         }
 
         if (requestCode == ScreenManager.BIOMETRICS_LAUNCH_VALUE) {
@@ -1694,23 +1709,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     private void showSetUpDeliveryPopUp() {
         if (mAccountResponse != null && mAccountResponse.accountList != null && mAccountResponse.accountList.size() != 0) {
-            Account account = mAccountResponse.accountList.get(0);
-            if (account != null && account.cards != null) {
-                if (account.cards.get(0).cardStatus != null) {
-                    if (account.cards.get(0).cardStatus.equals("PLC") && (account.cards.get(0).envelopeNumber != null)) {
-                        List<ConfigCreditCardDeliveryCardTypes> cardTypes = AppConfigSingleton.INSTANCE.getCreditCardDelivery().getCardTypes();
-                        if (cardTypes != null) {
-                            for (ConfigCreditCardDeliveryCardTypes ccdTypes : cardTypes) {
-                                if (ccdTypes.getBinNumber().equalsIgnoreCase(account.accountNumberBin)
-                                        && Utils.isFeatureEnabled(ccdTypes.getMinimumSupportedAppBuildNumber())) {
-                                    executeCreditCardDeliveryStatusService();
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            executeCreditCardDeliveryStatusService();
         } else {
             if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
                 loadAccounts(false);
@@ -2028,9 +2027,30 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     }
 
+    private Account getCCAccount(ArrayList<Account> accountsList){
+        for (Account account:accountsList) {
+            if (account.productGroupCode.equalsIgnoreCase(String.valueOf(ProductGroupCode.CC))){
+                return account;
+            }
+        }
+        return null;
+    }
     @Override
     public void executeCreditCardDeliveryStatusService() {
-        mCardPresenterImpl.getCreditCardDeliveryStatus(mAccountResponse.accountList.get(0).cards.get(0).envelopeNumber, String.valueOf(mAccountResponse.accountList.get(0).productOfferingId));
+        Account account = getCCAccount(mAccountResponse.accountList);
+        if (account != null && !account.cards.isEmpty()) {
+            Card card = account.cards.get(0);
+            if (card.cardStatus != null && card.cardStatus.equals("PLC") && (card.envelopeNumber != null)) {
+                List<ConfigCreditCardDeliveryCardTypes> cardTypes = AppConfigSingleton.INSTANCE.getCreditCardDelivery().getCardTypes();
+                for (ConfigCreditCardDeliveryCardTypes ccdTypes : cardTypes) {
+                    if (ccdTypes.getBinNumber().equalsIgnoreCase(account.accountNumberBin)
+                            && Utils.isFeatureEnabled(ccdTypes.getMinimumSupportedAppBuildNumber())) {
+                        mCardPresenterImpl.getCreditCardDeliveryStatus(card.envelopeNumber, String.valueOf(account.productOfferingId));
+                        return;
+                    }
+                }
+            }
+        }
     }
 
     @Override

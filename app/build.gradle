@@ -11,7 +11,7 @@ apply plugin: 'dagger.hilt.android.plugin'
 android {
 
     def major = "8"
-    def minor = "8"
+    def minor = "9"
     def fix = "0"
     def jobNumberProduction = 176
     def jobNumberQa = 575
@@ -33,6 +33,11 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+        unitTests.includeAndroidResources = true
     }
 
     lintOptions {
