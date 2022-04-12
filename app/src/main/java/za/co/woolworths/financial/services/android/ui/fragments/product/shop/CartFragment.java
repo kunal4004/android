@@ -1440,6 +1440,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
         if (lastDeliveryLocation != null) {
             setDeliveryLocation(lastDeliveryLocation);
+            loadShoppingCart(false);
         }
     }
 
