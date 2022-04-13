@@ -142,7 +142,6 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
 
     private fun initializeRootCategoryList() {
         if (parentFragment?.getCategoryResponseData() != null) bindDepartment() else executeDepartmentRequest()
-        }
     }
 
     private fun onWindowFocusChanged(hasFocus: Boolean) {
