@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/color_F3F3F3">
 
     <androidx.appcompat.widget.Toolbar
@@ -29,7 +30,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/tvToolbarTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -37,6 +38,7 @@
                 android:fontFamily="@font/myriad_pro_regular"
                 android:gravity="top"
                 android:text="@string/standard_delivery"
+                app:WTextView_font="myriadpro_regular"
                 android:textColor="@color/black"
                 android:textSize="@dimen/twelve_sp"
                 app:layout_constraintBottom_toTopOf="@+id/tvToolbarSubtitle"
@@ -44,12 +46,13 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_chainStyle="packed" />
 
-            <TextView
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/tvToolbarSubtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/myriad_pro_semi_bold"
                 android:gravity="center"
+                app:WTextView_font="myriadpro_semibold"
                 android:text="Default Location"
                 android:textAlignment="center"
                 android:textColor="@color/black"

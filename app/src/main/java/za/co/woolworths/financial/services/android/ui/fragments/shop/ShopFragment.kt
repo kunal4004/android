@@ -39,6 +39,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.Departments
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.DISPLAY_TOAST_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
+import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFullfilmentCollectionStoreFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_3000_MS
@@ -46,6 +47,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DE
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_ORDER_DETAILS_PAGE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 
 /**
@@ -89,6 +91,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
         tvSearchProduct?.setOnClickListener { navigateToProductSearch() }
         imBarcodeScanner?.setOnClickListener { checkCameraPermission() }
+        shopToolbar?.setOnClickListener { onEditDeliveryLocation() }
+
         shopPagerAdapter = ShopPagerAdapter(childFragmentManager, mTabTitle, this)
         viewpager_main?.offscreenPageLimit = 2
         viewpager_main?.adapter = shopPagerAdapter
@@ -128,22 +132,93 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                             showBlackToolTip(Delivery_Types.DASH)
                         }
                     }
+                    setupToolbar(position)
                 }
             }
         })
         tabs_main?.setupWithViewPager(viewpager_main)
         updateTabIconUI(0)
         showShopFeatureWalkThrough()
-        setupToolbar(0)
+
         viewLifecycleOwner.lifecycleScope.launch {
             delay(DELAY_3000_MS)
             showBlackToolTip(Delivery_Types.STANDARD)
         }
     }
 
+    private fun onEditDeliveryLocation() {
+        var deliveryType: Delivery? = Delivery.STANDARD
+        var placeId = ""
+
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
+                deliveryType = Delivery.getType(it.deliveryType)
+                placeId = it.address?.placeId ?: ""
+            }
+        } else {
+            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let {
+                deliveryType = Delivery.getType(it.deliveryType)
+                placeId = it.address?.placeId ?: ""
+            }
+        }
+
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.SHOP_DELIVERY_CLICK_COLLECT,
+            hashMapOf(
+                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_DELIVERY_CLICK_COLLECT
+            ),
+            activity)
+
+
+        KotlinUtils.presentEditDeliveryGeoLocationActivity(
+            requireActivity(),
+            REQUEST_CODE,
+            deliveryType,
+            placeId
+        )
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (Utils.getPreferredDeliveryLocation() == null && KotlinUtils.getAnonymousUserLocationDetails() == null) {
+            return
+        }
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            Utils.getPreferredDeliveryLocation()?.apply {
+                activity?.let {
+                    KotlinUtils.setDeliveryAddressView(
+                        it,
+                        this,
+                        tvToolbarTitle as WTextView,
+                        tvToolbarSubtitle as WTextView,
+                        imgToolbarStart
+                    )
+                }
+            }
+        } else {
+            KotlinUtils.getAnonymousUserLocationDetails()?.apply {
+                activity?.let {
+                    KotlinUtils.setDeliveryAddressView(
+                        it,
+                        this,
+                        tvToolbarTitle ,
+                        tvToolbarSubtitle,
+                        imgToolbarStart
+                    )
+                }
+            }
+        }
+    }
+
     private fun setupToolbar(tabPosition: Int) {
         if (tabPosition < 0) {
             return
+        }
+
+        if ( Utils.getPreferredDeliveryLocation() !=null ||
+            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails !=null ) {
+                return
         }
 
         when (tabPosition) {
@@ -175,7 +250,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                         R.drawable.ic_delivery_circle
                     )
                 )
-                tvToolbarTitle?.text = requireContext().getString(R.string.dash_delivery)
+                tvToolbarTitle?.text = requireContext().getString(R.string.standard_delivery)
                 tvToolbarSubtitle?.text = requireContext().getString(R.string.default_location)
             }
         }
