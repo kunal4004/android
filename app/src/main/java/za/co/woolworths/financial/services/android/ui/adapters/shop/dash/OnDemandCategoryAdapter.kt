@@ -63,7 +63,7 @@ class OnDemandCategoryItemHolder(itemView: View) : RecyclerView.ViewHolder(itemV
             itemView.setOnClickListener {
                 onDemandNavigationListener.onDemandNavigationClicked(it, categoryItem)
             }
-            ImageManager.loadImage(imgCategory, categoryItem.imgUrl)
+            ImageManager.setPicture(imgCategory, categoryItem.imgUrl)
             txtCategoryName?.text = categoryItem.categoryName
         }
     }

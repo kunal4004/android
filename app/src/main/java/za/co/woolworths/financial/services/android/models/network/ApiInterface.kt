@@ -343,7 +343,7 @@ interface ApiInterface {
 
     // Same as fun getRootCategories()
     // This is suspend fun with coroutines
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "Accept-Encoding: gzip", "environment: SIT4")
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "Accept-Encoding: gzip")
     @GET("wfs/app/v4/categories")
     suspend fun getDashCategoriesNavigation(
         @Header("sessionToken") sessionToken: String,
