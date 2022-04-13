@@ -60,7 +60,6 @@ import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
-import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.BrandNavigationDetails
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -82,7 +81,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerA
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.extension.underline
-import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
@@ -111,7 +109,6 @@ import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1500_MS
-import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_300_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_500_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.SDK_INIT_FAIL
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_LIVE_CAMERA
@@ -131,7 +128,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback,
     ILocationProvider, View.OnClickListener,
     OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener,
-    DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection,
     ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
     VtoSelectOptionListener, WMaterialShowcaseView.IWalkthroughActionListener, VtoTryAgainListener {
 
@@ -673,11 +669,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             return
         }
 
-        if (!Utils.isDeliverySelectionModalShown()) {
-            showDeliveryOptionDialog()
-            return
-        }
-
         if (!Utils.retrieveStoreId(productDetails?.fulfillmentType)
                 .equals(storeIdForInventory, ignoreCase = true)
         ) {
@@ -1011,8 +1002,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun updateDefaultUI(isInventoryCalled: Boolean) {
-        if (isInventoryCalled)
-            loadSizeAndColor()
+        loadSizeAndColor()
         loadPromotionalImages()
         updateAuxiliaryImages(getAuxiliaryImagesByGroupKey())
         if (!TextUtils.isEmpty(this.productDetails?.ingredients))
@@ -1252,6 +1242,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun updateAddToCartButtonForSelectedSKU() {
+
+        if (!SessionUtilities.getInstance().isUserAuthenticated || Utils.getPreferredDeliveryLocation() == null) {
+            showAddToCart()
+            return
+        }
 
         when (getSelectedSku()) {
             null -> showAddToCart()
@@ -2277,27 +2272,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 fragmentTransaction.detach(this).attach(this).commit()
         }
     }
-
-    private fun showDeliveryOptionDialog() {
-        (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()
-            ?.let { fragmentTransaction ->
-                DeliveryOrClickAndCollectSelectorDialogFragment.newInstance(this).show(
-                    fragmentTransaction,
-                    DeliveryOrClickAndCollectSelectorDialogFragment::class.java.simpleName
-                )
-            }
-    }
-
-        override fun onDeliveryOptionSelected(deliveryType: Delivery) {
-            activity?.apply {
-                KotlinUtils.presentEditDeliveryGeoLocationActivity(
-                    this,
-                    REQUEST_SUBURB_CHANGE,
-                    deliveryType,
-                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
-                )
-            }
-        }
 
     override fun clearSelectedOnLocationChange() {
         if (!(!hasColor && !hasSize)) {

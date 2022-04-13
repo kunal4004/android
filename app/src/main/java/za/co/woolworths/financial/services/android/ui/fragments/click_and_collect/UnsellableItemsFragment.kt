@@ -5,10 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.google.gson.Gson
@@ -20,14 +18,13 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.ui.adapters.UnsellableItemsListAdapter
 import za.co.woolworths.financial.services.android.util.Utils
 
-class UnsellableItemsFragment : Fragment(), View.OnClickListener {
+class UnsellableItemsFragment : AppCompatDialogFragment(), View.OnClickListener {
 
     var selectedSuburb: Suburb? = null
     var selectedProvince: Province? = null
     var bundle: Bundle? = null
     private var fromScreenName: String? = ""
     private var commerceItems: ArrayList<UnSellableCommerceItem>? = null
-    var navController: NavController? = null
     companion object {
         const val KEY_ARGS_BUNDLE = "bundle"
         const val KEY_ARGS_SUBURB = "SUBURB"
@@ -37,6 +34,7 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setStyle(STYLE_NO_TITLE, android.R.style.Theme_Material_Light_NoActionBar_Fullscreen)
         super.onCreate(savedInstanceState)
         bundle = arguments?.getBundle(KEY_ARGS_BUNDLE)
         bundle?.apply {
@@ -56,9 +54,9 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        navController = Navigation.findNavController(view)
-
         removeItems?.setOnClickListener(this)
+        dialog?.window
+            ?.attributes?.windowAnimations = R.style.DialogFragmentAnimation
         if(activity is CheckoutActivity) {
             initCheckoutUnsellableItemsView()
         } else {
@@ -102,6 +100,6 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
     }
 
     private fun confirmRemoveItems() {
-         navController?.navigateUp()
+         dismiss()
     }
 }
