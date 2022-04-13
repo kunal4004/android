@@ -4,6 +4,7 @@ import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Typeface
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
@@ -13,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
+import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.black_tool_tip_layout.*
 import kotlinx.android.synthetic.main.fragment_shop.*
@@ -42,10 +44,7 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_3000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_4000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_ORDER_DETAILS_PAGE
-import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
-import za.co.woolworths.financial.services.android.util.PermissionResultCallback
-import za.co.woolworths.financial.services.android.util.PermissionUtils
 import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE
 
 
@@ -198,16 +197,21 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     private fun updateTabIconUI(selectedTab: Int) {
         tabs_main?.let { tab ->
-            for (i in mTabTitle?.indices!!) {
-                tab.getTabAt(i)?.customView = prepareTabView(i, mTabTitle)
-            }
             tab.getTabAt(selectedTab)?.customView?.isSelected = true
+            for (i in mTabTitle?.indices!!) {
+                tab.getTabAt(i)?.customView = prepareTabView(tab, i, mTabTitle)
+            }
         }
     }
 
-    private fun prepareTabView(pos: Int, tabTitle: MutableList<String>?): View? {
+    private fun prepareTabView(tab: TabLayout, pos: Int, tabTitle: MutableList<String>?): View? {
         val view = activity?.layoutInflater?.inflate(R.layout.shop_custom_tab, null)
         view?.tvTitle?.text = tabTitle?.get(pos)
+        if (tab.getTabAt(pos)?.view?.isSelected == true) {
+            val futuraFont =
+                Typeface.createFromAsset(activity?.assets, "fonts/MyriadPro-Semibold.otf")
+            view?.tvTitle?.setTypeface(futuraFont)
+        }
         if (pos == 2) {
             foodOnlyText?.visibility = View.VISIBLE
         }
@@ -509,7 +513,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private fun showStandardDeliveryToolTip() {
         fashionItemDateText?.visibility = View.VISIBLE
         foodItemTitle?.visibility = View.VISIBLE
-        deliveryIconLayout?.visibility = View.VISIBLE
+        deliveryIconLayout?.visibility = View.GONE
         fashionItemTitle?.visibility = View.VISIBLE
 
         //ToDo: Remove this hardcoded value in WOP-15382
@@ -517,7 +521,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         foodItemDateText?.text = "Sun, 19 Aug 1pm - 2pm"
         fashionItemDateText?.text = "Mon, 22 Aug 10:30am - 11:30am"
         productAvailableText?.text = "All products available"
-        deliveryFeeText?.text = "R50 Delivery Fee"
         bubbleLayout?.arrowPosition = 200.0F
     }
 
