@@ -10,12 +10,14 @@ import android.view.animation.TranslateAnimation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.add_to_shopping_list_activity.*
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.ANIM_DOWN_DURATION
-import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity.Companion.ORDER_ID
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.CreateShoppingListFragment
+import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.ORDER_ID
 import za.co.woolworths.financial.services.android.util.Utils
 
 class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
@@ -35,22 +37,32 @@ class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
         if (savedInstanceState == null) {
             Utils.updateStatusBarBackground(this)
             val addToListRequestBundle: String? = intent?.getStringExtra("addToListRequest")
-            val shouldDisplayCreateList: Boolean? = intent?.getBooleanExtra("shouldDisplayCreateList", false)
+            val shouldDisplayCreateList: Boolean? =
+                intent?.getBooleanExtra("shouldDisplayCreateList", false)
             val orderId = intent?.getStringExtra(ORDER_ID)
 
             if (shouldDisplayCreateList!!) {
                 addFragment(
-                        fragment = CreateShoppingListFragment.newInstance(HashMap(), addToListRequestBundle, shouldDisplayCreateList, orderId),
-                        tag = AddToShoppingListFragment::class.java.simpleName,
-                        allowStateLoss = false,
-                        containerViewId = R.id.flShoppingListContainer)
+                    fragment = CreateShoppingListFragment.newInstance(
+                        HashMap(),
+                        addToListRequestBundle,
+                        shouldDisplayCreateList,
+                        orderId
+                    ),
+                    tag = AddToShoppingListFragment::class.java.simpleName,
+                    allowStateLoss = false,
+                    containerViewId = R.id.flShoppingListContainer
+                )
 
             } else {
                 addFragment(
-                        fragment = AddToShoppingListFragment.newInstance(addToListRequestBundle, orderId),
-                        tag = AddToShoppingListFragment::class.java.simpleName,
-                        allowStateLoss = false,
-                        containerViewId = R.id.flShoppingListContainer
+                    fragment = AddToShoppingListFragment.newInstance(
+                        addToListRequestBundle,
+                        orderId
+                    ),
+                    tag = AddToShoppingListFragment::class.java.simpleName,
+                    allowStateLoss = false,
+                    containerViewId = R.id.flShoppingListContainer
                 )
             }
         }
@@ -60,9 +72,24 @@ class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE -> {
+                when(resultCode) {
+                    BottomNavigationActivity.RESULT_OK_OPEN_CART_FROM_SHOPPING_DETAILS -> {
+                        // Pass back result to BottomNavigation to load cart screen.
+                        setResult(BottomNavigationActivity.RESULT_OK_OPEN_CART_FROM_SHOPPING_DETAILS)
+                        finishActivity(ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE)
+                    }
+                    else -> setFragmentResult(requestCode, resultCode, data)
+                }
+            }
+            else -> setFragmentResult(requestCode, resultCode, data)
+        }
+    }
+
+    private fun setFragmentResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val fm = supportFragmentManager?.findFragmentById(R.id.flShoppingListContainer)
         fm?.onActivityResult(requestCode, resultCode, data)
-
     }
 
     override fun onDialogDismissed() {

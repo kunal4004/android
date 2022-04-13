@@ -4,6 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/enterPaymentAmountRootLayoutStyle">
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/totalAmountGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="amountDividerView,totalAmountDueValueTextView,totalAmountDueLabelTextView,totalAmountDueInfoDescImageButton" />
+
     <TextView
         android:id="@+id/enterPaymentAmountTextView"
         style="@style/enterPaymentAmountStyle"
@@ -115,10 +121,58 @@
         android:id="@+id/currentBalanceDescImageButton"
         style="@style/iconInfoRoundedStyle"
         android:alpha="0.4"
-        app:srcCompat="@drawable/icon_info"
         app:layout_constraintBottom_toBottomOf="@+id/amountOverdueLabelTextView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/amountOverdueLabelTextView"
+        app:srcCompat="@drawable/icon_info"
         tools:ignore="ContentDescription" />
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/amountYouSaveGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="amountYouSaveDividerView,amountYouSave,amountYouSaveValueTextView,amountYouSaveImageButton" />
+
+    <View
+        android:id="@+id/amountYouSaveDividerView"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_1sdp"
+        android:layout_marginBottom="@dimen/_20sdp"
+        android:background="@color/bpi_background"
+        app:layout_constraintBottom_toTopOf="@+id/amountYouSave"
+        app:layout_constraintEnd_toStartOf="@+id/endGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startGuideline" />
+
+    <TextView
+        android:id="@+id/amountYouSave"
+        style="@style/enterPaymentAmountOverdueStyle"
+        android:layout_width="0dp"
+        android:layout_marginStart="16dp"
+        android:text="@string/amount_you_save"
+        app:layout_constraintBottom_toBottomOf="@+id/amountYouSaveValueTextView"
+        app:layout_constraintEnd_toStartOf="@+id/amountYouSaveValueTextView"
+        app:layout_constraintStart_toEndOf="@+id/amountYouSaveImageButton"
+        app:layout_constraintTop_toTopOf="@+id/amountYouSaveValueTextView" />
+
+    <TextView
+        android:id="@+id/amountYouSaveValueTextView"
+        style="@style/enterPaymentAmountOverdueValueStyle"
+        android:layout_marginBottom="@dimen/_20sdp"
+        android:text="@string/currency_placeholder"
+        android:background="@drawable/amount_selected_violet"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/continueToPaymentButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/endGuideline" />
+
+    <ImageButton
+        android:id="@+id/amountYouSaveImageButton"
+        style="@style/iconInfoRoundedStyle"
+        android:alpha="0.4"
+        app:layout_constraintBottom_toBottomOf="@+id/amountYouSave"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/amountYouSave"
+        app:srcCompat="@drawable/icon_info"
+        tools:ignore="ContentDescription" />
 </androidx.constraintlayout.widget.ConstraintLayout>
