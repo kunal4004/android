@@ -120,7 +120,9 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
             false -> {
                 when (presenter.isViewTreatmentPlanSupported()
                         || presenter.isTakeUpTreatmentPlanJourneyEnabled()) {
-                    true -> R.string.account_in_recovery_label to getViewTreatmentPlanDescription(state)
+                    true -> R.string.account_in_recovery_label to getViewTreatmentPlanDescription(
+                        state
+                    )
                     false -> R.string.payment_overdue_label to getString(
                         stringId = R.string.payment_overdue_error_desc,
                         amountOverdue
@@ -193,19 +195,28 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
     }
 
     @SuppressLint("VisibleForTests")
-    private fun getViewTreatmentPlanDescription(
-        state: ApplyNowState?
-    ): String? {
-        val descriptionId = when (state) {
-            ApplyNowState.PERSONAL_LOAN -> R.string.account_in_recovery_pl_desc
-            ApplyNowState.STORE_CARD -> R.string.account_in_recovery_sc_desc
-            else -> R.string.account_in_recovery_desc
+    private fun getViewTreatmentPlanDescription(state: ApplyNowState?): String? {
+        val paymentDueDate = account?.paymentDueDate
+        return when (paymentDueDate.isNullOrEmpty()) {
+            true ->
+                activity?.resources?.getString(
+                    when (state) {
+                        ApplyNowState.PERSONAL_LOAN -> R.string.account_in_recovery_sc_payment_due_unavailable_desc
+                        ApplyNowState.STORE_CARD -> R.string.account_in_recovery_pl_payment_due_unavailable_desc
+                        else -> R.string.account_in_recovery_desc
+                    }
+                )
+
+            false -> activity?.resources?.getString(
+                    when (state) {
+                        ApplyNowState.PERSONAL_LOAN -> R.string.account_in_recovery_pl_desc
+                        ApplyNowState.STORE_CARD -> R.string.account_in_recovery_sc_desc
+                        else -> R.string.account_in_recovery_desc
+                    },
+                    formatDateTOddMMMYYYY(paymentDueDate, toPattern = "dd MMMM yyyy")
+                )
+
         }
-        val paymentDueDate = account?.paymentDueDate ?: ""
-        return activity?.resources?.getString(
-            descriptionId,
-            formatDateTOddMMMYYYY(paymentDueDate, toPattern = "dd MMMM yyyy")
-        )
     }
 
     private fun getString(@StringRes stringId: Int, value: String): String {
