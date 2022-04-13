@@ -141,16 +141,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
     }
 
     private fun initializeRootCategoryList() {
-        if (parentFragment?.getCategoryResponseData() != null) bindDepartment()
-        else {
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-                || !Utils.isLocationEnabled(requireContext())
-            ) {
-                executeDepartmentRequest()
-            }
+        if (parentFragment?.getCategoryResponseData() != null) bindDepartment() else executeDepartmentRequest()
         }
     }
 
