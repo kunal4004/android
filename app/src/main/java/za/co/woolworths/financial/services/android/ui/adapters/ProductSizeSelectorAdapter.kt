@@ -57,6 +57,10 @@ class ProductSizeSelectorAdapter(
                             R.color.low_stock_indicator))
                         itemView.size.setBackgroundResource(R.drawable.ic_rectangle_low_stock)
                     }
+                    quantity == -1 -> {
+                        itemView.size.setTextColor(ContextCompat.getColor(context, R.color.black))
+                        itemView.size.setBackgroundResource(if (selectedSize?.sku.equals(otherSku.sku)) R.drawable.product_available_size_selected_background else R.drawable.product_available_size_un_selected_background)
+                    }
                     else -> {
                         itemView.size.setTextColor(ContextCompat.getColor(context, R.color.black))
                         itemView.size.setBackgroundResource(if (selectedSize?.sku.equals(otherSku.sku)) R.drawable.product_available_size_selected_background else R.drawable.product_available_size_un_selected_background)
