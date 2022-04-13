@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -47,6 +48,7 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLoca
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.LocationErrorLiveData
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
+import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.*
@@ -116,6 +118,7 @@ class ConfirmAddressMapFragment :
             setUpViewModel()
             clearAddress()
             confirmAddressClick()
+            addFragmentListner()
 
             if (confirmAddressViewModel.isConnectedToInternet(requireActivity())) {
                 initMap()
@@ -139,6 +142,12 @@ class ConfirmAddressMapFragment :
                 "",
                 getString(R.string.retry_label)
             )
+        }
+    }
+
+    private fun addFragmentListner() {
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, _ ->
+            clearAddressText()
         }
     }
 
@@ -174,11 +183,15 @@ class ConfirmAddressMapFragment :
     private fun clearAddress() {
         binding?.apply {
             imgRemoveAddress.setOnClickListener {
-                autoCompleteTextView.setText("")
-                errorMassageDivider.visibility = View.GONE
-                errorMessage.visibility = View.GONE
+                clearAddressText()
             }
         }
+    }
+
+    private fun clearAddressText() {
+        autoCompleteTextView.setText("")
+        errorMassageDivider.visibility = View.GONE
+        errorMessage.visibility = View.GONE
     }
 
     private fun confirmAddressClick() {
@@ -230,6 +243,7 @@ class ConfirmAddressMapFragment :
         if (placeId.isNullOrEmpty())
             return
 
+        // Make Validate Location Call
         lifecycleScope.launch {
             binding?.progressBar?.visibility = View.VISIBLE
             try {
@@ -242,9 +256,18 @@ class ConfirmAddressMapFragment :
                         HTTP_OK -> {
                             validateLocationResponse.validatePlace?.let { place ->
                                 if (place.onDemand != null && place.onDemand!!.deliverable == true) {
+                                    // Once we know it is Dash deliverable then call confirmLocation API.
                                     confirmSetAddress(validateLocationResponse)
                                 } else {
-                                    //ToDo Show popup for dash not deliverable.
+                                    // Show not deliverable Bottom Dialog.
+                                    val customBottomSheetDialogFragment =
+                                        CustomBottomSheetDialogFragment.newInstance(
+                                            getString(R.string.no_location_delivery),
+                                            getString(R.string.no_location_desc),
+                                            getString(R.string.change_location),
+                                            R.drawable.location_disabled)
+                                    customBottomSheetDialogFragment.show(requireFragmentManager(),
+                                        CustomBottomSheetDialogFragment::class.java.simpleName)
                                 }
                             }
                         }
@@ -269,7 +292,9 @@ class ConfirmAddressMapFragment :
         //make confirm Location call
         val confirmLocationAddress = ConfirmLocationAddress(placeId)
         val confirmLocationRequest =
-            ConfirmLocationRequest(BundleKeysConstants.DASH, confirmLocationAddress, validateLocationResponse.validatePlace?.stores?.getOrNull(0)?.storeId)
+            ConfirmLocationRequest(BundleKeysConstants.DASH,
+                confirmLocationAddress,
+                validateLocationResponse.validatePlace?.stores?.getOrNull(0)?.storeId)
 
         lifecycleScope.launch {
             binding?.progressBar?.visibility = View.VISIBLE
@@ -280,7 +305,7 @@ class ConfirmAddressMapFragment :
                 if (confirmLocationResponse != null) {
                     when (confirmLocationResponse.httpCode) {
                         HTTP_OK -> {
-                                // save details in cache
+                            // save details in cache
                             if (SessionUtilities.getInstance().isUserAuthenticated) {
                                 Utils.savePreferredDeliveryLocation(
                                     ShoppingDeliveryLocation(
