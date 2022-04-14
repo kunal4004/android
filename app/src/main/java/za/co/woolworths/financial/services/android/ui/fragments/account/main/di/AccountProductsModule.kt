@@ -9,6 +9,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dat
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.AccountRemoteService
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.repository.storecard.StoreCardRepository
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountProductLandingDao
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.ManageCardFunctionalRequirementImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.creditcard.CreditCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.creditcard.CreditCardService
 
@@ -27,8 +28,9 @@ object AccountProductsModule {
     @Provides
     fun provideStoreCardDataSource(
         accountRemoteService: AccountRemoteService,
-        accountProductLandingDao: AccountProductLandingDao
-    ) = StoreCardDataSource(accountRemoteService, accountProductLandingDao)
+        accountProductLandingDao: AccountProductLandingDao,
+        manageCardFunctionalRequirementImpl: ManageCardFunctionalRequirementImpl,
+    ) = StoreCardDataSource(accountRemoteService, accountProductLandingDao,manageCardFunctionalRequirementImpl)
 
     @Singleton
     @Provides
