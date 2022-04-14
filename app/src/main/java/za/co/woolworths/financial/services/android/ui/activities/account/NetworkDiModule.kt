@@ -10,6 +10,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dat
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.IStoreCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.StoreCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountProductLandingDao
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_credit_limit_increase.CreditLimitIncreaseDataSource
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_credit_limit_increase.ICreditLimitIncrease
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.ManageCardFunctionalRequirementImpl
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -20,14 +23,31 @@ class NetworkDiModule {
         return TreatmentPlanDataSource()
     }
 
-
     @Provides
     fun provideAccountProductLandingDao(): AccountProductLandingDao {
         return AccountProductLandingDao()
     }
 
     @Provides
-    fun provideStoreCardDataSource( accountRemoteService: AccountRemoteService, landingDao: AccountProductLandingDao): IStoreCardDataSource {
-        return StoreCardDataSource(accountRemoteService, landingDao)
+    fun provideManageCard(): ManageCardFunctionalRequirementImpl {
+        return ManageCardFunctionalRequirementImpl()
     }
+
+    @Provides
+    fun provideStoreCardDataSource(
+        accountRemoteService: AccountRemoteService, landingDao: AccountProductLandingDao,
+        manageCard: ManageCardFunctionalRequirementImpl
+    ): IStoreCardDataSource {
+        return StoreCardDataSource(accountRemoteService, landingDao, manageCard)
+    }
+
+    @Provides
+    fun provideCreditLimitIncreaseDataSource(
+        accountRemoteService: AccountRemoteService,
+        landingDao: AccountProductLandingDao,
+    ): ICreditLimitIncrease {
+        return CreditLimitIncreaseDataSource(accountRemoteService, landingDao)
+    }
+
+
 }

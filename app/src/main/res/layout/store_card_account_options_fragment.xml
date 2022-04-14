@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <LinearLayout
@@ -21,17 +20,18 @@
             android:background="@color/white"
             android:nestedScrollingEnabled="false"
             android:tag="manageCardTag"
-            app:defaultNavHost="true"
             app:navGraph="@navigation/account_options_manage_card_fragment" />
 
         <View style="@style/account_options_horizontal_divider" />
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/creditLimitIncreaseContainer"
+            android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            android:minHeight="@dimen/_100sdp" />
+            android:tag="creditLimitIncreaseTag"
+            app:navGraph="@navigation/nav_credit_limit_increase_landing" />
 
         <View style="@style/account_options_horizontal_divider" />
 
