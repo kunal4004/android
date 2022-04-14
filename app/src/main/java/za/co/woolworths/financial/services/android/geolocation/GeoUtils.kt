@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.geolocation
 
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -33,6 +34,14 @@ class GeoUtils {
                 return true
             }
             return false
+        }
+
+        fun getStoreDetails(storeId: String?, stores: List<Store>?): Store? {
+            stores?.forEach {
+               it.storeId == storeId
+               return it
+            }
+            return null
         }
     }
 }

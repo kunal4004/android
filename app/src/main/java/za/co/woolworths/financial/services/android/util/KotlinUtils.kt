@@ -87,6 +87,9 @@ import java.util.concurrent.TimeUnit
 class KotlinUtils {
     companion object {
 
+        var isDeliveryLocationTabClicked: Boolean? = false
+        var isCncTabClicked: Boolean? = false
+        var isDashTabClicked: Boolean? = false
         const val DELAY: Long = 900
         const val collectionsIdUrl = "woolworths.wfs.co.za/CustomerCollections/IdVerification"
         const val COLLECTIONS_EXIT_URL = "collectionsExitUrl"
