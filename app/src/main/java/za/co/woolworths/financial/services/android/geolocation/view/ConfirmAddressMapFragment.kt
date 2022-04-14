@@ -300,14 +300,13 @@ class ConfirmAddressMapFragment :
     private fun confirmSetAddress(validateLocationResponse: ValidateLocationResponse) {
         if (placeId.isNullOrEmpty())
             return
-        WoolworthsApplication.setValidatedSuburbProducts(validateLocationResponse.validatePlace)
 
         //make confirm Location call
         val confirmLocationAddress = ConfirmLocationAddress(placeId)
         val confirmLocationRequest =
             ConfirmLocationRequest(BundleKeysConstants.DASH,
                 confirmLocationAddress,
-                validateLocationResponse.validatePlace?.stores?.getOrNull(0)?.storeId)
+                validateLocationResponse.validatePlace?.onDemand?.storeId)
 
         lifecycleScope.launch {
             binding?.progressBar?.visibility = View.VISIBLE
@@ -318,6 +317,8 @@ class ConfirmAddressMapFragment :
                 if (confirmLocationResponse != null) {
                     when (confirmLocationResponse.httpCode) {
                         HTTP_OK -> {
+
+                            WoolworthsApplication.setValidatedSuburbProducts(validateLocationResponse.validatePlace)
                             // save details in cache
                             if (SessionUtilities.getInstance().isUserAuthenticated) {
                                 Utils.savePreferredDeliveryLocation(

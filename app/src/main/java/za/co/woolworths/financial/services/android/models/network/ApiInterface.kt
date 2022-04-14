@@ -1288,6 +1288,7 @@ interface ApiInterface {
 
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
+        @Header("environment") environment: String,
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body confirmLocationRequest: ConfirmLocationRequest

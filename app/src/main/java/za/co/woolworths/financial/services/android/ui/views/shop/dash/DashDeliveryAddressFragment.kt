@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.adapters.shop.dash.DashDeliveryAdapter
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -51,16 +52,38 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
     fun initViews() {
         val savedLocation = Utils.getPreferredDeliveryLocation()
-        if (!SessionUtilities.getInstance().isUserAuthenticated || savedLocation?.fulfillmentDetails == null) {
-            // New user who don't have location.
-            showSetAddressScreen() // show set Address screen
-        } else {
-            val validatePlace = viewModel.getValidatePlaceResponse() ?: WoolworthsApplication.getValidatePlaceDetails()
-            if (validatePlace?.onDemand != null && validatePlace?.onDemand?.deliverable == true) {
-                setupRecyclerView()
-                initData()
-            } else
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            val anonymousUserLocation = getAnonymousUserLocationDetails()?.fulfillmentDetails
+            if (anonymousUserLocation != null) {
+                // AnonymousUser who has location
+                val validatePlace = WoolworthsApplication.getValidatePlaceDetails()
+                if (validatePlace?.onDemand != null && validatePlace?.onDemand?.deliverable == true) {
+                    setupRecyclerView()
+                    initData()
+                } else {
+                    // AnonymousUser has location but don't have Dash deliverable.
+                    showSetAddressScreen() // show set Address screen
+                }
+            } else {
+                // AnonymousUser who don't have location.
                 showSetAddressScreen() // show set Address screen
+            }
+        } else {
+            // user logged in
+            if (savedLocation?.fulfillmentDetails == null) {
+                // logged in but don't have location
+                showSetAddressScreen() // show set Address screen
+            } else {
+                val validatePlace = viewModel.getValidatePlaceResponse()
+                    ?: WoolworthsApplication.getValidatePlaceDetails()
+                if (validatePlace?.onDemand != null && validatePlace?.onDemand?.deliverable == true) {
+                    setupRecyclerView()
+                    initData()
+                } else {
+                    // user has location but don't have Dash deliverable.
+                    showSetAddressScreen() // show set Address screen
+                }
+            }
         }
     }
 
