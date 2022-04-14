@@ -154,10 +154,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         setupToolbar(0)
     }
 
-    override fun onResume() {
-        super.onResume()
-        executeValidateSuburb()
-    }
 
     private fun executeValidateSuburb() {
         var placeId: String? = null
@@ -245,6 +241,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     override fun onResume() {
         super.onResume()
+        executeValidateSuburb()
         if (Utils.getPreferredDeliveryLocation() == null && KotlinUtils.getAnonymousUserLocationDetails() == null) {
             return
         }
