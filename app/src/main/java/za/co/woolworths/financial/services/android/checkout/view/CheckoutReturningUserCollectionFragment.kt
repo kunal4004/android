@@ -82,8 +82,6 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     private var whoIsCollectingDetails: WhoIsCollectingDetails? = null
     private var shimmerComponentArray: List<Pair<ShimmerFrameLayout, View>> = ArrayList()
     private var navController: NavController? = null
-
-
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun afterTextChanged(s: Editable?) {
