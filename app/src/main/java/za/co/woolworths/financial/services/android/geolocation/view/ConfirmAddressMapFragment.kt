@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.geolocation.view
 
 import android.app.Activity
+import android.content.Intent
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
@@ -27,7 +28,6 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.maps.GeoApiContext
 import com.google.maps.GeocodingApi
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.geo_location_delivery_address.*
 import kotlinx.android.synthetic.main.geolocation_confirm_address.*
 import kotlinx.android.synthetic.main.no_connection.*
 import kotlinx.coroutines.delay
@@ -250,14 +250,27 @@ class ConfirmAddressMapFragment :
                 val validateLocationResponse =
                     confirmAddressViewModel.getValidateLocation(placeId!!)
                 binding?.progressBar?.visibility = View.GONE
-                geoDeliveryView?.visibility = View.VISIBLE
                 if (validateLocationResponse != null) {
                     when (validateLocationResponse?.httpCode) {
                         HTTP_OK -> {
                             validateLocationResponse.validatePlace?.let { place ->
                                 if (place.onDemand != null && place.onDemand!!.deliverable == true) {
-                                    // Once we know it is Dash deliverable then call confirmLocation API.
-                                    confirmSetAddress(validateLocationResponse)
+                                    if (!SessionUtilities.getInstance().isUserAuthenticated) {
+                                        // User not logged in that's why we are setting new location.
+                                        confirmSetAddress(validateLocationResponse)
+                                    } else {
+                                        val savedLocation = Utils.getPreferredDeliveryLocation()
+                                        if (savedLocation?.fulfillmentDetails == null) {
+                                            // user logged in but don't have any location that's why we are setting new location.
+                                            confirmSetAddress(validateLocationResponse)
+                                        } else {
+                                            // directly go back to Dash landing screen. Don't call confirm location API as user only wants to browse Dash.
+                                                var intent = Intent()
+                                            intent.putExtra(BundleKeysConstants.VALIDATE_RESPONSE, validateLocationResponse)
+                                            activity?.setResult(Activity.RESULT_OK, intent)
+                                            activity?.finish()
+                                        }
+                                    }
                                 } else {
                                     // Show not deliverable Bottom Dialog.
                                     val customBottomSheetDialogFragment =

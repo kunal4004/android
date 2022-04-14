@@ -11,6 +11,7 @@ import android.os.Handler
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
@@ -22,6 +23,9 @@ import kotlinx.android.synthetic.main.shop_custom_tab.view.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
@@ -49,6 +53,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DASH_SET_ADDRESS_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE
+import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 
 
 /**
@@ -68,6 +73,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private var ordersResponse: OrdersResponse? = null
     private var shoppingListsResponse: ShoppingListsResponse? = null
     private var user: String = ""
+    private val shopViewModel: ShopViewModel by viewModels(
+        ownerProducer = { this }
+    )
 
     enum class Delivery_Types(val value: String) {
         STANDARD("standard"),
@@ -368,6 +376,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             fragment?.onActivityResult(requestCode, resultCode, data)
         }
         if (requestCode == DASH_SET_ADDRESS_REQUEST_CODE) {
+            val validateLocationResponse = data?.getSerializableExtra(
+                BundleKeysConstants.VALIDATE_RESPONSE) as? ValidateLocationResponse
+            validateLocationResponse?.validatePlace?.let { shopViewModel.setValidatePlaceResponse(it) }
             refreshViewPagerFragment()
         }
     }

@@ -814,6 +814,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     SLOT_SELECTION_REQUEST_CODE,
                     KotlinUtils.getPreferredDeliveryType(),
                     placesId,
+                    false,
                     true,
                     true,
                     savedAddress,

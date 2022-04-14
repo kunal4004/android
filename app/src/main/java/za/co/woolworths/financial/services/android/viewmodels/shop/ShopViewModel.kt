@@ -4,23 +4,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.awfs.coordination.R
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.shop.DashCategories
 import za.co.woolworths.financial.services.android.models.network.Event
 import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.repository.shop.ShopRepository
-import za.co.woolworths.financial.services.android.util.KotlinUtils
 import javax.inject.Inject
 
 @HiltViewModel
 class ShopViewModel @Inject constructor(
-    val shopRepository: ShopRepository
+    private val shopRepository: ShopRepository
 ) : ViewModel() {
 
     private val _isOnDemandCategoriesAvailable = MutableLiveData(false)
@@ -36,6 +33,8 @@ class ShopViewModel @Inject constructor(
 
     private val _dashCategories = MutableLiveData<Event<Resource<DashCategories>>>()
     val dashCategories: LiveData<Event<Resource<DashCategories>>> = _dashCategories
+
+    private var validatePlaceResponse: ValidatePlace? = null
 
     fun getDashCategories() {
         _dashCategories.value = Event(Resource.loading(null))
@@ -53,5 +52,13 @@ class ShopViewModel @Inject constructor(
             _onDemandCategories.value = Event(response)
             _isOnDemandCategoriesAvailable.value = response.status == Status.SUCCESS
         }
+    }
+
+    fun setValidatePlaceResponse (validateLocationResponse: ValidatePlace){
+        validatePlaceResponse = validateLocationResponse
+    }
+
+    fun getValidatePlaceResponse() : ValidatePlace?{
+        return validatePlaceResponse
     }
 }

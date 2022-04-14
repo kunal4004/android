@@ -29,6 +29,7 @@ class BundleKeysConstants {
         const val DELIVERY_TYPE = "DELIVERY_TYPE"
         const val IS_COMING_FROM_CHECKOUT = "isComingFromCheckout"
         const val IS_COMING_FROM_SLOT_SELECTION = "isComingFromSlotSelection"
+        const val IS_FROM_DASH_TAB = "isFromDashTab"
         const val SAVED_ADDRESS_RESPONSE = "savedAddressResponse"
         const val DEFAULT_ADDRESS = "defaultAddress"
         const val PLACE_ID = "placeId"

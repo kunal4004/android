@@ -20,6 +20,8 @@ import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.adapters.shop.dash.DashDeliveryAdapter
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 
@@ -48,14 +50,23 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     }
 
     fun initViews() {
-        val validatePlace = WoolworthsApplication.getValidatePlaceDetails()
-        if (validatePlace?.onDemand != null) {
-            setupRecyclerView()
-            initData()
+        val savedLocation = Utils.getPreferredDeliveryLocation()
+        if (!SessionUtilities.getInstance().isUserAuthenticated || savedLocation?.fulfillmentDetails == null) {
+            // New user who don't have location.
+            showSetAddressScreen() // show set Address screen
         } else {
-            layoutDashSetAddress?.visibility = View.VISIBLE
-            btn_dash_set_address?.setOnClickListener(this)
+            val validatePlace = viewModel.getValidatePlaceResponse() ?: WoolworthsApplication.getValidatePlaceDetails()
+            if (validatePlace?.onDemand != null && validatePlace?.onDemand?.deliverable == true) {
+                setupRecyclerView()
+                initData()
+            } else
+                showSetAddressScreen() // show set Address screen
         }
+    }
+
+    private fun showSetAddressScreen() {
+        layoutDashSetAddress?.visibility = View.VISIBLE
+        btn_dash_set_address?.setOnClickListener(this)
     }
 
     private fun initData() {
@@ -158,7 +169,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 this,
                 BundleKeysConstants.DASH_SET_ADDRESS_REQUEST_CODE,
                 Delivery.DASH,
-                null
+                null,
+                true
             )
         }
     }
