@@ -64,6 +64,7 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
+import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.regex.Pattern
@@ -358,34 +359,41 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     private fun initializeDatesAndTimeSlots(selectedWeekSlot: Week?) {
-        selectedWeekSlot?.apply {
-            firstAvailableDateLayout?.titleTv?.text = date ?: try {
-                WFormatter.convertDateToFormat(
-                    slots?.get(0)?.stringShipOnDate,
-                    DATE_FORMAT_EEEE_COMMA_dd_MMMM
-                )
-            } catch (e: Exception) {
-                ""
-            }
-            context?.let { context ->
-                firstAvailableDateLayout?.titleTv?.setTextColor(
-                    ContextCompat.getColor(
-                        context,
-                        R.color.white
-                    )
-                )
-                firstAvailableDateLayout?.titleTv?.background =
-                    ContextCompat.getDrawable(
-                        context,
-                        R.drawable.checkout_delivering_title_round_button_pressed
-                    )
-                chooseDateLayout?.titleTv?.text = context.getString(R.string.choose_date)
-            }
-
-            setSelectedDateTimeSlots(slots)
-            chooseDateLayout?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
-            firstAvailableDateLayout?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
+        val slots = selectedWeekSlot?.slots?.filter { slot ->
+            slot.available == true
         }
+
+        if(slots.isNullOrEmpty()) {
+            return
+        }
+
+        firstAvailableDateLayout?.titleTv?.text = selectedWeekSlot?.date ?: try {
+            WFormatter.convertDateToFormat(
+                slots[0].stringShipOnDate,
+                DATE_FORMAT_EEEE_COMMA_dd_MMMM
+            )
+        } catch (e: Exception) {
+            FirebaseManager.logException(e)
+            ""
+        }
+        context?.let { context ->
+            firstAvailableDateLayout?.titleTv?.setTextColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.white
+                )
+            )
+            firstAvailableDateLayout?.titleTv?.background =
+                ContextCompat.getDrawable(
+                    context,
+                    R.drawable.checkout_delivering_title_round_button_pressed
+                )
+            chooseDateLayout?.titleTv?.text = context.getString(R.string.choose_date)
+        }
+
+        setSelectedDateTimeSlots(slots)
+        chooseDateLayout?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
+        firstAvailableDateLayout?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
     }
 
     private fun setSelectedDateTimeSlots(slots: List<Slot>?) {

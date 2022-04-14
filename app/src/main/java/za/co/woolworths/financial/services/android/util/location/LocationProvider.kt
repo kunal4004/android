@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.util.location
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
@@ -127,6 +128,7 @@ class LocationProvider(
      *
      * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+    @SuppressLint("MissingPermission")
     private fun getLastLocationGoogle() {
         googleFusedLocationClient.lastLocation
             .addOnSuccessListener { location ->
