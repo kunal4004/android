@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.fica
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -83,4 +84,16 @@ class FicaActivity : AppCompatActivity(), View.OnClickListener {
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when(requestCode){
+            KotlinUtils.RESULT_CODE_CLOSE_VIEW->{
+                when(resultCode){
+                    RESULT_OK->{
+                        finish()
+                    }
+                }
+            }
+        }
+    }
 }
