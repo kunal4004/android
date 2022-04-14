@@ -148,10 +148,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         updateTabIconUI(0)
         showShopFeatureWalkThrough()
         setupToolbar(0)
-        viewLifecycleOwner.lifecycleScope.launch {
-            delay(DELAY_3000_MS)
-            showBlackToolTip(Delivery.STANDARD)
-        }
     }
 
     override fun onResume() {
@@ -191,6 +187,10 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                                     WoolworthsApplication.setValidatedSuburbProducts(
                                         validateLocationResponse?.validatePlace
                                     )
+                                    viewLifecycleOwner.lifecycleScope.launch {
+                                        delay(DELAY_3000_MS)
+                                        showBlackToolTip(Delivery.STANDARD)
+                                    }
                                 }
                             }
                             else -> {
@@ -555,7 +555,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             blackToolTipLayout?.visibility = View.GONE
             return
         }
-        blackToolTipLayout?.visibility = View.VISIBLE
         closeWhiteBtn?.setOnClickListener {
             blackToolTipLayout?.visibility = View.GONE
         }
@@ -580,7 +579,13 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun showStandardDeliveryToolTip() {
+        if (KotlinUtils.isDeliveryLocationTabClicked == true) {
+            blackToolTipLayout?.visibility = View.GONE
+            return
+        }
 
+        blackToolTipLayout?.visibility = View.VISIBLE
+        KotlinUtils.isDeliveryLocationTabClicked = true
         validateLocationResponse?.validatePlace?.let {
             fashionItemDateText?.visibility = View.VISIBLE
             foodItemTitle?.visibility = View.VISIBLE
@@ -598,6 +603,12 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun showClickAndCollectToolTip() {
+        if (KotlinUtils.isCncTabClicked == true) {
+            blackToolTipLayout?.visibility = View.GONE
+            return
+        }
+        blackToolTipLayout?.visibility = View.VISIBLE
+        KotlinUtils.isCncTabClicked = true
         validateLocationResponse?.validatePlace?.let { validatePlace ->
             deliveryCollectionTitle?.text = getString(R.string.earliest_collection_Date)
             foodItemTitle?.visibility = View.GONE
@@ -641,6 +652,12 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun showDashToolTip() {
+        if (KotlinUtils.isDashTabClicked == true) {
+            blackToolTipLayout?.visibility = View.GONE
+            return
+        }
+        blackToolTipLayout?.visibility = View.VISIBLE
+        KotlinUtils.isDashTabClicked = true
         validateLocationResponse?.validatePlace?.let {
             deliveryCollectionTitle?.text = getString(R.string.next_dash_delivery_timeslot_text)
             foodItemTitle?.visibility = View.GONE
