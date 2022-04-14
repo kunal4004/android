@@ -297,8 +297,13 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     text?.delete(length - 1, length)
                 }
                 selectedAddress.savedAddress.nickname = it
-                if (it.isNotEmpty())
+                if (length >= 40) {
+                    addressNicknameErrorMsg?.visibility = View.VISIBLE
+                    addressNicknameErrorMsg?.text = getString(R.string.max_characters_allowed)
+                } else if (it.isNotEmpty()) {
+                    addressNicknameErrorMsg?.text = getString(R.string.address_nickname_error_msg)
                     showErrorInputField(this, View.GONE)
+                }
             }
         }
 

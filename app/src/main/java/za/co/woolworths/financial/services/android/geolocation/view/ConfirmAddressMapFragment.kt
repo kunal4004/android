@@ -27,8 +27,6 @@ import com.google.maps.GeocodingApi
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.geolocation_confirm_address.*
 import kotlinx.android.synthetic.main.geolocation_confirm_address.autoCompleteTextView
-import kotlinx.android.synthetic.main.no_connection.*
-import kotlinx.android.synthetic.main.no_connection.view.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
@@ -78,6 +76,7 @@ class ConfirmAddressMapFragment :
     private var isAddressFromSearch: Boolean = false
     private var isMoveMapCameraFirstTime: Boolean? = true
     private var isLocationErrorShowing: Boolean? = true
+    private var isAddressSearch: Boolean? = false
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
@@ -98,26 +97,30 @@ class ConfirmAddressMapFragment :
         view: View, savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
-        if (savedInstanceState == null) {
-            val bundle = arguments ?: return
-            val args = ConfirmAddressMapFragmentArgs.fromBundle(bundle)
-            latitude = args.mapData.latitude
-            longitude = args.mapData.longitude
-            isAddAddress = args.mapData.isAddAddress
-            isComingFromCheckout = args.mapData.isComingFromCheckout
-            setUpViewModel()
-            clearAddress()
-            confirmAddressClick()
+        initView()
 
-            if (confirmAddressViewModel.isConnectedToInternet(requireActivity())) {
-                initMap()
-            } else {
-                binding?.apply {
-                    mapFrameLayout.visibility = View.GONE
-                    imgMapMarker.visibility = View.GONE
-                    autoCompleteTextView.isEnabled = false
-                    no_connection_layout?.visibility = View.VISIBLE
-                }
+    }
+
+    private fun initView() {
+
+        val bundle = arguments ?: return
+        val args = ConfirmAddressMapFragmentArgs.fromBundle(bundle)
+        latitude = args.mapData.latitude
+        longitude = args.mapData.longitude
+        isAddAddress = args.mapData.isAddAddress
+        isComingFromCheckout = args.mapData.isComingFromCheckout
+        setUpViewModel()
+        clearAddress()
+        confirmAddressClick()
+
+        if (confirmAddressViewModel.isConnectedToInternet(requireActivity())) {
+            initMap()
+            mMap?.uiSettings?.setAllGesturesEnabled(true)
+        } else {
+            binding?.apply {
+                autoCompleteTextView.isEnabled = false
+                mMap?.uiSettings?.setAllGesturesEnabled(false)
+                showErrorDialog()
             }
         }
     }
@@ -139,24 +142,21 @@ class ConfirmAddressMapFragment :
             ConnectivityLiveData.observe(viewLifecycleOwner, { isNetworkAvailable ->
                 binding?.apply {
                     if (isNetworkAvailable) {
-                        no_connection_layout?.visibility = View.GONE
                         mapFragment?.view?.visibility = View.VISIBLE
                         mapFrameLayout.visibility = View.VISIBLE
                         imgMapMarker.visibility = View.VISIBLE
                         autoCompleteTextView.isEnabled = true
                         confirmAddress.isEnabled = true
-                        if (isAddAddress!!) {
+                        mMap?.uiSettings?.setAllGesturesEnabled(true)
+                        if (isAddAddress!! && isAddressSearch == false) {
                             confirmAddress.isEnabled = false
-                            imgMapMarker?.visibility = View.GONE
-
+                            imgMapMarker.visibility = View.GONE
                         }
                     } else {
-                        no_connection_layout?.visibility = View.VISIBLE
-                        mapFragment?.view?.visibility = View.GONE
-                        imgMapMarker.visibility = View.GONE
                         autoCompleteTextView.isEnabled = false
                         confirmAddress.isEnabled = false
-
+                        mMap?.uiSettings?.setAllGesturesEnabled(false)
+                        showErrorDialog()
                     }
                 }
             })
@@ -271,6 +271,7 @@ class ConfirmAddressMapFragment :
                                         latLng = address?.latitude?.let {
                                             LatLng(it, address.longitude)
                                         }
+                                        isAddressSearch = true
                                         moveMapCamera(latLng)
                                     } catch (e: Exception) {
                                         FirebaseManager.logException(e)
@@ -308,7 +309,6 @@ class ConfirmAddressMapFragment :
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         if (!isAddAddress!!) {
-            mMap?.uiSettings?.setAllGesturesEnabled(true)
             latLng = longitude?.let { latitude?.let { it1 -> LatLng(it1, it) } }
             if (isMoveMapCameraFirstTime == true){
                 moveMapCamera(latLng)
@@ -443,7 +443,7 @@ class ConfirmAddressMapFragment :
     }
 
     override fun tryAgain() {
-        //Do nothing
+        initView()
     }
 
     private fun setUpViewModel() {
