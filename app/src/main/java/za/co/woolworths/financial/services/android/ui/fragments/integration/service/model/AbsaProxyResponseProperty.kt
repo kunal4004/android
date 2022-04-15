@@ -1,5 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.integration.service.model
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
 data class AbsaProxyResponseProperty(
     val proxy: ProxyPayloadAndHeaders,
     val response: Response,
@@ -18,10 +21,11 @@ data class ProxyHeaders(
     var contentType: String?
 )
 
+@Parcelize
 data class Response(
     var code: String?,
     var desc: String?,
     var stsParams: String?,
     var message: String?,
     var version: String?
-)
+) : Parcelable

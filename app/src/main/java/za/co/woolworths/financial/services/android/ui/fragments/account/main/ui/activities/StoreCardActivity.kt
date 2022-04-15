@@ -45,8 +45,7 @@ class StoreCardActivity : AppCompatActivity() {
                     statusBarColor = Color.TRANSPARENT
                     clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
                     addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-                    decorView.systemUiVisibility =
-                        SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    decorView.systemUiVisibility = SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or SYSTEM_UI_FLAG_LAYOUT_STABLE
                 }
                 else -> {
                     statusBarColor = Color.TRANSPARENT

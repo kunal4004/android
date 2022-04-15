@@ -5,8 +5,8 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.FragmentComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.IBottomSheetBehaviour
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.WBottomSheetBehaviour
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.INavigationGraph
@@ -17,7 +17,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dom
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.IBalanceProtectionInsurance
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(FragmentComponent::class)
 object AccountProductsLandingModule {
 
     @Provides

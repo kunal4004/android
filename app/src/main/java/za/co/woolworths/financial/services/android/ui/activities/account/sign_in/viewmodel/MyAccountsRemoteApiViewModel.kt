@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlanResponse
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.getViewStateFlowForNetworkCall
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.IStoreCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.StoreCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.ApiResult
@@ -14,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MyAccountsRemoteApiViewModel @Inject constructor(
     private val collection: TreatmentPlanDataSource,
-    private val storeCardDataSource: StoreCardDataSource
+    val storeCardDataSource: StoreCardDataSource
 ) : ViewModel(), ITreatmentPlanDataSource by collection,
     IStoreCardDataSource by storeCardDataSource {
 
@@ -37,5 +37,4 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
     }
 
     suspend fun queryServiceGetStoreCardCards() = getViewStateFlowForNetworkCall { queryServiceGetStoreCards() }
-
 }

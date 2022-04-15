@@ -3,7 +3,7 @@ package za.co.woolworths.financial.services.android.ui.activities.account
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import dagger.hilt.android.components.ViewModelComponent
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.ITreatmentPlanDataSource
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.TreatmentPlanDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.AccountRemoteService
@@ -14,7 +14,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_credit_limit_increase.ICreditLimitIncrease
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.ManageCardFunctionalRequirementImpl
 
-@InstallIn(SingletonComponent::class)
+@InstallIn(ViewModelComponent::class)
 @Module
 class NetworkDiModule {
 

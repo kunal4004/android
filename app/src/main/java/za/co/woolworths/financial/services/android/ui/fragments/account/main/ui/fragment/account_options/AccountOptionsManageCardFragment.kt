@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.databinding.AccountOptionsManageCardFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
@@ -30,20 +31,25 @@ class AccountOptionsManageCardFragment : ViewBindingFragment<AccountOptionsManag
         val cardViewPager = CardViewPager()
 
         lifecycleScope.launchWhenStarted {
-            viewModel.queryServiceGetStoreCardCards().collect {
-                with(it) {
-                    renderSuccess {
-                        setupCard(this.output, cardViewPager) }
-                    renderFailure { Log.e("renderStatus", "renderFailure") }
-                    renderEmpty { Log.e("renderStatus", "renderEmpty") }
-                    renderLoading { Log.e("renderStatus", "renderLoading ${this.isLoading}") }
+            with(viewModel) {
+                queryServiceGetStoreCardCards().collect {
+                    with(it) {
+                        renderSuccess {
+                            storeCardDataSource.addCardToDisplayStateToPrimaryCardObject(this.output)
+                            setupCard(cardViewPager)
+                        }
+                        renderFailure { Log.e("renderStatus", "renderFailure") }
+                        renderEmpty { Log.e("renderStatus", "renderEmpty") }
+                        renderLoading { Log.e("renderStatus", "renderLoading ${this.isLoading}") }
+                    }
                 }
             }
         }
     }
 
-    private fun setupCard(storeCardsResponse: StoreCardsResponse, cardViewPager: CardViewPager) {
-        val storeCardsData = storeCardsResponse.storeCardsData
+    private fun setupCard(cardViewPager: CardViewPager) {
+        val storeCardsResponse : StoreCardsResponse = SaveResponseDao.getValue(SessionDao.KEY.STORE_CARE_RESPONSE_PAYLOAD)
+        val storeCardsData = storeCardsResponse?.storeCardsData
         cardSliderAdapter.setItem(storeCardsData?.primaryCards)
         cardViewPager.invoke(binding.accountOptionsManageCardViewPager, binding.tab, cardSliderAdapter)
     }

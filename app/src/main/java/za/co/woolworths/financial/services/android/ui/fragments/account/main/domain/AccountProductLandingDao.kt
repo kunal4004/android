@@ -10,7 +10,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dom
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
-interface IAccountProductLandingDao{
+interface IAccountProductLandingDao {
     val product : Account?
     fun getProductByProductGroupCode(): ProductLandingGroupCode
     fun getProductOfferingId():Int
@@ -24,7 +24,7 @@ interface IAccountProductLandingDao{
 
 class AccountProductLandingDao @Inject constructor() : IAccountProductLandingDao {
 
-    override val product: Account by SaveResponseDao(SessionDao.KEY.ACCOUNT_PRODUCT_PAYLOAD,Account::class.java)
+    override val product: Account = SaveResponseDao.getValue(SessionDao.KEY.ACCOUNT_PRODUCT_PAYLOAD)
 
     override fun getProductByProductGroupCode(): ProductLandingGroupCode {
         return when (product.productGroupCode) {
@@ -43,8 +43,7 @@ class AccountProductLandingDao @Inject constructor() : IAccountProductLandingDao
 
     override fun isProductInGoodStanding(): Boolean = product.productOfferingGoodStanding
 
-    override fun isProductChargedOff(): Boolean =
-        product.productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)
+    override fun isProductChargedOff(): Boolean = product.productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)
 
     override fun isUiVisible(): Int = if (isProductInGoodStanding()) View.GONE else View.VISIBLE
 
@@ -55,8 +54,7 @@ class AccountProductLandingDao @Inject constructor() : IAccountProductLandingDao
             is ProductLandingGroupCode.BlackCreditCard -> productGroupCode.title
             is ProductLandingGroupCode.GoldCreditCard -> productGroupCode.title
             is ProductLandingGroupCode.SilverCreditCard -> productGroupCode.title
-            is ProductLandingGroupCode.CreditCard,
-            is ProductLandingGroupCode.UnsupportedProductGroupCode -> R.string.app_name
+            else -> R.string.app_name
         }
     }
 
