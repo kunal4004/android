@@ -20,7 +20,7 @@ class BundleKeysConstants {
         const val STANDARD_DELIVERY = "StandardDelivery"
         const val STANDARD = "Standard"
         const val CNC = "CnC"
-        const val DASH = "onDemand"
+        const val DASH = "OnDemand"
         const val FULLFILLMENT_REQUEST_CODE = 8765
         const val IS_COMING_CONFIRM_ADD = "conform_add"
         var IS_FROM_STORE_LOCATOR = false
