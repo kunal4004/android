@@ -26,14 +26,10 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import com.google.android.gms.location.*
-import kotlinx.android.synthetic.main.enter_otp_fragment.*
 import kotlinx.android.synthetic.main.fragment_enter_otp.buttonNext
 import kotlinx.android.synthetic.main.fragment_enter_otp.didNotReceiveOTPTextView
-import kotlinx.android.synthetic.main.fragment_link_device_otp.*
-import kotlinx.android.synthetic.main.fragment_my_preferences.*
 import kotlinx.android.synthetic.main.fragment_unlink_device_otp.*
 import kotlinx.android.synthetic.main.fragment_unlink_device_otp.sendinOTPLayout
-import kotlinx.android.synthetic.main.layout_link_device_result.*
 import kotlinx.android.synthetic.main.layout_link_device_validate_otp.*
 import kotlinx.android.synthetic.main.layout_sending_otp_request.*
 import kotlinx.android.synthetic.main.layout_unlink_device_result.*
@@ -55,7 +51,6 @@ import za.co.woolworths.financial.services.android.ui.activities.account.LinkDev
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextWatcher
 import za.co.woolworths.financial.services.android.util.*
-import java.util.*
 
 
 class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeListener {
@@ -649,7 +644,7 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
         sendOTPSubtitle?.visibility = View.GONE
 
         context?.let {
-            sendOTPProcessingReq?.text = it.getString(R.string.changing_primary_device_processing)
+            sendOTPProcessingReq?.text = it.getString(R.string.changing_preferred_device_processing)
         }
         sendinOTPLayout?.visibility = View.VISIBLE
     }
