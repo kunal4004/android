@@ -279,9 +279,9 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                             HTTP_OK -> {
                                 // save details in cache
                                 if (SessionUtilities.getInstance().isUserAuthenticated) {
-                                    KotlinUtils.isDeliveryLocationTabClicked = placeId?.equals(Utils.getPreferredDeliveryLocation().fulfillmentDetails?.address?.placeId)
-                                    KotlinUtils.isCncTabClicked = placeId?.equals(Utils.getPreferredDeliveryLocation().fulfillmentDetails?.address?.placeId)
-                                    KotlinUtils.isDashTabClicked = placeId?.equals(Utils.getPreferredDeliveryLocation().fulfillmentDetails?.address?.placeId)
+                                    KotlinUtils.isDeliveryLocationTabClicked = placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
+                                    KotlinUtils.isCncTabClicked = placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
+                                    KotlinUtils.isDashTabClicked = placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
                                     Utils.savePreferredDeliveryLocation(
                                         ShoppingDeliveryLocation(
                                             confirmLocationResponse.orderSummary?.fulfillmentDetails
