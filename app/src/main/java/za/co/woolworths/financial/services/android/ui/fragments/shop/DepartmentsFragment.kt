@@ -28,10 +28,7 @@ import kotlinx.android.synthetic.main.no_connection_layout.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
-import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
-import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
@@ -65,7 +62,6 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
     private var fusedLocationClient: FusedLocationProviderClient? = null
     private var locationRequest: LocationRequest? = createLocationRequest()
     private var localPlaceId: String? = null
-    private var isValidateSelectedSuburbCallStopped = true
 
     companion object {
         var DEPARTMENT_LOGIN_REQUEST = 1717
@@ -209,14 +205,12 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
             )
         }
         mDepartmentAdapter?.notifyDataSetChanged()
-        executeValidateSuburb()
     }
 
     private fun setUpRecyclerView(categories: MutableList<RootCategory>?) {
         mDepartmentAdapter = DepartmentAdapter(
             categories,
             ::departmentItemClicked,
-            ::onEditDeliveryLocation,
             ::onDashBannerClicked
         ) //{ rootCategory: RootCategory -> departmentItemClicked(rootCategory)}
         activity?.let {
@@ -362,7 +356,6 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
 
         if (!hidden) {
             activity?.apply {
-                executeValidateSuburb()
                 //When moved from My Cart to department
                 startLocationUpdates()
             }
@@ -410,7 +403,6 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
             }
         } else if (resultCode == RESULT_OK || resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             mDepartmentAdapter?.notifyDataSetChanged()
-            executeValidateSuburb()
         }
     }
 
@@ -432,95 +424,11 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
         })
     }
 
-
     override fun onResume() {
         super.onResume()
         activity?.apply {
             mDepartmentAdapter?.notifyDataSetChanged()
-            val fragmentList = supportFragmentManager.fragments
-            if (fragmentList.isNotEmpty() && fragmentList[fragmentList.size - 1] !is ProductListingFragment) {
-                executeValidateSuburb()
-            }
         }
-    }
-
-    private fun isLocationChanged(): Boolean {
-        val currentPlaceId = KotlinUtils.getPreferredPlaceId()
-        if (currentPlaceId == null) {
-            return false
-        } else if (!(currentPlaceId?.equals(localPlaceId))!!) {
-            localPlaceId = currentPlaceId
-            return true
-        }
-        return true
-    }
-
-    private fun executeValidateSuburb() {
-
-        var placeId:String? = null
-        if (SessionUtilities.getInstance().isUserAuthenticated) {
-            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
-                placeId = it.address?.placeId
-            }
-        } else {
-            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let {
-                placeId = it.address?.placeId
-            }
-        }
-
-        placeId.let {
-            if (it == null) {
-                mDepartmentAdapter?.hideDeliveryDates()
-            } else {
-                if (placeId.equals(
-                        WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId,
-                        true
-                    ) || !isLocationChanged()
-                ) {
-                    updateDeliveryDates()
-                } else {
-                    when (isValidateSelectedSuburbCallStopped) {
-                        true -> {
-                            mDepartmentAdapter?.showDeliveryDatesProgress(true)
-                            isValidateSelectedSuburbCallStopped = false
-                            GeoLocationApiHelper().validateLocation(it)
-                                .enqueue(CompletionHandler(object :
-                                    IResponseListener<ValidateLocationResponse> {
-                                    override fun onSuccess(response: ValidateLocationResponse?) {
-                                        isValidateSelectedSuburbCallStopped = true
-                                        when (response?.httpCode) {
-                                            200 -> response.validatePlace?.let { it1 ->
-                                                if (it1.deliverable == true) {
-                                                    WoolworthsApplication.setValidatedSuburbProducts(
-                                                        it1
-                                                    )
-                                                }
-                                                updateDeliveryDates()
-                                            }
-                                            else -> mDepartmentAdapter?.hideDeliveryDates()
-                                        }
-                                    }
-
-                                    override fun onFailure(error: Throwable?) {
-                                        isValidateSelectedSuburbCallStopped = true
-                                        mDepartmentAdapter?.hideDeliveryDates()
-                                    }
-                                }, ValidateLocationResponse::class.java))
-
-                        }
-                        false -> {
-                            // Don't make new request.
-                        }
-                    }
-                }
-
-            }
-        }
-    }
-
-
-    fun updateDeliveryDates() {
-        mDepartmentAdapter?.updateDeliveryDate(WoolworthsApplication.getValidatePlaceDetails())
     }
 
     private fun onProviderDisabled() {
@@ -604,7 +512,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
         }
     }
 
-    public fun reloadRequest(){
+     fun reloadRequest(){
         executeDepartmentRequest()
     }
 }

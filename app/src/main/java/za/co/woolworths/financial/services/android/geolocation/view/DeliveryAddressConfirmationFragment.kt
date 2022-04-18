@@ -259,13 +259,11 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             val confirmLocationAddress = ConfirmLocationAddress(placeId)
             val confirmLocationRequest = when (deliveryType) {
                 Delivery.STANDARD.name -> {
-
                     ConfirmLocationRequest(STANDARD, confirmLocationAddress)
             }
             Delivery.CNC.name -> {
-
                     ConfirmLocationRequest(CNC, confirmLocationAddress, mStoreId)
-            }else -> {
+            } else -> {
                     ConfirmLocationRequest(DASH, confirmLocationAddress)
                 }
             }
@@ -315,6 +313,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                                     FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_STANDARD_CONFIRM),
 
                                         activity)
+
                                 }
 
                                 if (isComingFromCheckout) {
