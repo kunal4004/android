@@ -46,9 +46,14 @@ class GetAPaymentPlanActivity : AppCompatActivity(){
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == KotlinUtils.RESULT_CODE_CLOSE_VIEW){
-            setResult(RESULT_OK)
-            finish()
-            overridePendingTransition(0,0)
+            when (resultCode){
+                    RESULT_OK -> {
+                        setResult(RESULT_OK,data)
+                        finish()
+                        overridePendingTransition(0,0)}
+                    else -> Unit
+
+            }
         }
     }
 }
