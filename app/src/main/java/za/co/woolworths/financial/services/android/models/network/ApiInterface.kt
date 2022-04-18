@@ -42,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetailsR
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyOptOutBody
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 
 interface ApiInterface {
 
@@ -338,7 +339,7 @@ interface ApiInterface {
         @Header("longitude") long: Double?,
         @Query("suburbId") suburbId: String?,
         @Query("storeId") storeId: String?,
-        @Query("deliveryType") deliveryType: String? = "OnDemand"
+        @Query("deliveryType") deliveryType: String? = BundleKeysConstants.DASH
     ): Call<RootCategories>
 
     // Same as fun getRootCategories()
@@ -353,7 +354,7 @@ interface ApiInterface {
         @Header("longitude") long: Double?,
         @Query("suburbId") suburbId: String?,
         @Query("storeId") storeId: String?,
-        @Query("deliveryType") deliveryType: String? = "OnDemand",
+        @Query("deliveryType") deliveryType: String? = BundleKeysConstants.DASH
     ): retrofit2.Response<RootCategories>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "Accept-Encoding: gzip")
