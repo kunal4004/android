@@ -39,6 +39,7 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.Confirm
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.StoreLiveData
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.Suburb
@@ -258,13 +259,11 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             val confirmLocationAddress = ConfirmLocationAddress(placeId)
             val confirmLocationRequest = when (deliveryType) {
                 Delivery.STANDARD.name -> {
-
                     ConfirmLocationRequest(STANDARD, confirmLocationAddress)
             }
             Delivery.CNC.name -> {
-
                     ConfirmLocationRequest(CNC, confirmLocationAddress, mStoreId)
-            }else -> {
+            } else -> {
                     ConfirmLocationRequest(DASH, confirmLocationAddress)
                 }
             }
@@ -280,6 +279,9 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                             HTTP_OK -> {
                                 // save details in cache
                                 if (SessionUtilities.getInstance().isUserAuthenticated) {
+                                    KotlinUtils.isDeliveryLocationTabClicked = placeId?.equals(Utils.getPreferredDeliveryLocation())
+                                    KotlinUtils.isCncTabClicked = placeId?.equals(Utils.getPreferredDeliveryLocation())
+                                    KotlinUtils.isDashTabClicked = placeId?.equals(Utils.getPreferredDeliveryLocation())
                                     Utils.savePreferredDeliveryLocation(
                                         ShoppingDeliveryLocation(
                                             confirmLocationResponse.orderSummary?.fulfillmentDetails
@@ -288,12 +290,17 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                     if (KotlinUtils.getAnonymousUserLocationDetails() != null)
                                         KotlinUtils.clearAnonymousUserLocationDetails()
                                 } else {
+                                    KotlinUtils.isDeliveryLocationTabClicked = placeId?.equals(KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId)
+                                    KotlinUtils.isCncTabClicked = placeId?.equals(KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId)
+                                    KotlinUtils.isDashTabClicked = placeId?.equals(KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId)
                                     KotlinUtils.saveAnonymousUserLocationDetails(
                                         ShoppingDeliveryLocation(
                                             confirmLocationResponse.orderSummary?.fulfillmentDetails
                                         )
                                     )
                                 }
+
+                                WoolworthsApplication.setValidatedSuburbProducts(validateLocationResponse?.validatePlace)
 
                                 savedAddressResponse?.defaultAddressNickname =
                                     defaultAddress?.nickname
@@ -306,6 +313,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                                     FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_STANDARD_CONFIRM),
 
                                         activity)
+
                                 }
 
                                 if (isComingFromCheckout) {

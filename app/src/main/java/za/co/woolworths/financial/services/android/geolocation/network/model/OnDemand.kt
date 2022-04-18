@@ -2,8 +2,9 @@ package za.co.woolworths.financial.services.android.geolocation.network.model
 
 import com.google.gson.annotations.SerializedName
 import za.co.woolworths.financial.services.android.checkout.service.network.DeliveryStatus
+import java.io.Serializable
 
-class OnDemand {
+class OnDemand : Serializable {
     @SerializedName("unDeliverableCommerceItems")
     var unDeliverableCommerceItems: List<Any?>? = null
 

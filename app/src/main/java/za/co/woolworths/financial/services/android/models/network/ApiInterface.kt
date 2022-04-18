@@ -1025,6 +1025,7 @@ interface ApiInterface {
     @GET("wfs/app/v4/locationItems/validateLocation")
     fun validateLocation(
             @Header("userAgent") userAgent: String,
+            @Header("environment") environment: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
