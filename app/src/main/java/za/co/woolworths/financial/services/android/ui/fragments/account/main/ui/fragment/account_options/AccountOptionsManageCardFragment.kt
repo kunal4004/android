@@ -48,10 +48,15 @@ class AccountOptionsManageCardFragment : ViewBindingFragment<AccountOptionsManag
     }
 
     private fun setupCard(cardViewPager: CardViewPager) {
-        val storeCardsResponse : StoreCardsResponse = SaveResponseDao.getValue(SessionDao.KEY.STORE_CARE_RESPONSE_PAYLOAD)
-        val storeCardsData = storeCardsResponse?.storeCardsData
-        cardSliderAdapter.setItem(storeCardsData?.primaryCards)
-        cardViewPager.invoke(binding.accountOptionsManageCardViewPager, binding.tab, cardSliderAdapter)
+        val storeCardsResponse : StoreCardsResponse? = SaveResponseDao.getValue(SessionDao.KEY.STORE_CARE_RESPONSE_PAYLOAD)
+        storeCardsResponse?.apply {
+            cardSliderAdapter.setItem(storeCardsData?.primaryCards)
+            cardViewPager.invoke(
+                binding.accountOptionsManageCardViewPager,
+                binding.tab,
+                cardSliderAdapter
+            )
+        }
     }
 }
 

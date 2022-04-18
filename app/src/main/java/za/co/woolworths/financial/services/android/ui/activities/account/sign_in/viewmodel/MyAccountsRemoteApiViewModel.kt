@@ -15,8 +15,7 @@ import javax.inject.Inject
 class MyAccountsRemoteApiViewModel @Inject constructor(
     private val collection: TreatmentPlanDataSource,
     val storeCardDataSource: StoreCardDataSource
-) : ViewModel(), ITreatmentPlanDataSource by collection,
-    IStoreCardDataSource by storeCardDataSource {
+) : ViewModel() {
 
     fun fetchCheckEligibilityTreatmentPlan(
         productGroupCode: String,
@@ -25,7 +24,7 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             when (val checkEligibilityResponse =
-                fetchTreatmentPlanEligibility(productGroupCode.uppercase())) {
+                collection.fetchTreatmentPlanEligibility(productGroupCode.uppercase())) {
                 is ApiResult.Success -> {
                     successHandler(checkEligibilityResponse.data)
                 }
@@ -36,5 +35,5 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
         }
     }
 
-    suspend fun queryServiceGetStoreCardCards() = getViewStateFlowForNetworkCall { queryServiceGetStoreCards() }
+    suspend fun queryServiceGetStoreCardCards() = getViewStateFlowForNetworkCall { storeCardDataSource.queryServiceGetStoreCards() }
 }

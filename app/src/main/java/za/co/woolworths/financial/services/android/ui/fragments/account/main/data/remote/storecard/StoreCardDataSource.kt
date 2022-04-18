@@ -27,7 +27,7 @@ class StoreCardDataSource @Inject constructor(
 ) : CoreDataSource(), IStoreCardDataSource, IAccountProductLandingDao by landingDao,
     AccountRemoteService by accountRemoteService, IManageCardFunctionalRequirement by manageCard {
 
-    override val account: Account? = product
+    override var account: Account? = product
 
     override suspend fun getCreditCardToken() = performSafeNetworkApiCall {
         getCreditCardToken(
