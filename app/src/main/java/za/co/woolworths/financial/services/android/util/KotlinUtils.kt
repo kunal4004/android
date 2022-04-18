@@ -88,6 +88,9 @@ import java.util.concurrent.TimeUnit
 class KotlinUtils {
     companion object {
 
+        var isDeliveryLocationTabClicked: Boolean? = false
+        var isCncTabClicked: Boolean? = false
+        var isDashTabClicked: Boolean? = false
         const val DELAY: Long = 900
         const val collectionsIdUrl = "woolworths.wfs.co.za/CustomerCollections/IdVerification"
         const val COLLECTIONS_EXIT_URL = "collectionsExitUrl"
@@ -423,17 +426,25 @@ class KotlinUtils {
                                 context?.resources?.getString(R.string.store) + storeName?:""
 
                         tvDeliveryLocation?.visibility = View.VISIBLE
-                        deliverLocationIcon?.setBackgroundResource(R.drawable.icon_basket)
+                        deliverLocationIcon?.setImageResource(R.drawable.ic_collection_circle)
                     }
                     Delivery.STANDARD -> {
-                        tvDeliveringTo.text = context?.resources?.getString(R.string.delivering_to)
+                        tvDeliveringTo.text = context?.resources?.getString(R.string.standard_delivery)
                         tvDeliveryLocation.text =
                                 address?.address1?:""
 
                         tvDeliveryLocation.visibility = View.VISIBLE
-                        deliverLocationIcon?.setBackgroundResource(R.drawable.icon_delivery)
+                        deliverLocationIcon?.setImageResource(R.drawable.ic_delivery_circle)
                     }
-                    else ->{ }
+                    else ->{
+
+                        tvDeliveringTo?.text =
+                            context?.resources?.getString(R.string.dash_delivery)
+                        tvDeliveryLocation?.text = address?.address1?:""
+
+                        tvDeliveryLocation?.visibility = View.VISIBLE
+                        deliverLocationIcon?.setImageResource(R.drawable.ic_dash_delivery_circle)
+                    }
                 }
             }
         }

@@ -2501,6 +2501,8 @@
     <string name="driver_maximum_tip_amt_error">A maximum amount of R%1$s is allowed.</string>
     <string name="address_type">Address Type:</string>
     <string name="add_street_address">Street Address:</string>
+    <string name="dash_free_collection">"Free Collection"</string>
+    <string name="dash_item_limit">%d Item Limit</string>
 
 
     <string name="product_listing_price_from">From</string>
@@ -2519,12 +2521,5 @@
     <string name="view_your_payment_plan">VIEW YOUR PAYMENT PLAN</string>
     <string name="total_amount_you_saving">This is the total amount you are saving as agreed \n upon in your settlement plan</string>
     <string name="pay_now">PAY NOW</string>
-
-
-
-
-
-
-
 
 </resources>
