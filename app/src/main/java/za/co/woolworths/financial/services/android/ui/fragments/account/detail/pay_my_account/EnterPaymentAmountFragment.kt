@@ -37,7 +37,8 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
     private var isDoneButtonEnabled: Boolean = false
-    private var isAmountSelected = false // Prevent cursor to jump to front when re-selecting same amount
+    private var isAmountSelected =
+        false // Prevent cursor to jump to front when re-selecting same amount
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,16 +46,20 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         setHasOptionsMenu(true)
         arguments?.apply {
             isDoneButtonEnabled = getBoolean(IS_DONE_BUTTON_ENABLED, false)
+
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.enter_payment_amount_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         configureToolbar()
         configureButton()
         configureCurrencyEditText()
@@ -64,15 +69,19 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
         with(payMyAccountViewModel) {
             totalAmountDueValueTextView?.text = getTotalAmountDue()
+            paymentAmountInputEditText?.setText(getAmountEntered())
             if (isAccountChargedOff()) {
-                amountOverdueLabelTextView?.text = getString(R.string.current_balance_label)
-                amountOutstandingValueTextView?.text = getCurrentBalance()
+                if (elitePlanModel?.scope.isNullOrEmpty()){
+                    amountOverdueLabelTextView?.text = getString(R.string.current_balance_label)
+                    amountOutstandingValueTextView?.text = getCurrentBalance()
+                }else{
+                    setViewsForElitePlan(this)
+                }
             } else {
                 amountOverdueLabelTextView?.text = getString(R.string.overdue_amount_label)
                 amountOutstandingValueTextView?.text = getOverdueAmount()
             }
 
-            paymentAmountInputEditText?.setText(getAmountEntered())
         }
 
         setFragmentResultListener(InfoDialogFragment::class.java.simpleName) { _, _ ->
@@ -81,9 +90,23 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         }
     }
 
+    private fun setViewsForElitePlan(payMyAccountViewModel: PayMyAccountViewModel) {
+        amountOverdueLabelTextView?.text = getString(R.string.overdue_amount_label)
+        enterPaymentAmountTextView?.text = getString(R.string.amount_payable)
+        amountOutstandingValueTextView?.text = payMyAccountViewModel.getDiscountAmount()
+        paymentAmountInputEditText?.setText(payMyAccountViewModel.getDiscountAmount())
+        paymentAmountInputEditText?.isEnabled = false
+        amountYouSaveValueTextView?.text = payMyAccountViewModel.getSavedAmount()
+        totalAmountGroup?.visibility = GONE
+        amountOutstandingValueTextView.isActivated = true
+        amountOutstandingValueTextView.isClickable = false
+        amountYouSaveGroup.visibility = VISIBLE
+    }
+
     private fun setListeners() {
         currentBalanceDescImageButton?.setOnClickListener(this)
         totalAmountDueInfoDescImageButton?.setOnClickListener(this)
+        amountYouSaveImageButton?.setOnClickListener(this)
 
         totalAmountDueValueTextView?.apply {
             if (isZeroAmount(payMyAccountViewModel.getTotalAmountDue())) return
@@ -113,7 +136,8 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
     private fun configureButton() {
         continueToPaymentButton?.apply {
-            text = if (isDoneButtonEnabled) bindString(R.string.done) else bindString(R.string.continue_to_payment)
+            text =
+                if (isDoneButtonEnabled) bindString(R.string.done) else bindString(R.string.continue_to_payment)
             AnimationUtilExtension.animateViewPushDown(this)
             setOnClickListener(this@EnterPaymentAmountFragment)
         }
@@ -137,7 +161,9 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
             addTextChangedListener(object : TextWatcher {
 
                 override fun afterTextChanged(editableText: Editable) {
-                    continueToPaymentButton?.isEnabled = editableText.isNotEmpty() && !editableText.toString().equals(DEFAULT_RAND_CURRENCY, ignoreCase = true)
+                    continueToPaymentButton?.isEnabled =
+                        editableText.isNotEmpty() && !editableText.toString()
+                            .equals(DEFAULT_RAND_CURRENCY, ignoreCase = true)
                     when (this@apply.text?.toString()) {
                         payMyAccountViewModel.getCurrentBalance() -> selectCurrentBalance()
                         payMyAccountViewModel.getOverdueAmount() -> selectOutstandingAmount()
@@ -151,7 +177,13 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
                     }
                 }
 
-                override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+                override fun beforeTextChanged(
+                    s: CharSequence,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     reducePaymentAmountTextView?.visibility = GONE
@@ -181,21 +213,30 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
                         cardInfo?.amountEntered = inputValue
                         setPMACardInfo(cardInfo)
 
-                        switchToConfirmPaymentOrDoneButton(continueToPaymentButton?.text?.toString(), {
-                            //Done button
-                            hideKeyboard()
-                            activity?.apply {
-                                setResult(RESULT_OK, Intent().putExtra(PAYMENT_DETAIL_CARD_UPDATE, Gson().toJson(cardInfo)))
-                                finish()
-                            }
-                        }, {
-                            //Confirm Payment button
-                            hideKeyboard()
-                            view?.apply {
-                                Navigation.findNavController(this)
+                        switchToConfirmPaymentOrDoneButton(
+                            continueToPaymentButton?.text?.toString(),
+                            {
+                                //Done button
+                                hideKeyboard()
+                                activity?.apply {
+                                    setResult(
+                                        RESULT_OK,
+                                        Intent().putExtra(
+                                            PAYMENT_DETAIL_CARD_UPDATE,
+                                            Gson().toJson(cardInfo)
+                                        )
+                                    )
+                                    finish()
+                                }
+                            },
+                            {
+                                //Confirm Payment button
+                                hideKeyboard()
+                                view?.apply {
+                                    Navigation.findNavController(this)
                                         .navigate(R.id.action_enterPaymentAmountFragment_to_addNewPayUCardFragment)
-                            }
-                        })
+                                }
+                            })
                     })
                 }
             }
@@ -223,19 +264,41 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
             }
 
-            R.id.totalAmountDueInfoDescImageButton-> {
+            R.id.totalAmountDueInfoDescImageButton -> {
                 hideKeyboard()
-                view?.findNavController()?.navigate(EnterPaymentAmountFragmentDirections.actionEnterPaymentAmountFragmentToInfoDialogFragment(R.string.total_amount_due,R.string.pma_total_amount_due_popup_desc))
+                view?.findNavController()?.navigate(
+                    EnterPaymentAmountFragmentDirections.actionEnterPaymentAmountFragmentToInfoDialogFragment(
+                        R.string.total_amount_due,
+                        R.string.pma_total_amount_due_popup_desc
+                    )
+                )
+
+            }
+            R.id.amountYouSaveImageButton -> {
+                hideKeyboard()
+                view?.findNavController()?.navigate(
+                    EnterPaymentAmountFragmentDirections.actionEnterPaymentAmountFragmentToInfoDialogFragment(
+                        R.string.amount_you_save,
+                        R.string.total_amount_you_saving
+                    )
+                )
 
             }
             R.id.currentBalanceDescImageButton -> {
                 hideKeyboard()
                 view?.findNavController()?.navigate(
-                        if (payMyAccountViewModel.isAccountChargedOff()) {
-                            EnterPaymentAmountFragmentDirections.actionEnterPaymentAmountFragmentToInfoDialogFragment(R.string.current_balance_label, R.string.collection_remove_block_current_balance_popup_desc)
-                        } else {
-                            EnterPaymentAmountFragmentDirections.actionEnterPaymentAmountFragmentToInfoDialogFragment(R.string.overdue_amount_label, R.string.pma_amount_overdue_popup_desc)
-                        })
+                    if (payMyAccountViewModel.isAccountChargedOff()) {
+                        EnterPaymentAmountFragmentDirections.actionEnterPaymentAmountFragmentToInfoDialogFragment(
+                            R.string.current_balance_label,
+                            R.string.collection_remove_block_current_balance_popup_desc
+                        )
+                    } else {
+                        EnterPaymentAmountFragmentDirections.actionEnterPaymentAmountFragmentToInfoDialogFragment(
+                            R.string.overdue_amount_label,
+                            R.string.pma_amount_overdue_popup_desc
+                        )
+                    }
+                )
             }
         }
     }
@@ -270,7 +333,8 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         }
     }
 
-    private fun isZeroAmount(amount: String?) = payMyAccountViewModel.convertRandFormatToInt(amount) == 0
+    private fun isZeroAmount(amount: String?) =
+        payMyAccountViewModel.convertRandFormatToInt(amount) == 0
 
     private fun clearSelection() {
         totalAmountDueValueTextView?.isSelected = false
@@ -308,9 +372,16 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
     }
 
     fun showKeyboard() {
-        paymentAmountInputEditText?.requestFocus()
-        val imm: InputMethodManager? = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-        imm?.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
+        // hide keyboard for elite plans
+        if (payMyAccountViewModel.elitePlanModel?.scope.isNullOrEmpty()) {
+            paymentAmountInputEditText?.requestFocus()
+            val imm: InputMethodManager? =
+                activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            imm?.toggleSoftInput(
+                InputMethodManager.SHOW_FORCED,
+                InputMethodManager.HIDE_IMPLICIT_ONLY
+            )
+        }
     }
 
     fun hideKeyboard() {
@@ -329,7 +400,8 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
     }
 
     fun highlightAmountBlock() {
-        val inputFieldAmount = payMyAccountViewModel.convertRandFormatToDouble(paymentAmountInputEditText?.text?.toString())
+        val inputFieldAmount =
+            payMyAccountViewModel.convertRandFormatToDouble(paymentAmountInputEditText?.text?.toString())
         val totalAmountDue = totalAmountDueValueTextView?.text?.toString()
         val overdueAmount = amountOutstandingValueTextView?.text?.toString()
         when (inputFieldAmount.toString()) {

@@ -14,7 +14,7 @@ import com.bumptech.glide.request.target.Target
 class ImageManager {
 
     companion object {
-        fun setPicture(productImage: ImageView?, img_location: String) = productImage?.let { image ->
+        fun setPicture(productImage: ImageView?, img_location: String?) = productImage?.let { image ->
             productImage.scaleType = ImageView.ScaleType.CENTER
             productImage.context?.apply {
                 Glide.with(this)

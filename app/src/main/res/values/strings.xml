@@ -2144,6 +2144,7 @@
     <string name="submitDescription">In order to process your claim we will need the following documents.</string>
     <string name="view_application_status">View Application Status</string>
     <string name="app_version_info">App Version %s (%s)</string>
+    <string name="fsp_number_info">Woolworths Financial Services (FSP15289 and NCRCP49)</string>
     <string name="product_details_out_of_stock">Unfortunately this item is out of stock in %s. Try changing your delivery location and try again.</string>
 
     <!--  Voice of Customer  -->
@@ -2459,4 +2460,14 @@
     <string name="no_location_delivery">We Can’t Deliver To This Location Yet.</string>
     <string name="geo_map_address">%s %s %s</string>
     <string name="max_characters_allowed">Max 40 characters allowed</string>
+
+    <!--Elite Plan -->
+    <string name="amount_payable">Amount Payable</string>
+    <string name="you_saved">You Save %1$s</string>
+    <string name="amount_you_save">Amount You Save</string>
+    <string name="get_help_repayment">GET HELP WITH YOUR REPAYMENTS</string>
+    <string name="view_your_payment_plan">VIEW YOUR PAYMENT PLAN</string>
+    <string name="total_amount_you_saving">This is the total amount you are saving as agreed \n upon in your settlement plan</string>
+    <string name="pay_now">PAY NOW</string>
+
 </resources>

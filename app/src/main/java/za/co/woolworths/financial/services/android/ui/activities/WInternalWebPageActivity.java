@@ -1,5 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+
+import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl.ELITE_PLAN_MODEL;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -13,18 +16,10 @@ import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Handler;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.CookieManager;
-import android.webkit.DownloadListener;
 import android.webkit.SslErrorHandler;
 import android.webkit.URLUtil;
 import android.webkit.WebBackForwardList;
@@ -38,9 +33,18 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
 import com.awfs.coordination.R;
 import com.google.android.material.appbar.AppBarLayout;
 
+import java.util.HashMap;
+
+import za.co.woolworths.financial.services.android.util.eliteplan.ElitePlanModel;
 import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
@@ -166,21 +170,34 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 			@Override
 			public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
 				super.doUpdateVisitedHistory(view, url, isReload);
-				if (treatmentPlan && url.contains(collectionsExitUrl)) {
-					Uri uri = Uri.parse(url);
-					String urlToOpen = uri.getQueryParameter("nburl");
+				if (treatmentPlan ) {
+					HashMap<String,String> parameters = getQueryString(url);
+					if (parameters.containsKey("Scope") ){
+						if (parameters.get("Scope").equals("paynow")){
+							finishActivityForElite(parameters);
+						}else if (parameters.get("Scope").equals("back") &&
+								url.contains(collectionsExitUrl)){
+							finish();
+							overridePendingTransition(0,0);
+						}
+					}else if (url.contains(collectionsExitUrl)){
+						Uri uri = Uri.parse(url);
+						String urlToOpen = uri.getQueryParameter("nburl");
 
-					if(urlToOpen != null){
-						Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlToOpen));
-						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-						startActivity(intent);
+						if(urlToOpen != null){
+							Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlToOpen));
+							intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+							startActivity(intent);
 
-						Handler handler = new Handler();
-						handler.postDelayed(() -> webInternalPage.loadUrl(mExternalLink), AppConstant.DELAY_900_MS);
+							Handler handler = new Handler();
+							handler.postDelayed(() -> webInternalPage.loadUrl(mExternalLink), AppConstant.DELAY_900_MS);
+						}
+						else{
+							finishActivity();
+						}
+
 					}
-					else{
-						finishActivity();
-					}
+
 				}
 			}
 		});
@@ -197,7 +214,20 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 			}
 		});
 	}
+	public static HashMap<String, String> getQueryString(String url) {
+		Uri uri= Uri.parse(url);
 
+		HashMap<String, String> map = new HashMap<>();
+		for (String paramName : uri.getQueryParameterNames()) {
+			if (paramName != null) {
+				String paramValue = uri.getQueryParameter(paramName);
+				if (paramValue != null) {
+					map.put(paramName, paramValue);
+				}
+			}
+		}
+		return map;
+	}
 	private void handleUri(WebView view, Uri uri) {String url = uri.toString();
 		if (url.contains("mailto:")) {
 			Utils.sendEmail(url, "",getApplicationContext());
@@ -311,6 +341,14 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 
 	public void finishActivity() {
 		setResult(RESULT_OK);
+		finish();
+		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+	}
+	public void finishActivityForElite(HashMap<String,String> params) {
+		Intent resultIntent = new Intent();
+		ElitePlanModel elitePlanModel= new ElitePlanModel(params.get("Scope"), params.get("DiscountAmount"), params.get("SettlementAmount"));
+		resultIntent.putExtra(ELITE_PLAN_MODEL, elitePlanModel);
+		setResult(RESULT_OK,resultIntent);
 		finish();
 		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 	}
