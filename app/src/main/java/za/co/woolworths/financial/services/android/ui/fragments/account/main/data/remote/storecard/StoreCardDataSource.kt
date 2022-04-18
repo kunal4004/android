@@ -14,7 +14,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import javax.inject.Inject
 
 interface IStoreCardDataSource {
-    val account: Account?
+    var account: Account?
     suspend fun getCreditCardToken(): Flow<CoreDataSource.IOTaskResult<CreditCardTokenResponse>>
     suspend fun getPaymentPAYUMethod(): Flow<CoreDataSource.IOTaskResult<PaymentMethodsResponse>>
     suspend fun queryServiceGetStoreCards(): Flow<CoreDataSource.IOTaskResult<StoreCardsResponse>>

@@ -2143,6 +2143,7 @@
     <string name="submitDescription">In order to process your claim we will need the following documents.</string>
     <string name="view_application_status">View Application Status</string>
     <string name="app_version_info">App Version %s (%s)</string>
+    <string name="fsp_number_info">Woolworths Financial Services (FSP15289 and NCRCP49)</string>
     <string name="product_details_out_of_stock">Unfortunately this item is out of stock in %s. Try changing your delivery location and try again.</string>
 
     <!--  Voice of Customer  -->
@@ -2419,6 +2420,7 @@
     <string name="treatment_plan_desc_4">Simple and easy to manage from the palm of your hand.</string>
     <string name="view_treatment_plan_caption">View Treatment Plan</string>
     <string name="product_listing_price_from">From</string>
+    <string name="product_details_color_count">+ %d More</string>
 
     <!--Elite Plan -->
     <string name="amount_payable">Amount Payable</string>

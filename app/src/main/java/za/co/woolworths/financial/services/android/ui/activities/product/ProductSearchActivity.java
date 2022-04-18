@@ -126,30 +126,26 @@ public class ProductSearchActivity extends AppCompatActivity
         return false;
     }
 
-    private void searchProduct(String searchProductBrand) {
-        if (searchProductBrand.length() > 2) {
-            if (searchProductBrand.toLowerCase().contains(SEARCH_VALUE_CHANEL)) {
-                ChanelMessageDialogFragment.Companion.newInstance().show(getSupportFragmentManager(), ChanelMessageDialogFragment.class.getSimpleName());
-            } else {
-                SearchHistory search = new SearchHistory();
-                search.searchedValue = searchProductBrand;
-                saveRecentSearch(search);
-                if (TextUtils.isEmpty(mSearchTextHint)) {
-                    LoadState loadState = new LoadState();
-                    loadState.setSearchProduct(searchProductBrand);
-                    Utils.sendBus(loadState);
-                    mEditSearchProduct.setText("");
-                    finish();
-                    overridePendingTransition(0, 0);
-                } else {
-                    Intent intent = new Intent();
+	private void searchProduct(String searchProductBrand) {
+		if (searchProductBrand.length() > 2) {
+			   SearchHistory search = new SearchHistory();
+				search.searchedValue = searchProductBrand;
+				saveRecentSearch(search);
+				if (TextUtils.isEmpty(mSearchTextHint)) {
+					LoadState loadState = new LoadState();
+					loadState.setSearchProduct(searchProductBrand);
+					Utils.sendBus(loadState);
+					mEditSearchProduct.setText("");
+					finish();
+					overridePendingTransition(0, 0);
+				} else {
+					Intent intent = new Intent();
                     intent.putExtra(MY_LIST_LIST_ID, mListID);
                     intent.putExtra(MY_LIST_LIST_NAME, search.searchedValue);
                     setActivityResult(intent, PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE);
-                }
-            }
-        }
-    }
+				}
+		}
+	}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
