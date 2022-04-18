@@ -23,7 +23,6 @@ class GeoLocationApiHelper : RetrofitConfig() {
     suspend fun postConfirmLocation(confirmLocationRequest: ConfirmLocationRequest) =
         mApiInterface.confirmLocation("",
             "",
-            getEnvironment(),
             getSessionToken(),
             getDeviceIdentityToken(),
             confirmLocationRequest
@@ -40,7 +39,6 @@ class GeoLocationApiHelper : RetrofitConfig() {
     fun initConfirmLocation(confirmLocationRequest: ConfirmLocationRequest) =
         mApiInterface.confirmLocation("",
             "",
-            getEnvironment(),
             getSessionToken(),
             getDeviceIdentityToken(),
             confirmLocationRequest

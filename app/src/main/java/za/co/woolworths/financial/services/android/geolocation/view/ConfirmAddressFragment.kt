@@ -339,14 +339,15 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                     //Navigate to map screen with delivery type or checkout type
                     navigateToConfirmAddressForStoreLocator(mLastLocation?.latitude,
                         mLastLocation?.longitude,
-                        false)
+                        false, deliveryType)
                 } else if (!isComingFromCheckout && deliveryType == Delivery.DASH.name) {
                     // Navigate to Map screen
                     val getMapData =
                         getDataForMapView(mLastLocation?.latitude, mLastLocation?.longitude,
                             isAddAddress = false,
                             isComingFromCheckout = false,
-                            isFromDashTab = isFromDashTab)
+                            isFromDashTab = isFromDashTab,
+                            deliveryType)
                     val directions =
                         ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
                             getMapData
@@ -357,7 +358,8 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                         getDataForMapView(mLastLocation?.latitude, mLastLocation?.longitude,
                             isAddAddress = false,
                             isComingFromCheckout = false,
-                            isFromDashTab = false)
+                            isFromDashTab = false,
+                            deliveryType)
                     val directions =
                         ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
                             getMapData
@@ -391,12 +393,12 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                     navigateToAddAddress(savedAddressResponse)
                 } else if (isComingFromCheckout && deliveryType == Delivery.CNC.name) {
                     //Navigate to map screen with delivery type or checkout type
-                    navigateToConfirmAddressForStoreLocator(0.0, 0.0, true)
+                    navigateToConfirmAddressForStoreLocator(0.0, 0.0, true, deliveryType)
 
                 } else if (!isComingFromCheckout && deliveryType == Delivery.DASH.name) {
                     // Navigate to Map screen
                     val getMapData =
-                        getDataForMapView(0.0, 0.0, true, false, isFromDashTab)
+                        getDataForMapView(0.0, 0.0, true, false, isFromDashTab, deliveryType)
                     val directions =
                         ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
                             getMapData
@@ -404,7 +406,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                     findNavController().navigate(directions)
                 } else {
                     val getMapData =
-                        getDataForMapView(0.0, 0.0, true, false, false)
+                        getDataForMapView(0.0, 0.0, true, false, false, deliveryType)
                     val directions =
                         ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
                             getMapData
@@ -463,6 +465,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         latitude: Double?,
         longitude: Double?,
         isAddAddress: Boolean?,
+        deliveryType: String?,
     ) {
         val getMapData =
             getDataForMapView(
@@ -470,6 +473,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 isAddAddress = isAddAddress,
                 isComingFromCheckout = true,
                 isFromDashTab = false,
+                deliveryType = deliveryType
             )
         val directions =
             ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
@@ -484,13 +488,15 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         isAddAddress: Boolean?,
         isComingFromCheckout: Boolean,
         isFromDashTab: Boolean,
+        deliveryType: String?
     ): MapData {
         return MapData(
             latitude = latitude,
             longitude = longitude,
             isAddAddress = isAddAddress,
             isComingFromCheckout = isComingFromCheckout,
-            isFromDashTab = isFromDashTab
+            isFromDashTab = isFromDashTab,
+            deliveryType = deliveryType
         )
     }
 

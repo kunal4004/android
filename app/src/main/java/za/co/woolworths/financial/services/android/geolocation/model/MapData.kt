@@ -9,5 +9,6 @@ data class MapData(
     val longitude: Double?,
     val isAddAddress: Boolean?,
     val isComingFromCheckout:Boolean?,
-    val isFromDashTab: Boolean?
+    val isFromDashTab: Boolean?,
+    val deliveryType: String?,
 ) : Parcelable

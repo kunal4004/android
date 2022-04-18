@@ -71,7 +71,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             }
         } else {
             // user logged in
-            if (savedLocation?.fulfillmentDetails == null) {
+            if (savedLocation?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
                 // logged in but don't have location
                 showSetAddressScreen() // show set Address screen
             } else {

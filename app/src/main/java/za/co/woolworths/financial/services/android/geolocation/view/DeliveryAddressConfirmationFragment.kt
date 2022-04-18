@@ -185,7 +185,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     }
 
                     Delivery.DASH.name -> {
-                        // Todo this implementation will be done in separate story.
+                        navigateToConfirmAddressScreen()
+                        return
                     }
                 }
             }

@@ -69,6 +69,7 @@ class ConfirmAddressMapFragment :
     private var mMap: GoogleMap? = null
     private var mAddress: String? = null
     private var placeId: String? = null
+    private var deliveryType: String? = null
     private var latLng: LatLng? = null
     private var mLatitude: String? = null
     private var mLongitude: String? = null
@@ -115,6 +116,7 @@ class ConfirmAddressMapFragment :
             isAddAddress = args.mapData.isAddAddress
             isComingFromCheckout = args.mapData.isComingFromCheckout
             isFromDashTab = args.mapData.isFromDashTab
+            deliveryType = args.mapData.deliveryType
             setUpViewModel()
             clearAddress()
             confirmAddressClick()
@@ -229,6 +231,7 @@ class ConfirmAddressMapFragment :
                         putString(KEY_LATITUDE, mLatitude)
                         putString(KEY_LONGITUDE, mLongitude)
                         putString(KEY_PLACE_ID, placeId)
+                        putString(BundleKeysConstants.DELIVERY_TYPE, deliveryType)
                     }
                     findNavController().navigate(
                         R.id.action_confirmAddressMapFragment_to_deliveryAddressConfirmationFragment,
@@ -260,7 +263,7 @@ class ConfirmAddressMapFragment :
                                         confirmSetAddress(validateLocationResponse)
                                     } else {
                                         val savedLocation = Utils.getPreferredDeliveryLocation()
-                                        if (savedLocation?.fulfillmentDetails == null) {
+                                        if (savedLocation?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
                                             // user logged in but don't have any location that's why we are setting new location.
                                             confirmSetAddress(validateLocationResponse)
                                         } else {
