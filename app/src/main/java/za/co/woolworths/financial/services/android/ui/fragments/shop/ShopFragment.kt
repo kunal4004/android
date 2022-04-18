@@ -259,6 +259,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         if (isUserAuthenticated()) {
             Utils.getPreferredDeliveryLocation()?.apply {
                 updateCurrentTab(this?.fulfillmentDetails?.deliveryType)
+                if (this?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
+                    return
+                }
                 activity?.let {
                     KotlinUtils.setDeliveryAddressView(
                         it,
@@ -272,6 +275,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         } else {
             KotlinUtils.getAnonymousUserLocationDetails()?.apply {
                 updateCurrentTab(this?.fulfillmentDetails?.deliveryType)
+                if (this?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
+                    return
+                }
                 activity?.let {
                     KotlinUtils.setDeliveryAddressView(
                         it,
@@ -304,10 +310,12 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             return
         }
 
-        if ( Utils.getPreferredDeliveryLocation() !=null &&
+        if ( Utils.getPreferredDeliveryLocation() !=null ||
             KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails !=null ) {
                 return
         }
+
+
 
         when (tabPosition) {
             1 -> {
