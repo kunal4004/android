@@ -15,7 +15,7 @@
         app:bl_arrowPosition="@dimen/sixty_dp"
         app:bl_arrowWidth="@dimen/twenty_dp"
         app:bl_bubbleColor="@color/black"
-        app:bl_cornersRadius="0dp"
+        app:bl_cornersRadius="@dimen/_8sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -133,7 +133,7 @@
                     android:layout_marginStart="@dimen/ten_dp"
                     android:paddingTop="@dimen/three_dp"
                     android:paddingBottom="@dimen/three_dp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/color_D8D8D8"
                     android:textSize="@dimen/twelve_sp"
                     app:layout_constraintStart_toEndOf="@+id/cartIcon"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -166,7 +166,7 @@
                     android:layout_marginStart="@dimen/ten_dp"
                     android:paddingTop="@dimen/three_dp"
                     android:paddingBottom="@dimen/three_dp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/color_D8D8D8"
                     android:textSize="@dimen/twelve_sp"
                     app:layout_constraintStart_toEndOf="@+id/deliveryIcon"
                     app:layout_constraintTop_toTopOf="parent" />

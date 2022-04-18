@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/color_F3F3F3">
 
     <androidx.appcompat.widget.Toolbar
@@ -29,7 +30,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/tvToolbarTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -37,6 +38,7 @@
                 android:fontFamily="@font/myriad_pro_regular"
                 android:gravity="top"
                 android:text="@string/standard_delivery"
+                app:WTextView_font="myriadpro_regular"
                 android:textColor="@color/black"
                 android:textSize="@dimen/twelve_sp"
                 app:layout_constraintBottom_toTopOf="@+id/tvToolbarSubtitle"
@@ -44,12 +46,13 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_chainStyle="packed" />
 
-            <TextView
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/tvToolbarSubtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/myriad_pro_semi_bold"
                 android:gravity="center"
+                app:WTextView_font="myriadpro_semibold"
                 android:text="Default Location"
                 android:textAlignment="center"
                 android:textColor="@color/black"
@@ -117,6 +120,8 @@
             android:paddingEnd="@dimen/eight_dp"
             android:paddingBottom="@dimen/three_dp"
             android:text="@string/food_only"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
             android:textSize="@dimen/seven_sp"
             app:layout_constraintRight_toRightOf="@+id/tabs_main"
             app:layout_constraintTop_toTopOf="parent" />
@@ -127,7 +132,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/eighty_five_dp"
             android:layout_marginTop="@dimen/six_dp"
-            android:background="#4A9521"
+            android:background="@color/color_yellow_FEE600"
             android:fontFamily="@font/futura_bold"
             android:gravity="center"
             android:paddingStart="@dimen/eight_dp"
@@ -136,7 +141,8 @@
             android:paddingBottom="@dimen/three_dp"
             android:text="@string/food_only"
             android:textAlignment="center"
-            android:textColor="@color/white"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
             android:textSize="@dimen/seven_sp"
             app:layout_constraintEnd_toStartOf="@+id/foodOnlyText"
             app:layout_constraintStart_toStartOf="@+id/tvSearchProduct"
@@ -145,6 +151,7 @@
         <include
             android:id="@+id/blackToolTipLayout"
             layout="@layout/black_tool_tip_layout"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
@@ -183,12 +190,10 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginStart="@dimen/eight_dp"
-            android:layout_marginTop="@dimen/sixteen_dp"
             android:layout_marginEnd="@dimen/sixteen_dp"
-            android:layout_marginBottom="@dimen/sixteen_dp"
             android:background="@drawable/rectangle_grey_bg"
             android:contentDescription="@string/enter_barcode_desc"
-            android:padding="@dimen/four_dp"
+            android:padding="@dimen/_8sdp"
             android:src="@drawable/barcode"
             app:layout_constraintBottom_toBottomOf="@+id/tvSearchProduct"
             app:layout_constraintEnd_toEndOf="parent"

@@ -2500,6 +2500,8 @@
     <string name="driver_minimum_tip_amt_error">A minimum amount of R%1$s is required.</string>
     <string name="address_type">Address Type:</string>
     <string name="add_street_address">Street Address:</string>
+    <string name="dash_free_collection">"Free Collection"</string>
+    <string name="dash_item_limit">%d Item Limit</string>
 
 
     <string name="product_listing_price_from">From</string>
