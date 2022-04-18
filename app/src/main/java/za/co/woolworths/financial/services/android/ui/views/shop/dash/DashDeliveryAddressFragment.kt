@@ -58,6 +58,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 // AnonymousUser who has location
                 val validatePlace = WoolworthsApplication.getValidatePlaceDetails()
                 if (validatePlace?.onDemand != null && validatePlace?.onDemand?.deliverable == true) {
+                    // Show categories.
                     setupRecyclerView()
                     initData()
                 } else {
@@ -74,9 +75,11 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 // logged in but don't have location
                 showSetAddressScreen() // show set Address screen
             } else {
+                // User Logged in and have location.
                 val validatePlace = viewModel.getValidatePlaceResponse()
                     ?: WoolworthsApplication.getValidatePlaceDetails()
                 if (validatePlace?.onDemand != null && validatePlace?.onDemand?.deliverable == true) {
+                    // Show categories.
                     setupRecyclerView()
                     initData()
                 } else {
@@ -133,9 +136,11 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 when (resource.status) {
                     Status.LOADING -> {
                         //TODO need to confirm loading screens between shimmer view or progressbar
+                        progressBar.visibility = View.VISIBLE
                     }
                     Status.SUCCESS -> {
                         layoutDashSetAddress?.visibility = View.GONE
+                        progressBar.visibility = View.GONE
                         if (viewModel.isOnDemandCategoriesAvailable.value == true) {
                             dashDeliveryAdapter.setData(
                                 viewModel.onDemandCategories.value?.peekContent()?.data?.onDemandCategories,
@@ -144,6 +149,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                         }
                     }
                     Status.ERROR -> {
+                        progressBar.visibility = View.GONE
                         showErrorView(resource.message, resource.data)
                     }
                 }
@@ -155,10 +161,11 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             it.getContentIfNotHandled()?.let { resource ->
                 when (resource.status) {
                     Status.LOADING -> {
-                        //Do Nothing
+                        progressBar.visibility = View.VISIBLE
                     }
                     Status.SUCCESS -> {
                         layoutDashSetAddress?.visibility = View.GONE
+                        progressBar.visibility = View.GONE
                         if (viewModel.isDashCategoriesAvailable.value == true) {
                             dashDeliveryAdapter.setData(
                                 resource.data?.onDemandCategories,
@@ -167,6 +174,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                         }
                     }
                     Status.ERROR -> {
+                        progressBar.visibility = View.GONE
                         showErrorView(resource.message, resource.data)
                     }
                 }
