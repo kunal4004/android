@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.repository.shop
 
 import android.location.Location
-import android.util.Log
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.coroutines.delay
@@ -36,7 +35,6 @@ class MainShopRepository : ShopRepository {
                 Resource.error("An unknown error occured", null)
             }*/
         } catch (e: IOException) {
-            Log.e("EXCEPTION", "EXCEPTION:", e)
             FirebaseManager.logException(e)
             Resource.error("Couldn't reach the server. Check your internet connection", null)
         }
@@ -49,7 +47,7 @@ class MainShopRepository : ShopRepository {
             if (response.isSuccessful) {
                 response.body()?.let {
 
-                    return when(it.httpCode) {
+                    return when (it.httpCode) {
                         AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
                             Resource.success(it)
                         else ->
@@ -60,7 +58,6 @@ class MainShopRepository : ShopRepository {
                 Resource.error("An unknown error occurred", null)
             }
         } catch (e: IOException) {
-            Log.e("EXCEPTION", "EXCEPTION:", e)
             FirebaseManager.logException(e)
             Resource.error("Couldn't reach the server. Check your internet connection", null)
         }
