@@ -151,14 +151,13 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         tabs_main?.setupWithViewPager(viewpager_main)
         updateTabIconUI(0)
         showShopFeatureWalkThrough()
-        setupToolbar(0)
     }
 
 
     private fun executeValidateSuburb() {
         var placeId: String? = null
 
-        if (SessionUtilities.getInstance().isUserAuthenticated) {
+        if (isUserAuthenticated()) {
             Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
                 placeId = it.address?.placeId
             }
@@ -189,7 +188,19 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                                     )
                                     viewLifecycleOwner.lifecycleScope.launch {
                                         delay(DELAY_3000_MS)
-                                        showBlackToolTip(Delivery.STANDARD)
+                                        if (isUserAuthenticated()) {
+                                            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
+                                                Delivery.getType(it.deliveryType)?.let {
+                                                    showBlackToolTip(it)
+                                                }
+                                            }
+                                        } else {
+                                            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let {
+                                                Delivery.getType(it.deliveryType)?.let {
+                                                    showBlackToolTip(it)
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -210,7 +221,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         var deliveryType: Delivery? = Delivery.STANDARD
         var placeId = ""
 
-        if (SessionUtilities.getInstance().isUserAuthenticated) {
+        if (isUserAuthenticated()) {
             Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
                 deliveryType = Delivery.getType(it.deliveryType)
                 placeId = it.address?.placeId ?: ""
@@ -245,20 +256,22 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         if (Utils.getPreferredDeliveryLocation() == null && KotlinUtils.getAnonymousUserLocationDetails() == null) {
             return
         }
-        if (SessionUtilities.getInstance().isUserAuthenticated) {
+        if (isUserAuthenticated()) {
             Utils.getPreferredDeliveryLocation()?.apply {
+                updateCurrentTab(this?.fulfillmentDetails?.deliveryType)
                 activity?.let {
                     KotlinUtils.setDeliveryAddressView(
                         it,
                         this,
-                        tvToolbarTitle as WTextView,
-                        tvToolbarSubtitle as WTextView,
+                        tvToolbarTitle,
+                        tvToolbarSubtitle,
                         imgToolbarStart
                     )
                 }
             }
         } else {
             KotlinUtils.getAnonymousUserLocationDetails()?.apply {
+                updateCurrentTab(this?.fulfillmentDetails?.deliveryType)
                 activity?.let {
                     KotlinUtils.setDeliveryAddressView(
                         it,
@@ -272,12 +285,26 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
     }
 
+    private fun updateCurrentTab(deliveryType: String?) {
+        when (deliveryType) {
+            BundleKeysConstants.STANDARD -> {
+                viewpager_main.setCurrentItem(0)
+            }
+            BundleKeysConstants.CNC -> {
+                viewpager_main.setCurrentItem(1)
+            }
+            BundleKeysConstants.DASH -> {
+                viewpager_main.setCurrentItem(2)
+            }
+        }
+    }
+
     private fun setupToolbar(tabPosition: Int) {
         if (tabPosition < 0) {
             return
         }
 
-        if ( Utils.getPreferredDeliveryLocation() !=null ||
+        if ( Utils.getPreferredDeliveryLocation() !=null &&
             KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails !=null ) {
                 return
         }
@@ -688,7 +715,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             deliveryIconLayout?.visibility  = View.VISIBLE
 
 
-            if (SessionUtilities.getInstance().isUserAuthenticated) {
+            if (isUserAuthenticated()) {
                 Utils.getPreferredDeliveryLocation()?.let {
                     val store = GeoUtils.getStoreDetails(
                         it.fulfillmentDetails?.storeId,
@@ -850,4 +877,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
         }
     }
+
+    fun isUserAuthenticated() = SessionUtilities.getInstance().isUserAuthenticated
+
 }
