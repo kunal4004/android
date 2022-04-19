@@ -2,17 +2,12 @@ package za.co.woolworths.financial.services.android.ui.fragments.integration.uti
 
 import android.os.Build
 import android.util.Base64
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.annotation.ColorRes
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.transform
 import retrofit2.HttpException
 import za.co.absa.openbankingapi.AsymmetricCryptoHelper
 import za.co.absa.openbankingapi.DecryptionFailureException
