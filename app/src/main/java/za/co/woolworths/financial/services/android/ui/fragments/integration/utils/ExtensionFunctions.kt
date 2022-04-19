@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.integration.uti
 
 import android.os.Build
 import android.util.Base64
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.annotation.ColorRes
@@ -130,3 +131,5 @@ fun Fragment.updateStatusBarColor(@ColorRes colorId: Int, isStatusBarFontDark: B
         }
     }
 }
+
+fun String.toMaskABSAPhoneNumber() = this.replace("\\d(?!\\d{0,2}\$|\\d{7,10}\$)".toRegex(), "*")
