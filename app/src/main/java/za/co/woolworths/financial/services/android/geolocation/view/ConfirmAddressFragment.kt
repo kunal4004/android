@@ -302,18 +302,12 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                                 validateLocation(it.placesId!!)
 
                             } else {
-                                bundle?.putString(
-                                    KEY_PLACE_ID, it.placesId)
-
-                                bundle?.putString(
-                                    ADDRESS, it.address1)
-
-                                bundle?.putSerializable(
-                                    DEFAULT_ADDRESS, it)
-
-                                bundle?.putBoolean(
-                                    IS_COMING_CONFIRM_ADD, true)
-
+                                bundle?.apply {
+                                    putString(KEY_PLACE_ID, it.placesId)
+                                    putString(ADDRESS, it.address1)
+                                    putSerializable(DEFAULT_ADDRESS, it)
+                                    putBoolean(IS_COMING_CONFIRM_ADD, true)
+                                }
                                 if (IS_FROM_STORE_LOCATOR) {
                                     findNavController().navigate(
                                         R.id.actionClickAndCollectStoresFragment,

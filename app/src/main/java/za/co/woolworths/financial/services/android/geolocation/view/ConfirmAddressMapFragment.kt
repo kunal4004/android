@@ -149,6 +149,7 @@ class ConfirmAddressMapFragment :
 
     private fun addFragmentListner() {
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, _ ->
+            // change location button clicked as address is not deliverable.
             clearAddressText()
         }
     }

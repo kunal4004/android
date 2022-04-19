@@ -14,6 +14,9 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomS
 /**
  * Created by Kunal Uttarwar on 13/04/22.
  */
+/**
+ * This class can be used anywhere to show bottom dialog with button and image.
+ */
 class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
     View.OnClickListener {
 

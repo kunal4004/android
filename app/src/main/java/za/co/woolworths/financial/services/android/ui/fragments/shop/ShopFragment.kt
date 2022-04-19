@@ -538,6 +538,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             fragment?.onActivityResult(requestCode, resultCode, data)
         }
         if (requestCode == DASH_SET_ADDRESS_REQUEST_CODE) {
+            // Set Address done on Dash Tab. update the response and Refresh the Tab now.
             val validateLocationResponse = data?.getSerializableExtra(
                 BundleKeysConstants.VALIDATE_RESPONSE) as? ValidateLocationResponse
             validateLocationResponse?.validatePlace?.let { shopViewModel.setValidatePlaceResponse(it) }
