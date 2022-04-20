@@ -185,7 +185,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     }
 
                     Delivery.DASH.name -> {
-                        // Todo this implementation will be done in separate story.
+                        navigateToConfirmAddressScreen()
+                        return
                     }
                 }
             }
@@ -259,12 +260,12 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             val confirmLocationAddress = ConfirmLocationAddress(placeId)
             val confirmLocationRequest = when (deliveryType) {
                 Delivery.STANDARD.name -> {
-                    ConfirmLocationRequest(STANDARD, confirmLocationAddress)
+                    ConfirmLocationRequest(STANDARD, confirmLocationAddress, "")
             }
             Delivery.CNC.name -> {
                     ConfirmLocationRequest(CNC, confirmLocationAddress, mStoreId)
             } else -> {
-                    ConfirmLocationRequest(DASH, confirmLocationAddress)
+                    ConfirmLocationRequest(DASH, confirmLocationAddress, mStoreId)
                 }
             }
 
@@ -279,9 +280,9 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                             HTTP_OK -> {
                                 // save details in cache
                                 if (SessionUtilities.getInstance().isUserAuthenticated) {
-                                    KotlinUtils.isDeliveryLocationTabClicked = placeId?.equals(Utils.getPreferredDeliveryLocation())
-                                    KotlinUtils.isCncTabClicked = placeId?.equals(Utils.getPreferredDeliveryLocation())
-                                    KotlinUtils.isDashTabClicked = placeId?.equals(Utils.getPreferredDeliveryLocation())
+                                    KotlinUtils.isDeliveryLocationTabClicked = placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
+                                    KotlinUtils.isCncTabClicked = placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
+                                    KotlinUtils.isDashTabClicked = placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
                                     Utils.savePreferredDeliveryLocation(
                                         ShoppingDeliveryLocation(
                                             confirmLocationResponse.orderSummary?.fulfillmentDetails
@@ -313,7 +314,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                                     FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_STANDARD_CONFIRM),
 
                                         activity)
-
                                 }
 
                                 if (isComingFromCheckout) {

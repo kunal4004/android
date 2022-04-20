@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.geolocation.view
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
@@ -38,6 +39,7 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.Confirm
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment.Companion.DEPARTMENT_LOGIN_REQUEST
+import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.ADDRESS
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
@@ -46,6 +48,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_CONFIRM_ADD
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CHECKOUT
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_DASH_TAB
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_STORE_LOCATOR
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -62,11 +65,11 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
     private var bundle: Bundle? = null
     private var isComingFromCheckout: Boolean = false
     private var isComingFromSlotSelection: Boolean = false
+    private var isFromDashTab: Boolean = false
     private var deliveryType: String? = null
 
     companion object {
         fun newInstance() = ConfirmAddressFragment()
-
     }
 
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
@@ -75,12 +78,10 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         super.onCreate(savedInstanceState)
         bundle = arguments?.getBundle(BUNDLE)
         bundle?.apply {
-            isComingFromCheckout = this.getBoolean(
-                IS_COMING_FROM_CHECKOUT, false)
-            isComingFromSlotSelection = this.getBoolean(
-                IS_COMING_FROM_SLOT_SELECTION, false)
-            deliveryType =  this.getString(
-                DELIVERY_TYPE, "")
+            isComingFromCheckout = this.getBoolean(IS_COMING_FROM_CHECKOUT, false)
+            isComingFromSlotSelection = this.getBoolean(IS_COMING_FROM_SLOT_SELECTION, false)
+            isFromDashTab = this.getBoolean(IS_FROM_DASH_TAB, false)
+            deliveryType = this.getString(DELIVERY_TYPE, "")
         }
         hideBottomNav()
     }
@@ -137,7 +138,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             tvConfirmAddress?.visibility = View.VISIBLE
             if (confirmAddressViewModel.isConnectedToInternet(requireActivity()))
                 fetchAddress()
-            else{
+            else {
                 noAddressConnectionLayout?.no_connection_layout?.visibility = View.VISIBLE
             }
         } else {
@@ -217,9 +218,11 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
 
     private fun setButtonUI(activated: Boolean) {
         if (activated) {
-            tvConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireActivity(),R.color.black))
+            tvConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireActivity(),
+                R.color.black))
         } else {
-            tvConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireActivity(),R.color.color_A9A9A9))
+            tvConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireActivity(),
+                R.color.color_A9A9A9))
         }
 
     }
@@ -245,9 +248,9 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         mPosition = position
         setButtonUI(true)
         if (address.verified) {
-            tvConfirmAddress.text = getString(R.string.confirm)
+            tvConfirmAddress?.text = getString(R.string.confirm)
         } else {
-            tvConfirmAddress.text = getString(R.string.update_address)
+            tvConfirmAddress?.text = getString(R.string.update_address)
         }
     }
 
@@ -271,7 +274,8 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
 
                 if (progressBar.visibility == View.GONE
                     && selectedAddress != null
-                    && tvConfirmAddress.text == getString(R.string.update_address)){
+                    && tvConfirmAddress?.text == getString(R.string.update_address)
+                ) {
                     savedAddressResponse?.let {
 
                         Utils.triggerFireBaseEvents(
@@ -288,37 +292,35 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 }
                 if (progressBar.visibility == View.GONE
                     && selectedAddress != null
-                    && tvConfirmAddress.text == getString(R.string.confirm))
-                {
-                    selectedAddress?.let {
+                    && tvConfirmAddress?.text == getString(R.string.confirm)
+                ) {
+                    selectedAddress.let {
                         if (it.placesId != null) {
+                            if (isFromDashTab) {
+                                // This comes from Dash Tab. So will check if validatePlace API has onDemand Object.
+                                // If yes then land back on Dash Tab with new ValidatePlace Object else show Not Deliverable PopUp.
+                                validateLocation(it.placesId!!)
 
-                            bundle?.putString(
-                               KEY_PLACE_ID, it.placesId)
-
-                            bundle?.putString(
-                                ADDRESS, it.address1)
-
-                            bundle?.putSerializable(
-                                DEFAULT_ADDRESS, it)
-
-                            bundle?.putBoolean(
-                                IS_COMING_CONFIRM_ADD, true)
-
-                            if (IS_FROM_STORE_LOCATOR) {
-                                findNavController().navigate(
-                                    R.id.actionClickAndCollectStoresFragment,
-                                    bundleOf(BUNDLE to bundle)
-                                )
                             } else {
-                                findNavController().navigate(
-                                    R.id.actionToDeliveryAddressConfirmationFragment,
-                                    bundleOf(BUNDLE to bundle)
-                                )
+                                bundle?.apply {
+                                    putString(KEY_PLACE_ID, it.placesId)
+                                    putString(ADDRESS, it.address1)
+                                    putSerializable(DEFAULT_ADDRESS, it)
+                                    putBoolean(IS_COMING_CONFIRM_ADD, true)
+                                }
+                                if (IS_FROM_STORE_LOCATOR) {
+                                    findNavController().navigate(
+                                        R.id.actionClickAndCollectStoresFragment,
+                                        bundleOf(BUNDLE to bundle)
+                                    )
+                                } else {
+                                    findNavController().navigate(
+                                        R.id.actionToDeliveryAddressConfirmationFragment,
+                                        bundleOf(BUNDLE to bundle)
+                                    )
+                                }
                             }
-
-                        }
-                        else
+                        } else
                             return
                     }
                 }
@@ -329,12 +331,29 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                     navigateToAddAddress(savedAddressResponse)
                 } else if (isComingFromCheckout && deliveryType == Delivery.CNC.name) {
                     //Navigate to map screen with delivery type or checkout type
-                    navigateToConfirmAddressForStoreLocator(mLastLocation?.latitude, mLastLocation?.longitude,false)
+                    navigateToConfirmAddressForStoreLocator(mLastLocation?.latitude,
+                        mLastLocation?.longitude,
+                        false, deliveryType)
+                } else if (!isComingFromCheckout && deliveryType == Delivery.DASH.name) {
+                    // Navigate to Map screen
+                    val getMapData =
+                        getDataForMapView(mLastLocation?.latitude, mLastLocation?.longitude,
+                            isAddAddress = false,
+                            isComingFromCheckout = false,
+                            isFromDashTab = isFromDashTab,
+                            deliveryType)
+                    val directions =
+                        ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
+                            getMapData
+                        )
+                    findNavController().navigate(directions)
                 } else {
                     val getMapData =
                         getDataForMapView(mLastLocation?.latitude, mLastLocation?.longitude,
                             isAddAddress = false,
-                            isComingFromCheckout = false)
+                            isComingFromCheckout = false,
+                            isFromDashTab = false,
+                            deliveryType)
                     val directions =
                         ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
                             getMapData
@@ -356,8 +375,6 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 activity?.onBackPressed()
             }
             R.id.enterNewAddress -> {
-
-
                 Utils.triggerFireBaseEvents(
                     FirebaseManagerAnalyticsProperties.SHOP_NEW_ADDRESS,
                     hashMapOf(
@@ -370,11 +387,20 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                     navigateToAddAddress(savedAddressResponse)
                 } else if (isComingFromCheckout && deliveryType == Delivery.CNC.name) {
                     //Navigate to map screen with delivery type or checkout type
-                    navigateToConfirmAddressForStoreLocator(0.0, 0.0,true)
+                    navigateToConfirmAddressForStoreLocator(0.0, 0.0, true, deliveryType)
 
+                } else if (!isComingFromCheckout && deliveryType == Delivery.DASH.name) {
+                    // Navigate to Map screen
+                    val getMapData =
+                        getDataForMapView(0.0, 0.0, true, false, isFromDashTab, deliveryType)
+                    val directions =
+                        ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
+                            getMapData
+                        )
+                    findNavController().navigate(directions)
                 } else {
                     val getMapData =
-                        getDataForMapView(0.0, 0.0, true,false)
+                        getDataForMapView(0.0, 0.0, true, false, false, deliveryType)
                     val directions =
                         ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
                             getMapData
@@ -385,11 +411,64 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         }
     }
 
-    private fun navigateToConfirmAddressForStoreLocator(latitude: Double?, longitude: Double?,isAddAddress: Boolean?) {
+    private fun validateLocation(placeId: String) {
+        if (placeId.isNullOrEmpty())
+            return
+
+        // Make Validate Location Call
+        lifecycleScope.launch {
+            progressBar?.visibility = View.VISIBLE
+            try {
+                val validateLocationResponse =
+                    confirmAddressViewModel.getValidateLocation(placeId!!)
+                progressBar?.visibility = View.GONE
+                if (validateLocationResponse != null) {
+                    when (validateLocationResponse?.httpCode) {
+                        AppConstant.HTTP_OK -> {
+                            validateLocationResponse.validatePlace?.let { place ->
+                                if (place.onDemand != null && place.onDemand!!.deliverable == true) {
+                                    // directly go back to Dash landing screen. Don't call confirm location API as user only wants to browse Dash.
+                                    var intent = Intent()
+                                    intent.putExtra(BundleKeysConstants.VALIDATE_RESPONSE,
+                                        validateLocationResponse)
+                                    activity?.setResult(Activity.RESULT_OK, intent)
+                                    activity?.finish()
+                                } else {
+                                    // Show not deliverable Bottom Dialog.
+                                    val customBottomSheetDialogFragment =
+                                        CustomBottomSheetDialogFragment.newInstance(
+                                            getString(R.string.no_location_delivery),
+                                            getString(R.string.no_location_desc),
+                                            getString(R.string.change_location),
+                                            R.drawable.location_disabled)
+                                    customBottomSheetDialogFragment.show(requireFragmentManager(),
+                                        CustomBottomSheetDialogFragment::class.java.simpleName)
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (e: HttpException) {
+                FirebaseManager.logException(e)
+                progressBar?.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun navigateToConfirmAddressForStoreLocator(
+        latitude: Double?,
+        longitude: Double?,
+        isAddAddress: Boolean?,
+        deliveryType: String?,
+    ) {
         val getMapData =
-            getDataForMapView(latitude, longitude,
+            getDataForMapView(
+                latitude, longitude,
                 isAddAddress = isAddAddress,
-                isComingFromCheckout = true)
+                isComingFromCheckout = true,
+                isFromDashTab = false,
+                deliveryType = deliveryType
+            )
         val directions =
             ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
                 getMapData
@@ -402,12 +481,16 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         longitude: Double?,
         isAddAddress: Boolean?,
         isComingFromCheckout: Boolean,
+        isFromDashTab: Boolean,
+        deliveryType: String?
     ): MapData {
         return MapData(
             latitude = latitude,
             longitude = longitude,
             isAddAddress = isAddAddress,
-            isComingFromCheckout = isComingFromCheckout
+            isComingFromCheckout = isComingFromCheckout,
+            isFromDashTab = isFromDashTab,
+            deliveryType = deliveryType
         )
     }
 

@@ -2498,6 +2498,7 @@
     <string name="amt_tip_added">R%1$s Tip Added</string>
     <string name="rand_text">R</string>
     <string name="driver_minimum_tip_amt_error">A minimum amount of R%1$s is required.</string>
+    <string name="driver_maximum_tip_amt_error">A maximum amount of R%1$s is allowed.</string>
     <string name="address_type">Address Type:</string>
     <string name="add_street_address">Street Address:</string>
     <string name="dash_free_collection">"Free Collection"</string>
@@ -2511,6 +2512,7 @@
     <string name="no_location_collection">There Are No Collection Stores \n Available Near You.</string>
     <string name="no_location_delivery">We Can’t Deliver To This Location Yet.</string>
     <string name="geo_map_address">%s %s %s</string>
+    <string name="max_characters_allowed">Max 40 characters allowed</string>
 
     <!--Elite Plan -->
     <string name="amount_payable">Amount Payable</string>

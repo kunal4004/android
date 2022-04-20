@@ -29,7 +29,10 @@ class CustomDriverTipBottomSheetDialog : WBottomSheetDialogFragment() {
         private const val TITLE = "TITLE"
         private const val SUB_TITLE = "SUB_TITLE"
         private const val TIP_VALUE = "TIP_VALUE"
-        private const val MIN_TIP_VALUE = "5.00" // ToDo This will be taken from config once config is ready.
+        private const val MIN_TIP_VALUE =
+            5.00 // ToDo This will be taken from config once config is ready.
+        private const val MAX_TIP_VALUE =
+            1000.00 // ToDo This will be taken from config once config is ready.
         private var clickListner: ClickListner? = null
 
         fun newInstance(
@@ -73,14 +76,21 @@ class CustomDriverTipBottomSheetDialog : WBottomSheetDialogFragment() {
         driverTipAmtEditText.addTextChangedListener {
             if (it.isNullOrEmpty()) {
                 Utils.fadeInFadeOutAnimation(buttonConfirm, true)
-            } else if (it.toString() != null && it.toString().toDouble() >= 5) {
+            } else if (it.toString() == null || it.toString().toDouble() <= MIN_TIP_VALUE) {
                 // Driver tip should always be greater than R5
-                driverTipErrorText?.visibility = View.GONE
-                Utils.fadeInFadeOutAnimation(buttonConfirm, false)
-            } else {
                 Utils.fadeInFadeOutAnimation(buttonConfirm, true)
                 driverTipErrorText?.visibility = View.VISIBLE
-                driverTipErrorText?.text = bindString(R.string.driver_minimum_tip_amt_error, MIN_TIP_VALUE)
+                driverTipErrorText?.text =
+                    bindString(R.string.driver_minimum_tip_amt_error, MIN_TIP_VALUE.toString())
+            } else if (it.toString().toDouble() > MAX_TIP_VALUE) {
+                // Driver tip should always be less than R1000
+                Utils.fadeInFadeOutAnimation(buttonConfirm, true)
+                driverTipErrorText?.visibility = View.VISIBLE
+                driverTipErrorText?.text =
+                    bindString(R.string.driver_maximum_tip_amt_error, MAX_TIP_VALUE.toString())
+            } else {
+                driverTipErrorText?.visibility = View.GONE
+                Utils.fadeInFadeOutAnimation(buttonConfirm, false)
             }
         }
         buttonConfirm?.setOnClickListener {
