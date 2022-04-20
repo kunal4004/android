@@ -143,7 +143,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                             showBlackToolTip(Delivery.CNC)
                         }
                         2 -> {
-                           // Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYORDERS, this)
+                            // Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYORDERS, this)
                             showBlackToolTip(Delivery.DASH)
                         }
                     }
@@ -243,7 +243,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
                         FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_DELIVERY_CLICK_COLLECT
             ),
-            activity)
+            activity
+        )
 
 
         KotlinUtils.presentEditDeliveryGeoLocationActivity(
@@ -293,28 +294,29 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
     }
 
-   private fun updateCurrentTab(deliveryType: String?) {
-       when(deliveryType) {
-           BundleKeysConstants.STANDARD->  {
-               viewpager_main.setCurrentItem(0)
-           }
-           BundleKeysConstants.CNC -> {
-               viewpager_main.setCurrentItem(1)
-           }
-           BundleKeysConstants.DASH ->{
-               viewpager_main.setCurrentItem(2)
-           }
-       }
-   }
+    private fun updateCurrentTab(deliveryType: String?) {
+        when (deliveryType) {
+            BundleKeysConstants.STANDARD -> {
+                viewpager_main.setCurrentItem(0)
+            }
+            BundleKeysConstants.CNC -> {
+                viewpager_main.setCurrentItem(1)
+            }
+            BundleKeysConstants.DASH -> {
+                viewpager_main.setCurrentItem(2)
+            }
+        }
+    }
 
     private fun setupToolbar(tabPosition: Int) {
         if (tabPosition < 0) {
             return
         }
 
-        if ( Utils.getPreferredDeliveryLocation() !=null &&
-            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails !=null ) {
-                return
+        if (Utils.getPreferredDeliveryLocation() != null &&
+            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails != null
+        ) {
+            return
         }
 
         when (tabPosition) {
@@ -540,7 +542,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         if (requestCode == DASH_SET_ADDRESS_REQUEST_CODE) {
             // Set Address done on Dash Tab. update the response and Refresh the Tab now.
             val validateLocationResponse = data?.getSerializableExtra(
-                BundleKeysConstants.VALIDATE_RESPONSE) as? ValidateLocationResponse
+                BundleKeysConstants.VALIDATE_RESPONSE
+            ) as? ValidateLocationResponse
             validateLocationResponse?.validatePlace?.let { shopViewModel.setValidatePlaceResponse(it) }
             refreshViewPagerFragment()
         }
@@ -706,7 +709,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             foodItemTitle?.visibility = View.VISIBLE
             deliveryIconLayout?.visibility = View.VISIBLE
             fashionItemTitle?.visibility = View.VISIBLE
-            deliveryIconLayout?.visibility  = View.GONE
+            deliveryIconLayout?.visibility = View.GONE
 
             deliveryCollectionTitle?.text = getString(R.string.earliest_delivery_dates)
             foodItemDateText?.text = it.firstAvailableFoodDeliveryDate
@@ -729,7 +732,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             foodItemTitle?.visibility = View.GONE
             fashionItemDateText?.visibility = View.GONE
             fashionItemTitle?.visibility = View.GONE
-            deliveryIconLayout?.visibility  = View.VISIBLE
+            deliveryIconLayout?.visibility = View.VISIBLE
 
             if (isUserAuthenticated()) {
                 Utils.getPreferredDeliveryLocation()?.let {
@@ -744,7 +747,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     )
                 }
             } else {
-               KotlinUtils.getAnonymousUserLocationDetails()?.let {
+                KotlinUtils.getAnonymousUserLocationDetails()?.let {
                     val store = GeoUtils.getStoreDetails(
                         it.fulfillmentDetails.storeId,
                         validatePlace.stores
@@ -786,7 +789,10 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             cartIcon?.setImageResource(R.drawable.icon_cart_white)
             deliveryIcon?.setImageResource(R.drawable.icon_scooter_white)
             bubbleLayout?.arrowPosition = 1060.0F
-            productAvailableText?.text = resources.getString(R.string.dash_item_limit, it?.onDemand?.quantityLimit?.foodMaximumQuantity)
+            productAvailableText?.text = resources.getString(
+                R.string.dash_item_limit,
+                it?.onDemand?.quantityLimit?.foodMaximumQuantity
+            )
             /*TODO deliveryFee value will come from config*/
             deliveryFeeText?.text = "Free for orders over R75"
         }
