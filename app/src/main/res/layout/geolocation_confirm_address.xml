@@ -132,7 +132,10 @@
             android:gravity="center"
             android:letterSpacing="@integer/point_two"
             android:minHeight="@dimen/fifty_dp"
+            android:text="@string/confirm_address"
+            android:textAllCaps="true"
             android:textColor="@color/white"
+            android:textSize="@dimen/twelve_sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -140,7 +143,6 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
