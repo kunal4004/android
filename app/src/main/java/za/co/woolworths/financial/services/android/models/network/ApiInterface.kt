@@ -619,6 +619,7 @@ interface ApiInterface {
     fun getShoppingCart(
 
             @Header("sessionToken") sessionToken: String,
+            @Header("environment") environment: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
     ): Call<ShoppingCartResponse>
 
@@ -646,6 +647,7 @@ interface ApiInterface {
     fun getCartSummary(
 
             @Header("userAgent") userAgent: String,
+            @Header("environment") environment: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String): Call<CartSummaryResponse>

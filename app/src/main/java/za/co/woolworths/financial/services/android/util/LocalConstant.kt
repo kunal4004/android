@@ -8,5 +8,6 @@ class LocalConstant {
         const val textLabel = "release the hold"
         const val appPinLabel = "App PIN"
         const val environment = "SIT4"
+        const val dev4Environment = "www-win-dev4"
     }
 }

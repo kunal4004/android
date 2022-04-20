@@ -22,7 +22,9 @@ open class NetworkConfig {
 
     fun getOS(): String = "Android"
 
-    fun getEnvironment(): String = LocalConstant.environment
+    fun getSit4Environment(): String = LocalConstant.environment
+
+    fun getDev4Environment(): String = LocalConstant.dev4Environment
 
     fun getApiId(): String = WoolworthsApplication.getApiId()
 
