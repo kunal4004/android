@@ -28,7 +28,6 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
-import com.google.android.gms.location.LocationRequest
 import com.google.firebase.installations.FirebaseInstallations
 import kotlinx.android.synthetic.main.fragment_enter_otp.buttonNext
 import kotlinx.android.synthetic.main.fragment_enter_otp.didNotReceiveOTPTextView
@@ -41,7 +40,6 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.Card
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
@@ -87,7 +85,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     private var retryApiCall: String? = null
     private var otpMethod: String? = OTPMethodType.SMS.name
     private var currentLocation: Location? = null
-    private var cardWithPLCState: Card? = null
+    private var mLinkDeviceOTPReq: Call<RetrieveOTPResponse>? = null
     private val mKeyListener = View.OnKeyListener { v, keyCode, event ->
         if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
             when {
@@ -131,8 +129,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
             clearErrorMessage()
         }
     }
-
-    private var mLinkDeviceOTPReq: Call<RetrieveOTPResponse>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -290,23 +286,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
 
     private fun isRetrieveOTPCallInProgress(): Boolean = sendinOTPLayout?.visibility == View.VISIBLE
 
-    fun createLocationRequest(): LocationRequest? {
-        return LocationRequest.create().apply {
-            interval = 100
-            fastestInterval = 1000
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        }
-    }
-
-    @SuppressLint("NewApi")
-    private fun checkLocationPermission(): Boolean {
-        activity?.apply {
-            return ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-        }
-        return false
-    }
-
     private fun getNumberFromEditText(numberEditText: EditText?) = numberEditText?.text?.toString()
             ?: ""
 
@@ -449,29 +428,12 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         showLinkingDeviceProcessing()
 
         if (currentLocation == null && checkForLocationPermission) {
-            checkForLocationPermission()
+            startLocationDiscoveryProcess()
             return
         }
 
+        locator.stopService()
         retrieveTokenAndCallLinkDevice()
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private fun checkForLocationPermission() {
-        activity?.apply {
-            //Check if user has location services enabled. If not, notify user as per current store locator functionality.
-            if (!Utils.isLocationEnabled(this)) {
-                val enableLocationSettingsFragment = EnableLocationSettingsFragment()
-                enableLocationSettingsFragment?.show(
-                    supportFragmentManager,
-                    EnableLocationSettingsFragment::class.java.simpleName
-                )
-                return@apply
-            }
-
-            // If location services enabled, extract latitude and longitude
-            startLocationDiscoveryProcess()
-        }
     }
 
     private fun startLocationDiscoveryProcess() {
@@ -486,7 +448,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     private fun handleLocationEvent(locationEvent: Event.Location) {
         Utils.saveLastLocation(locationEvent.locationData, context)
         currentLocation = locationEvent.locationData
-        callLinkingDeviceAPI()
+        callLinkingDeviceAPI(checkForLocationPermission = false)
     }
 
     private fun handlePermissionEvent(permissionEvent: Event.Permission) {
@@ -816,6 +778,9 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         super.onActivityResult(requestCode, resultCode, data)
 
         when (requestCode) {
+            EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE -> {
+                startLocationDiscoveryProcess()
+            }
             ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE -> {
                 when (resultCode) {
                     ErrorHandlerActivity.RESULT_RETRY -> {
