@@ -1057,7 +1057,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                         if (fragment instanceof ShopFragment) {
                             ShopFragment shopFragment = (ShopFragment) fragment;
                             shopFragment.navigateToMyListFragment();
-                            shopFragment.refreshViewPagerFragment(true);
+                            shopFragment.refreshViewPagerFragment();
                         }
                         break;
 
@@ -1112,7 +1112,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     Fragment fragment = mNavController.getCurrentFrag();
                     if (fragment instanceof ShopFragment) {
                         ShopFragment shopFragment = (ShopFragment) fragment;
-                        shopFragment.refreshViewPagerFragment(false);
+                        shopFragment.refreshViewPagerFragment();
                         shopFragment.navigateToMyListFragment();
                         return;
                     }
@@ -1134,7 +1134,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     if (fragment instanceof ShopFragment) {
                         ShopFragment shopFragment = (ShopFragment) fragment;
                         shopFragment.navigateToMyListFragment();
-                        shopFragment.refreshViewPagerFragment(false);
+                        shopFragment.refreshViewPagerFragment();
                         return;
                     }
                     break;
@@ -1479,7 +1479,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 if (mNavController.getCurrentFrag() instanceof ShopFragment) {
                     ShopFragment shopFragment = (ShopFragment) mNavController.getCurrentFrag();
                     shopFragment.navigateToMyListFragment();
-                    shopFragment.refreshViewPagerFragment(true);
+                    shopFragment.refreshViewPagerFragment();
                 }
             }
         }

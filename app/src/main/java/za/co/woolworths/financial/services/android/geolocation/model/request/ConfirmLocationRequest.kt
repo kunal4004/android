@@ -12,13 +12,14 @@ class ConfirmLocationRequest(
     var page: String? = ""
 ) {
 
-    constructor (deliveryType: String, address: ConfirmLocationAddress) : this(
+    constructor (deliveryType: String, storeId: String, address: ConfirmLocationAddress) : this(
         deliveryType,
         address,
-        AppConstant.EMPTY_STRING,
+        storeId,
     ) {
         this.deliveryType = deliveryType
         this.address = address
+        this.storeId = storeId
     }
 
 }

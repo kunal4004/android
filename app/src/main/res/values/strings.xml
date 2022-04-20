@@ -2498,6 +2498,7 @@
     <string name="amt_tip_added">R%1$s Tip Added</string>
     <string name="rand_text">R</string>
     <string name="driver_minimum_tip_amt_error">A minimum amount of R%1$s is required.</string>
+    <string name="driver_maximum_tip_amt_error">A maximum amount of R%1$s is allowed.</string>
     <string name="address_type">Address Type:</string>
     <string name="add_street_address">Street Address:</string>
     <string name="dash_free_collection">"Free Collection"</string>
