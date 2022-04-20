@@ -248,9 +248,9 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         mPosition = position
         setButtonUI(true)
         if (address.verified) {
-            tvConfirmAddress.text = getString(R.string.confirm)
+            tvConfirmAddress?.text = getString(R.string.confirm)
         } else {
-            tvConfirmAddress.text = getString(R.string.update_address)
+            tvConfirmAddress?.text = getString(R.string.update_address)
         }
     }
 
@@ -274,7 +274,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
 
                 if (progressBar.visibility == View.GONE
                     && selectedAddress != null
-                    && tvConfirmAddress.text == getString(R.string.update_address)
+                    && tvConfirmAddress?.text == getString(R.string.update_address)
                 ) {
                     savedAddressResponse?.let {
 
@@ -292,7 +292,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 }
                 if (progressBar.visibility == View.GONE
                     && selectedAddress != null
-                    && tvConfirmAddress.text == getString(R.string.confirm)
+                    && tvConfirmAddress?.text == getString(R.string.confirm)
                 ) {
                     selectedAddress.let {
                         if (it.placesId != null) {
