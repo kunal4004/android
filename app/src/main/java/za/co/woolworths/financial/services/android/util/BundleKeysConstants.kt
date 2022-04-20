@@ -25,9 +25,11 @@ class BundleKeysConstants {
         const val IS_COMING_CONFIRM_ADD = "conform_add"
         var IS_FROM_STORE_LOCATOR = false
         const val REQUEST_CODE = 1515
+        const val DASH_SET_ADDRESS_REQUEST_CODE = 1516
         const val DELIVERY_TYPE = "DELIVERY_TYPE"
         const val IS_COMING_FROM_CHECKOUT = "isComingFromCheckout"
         const val IS_COMING_FROM_SLOT_SELECTION = "isComingFromSlotSelection"
+        const val IS_FROM_DASH_TAB = "isFromDashTab"
         const val SAVED_ADDRESS_RESPONSE = "savedAddressResponse"
         const val DEFAULT_ADDRESS = "defaultAddress"
         const val PLACE_ID = "placeId"

@@ -35,6 +35,10 @@ class ChangeFullfilmentCollectionStoreFragment : Fragment(R.layout.layout_dash_c
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        init()
+    }
+
+    fun init() {
         activity?.apply {
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         }
@@ -55,11 +59,11 @@ class ChangeFullfilmentCollectionStoreFragment : Fragment(R.layout.layout_dash_c
         } else {
             // when permission granted and location is not enabled
             if (isPermissionGranted) {
-
+                // todo to be handled in separate story.
             }
             //When Location permission not granted.
             else if (!checkLocationPermission() && !isLocationModalShown) {
-
+                // todo to show gps not on dialog.
             }
         }
     }
@@ -176,5 +180,9 @@ class ChangeFullfilmentCollectionStoreFragment : Fragment(R.layout.layout_dash_c
 
     private fun hideLocationDisabledUi() {
         layoutEdgeCaseScreen.visibility = View.GONE
+    }
+
+    fun scrollToTop() {
+            layoutEdgeCaseScreen?.scrollTo(0, 0)
     }
 }
