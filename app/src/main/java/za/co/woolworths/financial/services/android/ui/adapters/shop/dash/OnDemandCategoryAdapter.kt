@@ -9,6 +9,11 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DecodeFormat
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import kotlinx.android.synthetic.main.item_banner_carousel.view.*
 import kotlinx.android.synthetic.main.item_dash_category.view.*
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.OnDemandNavigationListener
@@ -63,7 +68,16 @@ class OnDemandCategoryItemHolder(itemView: View) : RecyclerView.ViewHolder(itemV
             itemView.setOnClickListener {
                 onDemandNavigationListener.onDemandNavigationClicked(it, categoryItem)
             }
-            ImageManager.setPicture(imgCategory, categoryItem.imgUrl)
+            Glide.with(context)
+                .load(categoryItem.imgUrl)
+                .format(DecodeFormat.PREFER_ARGB_8888)
+                .placeholder(R.drawable.woolworth_logo_icon)
+                .transform(
+                    CenterCrop(),
+                    RoundedCorners(context.resources.getDimensionPixelOffset(R.dimen.twenty_four_dp))
+                )
+                .dontAnimate()
+                .into(imgCategory)
             txtCategoryName?.text = categoryItem.categoryName
         }
     }
