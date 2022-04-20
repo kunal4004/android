@@ -112,6 +112,10 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     override fun onViewCreated(v: View, savedInstanceState: Bundle?) {
         super.onViewCreated(v, savedInstanceState)
 
+        dynamicMapView?.initializeMap(savedInstanceState, this)
+        mMarkers = HashMap<String, Int>()
+        markers = ArrayList<Marker>()
+
         mPopWindowValidationMessage = PopWindowValidationMessage(activity)
         storesProgressBar?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
         val relNoConnectionLayout =
@@ -222,14 +226,6 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
             updateMap(Utils.getLastSavedLocation())
         } else {
             startLocationUpdates()
-        }
-    }
-
-    private fun initMap() {
-        if (isAdded) {
-            dynamicMapView?.initializeMap(childFragmentManager, this)
-            mMarkers = HashMap<String, Int>()
-            markers = ArrayList<Marker>()
         }
     }
 
@@ -538,7 +534,6 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
         if (location != null) {
             Utils.saveLastLocation(location, activity)
             checkLocationServiceAndSetLayout(true)
-            initMap()
             updateMyCurrentLocationOnMap(location)
             locationAPIRequest(location)
         }
@@ -600,6 +595,11 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
         mBottomNavigator?.removeToolbar()
     }
 
+    override fun onDestroyView() {
+        dynamicMapView?.onDestroy()
+        super.onDestroyView()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver()
@@ -608,6 +608,7 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
 
     override fun onResume() {
         super.onResume()
+        dynamicMapView?.onResume()
         activity?.let { Utils.setScreenName(it, FirebaseManagerAnalyticsProperties.ScreenNames.STORES_NEARBY) }
         if (updateMap) {
             checkLocationServiceAndSetLayout(true)
@@ -705,4 +706,19 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     fun collapseSlidingPanel() { sliding_layout.panelState = PanelState.COLLAPSED }
 
     fun getSlidingPanelState() = sliding_layout?.panelState
+
+    override fun onPause() {
+        dynamicMapView?.onPause()
+        super.onPause()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        dynamicMapView?.onLowMemory()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        dynamicMapView?.onSaveInstanceState(outState)
+    }
 }

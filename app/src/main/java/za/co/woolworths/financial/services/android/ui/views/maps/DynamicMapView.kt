@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.views.maps
 
 import android.content.Context
+import android.os.Bundle
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -11,14 +12,14 @@ import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import kotlinx.android.synthetic.main.view_dynamic_map.view.*
 import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter
 
 class DynamicMapView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = 0,
-    defStyleRes: Int = 0,
-    var delegate: DynamicMapDelegate? = null
+    defStyleRes: Int = 0
 ) : ConstraintLayout(context, attrs, defStyle, defStyleRes), OnMapReadyCallback,
     GoogleMap.OnMarkerClickListener {
 
@@ -27,19 +28,17 @@ class DynamicMapView @JvmOverloads constructor(
         var CAMERA_ANIMATION_DURATION_SLOW = 500
     }
 
-    private var googleMapFragment: SupportMapFragment? = null
+    private var delegate: DynamicMapDelegate? = null
     var googleMap: GoogleMap? = null // TODO: make var private and create functions for usage of this
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_dynamic_map, this, true)
     }
 
-    fun initializeMap(fragmentManager: FragmentManager, delegate: DynamicMapDelegate) {
+    fun initializeMap(savedInstanceState: Bundle?, delegate: DynamicMapDelegate) {
         this.delegate = delegate
-        if (googleMap == null) {
-            googleMapFragment = fragmentManager.findFragmentById(R.id.googleMapFragment) as SupportMapFragment?
-            googleMapFragment?.getMapAsync(this)
-        }
+        googleMapView.onCreate(savedInstanceState)
+        googleMapView.getMapAsync(this)
     }
 
     override fun onMapReady(map: GoogleMap) {
@@ -78,5 +77,25 @@ class DynamicMapView @JvmOverloads constructor(
                 duration,
                 callback
             )
+    }
+
+    fun onResume() {
+        googleMapView.onResume()
+    }
+
+    fun onPause() {
+        googleMapView.onPause()
+    }
+
+    fun onDestroy() {
+        googleMapView.onDestroy()
+    }
+
+    fun onLowMemory() {
+        googleMapView.onLowMemory()
+    }
+
+    fun onSaveInstanceState(outState: Bundle) {
+        googleMapView.onSaveInstanceState(outState)
     }
 }
