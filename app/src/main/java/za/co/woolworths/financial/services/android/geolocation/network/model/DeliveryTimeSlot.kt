@@ -1,33 +1,34 @@
 package za.co.woolworths.financial.services.android.geolocation.network.model
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
-class DeliveryTimeSlot {
+class DeliveryTimeSlot(
 
     @SerializedName("hourFrom")
-    var hourFrom: String? = null
+    var hourFrom: String? = null,
 
     @SerializedName("hourTo")
-    var hourTo: String? = null
+    var hourTo: String? = null,
 
     @SerializedName("stringShipOnDate")
-    var stringShipOnDate: String? = null
+    var stringShipOnDate: String? = null,
 
     @SerializedName("intHourFrom")
-    var intHourFrom: Int? = null
+    var intHourFrom: Int? = null,
 
     @SerializedName("description")
-    var description: String? = null
+    var description: String? = null,
 
     @SerializedName("slotId")
-    var slotId: String? = null
+    var slotId: String? = null,
 
     @SerializedName("details")
-    var details: String? = null
+    var details: String? = null,
 
     @SerializedName("selected")
-    var selected: Boolean? = null
+    var selected: Boolean? = null,
 
     @SerializedName("slotCost")
-    var slotCost: Int? = null
-}
+    var slotCost: Int? = null,
+) : Serializable

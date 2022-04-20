@@ -693,6 +693,7 @@ object OneAppService : RetrofitConfig() {
     fun getConfirmDeliveryAddressDetails(body: ConfirmLocationRequest): Call<ConfirmDeliveryAddressResponse>{
         return mApiInterface.confirmLocation("",
             "",
+            getEnvironment(),
             getSessionToken(),
             getDeviceIdentityToken(),
             body
