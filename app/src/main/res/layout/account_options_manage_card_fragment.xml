@@ -111,7 +111,6 @@
                 android:id="@+id/replacementCardNext"
                 style="@style/accountOptionsNextImageViewStyle"
                 android:src="@drawable/ic_caret_black" />
-
         </RelativeLayout>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
