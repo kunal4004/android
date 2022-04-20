@@ -113,6 +113,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         const val SCREEN_NAME_EDIT_ADDRESS: String = "SCREEN_NAME_EDIT_ADDRESS"
         const val SCREEN_NAME_ADD_NEW_ADDRESS: String = "SCREEN_NAME_ADD_NEW_ADDRESS"
         const val REGEX_NICK_NAME: String = "^$|^[a-zA-Z0-9\\s<!>@$&().+,-/\"']+$"
+        const val ADDRESS_NICK_NAME_MAX_CHAR: Int = 40
     }
 
     enum class ProvinceSuburbType {
@@ -293,13 +294,18 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         }
         addressNicknameEditText?.apply {
             afterTextChanged {
-                val length = it.length
-                if (length > 0 && !Pattern.matches(REGEX_NICK_NAME, it)) {
-                    text?.delete(length - 1, length)
+                val addressNickNameLength = it.length
+                if (addressNickNameLength > 0 && !Pattern.matches(REGEX_NICK_NAME, it)) {
+                    text?.delete(addressNickNameLength - 1, addressNickNameLength)
                 }
                 selectedAddress.savedAddress.nickname = it
-                if (it.isNotEmpty())
+                if (addressNickNameLength >= ADDRESS_NICK_NAME_MAX_CHAR) {
+                    addressNicknameErrorMsg?.visibility = View.VISIBLE
+                    addressNicknameErrorMsg?.text = getString(R.string.max_characters_allowed)
+                } else if (it.isNotEmpty()) {
+                    addressNicknameErrorMsg?.text = getString(R.string.address_nickname_error_msg)
                     showErrorInputField(this, View.GONE)
+                }
             }
         }
 

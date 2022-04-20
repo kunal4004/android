@@ -11,6 +11,7 @@ import android.os.Handler
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
@@ -35,7 +36,6 @@ import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
-import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
@@ -49,15 +49,17 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.Departments
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.DISPLAY_TOAST_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
-import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFullfilmentCollectionStoreFragment
+import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashDeliveryAddressFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_3000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_4000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_ORDER_DETAILS_PAGE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DASH_SET_ADDRESS_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 
 
 /**
@@ -69,7 +71,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     OnChildFragmentEvents,
     WMaterialShowcaseView.IWalkthroughActionListener {
 
-
     private var mTabTitle: MutableList<String>? = null
     private var permissionUtils: PermissionUtils? = null
     var permissions: ArrayList<String> = arrayListOf()
@@ -79,6 +80,10 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private var shoppingListsResponse: ShoppingListsResponse? = null
     private var user: String = ""
     private var validateLocationResponse: ValidateLocationResponse? = null
+
+    private val shopViewModel: ShopViewModel by viewModels(
+        ownerProducer = { this }
+    )
     val confirmAddressViewModel: ConfirmAddressViewModel by lazy {
         ViewModelProvider(
             this,
@@ -134,13 +139,11 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                             showBlackToolTip(Delivery.STANDARD)
                         }
                         1 -> {
-                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS,
-                                this)
+                            //Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS, this)
                             showBlackToolTip(Delivery.CNC)
                         }
                         2 -> {
-                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYORDERS,
-                                this)
+                           // Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYORDERS, this)
                             showBlackToolTip(Delivery.DASH)
                         }
                     }
@@ -201,6 +204,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                                                 }
                                             }
                                         }
+
                                     }
                                 }
                             }
@@ -253,15 +257,16 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     override fun onResume() {
         super.onResume()
         executeValidateSuburb()
-        if (Utils.getPreferredDeliveryLocation() == null && KotlinUtils.getAnonymousUserLocationDetails() == null) {
+        if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails == null && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails == null) {
             return
         }
+        if (Utils.getPreferredDeliveryLocation().fulfillmentDetails.deliveryType.isNullOrEmpty() && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
+            return
+        }
+
         if (isUserAuthenticated()) {
             Utils.getPreferredDeliveryLocation()?.apply {
                 updateCurrentTab(this?.fulfillmentDetails?.deliveryType)
-                if (this?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
-                    return
-                }
                 activity?.let {
                     KotlinUtils.setDeliveryAddressView(
                         it,
@@ -275,14 +280,11 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         } else {
             KotlinUtils.getAnonymousUserLocationDetails()?.apply {
                 updateCurrentTab(this?.fulfillmentDetails?.deliveryType)
-                if (this?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
-                    return
-                }
                 activity?.let {
                     KotlinUtils.setDeliveryAddressView(
                         it,
                         this,
-                        tvToolbarTitle ,
+                        tvToolbarTitle,
                         tvToolbarSubtitle,
                         imgToolbarStart
                     )
@@ -291,31 +293,29 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
     }
 
-    private fun updateCurrentTab(deliveryType: String?) {
-        when (deliveryType) {
-            BundleKeysConstants.STANDARD -> {
-                viewpager_main.setCurrentItem(0)
-            }
-            BundleKeysConstants.CNC -> {
-                viewpager_main.setCurrentItem(1)
-            }
-            BundleKeysConstants.DASH -> {
-                viewpager_main.setCurrentItem(2)
-            }
-        }
-    }
+   private fun updateCurrentTab(deliveryType: String?) {
+       when(deliveryType) {
+           BundleKeysConstants.STANDARD->  {
+               viewpager_main.setCurrentItem(0)
+           }
+           BundleKeysConstants.CNC -> {
+               viewpager_main.setCurrentItem(1)
+           }
+           BundleKeysConstants.DASH ->{
+               viewpager_main.setCurrentItem(2)
+           }
+       }
+   }
 
     private fun setupToolbar(tabPosition: Int) {
         if (tabPosition < 0) {
             return
         }
 
-        if ( Utils.getPreferredDeliveryLocation() !=null ||
+        if ( Utils.getPreferredDeliveryLocation() !=null &&
             KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails !=null ) {
                 return
         }
-
-
 
         when (tabPosition) {
             1 -> {
@@ -409,7 +409,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 fadeOutToolbar(R.color.recent_search_bg)
                 showBackNavigationIcon(false)
                 showBottomNavigationMenu()
-                refreshViewPagerFragment(false)
+                refreshViewPagerFragment()
                 Handler().postDelayed({
                     hideToolbar()
                 }, AppConstant.DELAY_1000_MS)
@@ -500,13 +500,13 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             when (resultCode) {
                 DISPLAY_TOAST_RESULT_CODE -> {
                     navigateToMyListFragment()
-                    refreshViewPagerFragment(true)
+                    refreshViewPagerFragment()
                 }
                 ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE -> {
-                    refreshViewPagerFragment(true)
+                    refreshViewPagerFragment()
                 }
                 CancelOrderProgressFragment.RESULT_CODE_CANCEL_ORDER_SUCCESS -> {
-                    refreshViewPagerFragment(true)
+                    refreshViewPagerFragment()
                 }
             }
         }
@@ -514,20 +514,20 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         if (requestCode == CancelOrderProgressFragment.REQUEST_CODE_CANCEL_ORDER
             && resultCode == CancelOrderProgressFragment.RESULT_CODE_CANCEL_ORDER_SUCCESS
         ) {
-            refreshViewPagerFragment(true)
+            refreshViewPagerFragment()
         }
 
         if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-            refreshViewPagerFragment(true)
+            refreshViewPagerFragment()
         }
 
         if (requestCode == PDP_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
             navigateToMyListFragment()
-            refreshViewPagerFragment(true)
+            refreshViewPagerFragment()
         }
 
         if (requestCode == SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE) {
-            refreshViewPagerFragment(true)
+            refreshViewPagerFragment()
         }
 
         if (requestCode == REQUEST_CODE || requestCode == DEPARTMENT_LOGIN_REQUEST && viewpager_main.currentItem == 0) {
@@ -537,23 +537,31 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             ) as? DepartmentsFragment
             fragment?.onActivityResult(requestCode, resultCode, data)
         }
+        if (requestCode == DASH_SET_ADDRESS_REQUEST_CODE) {
+            // Set Address done on Dash Tab. update the response and Refresh the Tab now.
+            val validateLocationResponse = data?.getSerializableExtra(
+                BundleKeysConstants.VALIDATE_RESPONSE) as? ValidateLocationResponse
+            validateLocationResponse?.validatePlace?.let { shopViewModel.setValidatePlaceResponse(it) }
+            refreshViewPagerFragment()
+        }
     }
 
-    fun refreshViewPagerFragment(isNewSession: Boolean) {
+    fun refreshViewPagerFragment() {
         when (viewpager_main.currentItem) {
             1 -> {
-                val myListsFragment = viewpager_main?.adapter?.instantiateItem(
-                    viewpager_main,
-                    viewpager_main.currentItem
-                ) as? MyListsFragment
-                myListsFragment?.authenticateUser(isNewSession)
+                val changeFullfilmentCollectionStoreFragment =
+                    viewpager_main?.adapter?.instantiateItem(
+                        viewpager_main,
+                        viewpager_main.currentItem
+                    ) as? ChangeFullfilmentCollectionStoreFragment
+                changeFullfilmentCollectionStoreFragment?.init()
             }
             2 -> {
-                val myOrdersFragment = viewpager_main?.adapter?.instantiateItem(
+                val dashDeliveryAddressFragment = viewpager_main?.adapter?.instantiateItem(
                     viewpager_main,
                     viewpager_main.currentItem
-                ) as? MyOrdersFragment
-                myOrdersFragment?.configureUI(isNewSession)
+                ) as? DashDeliveryAddressFragment
+                dashDeliveryAddressFragment?.initViews()
             }
         }
     }
@@ -581,18 +589,19 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 detailsFragment?.scrollToTop()
             }
             1 -> {
-                val myListsFragment = viewpager_main?.adapter?.instantiateItem(
-                    viewpager_main,
-                    viewpager_main.currentItem
-                ) as? MyListsFragment
-                myListsFragment?.scrollToTop()
+                val changeFullfilmentCollectionStoreFragment =
+                    viewpager_main?.adapter?.instantiateItem(
+                        viewpager_main,
+                        viewpager_main.currentItem
+                    ) as? ChangeFullfilmentCollectionStoreFragment
+                changeFullfilmentCollectionStoreFragment?.scrollToTop()
             }
             2 -> {
-                val myOrdersFragment = viewpager_main?.adapter?.instantiateItem(
+                val dashDeliveryAddressFragment = viewpager_main?.adapter?.instantiateItem(
                     viewpager_main,
                     viewpager_main.currentItem
-                ) as? MyOrdersFragment
-                myOrdersFragment?.scrollToTop()
+                ) as? DashDeliveryAddressFragment
+                dashDeliveryAddressFragment?.scrollToTop()
             }
         }
     }
@@ -721,7 +730,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             fashionItemDateText?.visibility = View.GONE
             fashionItemTitle?.visibility = View.GONE
             deliveryIconLayout?.visibility  = View.VISIBLE
-
 
             if (isUserAuthenticated()) {
                 Utils.getPreferredDeliveryLocation()?.let {
@@ -887,5 +895,4 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     fun isUserAuthenticated() = SessionUtilities.getInstance().isUserAuthenticated
-
 }
