@@ -190,6 +190,16 @@ object OneAppService : RetrofitConfig() {
             getDeviceIdentityToken(), locationCord?.latitude, locationCord?.longitude, suburbId, storeId)
     }
 
+    suspend fun getDashCategoryNavigation(location: Location?): retrofit2.Response<RootCategories> {
+        return withContext(Dispatchers.IO) {
+            val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
+
+             mApiInterface.getDashCategoriesNavigation(
+                getSessionToken(),
+                getDeviceIdentityToken(), location?.latitude, location?.longitude, suburbId, storeId, "OnDemand")
+        }
+    }
+
     suspend fun getDashCategory(): retrofit2.Response<DashCategories> {
         return withContext(Dispatchers.IO) {
             val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()

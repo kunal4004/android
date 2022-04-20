@@ -4,23 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:layout_gravity="center"
     android:padding="@dimen/ten_dp">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/imgCircleContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="@dimen/twenty_four_dp"
         app:cardElevation="0dp"
-        app:cardPreventCornerOverlap="false"
+        app:cardCornerRadius="@dimen/twenty_four_dp"
+        android:id="@+id/imgCategoryCard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/imgCategory"
-            android:layout_width="@dimen/fourty_eight_dp"
-            android:layout_height="@dimen/fourty_eight_dp"
+            android:layout_width="@dimen/fourty_dp"
+            android:layout_height="@dimen/fourty_dp"
             android:scaleType="fitCenter" />
 
     </androidx.cardview.widget.CardView>
@@ -35,9 +35,9 @@
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="@dimen/twelve_sp"
-        app:layout_constraintEnd_toEndOf="@id/imgCircleContainer"
-        app:layout_constraintStart_toStartOf="@id/imgCircleContainer"
-        app:layout_constraintTop_toBottomOf="@id/imgCircleContainer"
+        app:layout_constraintEnd_toEndOf="@id/imgCategoryCard"
+        app:layout_constraintStart_toStartOf="@id/imgCategoryCard"
+        app:layout_constraintTop_toBottomOf="@id/imgCategoryCard"
         tools:text="On Promotion" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

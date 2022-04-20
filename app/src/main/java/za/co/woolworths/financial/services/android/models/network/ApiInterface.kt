@@ -42,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetailsR
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyOptOutBody
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 
 interface ApiInterface {
 
@@ -331,17 +332,31 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "Accept-Encoding: gzip")
     @GET("wfs/app/v4/categories")
     fun getRootCategories(
-            @Header("sessionToken") sessionToken: String,
-            @Header("deviceIdentityToken") deviceIdentityToken: String,
-            //Optional params
-            @Header("latitude") lat: Double?,
-            @Header("longitude") long: Double?,
-            @Query("suburbId") suburbId: String?,
-            @Query("storeId") storeId: String?
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        //Optional params
+        @Header("latitude") lat: Double?,
+        @Header("longitude") long: Double?,
+        @Query("suburbId") suburbId: String?,
+        @Query("storeId") storeId: String?,
+        @Query("deliveryType") deliveryType: String? = BundleKeysConstants.DASH
     ): Call<RootCategories>
 
     // Same as fun getRootCategories()
     // This is suspend fun with coroutines
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "Accept-Encoding: gzip")
+    @GET("wfs/app/v4/categories")
+    suspend fun getDashCategoriesNavigation(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        //Optional params
+        @Header("latitude") lat: Double?,
+        @Header("longitude") long: Double?,
+        @Query("suburbId") suburbId: String?,
+        @Query("storeId") storeId: String?,
+        @Query("deliveryType") deliveryType: String? = BundleKeysConstants.DASH
+    ): retrofit2.Response<RootCategories>
+
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "Accept-Encoding: gzip")
     @GET("wfs/app/v4/categories")
     suspend fun getDashCategories(

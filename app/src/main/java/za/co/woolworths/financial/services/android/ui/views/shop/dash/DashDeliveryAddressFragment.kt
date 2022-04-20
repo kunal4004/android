@@ -16,8 +16,12 @@ import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.ProductList
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
+import za.co.woolworths.financial.services.android.models.dto.RootCategory
 import za.co.woolworths.financial.services.android.models.network.Status
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.shop.dash.DashDeliveryAdapter
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getAnonymousUserLocationDetails
@@ -28,7 +32,7 @@ import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 
 @AndroidEntryPoint
 class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), IProductListing,
-    View.OnClickListener {
+    View.OnClickListener, OnDemandNavigationListener {
 
     private val viewModel: ShopViewModel by viewModels(
         ownerProducer = { requireParentFragment() }
@@ -38,7 +42,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        dashDeliveryAdapter = DashDeliveryAdapter(requireContext())
+        dashDeliveryAdapter = DashDeliveryAdapter(requireContext(), this)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -174,8 +178,16 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                         }
                     }
                     Status.ERROR -> {
+                        //Ignore error view for On Demand Categories,
+                        // Instead remove on demand category block from list
+                        // i.e. pass null in setData
+                        if (viewModel.isDashCategoriesAvailable.value == true) {
+                            dashDeliveryAdapter.setData(
+                                null,
+                                viewModel.dashCategories.value?.peekContent()?.data?.productCatalogues,
+                            )
+                        }
                         progressBar.visibility = View.GONE
-                        showErrorView(resource.message, resource.data)
                     }
                 }
             }
@@ -237,6 +249,17 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
     override fun openBrandLandingPage() {
         TODO("Not yet implemented")
+    }
+
+    override fun onDemandNavigationClicked(view: View?, categoryItem: RootCategory) {
+        (requireActivity() as? BottomNavigationActivity)?.apply {
+            pushFragment(
+                ProductListingFragment.newInstance(
+                searchType = ProductsRequestParams.SearchType.NAVIGATE,
+                sub_category_name = categoryItem.categoryName,
+                searchTerm = categoryItem.dimValId
+            ))
+        }
     }
 
     override fun onClick(v: View?) {
