@@ -30,9 +30,13 @@ import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.GoogleMap.CancelableCallback
-import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
 import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.fragment_stores_nearby1.*
+import kotlinx.android.synthetic.main.fragment_stores_nearby1.cardPager
+import kotlinx.android.synthetic.main.fragment_stores_nearby1.close
+import kotlinx.android.synthetic.main.fragment_stores_nearby1.layoutLocationServiceOn
+import kotlinx.android.synthetic.main.fragment_stores_nearby1.sliding_layout
+import kotlinx.android.synthetic.main.fragment_stores_nearby1.storesProgressBar
 import kotlinx.android.synthetic.main.location_service_off_layout.*
 import kotlinx.android.synthetic.main.store_details_layout_common.*
 import retrofit2.Call
@@ -50,17 +54,18 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter
-import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout.PanelState
 import za.co.woolworths.financial.services.android.ui.views.WButton
 import za.co.woolworths.financial.services.android.ui.views.WTextView
+import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate
+import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapView
 import za.co.woolworths.financial.services.android.util.*
 import java.util.*
 
-class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageChangeListener, OnMarkerClickListener, ILocationProvider {
+class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageChangeListener, ILocationProvider {
 
     companion object {
         private const val TAG = "StoresNearbyFragment1"
@@ -72,13 +77,11 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
     }
 
     private var mBottomNavigator: BottomNavigator? = null
-    var googleMap: GoogleMap? = null
     var unSelectedIcon: BitmapDescriptor? = null
     var selectedIcon: BitmapDescriptor? = null
     var mMarkers: HashMap<String, Int>? = null
     var markers: ArrayList<Marker>? = null
     var previousmarker: Marker? = null
-    var mapFragment: SupportMapFragment? = null
     var currentStorePosition = 0
     var storeDetailsList: List<StoreDetails>? = null
     private var updateMap = false
@@ -223,38 +226,24 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
     }
 
     private fun initMap() {
-        if (googleMap == null && isAdded) {
-            mapFragment =
-                    this.childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-            mapFragment?.getMapAsync(this)
+        if (isAdded) {
+            dynamicMapView?.initializeMap(childFragmentManager, this)
             mMarkers = HashMap<String, Int>()
             markers = ArrayList<Marker>()
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    override fun onMapReady(map: GoogleMap) {
-        googleMap = map
-        onMapReady()
-    }
-
-    private fun onMapReady() {
-        //If permission is not granted, request permission.
-        googleMap?.setInfoWindowAdapter(MapWindowAdapter(context))
-        googleMap?.setOnMarkerClickListener(this@StoresNearbyFragment1)
+    override fun onMapReady() {
         unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin)
         selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin)
     }
 
     private fun drawMarker(point: LatLng, bitmapDescriptor: BitmapDescriptor?, pos: Int) {
-        val markerOptions = MarkerOptions()
-        markerOptions.position(point)
-        markerOptions.icon(bitmapDescriptor)
-        val marker = googleMap?.addMarker(markerOptions)
+        val marker = dynamicMapView?.addMarker(point, bitmapDescriptor)
         mMarkers?.set(marker!!.id, pos)
         marker?.let { markers?.add(it) }
         if (pos == 0) {
-            googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(marker?.position, 13f), CAMERA_ANIMATION_SPEED, null)
+            dynamicMapView?.animateCamera(marker)
             previousmarker = marker
         }
     }
@@ -262,7 +251,7 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
     override fun onPageSelected(position: Int) {
         previousmarker?.setIcon(unSelectedIcon)
         markers?.get(position)?.setIcon(selectedIcon)
-        googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(markers?.get(position)?.position, 13f), CAMERA_ANIMATION_SPEED, null)
+        dynamicMapView?.animateCamera(markers?.get(position))
         previousmarker = markers?.get(position)
         /*
 		 *InfoWindow shows description above a marker.
@@ -272,17 +261,12 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
     override fun onPageScrollStateChanged(state: Int) {}
-    override fun onMarkerClick(marker: Marker): Boolean {
-        onMarkerClicked(marker)
-        return true
-    }
 
-    private fun onMarkerClicked(marker: Marker) {
+    override fun onMarkerClicked(marker: Marker) {
         try {
             val id = mMarkers?.get(marker.id)
             previousmarker?.setIcon(unSelectedIcon)
             marker.setIcon(selectedIcon)
-            //googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 13), CAMERA_ANIMATION_SPEED, null);
             previousmarker = marker
             cardPager?.currentItem = id ?: 0
         } catch (ex: NullPointerException) {
@@ -299,8 +283,8 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
     }
 
     fun backToAllStoresPage(position: Int) {
-        googleMap?.uiSettings?.isScrollGesturesEnabled = true
-        googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(markers?.get(position)?.position, 13f), 500, null)
+        dynamicMapView?.googleMap?.uiSettings?.isScrollGesturesEnabled = true
+        dynamicMapView?.animateCamera(markers?.get(position), DynamicMapView.CAMERA_ANIMATION_DURATION_SLOW)
         val toolbar = mBottomNavigator?.toolbar()
         toolbar?.animate()?.translationY(toolbar.top.toFloat())?.setInterpolator(AccelerateInterpolator())?.start()
         showAllMarkers(markers)
@@ -309,14 +293,14 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
     private fun showStoreDetails(position: Int) {
         storeDetailsList?.get(position)?.let { storeDetails -> initStoreDetailsView(storeDetails) }
         hideMarkers(markers, position)
-        val center = googleMap?.cameraPosition?.target?.latitude
-        val northMap = googleMap?.projection?.visibleRegion?.latLngBounds?.northeast?.latitude
+        val center = dynamicMapView?.googleMap?.cameraPosition?.target?.latitude
+        val northMap = dynamicMapView?.googleMap?.projection?.visibleRegion?.latLngBounds?.northeast?.latitude
         val diff = northMap?.let { center?.minus(it) }
         val newLat = markers?.get(position)?.position?.latitude?.plus(diff?.div(1.5)!!)
         val centerCam =
                 CameraUpdateFactory.newLatLng(markers?.get(position)?.position?.longitude?.let { newLat?.let { latitude -> LatLng(latitude, it) } })
-        googleMap?.animateCamera(centerCam, CAMERA_ANIMATION_SPEED, null)
-        googleMap?.uiSettings?.isScrollGesturesEnabled = false
+        dynamicMapView?.animateCamera(centerCam)
+        dynamicMapView?.googleMap?.uiSettings?.isScrollGesturesEnabled = false
         if (sliding_layout?.anchorPoint == 1.0f) {
             val toolbar = mBottomNavigator?.toolbar()
             toolbar?.animate()?.translationY(-toolbar.bottom.toFloat())?.setInterpolator(AccelerateInterpolator())?.start()
@@ -340,7 +324,7 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
     }
 
     fun bindDataWithUI(storeDetailsList: List<StoreDetails>) {
-        if (googleMap != null && storeDetailsList.size >= 0) {
+        if (dynamicMapView?.googleMap != null && storeDetailsList.size >= 0) {
             updateMyCurrentLocationOnMap(mLocation)
             for (i in storeDetailsList.indices) {
                 if (i == 0) {
@@ -487,12 +471,11 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
 
             if (myLocation == null) {
                 myLocation =
-                        googleMap?.addMarker(MarkerOptions().position(LatLng(latitude, longitude)).icon(BitmapDescriptorFactory.fromResource(R.drawable.mapcurrentlocation)))
-                googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), 13f), CAMERA_ANIMATION_SPEED, null)
+                    dynamicMapView?.addMarker(LatLng(latitude, longitude), BitmapDescriptorFactory.fromResource(R.drawable.mapcurrentlocation))
             } else {
                 myLocation?.position = LatLng(latitude, longitude)
-                googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), 13f), CAMERA_ANIMATION_SPEED, null)
             }
+            dynamicMapView?.animateCamera(myLocation)
         } catch (ex: Exception) {
             FirebaseManager.logException(ex)
         }
@@ -527,7 +510,7 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
      */
     private fun changeCamera(update: CameraUpdate, callback: CancelableCallback) {
         // The duration must be strictly positive so we make it at least 1.
-        googleMap?.animateCamera(update, 2000.coerceAtLeast(1), callback)
+        dynamicMapView?.animateCamera(update, 2000.coerceAtLeast(1), callback)
     }
 
     fun showProgressBar() {
@@ -650,7 +633,7 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
                             activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
                         } else {
                             startLocationUpdates()
-                            googleMap?.isMyLocationEnabled = false
+                            dynamicMapView?.googleMap?.isMyLocationEnabled = false
                         }
                     }
                 }
