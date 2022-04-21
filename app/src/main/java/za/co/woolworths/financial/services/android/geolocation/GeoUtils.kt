@@ -9,6 +9,8 @@ class GeoUtils {
 
     companion object {
 
+        private var store: Store? = null
+
         fun getPlaceId() = Utils
             .getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
                 it.address?.placeId
@@ -43,5 +45,11 @@ class GeoUtils {
             }
             return null
         }
+
+        fun storeDetails(store: Store?) {
+            this.store = store
+        }
+
+        fun getStoreDetails() = store
     }
 }

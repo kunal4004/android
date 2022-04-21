@@ -30,6 +30,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Save
 import za.co.woolworths.financial.services.android.checkout.view.*
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
@@ -37,7 +38,6 @@ import za.co.woolworths.financial.services.android.geolocation.network.model.Sto
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
-import za.co.woolworths.financial.services.android.geolocation.viewmodel.StoreLiveData
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Province
@@ -148,6 +148,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.imgDelBack -> {
+                GeoUtils.storeDetails(null)
                 activity?.onBackPressed()
             }
             R.id.editDelivery -> {
@@ -446,7 +447,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         geoDeliveryTab?.isEnabled = true
         geoCollectTab?.isEnabled = true
         geoDashTab?.isEnabled = true
-        StoreLiveData.observe(viewLifecycleOwner) {
+        GeoUtils.getStoreDetails()?.let {
             if (it?.storeName != null) {
                 geoDeliveryText?.text = it?.storeName
             }
@@ -682,7 +683,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     private fun setGeoDeliveryTextForCnc() {
-        if (!StoreLiveData.value?.storeName.isNullOrEmpty()) {
+        if (!GeoUtils.getStoreDetails()?.storeName.isNullOrEmpty()) {
             geoDeliveryText?.text = mStoreName
             editDelivery?.text = bindString(R.string.edit)
             btnConfirmAddress?.isEnabled = true
@@ -750,9 +751,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     override fun onStop() {
         super.onStop()
-        StoreLiveData.value?.storeName = null
-        StoreLiveData.value?.storeId = null
-        StoreLiveData.postValue(null)
+        GeoUtils.storeDetails(null)
     }
 
     /**
