@@ -261,7 +261,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails == null && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails == null) {
             return
         }
-        if (Utils.getPreferredDeliveryLocation().fulfillmentDetails.deliveryType.isNullOrEmpty() && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
+        if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType.isNullOrEmpty() && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
             return
         }
 
@@ -313,10 +313,14 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             return
         }
 
-        if (Utils.getPreferredDeliveryLocation() != null &&
-            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails != null
-        ) {
-            return
+        if (isUserAuthenticated()) {
+            if (Utils.getPreferredDeliveryLocation()!=null) {
+                return
+            }
+        } else {
+            if (KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails != null){
+                return
+            }
         }
 
         when (tabPosition) {
