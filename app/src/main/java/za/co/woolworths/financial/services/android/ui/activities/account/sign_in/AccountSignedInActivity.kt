@@ -72,8 +72,8 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     }
 
     private var isReloadCacheAccountDataEnabled: Boolean = false
-    var mAccountOptionsNavHost: NavHostFragment? = null
-    var mAvailableFundsNavHost: NavHostFragment? = null
+    private var mAccountOptionsNavHost: NavHostFragment? = null
+    private var mAvailableFundsNavHost: NavHostFragment? = null
     private var mPeekHeight: Int = 0
     var mAccountSignedInPresenter: AccountSignedInPresenterImpl? = null
     private var sheetBehavior: BottomSheetBehavior<*>? = null

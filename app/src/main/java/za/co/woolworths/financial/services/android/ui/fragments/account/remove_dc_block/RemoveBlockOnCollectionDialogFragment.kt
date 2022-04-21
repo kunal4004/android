@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.remove_
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -16,15 +17,19 @@ import za.co.woolworths.financial.services.android.models.dto.ActionText
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.GetAPaymentPlanActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl.Companion.ELITE_PLAN
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanImpl
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import za.co.woolworths.financial.services.android.util.eliteplan.TakeUpPlanUtil
 
 class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.OnClickListener {
+
+    private lateinit var mTreatmentPlanImpl: ViewTreatmentPlanImpl
     private val mClassName = RemoveBlockOnCollectionDialogFragment::class.java.simpleName
     private var eligibilityPlan: EligibilityPlan? = null
     private var state: ApplyNowState? = null
@@ -43,20 +48,30 @@ class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.On
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         state =
             arguments?.getSerializable(ViewTreatmentPlanDialogFragment.APPLY_NOW_STATE) as? ApplyNowState
         eligibilityPlan =
             arguments?.getSerializable(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN) as? EligibilityPlan
+
+        val presenter = (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter
+        mTreatmentPlanImpl = ViewTreatmentPlanImpl(
+            eligibilityPlan = eligibilityPlan,
+            account = presenter?.getAccount(),
+            applyNowState = state,
+            context = requireContext()
+        )
+
+        val titleDesc = mTreatmentPlanImpl.getTitleAndDescription()
+        accountInArrearsTitleTextView?.text = bindString(titleDesc.first)
+        accountInArrearsDescriptionTextView?.text = titleDesc.second
+
         cannotAffordPaymentButton?.apply {
             setOnClickListener(this@RemoveBlockOnCollectionDialogFragment)
             when (eligibilityPlan?.planType) {
-                ELITE_PLAN -> when (state) {
-                    ApplyNowState.STORE_CARD, ApplyNowState.PERSONAL_LOAN -> {
-                        visibility = VISIBLE
-                    }
-                    else -> {
-                        visibility = GONE
-                    }
+                ELITE_PLAN -> visibility = when (state) {
+                    ApplyNowState.STORE_CARD, ApplyNowState.PERSONAL_LOAN -> VISIBLE
+                    else -> GONE
                 }
             }
         }
@@ -100,7 +115,7 @@ class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.On
         }
     }
 
-    fun cannotAffordClickHandler() {
+    private fun cannotAffordClickHandler() {
         when (eligibilityPlan?.actionText) {
             ActionText.VIEW_ELITE_PLAN.value -> {
                 KotlinUtils.openTreatmenPlanUrl(activity, eligibilityPlan)

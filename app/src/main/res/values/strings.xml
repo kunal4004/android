@@ -2434,9 +2434,11 @@
     <string name="account_in_recovery_desc">Your account is in arrears. Have you already agreed to a repayment plan? View your plan or make a payment now.</string>
 
     <string name="account_in_recovery_sc_desc">Your Store Card is currently in a payment plan. Please remember to make your next payment by its due date of %1$s.</string>
-    <string name="account_in_recovery_pl_desc">Your Personal Loan Card is currently in a payment plan. Please remember to make your next payment by its due date of %1$s.</string>
+    <string name="account_in_recovery_pl_desc">Your Personal Loan is currently in a payment plan. Please remember to make your next payment by its due date of %1$s.</string>
+    <string name="account_in_recovery_cc_desc">Your Credit Card is currently in a payment plan. Please remember to make your next payment by its due date of %1$s.</string>
 
     <string name="account_in_recovery_sc_payment_due_unavailable_desc">Your Store Card is currently in a payment plan. Please remember to make your next payment.</string>
-    <string name="account_in_recovery_pl_payment_due_unavailable_desc">Your Personal Loan Card is currently in a payment plan. Please remember to make your next payment.</string>
+    <string name="account_in_recovery_pl_payment_due_unavailable_desc">Your Personal Loan is currently in a payment plan. Please remember to make your next payment.</string>
+    <string name="account_in_recovery_cc_payment_due_unavailable_desc">Your Credit Card is currently in a payment plan. Please remember to make your next payment.</string>
 
 </resources>

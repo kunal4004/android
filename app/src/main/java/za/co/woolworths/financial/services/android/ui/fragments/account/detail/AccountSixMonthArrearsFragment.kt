@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.detail
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -17,20 +18,18 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.account_cart_item.*
 import kotlinx.android.synthetic.main.account_detail_header_fragment.*
 import kotlinx.android.synthetic.main.account_six_month_arrears_fragment.*
-import kotlinx.android.synthetic.main.remove_block_dc_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.ActionText
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
-import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.GetAPaymentPlanActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl.Companion.ELITE_PLAN
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.OutSystemBuilder
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.ProductOfferingStatus
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanImpl
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.eliteplan.EligibilityImpl
@@ -49,8 +48,7 @@ class AccountSixMonthArrearsFragment : Fragment(), EligibilityImpl {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, "")
-        mApplyNowAccountKeyPair =
-            Gson().fromJson(account, object : TypeToken<Pair<Int, Int>>() {}.type)
+        mApplyNowAccountKeyPair = Gson().fromJson(account, object : TypeToken<Pair<Int, Int>>() {}.type)
         isViewTreatmentPlanSupported = arguments?.getBoolean(IS_VIEW_TREATMENT_PLAN, false) ?: false
 
     }
@@ -67,9 +65,9 @@ class AccountSixMonthArrearsFragment : Fragment(), EligibilityImpl {
         super.onViewCreated(view, savedInstanceState)
         mAccountPresenter = (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter
         mAccountPresenter?.eligibilityImpl = this
+
         hideCardTextViews()
         setTitleAndCardTypeAndButton()
-
         callTheCallCenterButton?.setOnClickListener { Utils.makeCall("0861502020") }
         callTheCallCenterUnderlinedButton?.setOnClickListener { Utils.makeCall("0861502020") }
         viewTreatmentPlansButton?.setOnClickListener {
@@ -150,7 +148,7 @@ class AccountSixMonthArrearsFragment : Fragment(), EligibilityImpl {
         showCallUsButton()
     }
 
-    fun showCallUsButton() {
+    private fun showCallUsButton() {
         arrearsDescTextView?.text =
             activity?.resources?.getString(R.string.account_arrears_description)
         callTheCallCenterButton?.visibility = VISIBLE
@@ -158,7 +156,7 @@ class AccountSixMonthArrearsFragment : Fragment(), EligibilityImpl {
         callTheCallCenterUnderlinedButton?.visibility = GONE
     }
 
-    fun setElitePlanViews(eligibilityPlan: EligibilityPlan?) {
+    private fun setElitePlanViews(eligibilityPlan: EligibilityPlan?) {
         arrearsDescTextView?.text = bindString(R.string.account_arrears_description)
         callTheCallCenterButton?.visibility = GONE
         viewTreatmentPlansButton.visibility = VISIBLE
@@ -168,7 +166,11 @@ class AccountSixMonthArrearsFragment : Fragment(), EligibilityImpl {
         }
         when (eligibilityPlan?.actionText) {
             ActionText.VIEW_ELITE_PLAN.value -> {
-                viewTreatmentPlansButton.text = bindString(R.string.view_your_payment_plan)
+                callTheCallCenterUnderlinedButton?.apply {
+                    visibility = GONE
+                    isEnabled = false
+                }
+                viewTreatmentPlansButton.text = eligibilityPlan.displayText
             }
             ActionText.START_NEW_ELITE_PLAN.value -> {
                 viewTreatmentPlansButton.text = bindString(R.string.get_help_repayment)
@@ -181,10 +183,7 @@ class AccountSixMonthArrearsFragment : Fragment(), EligibilityImpl {
         when (mAccountPresenter?.getEligibilityPlan()?.actionText) {
             ActionText.START_NEW_ELITE_PLAN.value -> {
                 activity?.apply {
-                    TakeUpPlanUtil.takeUpPlanEventLog(
-                        mAccountPresenter?.getMyAccountCardInfo()?.first!!,
-                        this
-                    )
+                    TakeUpPlanUtil.takeUpPlanEventLog(mAccountPresenter?.getMyAccountCardInfo()?.first, this)
                 }
                 openSetupPaymentPlanPage()
             }

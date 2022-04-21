@@ -4,10 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Paint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
@@ -21,19 +21,15 @@ import za.co.woolworths.financial.services.android.models.dto.ActionText
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.ProductOfferingStatus
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
-import za.co.woolworths.financial.services.android.util.CurrencyFormatter
-import za.co.woolworths.financial.services.android.util.DateFormatter
-import za.co.woolworths.financial.services.android.util.DateFormatter.Companion.formatDateTOddMMMYYYY
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.WFormatter.formatDateTOddMMMYYYY
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickListener {
 
+    private lateinit var mTreatmentPlanImpl: ViewTreatmentPlanImpl
     private var account: Account? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
     private var showChatBubbleInterface: IShowChatBubble? = null
@@ -41,9 +37,6 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
     private var state: ApplyNowState? = null
     private var eligibilityPlan: EligibilityPlan? = null
 
-    enum class TreatmentPlanType {
-        VIEW, TAKE_UP, ELITE, NONE
-    }
 
     companion object {
         const val VIEW_PAYMENT_PLAN_BUTTON = "viewPaymentPlanButton"
@@ -75,96 +68,51 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
         eligibilityPlan = arguments?.getSerializable(ELIGIBILITY_PLAN) as? EligibilityPlan
         account = payMyAccountViewModel.getCardDetail()?.account?.second
 
-
-        val planType = when (eligibilityPlan?.actionText) {
-            ActionText.TAKE_UP_TREATMENT_PLAN.value -> TreatmentPlanType.TAKE_UP
-            ActionText.VIEW_TREATMENT_PLAN.value -> TreatmentPlanType.VIEW
-            ActionText.VIEW_ELITE_PLAN.value -> TreatmentPlanType.ELITE
-            else -> TreatmentPlanType.NONE
-        }
-
-        val isViewTreatmentPlan =
-            eligibilityPlan?.actionText == ActionText.VIEW_TREATMENT_PLAN.value ||
-                    eligibilityPlan?.actionText == ActionText.VIEW_ELITE_PLAN.value
-
-        val isAccountChargedOff = payMyAccountViewModel.isAccountChargedOff()
+        Log.e("blueArray","blowDs")
+        mTreatmentPlanImpl = ViewTreatmentPlanImpl(
+            eligibilityPlan = eligibilityPlan,
+            account = account,
+            applyNowState = state,
+            context = requireContext()
+        )
 
         setTitleAndDescription()
         setListeners()
-        setupMainButton(planType == TreatmentPlanType.TAKE_UP)
-        setupMakePaymentButton(isViewTreatmentPlan)
-        setupViewPaymentOptionsButton(isViewTreatmentPlan)
-        setupCannotAffordPaymentButton(planType == TreatmentPlanType.TAKE_UP)
+        setupMainButton()
+        setupMakePaymentButton()
+        setupViewPaymentOptionsButton()
+        setupCannotAffordPaymentButton()
     }
 
+    @SuppressLint("VisibleForTests")
     private fun setTitleAndDescription() {
-        val isAccountChargedOff = payMyAccountViewModel.isAccountChargedOff()
-        val applyNowState = payMyAccountViewModel.getApplyNowState()
-        val presenter = ProductOfferingStatus(account)
-        val isProductCC =
-            applyNowState != ApplyNowState.STORE_CARD || applyNowState != ApplyNowState.PERSONAL_LOAN
-        val amountOverdue = Utils.removeNegativeSymbol(
-            CurrencyFormatter.formatAmountToRandAndCent(
-                account?.amountOverdue ?: 0
-            )
-        )
-        val paymentDueDate = account?.paymentDueDate ?: "N/A"
-
-        val titleDesc = when (isAccountChargedOff) {
-            true -> {
-                when (isProductCC) {
-                    true -> R.string.remove_block_on_collection_dialog_title to bindString(R.string.remove_block_on_collection_dialog_desc)
-                    false -> R.string.remove_block_on_collection_dialog_title to bindString(R.string.remove_block_on_collection_dialog_desc)
-                }
-            }
-            false -> {
-                when (presenter.isViewTreatmentPlanSupported()
-                        || presenter.isTakeUpTreatmentPlanJourneyEnabled()) {
-                    true -> R.string.account_in_recovery_label to getViewTreatmentPlanDescription(
-                        state
-                    )
-                    false -> R.string.payment_overdue_label to getString(
-                        stringId = R.string.payment_overdue_error_desc,
-                        amountOverdue
-                    )
-                }
-            }
+        with(mTreatmentPlanImpl.getTitleAndDescription()) {
+            viewTreatmentPlanTitleTextView?.text = bindString(first)
+            viewTreatmentPlanDescriptionTextView?.text = second
         }
-
-        viewTreatmentPlanTitleTextView?.text = bindString(titleDesc.first)
-        viewTreatmentPlanDescriptionTextView?.text = titleDesc.second
-
     }
 
-    private fun setupMainButton(planType: Boolean) {
-        mainButton?.text = if (planType)
-            bindString(R.string.make_payment_now_button_label)
-        else bindString(R.string.view_payment_plan_button_label)
+    private fun setupMainButton() {
+        mainButton?.text = mTreatmentPlanImpl.makePaymentPlanButtonLabel()
     }
 
-    private fun setupMakePaymentButton(isViewTreatmentPlan: Boolean) {
+    private fun setupMakePaymentButton() {
         makePaymentButton?.apply {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            visibility = if (isViewTreatmentPlan &&
-                (state == ApplyNowState.PERSONAL_LOAN || state == ApplyNowState.STORE_CARD)
-            ) View.VISIBLE else View.GONE
+            visibility = mTreatmentPlanImpl.isMakePaymentButtonVisible()
         }
     }
 
-    private fun setupViewPaymentOptionsButton(isViewTreatmentPlan: Boolean) {
+    private fun setupViewPaymentOptionsButton() {
         viewPaymentOptionsButton?.apply {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            visibility = if (isViewTreatmentPlan &&
-                (state == ApplyNowState.GOLD_CREDIT_CARD ||
-                        state == ApplyNowState.BLACK_CREDIT_CARD ||
-                        state == ApplyNowState.SILVER_CREDIT_CARD)
-            )
-                View.VISIBLE else View.GONE
+            visibility = mTreatmentPlanImpl.isViewPaymentOptionsButtonVisible()
         }
     }
 
-    private fun setupCannotAffordPaymentButton(planType: Boolean) {
-        cannotAffordPaymentButton?.visibility = if (planType) View.VISIBLE else View.GONE
+    private fun setupCannotAffordPaymentButton() {
+        cannotAffordPaymentButton?.visibility =
+            mTreatmentPlanImpl.isCannotAffordPaymentButtonVisible()
     }
 
     fun setListeners() {
@@ -192,35 +140,6 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
             setOnClickListener(this@ViewTreatmentPlanDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
-    }
-
-    @SuppressLint("VisibleForTests")
-    private fun getViewTreatmentPlanDescription(state: ApplyNowState?): String? {
-        val paymentDueDate = account?.paymentDueDate
-        return when (paymentDueDate.isNullOrEmpty()) {
-            true ->
-                activity?.resources?.getString(
-                    when (state) {
-                        ApplyNowState.PERSONAL_LOAN -> R.string.account_in_recovery_sc_payment_due_unavailable_desc
-                        ApplyNowState.STORE_CARD -> R.string.account_in_recovery_pl_payment_due_unavailable_desc
-                        else -> R.string.account_in_recovery_desc
-                    }
-                )
-
-            false -> activity?.resources?.getString(
-                    when (state) {
-                        ApplyNowState.PERSONAL_LOAN -> R.string.account_in_recovery_pl_desc
-                        ApplyNowState.STORE_CARD -> R.string.account_in_recovery_sc_desc
-                        else -> R.string.account_in_recovery_desc
-                    },
-                    formatDateTOddMMMYYYY(paymentDueDate, toPattern = "dd MMMM yyyy")
-                )
-
-        }
-    }
-
-    private fun getString(@StringRes stringId: Int, value: String): String {
-        return requireActivity().getString(stringId, value)
     }
 
     override fun onClick(view: View?) {
@@ -262,17 +181,7 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
 
     private fun setFirebaseEvent() {
         val arguments = HashMap<String, String>()
-        val event = when (state) {
-            ApplyNowState.STORE_CARD ->
-                FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_SC to
-                        FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_SC_ACTION
-            ApplyNowState.PERSONAL_LOAN ->
-                FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_PL to
-                        FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_PL_ACTION
-            else ->
-                FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_CC to
-                        FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_CC_ACTION
-        }
+        val event = mTreatmentPlanImpl.cannotAffordPaymentFirebaseEvent()
         arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = event.second
         Utils.triggerFireBaseEvents(event.first, arguments, activity)
     }

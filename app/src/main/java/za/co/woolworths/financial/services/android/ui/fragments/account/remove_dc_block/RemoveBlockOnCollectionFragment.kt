@@ -37,7 +37,6 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl.Companion.ELITE_PLAN
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
@@ -72,6 +71,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, Eligib
         mAccountPresenter = (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter
         accountData = mAccountPresenter?.getMyAccountCardInfo()
         mAccountPresenter?.eligibilityImpl = this
+
         when (accountData?.first) {
             ApplyNowState.PERSONAL_LOAN -> {
                 removeBlockBackgroundConstraintLayout?.setBackgroundResource(R.drawable.personal_loan_background)
@@ -280,7 +280,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, Eligib
                     ChatFragment.ACCOUNTS,
                     Gson().toJson(Pair(applyNowState, this))
                 )
-                intent.putExtra("cardType", productGroupCode?.toUpperCase())
+                intent.putExtra("cardType", productGroupCode?.uppercase())
                 activity.startActivityForResult(intent, 0)
                 activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
             }
@@ -351,14 +351,15 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, Eligib
     }
 
     override fun eligibilityResponse(eligibilityPlan: EligibilityPlan?) {
-        eligibilityPlan.let {
-            if (it?.actionText.equals(ActionText.VIEW_ELITE_PLAN.value, ignoreCase = true)) {
-                    helpWithPayment.text = bindString(if (mAccountPresenter?.isAccountInDelinquencyMoreThan6Months() == true) R.string.get_help_repayment else R.string.view_your_payment_plan)
+        eligibilityPlan.let { plan ->
+            helpWithPayment.text =  when (plan?.actionText.equals(ActionText.VIEW_ELITE_PLAN.value, ignoreCase = true)) {
+                true ->   plan?.displayText
+                false ->   bindString( R.string.get_help_repayment)
             }
+
             viewLifecycleOwner.lifecycleScope.launch {
                 delay(AppConstant.DELAY_1000_MS)
-                helpWithPaymentView.visibility =
-                    if (it?.planType.equals(ELITE_PLAN)) VISIBLE else GONE
+                helpWithPaymentView.visibility = if (plan?.planType.equals(ELITE_PLAN)) VISIBLE else GONE
             }
         }
     }
