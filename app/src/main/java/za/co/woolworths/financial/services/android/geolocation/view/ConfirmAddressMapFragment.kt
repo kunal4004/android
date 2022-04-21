@@ -152,7 +152,11 @@ class ConfirmAddressMapFragment :
     private fun addFragmentListner() {
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, _ ->
             // change location button clicked as address is not deliverable.
-            clearAddressText()
+            initView()
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                delay(AppConstant.DELAY_1500_MS)
+                clearAddressText()
+            }
         }
     }
 
@@ -268,8 +272,9 @@ class ConfirmAddressMapFragment :
                                             confirmSetAddress(validateLocationResponse)
                                         } else {
                                             // directly go back to Dash landing screen. Don't call confirm location API as user only wants to browse Dash.
-                                                var intent = Intent()
-                                            intent.putExtra(BundleKeysConstants.VALIDATE_RESPONSE, validateLocationResponse)
+                                            var intent = Intent()
+                                            intent.putExtra(BundleKeysConstants.VALIDATE_RESPONSE,
+                                                validateLocationResponse)
                                             activity?.setResult(Activity.RESULT_OK, intent)
                                             activity?.finish()
                                         }
@@ -321,7 +326,8 @@ class ConfirmAddressMapFragment :
                     when (confirmLocationResponse.httpCode) {
                         HTTP_OK -> {
 
-                            WoolworthsApplication.setValidatedSuburbProducts(validateLocationResponse.validatePlace)
+                            WoolworthsApplication.setValidatedSuburbProducts(
+                                validateLocationResponse.validatePlace)
                             // save details in cache
                             if (SessionUtilities.getInstance().isUserAuthenticated) {
                                 Utils.savePreferredDeliveryLocation(

@@ -84,7 +84,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private val shopViewModel: ShopViewModel by viewModels(
         ownerProducer = { this }
     )
-    val confirmAddressViewModel: ConfirmAddressViewModel by lazy {
+    private val confirmAddressViewModel: ConfirmAddressViewModel by lazy {
         ViewModelProvider(
             this,
             GeoLocationViewModelFactory(GeoLocationApiHelper())
@@ -192,14 +192,14 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                                     viewLifecycleOwner.lifecycleScope.launch {
                                         delay(DELAY_3000_MS)
                                         if (isUserAuthenticated()) {
-                                            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
-                                                Delivery.getType(it.deliveryType)?.let {
+                                            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let { fulfillmentDetails ->
+                                                Delivery.getType(fulfillmentDetails.deliveryType)?.let {
                                                     showBlackToolTip(it)
                                                 }
                                             }
                                         } else {
-                                            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let {
-                                                Delivery.getType(it.deliveryType)?.let {
+                                            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let { fulfillmentDetails ->
+                                                Delivery.getType(fulfillmentDetails.deliveryType)?.let {
                                                     showBlackToolTip(it)
                                                 }
                                             }
@@ -267,7 +267,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
         if (isUserAuthenticated()) {
             Utils.getPreferredDeliveryLocation()?.apply {
-                updateCurrentTab(this?.fulfillmentDetails?.deliveryType)
+                updateCurrentTab(this.fulfillmentDetails?.deliveryType)
                 activity?.let {
                     KotlinUtils.setDeliveryAddressView(
                         it,
@@ -280,7 +280,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
         } else {
             KotlinUtils.getAnonymousUserLocationDetails()?.apply {
-                updateCurrentTab(this?.fulfillmentDetails?.deliveryType)
+                updateCurrentTab(this.fulfillmentDetails?.deliveryType)
                 activity?.let {
                     KotlinUtils.setDeliveryAddressView(
                         it,
@@ -297,13 +297,13 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private fun updateCurrentTab(deliveryType: String?) {
         when (deliveryType) {
             BundleKeysConstants.STANDARD -> {
-                viewpager_main.setCurrentItem(0)
+                viewpager_main.currentItem = 0
             }
             BundleKeysConstants.CNC -> {
-                viewpager_main.setCurrentItem(1)
+                viewpager_main.currentItem = 1
             }
             BundleKeysConstants.DASH -> {
-                viewpager_main.setCurrentItem(2)
+                viewpager_main.currentItem = 2
             }
         }
     }
@@ -387,7 +387,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         if (tab.getTabAt(pos)?.view?.isSelected == true) {
             val futuraFont =
                 Typeface.createFromAsset(activity?.assets, "fonts/MyriadPro-Semibold.otf")
-            view?.tvTitle?.setTypeface(futuraFont)
+            view?.tvTitle?.typeface = futuraFont
         }
         if (pos == 2) {
             foodOnlyText?.visibility = View.VISIBLE
@@ -617,7 +617,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         this.rootCategories = rootCategories
     }
 
-    fun setShoppingListResponseData(shoppingListsResponse: ShoppingListsResponse?) {
+    private fun setShoppingListResponseData(shoppingListsResponse: ShoppingListsResponse?) {
         this.shoppingListsResponse = shoppingListsResponse
     }
 
@@ -637,12 +637,12 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         return ordersResponse
     }
 
-    fun isDifferentUser(): Boolean? {
+    fun isDifferentUser(): Boolean {
         return user != AppInstanceObject.get()?.currentUserObject?.id ?: false
     }
 
     fun clearCachedData() {
-        if (isDifferentUser()!!) {
+        if (isDifferentUser()) {
             setOrdersResponseData(null)
             setShoppingListResponseData(null)
         }
@@ -773,7 +773,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun showDashToolTip() {
-        if (KotlinUtils.isDashTabClicked == true) {
+        val dashDeliverable = validateLocationResponse?.validatePlace?.onDemand?.deliverable
+        if (KotlinUtils.isDashTabClicked == true || dashDeliverable == null || dashDeliverable == false) {
             blackToolTipLayout?.visibility = View.GONE
             return
         }
@@ -795,7 +796,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             bubbleLayout?.arrowPosition = 1060.0F
             productAvailableText?.text = resources.getString(
                 R.string.dash_item_limit,
-                it?.onDemand?.quantityLimit?.foodMaximumQuantity
+                it.onDemand?.quantityLimit?.foodMaximumQuantity
             )
             /*TODO deliveryFee value will come from config*/
             deliveryFeeText?.text = "Free for orders over R75"
