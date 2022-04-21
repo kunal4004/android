@@ -26,6 +26,7 @@ import android.view.animation.Animation
 import android.view.animation.RotateAnimation
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.annotation.RawRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -413,8 +414,8 @@ class KotlinUtils {
         fun setDeliveryAddressView(
             context: Activity?,
             shoppingDeliveryLocation: ShoppingDeliveryLocation,
-            tvDeliveringTo: WTextView,
-            tvDeliveryLocation: WTextView,
+            tvDeliveringTo: TextView,
+            tvDeliveryLocation: TextView,
             deliverLocationIcon: ImageView?
         ) {
             with(shoppingDeliveryLocation?.fulfillmentDetails) {

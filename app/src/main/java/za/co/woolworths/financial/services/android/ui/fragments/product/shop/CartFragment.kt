@@ -78,6 +78,7 @@ import za.co.woolworths.financial.services.android.util.FirebaseManager.Companio
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionClickAndCollect
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAddressView
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.showGeneralInfoDialog
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.updateCheckOutLink
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter.Companion.instance
@@ -1596,14 +1597,16 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
 
     private fun setDeliveryLocation(shoppingDeliveryLocation: ShoppingDeliveryLocation?) {
         //TODO: Redesign data mapping
-        requireActivity().apply {
-            /*setDeliveryAddressView(
-                this,
-                (shoppingDeliveryLocation)!!,
-                (tvDeliveryTitle)!!,
-                (tvDeliveryLocation)!!,
-                deliverLocationIcon
-            )*/
+        shoppingDeliveryLocation?.let {
+            requireActivity().apply {
+                setDeliveryAddressView(
+                    this,
+                    shoppingDeliveryLocation,
+                    tvDeliveryTitle,
+                    tvDeliverySubtitle,
+                    imgCartDelivery
+                )
+            }
         }
     }
 
