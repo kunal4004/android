@@ -23,6 +23,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.android.synthetic.main.confirm_address_bottom_sheet_dialog.*
 import kotlinx.android.synthetic.main.current_location_row_layout.*
+import kotlinx.android.synthetic.main.no_connection.*
 import kotlinx.android.synthetic.main.no_connection.view.*
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -116,7 +117,11 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             inSavedAddress?.visibility = View.GONE
             tvConfirmAddress?.visibility = View.VISIBLE
-            fetchAddress()
+            if (confirmAddressViewModel.isConnectedToInternet(requireActivity()))
+                fetchAddress()
+            else {
+                no_connection_layout?.visibility = View.VISIBLE
+            }
             rvSavedAddressList?.visibility = View.VISIBLE
         } else {
             inSavedAddress?.visibility = View.VISIBLE
@@ -137,15 +142,15 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             tvConfirmAddress?.visibility = View.VISIBLE
             if (confirmAddressViewModel.isConnectedToInternet(requireActivity()))
                 fetchAddress()
-            else{
-                noAddressConnectionLayout?.no_connection_layout?.visibility = View.VISIBLE
+            else {
+                no_connection_layout?.visibility = View.VISIBLE
             }
         } else {
             inSavedAddress?.visibility = View.VISIBLE
             tvConfirmAddress?.visibility = View.GONE
         }
         setButtonUI(false)
-        noAddressConnectionLayout?.no_connection_layout?.btnRetry?.setOnClickListener {
+         no_connection_layout?.btnRetry?.setOnClickListener {
             initViews()
         }
 
