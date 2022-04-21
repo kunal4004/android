@@ -251,7 +251,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             unSellableCommerceItems?.let {
                 navigateToUnsellableItemsFragment(it)
 
-                }
+            }
 
         } else {
             if (placeId == null) {
@@ -261,10 +261,11 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             val confirmLocationRequest = when (deliveryType) {
                 Delivery.STANDARD.name -> {
                     ConfirmLocationRequest(STANDARD, confirmLocationAddress, "")
-            }
-            Delivery.CNC.name -> {
+                }
+                Delivery.CNC.name -> {
                     ConfirmLocationRequest(CNC, confirmLocationAddress, mStoreId)
-            } else -> {
+                }
+                else -> {
                     ConfirmLocationRequest(DASH, confirmLocationAddress, mStoreId)
                 }
             }
@@ -280,9 +281,12 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                             HTTP_OK -> {
                                 // save details in cache
                                 if (SessionUtilities.getInstance().isUserAuthenticated) {
-                                    KotlinUtils.isDeliveryLocationTabClicked = placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
-                                    KotlinUtils.isCncTabClicked = placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
-                                    KotlinUtils.isDashTabClicked = placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
+                                    KotlinUtils.isDeliveryLocationTabClicked =
+                                        placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
+                                    KotlinUtils.isCncTabClicked =
+                                        placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
+                                    KotlinUtils.isDashTabClicked =
+                                        placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
                                     Utils.savePreferredDeliveryLocation(
                                         ShoppingDeliveryLocation(
                                             confirmLocationResponse.orderSummary?.fulfillmentDetails
@@ -291,9 +295,12 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                     if (KotlinUtils.getAnonymousUserLocationDetails() != null)
                                         KotlinUtils.clearAnonymousUserLocationDetails()
                                 } else {
-                                    KotlinUtils.isDeliveryLocationTabClicked = placeId?.equals(KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId)
-                                    KotlinUtils.isCncTabClicked = placeId?.equals(KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId)
-                                    KotlinUtils.isDashTabClicked = placeId?.equals(KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId)
+                                    KotlinUtils.isDeliveryLocationTabClicked =
+                                        placeId?.equals(KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId)
+                                    KotlinUtils.isCncTabClicked =
+                                        placeId?.equals(KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId)
+                                    KotlinUtils.isDashTabClicked =
+                                        placeId?.equals(KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId)
                                     KotlinUtils.saveAnonymousUserLocationDetails(
                                         ShoppingDeliveryLocation(
                                             confirmLocationResponse.orderSummary?.fulfillmentDetails
@@ -301,7 +308,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                     )
                                 }
 
-                                WoolworthsApplication.setValidatedSuburbProducts(validateLocationResponse?.validatePlace)
+                                WoolworthsApplication.setValidatedSuburbProducts(
+                                    validateLocationResponse?.validatePlace)
 
                                 savedAddressResponse?.defaultAddressNickname =
                                     defaultAddress?.nickname
@@ -323,8 +331,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
                                             val checkoutActivityIntent =
                                                 Intent(activity,
-                                                CheckoutActivity::class.java
-                                            )
+                                                    CheckoutActivity::class.java
+                                                )
                                             checkoutActivityIntent.putExtra(
                                                 CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
                                                 savedAddressResponse)
@@ -466,7 +474,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 connectionLayout?.visibility = View.VISIBLE
             }
         }
-        btnRetryConnection?.setOnClickListener (this)
+        btnRetryConnection?.setOnClickListener(this)
     }
 
     private fun openGeoDeliveryTab() {
@@ -483,7 +491,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             R.color.black))
         editDelivery?.text = getString(R.string.edit)
         changeFulfillmentTitleTextView?.text = bindString(R.string.standard_delivery)
-        changeFulfillmentSubTitleTextView?.text = bindString(R.string.standard_delivery_title_text)
+        changeFulfillmentSubTitleTextView?.text = bindString(R.string.empty)
         updateDeliveryDetails()
     }
 
@@ -496,7 +504,11 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
             R.drawable.img_collection_bag))
         changeFulfillmentTitleTextView?.text = bindString(R.string.click_and_collect)
-        changeFulfillmentSubTitleTextView?.text = bindString(R.string.click_and_collect_title_text)
+        val collectionQuantity =
+            validateLocationResponse?.validatePlace?.stores?.getOrNull(0)?.quantityLimit?.foodMaximumQuantity
+        changeFulfillmentSubTitleTextView?.text =
+            if (collectionQuantity != null) bindString(R.string.click_and_collect_title_text,
+                collectionQuantity.toString()) else bindString(R.string.empty)
         updateCollectionDetails()
     }
 
@@ -506,7 +518,15 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
             R.drawable.img_dash_delivery))
         changeFulfillmentTitleTextView?.text = bindString(R.string.dash_delivery)
-        changeFulfillmentSubTitleTextView?.text = bindString(R.string.dash_title_text)
+        val deliveryFee =
+            validateLocationResponse?.validatePlace?.onDemand?.deliveryTimeSlots?.getOrNull(0)?.slotCost
+        val deliveryQuantity =
+            validateLocationResponse?.validatePlace?.onDemand?.quantityLimit?.foodMaximumQuantity
+
+        changeFulfillmentSubTitleTextView?.text =
+            if (deliveryFee != null || deliveryQuantity != null) bindString(R.string.dash_title_text,
+                deliveryFee.toString(),
+                deliveryQuantity.toString()) else bindString(R.string.empty)
         updateDashDetails()
     }
 
@@ -669,7 +689,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             earliestFashionDeliveryDateLabel?.visibility = View.VISIBLE
             earliestFashionDeliveryDateValue?.visibility = View.VISIBLE
             earliestFashionDeliveryDateValue?.text =
-            WFormatter.getFullMonthWithDate(earliestFashionDate)
+                WFormatter.getFullMonthWithDate(earliestFashionDate)
         }
         if (earliestDashDate.isNullOrEmpty()) {
             earliestDeliveryDashLabel?.visibility = View.GONE
@@ -716,7 +736,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     private fun whereToCollect() {
         geoDeliveryText?.text =
-                getNearestStore(validateLocationResponse?.validatePlace?.stores)
+            getNearestStore(validateLocationResponse?.validatePlace?.stores)
         mStoreId = getNearestStoreId(validateLocationResponse?.validatePlace?.stores)
         editDelivery?.text = bindString(R.string.edit)
         btnConfirmAddress?.isEnabled = true
@@ -781,10 +801,11 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     private fun isUnSellableItemsRemoved() {
         UnSellableItemsLiveData.observe(viewLifecycleOwner) {
             isUnSellableItemsRemoved = it
-        if (isUnSellableItemsRemoved == true) {
+            if (isUnSellableItemsRemoved == true) {
                 sendConfirmLocation()
                 UnSellableItemsLiveData.value = false
-            }}
+            }
+        }
     }
 
     private fun showErrorDialog() {

@@ -2473,10 +2473,9 @@
     <string name="walkthrough_delivery_details_desc">View and edit your delivery details, no matter where you are in the App.</string>
     <string name="walkthrough_delivery_details_action">set your delivery address</string>
     <string name="standard_delivery">Standard Delivery</string>
-    <string name="standard_delivery_title_text">R50 Delivery Fee. Free for orders over R450.</string>
     <string name="click_and_collect">Click &amp; Collect</string>
-    <string name="click_and_collect_title_text">Free Collection. \n Limited shop of 64 Items.</string>
-    <string name="dash_title_text">R35 Delivery Fee. Free for orders over R75. \n Limited shop of 42 Items.</string>
+    <string name="click_and_collect_title_text">Free Collection. \n Limited shop of %1$s Items.</string>
+    <string name="dash_title_text">R%1$s Delivery Fee. \n Limited shop of %2$s Items.</string>
     <string name="dash_delivery">Dash Delivery</string>
     <string name="dash_product_search">Search name, product code or brand</string>
     <string name="default_location">Default Location</string>

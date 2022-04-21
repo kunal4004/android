@@ -58,7 +58,6 @@
         android:layout_marginEnd="@dimen/thirty_five_dp"
         android:layout_marginBottom="@dimen/fourty_dp"
         android:gravity="center"
-        android:text="@string/standard_delivery_title_text"
         android:textSize="@dimen/sixteen_sp"
         app:layout_constraintBottom_toTopOf="@id/geoDeliveryTab"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
