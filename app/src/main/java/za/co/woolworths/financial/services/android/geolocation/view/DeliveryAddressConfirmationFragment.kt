@@ -97,8 +97,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     private var savedAddressResponse: SavedAddressResponse? = null
     private var whoIsCollecting: WhoIsCollectingDetails? = null
     var store: Store? = null
-    private var isComingFromConfirmAndLocatorScreen: Boolean? = false
-
 
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
@@ -451,7 +449,20 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         geoDeliveryTab?.isEnabled = true
         geoCollectTab?.isEnabled = true
         geoDashTab?.isEnabled = true
+        addFragmentListener()
+        isUnSellableItemsRemoved()
+        placeId?.let {
+            if (confirmAddressViewModel.isConnectedToInternet(requireActivity())) {
+                getDeliveryDetailsFromValidateLocation(it)
+                connectionLayout?.visibility = View.GONE
+            } else {
+                connectionLayout?.visibility = View.VISIBLE
+            }
+        }
+        btnRetryConnection?.setOnClickListener (this)
+    }
 
+    private fun addFragmentListener() {
         setFragmentResultListener(STORE_LOCATOR_REQUEST_CODE) { _, bundle ->
             store = bundle.get(BUNDLE) as Store
             store?.let {
@@ -470,19 +481,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 mStoreId = it?.storeId.toString()
             }
         }
-        setFragmentResultListener("345") { _, bundle ->
-            isComingFromConfirmAndLocatorScreen = bundle.getBoolean("IS_FROM_STORE_LOCATOR_SCREEN")
-        }
-        isUnSellableItemsRemoved()
-        placeId?.let {
-            if (confirmAddressViewModel.isConnectedToInternet(requireActivity())) {
-                getDeliveryDetailsFromValidateLocation(it)
-                connectionLayout?.visibility = View.GONE
-            } else {
-                connectionLayout?.visibility = View.VISIBLE
-            }
-        }
-        btnRetryConnection?.setOnClickListener (this)
     }
 
     private fun openGeoDeliveryTab() {
