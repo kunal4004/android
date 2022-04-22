@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.views.maps
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.AttributeSet
@@ -29,7 +30,7 @@ class DynamicMapView @JvmOverloads constructor(
     }
 
     private var delegate: DynamicMapDelegate? = null
-    var googleMap: GoogleMap? = null // TODO: make var private and create functions for usage of this
+    private var googleMap: GoogleMap? = null
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_dynamic_map, this, true)
@@ -39,6 +40,27 @@ class DynamicMapView @JvmOverloads constructor(
         this.delegate = delegate
         googleMapView.onCreate(savedInstanceState)
         googleMapView.getMapAsync(this)
+    }
+
+    fun isMapInstantiated(): Boolean {
+        return googleMap != null
+    }
+
+    fun setScrollGesturesEnabled(isEnabled: Boolean) {
+        googleMap?.uiSettings?.isScrollGesturesEnabled = isEnabled
+    }
+
+    @SuppressLint("MissingPermission")
+    fun setMyLocationEnabled(isEnabled: Boolean) {
+        googleMap?.isMyLocationEnabled = isEnabled
+    }
+
+    fun getCameraPositionTargetLatitude(): Double? {
+        return googleMap?.cameraPosition?.target?.latitude
+    }
+
+    fun getVisibleRegionNortheastLatitude(): Double? {
+        return googleMap?.projection?.visibleRegion?.latLngBounds?.northeast?.latitude
     }
 
     override fun onMapReady(map: GoogleMap) {
@@ -70,12 +92,12 @@ class DynamicMapView @JvmOverloads constructor(
             )
     }
 
-    fun animateCamera(cameraUpdate: CameraUpdate, duration: Int = CAMERA_ANIMATION_DURATION_FAST, callback: GoogleMap.CancelableCallback? = null) {
+    fun animateCamera(cameraUpdate: CameraUpdate, duration: Int = CAMERA_ANIMATION_DURATION_FAST) {
         googleMap
             ?.animateCamera(
                 cameraUpdate,
                 duration,
-                callback
+                null
             )
     }
 

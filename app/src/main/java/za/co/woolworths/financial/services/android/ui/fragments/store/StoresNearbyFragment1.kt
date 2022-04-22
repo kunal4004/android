@@ -29,7 +29,6 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
 import com.google.android.gms.maps.*
-import com.google.android.gms.maps.GoogleMap.CancelableCallback
 import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.fragment_stores_nearby1.*
 import kotlinx.android.synthetic.main.fragment_stores_nearby1.cardPager
@@ -279,7 +278,7 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     }
 
     fun backToAllStoresPage(position: Int) {
-        dynamicMapView?.googleMap?.uiSettings?.isScrollGesturesEnabled = true
+        dynamicMapView?.setScrollGesturesEnabled(isEnabled = true)
         dynamicMapView?.animateCamera(markers?.get(position), DynamicMapView.CAMERA_ANIMATION_DURATION_SLOW)
         val toolbar = mBottomNavigator?.toolbar()
         toolbar?.animate()?.translationY(toolbar.top.toFloat())?.setInterpolator(AccelerateInterpolator())?.start()
@@ -289,14 +288,14 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     private fun showStoreDetails(position: Int) {
         storeDetailsList?.get(position)?.let { storeDetails -> initStoreDetailsView(storeDetails) }
         hideMarkers(markers, position)
-        val center = dynamicMapView?.googleMap?.cameraPosition?.target?.latitude
-        val northMap = dynamicMapView?.googleMap?.projection?.visibleRegion?.latLngBounds?.northeast?.latitude
+        val center = dynamicMapView?.getCameraPositionTargetLatitude()
+        val northMap = dynamicMapView?.getVisibleRegionNortheastLatitude()
         val diff = northMap?.let { center?.minus(it) }
         val newLat = markers?.get(position)?.position?.latitude?.plus(diff?.div(1.5)!!)
         val centerCam =
                 CameraUpdateFactory.newLatLng(markers?.get(position)?.position?.longitude?.let { newLat?.let { latitude -> LatLng(latitude, it) } })
         dynamicMapView?.animateCamera(centerCam)
-        dynamicMapView?.googleMap?.uiSettings?.isScrollGesturesEnabled = false
+        dynamicMapView?.setScrollGesturesEnabled(isEnabled = false)
         if (sliding_layout?.anchorPoint == 1.0f) {
             val toolbar = mBottomNavigator?.toolbar()
             toolbar?.animate()?.translationY(-toolbar.bottom.toFloat())?.setInterpolator(AccelerateInterpolator())?.start()
@@ -320,7 +319,7 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     }
 
     fun bindDataWithUI(storeDetailsList: List<StoreDetails>) {
-        if (dynamicMapView?.googleMap != null && storeDetailsList.size >= 0) {
+        if (dynamicMapView?.isMapInstantiated() == true && storeDetailsList.size >= 0) {
             updateMyCurrentLocationOnMap(mLocation)
             for (i in storeDetailsList.indices) {
                 if (i == 0) {
@@ -494,19 +493,8 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     }
 
     private fun goToUser(mLocation: CameraPosition?) {
-        changeCamera(CameraUpdateFactory.newCameraPosition(mLocation), object : CancelableCallback {
-            override fun onFinish() {}
-            override fun onCancel() {}
-        })
-    }
-
-    /**
-     * Change the camera position by moving or animating the camera depending on the state of the
-     * animate toggle button.
-     */
-    private fun changeCamera(update: CameraUpdate, callback: CancelableCallback) {
         // The duration must be strictly positive so we make it at least 1.
-        dynamicMapView?.animateCamera(update, 2000.coerceAtLeast(1), callback)
+        dynamicMapView?.animateCamera(CameraUpdateFactory.newCameraPosition(mLocation), 2000.coerceAtLeast(1))
     }
 
     fun showProgressBar() {
@@ -634,7 +622,7 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
                             activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
                         } else {
                             startLocationUpdates()
-                            dynamicMapView?.googleMap?.isMyLocationEnabled = false
+                            dynamicMapView?.setMyLocationEnabled(isEnabled = false)
                         }
                     }
                 }
