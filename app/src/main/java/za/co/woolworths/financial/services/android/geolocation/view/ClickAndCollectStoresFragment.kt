@@ -26,6 +26,7 @@ import android.text.TextWatcher
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -40,7 +41,6 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
-import za.co.woolworths.financial.services.android.geolocation.viewmodel.StoreLiveData
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.AppConstant
@@ -69,12 +69,13 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
 
     companion object {
-        fun newInstance(validateLocationResponse: ValidateLocationResponse?) =
+        fun newInstance(bundle: Bundle?) =
             ClickAndCollectStoresFragment().withArgs {
-                putSerializable(VALIDATE_RESPONSE, validateLocationResponse)
+                this.putBundle(BUNDLE, bundle)
             }
-
     }
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setStyle(STYLE_NO_TITLE, android.R.style.Theme_Material_Light_NoActionBar_Fullscreen)
@@ -231,16 +232,25 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
 
     private fun navigateToFulfillmentScreen() {
         if (IS_FROM_STORE_LOCATOR) {
-            dataStore?.let { StoreLiveData.value = it }
-            bundle?.putString(
-               KEY_PLACE_ID, placeId)
-            IS_FROM_STORE_LOCATOR = false
+            dataStore?.let {
+                bundle?.putString(
+                    KEY_PLACE_ID, placeId
+                )
+                IS_FROM_STORE_LOCATOR = false
+                setFragmentResult(
+                    DeliveryAddressConfirmationFragment.STORE_LOCATOR_REQUEST_CODE,
+                    bundleOf(BUNDLE to it))
+            }
             findNavController().navigate(
                 R.id.action_clickAndCollectStoresFragment_to_deliveryAddressConfirmationFragment,
                 bundleOf(BUNDLE to bundle)
             )
         } else {
-            dataStore?.let { StoreLiveData.value = it }
+            dataStore?.let {
+                setFragmentResult(
+                    DeliveryAddressConfirmationFragment.STORE_LOCATOR_REQUEST_CODE,
+                    bundleOf(BUNDLE to it))
+            }
             dismiss()
         }
     }

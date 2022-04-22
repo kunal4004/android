@@ -11,6 +11,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -37,7 +38,6 @@ import za.co.woolworths.financial.services.android.geolocation.network.model.Sto
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
-import za.co.woolworths.financial.services.android.geolocation.viewmodel.StoreLiveData
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Province
@@ -96,6 +96,9 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     private var defaultAddress: Address? = null
     private var savedAddressResponse: SavedAddressResponse? = null
     private var whoIsCollecting: WhoIsCollectingDetails? = null
+    var store: Store? = null
+    private var isComingFromConfirmAndLocatorScreen: Boolean? = false
+
 
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
@@ -414,6 +417,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     companion object {
 
+        const val STORE_LOCATOR_REQUEST_CODE ="543"
+
         fun newInstance(latitude: String, longitude: String, placesId: String) =
             DeliveryAddressConfirmationFragment().withArgs {
                 putString(KEY_LATITUDE, latitude)
@@ -446,16 +451,27 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         geoDeliveryTab?.isEnabled = true
         geoCollectTab?.isEnabled = true
         geoDashTab?.isEnabled = true
-        StoreLiveData.observe(viewLifecycleOwner) {
-            if (it?.storeName != null) {
-                geoDeliveryText?.text = it?.storeName
+
+        setFragmentResultListener(STORE_LOCATOR_REQUEST_CODE) { _, bundle ->
+            store = bundle.get(BUNDLE) as Store
+            store?.let {
+                if (it?.storeName != null) {
+                    geoDeliveryText?.text = it?.storeName
+                }
+                editDelivery?.text = bindString(R.string.edit)
+                btnConfirmAddress?.isEnabled = true
+                btnConfirmAddress?.setBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.black
+                    )
+                )
+                mStoreName = it?.storeName.toString()
+                mStoreId = it?.storeId.toString()
             }
-            editDelivery?.text = bindString(R.string.edit)
-            btnConfirmAddress?.isEnabled = true
-            btnConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireContext(),
-                R.color.black))
-            mStoreName = it?.storeName.toString()
-            mStoreId = it?.storeId.toString()
+        }
+        setFragmentResultListener("345") { _, bundle ->
+            isComingFromConfirmAndLocatorScreen = bundle.getBoolean("IS_FROM_STORE_LOCATOR_SCREEN")
         }
         isUnSellableItemsRemoved()
         placeId?.let {
@@ -682,35 +698,70 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     private fun setGeoDeliveryTextForCnc() {
-        if (!StoreLiveData.value?.storeName.isNullOrEmpty()) {
-            geoDeliveryText?.text = mStoreName
-            editDelivery?.text = bindString(R.string.edit)
-            btnConfirmAddress?.isEnabled = true
-            btnConfirmAddress?.setBackgroundColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.black
-                )
-            )
-        } else if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address != null) {
 
+        if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName?.isNullOrEmpty() == true
+            && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.storeName?.isNullOrEmpty() == true) {
+            whereToCollect()
+            return
+        } else if (SessionUtilities.getInstance().isUserAuthenticated) {
+            if (store != null) {
+                geoDeliveryText?.text = store?.storeName
+                editDelivery?.text = bindString(R.string.edit)
+                btnConfirmAddress?.isEnabled = true
+                btnConfirmAddress?.setBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.black
+                    )
+                )
+                return
+            }
+            if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails == null) {
+                whereToCollect()
+                return
+            }
             Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
-                if (it.storeName.equals("null") || it.storeName.isNullOrEmpty()) {
-                    whereToCollect()
-                } else {
-                    geoDeliveryText?.text = it.storeName
-                    editDelivery?.text = bindString(R.string.edit)
-                    btnConfirmAddress?.isEnabled = true
-                    btnConfirmAddress?.setBackgroundColor(
+                geoDeliveryText?.text = it.storeName
+                editDelivery?.text = bindString(R.string.edit)
+                btnConfirmAddress?.isEnabled = true
+                btnConfirmAddress?.setBackgroundColor(
                         ContextCompat.getColor(
                             requireContext(),
                             R.color.black
                         )
                     )
-                }
+                return
             }
         } else {
-            whereToCollect()
+            if (store != null) {
+                geoDeliveryText?.text = store?.storeName
+                editDelivery?.text = bindString(R.string.edit)
+                btnConfirmAddress?.isEnabled = true
+                btnConfirmAddress?.setBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.black
+                    )
+                )
+                return
+            }
+
+            if (KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails == null) {
+                whereToCollect()
+                return
+            }
+            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let {
+                geoDeliveryText?.text = it.storeName
+                editDelivery?.text = bindString(R.string.edit)
+                btnConfirmAddress?.isEnabled = true
+                btnConfirmAddress?.setBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.black
+                    )
+                )
+                return
+            }
         }
     }
 
@@ -750,9 +801,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     override fun onStop() {
         super.onStop()
-        StoreLiveData.value?.storeName = null
-        StoreLiveData.value?.storeId = null
-        StoreLiveData.postValue(null)
     }
 
     /**
