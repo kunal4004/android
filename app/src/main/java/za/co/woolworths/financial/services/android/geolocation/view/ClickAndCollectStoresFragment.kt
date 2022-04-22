@@ -25,7 +25,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -37,10 +37,10 @@ import kotlinx.android.synthetic.main.no_connection.view.*
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.StoreLiveData
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.AppConstant
@@ -54,7 +54,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
+class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
     StoreListAdapter.OnStoreSelected, View.OnClickListener, TextWatcher, VtoTryAgainListener {
 
     private lateinit var mapFragment: SupportMapFragment
@@ -77,7 +77,7 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        //setStyle(STYLE_NO_TITLE, android.R.style.Theme_Material_Light_NoActionBar_Fullscreen)
+        setStyle(STYLE_NO_TITLE, android.R.style.Theme_Material_Light_NoActionBar_Fullscreen)
         super.onCreate(savedInstanceState)
         bundle = arguments?.getBundle(BUNDLE)
         bundle?.apply {
@@ -106,8 +106,8 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
         ivCross?.setOnClickListener(this)
         btChange?.setOnClickListener(this)
         etEnterNewAddress?.addTextChangedListener(this)
-//        dialog?.window
-//            ?.attributes?.windowAnimations = R.style.DialogFragmentAnimation
+        dialog?.window
+            ?.attributes?.windowAnimations = R.style.DialogFragmentAnimation
         mapFragment = childFragmentManager
             .findFragmentById(R.id.mapView) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -217,8 +217,7 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
                 navigateToFulfillmentScreen()
             }
             R.id.ivCross -> {
-              // dismiss()
-                findNavController().navigateUp()
+               dismiss()
             }
             R.id.btChange -> {
                 IS_FROM_STORE_LOCATOR = true
@@ -232,10 +231,7 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
 
     private fun navigateToFulfillmentScreen() {
         if (IS_FROM_STORE_LOCATOR) {
-            dataStore?.let {
-              //  StoreLiveData.value = it
-                GeoUtils.storeDetails(it)
-            }
+            dataStore?.let { StoreLiveData.value = it }
             bundle?.putString(
                KEY_PLACE_ID, placeId)
             IS_FROM_STORE_LOCATOR = false
@@ -244,11 +240,8 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
                 bundleOf(BUNDLE to bundle)
             )
         } else {
-            dataStore?.let {
-               // StoreLiveData.value = it
-                GeoUtils.storeDetails(it)
-            }
-            findNavController().navigateUp()
+            dataStore?.let { StoreLiveData.value = it }
+            dismiss()
         }
     }
 
