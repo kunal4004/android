@@ -7,7 +7,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant
 class ConfirmLocationRequest(
     var deliveryType: String,
     var address: ConfirmLocationAddress,
-    var storeId: String?,
+    var storeId: String? = "",
     @Nullable
     var page: String? = ""
 ) {
