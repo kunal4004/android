@@ -1,26 +1,24 @@
 package za.co.woolworths.financial.services.android.ui.fragments.mypreferences
 
 import android.Manifest
-import android.annotation.SuppressLint
-import android.annotation.TargetApi
 import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.graphics.Paint
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.text.TextUtils
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -75,6 +73,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         const val RETRY_GET_OTP: String = "GET_OTP"
         const val RETRY_VALIDATE: String = "VALIDATE_OTP"
         const val RETRY_LINK_DEVICE: String = "LINK_DEVICE"
+        const val REQUEST_PERMISSION_LOCATION = 210
     }
 
     private lateinit var locator: Locator
@@ -428,7 +427,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         showLinkingDeviceProcessing()
 
         if (currentLocation == null && checkForLocationPermission) {
-            startLocationDiscoveryProcess()
+            checkForLocationPermission()
             return
         }
 
@@ -465,6 +464,23 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
             }
         }
         callLinkingDeviceAPI(checkForLocationPermission = false)
+    }
+
+    private fun checkForLocationPermission(skipEnableLocation: Boolean = false) {
+        activity?.apply {
+            //Check if user has location services enabled. If not, notify user as per current store locator functionality.
+            if (!skipEnableLocation && !Utils.isLocationEnabled(this)) {
+                val enableLocationSettingsFragment: EnableLocationSettingsFragment? = EnableLocationSettingsFragment()
+                enableLocationSettingsFragment?.show(supportFragmentManager, EnableLocationSettingsFragment::class.java.simpleName)
+                return@apply
+            }
+
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+                REQUEST_PERMISSION_LOCATION
+            )
+        }
     }
 
     private fun retrieveTokenAndCallLinkDevice() {
@@ -774,12 +790,18 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         mConnectionBroadCast = Utils.connectionBroadCast(activity, this)
     }
 
+    override fun onRequestPermissionsResult(requestCode: Int, @NonNull permissions: Array<String>, @NonNull grantResults: IntArray) {
+        when (requestCode) {
+            REQUEST_PERMISSION_LOCATION -> startLocationDiscoveryProcess()
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         when (requestCode) {
             EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE -> {
-                startLocationDiscoveryProcess()
+                checkForLocationPermission(skipEnableLocation = true)
             }
             ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE -> {
                 when (resultCode) {
