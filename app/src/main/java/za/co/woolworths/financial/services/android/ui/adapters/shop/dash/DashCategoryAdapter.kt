@@ -6,6 +6,7 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -16,6 +17,7 @@ import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.load.resource.bitmap.TransformationUtils.fitCenter
 import kotlinx.android.synthetic.main.item_banner_carousel.view.*
 import kotlinx.android.synthetic.main.item_long_banner_carousel.view.*
 import kotlinx.android.synthetic.main.item_long_banner_list.view.*
@@ -171,7 +173,6 @@ class BannerCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
             .format(DecodeFormat.PREFER_ARGB_8888)
             .placeholder(R.drawable.woolworth_logo_icon)
             .transform(
-                CenterCrop(),
                 RoundedCorners(context.resources.getDimensionPixelOffset(R.dimen.seven_dp))
             )
             .dontAnimate()

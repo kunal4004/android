@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.views.shop.dash
 
-import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.view.View
@@ -99,6 +98,10 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         btn_dash_set_address?.setOnClickListener(this)
     }
 
+    private fun hideSetAddressScreen() {
+        layoutDashSetAddress?.visibility = View.GONE
+    }
+
     private fun initData() {
         when {
             // Both API data available
@@ -108,7 +111,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 layoutDashSetAddress?.visibility = View.GONE
                 dashDeliveryAdapter.setData(
                     viewModel.onDemandCategories.value?.peekContent()?.data?.onDemandCategories,
-                    viewModel.dashCategories.value?.peekContent()?.data?.productCatalogues
+                    viewModel.dashLandingDetails.value?.peekContent()?.data?.productCatalogues
                 )
             }
             // Either of API data available
@@ -120,12 +123,12 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 // Data will be set in observers when api successful/failure
                 when (viewModel.isDashCategoriesAvailable.value) {
                     true -> viewModel.getOnDemandCategories()
-                    else -> viewModel.getDashCategories()
+                    else -> viewModel.getDashLandingDetails()
                 }
             }
             else -> {
                 viewModel.getOnDemandCategories()
-                viewModel.getDashCategories()
+                viewModel.getDashLandingDetails()
             }
         }
 
@@ -135,7 +138,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     private fun subscribeToObservers() {
 
         //Dash API.
-        viewModel.dashCategories.observe(viewLifecycleOwner) {
+        viewModel.dashLandingDetails.observe(viewLifecycleOwner) {
             it.getContentIfNotHandled()?.let { resource ->
                 when (resource.status) {
                     Status.LOADING -> {
@@ -173,7 +176,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                         if (viewModel.isDashCategoriesAvailable.value == true) {
                             dashDeliveryAdapter.setData(
                                 resource.data?.onDemandCategories,
-                                viewModel.dashCategories.value?.peekContent()?.data?.productCatalogues,
+                                viewModel.dashLandingDetails.value?.peekContent()?.data?.productCatalogues,
                             )
                         }
                     }
@@ -184,7 +187,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                         if (viewModel.isDashCategoriesAvailable.value == true) {
                             dashDeliveryAdapter.setData(
                                 null,
-                                viewModel.dashCategories.value?.peekContent()?.data?.productCatalogues,
+                                viewModel.dashLandingDetails.value?.peekContent()?.data?.productCatalogues,
                             )
                         }
                         progressBar.visibility = View.GONE
@@ -268,9 +271,5 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 navigateToConfirmAddressScreen()
             }
         }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
     }
 }

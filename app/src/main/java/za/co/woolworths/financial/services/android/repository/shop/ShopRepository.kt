@@ -7,6 +7,6 @@ import za.co.woolworths.financial.services.android.models.network.Resource
 
 interface ShopRepository {
 
-    suspend fun fetchDashCategories(): Resource<DashCategories>
+    suspend fun fetchDashLandingDetails(): Resource<DashCategories>
     suspend fun fetchOnDemandCategories(location: Location?): Resource<RootCategories>
 }

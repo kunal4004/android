@@ -358,15 +358,10 @@ interface ApiInterface {
     ): retrofit2.Response<RootCategories>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "Accept-Encoding: gzip")
-    @GET("wfs/app/v4/categories")
-    suspend fun getDashCategories(
+    @GET("wfs/app/v4/search/department/landingPage")
+    suspend fun getDashLandingDetails(
             @Header("sessionToken") sessionToken: String,
-            @Header("deviceIdentityToken") deviceIdentityToken: String,
-            //Optional params
-            @Header("latitude") lat: Double?,
-            @Header("longitude") long: Double?,
-            @Query("suburbId") suburbId: String?,
-            @Query("storeId") storeId: String?,
+            @Header("deviceIdentityToken") deviceIdentityToken: String
     ): retrofit2.Response<DashCategories>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "Accept-Encoding: gzip")
