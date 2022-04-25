@@ -49,7 +49,7 @@ open class NetworkConfig {
         return SessionUtilities.getInstance().deviceIdentityToken
     }
 
-    fun getAppVersion(): String=WoolworthsApplication.getAppVersionName()
+    fun getAppVersion(): String= WoolworthsApplication.getAppVersionName()
 
 
 }
