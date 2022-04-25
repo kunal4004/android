@@ -24,9 +24,6 @@ android {
         enabled = true
     }
 
-
-
-
     compileOptions {
         // Support for Java 8 features
         coreLibraryDesugaringEnabled true
