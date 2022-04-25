@@ -12,10 +12,10 @@ android {
 
     def major = "8"
     def minor = "9"
-    def fix = "0"
-    def jobNumberProduction = 177
-    def jobNumberQa = 575
-    def jobNumberFeature = 154432
+    def fix = "1"
+    def jobNumberProduction = 178
+    def jobNumberQa = 576
+    def jobNumberFeature = 160042
 
     dataBinding {
         enabled = true
@@ -66,6 +66,7 @@ android {
         buildConfigField("String", "HOST", '"' + System.env.WigroupServer_API_URL + '"')
         buildConfigField("String", "SHA1", '"' + System.env.WigroupServer_API_HASH + '"')
         buildConfigField("String", "ENV", '"' + System.env.Environment + '"')
+        resValue "string", "maps_api_key", '"' + System.env.MAPS_API_KEY + '"'
     }
 
     def secureProps = new Properties()
@@ -75,10 +76,20 @@ android {
         isQaRelease = System.env.IS_QA_RELEASE.toBoolean()
     }
 
+    signingConfigs {
+        woneappQa {
+            keyAlias 'woneapp_qa'
+            keyPassword 'woneapp_qa'
+            storeFile file('key/woneapp_qa-release-key.keystore')
+            storePassword 'woneapp_qa'
+        }
+    }
+
     buildTypes {
         // MARK - Debug build types
         debug {
             debuggable true
+            signingConfig signingConfigs.woneappQa
         }
 
         // MARK - Release build types
@@ -108,17 +119,9 @@ android {
 
                 buildConfigField("String", "HOST", '"' + secureProps['URL_QA_' + apiKey] + '"')
                 buildConfigField("String", "SHA1", '"' + secureProps['HASH_QA_' + apiKey] + '"')
+                resValue "string", "maps_api_key", (secureProps["MAPS_API_KEY"] ?: "Google Maps API Key")
 
-                signingConfigs {
-                    woolworths {
-                        keyAlias 'woneapp_qa'
-                        keyPassword 'woneapp_qa'
-                        storeFile file('key/woneapp_qa-release-key.keystore')
-                        storePassword 'woneapp_qa'
-                    }
-                }
-
-                signingConfig signingConfigs.woolworths
+                signingConfig signingConfigs.woneappQa
             }
 
             applicationIdSuffix ".qa"
@@ -126,7 +129,6 @@ android {
             manifestPlaceholders = [appLabel: "Woolworths Q"]
             manifestPlaceholders = [app_links_host: "www-win-qa.woolworths.co.za"]
             buildConfigField("String", "ENV", '"QA"')
-            resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "Google Maps API Key")
         }
 
         googleProduction {
@@ -135,6 +137,7 @@ android {
 
                 buildConfigField("String", "HOST", '"' + secureProps['URL_PROD_' + apiKey] + '"')
                 buildConfigField("String", "SHA1", '"' + secureProps['HASH_PROD_' + apiKey] + '"')
+                resValue "string", "maps_api_key", (secureProps["MAPS_API_KEY"] ?: "Google Maps API Key")
             }
 
             if (file("../ProductionKeystore.properties").exists()) {
@@ -154,7 +157,6 @@ android {
 
             versionCode jobNumberProduction
             buildConfigField("String", "ENV", '""')
-            resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "Google Maps API Key")
         }
 
         huaweiQa {
@@ -163,17 +165,9 @@ android {
 
                 buildConfigField("String", "HOST", '"' + secureProps['URL_QA_' + apiKey] + '"')
                 buildConfigField("String", "SHA1", '"' + secureProps['HASH_QA_' + apiKey] + '"')
+                resValue "string", "maps_api_key", (secureProps["MAPS_API_KEY"] ?: "Huawei MapKit API Key")
 
-                signingConfigs {
-                    woolworths {
-                        keyAlias 'woneapp_qa'
-                        keyPassword 'woneapp_qa'
-                        storeFile file('key/woneapp_qa-release-key.keystore')
-                        storePassword 'woneapp_qa'
-                    }
-                }
-
-                signingConfig signingConfigs.woolworths
+                signingConfig signingConfigs.woneappQa
             }
 
             applicationIdSuffix ".qa"
@@ -181,7 +175,6 @@ android {
             manifestPlaceholders = [appLabel: "Woolworths Q"]
             manifestPlaceholders = [app_links_host: "www-win-qa.woolworths.co.za"]
             buildConfigField("String", "ENV", '"QA"')
-            resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "Huawei MapKit API Key")
         }
 
         huaweiProduction {
@@ -190,6 +183,7 @@ android {
 
                 buildConfigField("String", "HOST", '"' + secureProps['URL_PROD_' + apiKey] + '"')
                 buildConfigField("String", "SHA1", '"' + secureProps['HASH_PROD_' + apiKey] + '"')
+                resValue "string", "maps_api_key", (secureProps["MAPS_API_KEY"] ?: "Huawei MapKit API Key")
             }
 
             if (file("../ProductionKeystore.properties").exists()) {
@@ -209,7 +203,6 @@ android {
 
             versionCode jobNumberProduction
             buildConfigField("String", "ENV", '""')
-            resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "Huawei MapKit API Key")
         }
     }
 
