@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.FragmentManager
 import com.awfs.coordination.R
 import com.google.android.gms.maps.*
@@ -21,8 +22,8 @@ class DynamicMapView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyle: Int = 0,
     defStyleRes: Int = 0
-) : ConstraintLayout(context, attrs, defStyle, defStyleRes), OnMapReadyCallback,
-    GoogleMap.OnMarkerClickListener {
+) : ConstraintLayout(context, attrs, defStyle, defStyleRes),
+    OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     companion object {
         var CAMERA_ANIMATION_DURATION_FAST = 350
@@ -30,6 +31,7 @@ class DynamicMapView @JvmOverloads constructor(
     }
 
     private var delegate: DynamicMapDelegate? = null
+    private var googleMapView: MapView? = null
     private var googleMap: GoogleMap? = null
 
     init {
@@ -37,9 +39,12 @@ class DynamicMapView @JvmOverloads constructor(
     }
 
     fun initializeMap(savedInstanceState: Bundle?, delegate: DynamicMapDelegate) {
+        googleMapView = MapView(context)
+        googleMapView?.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+        addView(googleMapView)
         this.delegate = delegate
-        googleMapView.onCreate(savedInstanceState)
-        googleMapView.getMapAsync(this)
+        googleMapView?.onCreate(savedInstanceState)
+        googleMapView?.getMapAsync(this)
     }
 
     fun isMapInstantiated(): Boolean {
@@ -102,22 +107,22 @@ class DynamicMapView @JvmOverloads constructor(
     }
 
     fun onResume() {
-        googleMapView.onResume()
+        googleMapView?.onResume()
     }
 
     fun onPause() {
-        googleMapView.onPause()
+        googleMapView?.onPause()
     }
 
     fun onDestroy() {
-        googleMapView.onDestroy()
+        googleMapView?.onDestroy()
     }
 
     fun onLowMemory() {
-        googleMapView.onLowMemory()
+        googleMapView?.onLowMemory()
     }
 
     fun onSaveInstanceState(outState: Bundle) {
-        googleMapView.onSaveInstanceState(outState)
+        googleMapView?.onSaveInstanceState(outState)
     }
 }
