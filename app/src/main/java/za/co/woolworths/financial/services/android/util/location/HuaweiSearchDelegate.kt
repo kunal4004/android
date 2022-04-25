@@ -39,7 +39,6 @@ class HuaweiSearchDelegate(val activity: Activity,
             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
             .setInterval(10 * 1000) // 10 seconds, in milliseconds
             .setFastestInterval(1 * 1000)
-            .setExpirationDuration(20 * 1000) // 20 seconds, in milliseconds
 
         huaweiFusedLocationClient.requestLocationUpdates(
             locationRequest,
