@@ -1,19 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.fragments.mypreferences
 
-import android.Manifest
-import android.annotation.SuppressLint
-import android.annotation.TargetApi
 import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.graphics.Paint
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.text.TextUtils
@@ -65,7 +60,6 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator
-import za.co.woolworths.financial.services.android.util.location.Logger
 import java.util.*
 
 class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeListener {
@@ -452,17 +446,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     }
 
     private fun handlePermissionEvent(permissionEvent: Event.Permission) {
-        when (permissionEvent.event) {
-            EventType.LOCATION_PERMISSION_GRANTED -> {
-                Logger.logDebug("Permission granted")
-            }
-            EventType.LOCATION_PERMISSION_NOT_GRANTED -> {
-                Logger.logDebug("Permission NOT granted")
-                Utils.saveLastLocation(null, activity)
-            }
-            EventType.LOCATION_DISABLED_ON_DEVICE -> {
-                Logger.logDebug("Permission NOT granted permanently")
-            }
+        if (permissionEvent.event == EventType.LOCATION_PERMISSION_NOT_GRANTED) {
+            Utils.saveLastLocation(null, activity)
         }
         callLinkingDeviceAPI(checkForLocationPermission = false)
     }
