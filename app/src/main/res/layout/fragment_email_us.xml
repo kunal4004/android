@@ -84,6 +84,7 @@
                 android:layout_marginTop="@dimen/_5sdp"
                 android:letterSpacing="0.08"
                 android:lineSpacingExtra="8sp"
+                android:visibility="gone"
                 android:text="@string/email_us_email_validation"
                 android:textSize="@dimen/_8ssp"
                 app:WTextView_font="medium" />
