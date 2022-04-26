@@ -438,11 +438,16 @@ class KotlinUtils {
                         deliverLocationIcon?.setImageResource(R.drawable.ic_delivery_circle)
                     }
                     else ->{
-
-                        tvDeliveringTo?.text =
-                            context?.resources?.getString(R.string.dash_delivery)
+                        val timeSlot: String? = WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.firstAvailableFoodDeliveryTime
+                        if (timeSlot == null) {
+                            tvDeliveringTo?.text =
+                                context?.resources?.getString(R.string.dash_delivery_bold)
+                        } else {
+                            tvDeliveringTo?.text =
+                                context?.resources?.getString(R.string.dash_delivery_bold)
+                                    .plus("\t" + timeSlot)
+                        }
                         tvDeliveryLocation?.text = address?.address1?:""
-
                         tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_dash_delivery_circle)
                     }

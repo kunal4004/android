@@ -2479,6 +2479,7 @@
     <string name="click_and_collect_title_text">Free Collection. \n Limited shop of 64 Items.</string>
     <string name="dash_title_text">R35 Delivery Fee. Free for orders over R75. \n Limited shop of 42 Items.</string>
     <string name="dash_delivery">Dash Delivery</string>
+    <string name="dash_delivery_bold"><b>Dash Delivery</b></string>
     <string name="dash_product_search">Search name, product code or brand</string>
     <string name="default_location">Default Location</string>
     <string name="set_your_address">Set your address</string>
