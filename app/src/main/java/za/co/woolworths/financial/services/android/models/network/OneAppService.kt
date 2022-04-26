@@ -174,7 +174,7 @@ object OneAppService : RetrofitConfig() {
             getDeviceIdentityToken())
     }
 
-    fun getRootCategory(locationEnabled: Boolean, location: Location?): Call<RootCategories> {
+    fun getRootCategory(locationEnabled: Boolean, location: Location?, deliveryType: String): Call<RootCategories> {
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
         // Pass storeId value of 01 fulfillment type
         var locationCord = location
@@ -184,7 +184,7 @@ object OneAppService : RetrofitConfig() {
 
         return mApiInterface.getRootCategories(
             getSessionToken(),
-            getDeviceIdentityToken(), locationCord?.latitude, locationCord?.longitude, suburbId, storeId)
+            getDeviceIdentityToken(), locationCord?.latitude, locationCord?.longitude, suburbId, storeId, deliveryType)
     }
 
     suspend fun getDashCategoryNavigation(location: Location?): retrofit2.Response<RootCategories> {

@@ -10,6 +10,11 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.OneAppService.getSubCategory
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 class SubCategoryViewModel : BaseViewModel<SubCategoryNavigator>() {
     private var childItem = false
@@ -72,7 +77,7 @@ class SubCategoryViewModel : BaseViewModel<SubCategoryNavigator>() {
         location: Location?,
         retryCountOn502: Int = 3
     ) {
-        rootCategoryRequest = OneAppService.getRootCategory(isLocationEnabled, location)
+        rootCategoryRequest = OneAppService.getRootCategory(isLocationEnabled, location, getDeliveryType())
         rootCategoryRequest?.enqueue(CompletionHandler(object : IResponseListener<RootCategories> {
             override fun onSuccess(response: RootCategories?) {
                 when (response?.httpCode) {
@@ -132,6 +137,19 @@ class SubCategoryViewModel : BaseViewModel<SubCategoryNavigator>() {
         if (subCategoryRequest != null && subCategoryRequest!!.isCanceled) {
             subCategoryRequest!!.cancel()
         }
+    }
+
+    private fun getDeliveryType(): String {
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let { fulfillmentDetails ->
+                return Delivery.getType(fulfillmentDetails.deliveryType)?.name ?: BundleKeysConstants.STANDARD
+            }
+        } else {
+            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let { fulfillmentDetails ->
+                return Delivery.getType(fulfillmentDetails.deliveryType)?.name ?: BundleKeysConstants.STANDARD
+            }
+        }
+        return BundleKeysConstants.STANDARD
     }
 
     fun setChildItem(childItem: Boolean) {
