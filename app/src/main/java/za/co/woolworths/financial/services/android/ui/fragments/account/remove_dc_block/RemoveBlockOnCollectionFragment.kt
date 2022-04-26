@@ -41,6 +41,7 @@ import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWi
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.displayLabel
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
@@ -353,7 +354,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, Eligib
     override fun eligibilityResponse(eligibilityPlan: EligibilityPlan?) {
         eligibilityPlan.let { plan ->
             helpWithPayment.text =  when (plan?.actionText.equals(ActionText.VIEW_ELITE_PLAN.value, ignoreCase = true)) {
-                true ->   plan?.displayText
+                true -> requireContext().displayLabel()
                 false ->   bindString( R.string.get_help_repayment)
             }
 

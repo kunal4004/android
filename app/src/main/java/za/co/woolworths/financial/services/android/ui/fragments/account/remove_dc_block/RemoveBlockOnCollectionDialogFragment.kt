@@ -1,8 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.remove_dc_block
 
 import android.content.Intent
+import android.graphics.Paint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -13,6 +13,9 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.remove_block_on_collection_dialog.*
+import kotlinx.android.synthetic.main.remove_block_on_collection_dialog.cannotAffordPaymentButton
+import kotlinx.android.synthetic.main.remove_block_on_collection_dialog.closeIconImageButton
+import kotlinx.android.synthetic.main.view_treatment_plan_dialog_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.ActionText
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -150,6 +153,15 @@ class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.On
     private fun enableElitePlanForCC(): Boolean {
         return eligibilityPlan?.planType.equals(ELITE_PLAN) &&
                 (state != ApplyNowState.PERSONAL_LOAN && state != ApplyNowState.STORE_CARD)
+    }
+
+    private fun setupMakePaymentButton() {
+        makePaymentButton?.apply {
+            paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            visibility = mTreatmentPlanImpl.isMakePaymentButtonVisible()
+            setOnClickListener(this@RemoveBlockOnCollectionDialogFragment)
+            AnimationUtilExtension.animateViewPushDown(this)
+        }
     }
 
 }

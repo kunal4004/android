@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
@@ -28,6 +29,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.OutSystemBuilder
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
+import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.displayLabel
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanImpl
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -170,7 +172,7 @@ class AccountSixMonthArrearsFragment : Fragment(), EligibilityImpl {
                     visibility = GONE
                     isEnabled = false
                 }
-                viewTreatmentPlansButton.text = eligibilityPlan.displayText
+                viewTreatmentPlansButton.text = requireContext().displayLabel()
             }
             ActionText.START_NEW_ELITE_PLAN.value -> {
                 viewTreatmentPlansButton.text = bindString(R.string.get_help_repayment)
