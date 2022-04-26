@@ -20,8 +20,8 @@
             android:id="@+id/ll_email_us_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_marginTop="@dimen/_10sdp"
+            android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -43,8 +43,9 @@
                 android:layout_marginTop="@dimen/_5sdp"
                 android:background="@drawable/bg_input_edittext"
                 android:gravity="center_vertical"
+                android:inputType="textPersonName"
                 android:paddingStart="@dimen/_5sdp"
-                android:paddingEnd="@dimen/_5sdp"/>
+                android:paddingEnd="@dimen/_5sdp" />
         </LinearLayout>
 
         <LinearLayout
@@ -74,6 +75,7 @@
                 android:layout_marginTop="@dimen/_5sdp"
                 android:background="@drawable/bg_input_edittext"
                 android:gravity="center_vertical"
+                android:inputType="textEmailAddress"
                 android:paddingStart="@dimen/_5sdp"
                 android:paddingEnd="@dimen/_5sdp" />
 
@@ -84,11 +86,12 @@
                 android:layout_marginTop="@dimen/_5sdp"
                 android:letterSpacing="0.08"
                 android:lineSpacingExtra="8sp"
-                android:visibility="gone"
                 android:text="@string/email_us_email_validation"
                 android:textSize="@dimen/_8ssp"
+                android:visibility="gone"
                 app:WTextView_font="medium" />
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/ll_email_us_enquiry"
             android:layout_width="0dp"
@@ -115,11 +118,11 @@
                 android:layout_height="@dimen/_30sdp"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:background="@drawable/bg_input_edittext"
-                android:gravity="center_vertical"
                 android:cursorVisible="false"
-                android:focusable="false"
-                android:paddingStart="@dimen/_5sdp"
                 android:drawableEnd="@drawable/refinement_down_arrow_selector"
+                android:focusable="false"
+                android:gravity="center_vertical"
+                android:paddingStart="@dimen/_5sdp"
                 android:paddingEnd="@dimen/_5sdp" />
 
         </LinearLayout>
@@ -148,12 +151,12 @@
                 android:id="@+id/et_email_us_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/_150sdp"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:background="@drawable/bg_input_edittext"
                 android:gravity="start"
-                android:paddingTop="@dimen/_5sdp"
+                android:minHeight="@dimen/_150sdp"
                 android:paddingStart="@dimen/_5sdp"
+                android:paddingTop="@dimen/_5sdp"
                 android:paddingEnd="@dimen/_5sdp" />
 
         </LinearLayout>
@@ -162,16 +165,16 @@
             android:id="@+id/btn_email_us"
             style="@style/blackButtonStyle"
             android:layout_marginStart="@dimen/_29sdp"
+            android:layout_marginTop="@dimen/_15sdp"
             android:layout_marginEnd="@dimen/_29sdp"
             android:layout_marginBottom="@dimen/_29sdp"
             android:background="@drawable/button_disable_color"
+            android:enabled="false"
             android:gravity="center"
-            android:layout_marginTop="@dimen/_15sdp"
             android:text="@string/send"
             android:textColor="@color/text_color_selector"
             android:textSize="@dimen/_10ssp"
             app:WButton_font="medium_bold"
-            android:enabled="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
