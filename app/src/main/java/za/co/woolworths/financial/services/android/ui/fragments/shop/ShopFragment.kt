@@ -193,15 +193,17 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                                         delay(DELAY_3000_MS)
                                         if (isUserAuthenticated()) {
                                             Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let { fulfillmentDetails ->
-                                                Delivery.getType(fulfillmentDetails.deliveryType)?.let {
-                                                    showBlackToolTip(it)
-                                                }
+                                                Delivery.getType(fulfillmentDetails.deliveryType)
+                                                    ?.let {
+                                                        showBlackToolTip(it)
+                                                    }
                                             }
                                         } else {
                                             KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let { fulfillmentDetails ->
-                                                Delivery.getType(fulfillmentDetails.deliveryType)?.let {
-                                                    showBlackToolTip(it)
-                                                }
+                                                Delivery.getType(fulfillmentDetails.deliveryType)
+                                                    ?.let {
+                                                        showBlackToolTip(it)
+                                                    }
                                             }
                                         }
 
@@ -314,11 +316,11 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
 
         if (isUserAuthenticated()) {
-            if (Utils.getPreferredDeliveryLocation()!=null) {
+            if (Utils.getPreferredDeliveryLocation() != null) {
                 return
             }
         } else {
-            if (KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails != null){
+            if (KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails != null) {
                 return
             }
         }
@@ -549,12 +551,27 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 BundleKeysConstants.VALIDATE_RESPONSE
             ) as? ValidateLocationResponse
             validateLocationResponse?.validatePlace?.let { shopViewModel.setValidatePlaceResponse(it) }
-            refreshViewPagerFragment()
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                // delay added because onResume() sets current item back to deliveryType tab.
+                // But we want forcefully user to come on Dash tab even though the location is not dash.
+                delay(AppConstant.DELAY_500_MS)
+                updateCurrentTab(BundleKeysConstants.DASH)
+                refreshViewPagerFragment()
+                showDashToolTip() // externally showing dash tooltip as delivery type is not same.
+            }
         }
     }
 
     fun refreshViewPagerFragment() {
         when (viewpager_main.currentItem) {
+            0 -> {
+                val departmentsFragment =
+                    viewpager_main?.adapter?.instantiateItem(
+                        viewpager_main,
+                        viewpager_main.currentItem
+                    ) as? DepartmentsFragment
+                departmentsFragment?.initView()
+            }
             1 -> {
                 val changeFullfilmentCollectionStoreFragment =
                     viewpager_main?.adapter?.instantiateItem(

@@ -88,7 +88,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.fragment_shop_department, container, false)
     }
@@ -100,6 +100,10 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
                 hasFocus
             )
         }
+        initView()
+    }
+
+    fun initView() {
         activity?.apply {
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         }
@@ -524,7 +528,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
         }
     }
 
-     fun reloadRequest() {
+    fun reloadRequest() {
         executeDepartmentRequest()
     }
 }

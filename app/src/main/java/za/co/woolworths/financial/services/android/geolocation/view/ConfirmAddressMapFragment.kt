@@ -262,10 +262,15 @@ class ConfirmAddressMapFragment :
                         HTTP_OK -> {
                             validateLocationResponse.validatePlace?.let { place ->
                                 if (place.onDemand != null && place.onDemand!!.deliverable == true) {
+
                                     if (!SessionUtilities.getInstance().isUserAuthenticated) {
                                         // User not logged in that's why we are setting new location.
+                                        KotlinUtils.isDashTabClicked =
+                                            placeId?.equals(KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId) // changing black tooltip flag as user changes his browsing location.
                                         confirmSetAddress(validateLocationResponse)
                                     } else {
+                                        KotlinUtils.isDashTabClicked =
+                                            placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId) // changing black tooltip flag as user changes his browsing location.
                                         val savedLocation = Utils.getPreferredDeliveryLocation()
                                         if (savedLocation?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
                                             // user logged in but don't have any location that's why we are setting new location.
