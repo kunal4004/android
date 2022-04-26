@@ -326,7 +326,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         deliveringOptionsList = AppConfigSingleton.nativeCheckout?.addressTypes
         showWhereAreWeDeliveringView()
         activity?.applicationContext?.let { context ->
-            Places.initialize(context, getString(R.string.maps_api_key))
+            Places.initialize(context, getString(R.string.maps_google_api_key))
             val placesClient = Places.createClient(context)
             val placesAdapter =
                 GooglePlacesAdapter(requireActivity(), placesClient)

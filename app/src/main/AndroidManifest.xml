@@ -146,12 +146,12 @@
             android:icon="@drawable/ic_action_bar_logo"
             android:theme="@style/SSOActivity" /> <!-- Goolge Maps API Key -->
         <!--
-        Note: Android Studio will not resolve @string/maps_api_key until build time.
+        Note: Android Studio will not resolve @string/maps_google_api_key until build time.
         Do not use quick fix to generate a string value resource for this property.
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/maps_api_key" />
+            android:value="@string/maps_google_api_key" />
         <!-- Google Analytics -->
         <receiver
             android:name="com.google.android.gms.analytics.AnalyticsReceiver"

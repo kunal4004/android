@@ -5,7 +5,8 @@ apply plugin: "kotlin-kapt"
 apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: "androidx.navigation.safeargs"
-apply plugin: 'com.google.gms.google-services'  // Google Services plugin
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.huawei.agconnect'
 apply plugin: 'dagger.hilt.android.plugin'
 
 android {
@@ -66,7 +67,8 @@ android {
         buildConfigField("String", "HOST", '"' + System.env.WigroupServer_API_URL + '"')
         buildConfigField("String", "SHA1", '"' + System.env.WigroupServer_API_HASH + '"')
         buildConfigField("String", "ENV", '"' + System.env.Environment + '"')
-        resValue "string", "maps_api_key", '"' + System.env.MAPS_API_KEY + '"'
+        resValue "string", "maps_google_api_key", '"' + System.env.MAPS_GOOGLE_API_KEY + '"'
+        resValue "string", "maps_huawei_api_key", '"' + System.env.MAPS_HUAWEI_API_KEY + '"'
     }
 
     def secureProps = new Properties()
@@ -119,7 +121,8 @@ android {
 
                 buildConfigField("String", "HOST", '"' + secureProps['URL_QA_' + apiKey] + '"')
                 buildConfigField("String", "SHA1", '"' + secureProps['HASH_QA_' + apiKey] + '"')
-                resValue "string", "maps_api_key", (secureProps["MAPS_API_KEY"] ?: "Google Maps API Key")
+                resValue "string", "maps_google_api_key", (secureProps["MAPS_GOOGLE_API_KEY"] ?: "Google Maps API Key")
+                resValue "string", "maps_huawei_api_key", (secureProps["MAPS_HUAWEI_API_KEY"] ?: "Huawei Maps API Key")
 
                 signingConfig signingConfigs.woneappQa
             }
@@ -137,7 +140,8 @@ android {
 
                 buildConfigField("String", "HOST", '"' + secureProps['URL_PROD_' + apiKey] + '"')
                 buildConfigField("String", "SHA1", '"' + secureProps['HASH_PROD_' + apiKey] + '"')
-                resValue "string", "maps_api_key", (secureProps["MAPS_API_KEY"] ?: "Google Maps API Key")
+                resValue "string", "maps_google_api_key", (secureProps["MAPS_GOOGLE_API_KEY"] ?: "Google Maps API Key")
+                resValue "string", "maps_huawei_api_key", (secureProps["MAPS_HUAWEI_API_KEY"] ?: "Huawei Maps API Key")
             }
 
             if (file("../ProductionKeystore.properties").exists()) {
@@ -165,7 +169,8 @@ android {
 
                 buildConfigField("String", "HOST", '"' + secureProps['URL_QA_' + apiKey] + '"')
                 buildConfigField("String", "SHA1", '"' + secureProps['HASH_QA_' + apiKey] + '"')
-                resValue "string", "maps_api_key", (secureProps["MAPS_API_KEY"] ?: "Huawei MapKit API Key")
+                resValue "string", "maps_google_api_key", (secureProps["MAPS_GOOGLE_API_KEY"] ?: "Google Maps API Key")
+                resValue "string", "maps_huawei_api_key", (secureProps["MAPS_HUAWEI_API_KEY"] ?: "Huawei Maps API Key")
 
                 signingConfig signingConfigs.woneappQa
             }
@@ -183,7 +188,8 @@ android {
 
                 buildConfigField("String", "HOST", '"' + secureProps['URL_PROD_' + apiKey] + '"')
                 buildConfigField("String", "SHA1", '"' + secureProps['HASH_PROD_' + apiKey] + '"')
-                resValue "string", "maps_api_key", (secureProps["MAPS_API_KEY"] ?: "Huawei MapKit API Key")
+                resValue "string", "maps_google_api_key", (secureProps["MAPS_GOOGLE_API_KEY"] ?: "Google Maps API Key")
+                resValue "string", "maps_huawei_api_key", (secureProps["MAPS_HUAWEI_API_KEY"] ?: "Huawei Maps API Key")
             }
 
             if (file("../ProductionKeystore.properties").exists()) {
@@ -347,9 +353,11 @@ dependencies {
     kapt "com.google.dagger:hilt-android-compiler:2.37"
 
     // Huawei
-    huaweiQaImplementation 'com.huawei.hms:location:5.1.0.303'
-    huaweiProductionImplementation 'com.huawei.hms:location:5.1.0.303'
-
+    huaweiQaImplementation 'com.huawei.hms:location:6.4.0.300'
+    huaweiProductionImplementation 'com.huawei.hms:location:6.4.0.300'
+    implementation 'com.huawei.hms:maps:6.3.1.300'
+//    huaweiQaImplementation 'com.huawei.hms:maps:6.3.1.300'
+//    huaweiProductionImplementation 'com.huawei.hms:maps:6.3.1.300'
 }
 
 apply plugin: 'com.google.gms.google-services'
