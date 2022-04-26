@@ -43,6 +43,9 @@ import com.perfectcorp.perfectlib.MakeupCam
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.low_stock_product_details.*
 import kotlinx.android.synthetic.main.low_stock_product_details.view.*
+import kotlinx.android.synthetic.main.chanel_logo_view.view.*
+import kotlinx.android.synthetic.main.item_found_layout.view.*
+import kotlinx.android.synthetic.main.layout_product_details_chanel.view.*
 import kotlinx.android.synthetic.main.product_details_add_to_cart_and_find_in_store_button_layout.*
 import kotlinx.android.synthetic.main.product_details_delivery_location_layout.*
 import kotlinx.android.synthetic.main.product_details_fragment.*
@@ -53,10 +56,12 @@ import kotlinx.android.synthetic.main.product_details_size_and_color_layout.*
 import kotlinx.android.synthetic.main.promotional_image.view.*
 import kotlinx.android.synthetic.main.vto_layout.*
 import kotlinx.coroutines.*
+import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.BrandNavigationDetails
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -131,6 +136,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
+    private var brandHeaderText: String? = null
     private var mFetchFromJson: Boolean = false
     private var defaultProductResponse: String? = null
     private var auxiliaryImages: MutableList<String> = ArrayList()
@@ -193,6 +199,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var isPickedImageFromLiveCamera: Boolean = false
     private var takenOriginalPicture: Bitmap? = null
     private var isVtoSdkInitFail: Boolean = false
+    private var bannerLabel: String? = null
+    private var bannerImage: String? = null
 
     @OpenTermAndLighting
     @Inject
@@ -220,6 +228,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         const val STR_PRODUCT_CATEGORY = "strProductCategory"
         const val STR_PRODUCT_LIST = "strProductList"
+        const val STR_BRAND_HEADER = "strBandHeaderDesc"
+        const val BRAND_NAVIGATION_DETAILS = "BRAND_NAVIGATION_DETAILS"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -230,6 +240,14 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 ProductDetails::class.java
             ) as ProductDetails
             subCategoryTitle = getString(STR_PRODUCT_CATEGORY)
+            brandHeaderText = getString(STR_BRAND_HEADER, AppConstant.EMPTY_STRING)
+
+            (getSerializable(BRAND_NAVIGATION_DETAILS) as? BrandNavigationDetails)?.let {
+                bannerLabel = it.bannerLabel ?: ""
+                bannerImage = it.bannerImage ?: ""
+            }
+
+            brandHeaderText = getString(STR_BRAND_HEADER, AppConstant.EMPTY_STRING)
             defaultProductResponse = getString("productResponse")
             mFetchFromJson = getBoolean("fetchFromJson")
         }
@@ -265,7 +283,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         imgCloseVTO?.setOnClickListener(this)
         imgVTORefresh?.setOnClickListener(this)
         openCart?.setOnClickListener(this)
+        brand_view?.brand_openCart?.setOnClickListener(this)
         backArrow?.setOnClickListener(this)
+        brand_view?.brand_backArrow?.setOnClickListener(this)
         share?.setOnClickListener(this)
         sizeGuide?.setOnClickListener(this)
         imgVTOOpen?.setOnClickListener(this)
@@ -342,11 +362,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.moreColor -> showMoreColors()
             R.id.share -> shareProduct()
             R.id.sizeGuide -> showDetailsInformation(ProductInformationActivity.ProductInformationType.SIZE_GUIDE)
-            R.id.imgVTOOpen -> vtoOptionSelectBottomDialog.showBottomSheetDialog(this@ProductDetailsFragment,
+            R.id.imgVTOOpen -> vtoOptionSelectBottomDialog.showBottomSheetDialog(
+                this@ProductDetailsFragment,
                 requireActivity(),
-                false)
+                false
+            )
             R.id.openCart -> openCart()
+            R.id.brand_openCart -> openCart()
             R.id.backArrow -> (activity as? BottomNavigationActivity)?.popFragment()
+            R.id.brand_backArrow -> (activity as? BottomNavigationActivity)?.popFragment()
             R.id.imgCloseVTO -> closeVto()
             R.id.imgVTORefresh -> clearEffect()
             R.id.retakeCamera -> reOpenCamera()
@@ -495,7 +519,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 job?.cancel()
                 stopVtoLiveCamera()
             }
-            vtoLayout.visibility = View.GONE
+            vtoLayout?.visibility = View.GONE
         } catch (e: Exception) {
             handleException(e)
         }
@@ -534,14 +558,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         updateStockAvailabilityLocation()
 
         productDetails?.let {
-            productName?.text = it.productName
-            brandName?.apply {
-                if (!it.brandText.isNullOrEmpty()) {
-                    text = it.brandText
-                    visibility = View.VISIBLE
-                }
-            }
-
+            setupBrandView()
             BaseProductUtils.displayPrice(
                 fromPricePlaceHolder,
                 textPrice,
@@ -571,6 +588,55 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     productDetails?.sku
                 )
             )
+        }
+    }
+
+    private fun setupBrandView() {
+
+        productDetails?.let {
+            productName?.text = it.productName
+            if (!it.range.isNullOrEmpty()) {
+                rangeName?.visibility = View.VISIBLE
+                rangeName?.text = it.range
+            }
+            brandName?.apply {
+                if (!it.brandText.isNullOrEmpty()) {
+                    text = it.brandText
+                    visibility = View.VISIBLE
+                }
+            }
+
+            if (ChanelUtils.isCategoryPresentInConfig(it.brandText)) {
+                brand_view?.visibility = View.VISIBLE
+                backArrow?.visibility = View.GONE
+                openCart?.visibility = View.GONE
+                share?.visibility = View.GONE
+                imgVTOOpen?.visibility = View.GONE
+                if (!TextUtils.isEmpty(bannerLabel)) {
+                    brand_view?.brand_pdp_logo_header?.tv_logo_name?.text = bannerLabel
+                } else {
+                    if (TextUtils.isEmpty(bannerImage)) {
+                        // Apply logo image from config if not present
+                        ImageManager.loadImage(
+                            brand_view?.brand_pdp_img_banner,
+                            ChanelUtils.getBrandCategory(
+                                it.brandText
+                            )?.externalImageRefV2 ?: ""
+                        )
+                    } else {
+                        ImageManager.loadImage(
+                            brand_view?.brand_pdp_img_banner,
+                            bannerImage ?: ""
+                        )
+                    }
+                }
+            } else {
+                brand_view?.visibility = View.GONE
+                backArrow?.visibility = View.VISIBLE
+                openCart?.visibility = View.VISIBLE
+                share?.visibility = View.VISIBLE
+                imgVTOOpen?.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -616,14 +682,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 true -> {
                     title = getString(R.string.product_unavailable)
                     message =
-                        getString(R.string.unavailable_item,
-                            if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name)
+                        getString(
+                            R.string.unavailable_item,
+                            if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name
+                        )
                 }
                 else -> {
                     title = getString(R.string.out_of_stock)
                     message =
-                        getString(R.string.out_of_stock_item,
-                            if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name)
+                        getString(
+                            R.string.out_of_stock_item,
+                            if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name
+                        )
 
                 }
             }
@@ -688,6 +758,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             setSelectedSku(this.defaultSku)
             updateAddToCartButtonForSelectedSKU()
         }
+
+        setupBrandView()
 
         if (hasSize)
             setSelectedGroupKey(defaultGroupKey)
@@ -841,23 +913,27 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         otherSKUsByGroupKey.size.let {
             if (it > spanCount) {
-                moreColor.text = "+ " + (it - spanCount) + " More"
-                moreColor.visibility = View.VISIBLE
+                val moreColorCount = otherSKUsByGroupKey.size - spanCount
+                moreColor?.text = requireContext().getString(R.string.product_details_color_count, moreColorCount)
+                moreColor?.visibility = View.VISIBLE
             }
         }
 
-        colorSelectorLayout.visibility = View.VISIBLE
+        colorSelectorLayout?.visibility = View.VISIBLE
     }
 
     private fun showSize() {
-        sizeSelectorRecycleView.layoutManager = GridLayoutManager(activity, 4)
-        productSizeSelectorAdapter =
-            ProductSizeSelectorAdapter(requireActivity(),
+        productSizeSelectorAdapter = ProductSizeSelectorAdapter(
+
+                requireActivity(),
                 otherSKUsByGroupKey[getSelectedGroupKey()]!!,
                 productDetails?.lowStockIndicator ?: 0,
-                this).apply {
-                sizeSelectorRecycleView.adapter = this
-            }
+                this
+            )
+        sizeSelectorRecycleView?.apply {
+            adapter = productSizeSelectorAdapter
+            layoutManager = GridLayoutManager(activity, 4)
+        }
 
         otherSKUsByGroupKey[getSelectedGroupKey()]?.let {
             if (it.size == 1) {
@@ -866,7 +942,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
         }
 
-        sizeSelectorLayout.visibility = View.VISIBLE
+        sizeSelectorLayout?.visibility = View.VISIBLE
     }
 
     private fun groupOtherSKUsByColor(otherSKUsList: ArrayList<OtherSkus>): HashMap<String, ArrayList<OtherSkus>> {
@@ -1037,7 +1113,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             && !hasSize && getSelectedSku()?.quantity!! > 0 && AppConfigSingleton.lowStock?.isEnabled == true
         ) {
             showLowStockForSelectedColor()
-            colorPlaceholder.text = ""
+            colorPlaceholder?.text = ""
         } else {
             hideLowStockFromSelectedColor()
 
@@ -1242,7 +1318,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             )
         }
         setSelectedQuantity(quantity)
-        quantityText.text = quantity.toString()
+        quantityText?.text = quantity.toString()
     }
 
     override fun setSelectedQuantity(selectedQuantity: Int?) {
@@ -1377,9 +1453,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             putExtra("ItemsCount", getSelectedQuantity())
                             putExtra("ProductCountMap", Utils.toJson(it[0].productCountMap))
                         }
-                        onActivityResult(ADD_TO_CART_SUCCESS_RESULT,
+                        onActivityResult(
                             ADD_TO_CART_SUCCESS_RESULT,
-                            intent)
+                            ADD_TO_CART_SUCCESS_RESULT,
+                            intent
+                        )
                     }
                 }
             }
@@ -1769,8 +1847,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun showProductDetailsLoading() {
         activity?.apply {
             showProgressBar()
-            viewsToHideOnProductLoading.visibility = View.GONE
-            toCartAndFindInStoreLayout.visibility = View.GONE
+            viewsToHideOnProductLoading?.visibility = View.GONE
+            toCartAndFindInStoreLayout?.visibility = View.GONE
         }
     }
 
@@ -1796,9 +1874,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         (requireActivity() as? BottomNavigationActivity)?.let {
 
             it.walkThroughPromtView =
-                WMaterialShowcaseView.Builder(it,
+                WMaterialShowcaseView.Builder(
+                    it,
                     WMaterialShowcaseView.Feature.VTO_TRY_IT,
-                    true)
+                    true
+                )
                     .setTarget(imgVTOOpen)
                     .setTitle(R.string.try_on_intro_txt)
                     .setDescription(R.string.try_on_intro_desc)
@@ -1807,8 +1887,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     .setAction(this@ProductDetailsFragment)
                     .hideFeatureTutorialsText()
                     .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
-                    .setMaskColour(ContextCompat.getColor(it,
-                        R.color.semi_transparent_black))
+                    .setMaskColour(
+                        ContextCompat.getColor(
+                            it,
+                            R.color.semi_transparent_black
+                        )
+                    )
                     .build()
             it.walkThroughPromtView?.show(it)
         }
@@ -1827,14 +1911,14 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun showProgressBar() {
         activity?.apply {
             isApiCallInProgress = true
-            progressBar.visibility = View.VISIBLE
+            progressBar?.visibility = View.VISIBLE
         }
     }
 
     override fun hideProgressBar() {
         activity?.apply {
             isApiCallInProgress = false
-            progressBar.visibility = View.GONE
+            progressBar?.visibility = View.GONE
         }
     }
 
@@ -1853,33 +1937,31 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun showSelectedColor() {
         activity?.apply {
             getSelectedGroupKey()?.let {
-                colorPlaceholder.setTextColor(ContextCompat.getColor(this, R.color.black))
-                selectedColor.text = "  -  $it"
+                colorPlaceholder?.setTextColor(ContextCompat.getColor(this, R.color.black))
+                selectedColor?.text = "  -  $it"
             }
         }
     }
 
     @SuppressLint("SetTextI18n")
     private fun showSelectedSize(selectedSku: OtherSkus?) {
+        if (productDetails?.lowStockIndicator ?: 0 > selectedSku?.quantity ?: 0
+            && selectedSku?.quantity!! > 0 && AppConfigSingleton.lowStock?.isEnabled == true
+        ) {
+            showLowStockForSelectedSize()
+            selectedSizePlaceholder?.text = ""
+        } else {
+            hideLowStockForSize()
+        }
         getSelectedSku().let {
-            if (productDetails?.lowStockIndicator ?: 0 > selectedSku?.quantity ?: 0
-                && selectedSku?.quantity!! > 0 && AppConfigSingleton.lowStock?.isEnabled == true
-            ) {
-                showLowStockForSelectedSize()
-                selectedSizePlaceholder.text = ""
-            } else {
-                hideLowStockForSize()
-            }
-            selectedSize.text = if (it != null) "  -  ${it.size}" else ""
-            activity?.apply {
-                if (it != null)
-                    selectedSizePlaceholder.setTextColor(
-                        ContextCompat.getColor(
-                            this,
-                            R.color.black
-                        )
+            selectedSize?.text = if (it != null) "  -  ${it.size}" else ""
+            if (it != null)
+                selectedSizePlaceholder?.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.black
                     )
-            }
+                )
         }
     }
 
@@ -1952,7 +2034,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun showMoreColors() {
         productColorSelectorAdapter?.apply {
             showMoreColors()
-            moreColor.visibility = View.INVISIBLE
+            moreColor?.visibility = View.INVISIBLE
         }
     }
 
@@ -2062,7 +2144,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         if (!isOutOfStockFragmentAdded) {
             isOutOfStockFragmentAdded = true
             activity?.apply {
-                getDeliveryLocation().let {
+                getDeliveryLocation()?.let {
                     val suburbName = when (it) {
                         is ShoppingDeliveryLocation -> if (it.storePickup) it.store?.name else it.suburb?.name
                         is ConfigQuickShopDefaultValues -> it.suburb.name
@@ -2154,8 +2236,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             activity?.supportFragmentManager?.beginTransaction()
         if (fragmentTransaction != null && currentFragment != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                fragmentTransaction?.detach(currentFragment!!).commitNow()
-                fragmentTransaction?.attach(currentFragment!!).commitNow()
+                fragmentTransaction.detach(currentFragment).commitNow()
+                fragmentTransaction.attach(currentFragment).commitNow()
             } else
                 fragmentTransaction.detach(this).attach(this).commit()
         }
@@ -2340,7 +2422,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         if (type.equals("jpg") || type.equals("png")) {
             setPickedImage(uri, null, false)
         } else {
-            requireActivity().resources?.apply {
+            requireContext().apply {
                 vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
                     this@ProductDetailsFragment,
                     requireActivity(),
@@ -2349,9 +2431,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     getString(R.string.try_again)
                 )
             }
-
         }
-
     }
 
 
@@ -2370,7 +2450,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
         }
 
-
     private val requestSinglePermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
@@ -2388,7 +2467,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
             } else {
                 //Can’t Access Camera permission
-                requireActivity().resources?.apply {
+                requireContext().apply {
                     vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
                         this@ProductDetailsFragment,
                         requireActivity(),
@@ -2397,7 +2476,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         getString(R.string.vto_change_setting)
                     )
                 }
-
             }
         }
 
@@ -2455,7 +2533,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     imgVTOSplit?.visibility = View.GONE
                     captureImage?.visibility = View.GONE
                     imgVTORefresh?.visibility = View.GONE
-                    requireActivity().resources?.apply {
+                    requireContext().apply {
                         vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
                             this@ProductDetailsFragment,
                             requireActivity(),
@@ -2719,7 +2797,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         colourUnavailableError?.visibility = View.GONE
         imgVTORefresh?.visibility = View.GONE
         imgDownloadVTO?.visibility = View.GONE
-        requireActivity().resources?.apply {
+        requireContext().apply {
             vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
                 this@ProductDetailsFragment,
                 requireActivity(),
@@ -2728,8 +2806,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 getString(R.string.try_again)
             )
         }
-
-
     }
 
     private fun setBitmapFromUri(uri: Uri?) {
@@ -2927,8 +3003,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
      *  not have lowStockThreshold > quantity
      */
     private fun hideLowStockForSize() {
-        selectedSizePlaceholder.text =
-            getString(R.string.product_placeholder_selected_size)
+        selectedSizePlaceholder?.text =
+            requireContext().getString(R.string.product_placeholder_selected_size)
         (selectedSize?.layoutParams as ConstraintLayout.LayoutParams).let {
             it.startToEnd = R.id.selectedSizePlaceholder
             it.topToTop = R.id.selectedSizePlaceholder
@@ -2982,7 +3058,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
      * not have lowStockThreshold > quantity
      */
     private fun hideLowStockFromSelectedColor() {
-        colorPlaceholder.text = getString(R.string.selected_colour)
+        colorPlaceholder?.text = requireContext().getString(R.string.selected_colour)
         (selectedColor?.layoutParams as ConstraintLayout.LayoutParams).let {
             it.startToEnd = R.id.colorPlaceholder
             it.topToTop = R.id.colorPlaceholder
@@ -3000,7 +3076,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             it.bottomToBottom = R.id.selectedColor
             moreColor?.layoutParams = it
         }
-
     }
 }
 

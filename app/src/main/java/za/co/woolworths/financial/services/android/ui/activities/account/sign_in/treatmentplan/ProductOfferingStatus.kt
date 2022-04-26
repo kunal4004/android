@@ -7,6 +7,7 @@ import za.co.woolworths.financial.services.android.models.dto.app_config.account
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOfferingState
 import za.co.woolworths.financial.services.android.util.Utils
 
+
 interface IProductOffering {
     fun state(result: (AccountOfferingState) -> Unit)
     fun minimumViewTreatmentDelinquencyCycle(): Int?
@@ -22,15 +23,7 @@ class ProductOfferingStatus(private val account: Account?) : IProductOffering {
     // consumed
     val accountOptions = AppConfigSingleton.accountOptions
 
-    // consumed
-    override fun minimumViewTreatmentDelinquencyCycle(): Int? =
-        getMinimumDelinquencyCycle(accountOptions?.showTreatmentPlanJourney)
 
-    // consumed
-    override fun minimumTakeUpTreatmentDelinquencyCycle(): Int? =
-        getMinimumDelinquencyCycle(accountOptions?.collectionsStartNewPlanJourney)
-
-    // consumed
     override fun isViewTreatmentPlanSupported(): Boolean =
         (getAccountsDelinquencyCycle() >= minimumViewTreatmentDelinquencyCycle() ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT) && isTreatmentPlanSupported(
             accountOptions?.showTreatmentPlanJourney
@@ -53,8 +46,8 @@ class ProductOfferingStatus(private val account: Account?) : IProductOffering {
     private fun isTreatmentPlanSupported(treatmentPlan: ConfigShowTreatmentPlan?): Boolean {
         val appBuildNumber = Utils.getAppBuildNumber()
         return when (productGroupCode()) {
-            productGroupCodeSc -> appBuildNumber >= treatmentPlan?.personalLoan?.minimumSupportedAppBuildNumber ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT
-            productGroupCodePl -> appBuildNumber >= treatmentPlan?.storeCard?.minimumSupportedAppBuildNumber ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT
+            productGroupCodeSc -> appBuildNumber >= treatmentPlan?.storeCard?.minimumSupportedAppBuildNumber ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT
+            productGroupCodePl -> appBuildNumber >= treatmentPlan?.personalLoan?.minimumSupportedAppBuildNumber ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT
             else -> appBuildNumber >= treatmentPlan?.creditCard?.minimumSupportedAppBuildNumber ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT
         }
     }
@@ -71,19 +64,28 @@ class ProductOfferingStatus(private val account: Account?) : IProductOffering {
     override fun state(result: (AccountOfferingState) -> Unit) {
         val accountOfferingState = when (account?.productOfferingGoodStanding ?: false) {
             true -> AccountOfferingState.AccountInGoodStanding
-            false -> {
-                val isProductChargedOff = account?.productOfferingStatus.equals(
-                    Utils.ACCOUNT_CHARGED_OFF,
-                    ignoreCase = true
-                )
-                when {
-                    !isProductChargedOff && isTakeUpTreatmentPlanJourneyEnabled() -> AccountOfferingState.MakeGetEligibilityCall
-                    isViewTreatmentPlanSupported() -> if (isProductChargedOff) AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff else AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig
-                    else -> if (isProductChargedOff) AccountOfferingState.AccountIsChargedOff else AccountOfferingState.AccountIsInArrears
+            false -> when {
+                    isTakeUpTreatmentPlanJourneyEnabled() -> AccountOfferingState.MakeGetEligibilityCall
+                    isViewTreatmentPlanSupported() -> if (isChargedOff()) AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff else AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig
+                    else -> if (isChargedOff()) AccountOfferingState.AccountIsChargedOff else AccountOfferingState.AccountIsInArrears
                 }
-            }
+
         }
         result(accountOfferingState)
+    }
+
+    override fun minimumViewTreatmentDelinquencyCycle(): Int?   =   getMinimumDelinquencyCycle(accountOptions?.showTreatmentPlanJourney)
+
+    override fun minimumTakeUpTreatmentDelinquencyCycle(): Int?  =  getMinimumDelinquencyCycle(accountOptions?.collectionsStartNewPlanJourney)
+
+    fun isChargedOff():Boolean{
+       return account?.productOfferingStatus.equals(
+            Utils.ACCOUNT_CHARGED_OFF,
+            ignoreCase = true
+        )
+    }
+    fun isChargedOffCC() :Boolean{
+        return productGroupCode() != productGroupCodeSc && productGroupCode() != productGroupCodePl && isChargedOff()
     }
 
 // consumed

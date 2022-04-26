@@ -1,9 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.viewModels
@@ -14,20 +16,22 @@ import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountProductLandingMainFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.bpi_covered_tag_layout.*
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.observeOn
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.NavigationGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOfferingState
-
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.DialogData
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RED_HEX_COLOR
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 @AndroidEntryPoint
-class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMainFragmentBinding>(AccountProductLandingMainFragmentBinding::inflate) {
-
+class AccountProductsMainFragment :
+    ViewBindingFragment<AccountProductLandingMainFragmentBinding>(AccountProductLandingMainFragmentBinding::inflate) {
     private var childNavController: NavController? = null
     val viewModel by viewModels<AccountProductsHomeViewModel>()
     var navigationGraph: NavigationGraph = NavigationGraph()
@@ -37,7 +41,6 @@ class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMai
         activity?.window?.let { WindowCompat.setDecorFitsSystemWindows(it, false) }
         setToolbar()
         setupLandingScreen()
-        setupObservers()
     }
 
     private fun setToolbar() {
@@ -58,7 +61,8 @@ class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMai
     }
 
     private fun setupLandingScreen() {
-        val navHostFragment = childFragmentManager.findFragmentById(R.id.productNavigationView) as NavHostFragment
+        val navHostFragment =
+            childFragmentManager.findFragmentById(R.id.productNavigationView) as NavHostFragment
         childNavController = navHostFragment.navController
 
         with(viewModel) {
@@ -79,60 +83,65 @@ class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMai
                     is AccountOfferingState.AccountInGoodStanding -> Unit
 
                     is AccountOfferingState.AccountIsInArrears -> {
-                        // showAccountInArrears(account)
+                        displayPopUp(DialogData.AccountInArrDialog())
                     }
 
                     is AccountOfferingState.AccountIsChargedOff -> {
-
-                        // account is in arrears for more than 6 months
-                        // removeBlocksOnCollectionCustomer()
+                        when(isCreditCard(product)){
+                            false -> displayPopUp(DialogData.ChargedOff())
+                        }
                     }
 
                     is AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff -> {
+                        when(isCreditCard(product)){
+                            false -> displayPopUp(DialogData.ViewPlanDialog())
+                            true-> displayPopUp(DialogData.ChargedOff(
+                                firstButtonTitle = R.string.view_your_payment_plan,
+                                secondButtonVisibility = GONE
+                            ))
+                        }
 
                     }
 
                     is AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig -> {
+                        displayPopUp(DialogData.ViewPlanDialog())
 
                     }
 
                     is AccountOfferingState.MakeGetEligibilityCall -> {
-                        lifecycleScope.launchWhenStarted {
-                            viewModel.eligibilityPlanResponse().collect { response ->
-                                when (response) {
-                                    is ViewState.RenderSuccess<*>-> {
-                                     //   displayPopUp(response.output)
-                                    }
-                                    is ViewState.RenderFailure -> {
-                                        displayPopUp()
-                                    }
-                                    is ViewState.Loading -> {}
-
-                                    is ViewState.RenderEmpty -> {}
-                                }
-                            }
-                        }
+                        callEligibility()
                     }
                 }
             }
         }
     }
 
-
-    private fun setupObservers() {
-        with(viewModel) {
-            eligibilityPlanResponseLiveData.observe(viewLifecycleOwner) { response ->
-
+    private fun callEligibility() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.eligibilityPlanResponse().collect { response ->
+                when (response) {
+                    is ViewState.RenderSuccess -> {
+                        response.output.eligibilityPlan.let {
+                            displayPopUp(viewModel.getPopUpData(it), it)
+                        }
+                    }
+                    is ViewState.RenderFailure -> {
+                        displayPopUp(DialogData.AccountInArrDialog())
+                    }
+                    is ViewState.Loading -> {
+                    }
+                    ViewState.RenderEmpty -> {}
+                }
             }
         }
     }
 
-    private fun displayPopUp(eligibilityPlan: EligibilityPlan? = null) {
+    fun displayPopUp(dialogData: DialogData, eligibilityPlan: EligibilityPlan? = null) {
         viewModel.apply {
             findNavController().navigate(
                 AccountProductsMainFragmentDirections.actionAccountProductsMainFragmentToAccountLandingDialogFragment(
                     product,
-                    viewModel.getPopUpData(eligibilityPlan), eligibilityPlan
+                    dialogData, eligibilityPlan
                 )
             )
         }

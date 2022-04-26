@@ -236,7 +236,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     fun init() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        //TODO:: Handle notification for Android R
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && Build.VERSION.SDK_INT  < Build.VERSION_CODES.R) {
             NotificationUtils.createNotificationChannelIfNeeded(this)
         }
         // Disable first time launch splash video screen, remove to enable video on startup
@@ -448,7 +449,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     override fun onStart() {
         super.onStart()
         if (Utils.checkForBinarySu() && CommonUtils.isRooted(this) && !Util.isDebug(
-                WoolworthsApplication.getAppContext()
+                this.applicationContext
             )
         ) {
             Utils.setScreenName(
