@@ -8,6 +8,8 @@ import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
@@ -67,19 +69,13 @@ class EmailUsFragment : Fragment(), View.OnClickListener, TextWatcher {
         viewModel.validationErrors?.observe(viewLifecycleOwner) {
             binding.apply {
                 when (it) {
-                    ValidationErrors.NameNotValid -> {
-                        tvEmailUsName.setTextColor(resources.getColor(R.color.red))
-                    }
                     ValidationErrors.EmailNotValid -> {
-                        tvEmailUsEmail.setTextColor(resources.getColor(R.color.red))
+                        binding.tvEmailUsEmailValidation.visibility = VISIBLE
 
                     }
                     ValidationErrors.EnquiryNotValid -> {
                         tvEmailUsEnquiry.setTextColor(resources.getColor(R.color.red))
 
-                    }
-                    ValidationErrors.MessageNotValid -> {
-                        tvEmailUsMessage.setTextColor(resources.getColor(R.color.red))
                     }
                     ValidationErrors.ValidationSuccess -> {
                         btnEmailUs.isEnabled = true
@@ -127,7 +123,7 @@ class EmailUsFragment : Fragment(), View.OnClickListener, TextWatcher {
         when (view) {
             binding.btnEmailUs -> {
                 binding.apply {
-                    resetTVsColors()
+                    resetViews()
                     if (viewModel.contactUsValidation(
                             etEmailUsName.text.toString(),
                             etEmailUsEmail.text.toString(),
@@ -150,11 +146,9 @@ class EmailUsFragment : Fragment(), View.OnClickListener, TextWatcher {
         }
     }
 
-    private fun resetTVsColors() {
-        binding.tvEmailUsName.setTextColor(resources.getColor(R.color.color_222222))
-        binding.tvEmailUsEmail.setTextColor(resources.getColor(R.color.color_222222))
+    private fun resetViews() {
         binding.tvEmailUsEnquiry.setTextColor(resources.getColor(R.color.color_222222))
-        binding.tvEmailUsMessage.setTextColor(resources.getColor(R.color.color_222222))
+        binding.tvEmailUsEmailValidation.visibility = GONE
     }
 
     override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {

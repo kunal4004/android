@@ -39,16 +39,8 @@ class EnquiriesListViewModel @Inject constructor() : ViewModel() {
         message: String
     ): Boolean {
         var isValid = true
-        if (name.length < 3) {
-            validationErrors?.value = ValidationErrors.NameNotValid
-            isValid = false
-        }
         if (!validateEmail(email)) {
             validationErrors?.value = ValidationErrors.EmailNotValid
-            isValid = false
-        }
-        if (message.length < 2) {
-            validationErrors?.value = ValidationErrors.MessageNotValid
             isValid = false
         }
         if (isValid) {
@@ -71,9 +63,7 @@ class EnquiriesListViewModel @Inject constructor() : ViewModel() {
 }
 
 sealed class ValidationErrors {
-    object NameNotValid : ValidationErrors()
     object EmailNotValid : ValidationErrors()
     object EnquiryNotValid : ValidationErrors()
-    object MessageNotValid : ValidationErrors()
     object ValidationSuccess : ValidationErrors()
 }

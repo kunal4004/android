@@ -78,6 +78,7 @@
                 android:paddingEnd="@dimen/_5sdp" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/tv_email_us_email_validation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_5sdp"
