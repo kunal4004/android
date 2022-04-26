@@ -93,10 +93,18 @@ class AccountProductsMainFragment :
                     }
 
                     is AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff -> {
+                        when(isCreditCard(product)){
+                            false -> displayPopUp(DialogData.ViewPlanDialog())
+                            true-> displayPopUp(DialogData.ChargedOff(
+                                firstButtonTitle = R.string.view_your_payment_plan,
+                                secondButtonVisibility = GONE
+                            ))
+                        }
 
                     }
 
                     is AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig -> {
+                        displayPopUp(DialogData.ViewPlanDialog())
 
                     }
 
