@@ -7,42 +7,50 @@ import android.text.Spannable
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.account_in_arrears_layout.*
 import kotlinx.android.synthetic.main.remove_block_dc_fragment.*
-import kotlinx.android.synthetic.main.remove_block_dc_fragment.incPayMyAccountButton
-import kotlinx.android.synthetic.main.remove_block_dc_fragment.incRecentTransactionButton
-import kotlinx.android.synthetic.main.remove_block_dc_fragment.incViewStatementButton
 import kotlinx.android.synthetic.main.view_pay_my_account_button.*
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.ActionText
+import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigPayMyAccount
+import za.co.woolworths.financial.services.android.ui.activities.GetAPaymentPlanActivity
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl.Companion.ELITE_PLAN
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import za.co.woolworths.financial.services.android.util.eliteplan.EligibilityImpl
+import za.co.woolworths.financial.services.android.util.eliteplan.TakeUpPlanUtil
 import za.co.woolworths.financial.services.android.util.spannable.WSpannableStringBuilder
 import za.co.woolworths.financial.services.android.util.wenum.LinkType
 
-class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
+class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, EligibilityImpl {
 
     lateinit var navController: NavController
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
@@ -50,7 +58,11 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
     private var accountData: Pair<ApplyNowState, Account>? = null
     private var mAccountPresenter: AccountSignedInPresenterImpl? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.remove_block_dc_fragment, container, false)
     }
 
@@ -59,7 +71,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
 
         mAccountPresenter = (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter
         accountData = mAccountPresenter?.getMyAccountCardInfo()
-
+        mAccountPresenter?.eligibilityImpl = this
         when (accountData?.first) {
             ApplyNowState.PERSONAL_LOAN -> {
                 removeBlockBackgroundConstraintLayout?.setBackgroundResource(R.drawable.personal_loan_background)
@@ -72,8 +84,10 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
         }
 
         val account = accountData?.second
-        currentBalanceAmountTextview?.text = Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCentWithSpace(account?.currentBalance))
-        totalAmountDueAmountTextview?.text = Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCentWithSpace(account?.totalAmountDue))
+        currentBalanceAmountTextview?.text =
+            Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCentWithSpace(account?.currentBalance))
+        totalAmountDueAmountTextview?.text =
+            Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCentWithSpace(account?.totalAmountDue))
 
         setPushViewDownAnimation(incRecentTransactionButton)
         setPushViewDownAnimation(incViewStatementButton)
@@ -82,8 +96,11 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
         setPushViewDownAnimation(navigateBackImageButton)
         setPushViewDownAnimation(toolbarTitleTextView)
         setPushViewDownAnimation(infoIconImageView)
-
-        val contactCallCenter = WSpannableStringBuilder(bindString(R.string.contact_the_call_centre_now))
+        setPushViewDownAnimation(helpWithPayment)
+        helpWithPaymentView.visibility =
+            if (mAccountPresenter?.getEligibilityPlan()?.planType.equals(ELITE_PLAN)) VISIBLE else GONE
+        val contactCallCenter =
+            WSpannableStringBuilder(bindString(R.string.contact_the_call_centre_now))
         contactCallCenter.makeStringInteractable("0861502020", LinkType.PHONE)
         contactCallCenter.makeStringUnderlined("0861502020")
         setUnderlineText(contactCallCenter.build(), contactCallCenterNowTextview)
@@ -92,7 +109,10 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
 
         setFragmentResultListener(RemoveBlockOnCollectionDialogFragment::class.java.simpleName) { _, bundle ->
             GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
-                when (bundle.getString(RemoveBlockOnCollectionDialogFragment::class.java.simpleName, "N/A")) {
+                when (bundle.getString(
+                    RemoveBlockOnCollectionDialogFragment::class.java.simpleName,
+                    "N/A"
+                )) {
                     RemoveBlockOnCollectionDialogFragment.ARREARS_PAY_NOW_BUTTON -> {
                         accountData?.apply {
                             when (first) {
@@ -128,6 +148,38 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
             R.id.toolbarTitleTextView -> {
             }
             R.id.infoIconImageView -> navigateToCardInformation()
+            R.id.helpWithPayment -> {
+                elitePlanHandling()
+            }
+        }
+    }
+
+    private fun elitePlanHandling() {
+        when (mAccountPresenter?.getEligibilityPlan()?.actionText) {
+            ActionText.START_NEW_ELITE_PLAN.value -> {
+                activity?.apply {
+                    payMyAccountViewModel.getApplyNowState().let {
+                        TakeUpPlanUtil.takeUpPlanEventLog(it!!, this)
+                    }
+                }
+                openSetupPaymentPlanPage()
+            }
+
+            ActionText.VIEW_ELITE_PLAN.value -> {
+                KotlinUtils.openTreatmenPlanUrl(activity, mAccountPresenter?.getEligibilityPlan())
+            }
+        }
+    }
+
+    private fun openSetupPaymentPlanPage() {
+        activity?.apply {
+            val intent = Intent(context, GetAPaymentPlanActivity::class.java)
+            intent.putExtra(
+                ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN,
+                mAccountPresenter?.getEligibilityPlan()
+            )
+            startActivityForResult(intent, AccountsOptionFragment.REQUEST_ELITEPLAN)
+            overridePendingTransition(R.anim.slide_from_right, R.anim.stay)
         }
     }
 
@@ -141,7 +193,12 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
     private fun navigatePayMyAccountStoreCard() {
         payMyAccountViewModel.resetAmountEnteredToDefault()
 
-        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC, this) }
+        activity?.apply {
+            Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC,
+                this
+            )
+        }
 
         if (payMyAccountViewModel.getPaymentMethodType() == PayMyAccountViewModel.PAYUMethodType.ERROR) {
             try {
@@ -164,7 +221,12 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
     }
 
     private fun navigatePayMyAccountPersonalLoan() {
-        activity?.apply {Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_PL, this) }
+        activity?.apply {
+            Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_PL,
+                this
+            )
+        }
 
         if (payMyAccountViewModel.getPaymentMethodType() == PayMyAccountViewModel.PAYUMethodType.ERROR) {
             navController.navigate(R.id.payMyAccountRetryErrorFragment)
@@ -190,7 +252,12 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
 
     private fun navigateToPayMyAccountActivity() {
         if (fragmentAlreadyAdded()) return
-        activity?.let { activity -> ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, payMyAccountViewModel.getCardDetail()) }
+        activity?.let { activity ->
+            ActivityIntentNavigationManager.presentPayMyAccountActivity(
+                activity,
+                payMyAccountViewModel.getCardDetail()
+            )
+        }
     }
 
     private fun navigateToRecentTransactionActivity() {
@@ -201,10 +268,13 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
                 ApplyNowState.STORE_CARD -> FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDTRANSACTIONS
                 else -> ""
             }
-            activity?.apply {Utils.triggerFireBaseEvents(propertyName, this) }
+            activity?.apply { Utils.triggerFireBaseEvents(propertyName, this) }
             accountData?.second?.apply {
                 val intent = Intent(activity, WTransactionsActivity::class.java)
-                intent.putExtra(BundleKeysConstants.PRODUCT_OFFERINGID, productOfferingId.toString())
+                intent.putExtra(
+                    BundleKeysConstants.PRODUCT_OFFERINGID,
+                    productOfferingId.toString()
+                )
                 intent.putExtra(
                     ChatFragment.ACCOUNTS,
                     Gson().toJson(Pair(applyNowState, this))
@@ -225,7 +295,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
                 ApplyNowState.STORE_CARD -> FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDSTATEMENTS
                 else -> ""
             }
-            activity?.apply {Utils.triggerFireBaseEvents(propertyName, this) }
+            activity?.apply { Utils.triggerFireBaseEvents(propertyName, this) }
 
             activity?.apply {
                 val openStatement = Intent(this, StatementActivity::class.java)
@@ -249,7 +319,10 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
         val helpIcon = mAccountPresenter?.getCardProductInformation(true)
 
         val cardInformationHelpActivity = Intent(activity, CardInformationHelpActivity::class.java)
-        cardInformationHelpActivity.putExtra(CardInformationHelpActivity.HELP_INFORMATION, Gson().toJson(helpIcon))
+        cardInformationHelpActivity.putExtra(
+            CardInformationHelpActivity.HELP_INFORMATION,
+            Gson().toJson(helpIcon)
+        )
         activity?.startActivityForResult(
             cardInformationHelpActivity,
             AccountSignedInActivity.REQUEST_CODE_ACCOUNT_INFORMATION
@@ -274,5 +347,24 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
 
         viewPaymentOptionTextShimmerLayout?.setShimmer(null)
         viewPaymentOptionTextShimmerLayout?.stopShimmer()
+    }
+
+    override fun eligibilityResponse(eligibilityPlan: EligibilityPlan?) {
+        eligibilityPlan.let {
+            when (it?.actionText) {
+                ActionText.VIEW_ELITE_PLAN.value -> {
+                    helpWithPayment.text = bindString(R.string.view_your_payment_plan)
+                }
+            }
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(AppConstant.DELAY_1000_MS)
+                helpWithPaymentView.visibility =
+                    if (it?.planType.equals(ELITE_PLAN)) VISIBLE else GONE
+            }
+        }
+    }
+
+    override fun eligibilityFailed() {
+        helpWithPaymentView.visibility = GONE
     }
 }
