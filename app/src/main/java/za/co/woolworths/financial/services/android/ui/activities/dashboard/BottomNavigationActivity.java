@@ -111,6 +111,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.u
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shop.MyListsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment;
@@ -1475,12 +1476,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 if (shoppingList != null)
                     ScreenManager.presentShoppingListDetailActivity(this, listId, shoppingList.getAsJsonObject().get("name").getAsString());
             } else {
-                getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
-                if (mNavController.getCurrentFrag() instanceof ShopFragment) {
-                    ShopFragment shopFragment = (ShopFragment) mNavController.getCurrentFrag();
-                    shopFragment.navigateToMyListFragment();
-                    shopFragment.refreshViewPagerFragment();
-                }
+                getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
+                MyListsFragment fragment = new MyListsFragment();
+                pushFragment(fragment);
             }
         }
     }
