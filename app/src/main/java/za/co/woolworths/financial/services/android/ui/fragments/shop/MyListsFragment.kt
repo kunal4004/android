@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -24,7 +25,10 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.adapters.ViewShoppingListAdapter
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.util.*
@@ -36,6 +40,15 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     private var isMyListsFragmentVisible: Boolean = false
     private var isFragmentVisible: Boolean = false
     private var shoppingListsResponse: ShoppingListsResponse? = null
+
+    private var mBottomNavigator: BottomNavigator? = null
+
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is BottomNavigationActivity)
+            mBottomNavigator = context
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,7 +64,14 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
         setListener()
     }
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden)
+            setupToolbar()
+    }
+
     private fun initUI() {
+        setupToolbar()
         activity?.let {
             val itemDecorator = DividerItemDecoration(it, DividerItemDecoration.VERTICAL)
             ContextCompat.getDrawable(it, R.drawable.divider)
@@ -61,6 +81,14 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
                 LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false)
             mAddToShoppingListAdapter = ViewShoppingListAdapter(mutableListOf(), this)
             rcvShoppingLists.adapter = mAddToShoppingListAdapter
+        }
+    }
+
+    private fun setupToolbar() {
+        mBottomNavigator?.apply {
+            setTitle(bindString(R.string.my_lists))
+            displayToolbar()
+            showBackNavigationIcon(true)
         }
     }
 
@@ -154,22 +182,12 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     private fun setYourDeliveryLocation() {
         Utils.getPreferredDeliveryLocation()?.apply {
             rightArrowDelivery?.visibility = GONE
-            editLocation?.visibility = VISIBLE
             activity?.let {
                 KotlinUtils.setDeliveryAddressView(it,
                     this,
                     tvDeliveringTo,
                     tvDeliveryLocation,
                     deliverLocationIcon)
-            }
-            iconCaretRight?.visibility = GONE
-            editDeliveryLocation?.visibility = VISIBLE
-            activity?.let {
-                KotlinUtils.setDeliveryAddressView(it,
-                    this,
-                    tvDeliveringEmptyTo,
-                    tvDeliveryEmptyLocation,
-                    truckIcon)
             }
         }
     }
