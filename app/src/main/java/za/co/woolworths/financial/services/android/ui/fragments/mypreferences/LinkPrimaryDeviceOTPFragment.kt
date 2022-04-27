@@ -1,23 +1,17 @@
 package za.co.woolworths.financial.services.android.ui.fragments.mypreferences
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.graphics.Paint
-import android.location.Location
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
 import android.text.TextUtils
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -25,15 +19,9 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
-import com.google.android.gms.location.*
-import kotlinx.android.synthetic.main.enter_otp_fragment.*
 import kotlinx.android.synthetic.main.fragment_enter_otp.buttonNext
 import kotlinx.android.synthetic.main.fragment_enter_otp.didNotReceiveOTPTextView
-import kotlinx.android.synthetic.main.fragment_link_device_otp.*
-import kotlinx.android.synthetic.main.fragment_my_preferences.*
 import kotlinx.android.synthetic.main.fragment_unlink_device_otp.*
-import kotlinx.android.synthetic.main.fragment_unlink_device_otp.sendinOTPLayout
-import kotlinx.android.synthetic.main.layout_link_device_result.*
 import kotlinx.android.synthetic.main.layout_link_device_validate_otp.*
 import kotlinx.android.synthetic.main.layout_sending_otp_request.*
 import kotlinx.android.synthetic.main.layout_unlink_device_result.*
@@ -55,8 +43,6 @@ import za.co.woolworths.financial.services.android.ui.activities.account.LinkDev
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextWatcher
 import za.co.woolworths.financial.services.android.util.*
-import java.util.*
-
 
 class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeListener {
 
@@ -67,21 +53,7 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
     private var otpSMSNumber: String? = null
     private var retryApiCall: String? = null
     private var otpMethod: String? = OTPMethodType.SMS.name
-    private var currentLocation: Location? = null
     private var deleteOldPrimaryDevice: Boolean = false
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private val locationRequest = createLocationRequest()
-    private val locationCallback = object : LocationCallback() {
-        override fun onLocationResult(locationResult: LocationResult?) {
-            locationResult ?: return
-            for (location in locationResult.locations) {
-                this@LinkPrimaryDeviceOTPFragment.currentLocation = location
-                stopLocationUpdates()
-                callLinkingDeviceAPI()
-                break
-            }
-        }
-    }
 
     private val mKeyListener = View.OnKeyListener { v, keyCode, event ->
         if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
@@ -184,11 +156,6 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
         super.onViewCreated(view, savedInstanceState)
 
         setToolbar()
-
-        activity?.apply {
-            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        }
-
         connectionDetector()
 
         didNotReceiveOTPTextView?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
@@ -294,38 +261,6 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
 
 
     private fun isRetrieveOTPCallInProgress(): Boolean = sendinOTPLayout?.visibility == View.VISIBLE
-
-    fun createLocationRequest(): LocationRequest? {
-        return LocationRequest.create().apply {
-            interval = 100
-            fastestInterval = 1000
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        }
-    }
-
-    private fun startLocationUpdates() {
-        context?.apply {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return
-            }
-            fusedLocationClient.requestLocationUpdates(locationRequest,
-                    locationCallback,
-                    Looper.getMainLooper())
-        }
-    }
-
-    @SuppressLint("NewApi")
-    private fun checkLocationPermission(): Boolean {
-        activity?.apply {
-            return ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-        }
-        return false
-    }
-
-    private fun stopLocationUpdates() {
-        fusedLocationClient.removeLocationUpdates(locationCallback)
-    }
 
     private fun getNumberFromEditText(numberEditText: EditText?) = numberEditText?.text?.toString()
             ?: ""
@@ -466,12 +401,6 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
         }
 
         showLinkingDeviceProcessing()
-        //Location permission granted but no current location found.
-        if (checkLocationPermission() && Utils.isLocationEnabled(context) && currentLocation == null) {
-            startLocationUpdates()
-            return
-        }
-
         handlePrimaryDevice()
     }
 
