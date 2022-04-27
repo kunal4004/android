@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/paymentOptionsView"
+    style="@style/accountOptionItemsStyle"
+    tools:showIn="@layout/store_card_account_options_fragment">
+
+    <ImageView
+        android:id="@+id/paymentOptionsImageView"
+        style="@style/accountOptionsImageviewStyle"
+        android:src="@drawable/payment_options_grey" />
+
+    <TextView
+        android:id="@+id/paymentOptionsTextView"
+        style="@style/accountOptionsLabelStyle"
+        android:layout_alignTop="@+id/paymentOptionsImageView"
+        android:layout_alignBottom="@+id/paymentOptionsImageView"
+        android:layout_toStartOf="@+id/paymentOptionsArrowImageView"
+        android:layout_toEndOf="@+id/paymentOptionsImageView"
+        android:text="@string/payment_option_title" />
+
+    <ImageView
+        android:id="@+id/paymentOptionsArrowImageView"
+        style="@style/accountOptionsNextImageViewStyle"
+        android:src="@drawable/ic_caret_black" />
+</RelativeLayout>
+
+        

@@ -1,6 +1,6 @@
 package za.co.woolworths.financial.services.android.contracts
 
-import za.co.woolworths.financial.services.android.models.dto.Response
+import  za.co.woolworths.financial.services.android.ui.fragments.integration.service.model.Response
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 
 interface IOTPLinkStoreCard<T> {

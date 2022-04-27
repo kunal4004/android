@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/accountToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_86sdp"
+        android:background="@android:color/transparent"
+        android:elevation="2dp"
+        android:gravity="center_vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical">
+
+            <ImageButton
+                android:id="@+id/navigateBackImageButton"
+                style="@style/selectableImageButtonRippleStyle"
+                android:layout_width="@dimen/_48sdp"
+                android:layout_height="@dimen/_48sdp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:background="@null"
+                app:srcCompat="@drawable/back_white"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/toolbarTitleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_centerVertical="true"
+                android:fontFamily="@font/futura_semi_bold_ttf"
+                android:gravity="center"
+                android:letterSpacing="0.2"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_12ssp"
+                tools:ignore="UnusedAttribute" />
+
+            <ImageButton
+                android:id="@+id/infoIconImageView"
+                android:layout_width="@dimen/_48sdp"
+                android:layout_height="@dimen/_48sdp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="end"
+                android:background="@null"
+                android:padding="@dimen/_3sdp"
+                app:srcCompat="@drawable/info_white"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/accountInArrearsTextView"
+                style="@style/accountInArrearsTextViewStyle"
+                android:layout_centerInParent="true"
+                android:fontFamily="@font/futura_semi_bold_ttf"
+                android:paddingStart="@dimen/_7sdp"
+                android:paddingTop="@dimen/_4sdp"
+                android:paddingEnd="@dimen/_7sdp"
+                android:paddingBottom="@dimen/_4sdp"
+                android:text="@string/account_in_arrears"
+                android:visibility="visible"
+                tools:ignore="UnusedAttribute" />
+        </RelativeLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <View
+        android:id="@+id/horizontalDivider"
+        android:layout_width="match_parent"
+        android:layout_height="0.8dp"
+        android:background="@color/dark_divider"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/accountToolbar" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/productNavigationView"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:tag="productNavigationView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

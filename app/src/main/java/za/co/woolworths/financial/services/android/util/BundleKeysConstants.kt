@@ -10,6 +10,9 @@ class BundleKeysConstants {
         const val ACCOUNTBI_NNUMBER = "accountBinNumber"
         const val STATUS_RESPONSE = "StatusResponse"
         const val PRODUCT_OFFERINGID = "productOfferingId"
+        const val ACCOUNT_NUMBER = "accountNumber"
+        const val CARDTYPE = "cardType"
+        const val CREDITCARD_TOKEN = "creditCardToken"
     }
 
 }
