@@ -44,7 +44,6 @@ import za.co.woolworths.financial.services.android.geolocation.network.apihelper
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
-import za.co.woolworths.financial.services.android.geolocation.viewmodel.LocationErrorLiveData
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
@@ -85,13 +84,14 @@ class ConfirmAddressMapFragment :
     private var isFromDashTab: Boolean? = false
     private var isAddressFromSearch: Boolean = false
     private var isMoveMapCameraFirstTime: Boolean? = true
-    private var isLocationErrorShowing: Boolean? = true
     private var isAddressSearch: Boolean? = false
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
 
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
-
+    private var placeName: String? = null
+    private var isMainPlaceName: Boolean? = false
+    private var isStreetNumberAndRouteFromSearch: Boolean? = false
     private var _binding: GeolocationConfirmAddressBinding? = null
     private val binding get() = _binding
 
@@ -378,14 +378,16 @@ class ConfirmAddressMapFragment :
             binding?.autoCompleteTextView?.apply {
                 setAdapter(placesAdapter)
             }
-            showLocationErrorBanner()
             binding?.autoCompleteTextView?.onItemClickListener =
                 AdapterView.OnItemClickListener { parent, _, position, _ ->
                     val item = parent.getItemAtPosition(position) as? PlaceAutocomplete
                     placeId = item?.placeId.toString()
-                    val placeName = item?.primaryText.toString()
+                    placeName = item?.primaryText.toString()
                     binding?.autoCompleteTextView?.setText(placeName)
                     isAddressFromSearch = true
+                    isMainPlaceName = true
+                    getStreetNumberAndRoute(placeId)
+                    isStreetNumberAndRouteFromSearch = true
                     val placeFields: MutableList<Place.Field> = mutableListOf(
                         Place.Field.ID,
                         Place.Field.NAME,
@@ -424,13 +426,6 @@ class ConfirmAddressMapFragment :
                             }
                     }
                 }
-        }
-    }
-
-    private fun showLocationErrorBanner() {
-        LocationErrorLiveData.observe(viewLifecycleOwner) { isResult ->
-            isLocationErrorShowing = isResult
-            showSelectedLocationError(isResult)
         }
     }
 
@@ -537,10 +532,10 @@ class ConfirmAddressMapFragment :
             }).await()
 
         placeId = results.getOrNull(0)?.placeId.toString()
-
-        getStreetNumberAndRoute(placeId)
-
-        sendAddressData()
+        if (isStreetNumberAndRouteFromSearch == false) {
+            getStreetNumberAndRoute(placeId)
+        }
+        isStreetNumberAndRouteFromSearch = false
     }
 
     private fun getStreetNumberAndRoute(placeId: String?) {
@@ -563,17 +558,30 @@ class ConfirmAddressMapFragment :
             placesClient.fetchPlace(placeRequest)
                 .addOnSuccessListener { response ->
                     val place = response.place
-                    val address = place.addressComponents?.asList()?.getOrNull(0)
-                    address?.types?.getOrNull(0)
-                    when (address?.types?.getOrNull(0)) {
-                        STREET_NUMBER.value -> streetNumber = address.name
-                        ROUTE.value -> routeName = address.name
+                    for (address in place.addressComponents?.asList()!!) {
+                        when (address.types[0]) {
+                            STREET_NUMBER.value -> streetNumber = address.name
+                            ROUTE.value -> routeName = address.name
+                        }
                     }
+                    placeName?.let {
+                        if (!it.equals("$streetNumber $routeName",
+                                true) && isMainPlaceName == true
+                        ) {
+                            sendAddressData(it)
+                            isMainPlaceName = false
+                        } else {
+                            sendAddressData("$streetNumber $routeName")
+                            isMainPlaceName = false
+                        }
+                    } ?: sendAddressData("$streetNumber $routeName")
+
                     viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                         delay(AppConstant.DELAY_500_MS)
-                        if (streetNumber.isNullOrEmpty() && routeName.isNullOrEmpty() && isLocationErrorShowing == false) {
+                        if (streetNumber.isNullOrEmpty() && routeName.isNullOrEmpty())
                             showSelectedLocationError(true)
-                        }
+                        else
+                            showSelectedLocationError(false)
                     }
 
                 }.addOnFailureListener {
@@ -599,8 +607,8 @@ class ConfirmAddressMapFragment :
         ).get(ConfirmAddressViewModel::class.java)
     }
 
-    private fun sendAddressData() {
-        val saveAddressLocationRequest = SaveAddressLocationRequest("$address1 $city",
+    private fun sendAddressData(placeName: String?) {
+        val saveAddressLocationRequest = SaveAddressLocationRequest("$placeName",
             city,
             country,
             mAddress,
@@ -617,7 +625,6 @@ class ConfirmAddressMapFragment :
 
     override fun onDestroy() {
         super.onDestroy()
-        LocationErrorLiveData.value = false
         _binding = null
     }
 
