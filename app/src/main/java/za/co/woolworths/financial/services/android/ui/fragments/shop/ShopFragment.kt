@@ -557,7 +557,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 delay(AppConstant.DELAY_500_MS)
                 updateCurrentTab(BundleKeysConstants.DASH)
                 refreshViewPagerFragment()
-                showDashToolTip() // externally showing dash tooltip as delivery type is not same.
+                showDashToolTip(validateLocationResponse) // externally showing dash tooltip as delivery type is not same.
             }
         }
     }
@@ -705,7 +705,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 showClickAndCollectToolTip()
             }
             Delivery.DASH -> {
-                showDashToolTip()
+                showDashToolTip(validateLocationResponse)
             }
         }
 
@@ -789,7 +789,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
     }
 
-    private fun showDashToolTip() {
+    private fun showDashToolTip(validateLocationResponse: ValidateLocationResponse?) {
         val dashDeliverable = validateLocationResponse?.validatePlace?.onDemand?.deliverable
         if (KotlinUtils.isDashTabClicked == true || dashDeliverable == null || dashDeliverable == false) {
             blackToolTipLayout?.visibility = View.GONE

@@ -20,8 +20,8 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.geo_location_delivery_address.*
-import kotlinx.android.synthetic.main.layout_laocation_not_available.*
-import kotlinx.android.synthetic.main.layout_laocation_not_available.view.*
+import kotlinx.android.synthetic.main.layout_location_not_available.*
+import kotlinx.android.synthetic.main.layout_location_not_available.view.*
 import kotlinx.android.synthetic.main.no_collection_store_fragment.view.*
 import kotlinx.android.synthetic.main.no_connection.*
 import kotlinx.coroutines.launch
@@ -454,6 +454,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         geoDeliveryTab?.setOnClickListener(this)
         geoCollectTab?.setOnClickListener(this)
         geoDashTab?.setOnClickListener(this)
+        btn_no_loc_change_location?.setOnClickListener(this)
         geoDeliveryTab?.isEnabled = true
         geoCollectTab?.isEnabled = true
         geoDashTab?.isEnabled = true
@@ -617,7 +618,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             txt_no_loc_title?.text = getString(R.string.no_location_delivery)
             img_no_loc?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
                 R.drawable.ic_delivery_truck))
-            btn_no_loc_change_location?.setOnClickListener(this)
             return
         }
         geoDeliveryView?.visibility = View.VISIBLE
@@ -656,7 +656,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     R.drawable.shoppingbag
                 )
             )
-            btn_no_loc_change_location?.setOnClickListener(this)
             return
         }
 
@@ -734,7 +733,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 )
                 return
             }
-            if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails == null) {
+            if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName == null) {
                 whereToCollect()
                 return
             }

@@ -271,7 +271,7 @@
 
     <include
         android:id="@+id/no_loc_layout"
-        layout="@layout/layout_laocation_not_available"
+        layout="@layout/layout_location_not_available"
         android:layout_width="match_parent"
         android:layout_height="@dimen/zero_dp"
         android:visibility="gone"

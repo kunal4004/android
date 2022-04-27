@@ -144,13 +144,13 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     }
                     Status.SUCCESS -> {
                         layoutDashSetAddress?.visibility = View.GONE
-                        progressBar.visibility = View.GONE
                         if (viewModel.isOnDemandCategoriesAvailable.value == true) {
                             dashDeliveryAdapter.setData(
                                 viewModel.onDemandCategories.value?.peekContent()?.data?.onDemandCategories,
                                 resource.data?.productCatalogues
                             )
                         }
+                        progressBar.visibility = View.GONE
                     }
                     Status.ERROR -> {
                         progressBar.visibility = View.GONE
@@ -169,13 +169,13 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     }
                     Status.SUCCESS -> {
                         layoutDashSetAddress?.visibility = View.GONE
-                        progressBar.visibility = View.GONE
                         if (viewModel.isDashCategoriesAvailable.value == true) {
                             dashDeliveryAdapter.setData(
                                 resource.data?.onDemandCategories,
                                 viewModel.dashCategories.value?.peekContent()?.data?.productCatalogues,
                             )
                         }
+                        progressBar.visibility = View.GONE
                     }
                     Status.ERROR -> {
                         //Ignore error view for On Demand Categories,
