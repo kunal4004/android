@@ -17,6 +17,7 @@ import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import kotlinx.android.synthetic.main.item_banner_carousel.view.*
 import kotlinx.android.synthetic.main.item_long_banner_list.view.*
+import kotlinx.android.synthetic.main.item_product_carousel_list.view.*
 import kotlinx.android.synthetic.main.product_listing_page_row.view.*
 import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
 import kotlinx.android.synthetic.main.product_listing_promotional_images.view.*
@@ -297,9 +298,6 @@ class ProductCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(it
         val nextProduct = if (position % 2 != 0) list.getOrNull(position + 1) else null
         val previousProduct = if (position % 2 == 0) list.getOrNull(position - 1) else null
 
-        itemView.constProductContainer?.background =
-            ContextCompat.getDrawable(context, R.color.color_separator_light_grey)
-
         with(productList) {
             setProductImage(this)
             setPromotionalImage(promotionImages, virtualTryOn)
@@ -310,10 +308,12 @@ class ProductCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(it
             priceItem.setPrice(productList, itemView)
             setProductVariant(this)
             quickShopAddToCartSwitch(this)
-            iProductListing?.let {
-                setOnClickListener(it, this)
+            iProductListing?.let {navigator ->
+                itemView.row_layout?.setOnClickListener {
+                    navigator.openProductDetailView(this)
+                }
+                setQuickshopListener(context, navigator, this)
             }
-            setQuickshopListener(context, iProductListing, productList)
         }
     }
 
@@ -337,10 +337,6 @@ class ProductCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(it
                 )
             }
         }
-    }
-
-    private fun setOnClickListener(navigator: IProductListing, productList: ProductList) {
-        itemView.setOnClickListener { navigator.openProductDetailView(productList) }
     }
 
     private fun setProductName(productList: ProductList?) = with(itemView) {

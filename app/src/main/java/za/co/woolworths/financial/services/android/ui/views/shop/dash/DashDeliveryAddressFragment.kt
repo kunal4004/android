@@ -316,16 +316,15 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     }
 
     override fun openProductDetailView(productList: ProductList) {
-        with(newInstance()) {
-            arguments = bundleOf(
-                ProductDetailsFragment.STR_PRODUCT_LIST to Gson().toJson(productList),
-                ProductDetailsFragment.STR_PRODUCT_CATEGORY to productList.productName,
-                ProductDetailsFragment.STR_BRAND_HEADER to productList.brandHeaderDescription
-            )
-            (activity as? BottomNavigationActivity)?.apply {
-                Utils.updateStatusBarBackground(this)
-                pushFragment(this@with)
-            }
+        val productDetailsFragment = newInstance()
+        productDetailsFragment.arguments = bundleOf(
+            ProductDetailsFragment.STR_PRODUCT_LIST to Gson().toJson(productList),
+            ProductDetailsFragment.STR_PRODUCT_CATEGORY to productList.productName,
+            ProductDetailsFragment.STR_BRAND_HEADER to productList.brandHeaderDescription
+        )
+        (activity as? BottomNavigationActivity)?.apply {
+            Utils.updateStatusBarBackground(this)
+            pushFragment(productDetailsFragment)
         }
     }
 
