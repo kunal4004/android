@@ -13,30 +13,26 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DecodeFormat
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import kotlinx.android.synthetic.main.item_banner_carousel.view.*
-import kotlinx.android.synthetic.main.item_long_banner_carousel.view.*
 import kotlinx.android.synthetic.main.item_long_banner_list.view.*
 import kotlinx.android.synthetic.main.product_listing_page_row.view.*
 import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
 import kotlinx.android.synthetic.main.product_listing_promotional_images.view.*
 import za.co.woolworths.financial.services.android.contracts.IProductListing
-import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages
 import za.co.woolworths.financial.services.android.models.dto.shop.Banner
 import za.co.woolworths.financial.services.android.models.dto.shop.ProductCatalogue
 import za.co.woolworths.financial.services.android.ui.adapters.holder.PriceItem
 import za.co.woolworths.financial.services.android.ui.adapters.shop.dash.DashDeliveryAdapter.Companion.TYPE_EMPTY
+import za.co.woolworths.financial.services.android.ui.views.shop.dash.OnDashLandingNavigationListener
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.util.ImageManager
-import za.co.woolworths.financial.services.android.util.SessionUtilities
-import za.co.woolworths.financial.services.android.util.Utils
 
 class DashCategoryAdapter(
-    val context: Context
+    val context: Context,
+    private val dashLandingNavigationListener: OnDashLandingNavigationListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var type: String? = null
@@ -107,25 +103,46 @@ class DashCategoryAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when {
-            holder is BannerCarouselItemViewHolder -> {
-                holder.bind(context, position, list[position] as Banner)
+        when (holder) {
+            is BannerCarouselItemViewHolder -> {
+                holder.bind(
+                    context,
+                    position,
+                    list[position] as Banner,
+                    dashLandingNavigationListener
+                )
             }
-            holder is BannerGridItemViewHolder -> {
-                holder.bind(context, position, list[position] as Banner)
+            is BannerGridItemViewHolder -> {
+                holder.bind(
+                    context,
+                    position,
+                    list[position] as Banner,
+                    dashLandingNavigationListener
+                )
             }
-            holder is LongBannerCarouselItemViewHolder -> {
-                holder.bind(context, position, list[position] as Banner)
+            is LongBannerCarouselItemViewHolder -> {
+                holder.bind(
+                    context,
+                    position,
+                    list[position] as Banner,
+                    dashLandingNavigationListener
+                )
             }
-            holder is LongBannerListItemViewHolder -> {
-                holder.bind(context, position, list[position] as Banner)
+            is LongBannerListItemViewHolder -> {
+                holder.bind(
+                    context,
+                    position,
+                    list[position] as Banner,
+                    dashLandingNavigationListener
+                )
             }
-            holder is ProductCarouselItemViewHolder -> {
+            is ProductCarouselItemViewHolder -> {
                 holder.bind(
                     context,
                     position,
                     list[position] as ProductList,
-                    list as List<ProductList>
+                    list as List<ProductList>,
+                    dashLandingNavigationListener
                 )
             }
         }
@@ -163,15 +180,21 @@ class DashCategoryAdapter(
 
 class BannerCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    fun bind(context: Context, position: Int, banner: Banner) {
+    fun bind(
+        context: Context,
+        position: Int,
+        banner: Banner,
+        dashLandingNavigationListener: OnDashLandingNavigationListener
+    ) {
         itemView.tvCategoryTitle?.text = banner.displayName
-
+        itemView.dashBannerCarouselContainer?.setOnClickListener {
+            dashLandingNavigationListener.onDashLandingNavigationClicked(view = it, banner)
+        }
         Glide.with(context)
             .load(banner.externalImageRefV2)
             .format(DecodeFormat.PREFER_ARGB_8888)
             .placeholder(R.drawable.woolworth_logo_icon)
             .transform(
-                CenterCrop(),
                 RoundedCorners(context.resources.getDimensionPixelOffset(R.dimen.seven_dp))
             )
             .dontAnimate()
@@ -181,7 +204,15 @@ class BannerCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
 
 class BannerGridItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    fun bind(context: Context, position: Int, banner: Banner) {
+    fun bind(
+        context: Context,
+        position: Int,
+        banner: Banner,
+        dashLandingNavigationListener: OnDashLandingNavigationListener
+    ) {
+        itemView.dashBannerCarouselContainer?.setOnClickListener {
+            dashLandingNavigationListener.onDashLandingNavigationClicked(view = it, banner)
+        }
         Glide.with(context)
             .load(banner.externalImageRefV2)
             .format(DecodeFormat.PREFER_ARGB_8888)
@@ -196,8 +227,15 @@ class BannerGridItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemVie
 
 class LongBannerCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    fun bind(context: Context, position: Int, banner: Banner) {
-
+    fun bind(
+        context: Context,
+        position: Int,
+        banner: Banner,
+        dashLandingNavigationListener: OnDashLandingNavigationListener
+    ) {
+        itemView.longBannerListContainer?.setOnClickListener {
+            dashLandingNavigationListener?.onDashLandingNavigationClicked(it, banner)
+        }
         itemView.tvLongBannerTitle?.text = banner.displayName
         itemView.tvLongBannerSubtitle?.text = banner.subTitle
 
@@ -215,8 +253,15 @@ class LongBannerCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder
 
 class LongBannerListItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    fun bind(context: Context, position: Int, banner: Banner) {
-
+    fun bind(
+        context: Context,
+        position: Int,
+        banner: Banner,
+        dashLandingNavigationListener: OnDashLandingNavigationListener
+    ) {
+        itemView.longBannerListContainer?.setOnClickListener {
+            dashLandingNavigationListener?.onDashLandingNavigationClicked(it, banner)
+        }
         itemView.tvLongBannerTitle?.text = banner.displayName
         itemView.tvLongBannerSubtitle?.text = banner.subTitle
 
@@ -234,12 +279,19 @@ class LongBannerListItemViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
 
 class ProductCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    fun bind(context: Context, position: Int, productList: ProductList, list: List<ProductList>) {
+    fun bind(
+        context: Context,
+        position: Int,
+        productList: ProductList,
+        list: List<ProductList>,
+        dashLandingNavigationListener: OnDashLandingNavigationListener
+    ) {
         val nextProduct = if (position % 2 != 0) list.getOrNull(position + 1) else null
         val previousProduct = if (position % 2 == 0) list.getOrNull(position - 1) else null
         val navigator = context as? IProductListing
 
-        itemView.constProductContainer?.background = ContextCompat.getDrawable(context, R.color.color_separator_light_grey)
+        itemView.constProductContainer?.background =
+            ContextCompat.getDrawable(context, R.color.color_separator_light_grey)
 
         with(productList) {
             setProductImage(this)
