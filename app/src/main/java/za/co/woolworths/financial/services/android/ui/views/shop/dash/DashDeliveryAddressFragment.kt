@@ -2,33 +2,49 @@ package za.co.woolworths.financial.services.android.ui.views.shop.dash
 
 import android.location.Location
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
+import android.widget.Button
+import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import com.google.gson.Gson
+import com.skydoves.balloon.balloon
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_dash_delivery.*
+import kotlinx.android.synthetic.main.grid_layout.*
 import kotlinx.android.synthetic.main.layout_dash_set_address_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IProductListing
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
-import za.co.woolworths.financial.services.android.models.dto.ProductList
-import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
-import za.co.woolworths.financial.services.android.models.dto.RootCategory
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.shop.Banner
 import za.co.woolworths.financial.services.android.models.network.Status
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.adapters.shop.dash.DashDeliveryAdapter
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
-import za.co.woolworths.financial.services.android.util.BundleKeysConstants
-import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
+import za.co.woolworths.financial.services.android.ui.views.ToastFactory
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
+import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_QUERY_INVENTORY_FOR_STORE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getAnonymousUserLocationDetails
-import za.co.woolworths.financial.services.android.util.SessionUtilities
-import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
+import java.net.ConnectException
+import java.net.UnknownHostException
+import java.util.*
 
 @AndroidEntryPoint
 class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), IProductListing,
@@ -42,8 +58,10 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        dashDeliveryAdapter = DashDeliveryAdapter(requireContext(), onDemandNavigationListener = this,
-            dashLandingNavigationListener = this)
+        dashDeliveryAdapter = DashDeliveryAdapter(
+            requireContext(), onDemandNavigationListener = this,
+            dashLandingNavigationListener = this, this
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -197,6 +215,76 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 }
             }
         }
+
+        // Inventory For Store API
+        viewModel.inventorySkuForStore.observe(viewLifecycleOwner) {
+            it.getContentIfNotHandled()?.let { resource ->
+                when (resource.status) {
+                    Status.LOADING -> {
+                        progressBar.visibility = View.VISIBLE
+                    }
+                    Status.SUCCESS -> {
+                        layoutDashSetAddress?.visibility = View.GONE
+                        progressBar.visibility = View.GONE
+                        val skuInventoryList = resource.data?.skuInventory
+                        val addItemToCart = viewModel.addItemToCart.value
+                        when {
+                            skuInventoryList?.size == 0 ||
+                                    skuInventoryList?.get(0)?.quantity == 0 -> {
+                                addItemToCart?.catalogRefId?.let { skuId ->
+                                    productOutOfStockErrorMessage(
+                                        skuId
+                                    )
+                                }
+                            }
+                            skuInventoryList?.get(0)?.quantity == 1 -> {
+                                addFoodProductTypeToCart(
+                                    AddItemToCart(
+                                        addItemToCart?.productId,
+                                        addItemToCart?.catalogRefId,
+                                        1
+                                    )
+                                )
+                            }
+                            else -> {
+                                val cartItem = AddItemToCart(
+                                    addItemToCart?.productId ?: "",
+                                    addItemToCart?.catalogRefId ?: "",
+                                    skuInventoryList?.get(0)?.quantity ?: 0
+                                )
+                                try {
+                                    val selectYourQuantityFragment =
+                                        SelectYourQuantityFragment.newInstance(
+                                            cartItem,
+                                            this@DashDeliveryAddressFragment
+                                        )
+                                    activity?.supportFragmentManager?.beginTransaction()?.apply {
+                                        selectYourQuantityFragment.show(
+                                            this,
+                                            SelectYourQuantityFragment::class.java.simpleName
+                                        )
+                                    }
+                                } catch (ex: IllegalStateException) {
+                                    FirebaseManager.logException(ex)
+                                }
+                            }
+                        }
+                    }
+                    Status.ERROR -> {
+                        progressBar.visibility = View.GONE
+                        resource.data?.response?.desc?.let { desc ->
+                            Utils.displayValidationMessage(
+                                activity,
+                                CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+                                desc
+                            )
+                            return@observe
+                        }
+                        onFailureHandler(Throwable(ConnectException()))
+                    }
+                }
+            }
+        }
     }
 
     private fun setupRecyclerView() {
@@ -227,9 +315,18 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         //TODO: get error screens from UI/UX team
     }
 
-    // Product Items interface
     override fun openProductDetailView(productList: ProductList) {
-
+        with(newInstance()) {
+            arguments = bundleOf(
+                ProductDetailsFragment.STR_PRODUCT_LIST to Gson().toJson(productList),
+                ProductDetailsFragment.STR_PRODUCT_CATEGORY to productList.productName,
+                ProductDetailsFragment.STR_BRAND_HEADER to productList.brandHeaderDescription
+            )
+            (activity as? BottomNavigationActivity)?.apply {
+                Utils.updateStatusBarBackground(this)
+                pushFragment(this@with)
+            }
+        }
     }
 
     override fun queryInventoryForStore(
@@ -237,11 +334,175 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         addItemToCart: AddItemToCart?,
         productList: ProductList,
     ) {
-        TODO("Not yet implemented")
+
+        val mStoreId =
+            fulfilmentTypeId.let { it1 -> RecyclerViewViewHolderItems.getFulFillmentStoreId(it1) }
+
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSignin(
+                activity,
+                REQUEST_CODE_QUERY_INVENTORY_FOR_STORE
+            )
+            return
+        }
+
+        if (productList.isLiquor == true && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()) {
+            KotlinUtils.setLiquorModalShown()
+            showLiquorDialog()
+            AppConfigSingleton.productItemForLiquorInventory = productList
+            return
+        }
+
+        if (mStoreId.isEmpty()) {
+            addItemToCart?.catalogRefId?.let { skuId -> productOutOfStockErrorMessage(skuId) }
+            return
+        }
+
+        viewModel.setAddItemToCart(addItemToCart)
+        viewModel.fetchInventorySkuForStore(
+            mStoreId, addItemToCart?.catalogRefId
+                ?: ""
+        )
+    }
+
+    private fun onFailureHandler(error: Throwable) {
+        activity?.let { activity ->
+            when (error) {
+                is ConnectException, is UnknownHostException -> {
+                    ErrorHandlerView(activity).showToast(getString(R.string.no_connection))
+                }
+                else -> return
+            }
+        }
+    }
+
+    private fun productOutOfStockErrorMessage(skuId: String) {
+        try {
+            activity?.supportFragmentManager?.beginTransaction()?.apply {
+                val productListingFindInStoreNoQuantityFragment =
+                    ProductListingFindInStoreNoQuantityFragment.newInstance(
+                        skuId,
+                        this@DashDeliveryAddressFragment
+                    )
+                productListingFindInStoreNoQuantityFragment.show(
+                    this,
+                    ProductListingFindInStoreNoQuantityFragment::class.java.simpleName
+                )
+            }
+        } catch (ex: IllegalStateException) {
+            FirebaseManager.logException(ex)
+        }
     }
 
     override fun addFoodProductTypeToCart(addItemToCart: AddItemToCart?) {
-        TODO("Not yet implemented")
+//        showProgressBar()
+        val mAddItemsToCart = mutableListOf<AddItemToCart>()
+        addItemToCart?.let { cartItem -> mAddItemsToCart.add(cartItem) }
+        PostItemToCart().make(mAddItemsToCart, object : IResponseListener<AddItemToCartResponse> {
+            override fun onSuccess(response: AddItemToCartResponse?) {
+                if (!isAdded) return
+                activity?.apply {
+//                    dismissProgressBar()
+                    when (response?.httpCode) {
+                        AppConstant.HTTP_OK -> {
+                            // Preferred Delivery Location has been reset on server
+                            // As such, we give the user the ability to set their location again
+                            val addToCartList = response.data
+                            if (addToCartList != null && addToCartList.size > 0 && addToCartList[0].formexceptions != null) {
+                                val formException = addToCartList[0].formexceptions[0]
+                                if (formException != null) {
+                                    if (formException.message.toLowerCase(Locale.getDefault())
+                                            .contains("unfortunately this product is now out of stock, please try again tomorrow")
+                                    ) {
+                                        addItemToCart?.catalogRefId?.let { catalogRefId ->
+                                            productOutOfStockErrorMessage(
+                                                catalogRefId
+                                            )
+                                        }
+                                    } else {
+                                        response.response.desc = formException.message
+                                        Utils.displayValidationMessage(
+                                            this,
+                                            CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+                                            response.response.desc
+                                        )
+                                    }
+                                    return
+                                }
+                            }
+                            if (KotlinUtils.isDeliveryOptionClickAndCollect() && response.data[0]?.productCountMap?.quantityLimit?.foodLayoutColour != null) {
+                                response.data[0]?.productCountMap?.let {
+                                    addItemToCart?.quantity?.let { it1 ->
+                                        ToastFactory.showItemsLimitToastOnAddToCart(
+                                            productsRecyclerView,
+                                            it,
+                                            this,
+                                            it1
+                                        )
+                                    }
+                                }
+                            } else {
+                                val addToCartBalloon by balloon(AddedToCartBalloonFactory::class)
+                                val bottomView =
+                                    (activity as? BottomNavigationActivity)?.bottomNavigationById
+                                val buttonView: Button =
+                                    addToCartBalloon.getContentView().findViewById(R.id.btnView)
+                                val tvAddedItem: TextView = addToCartBalloon.getContentView()
+                                    .findViewById(R.id.tvAddedItem)
+                                val quantityAdded = addItemToCart?.quantity?.toString()
+                                val quantityDesc =
+                                    "$quantityAdded ITEM${if (addItemToCart?.quantity == 0) "" else "s"}"
+                                tvAddedItem.text = quantityDesc
+
+                                buttonView.setOnClickListener {
+//                                    openCartActivity()
+                                    addToCartBalloon.dismiss()
+                                }
+
+                                bottomView?.let { bottomNavigationView ->
+                                    addToCartBalloon.showAlignBottom(
+                                        bottomNavigationView,
+                                        0,
+                                        16
+                                    )
+                                }
+                                Handler().postDelayed({
+                                    addToCartBalloon.dismiss()
+                                }, 3000)
+                            }
+                        }
+
+                        AppConstant.HTTP_EXPECTATION_FAILED_417 -> resources?.let {
+                            activity?.apply {
+                                KotlinUtils.presentEditDeliveryGeoLocationActivity(
+                                    this,
+                                    ProductListingFragment.SET_DELIVERY_LOCATION_REQUEST_CODE,
+                                    KotlinUtils.getPreferredDeliveryType(),
+                                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
+                                )
+                            }
+                        }
+                        AppConstant.HTTP_SESSION_TIMEOUT_440 -> {
+                            SessionUtilities.getInstance()
+                                .setSessionState(SessionDao.SESSION_STATE.INACTIVE)
+                            ScreenManager.presentSSOSignin(this)
+                        }
+
+                        else -> response?.response?.desc?.let { desc ->
+                            Utils.displayValidationMessage(
+                                this,
+                                CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+                                desc
+                            )
+                        }
+                    }
+                }
+            }
+
+            override fun onFailure(error: Throwable?) {
+//                activity?.runOnUiThread { dismissProgressBar() }
+            }
+        })
     }
 
     override fun queryStoreFinderProductByFusedLocation(location: Location?) {

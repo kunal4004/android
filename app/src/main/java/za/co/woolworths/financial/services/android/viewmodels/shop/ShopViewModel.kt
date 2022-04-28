@@ -8,12 +8,15 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
+import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.models.dto.shop.DashCategories
 import za.co.woolworths.financial.services.android.models.network.Event
 import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.repository.shop.ShopRepository
+import java.lang.ref.PhantomReference
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,6 +35,13 @@ class ShopViewModel @Inject constructor(
     private val _location = MutableLiveData<Location?>()
     val location: LiveData<Location?>
     get() = _location
+
+    private val _addItemToCart = MutableLiveData<AddItemToCart?>()
+    val addItemToCart: LiveData<AddItemToCart?>
+    get() = _addItemToCart
+
+    private val _inventorySkuForStore = MutableLiveData<Event<Resource<SkusInventoryForStoreResponse>>>()
+    val inventorySkuForStore: LiveData<Event<Resource<SkusInventoryForStoreResponse>>> = _inventorySkuForStore
 
     private val _onDemandCategories = MutableLiveData<Event<Resource<RootCategories>>>()
     val onDemandCategories: LiveData<Event<Resource<RootCategories>>> = _onDemandCategories
@@ -59,8 +69,20 @@ class ShopViewModel @Inject constructor(
         }
     }
 
+    fun fetchInventorySkuForStore(mStoreId: String, referenceId: String) {
+        _inventorySkuForStore.value = Event(Resource.loading(null))
+        viewModelScope.launch {
+            val response = shopRepository.fetchInventorySkuForStore(mStoreId, referenceId)
+            _inventorySkuForStore.value = Event(response)
+        }
+    }
+
     fun setLocation(location: Location?) {
         _location.value = location
+    }
+
+    fun setAddItemToCart(addItemToCart: AddItemToCart?) {
+        _addItemToCart.value = addItemToCart
     }
 
     fun setOnDemandCategoryData(response: RootCategories) {

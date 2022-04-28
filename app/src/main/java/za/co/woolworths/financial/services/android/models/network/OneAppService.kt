@@ -395,6 +395,12 @@ object OneAppService : RetrofitConfig() {
 
     }
 
+    suspend fun fetchInventorySkuForStore(store_id: String, multipleSku: String): retrofit2.Response<SkusInventoryForStoreResponse> {
+        return withContext(Dispatchers.IO) {
+            mApiInterface.fetchInventorySKUForStore( getSessionToken(), getDeviceIdentityToken(), store_id, multipleSku)
+        }
+    }
+
     fun getPDFResponse(getStatement: GetStatement): Call<ResponseBody> {
         return mApiInterface.getStatement( "", "", getSessionToken(),
             getDeviceIdentityToken(), getStatement.docId, getStatement.productOfferingId, getStatement.docDesc)
