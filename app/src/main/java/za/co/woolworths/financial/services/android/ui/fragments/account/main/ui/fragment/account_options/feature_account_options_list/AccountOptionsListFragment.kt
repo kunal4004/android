@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -31,7 +30,6 @@ class AccountOptionsListFragment : ViewBindingFragment<AccountOptionsListFragmen
         with(binding) {
             lifecycleScope.launch {
                 viewModel.viewState.collect { items ->
-                    Log.e("planType", "items items items items")
                     items.forEach { item ->
                         with(item) {
                             when (this) {
@@ -65,7 +63,6 @@ class AccountOptionsListFragment : ViewBindingFragment<AccountOptionsListFragmen
     ) {
         when (bpi.status) {
             BpiInsuranceApplicationStatusType.INSURANCE_COVERED -> {
-                Log.e("BpiInsStatusType", "INSURANCE_COVERED")
                 balanceProtectionInsuranceTag.bpiTagTextView.visibility = View.VISIBLE
                 balanceProtectionInsuranceTag.bpiNotCoveredTextView.visibility = View.GONE
                 balanceProtectionInsuranceTag.balanceProtectionInsuranceArrowImageView.visibility =
@@ -77,14 +74,12 @@ class AccountOptionsListFragment : ViewBindingFragment<AccountOptionsListFragmen
                 )
             }
             BpiInsuranceApplicationStatusType.NOT_COVERED -> {
-                Log.e("BpiInsStatusType", "NOT_COVERED")
                 balanceProtectionInsuranceTag.bpiTagTextView.visibility = View.GONE
                 balanceProtectionInsuranceTag.bpiNotCoveredTextView.visibility = View.VISIBLE
                 balanceProtectionInsuranceTag.balanceProtectionInsuranceArrowImageView.visibility =
                     View.VISIBLE
             }
             else -> {
-                Log.e("BpiInsStatusType", "lead")
                 val data = bpi.leadGen
                 val displayLabel = data?.displayLabel
                 balanceProtectionInsuranceTag.bpiTagTextView.visibility = View.VISIBLE

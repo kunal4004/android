@@ -1,9 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -38,7 +36,6 @@ class StoreCardAccountOptionsViewModel @Inject constructor(
             viewModelScope.launch {
                 eligibilityPlanState.asStateFlow().collect { plan ->
                     if (!plan.actionText.isNullOrEmpty() && !plan.displayText.isNullOrEmpty()) {
-                        Log.e("planType", Gson().toJson(plan))
                         _viewState.emit(collectionTreatmentPlanItem(plan))
                     }
                 }
