@@ -36,16 +36,16 @@ class ShopViewModel @Inject constructor(
     private val _onDemandCategories = MutableLiveData<Event<Resource<RootCategories>>>()
     val onDemandCategories: LiveData<Event<Resource<RootCategories>>> = _onDemandCategories
 
-    private val _dashCategories = MutableLiveData<Event<Resource<DashCategories>>>()
-    val dashCategories: LiveData<Event<Resource<DashCategories>>> = _dashCategories
+    private val _dashLandingDetails = MutableLiveData<Event<Resource<DashCategories>>>()
+    val dashLandingDetails: LiveData<Event<Resource<DashCategories>>> = _dashLandingDetails
 
     private var validatePlaceResponse: ValidatePlace? = null
 
-    fun getDashCategories() {
-        _dashCategories.value = Event(Resource.loading(null))
+    fun getDashLandingDetails() {
+        _dashLandingDetails.value = Event(Resource.loading(null))
         viewModelScope.launch {
-            val response = shopRepository.fetchDashCategories()
-            _dashCategories.value = Event(response)
+            val response = shopRepository.fetchDashLandingDetails()
+            _dashLandingDetails.value = Event(response)
             _isDashCategoriesAvailable.value = response.status == Status.SUCCESS
         }
     }

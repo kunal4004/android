@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.views.shop.dash
 
-import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.view.View
@@ -18,6 +17,7 @@ import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
+import za.co.woolworths.financial.services.android.models.dto.shop.Banner
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.shop.dash.DashDeliveryAdapter
@@ -32,7 +32,7 @@ import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 
 @AndroidEntryPoint
 class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), IProductListing,
-    View.OnClickListener, OnDemandNavigationListener {
+    View.OnClickListener, OnDemandNavigationListener, OnDashLandingNavigationListener {
 
     private val viewModel: ShopViewModel by viewModels(
         ownerProducer = { requireParentFragment() }
@@ -42,7 +42,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        dashDeliveryAdapter = DashDeliveryAdapter(requireContext(), this)
+        dashDeliveryAdapter = DashDeliveryAdapter(requireContext(), onDemandNavigationListener = this,
+            dashLandingNavigationListener = this)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -99,6 +100,10 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         btn_dash_set_address?.setOnClickListener(this)
     }
 
+    private fun hideSetAddressScreen() {
+        layoutDashSetAddress?.visibility = View.GONE
+    }
+
     private fun initData() {
         when {
             // Both API data available
@@ -108,7 +113,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 layoutDashSetAddress?.visibility = View.GONE
                 dashDeliveryAdapter.setData(
                     viewModel.onDemandCategories.value?.peekContent()?.data?.onDemandCategories,
-                    viewModel.dashCategories.value?.peekContent()?.data?.productCatalogues
+                    viewModel.dashLandingDetails.value?.peekContent()?.data?.productCatalogues
                 )
             }
             // Either of API data available
@@ -120,12 +125,12 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 // Data will be set in observers when api successful/failure
                 when (viewModel.isDashCategoriesAvailable.value) {
                     true -> viewModel.getOnDemandCategories()
-                    else -> viewModel.getDashCategories()
+                    else -> viewModel.getDashLandingDetails()
                 }
             }
             else -> {
                 viewModel.getOnDemandCategories()
-                viewModel.getDashCategories()
+                viewModel.getDashLandingDetails()
             }
         }
 
@@ -135,7 +140,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     private fun subscribeToObservers() {
 
         //Dash API.
-        viewModel.dashCategories.observe(viewLifecycleOwner) {
+        viewModel.dashLandingDetails.observe(viewLifecycleOwner) {
             it.getContentIfNotHandled()?.let { resource ->
                 when (resource.status) {
                     Status.LOADING -> {
@@ -173,7 +178,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                         if (viewModel.isDashCategoriesAvailable.value == true) {
                             dashDeliveryAdapter.setData(
                                 resource.data?.onDemandCategories,
-                                viewModel.dashCategories.value?.peekContent()?.data?.productCatalogues,
+                                viewModel.dashLandingDetails.value?.peekContent()?.data?.productCatalogues,
                             )
                         }
                     }
@@ -184,7 +189,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                         if (viewModel.isDashCategoriesAvailable.value == true) {
                             dashDeliveryAdapter.setData(
                                 null,
-                                viewModel.dashCategories.value?.peekContent()?.data?.productCatalogues,
+                                viewModel.dashLandingDetails.value?.peekContent()?.data?.productCatalogues,
                             )
                         }
                         progressBar.visibility = View.GONE
@@ -255,10 +260,23 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         (requireActivity() as? BottomNavigationActivity)?.apply {
             pushFragment(
                 ProductListingFragment.newInstance(
-                searchType = ProductsRequestParams.SearchType.NAVIGATE,
-                sub_category_name = categoryItem.categoryName,
-                searchTerm = categoryItem.dimValId
-            ))
+                    searchType = ProductsRequestParams.SearchType.NAVIGATE,
+                    sub_category_name = categoryItem.categoryName,
+                    searchTerm = categoryItem.dimValId
+                )
+            )
+        }
+    }
+
+    override fun onDashLandingNavigationClicked(view: View?, item: Banner) {
+        (requireActivity() as? BottomNavigationActivity)?.apply {
+            pushFragment(
+                ProductListingFragment.newInstance(
+                    searchType = ProductsRequestParams.SearchType.NAVIGATE,
+                    sub_category_name = item.displayName,
+                    searchTerm = item.navigationState
+                )
+            )
         }
     }
 
@@ -270,7 +288,4 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-    }
 }

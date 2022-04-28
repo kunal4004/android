@@ -43,9 +43,6 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.net.URLEncoder
-import android.text.TextUtils
-
-import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 
 object OneAppService : RetrofitConfig() {
 
@@ -200,14 +197,9 @@ object OneAppService : RetrofitConfig() {
         }
     }
 
-    suspend fun getDashCategory(): retrofit2.Response<DashCategories> {
+    suspend fun getDashLandingDetails(): retrofit2.Response<DashCategories> {
         return withContext(Dispatchers.IO) {
-            val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
-            val fulFillmentStoreId01 = Utils.retrieveStoreId("01")
-
-             mApiInterface.getDashCategories(
-                getSessionToken(),
-                getDeviceIdentityToken(), null, null, suburbId, storeId)
+             mApiInterface.getDashLandingDetails(getSessionToken(), getDeviceIdentityToken())
         }
     }
 

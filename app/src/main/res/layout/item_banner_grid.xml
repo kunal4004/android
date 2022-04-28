@@ -5,18 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:minWidth="@dimen/hundred_and_fifty_dp"
-    android:minHeight="@dimen/hundred_and_sixty_four_dp"
     android:padding="@dimen/ten_dp">
-
-    <View
-        android:background="@color/color_F3F3F3"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constrainedHeight="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imgCategoryImage"
