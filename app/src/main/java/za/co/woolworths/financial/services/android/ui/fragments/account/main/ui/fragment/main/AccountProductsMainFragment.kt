@@ -46,6 +46,7 @@ class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMai
 
     private fun setToolbar() {
         binding.infoIconImageView.setOnClickListener(this)
+        binding.navigateBackImageButton.setOnClickListener(this)
         with(binding) {
             when (viewModel.isProductInGoodStanding()) {
                 true -> {
@@ -170,7 +171,7 @@ class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMai
                 navigateToInformation()
             }
             binding.navigateBackImageButton -> {
-                findNavController().navigateUp()
+                activity?.finish()
             }
         }
     }
