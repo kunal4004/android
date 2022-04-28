@@ -208,11 +208,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity" />
         </activity>
-
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.information.InformationActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/WTransaction" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.SSOActivity"
             android:theme="@style/SSOActivity" />

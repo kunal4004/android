@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.information
+package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.information
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

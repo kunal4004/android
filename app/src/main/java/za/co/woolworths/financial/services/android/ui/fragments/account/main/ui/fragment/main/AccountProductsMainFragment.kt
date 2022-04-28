@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.View.GONE
@@ -12,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.navigateUp
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountProductLandingMainFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,9 +24,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.cor
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOfferingState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.DialogData
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.InformationData
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.information.InformationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.INFORMATION_DATA
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RED_HEX_COLOR
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
@@ -47,7 +45,7 @@ class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMai
     }
 
     private fun setToolbar() {
-        infoIconImageView.setOnClickListener(this)
+        binding.infoIconImageView.setOnClickListener(this)
         with(binding) {
             when (viewModel.isProductInGoodStanding()) {
                 true -> {
@@ -158,9 +156,11 @@ class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMai
 
     private fun navigateToInformation() {
         viewModel.apply {
-            val intent = Intent(activity,InformationActivity::class.java)
-            intent.putExtra(INFORMATION_DATA,if (isProductInGoodStanding()) InformationData.GoodStanding() else InformationData.Arrears())
-            startActivity(intent)
+            findNavController().navigate(
+                AccountProductsMainFragmentDirections.actionAccountProductsMainFragmentToAccountInformationFragment(
+                    if (isProductInGoodStanding()) InformationData.GoodStanding() else InformationData.Arrears()
+                )
+            )
         }
     }
 
@@ -168,6 +168,9 @@ class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMai
         when (view) {
             binding.infoIconImageView -> {
                 navigateToInformation()
+            }
+            binding.navigateBackImageButton -> {
+                findNavController().navigateUp()
             }
         }
     }
