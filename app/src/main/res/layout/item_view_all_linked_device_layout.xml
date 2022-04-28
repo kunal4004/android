@@ -32,6 +32,7 @@
         android:lineSpacingExtra="@dimen/_2ssp"
         android:padding="@dimen/_12sdp"
         android:alpha="0.9"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/viewAllDevicesTitleTextView"

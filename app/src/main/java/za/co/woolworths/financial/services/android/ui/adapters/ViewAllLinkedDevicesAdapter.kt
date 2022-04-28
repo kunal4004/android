@@ -59,6 +59,7 @@ class ViewAllLinkedDevicesAdapter(val context: Context, val onClickListener: Vie
         fun bind() {
             itemView.apply {
                 val primaryDevice = getPrimaryDevice()
+                viewAllDevicesDescTextView?.visibility =  View.VISIBLE
                 viewAllDevicesTitleTextView?.text = context?.getString(R.string.view_all_preferred_device_title)
                 viewAllDeviceNameTextView?.text = URLDecoder.decode(primaryDevice?.deviceName, "UTF8")
                 viewAllDeviceLocationTextView?.text = if (TextUtils.isEmpty(primaryDevice?.locationLinked)) context.getString(R.string.view_all_device_location_n_a) else primaryDevice?.locationLinked
@@ -100,7 +101,6 @@ class ViewAllLinkedDevicesAdapter(val context: Context, val onClickListener: Vie
                         listItem.viewAllDeviceLocationTextView?.text = if(TextUtils.isEmpty(it.locationLinked)) context.getString(R.string.view_all_device_location_n_a) else it.locationLinked
                         listItem.viewAllDeviceDeleteImageView?.visibility =  View.GONE
                         listItem.viewAllDeviceEditImageView?.visibility =  View.VISIBLE
-                        listItem.viewAllDevicesDescTextView?.visibility =  View.GONE
                         listItem.viewAllDeviceEditImageView?.setTag(R.id.viewAllDeviceEditImageView, it)
                         listItem.viewAllDeviceEditImageView?.setOnClickListener(onClickListener)
                         itemView.viewAllOtherDevicesContainer.addView(listItem)
