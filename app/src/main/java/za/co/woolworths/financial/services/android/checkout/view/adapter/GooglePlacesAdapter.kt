@@ -15,7 +15,6 @@ import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
 import com.google.android.libraries.places.api.net.PlacesClient
-import za.co.woolworths.financial.services.android.geolocation.viewmodel.LocationErrorLiveData
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -87,13 +86,10 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapte
                 if (results != null && results.count > 0) {
                     // The API returned at least one result, update the data.
                     mResultList = results.values as ArrayList<PlaceAutocomplete>
-
-                    LocationErrorLiveData.value = false
                     notifyDataSetChanged()
                 } else {
                     // The API did not return any results, invalidate the data set.
                     if(constraint != null && constraint.toString().trim().length >= SEARCH_LENGTH){
-                         LocationErrorLiveData.value = true
                          notifyDataSetInvalidated()
                     }
                 }
