@@ -52,7 +52,7 @@
         android:paddingHorizontal="@dimen/_32sdp"
         android:text="@string/processing_your_request_desc"
         android:textColor="@color/color_7f7f7f"
-        android:textSize="@dimen/_14ssp"
+        android:textSize="@dimen/_12ssp"
         android:lineSpacingExtra="@dimen/_6sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
