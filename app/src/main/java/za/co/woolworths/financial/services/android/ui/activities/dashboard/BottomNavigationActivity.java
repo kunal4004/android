@@ -1385,7 +1385,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if (mNavController != null && mNavController.getCurrentFrag() instanceof CartFragment) {
             NavigateToShoppingList.Companion navigateTo = NavigateToShoppingList.Companion;
             if (jsonElement != null) {
-                //Navigate to shop tab, select My list tab and open shopping list
+                //Navigate to Account tab, select My list tab and open shopping list
                 getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
                 if (getCurrentFragment() instanceof ShopFragment) {
                     ShopFragment shopFragment = (ShopFragment) getCurrentFragment();
