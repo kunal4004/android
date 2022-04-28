@@ -5,4 +5,5 @@ object Constants {
 
     // required for dynamically set tag background color
     const val GreenColorCode = "#bad110"
+    const val INFORMATION_DATA = "#INFORMATION_DATA"
 }

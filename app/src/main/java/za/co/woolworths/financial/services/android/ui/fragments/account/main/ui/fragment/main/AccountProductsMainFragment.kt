@@ -1,11 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main
 
+import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.viewModels
@@ -16,22 +15,26 @@ import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountProductLandingMainFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.bpi_covered_tag_layout.*
+import kotlinx.android.synthetic.main.account_product_landing_main_fragment.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.observeOn
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.NavigationGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOfferingState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.DialogData
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.InformationData
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.information.InformationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.INFORMATION_DATA
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RED_HEX_COLOR
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 @AndroidEntryPoint
-class AccountProductsMainFragment :
-    ViewBindingFragment<AccountProductLandingMainFragmentBinding>(AccountProductLandingMainFragmentBinding::inflate) {
+class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMainFragmentBinding>(
+    AccountProductLandingMainFragmentBinding::inflate
+), View.OnClickListener {
+
     private var childNavController: NavController? = null
     val viewModel by viewModels<AccountProductsHomeViewModel>()
     var navigationGraph: NavigationGraph = NavigationGraph()
@@ -44,6 +47,7 @@ class AccountProductsMainFragment :
     }
 
     private fun setToolbar() {
+        infoIconImageView.setOnClickListener(this)
         with(binding) {
             when (viewModel.isProductInGoodStanding()) {
                 true -> {
@@ -74,7 +78,7 @@ class AccountProductsMainFragment :
                 bundleOf()
             )
 
-         getPopupDialogStatus { state ->
+            getPopupDialogStatus { state ->
                 when (state) {
                     /* when productOfferingGoodStanding == true
                    hideAccountInArrears(account)
@@ -87,18 +91,20 @@ class AccountProductsMainFragment :
                     }
 
                     is AccountOfferingState.AccountIsChargedOff -> {
-                        when(isCreditCard(product)){
+                        when (isCreditCard(product)) {
                             false -> displayPopUp(DialogData.ChargedOff())
                         }
                     }
 
                     is AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff -> {
-                        when(isCreditCard(product)){
+                        when (isCreditCard(product)) {
                             false -> displayPopUp(DialogData.ViewPlanDialog())
-                            true-> displayPopUp(DialogData.ChargedOff(
-                                firstButtonTitle = R.string.view_your_payment_plan,
-                                secondButtonVisibility = GONE
-                            ))
+                            true -> displayPopUp(
+                                DialogData.ChargedOff(
+                                    firstButtonTitle = R.string.view_your_payment_plan,
+                                    secondButtonVisibility = GONE
+                                )
+                            )
                         }
 
                     }
@@ -130,11 +136,13 @@ class AccountProductsMainFragment :
                     }
                     is ViewState.Loading -> {
                     }
-                    ViewState.RenderEmpty -> {}
+                    ViewState.RenderEmpty -> {
+                    }
                 }
             }
         }
     }
+
 
     fun displayPopUp(dialogData: DialogData, eligibilityPlan: EligibilityPlan? = null) {
         viewModel.apply {
@@ -147,4 +155,21 @@ class AccountProductsMainFragment :
         }
 
     }
+
+    private fun navigateToInformation() {
+        viewModel.apply {
+            val intent = Intent(activity,InformationActivity::class.java)
+            intent.putExtra(INFORMATION_DATA,if (isProductInGoodStanding()) InformationData.GoodStanding() else InformationData.Arrears())
+            startActivity(intent)
+        }
+    }
+
+    override fun onClick(view: View?) {
+        when (view) {
+            binding.infoIconImageView -> {
+                navigateToInformation()
+            }
+        }
+    }
 }
+
