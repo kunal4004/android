@@ -26,18 +26,22 @@ class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
         const val DIALOG_BUTTON_TEXT = "dialog_button_text"
         const val DIALOG_TITLE_IMG = "dialog_title_img"
         const val DIALOG_BUTTON_CLICK_RESULT = "dialog_button_click_result"
+        const val DIALOG_BUTTON_DISMISS_RESULT = "dialog_button_dismiss_result"
+        const val DIALOG_DISMISS_LINK_TEXT = "dialog_dismiss_link_text"
 
         fun newInstance(
             title: String,
             subTitle: String,
             dialog_button_text: String,
             dialog_title_img: Int,
+            dismissLinkText: String?
         ) =
             CustomBottomSheetDialogFragment().withArgs {
                 putString(DIALOG_TITLE, title)
                 putString(DIALOG_SUB_TITLE, subTitle)
                 putString(DIALOG_BUTTON_TEXT, dialog_button_text)
                 putInt(DIALOG_TITLE_IMG, dialog_title_img)
+                putString(DIALOG_DISMISS_LINK_TEXT, dismissLinkText)
             }
     }
 
@@ -87,6 +91,10 @@ class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
                 img_view.setImageResource(dialogImg)
             } else
                 img_view.visibility = View.GONE
+
+            val linkText = getString(DIALOG_DISMISS_LINK_TEXT)
+            if (!linkText.isNullOrEmpty())
+                tvDismiss?.text = linkText
         }
 
         tvDismiss.setOnClickListener(this)
@@ -100,6 +108,7 @@ class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
                 dismiss()
             }
             R.id.tvDismiss -> {
+                setFragmentResult(DIALOG_BUTTON_DISMISS_RESULT, bundleOf())
                 dismiss()
             }
         }

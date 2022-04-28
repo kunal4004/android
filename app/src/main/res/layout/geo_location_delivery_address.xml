@@ -258,28 +258,6 @@
         app:layout_constraintStart_toEndOf="@id/earliestDeliveryDashLabel"
         app:layout_constraintTop_toBottomOf="@+id/tabsDivider" />
 
-    <include
-        android:id="@+id/no_conn_layout"
-        layout="@layout/no_collection_store_fragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@id/geoDashTab" />
-
-    <include
-        android:id="@+id/no_loc_layout"
-        layout="@layout/layout_location_not_available"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/zero_dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@id/geoDashTab" />
-
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyle"
