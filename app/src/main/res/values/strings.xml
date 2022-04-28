@@ -2427,8 +2427,18 @@
     <string name="you_saved">You Save %1$s</string>
     <string name="amount_you_save">Amount You Save</string>
     <string name="get_help_repayment">GET HELP WITH YOUR REPAYMENTS</string>
-    <string name="view_your_payment_plan">VIEW YOUR PAYMENT PLAN</string>
+    <string name="view_your_payment_plan">VIEW PAYMENT PLAN</string>
     <string name="total_amount_you_saving">This is the total amount you are saving as agreed \n upon in your settlement plan</string>
     <string name="pay_now">PAY NOW</string>
+    <string name="account_in_recovery_label">Account in Recovery</string>
+    <string name="account_in_recovery_desc">Your account is in arrears. Have you already agreed to a repayment plan? View your plan or make a payment now.</string>
+
+    <string name="account_in_recovery_sc_desc">Your Store Card is currently in a payment plan. Please remember to make your next payment by its due date of %1$s.</string>
+    <string name="account_in_recovery_pl_desc">Your Personal Loan is currently in a payment plan. Please remember to make your next payment by its due date of %1$s.</string>
+    <string name="account_in_recovery_cc_desc">Your Credit Card is currently in a payment plan. Please remember to make your next payment by its due date of %1$s.</string>
+
+    <string name="account_in_recovery_sc_payment_due_unavailable_desc">Your Store Card is currently in a payment plan. Please remember to make your next payment.</string>
+    <string name="account_in_recovery_pl_payment_due_unavailable_desc">Your Personal Loan is currently in a payment plan. Please remember to make your next payment.</string>
+    <string name="account_in_recovery_cc_payment_due_unavailable_desc">Your Credit Card is currently in a payment plan. Please remember to make your next payment.</string>
 
 </resources>

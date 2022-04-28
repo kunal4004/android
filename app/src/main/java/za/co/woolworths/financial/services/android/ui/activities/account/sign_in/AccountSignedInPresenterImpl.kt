@@ -29,7 +29,7 @@ class AccountSignedInPresenterImpl(
     private var model: IAccountSignedInContract.MyAccountModel
 ) : IAccountSignedInContract.MyAccountPresenter {
 
-    private var mApplyNowState: ApplyNowState = ApplyNowState.STORE_CARD
+    var mApplyNowState: ApplyNowState = ApplyNowState.STORE_CARD
     private var mAccountResponse: AccountsResponse? = null
     private var mProductGroupCode: String? = null
     private var mDeepLinkingData: String? = null
