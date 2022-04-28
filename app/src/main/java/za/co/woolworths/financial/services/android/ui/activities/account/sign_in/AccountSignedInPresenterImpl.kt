@@ -18,8 +18,8 @@ import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowSt
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.ProductOfferingStatus
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.extension.deviceHeight
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOfferingState
 import za.co.woolworths.financial.services.android.util.eliteplan.EligibilityImpl
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOfferingState
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
