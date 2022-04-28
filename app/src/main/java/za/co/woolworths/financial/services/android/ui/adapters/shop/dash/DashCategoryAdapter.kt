@@ -1,13 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.adapters.shop.dash
 
-import android.app.Activity
 import android.content.Context
 import android.text.Html
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -31,7 +29,6 @@ import za.co.woolworths.financial.services.android.models.dto.shop.Banner
 import za.co.woolworths.financial.services.android.models.dto.shop.ProductCatalogue
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.holder.PriceItem
-import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.adapters.shop.dash.DashDeliveryAdapter.Companion.TYPE_EMPTY
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.OnDashLandingNavigationListener
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
@@ -308,7 +305,7 @@ class ProductCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(it
             priceItem.setPrice(productList, itemView)
             setProductVariant(this)
             quickShopAddToCartSwitch(this)
-            iProductListing?.let {navigator ->
+            iProductListing?.let { navigator ->
                 itemView.row_layout?.setOnClickListener {
                     navigator.openProductDetailView(this)
                 }
