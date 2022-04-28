@@ -1051,14 +1051,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
                 switch (resultCode) {
                     case ADD_TO_SHOPPING_LIST_REQUEST_CODE:
-                        // refresh my list view
-                        getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
-                        clearStack();
                         Fragment fragment = mNavController.getCurrentFrag();
-                        if (fragment instanceof ShopFragment) {
-                            ShopFragment shopFragment = (ShopFragment) fragment;
-                            shopFragment.navigateToMyListFragment();
-                            shopFragment.refreshViewPagerFragment();
+                        if (fragment instanceof MyListsFragment) {
+                            MyListsFragment myListsFragment = (MyListsFragment) fragment;
+                            myListsFragment.getShoppingList(false);
                         }
                         break;
 
@@ -1390,7 +1386,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             NavigateToShoppingList.Companion navigateTo = NavigateToShoppingList.Companion;
             if (jsonElement != null) {
                 //Navigate to shop tab, select My list tab and open shopping list
-                getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
+                getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
                 if (getCurrentFragment() instanceof ShopFragment) {
                     ShopFragment shopFragment = (ShopFragment) getCurrentFragment();
                     shopFragment.navigateToMyListFragment();
@@ -1473,8 +1469,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     listId = entry.getKey();
                     shoppingList = entry.getValue();
                 }
-                if (shoppingList != null)
+                if (shoppingList != null) {
+                    getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
                     ScreenManager.presentShoppingListDetailActivity(this, listId, shoppingList.getAsJsonObject().get("name").getAsString());
+                }
             } else {
                 getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
                 MyListsFragment fragment = new MyListsFragment();
