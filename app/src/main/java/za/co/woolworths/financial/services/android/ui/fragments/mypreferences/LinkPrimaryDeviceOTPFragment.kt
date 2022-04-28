@@ -648,7 +648,7 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
         sendOTPSubtitle?.visibility = View.GONE
 
         context?.let {
-            sendOTPProcessingReq?.text = it.getString(R.string.changing_primary_device_processing)
+            sendOTPProcessingReq?.text = it.getString(R.string.changing_preferred_device_processing)
         }
         sendinOTPLayout?.visibility = View.VISIBLE
     }
