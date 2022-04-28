@@ -27,7 +27,10 @@ class AccountOptionsCreditLimitIncreaseFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.progressCreditLimit.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
+        binding.progressCreditLimit.indeterminateDrawable?.setColorFilter(
+            Color.BLACK,
+            PorterDuff.Mode.MULTIPLY
+        )
         subscribeObservers()
     }
 
@@ -51,8 +54,8 @@ class AccountOptionsCreditLimitIncreaseFragment :
                 binding.llCommonLayer.visibility = GONE
                 binding.relIncreaseMyLimit.visibility = GONE
             }
-            else -> {
-               binding.progressCreditLimit.visibility = GONE
+            false -> {
+                binding.progressCreditLimit.visibility = GONE
                 binding.llCommonLayer.visibility = VISIBLE
                 binding.relIncreaseMyLimit.visibility = VISIBLE
             }
