@@ -79,6 +79,7 @@ import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo;
 import za.co.woolworths.financial.services.android.models.dto.Data;
 import za.co.woolworths.financial.services.android.models.dto.GlobalMessages;
+import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.Province;
@@ -648,7 +649,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             orderSummary = cartResponse.orderSummary;
             voucherDetails = cartResponse.voucherDetails;
             productCountMap = cartResponse.productCountMap;
-            cartProductAdapter = new CartProductAdapter(cartItems, this, orderSummary, getActivity(), voucherDetails);
+            LiquorCompliance liquorCompliance=new LiquorCompliance(cartResponse.liquorOrder,cartResponse.noLiquorImageUrl);
+            cartProductAdapter = new CartProductAdapter(cartItems, this, orderSummary, getActivity(), voucherDetails,liquorCompliance);
             queryServiceInventoryCall(cartResponse.cartItems);
             LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
             mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -1138,6 +1140,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             cartResponse.orderSummary = data.orderSummary;
             cartResponse.voucherDetails = data.voucherDetails;
             cartResponse.productCountMap = data.productCountMap;// set delivery location
+            cartResponse.liquorOrder=data.liquorOrder;
+            cartResponse.noLiquorImageUrl=data.noLiquorImageUrl;
             if (!TextUtils.isEmpty(data.suburbName) && !TextUtils.isEmpty(data.provinceName)) {
                 Province province = new Province(data.provinceId, data.provinceName);
                 if (cartResponse.orderSummary.store != null) {

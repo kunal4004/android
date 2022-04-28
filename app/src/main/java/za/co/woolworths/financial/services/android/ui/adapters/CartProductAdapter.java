@@ -35,6 +35,7 @@ import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
 import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo;
+import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.DiscountDetails;
@@ -49,7 +50,6 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.ImageManager;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
 
@@ -102,15 +102,17 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
     private boolean firstLoadCompleted = false;
     private ArrayList<CartItemGroup> cartItems;
     private OrderSummary orderSummary;
+    private LiquorCompliance liquorComplianceInfo;
     private Activity mContext;
     private VoucherDetails voucherDetails;
 
-    public CartProductAdapter(ArrayList<CartItemGroup> cartItems, OnItemClick onItemClick, OrderSummary orderSummary, Activity context, VoucherDetails voucherDetails) {
+    public CartProductAdapter(ArrayList<CartItemGroup> cartItems, OnItemClick onItemClick, OrderSummary orderSummary, Activity context, VoucherDetails voucherDetails,LiquorCompliance liquorCompliance) {
         this.cartItems = cartItems;
         this.onItemClick = onItemClick;
         this.orderSummary = orderSummary;
         this.mContext = context;
         this.voucherDetails = voucherDetails;
+        this.liquorComplianceInfo=liquorCompliance;
     }
 
     @Override
@@ -361,7 +363,15 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                 priceHolder.promoDiscountInfo.setOnClickListener(v -> {
                         onItemClick.onPromoDiscountInfo();
                 });
+                if(liquorComplianceInfo!=null&&liquorComplianceInfo.isLiquorOrder()){
+                    priceHolder.liquorBannerRootConstraintLayout.setVisibility(View.VISIBLE);
+                   if(liquorComplianceInfo.getLiquorImageUrl()!=null&&!liquorComplianceInfo.getLiquorImageUrl().isEmpty())
+                    ImageManager.Companion.setPicture(priceHolder.imgLiBanner, liquorComplianceInfo.getLiquorImageUrl());
+                }else{
+                    priceHolder.liquorBannerRootConstraintLayout.setVisibility(View.GONE);
+                }
                 break;
+
 
             default:
                 break;
@@ -623,6 +633,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
         private RelativeLayout rlDiscount, rlCompanyDiscount, rlWrewardsDiscount, rlTotalDiscount, rlPromoCodeDiscount;
         private TextView availableVouchersCount, viewVouchers, promoCodeAction, promoCodeLabel;
         private ImageView promoDiscountInfo;
+        private ConstraintLayout liquorBannerRootConstraintLayout;
+        private ImageView imgLiBanner;
 
 
         public CartPricesViewHolder(View view) {
@@ -645,6 +657,9 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
             txtPromoCodeDiscount = view.findViewById(R.id.txtPromoCodeDiscount);
             rlPromoCodeDiscount = view.findViewById(R.id.rlPromoCodeDiscount);
             promoDiscountInfo = view.findViewById(R.id.promoDiscountInfo);
+            liquorBannerRootConstraintLayout=view.findViewById(R.id.liquorBannerRootConstraintLayout);
+            imgLiBanner=view.findViewById(R.id.imgLiquorBanner);
+
         }
     }
 
