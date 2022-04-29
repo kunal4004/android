@@ -8,12 +8,13 @@ import javax.inject.Inject
 
 class CreditLimitIncreaseDataSource @Inject constructor(
     private val accountRemoteService: AccountRemoteService,
-    private val landingDao: AccountProductLandingDao
+    private val accountProductLandingDao: AccountProductLandingDao
 ) : CoreDataSource(),
-    AccountRemoteService by accountRemoteService, IAccountProductLandingDao by landingDao,
+    AccountRemoteService by accountRemoteService,
+    IAccountProductLandingDao by accountProductLandingDao,
     ICreditLimitIncrease {
 
-    override fun isCliFlowHiddenForProductNotInGoodStanding(): Boolean  = !landingDao.isProductInGoodStanding()
+    override fun isCliFlowHiddenForProductNotInGoodStanding(): Boolean = !isProductInGoodStanding()
 
     override suspend fun queryCliServiceOfferActive() = performSafeNetworkApiCall {
         val productOfferingId = getProductOfferingId().toString()
