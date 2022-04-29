@@ -609,7 +609,7 @@ interface ApiInterface {
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body suburbRequest: SetDeliveryLocationSuburbRequest): Call<SetDeliveryLocationSuburbResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "environment: www-win-dev4")
     @GET("wfs/app/v4/cartV2")
     fun getShoppingCart(
 
@@ -628,7 +628,7 @@ interface ApiInterface {
             @Path("deliveryType") deliveryType: String,
             @Body addItemToCart: MutableList<AddItemToCart>): Call<AddItemToCartResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "environment: www-win-dev4")
     @DELETE("wfs/app/v4/cartV2/item")
     fun removeItemFromCart(
 
@@ -636,7 +636,7 @@ interface ApiInterface {
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("commerceId") commerceId: String): Call<ShoppingCartResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "environment: www-win-dev2")
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "environment: www-win-dev4")
     @GET("wfs/app/v4/cart/summary")
     fun getCartSummary(
 
