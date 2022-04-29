@@ -38,7 +38,7 @@
                 android:visibility="gone" />
 
             <TextView
-                android:id="@+id/cli_title_text_view"
+                android:id="@+id/titleTextView"
                 style="@style/style_loan_title"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"

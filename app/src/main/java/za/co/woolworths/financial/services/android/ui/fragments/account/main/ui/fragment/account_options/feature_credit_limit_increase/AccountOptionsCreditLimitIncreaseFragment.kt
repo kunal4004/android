@@ -69,7 +69,7 @@ class AccountOptionsCreditLimitIncreaseFragment :
         isTopDividerVisible: Boolean = true,
         isIncreaseMyLimitLayoutVisible: Boolean = false
     ) {
-        cliTitleTextView.text = getString(R.string.cli_credit_limit_increase)
+        titleTextView.text = getString(R.string.cli_credit_limit_increase)
         offerActive?.apply {
             topGrayDividerSpacer.visibility = if (isTopDividerVisible) VISIBLE else GONE
             increaseMyLimitItemLinearLayout.visibility =
