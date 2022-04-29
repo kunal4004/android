@@ -1056,18 +1056,18 @@ class KotlinUtils {
         fun clearAnonymousUserLocationDetails() {
             Utils.removeFromDb(KEY.ANONYMOUS_USER_LOCATION_DETAILS)
         }
-    }
 
-    fun coroutineContextWithExceptionHandler(errorHandler: (AbsaApiFailureHandler) -> Unit): CoroutineContext {
-        return (Dispatchers.IO + CoroutineExceptionHandler { _, throwable ->
-            when (throwable) {
-                is SocketException -> errorHandler(AbsaApiFailureHandler.NoInternetApiFailure)
-                is HttpException -> errorHandler(AbsaApiFailureHandler.HttpException(throwable.message(),
-                    throwable.code()))
-                is Exception -> errorHandler(AbsaApiFailureHandler.Exception(throwable.message,
-                    throwable.hashCode()))
-                else -> errorHandler(AbsaApiFailureHandler.NoInternetApiFailure)
-            }
-        })
+        fun coroutineContextWithExceptionHandler(errorHandler: (AbsaApiFailureHandler) -> Unit): CoroutineContext {
+            return (Dispatchers.IO + CoroutineExceptionHandler { _, throwable ->
+                when (throwable) {
+                    is SocketException -> errorHandler(AbsaApiFailureHandler.NoInternetApiFailure)
+                    is HttpException -> errorHandler(AbsaApiFailureHandler.HttpException(throwable.message(),
+                        throwable.code()))
+                    is Exception -> errorHandler(AbsaApiFailureHandler.Exception(throwable.message,
+                        throwable.hashCode()))
+                    else -> errorHandler(AbsaApiFailureHandler.NoInternetApiFailure)
+                }
+            })
+        }
     }
 }
