@@ -38,8 +38,11 @@ import com.google.common.reflect.TypeToken
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.installations.FirebaseInstallations
 import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import org.json.JSONObject
+import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_COLLECTING_DETAILS
@@ -66,8 +69,8 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiFailureHandler
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
-import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DEFAULT_ADDRESS
@@ -80,11 +83,13 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import java.io.*
+import java.net.SocketException
 import java.text.NumberFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.coroutines.CoroutineContext
 
 class KotlinUtils {
     companion object {
@@ -1053,4 +1058,16 @@ class KotlinUtils {
         }
     }
 
+    fun coroutineContextWithExceptionHandler(errorHandler: (AbsaApiFailureHandler) -> Unit): CoroutineContext {
+        return (Dispatchers.IO + CoroutineExceptionHandler { _, throwable ->
+            when (throwable) {
+                is SocketException -> errorHandler(AbsaApiFailureHandler.NoInternetApiFailure)
+                is HttpException -> errorHandler(AbsaApiFailureHandler.HttpException(throwable.message(),
+                    throwable.code()))
+                is Exception -> errorHandler(AbsaApiFailureHandler.Exception(throwable.message,
+                    throwable.hashCode()))
+                else -> errorHandler(AbsaApiFailureHandler.NoInternetApiFailure)
+            }
+        })
+    }
 }
