@@ -10,18 +10,12 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.transform
 import retrofit2.HttpException
 import za.co.absa.openbankingapi.AsymmetricCryptoHelper
 import za.co.absa.openbankingapi.DecryptionFailureException
 import za.co.absa.openbankingapi.SymmetricCipher
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.ActionText
-import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.ui.fragments.integration.helper.AbsaTemporaryDataSourceSingleton
 import za.co.woolworths.financial.services.android.ui.fragments.integration.helper.Aes256DecryptSymmetricCipherDelegate
 import za.co.woolworths.financial.services.android.ui.fragments.integration.helper.Aes256EncryptSymmetricCipherDelegate
@@ -135,5 +129,6 @@ fun Fragment.updateStatusBarColor(@ColorRes colorId: Int, isStatusBarFontDark: B
     }
 }
 
-
 fun Context.displayLabel() : String? = resources?.getString(R.string.view_your_payment_plan)
+
+fun String.toMaskABSAPhoneNumber() = this.replace("\\d(?!\\d{0,2}\$|\\d{7,10}\$)".toRegex(), "*")
