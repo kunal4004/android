@@ -20,8 +20,11 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.account_activate_credit_card_layout.*
 import kotlinx.android.synthetic.main.account_card_detail_fragment.*
+import kotlinx.android.synthetic.main.account_card_detail_fragment.logoIncreaseLimit
+import kotlinx.android.synthetic.main.account_card_detail_fragment.relIncreaseMyLimit
 import kotlinx.android.synthetic.main.account_cart_item.*
 import kotlinx.android.synthetic.main.account_detail_header_fragment.*
+import kotlinx.android.synthetic.main.account_options_credit_limit_increase_fragment.*
 import kotlinx.android.synthetic.main.account_options_layout.*
 import kotlinx.android.synthetic.main.bpi_covered_tag_layout.*
 import kotlinx.android.synthetic.main.common_account_detail.*
@@ -105,7 +108,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         balanceProtectionInsuranceView?.setOnClickListener(this)
         cardImageRootView?.setOnClickListener(this)
         debitOrderView?.setOnClickListener(this)
-        `@+id/cli_title_text_view`?.setOnClickListener(this)
+        tvIncreaseLimit?.setOnClickListener(this)
         relIncreaseMyLimit?.setOnClickListener(this)
         llIncreaseLimitContainer?.setOnClickListener(this)
         withdrawCashView?.setOnClickListener(this)
@@ -119,7 +122,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         mCardPresenterImpl?.apply {
             getBpiInsuranceApplication()
             displayCardHolderName()
-            creditLimitIncrease()?.showCLIProgress(logoIncreaseLimit, llCommonLayer, `@+id/cli_title_text_view`)
+            creditLimitIncrease()?.showCLIProgress(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit)
             showBalanceProtectionInsuranceLead()
         }
 
@@ -159,8 +162,8 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                 mCardPresenterImpl?.apply {
                     logoIncreaseLimit?.visibility = GONE
                     llCommonLayer?.visibility = GONE
-                    `@+id/cli_title_text_view`?.text = ""
-                    `@+id/cli_title_text_view`?.visibility = GONE
+                    tvIncreaseLimit.text = ""
+                    tvIncreaseLimit.visibility = GONE
                     logoIncreaseLimit?.visibility = GONE
                     tvIncreaseLimitDescription?.visibility = GONE
                     getUserCLIOfferActive()
@@ -277,7 +280,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                     cancelRetrofitRequest(mOfferActiveCall)
                     navigateToTemporaryStoreCard()
                 }
-                R.id.`@+id/cli_title_text_view`, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> {
+                R.id.tvIncreaseLimit, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> {
                     val applyNowState = mApplyNowAccountKeyPair?.first
 
                     if (applyNowState != null) {
@@ -430,7 +433,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         llIncreaseLimitContainer?.isEnabled = true
         relIncreaseMyLimit?.isEnabled = true
         progressCreditLimit?.visibility = GONE
-        `@+id/cli_title_text_view`?.visibility = VISIBLE
+        tvIncreaseLimit?.visibility = VISIBLE
     }
 
     override fun showUserOfferActiveProgress() {
@@ -440,23 +443,23 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         progressCreditLimit?.visibility = VISIBLE
         progressCreditLimit?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
         tvApplyNowIncreaseLimit?.visibility = GONE
-        `@+id/cli_title_text_view`?.visibility = VISIBLE
+        tvIncreaseLimit?.visibility = VISIBLE
     }
 
     override fun disableContentStatusUI() {
         relIncreaseMyLimit?.isEnabled = false
         llIncreaseLimitContainer?.isEnabled = false
-        `@+id/cli_title_text_view`?.isEnabled = false
+        tvIncreaseLimit?.isEnabled = false
     }
 
     override fun enableContentStatusUI() {
         relIncreaseMyLimit?.isEnabled = true
         llIncreaseLimitContainer?.isEnabled = true
-        `@+id/cli_title_text_view`?.isEnabled = true
+        tvIncreaseLimit?.isEnabled = true
     }
 
     override fun handleCreditLimitIncreaseTagStatus(offerActive: OfferActive) {
-        activity?.runOnUiThread { mCardPresenterImpl?.creditLimitIncrease()?.cliStatus(llCommonLayer, `@+id/cli_title_text_view`, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive) }
+        activity?.runOnUiThread { mCardPresenterImpl?.creditLimitIncrease()?.cliStatus(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive) }
     }
 
     override fun hideProductNotInGoodStanding() {
