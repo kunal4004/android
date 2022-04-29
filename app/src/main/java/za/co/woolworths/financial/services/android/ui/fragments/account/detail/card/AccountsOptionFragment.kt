@@ -162,8 +162,8 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                 mCardPresenterImpl?.apply {
                     logoIncreaseLimit?.visibility = GONE
                     llCommonLayer?.visibility = GONE
-                    tvIncreaseLimit.text = ""
-                    tvIncreaseLimit.visibility = GONE
+                    tvIncreaseLimit?.text = ""
+                    tvIncreaseLimit?.visibility = GONE
                     logoIncreaseLimit?.visibility = GONE
                     tvIncreaseLimitDescription?.visibility = GONE
                     getUserCLIOfferActive()
