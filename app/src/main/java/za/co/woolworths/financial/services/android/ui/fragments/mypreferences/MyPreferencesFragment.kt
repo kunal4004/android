@@ -32,6 +32,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.repository.AppStateRepository
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.FirebaseManager
@@ -176,6 +177,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
             val isDeviceIdentityIdPresent = verifyDeviceIdentityId(deviceList)
             updateLinkedDeviceView(isDeviceIdentityIdPresent)
         }
+        tvMyPrefManageDevicesTitle.text = bindString(R.string.my_preferences_linked_devices , deviceList?.size.toString())
     }
 
     private fun callLinkedDevicesAPI() {
