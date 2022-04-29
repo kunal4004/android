@@ -90,4 +90,38 @@
 
         </RadioGroup>
     </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/ageConfirmationShimmerFrameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/eighteen_dp"
+        android:layout_marginTop="@dimen/eight_dp"
+        android:background="@color/shimmer_view_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/radioGroupShoppingBagsShimmerFrameLayout">
+
+    <include
+        android:id="@+id/ageConfirmationLayout"
+        layout="@layout/layout_native_checkout_age_confirmation"/>
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/liquorComplianceShimmerFrameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/eighteen_dp"
+        android:layout_marginTop="@dimen/line_dp"
+        android:background="@color/shimmer_view_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ageConfirmationShimmerFrameLayout">
+
+        <include layout="@layout/liquor_compliance_banner"/>
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
