@@ -1,11 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_credit_limit_increase
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
@@ -36,7 +34,7 @@ class AccountOptionsCreditLimitIncreaseFragment :
     }
 
     private fun queryCLIOfferActiveRemoteService() {
-        if (viewModel.isCliFlowHiddenForProdcutNotInGoodStanding()) {
+        if (viewModel.isCliFlowHiddenForProductNotInGoodStanding()) {
             binding.hideCliComponent()
             return
         }

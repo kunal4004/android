@@ -13,7 +13,7 @@ class CreditLimitIncreaseDataSource @Inject constructor(
     AccountRemoteService by accountRemoteService, IAccountProductLandingDao by landingDao,
     ICreditLimitIncrease {
 
-    override fun isCliFlowHiddenForProdcutNotInGoodStanding(): Boolean  = !landingDao.isProductInGoodStanding()
+    override fun isCliFlowHiddenForProductNotInGoodStanding(): Boolean  = !landingDao.isProductInGoodStanding()
 
     override suspend fun queryCliServiceOfferActive() = performSafeNetworkApiCall {
         val productOfferingId = getProductOfferingId().toString()

@@ -5,6 +5,6 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.CoreDataSource
 
 interface ICreditLimitIncrease {
-    fun isCliFlowHiddenForProdcutNotInGoodStanding(): Boolean
+    fun isCliFlowHiddenForProductNotInGoodStanding(): Boolean
     suspend fun queryCliServiceOfferActive(): Flow<CoreDataSource.IOTaskResult<OfferActive>>
 }
