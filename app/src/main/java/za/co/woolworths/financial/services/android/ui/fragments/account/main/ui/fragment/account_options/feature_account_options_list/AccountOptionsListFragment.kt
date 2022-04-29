@@ -15,9 +15,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
-class AccountOptionsListFragment : ViewBindingFragment<AccountOptionsListFragmentBinding>(
-    AccountOptionsListFragmentBinding::inflate
-) {
+class AccountOptionsListFragment : ViewBindingFragment<AccountOptionsListFragmentBinding>(AccountOptionsListFragmentBinding::inflate) {
 
     val viewModel: StoreCardAccountOptionsViewModel by activityViewModels()
 

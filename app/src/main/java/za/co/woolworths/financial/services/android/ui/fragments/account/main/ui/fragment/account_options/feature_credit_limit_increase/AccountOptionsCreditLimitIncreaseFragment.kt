@@ -1,22 +1,23 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_credit_limit_increase
 
 import android.graphics.Color
-import android.graphics.PorterDuff
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountOptionsCreditLimitIncreaseFragmentBinding
-import com.google.gson.Gson
 import kotlinx.coroutines.flow.collect
+import za.co.woolworths.financial.services.android.models.dto.OfferActive
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderEmpty
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderFailure
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
+import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 class AccountOptionsCreditLimitIncreaseFragment :
     ViewBindingFragment<AccountOptionsCreditLimitIncreaseFragmentBinding>(
@@ -27,38 +28,70 @@ class AccountOptionsCreditLimitIncreaseFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.progressCreditLimit.indeterminateDrawable?.setColorFilter(
-            Color.BLACK,
-            PorterDuff.Mode.MULTIPLY
-        )
         subscribeObservers()
     }
 
     private fun subscribeObservers() {
+        queryCLIOfferActiveRemoteService()
+    }
+
+    private fun queryCLIOfferActiveRemoteService() {
+        if (viewModel.isCliFlowHiddenForProdcutNotInGoodStanding()) {
+            binding.hideCliComponent()
+            return
+        }
         lifecycleScope.launchWhenStarted {
             viewModel.queryRemoteServiceCLIOfferActive().collect { result ->
                 with(result) {
-                    renderSuccess { Log.e("renderLoadingX", "xxx ${Gson().toJson(output)} xx") }
-                    renderEmpty { Log.e("renderLoadingX", "xxx empty xx") }
-                    renderFailure { Log.e("renderLoadingX", "xxx failure xx") }
-                    renderLoading { showProgress(this.isLoading) }
+                    renderSuccess {
+                        when (val data = viewModel.getStatus(output)) {
+                            is CLILandingUIState.Consent -> binding.setCommonStateUI(
+                                offerActive = data.offerActive,
+                                isIncreaseMyLimitLayoutVisible = true
+                            )
+                            is CLILandingUIState.CommonStatus -> binding.setCommonStateUI(data.offerActive)
+                            is CLILandingUIState.Unavailable -> binding.setCommonStateUI(data.offerActive)
+                        }
+                    }
+                    renderFailure {  // TODO :: AutoConnect on internet failure
+                    }
+                    renderLoading { binding.showProgress(this.isLoading) }
                 }
             }
         }
     }
 
-    private fun showProgress(isLoading: Boolean = false) {
-        when (isLoading) {
-            true -> {
-                binding.progressCreditLimit.visibility = VISIBLE
-                binding.llCommonLayer.visibility = GONE
-                binding.relIncreaseMyLimit.visibility = GONE
+    private fun AccountOptionsCreditLimitIncreaseFragmentBinding.hideCliComponent() {
+        rootContainerLinearLayout.visibility = GONE
+        topGrayDividerSpacer.visibility = GONE
+    }
+
+    private fun AccountOptionsCreditLimitIncreaseFragmentBinding.setCommonStateUI(
+        offerActive: OfferActive?,
+        isTopDividerVisible: Boolean = true,
+        isIncreaseMyLimitLayoutVisible: Boolean = false
+    ) {
+        tvIncreaseLimit.text = getString(R.string.cli_credit_limit_increase)
+        offerActive?.apply {
+            topGrayDividerSpacer.visibility = if (isTopDividerVisible) VISIBLE else GONE
+            increaseMyLimitItemLinearLayout.visibility =
+                if (isIncreaseMyLimitLayoutVisible) VISIBLE else GONE
+            with(descriptionTextView) {
+                visibility = if (messageDetail.isNullOrEmpty()) GONE else VISIBLE
+                text = messageDetail
             }
-            false -> {
-                binding.progressCreditLimit.visibility = GONE
-                binding.llCommonLayer.visibility = VISIBLE
-                binding.relIncreaseMyLimit.visibility = VISIBLE
+            with(badgeLabelTextView) {
+                visibility = VISIBLE
+                KotlinUtils.roundCornerDrawable(
+                    badgeLabelTextView,
+                    nextStepColour ?: AppConstant.DEFAULT_TAG_HEX_COLOR
+                )
+                text = messageSummary
             }
         }
+    }
+
+    private fun AccountOptionsCreditLimitIncreaseFragmentBinding.showProgress(isLoading: Boolean = false) {
+        circularProgressBarIndicator.visibility = if (isLoading) VISIBLE else GONE
     }
 }

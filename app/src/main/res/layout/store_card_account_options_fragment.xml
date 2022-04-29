@@ -23,8 +23,6 @@
             android:tag="manageCardTag"
             app:navGraph="@navigation/account_options_manage_card_fragment" />
 
-        <View style="@style/account_options_horizontal_divider" />
-
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/creditLimitIncreaseContainer"
             android:name="androidx.navigation.fragment.NavHostFragment"

@@ -78,6 +78,7 @@ class AppConstant {
         const val NAVIGATED_FROM_MY_ACCOUNTS = "NAVIGATED_FROM_MY_ACCOUNTS"
 
         const val RED_HEX_COLOR ="#ff0000"
+        const val DEFAULT_TAG_HEX_COLOR="#b2b2b2"
     }
 
     enum class DashDetailsViewType(val value: Int) { HEADER_TITLE(0), APP_FEATURE_LIST(1), TERMS_AND_CONDITION(2) }
