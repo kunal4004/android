@@ -54,7 +54,7 @@ class CreditLimitIncreaseStatus {
         var nextStepColour = ""
 
         offerActive?.let { offer ->
-            nextStep = offer.nextStep.toLowerCase(Locale.getDefault())
+            nextStep = offer.nextStep.lowercase()
             messageSummary = offer.messageSummary
             messageDetail = offer.messageDetail
             activeOffer = offer.offerActive
