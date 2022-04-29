@@ -225,7 +225,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             navigateToConfirmAddressScreen()
         }
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { _, _ ->
-            // change location dismiss button clicked as address is not deliverable.
+            // change location dismiss button clicked so land back on last delivery location tab.
             when (lastDeliveryType) {
                 Delivery.STANDARD.name -> {
                     openGeoDeliveryTab()
@@ -276,8 +276,11 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 Delivery.CNC.name -> {
                     ConfirmLocationRequest(CNC, confirmLocationAddress, mStoreId)
                 }
-                else -> {
+                Delivery.DASH.name -> {
                     ConfirmLocationRequest(DASH, confirmLocationAddress, mStoreId)
+                }
+                else -> {
+                    ConfirmLocationRequest(DASH, confirmLocationAddress, "")
                 }
             }
 
@@ -605,8 +608,11 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                 Delivery.CNC.name -> {
                                     openCollectionTab()
                                 }
-                                else -> {
+                                Delivery.DASH.name -> {
                                     openDashTab()
+                                }
+                                else -> {
+                                    openGeoDeliveryTab()
                                 }
                             }
                         }
@@ -630,7 +636,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             showNotDeliverablePopUp(getString(R.string.no_location_delivery),
                 getString(R.string.no_location_desc),
                 getString(R.string.change_location),
-                R.drawable.location_disabled, getString(R.string.cancel))
+                R.drawable.location_disabled, null)
         }
         geoDeliveryView?.visibility = View.VISIBLE
         geoDeliveryText?.text =
@@ -651,7 +657,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 showNotDeliverablePopUp(getString(R.string.no_location_collection),
                     getString(R.string.no_location_desc),
                     getString(R.string.change_location),
-                    R.drawable.img_collection_bag, getString(R.string.cancel))
+                    R.drawable.img_collection_bag, null)
             }
         }
 
@@ -674,7 +680,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             showNotDeliverablePopUp(getString(R.string.no_location_delivery),
                 getString(R.string.no_location_desc),
                 getString(R.string.change_location),
-                R.drawable.location_disabled, getString(R.string.cancel))
+                R.drawable.location_disabled, null)
         }
     }
 
@@ -683,10 +689,14 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         subTitle: String,
         btnText: String,
         imgUrl: Int,
-        dismissLinkText: String
+        dismissLinkText: String?,
     ) {
         val customBottomSheetDialogFragment =
-            CustomBottomSheetDialogFragment.newInstance(title, subTitle, btnText, imgUrl, dismissLinkText)
+            CustomBottomSheetDialogFragment.newInstance(title,
+                subTitle,
+                btnText,
+                imgUrl,
+                dismissLinkText)
         customBottomSheetDialogFragment.show(requireFragmentManager(),
             CustomBottomSheetDialogFragment::class.java.simpleName)
     }
@@ -825,10 +835,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             }
         }
         return shortestDistance?.storeId
-    }
-
-    override fun onStop() {
-        super.onStop()
     }
 
     /**

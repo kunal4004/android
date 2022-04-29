@@ -291,7 +291,7 @@ class ConfirmAddressMapFragment :
                                             getString(R.string.no_location_delivery),
                                             getString(R.string.no_location_desc),
                                             getString(R.string.change_location),
-                                            R.drawable.location_disabled, null)
+                                            R.drawable.location_disabled, getString(R.string.dismiss))
                                     customBottomSheetDialogFragment.show(requireFragmentManager(),
                                         CustomBottomSheetDialogFragment::class.java.simpleName)
                                 }
