@@ -339,7 +339,7 @@ interface ApiInterface {
         @Header("longitude") long: Double?,
         @Query("suburbId") suburbId: String?,
         @Query("storeId") storeId: String?,
-        @Query("deliveryType") deliveryType: String? = BundleKeysConstants.DASH
+        @Query("deliveryType") deliveryType: String?
     ): Call<RootCategories>
 
     // Same as fun getRootCategories()

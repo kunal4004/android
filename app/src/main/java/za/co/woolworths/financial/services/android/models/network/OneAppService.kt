@@ -184,7 +184,7 @@ object OneAppService : RetrofitConfig() {
 
         return mApiInterface.getRootCategories(
             getSessionToken(),
-            getDeviceIdentityToken(), locationCord?.latitude, locationCord?.longitude, suburbId, storeId)
+            getDeviceIdentityToken(), locationCord?.latitude, locationCord?.longitude, suburbId, storeId, null)
     }
 
     suspend fun getDashCategoryNavigation(location: Location?): retrofit2.Response<RootCategories> {

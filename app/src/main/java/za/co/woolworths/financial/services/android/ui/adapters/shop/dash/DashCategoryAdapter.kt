@@ -216,7 +216,7 @@ class BannerGridItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemVie
         banner: Banner,
         dashLandingNavigationListener: OnDashLandingNavigationListener?
     ) {
-        itemView.dashBannerCarouselContainer?.setOnClickListener {
+        itemView.setOnClickListener {
             dashLandingNavigationListener?.onDashLandingNavigationClicked(view = it, banner)
         }
         Glide.with(context)
