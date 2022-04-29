@@ -51,4 +51,8 @@ open class NetworkConfig {
     fun getDeviceIdentityToken(): String {
         return SessionUtilities.getInstance().deviceIdentityToken
     }
+
+    fun getAppVersion(): String= WoolworthsApplication.getAppVersionName()
+
+
 }

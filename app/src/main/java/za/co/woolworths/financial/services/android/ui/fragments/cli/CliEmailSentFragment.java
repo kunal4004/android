@@ -37,7 +37,9 @@ public class CliEmailSentFragment extends CLIFragment implements View.OnClickLis
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		mCliStepIndicatorListener.onStepSelected(5);
+		if(mCliStepIndicatorListener != null) {
+			mCliStepIndicatorListener.onStepSelected(5);
+		}
 		initUI(view);
 
 	}
