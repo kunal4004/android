@@ -50,13 +50,11 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.OutSystemBuilder
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
-import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.personal_loan.PersonalLoanFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.MyAccountsScreenNavigator
@@ -67,7 +65,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.credit_card_acti
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
-import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 
 open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDetailsContract.AccountCardDetailView {
 
@@ -108,7 +105,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         balanceProtectionInsuranceView?.setOnClickListener(this)
         cardImageRootView?.setOnClickListener(this)
         debitOrderView?.setOnClickListener(this)
-        tvIncreaseLimit?.setOnClickListener(this)
+        `@+id/cli_title_text_view`?.setOnClickListener(this)
         relIncreaseMyLimit?.setOnClickListener(this)
         llIncreaseLimitContainer?.setOnClickListener(this)
         withdrawCashView?.setOnClickListener(this)
@@ -122,7 +119,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         mCardPresenterImpl?.apply {
             getBpiInsuranceApplication()
             displayCardHolderName()
-            creditLimitIncrease()?.showCLIProgress(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit)
+            creditLimitIncrease()?.showCLIProgress(logoIncreaseLimit, llCommonLayer, `@+id/cli_title_text_view`)
             showBalanceProtectionInsuranceLead()
         }
 
@@ -162,8 +159,8 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                 mCardPresenterImpl?.apply {
                     logoIncreaseLimit?.visibility = GONE
                     llCommonLayer?.visibility = GONE
-                    tvIncreaseLimit?.text = ""
-                    tvIncreaseLimit?.visibility = GONE
+                    `@+id/cli_title_text_view`?.text = ""
+                    `@+id/cli_title_text_view`?.visibility = GONE
                     logoIncreaseLimit?.visibility = GONE
                     tvIncreaseLimitDescription?.visibility = GONE
                     getUserCLIOfferActive()
@@ -280,7 +277,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                     cancelRetrofitRequest(mOfferActiveCall)
                     navigateToTemporaryStoreCard()
                 }
-                R.id.tvIncreaseLimit, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> {
+                R.id.`@+id/cli_title_text_view`, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> {
                     val applyNowState = mApplyNowAccountKeyPair?.first
 
                     if (applyNowState != null) {
@@ -433,7 +430,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         llIncreaseLimitContainer?.isEnabled = true
         relIncreaseMyLimit?.isEnabled = true
         progressCreditLimit?.visibility = GONE
-        tvIncreaseLimit?.visibility = VISIBLE
+        `@+id/cli_title_text_view`?.visibility = VISIBLE
     }
 
     override fun showUserOfferActiveProgress() {
@@ -443,23 +440,23 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         progressCreditLimit?.visibility = VISIBLE
         progressCreditLimit?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
         tvApplyNowIncreaseLimit?.visibility = GONE
-        tvIncreaseLimit?.visibility = VISIBLE
+        `@+id/cli_title_text_view`?.visibility = VISIBLE
     }
 
     override fun disableContentStatusUI() {
         relIncreaseMyLimit?.isEnabled = false
         llIncreaseLimitContainer?.isEnabled = false
-        tvIncreaseLimit?.isEnabled = false
+        `@+id/cli_title_text_view`?.isEnabled = false
     }
 
     override fun enableContentStatusUI() {
         relIncreaseMyLimit?.isEnabled = true
         llIncreaseLimitContainer?.isEnabled = true
-        tvIncreaseLimit?.isEnabled = true
+        `@+id/cli_title_text_view`?.isEnabled = true
     }
 
     override fun handleCreditLimitIncreaseTagStatus(offerActive: OfferActive) {
-        activity?.runOnUiThread { mCardPresenterImpl?.creditLimitIncrease()?.cliStatus(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive) }
+        activity?.runOnUiThread { mCardPresenterImpl?.creditLimitIncrease()?.cliStatus(llCommonLayer, `@+id/cli_title_text_view`, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive) }
     }
 
     override fun hideProductNotInGoodStanding() {
