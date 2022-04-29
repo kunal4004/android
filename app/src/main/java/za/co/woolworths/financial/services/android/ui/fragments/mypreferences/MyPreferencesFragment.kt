@@ -201,6 +201,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                         deviceList = response?.userDevices
                         AppStateRepository().saveLinkedDevices(deviceList)
                         updateLinkedDeviceView(isDeviceIdentityIdPresent)
+                        tvMyPrefManageDevicesTitle.text = bindString(R.string.my_preferences_linked_devices , deviceList?.size.toString())
                     }
                     else -> {
                         spinningAnimation.cancel()
