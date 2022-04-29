@@ -130,4 +130,5 @@ fun Fragment.updateStatusBarColor(@ColorRes colorId: Int, isStatusBarFontDark: B
 }
 
 fun Context.displayLabel() : String? = resources?.getString(R.string.view_your_payment_plan)
+
 fun String.toMaskABSAPhoneNumber() = this.replace("\\d(?!\\d{0,2}\$|\\d{7,10}\$)".toRegex(), "*")
