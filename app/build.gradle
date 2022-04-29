@@ -17,7 +17,6 @@ android {
     def jobNumberQa = 576
     def jobNumberFeature = 16000
 
-
     dataBinding {
         enabled = true
     }
