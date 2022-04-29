@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import za.co.woolworths.financial.services.android.util.eliteplan.TakeUpPlanUtil
 
@@ -100,19 +101,26 @@ class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.On
     }
 
     fun cannotAffordClickHandler() {
-        activity?.apply {
-            state?.let {
-                TakeUpPlanUtil.takeUpPlanEventLog(it, this)
+        when (eligibilityPlan?.actionText) {
+            ActionText.VIEW_ELITE_PLAN.value -> {
+                KotlinUtils.openTreatmenPlanUrl(activity, eligibilityPlan)
+            }
+            else -> {
+                activity?.apply {
+                    state?.let {
+                        TakeUpPlanUtil.takeUpPlanEventLog(it, this)
+                    }
+                }
+                setFragmentResult(
+                    mClassName, bundleOf(
+                        ViewTreatmentPlanDialogFragment.CANNOT_AFFORD_PAYMENT_BUTTON to ViewTreatmentPlanDialogFragment.CANNOT_AFFORD_PAYMENT_BUTTON,
+                        ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN to eligibilityPlan
+                    )
+                )
+                openSetupPaymentPlanPage()
             }
         }
         dismiss()
-        setFragmentResult(
-            mClassName, bundleOf(
-                ViewTreatmentPlanDialogFragment.CANNOT_AFFORD_PAYMENT_BUTTON to ViewTreatmentPlanDialogFragment.CANNOT_AFFORD_PAYMENT_BUTTON,
-                ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN to eligibilityPlan
-            )
-        )
-        openSetupPaymentPlanPage()
     }
 
     private fun openSetupPaymentPlanPage() {

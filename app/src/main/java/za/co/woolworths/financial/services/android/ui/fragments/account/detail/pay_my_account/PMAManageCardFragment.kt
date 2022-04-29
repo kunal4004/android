@@ -56,7 +56,7 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         navController = Navigation.findNavController(view)
-
+        mTemporarySelectedPosition = payMyAccountViewModel.getSelectedPosition()
         configureToolbar(true, R.string.credit_debit_cards_label)
         useThisCardButton?.apply {
             setOnClickListener(this@PMAManageCardFragment)
@@ -110,7 +110,6 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
             layoutManager = activity?.let { LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false) }
 
             manageCardAdapter = PMACardsAdapter(mPaymentMethodList) { paymentMethod, position ->
-                mTemporarySelectedPosition = position
 
                 val isCardSelected = manageCardAdapter?.getList()?.any { it.isCardChecked }
 
@@ -120,6 +119,9 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
                     true -> {
                         payMyAccountViewModel.mSelectExpiredPaymentMethod = paymentMethod
                         navController?.navigate(R.id.action_manageCardFragment_to_PMACardExpiredFragment)
+                    }
+                    else->{
+                        mTemporarySelectedPosition = position
                     }
                 }
             }
