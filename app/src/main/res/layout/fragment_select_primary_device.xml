@@ -63,7 +63,7 @@
         android:enabled="false"
         android:clickable="true"
         android:fontFamily="@font/futura_semi_bold"
-        android:text="@string/unlink_device_change_to_primary"
+        android:text="@string/unlink_device_change_to_preferred"
         android:textSize="@dimen/twelve_sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
