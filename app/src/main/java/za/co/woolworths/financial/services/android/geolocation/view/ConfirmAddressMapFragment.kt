@@ -288,7 +288,7 @@ class ConfirmAddressMapFragment :
                                     // Show not deliverable Bottom Dialog.
                                     val customBottomSheetDialogFragment =
                                         CustomBottomSheetDialogFragment.newInstance(
-                                            getString(R.string.no_location_delivery),
+                                            getString(R.string.no_location_title),
                                             getString(R.string.no_location_desc),
                                             getString(R.string.change_location),
                                             R.drawable.location_disabled, getString(R.string.dismiss))

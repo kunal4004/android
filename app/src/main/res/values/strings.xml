@@ -2512,7 +2512,6 @@
     <string name="geo_loc_error_msg">We can’t seem to find you. Please enter number and name of your street ,or drag the pin to your exact location.</string>
     <string name="fashion_beauty_geo">Fashion,Beauty,Home</string>
     <string name="no_location_collection">There Are No Collection Stores \n Available Near You.</string>
-    <string name="no_location_delivery">We Can’t Deliver To This Location Yet.</string>
     <string name="geo_map_address">%s %s %s</string>
     <string name="max_characters_allowed">Max 40 characters allowed</string>
 

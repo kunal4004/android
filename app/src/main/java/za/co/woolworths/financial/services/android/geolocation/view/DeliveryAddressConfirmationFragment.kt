@@ -633,7 +633,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     private fun updateDeliveryDetails() {
         if (validateLocationResponse?.validatePlace?.deliverable == false) {
             // Show not deliverable Bottom Dialog.
-            showNotDeliverablePopUp(getString(R.string.no_location_delivery),
+            showNotDeliverablePopUp(getString(R.string.no_location_title),
                 getString(R.string.no_location_desc),
                 getString(R.string.change_location),
                 R.drawable.location_disabled, null)
@@ -677,7 +677,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             setVisibilityDeliveryDates(null, null, earliestDashDate)
         } else {
             // Show not deliverable Popup
-            showNotDeliverablePopUp(getString(R.string.no_location_delivery),
+            showNotDeliverablePopUp(getString(R.string.no_location_title),
                 getString(R.string.no_location_desc),
                 getString(R.string.change_location),
                 R.drawable.location_disabled, null)

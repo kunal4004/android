@@ -89,7 +89,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     initData()
                 } else {
                     // user has location but don't have Dash deliverable.
-                    showSetAddressScreen() // show set Address screen
+                    showChangeLocationScreen() // show change Address screen
                 }
             }
         }
@@ -97,6 +97,19 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
     private fun showSetAddressScreen() {
         layoutDashSetAddress?.visibility = View.VISIBLE
+        img_view?.setImageResource(R.drawable.img_dash_delivery)
+        txt_dash_title?.text = getString(R.string.dash_delivery_msg)
+        txt_dash_sub_title?.text = getString(R.string.dash_delivery_title)
+        btn_dash_set_address?.text = getString(R.string.set_address)
+        btn_dash_set_address?.setOnClickListener(this)
+    }
+
+    private fun showChangeLocationScreen() {
+        layoutDashSetAddress?.visibility = View.VISIBLE
+        img_view?.setImageResource(R.drawable.location_disabled)
+        txt_dash_title?.text = getString(R.string.no_location_title)
+        txt_dash_sub_title?.text = getString(R.string.no_location_desc)
+        btn_dash_set_address?.text = getString(R.string.change_location)
         btn_dash_set_address?.setOnClickListener(this)
     }
 
