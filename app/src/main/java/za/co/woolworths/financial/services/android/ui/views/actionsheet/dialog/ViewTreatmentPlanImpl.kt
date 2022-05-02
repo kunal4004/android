@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.annotation.StringRes
