@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.store_locator_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter
-import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter
+import za.co.woolworths.financial.services.android.ui.views.maps.adapter.GoogleMapWindowAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ParticipatingStoreFragment.Companion.STORE_CARD
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1.Companion.CAMERA_ANIMATION_SPEED
 import za.co.woolworths.financial.services.android.ui.fragments.vtc.SelectStoreDetailsFragment
@@ -102,7 +102,11 @@ class StoreLocatorFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
         unSelectedIcon = getUnSelectedIcon()
 
         activity?.apply {
-            mGoogleMap?.setInfoWindowAdapter(MapWindowAdapter(this))
+            mGoogleMap?.setInfoWindowAdapter(
+                GoogleMapWindowAdapter(
+                    this
+                )
+            )
             mGoogleMap?.setOnMarkerClickListener(this@StoreLocatorFragment)
         }
 

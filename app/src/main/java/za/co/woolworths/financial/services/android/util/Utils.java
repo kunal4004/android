@@ -1589,7 +1589,7 @@ public class Utils {
     }
 
     public static Boolean isGooglePlayServicesAvailable() {
-        return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(WoolworthsApplication.getAppContext()) == ConnectionResult.SUCCESS;
+        return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(WoolworthsApplication.getAppContext()) == ConnectionResult.SUCCESS && false; // TODO revert
     }
 
     public static Boolean isHuaweiMobileServicesAvailable() {

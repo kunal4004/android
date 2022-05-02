@@ -6,16 +6,24 @@ import android.os.Bundle
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
-import androidx.fragment.app.FragmentManager
 import com.awfs.coordination.R
 import com.google.android.gms.maps.*
+import com.google.android.gms.maps.OnMapReadyCallback as GoogleOnMapReadyCallback
+import com.google.android.gms.maps.MapView as GoogleMapView
 import com.google.android.gms.maps.model.BitmapDescriptor
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
-import kotlinx.android.synthetic.main.view_dynamic_map.view.*
-import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter
+import com.google.android.gms.maps.model.LatLng as GoogleLatLng
+import com.google.android.gms.maps.model.Marker as GoogleMarker
+import com.google.android.gms.maps.model.MarkerOptions as GoogleMarkerOptions
+import com.huawei.hms.maps.HuaweiMap
+import com.huawei.hms.maps.model.MarkerOptions as HuaweiMarkerOptions
+import za.co.woolworths.financial.services.android.ui.views.maps.adapter.GoogleMapWindowAdapter
+import za.co.woolworths.financial.services.android.ui.views.maps.adapter.HuaweiMapWindowAdapter
+import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicLatLng
+import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
+import com.huawei.hms.maps.OnMapReadyCallback as HuaweiOnMapReadyCallback
+import com.huawei.hms.maps.MapView as HuaweiMapView
+import com.huawei.hms.maps.MapsInitializer as HuaweiMapsInitializer
+import com.huawei.hms.maps.model.Marker as HuaweiMarker
 import za.co.woolworths.financial.services.android.util.Utils
 
 class DynamicMapView @JvmOverloads constructor(
@@ -24,20 +32,23 @@ class DynamicMapView @JvmOverloads constructor(
     defStyle: Int = 0,
     defStyleRes: Int = 0
 ) : ConstraintLayout(context, attrs, defStyle, defStyleRes),
-    OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+    GoogleOnMapReadyCallback, GoogleMap.OnMarkerClickListener,
+    HuaweiOnMapReadyCallback, HuaweiMap.OnMarkerClickListener {
 
     companion object {
         var CAMERA_ANIMATION_DURATION_FAST = 350
         var CAMERA_ANIMATION_DURATION_SLOW = 500
+        val MAPVIEW_HUAWEI_BUNDLE_KEY = "MapViewBundleKey"
     }
 
     private var isGooglePlayServicesAvailable = false
 
     private var delegate: DynamicMapDelegate? = null
-    private var googleMapView: MapView? = null
+    private var googleMapView: GoogleMapView? = null
     private var googleMap: GoogleMap? = null
 
-//    private var huaweiMapView: com.huawei.hms.maps.MapView? = null
+    private var huaweiMapView: HuaweiMapView? = null
+    private var huaweiMap: HuaweiMap? = null
 
     init {
         isGooglePlayServicesAvailable = Utils.isGooglePlayServicesAvailable()
@@ -46,42 +57,68 @@ class DynamicMapView @JvmOverloads constructor(
 
     fun initializeMap(savedInstanceState: Bundle?, delegate: DynamicMapDelegate) {
         if (isGooglePlayServicesAvailable) {
-            googleMapView = MapView(context)
+            googleMapView = GoogleMapView(context)
             googleMapView?.layoutParams =
                 LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
             addView(googleMapView)
-            this.delegate = delegate
             googleMapView?.onCreate(savedInstanceState)
             googleMapView?.getMapAsync(this)
         } else {
-            // TODO
+            HuaweiMapsInitializer.setApiKey(resources.getString(R.string.maps_huawei_api_key))
+            huaweiMapView = HuaweiMapView(context)
+            huaweiMapView?.layoutParams =
+                LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+            addView(huaweiMapView)
+            huaweiMapView?.onCreate(savedInstanceState?.getBundle(MAPVIEW_HUAWEI_BUNDLE_KEY))
+            huaweiMapView?.getMapAsync(this)
         }
+        this.delegate = delegate
     }
 
     fun isMapInstantiated(): Boolean {
-        if (isGooglePlayServicesAvailable) {
-            return googleMap != null
+        return if (isGooglePlayServicesAvailable) {
+            googleMap != null
         } else {
-            return false // TODO
+            huaweiMap != null
         }
     }
 
     // region Google Maps Delegate
 
     override fun onMapReady(map: GoogleMap) {
-        if (isGooglePlayServicesAvailable) {
-            googleMap = map
-            //If permission is not granted, request permission.
-            googleMap?.setInfoWindowAdapter(MapWindowAdapter(context))
-            googleMap?.setOnMarkerClickListener(this)
-        } else {
-            // TODO
-        }
+        googleMap = map
+        //If permission is not granted, request permission.
+        googleMap?.setInfoWindowAdapter(
+            GoogleMapWindowAdapter(
+                context
+            )
+        )
+        googleMap?.setOnMarkerClickListener(this)
         delegate?.onMapReady()
     }
 
-    override fun onMarkerClick(marker: Marker): Boolean {
-        delegate?.onMarkerClicked(marker)
+    override fun onMarkerClick(marker: GoogleMarker): Boolean {
+        delegate?.onMarkerClicked(DynamicMapMarker(googleMarker = marker))
+        return true
+    }
+
+    // endregion
+
+    // region Huawei Maps Delegate
+
+    override fun onMapReady(map: HuaweiMap?) {
+        huaweiMap = map
+        huaweiMap?.setInfoWindowAdapter(
+            HuaweiMapWindowAdapter(
+                context
+            )
+        )
+        huaweiMap?.setOnMarkerClickListener(this)
+        delegate?.onMapReady()
+    }
+
+    override fun onMarkerClick(marker: HuaweiMarker): Boolean {
+        delegate?.onMarkerClicked(DynamicMapMarker(huaweiMarker = marker))
         return true
     }
 
@@ -91,7 +128,7 @@ class DynamicMapView @JvmOverloads constructor(
         if (isGooglePlayServicesAvailable) {
             googleMap?.uiSettings?.isScrollGesturesEnabled = isEnabled
         } else {
-            // TODO
+            huaweiMap?.uiSettings?.isScrollGesturesEnabled = isEnabled
         }
     }
 
@@ -100,34 +137,37 @@ class DynamicMapView @JvmOverloads constructor(
         if (isGooglePlayServicesAvailable) {
             googleMap?.isMyLocationEnabled = isEnabled
         } else {
-            // TODO
+            huaweiMap?.isMyLocationEnabled = isEnabled
         }
     }
 
     fun getCameraPositionTargetLatitude(): Double? {
-        if (isGooglePlayServicesAvailable) {
-            return googleMap?.cameraPosition?.target?.latitude
+        return if (isGooglePlayServicesAvailable) {
+            googleMap?.cameraPosition?.target?.latitude
         } else {
-            return null // TODO
+            huaweiMap?.cameraPosition?.target?.latitude
         }
     }
 
     fun getVisibleRegionNortheastLatitude(): Double? {
-        if (isGooglePlayServicesAvailable) {
-            return googleMap?.projection?.visibleRegion?.latLngBounds?.northeast?.latitude
+        return if (isGooglePlayServicesAvailable) {
+            googleMap?.projection?.visibleRegion?.latLngBounds?.northeast?.latitude
         } else {
-            return null // TODO
+            huaweiMap?.projection?.visibleRegion?.latLngBounds?.northeast?.latitude
         }
     }
 
-    fun addMarker(point: LatLng, bitmapDescriptor: BitmapDescriptor?): Marker? {
-        if (isGooglePlayServicesAvailable) {
-            val markerOptions = MarkerOptions()
-            markerOptions.position(point)
+    fun addMarker(point: DynamicLatLng, bitmapDescriptor: BitmapDescriptor?): DynamicMapMarker? {
+        if (point.googleLatLng != null) {
+            val markerOptions = GoogleMarkerOptions()
+            markerOptions.position(point.googleLatLng!!)
             markerOptions.icon(bitmapDescriptor)
-            return googleMap?.addMarker(markerOptions)
-        } else {
-            return null // TODO
+            return DynamicMapMarker(googleMarker = googleMap?.addMarker(markerOptions))
+        } else if (point.huaweiLatLng != null) {
+            val markerOptions = HuaweiMarkerOptions()
+            markerOptions.position(point.huaweiLatLng!!)
+//            markerOptions.icon(bitmapDescriptor) // TODO
+            return DynamicMapMarker(huaweiMarker = huaweiMap?.addMarker(markerOptions))
         }
     }
 

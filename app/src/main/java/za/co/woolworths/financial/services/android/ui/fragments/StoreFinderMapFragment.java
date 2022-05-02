@@ -49,7 +49,7 @@ import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
-import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter;
+import za.co.woolworths.financial.services.android.ui.views.maps.adapter.GoogleMapWindowAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderCardsOnMapAdapter;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -295,7 +295,7 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 			Log.e("onMapReady", "exPMapIsReady");
 		}
 		//If permission is not granted, request permission.
-		googleMap.setInfoWindowAdapter(new MapWindowAdapter(getContext()));
+		googleMap.setInfoWindowAdapter(new GoogleMapWindowAdapter(getContext()));
 		googleMap.setOnMarkerClickListener(mFragment);
 		unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin);
 		selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin);

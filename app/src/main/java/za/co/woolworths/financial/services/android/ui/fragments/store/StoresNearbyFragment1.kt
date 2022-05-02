@@ -61,6 +61,7 @@ import za.co.woolworths.financial.services.android.ui.views.WButton
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate
 import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapView
+import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
 import za.co.woolworths.financial.services.android.util.*
 import java.util.*
 
@@ -257,7 +258,7 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
     override fun onPageScrollStateChanged(state: Int) {}
 
-    override fun onMarkerClicked(marker: Marker) {
+    override fun onMarkerClicked(marker: DynamicMapMarker) {
         try {
             val id = mMarkers?.get(marker.id)
             previousmarker?.setIcon(unSelectedIcon)
