@@ -21,6 +21,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.click_and_collec
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.OrderConfirmationFragment
+import za.co.woolworths.financial.services.android.util.Constant.Companion.LIQUOR_ORDER
+import za.co.woolworths.financial.services.android.util.Constant.Companion.NO_LIQUOR_IMAGE_URL
 import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -46,6 +48,11 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                 Utils.toJson(savedAddressResponse)
             )
             baseFragBundle?.putBoolean(IS_DELIVERY, if (containsKey(IS_DELIVERY)) getBoolean(IS_DELIVERY) else true)
+            if(containsKey(LIQUOR_ORDER)&&containsKey(NO_LIQUOR_IMAGE_URL)){
+                baseFragBundle?.putBoolean(LIQUOR_ORDER , getBoolean(LIQUOR_ORDER))
+                baseFragBundle?.putString(NO_LIQUOR_IMAGE_URL,getString(NO_LIQUOR_IMAGE_URL))
+            }
+
         }
         loadNavHostFragment()
     }

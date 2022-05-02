@@ -114,6 +114,7 @@ import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseVie
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.CartUtils;
+import za.co.woolworths.financial.services.android.util.Constant;
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
@@ -185,6 +186,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     private CommerceItem mCommerceItem;
     private VoucherDetails voucherDetails;
     public ProductCountMap productCountMap;
+    private LiquorCompliance liquorCompliance;
 
     public CartFragment() {
         // Required empty public constructor
@@ -534,6 +536,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             Intent checkoutActivityIntent = new Intent(getActivity(), CheckoutActivity.class);
             checkoutActivityIntent.putExtra(SAVED_ADDRESS_KEY, response);
             checkoutActivityIntent.putExtra(IS_DELIVERY, !Utils.getPreferredDeliveryLocation().storePickup);
+            if(liquorCompliance!=null&&liquorCompliance.isLiquorOrder()&&liquorCompliance.getLiquorImageUrl()!=null&&!liquorCompliance.getLiquorImageUrl().isEmpty()){
+                checkoutActivityIntent.putExtra(Constant.LIQUOR_ORDER, liquorCompliance.isLiquorOrder());
+                checkoutActivityIntent.putExtra(Constant.NO_LIQUOR_IMAGE_URL, liquorCompliance.getLiquorImageUrl());
+
+            }
             activity.startActivityForResult(checkoutActivityIntent, REQUEST_PAYMENT_STATUS);
             activity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_to_left);
         }
@@ -649,7 +656,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             orderSummary = cartResponse.orderSummary;
             voucherDetails = cartResponse.voucherDetails;
             productCountMap = cartResponse.productCountMap;
-            LiquorCompliance liquorCompliance=new LiquorCompliance(cartResponse.liquorOrder,cartResponse.noLiquorImageUrl);
+            liquorCompliance=new LiquorCompliance(cartResponse.liquorOrder,cartResponse.noLiquorImageUrl);
             cartProductAdapter = new CartProductAdapter(cartItems, this, orderSummary, getActivity(), voucherDetails,liquorCompliance);
             queryServiceInventoryCall(cartResponse.cartItems);
             LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());

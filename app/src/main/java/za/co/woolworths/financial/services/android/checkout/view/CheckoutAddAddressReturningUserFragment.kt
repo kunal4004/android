@@ -59,6 +59,9 @@ import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerAct
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_EMPTY_CART
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART
+import za.co.woolworths.financial.services.android.util.Constant
+import za.co.woolworths.financial.services.android.util.Constant.Companion.LIQUOR_ORDER
+import za.co.woolworths.financial.services.android.util.Constant.Companion.NO_LIQUOR_IMAGE_URL
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -82,6 +85,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     private var oddSelectedPosition: Int = -1
     private var suburbId: String = ""
     private var selectedShoppingBagType: Double? = null
+    private var liquorImageUrl: String? = ""
+    private var liquorOrder:Boolean? = false
 
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -161,7 +166,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         addFragmentListner()
         initializeDeliveringToView()
         initializeDeliveryFoodOtherItems()
-
+        getLiquorComplianceDetails()
         expandableGrid.apply {
             disablePreviousBtnFood()
             disablePreviousBtnOther()
@@ -184,6 +189,17 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             view?.setOnClickListener {
                 Utils.hideSoftKeyboard(this)
             }
+        }
+    }
+
+    private fun getLiquorComplianceDetails() {
+        baseFragBundle?.apply {
+       if(containsKey(LIQUOR_ORDER)){
+           liquorOrder=getBoolean(LIQUOR_ORDER)
+          if(liquorOrder==true&&containsKey(NO_LIQUOR_IMAGE_URL)){
+              liquorImageUrl=getString(NO_LIQUOR_IMAGE_URL)
+          }
+       }
         }
     }
 
