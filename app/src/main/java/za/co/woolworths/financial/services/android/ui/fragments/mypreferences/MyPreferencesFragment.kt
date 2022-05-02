@@ -177,7 +177,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
             val isDeviceIdentityIdPresent = verifyDeviceIdentityId(deviceList)
             updateLinkedDeviceView(isDeviceIdentityIdPresent)
         }
-        tvMyPrefManageDevicesTitle.text = bindString(R.string.my_preferences_linked_devices , deviceList?.size.toString())
+        tvMyPrefManageDevicesTitle.text = bindString(R.string.my_preferences_linked_devices , (deviceList?.size ?: 0).toString())
     }
 
     private fun callLinkedDevicesAPI() {
@@ -201,7 +201,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                         deviceList = response?.userDevices
                         AppStateRepository().saveLinkedDevices(deviceList)
                         updateLinkedDeviceView(isDeviceIdentityIdPresent)
-                        tvMyPrefManageDevicesTitle.text = bindString(R.string.my_preferences_linked_devices , deviceList?.size.toString())
+                        tvMyPrefManageDevicesTitle.text = bindString(R.string.my_preferences_linked_devices , (deviceList?.size ?: 0).toString())
                     }
                     else -> {
                         spinningAnimation.cancel()
