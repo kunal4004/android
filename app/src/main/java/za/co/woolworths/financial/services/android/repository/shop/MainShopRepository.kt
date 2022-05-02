@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.repository.shop
 
 import android.location.Location
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.models.dto.shop.DashCategories
@@ -62,6 +64,28 @@ class MainShopRepository : ShopRepository {
         return try {
 
             val response = OneAppService.fetchInventorySkuForStore(mStoreId, referenceId)
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    return when (it.httpCode) {
+                        AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
+                            Resource.success(it)
+                        else ->
+                            Resource.error("An unknown error occurred", it)
+                    }
+                } ?: Resource.error("An unknown error occurred", null)
+            } else {
+                Resource.error("An unknown error occurred", null)
+            }
+        } catch (e: IOException) {
+            FirebaseManager.logException(e)
+            Resource.error("Couldn't reach the server. Check your internet connection", null)
+        }
+    }
+
+    override suspend fun addItemsToCart(mAddItemsToCart: MutableList<AddItemToCart>): Resource<AddItemToCartResponse> {
+       return try {
+
+            val response = OneAppService.addItemsToCart(mAddItemsToCart)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {

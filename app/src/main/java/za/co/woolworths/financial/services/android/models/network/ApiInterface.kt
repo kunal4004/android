@@ -629,6 +629,17 @@ interface ApiInterface {
             @Body addItemToCart: MutableList<AddItemToCart>): Call<AddItemToCartResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "environment: www-win-dev4")
+    @POST("wfs/app/v4/cart/{deliveryType}/itemV2")
+    suspend fun addItemsToCart(
+
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("deliveryType") deliveryType: String,
+        @Body addItemToCart: MutableList<AddItemToCart>): retrofit2.Response<AddItemToCartResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "environment: www-win-dev4")
     @DELETE("wfs/app/v4/cartV2/item")
     fun removeItemFromCart(
 

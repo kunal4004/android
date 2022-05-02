@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.models.dto.shop.DashCategories
@@ -16,6 +17,8 @@ import za.co.woolworths.financial.services.android.models.network.Event
 import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.repository.shop.ShopRepository
+import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
 import java.lang.ref.PhantomReference
 import javax.inject.Inject
 
@@ -42,6 +45,9 @@ class ShopViewModel @Inject constructor(
 
     private val _inventorySkuForStore = MutableLiveData<Event<Resource<SkusInventoryForStoreResponse>>>()
     val inventorySkuForStore: LiveData<Event<Resource<SkusInventoryForStoreResponse>>> = _inventorySkuForStore
+
+    private val _addItemToCartResp = MutableLiveData<Event<Resource<AddItemToCartResponse>>>()
+    val addItemToCartResp: LiveData<Event<Resource<AddItemToCartResponse>>> = _addItemToCartResp
 
     private val _onDemandCategories = MutableLiveData<Event<Resource<RootCategories>>>()
     val onDemandCategories: LiveData<Event<Resource<RootCategories>>> = _onDemandCategories
@@ -74,6 +80,18 @@ class ShopViewModel @Inject constructor(
         viewModelScope.launch {
             val response = shopRepository.fetchInventorySkuForStore(mStoreId, referenceId)
             _inventorySkuForStore.value = Event(response)
+        }
+    }
+
+    fun callToAddItemsToCart(mAddItemsToCart: MutableList<AddItemToCart>) {
+        _addItemToCartResp.value = Event(Resource.loading(null))
+        viewModelScope.launch {
+            val response = shopRepository.addItemsToCart(mAddItemsToCart)
+            _addItemToCartResp.value = Event(response)
+            if(response.data?.httpCode == AppConstant.HTTP_OK) {
+                // Ensure counter is always updated after a successful add to cart
+                QueryBadgeCounter.instance.queryCartSummaryCount()
+            }
         }
     }
 

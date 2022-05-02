@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.views.shop.dash
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -252,12 +253,12 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                 )
                             }
                             else -> {
-                                val cartItem = AddItemToCart(
-                                    addItemToCart?.productId ?: "",
-                                    addItemToCart?.catalogRefId ?: "",
-                                    skuInventoryList?.get(0)?.quantity ?: 0
-                                )
                                 try {
+                                    val cartItem = AddItemToCart(
+                                        addItemToCart?.productId ?: "",
+                                        addItemToCart?.catalogRefId ?: "",
+                                        skuInventoryList?.get(0)?.quantity ?: 0
+                                    )
                                     val selectYourQuantityFragment =
                                         SelectYourQuantityFragment.newInstance(
                                             cartItem,
@@ -286,6 +287,110 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                             return@observe
                         }
                         onFailureHandler(Throwable(ConnectException()))
+                    }
+                }
+            }
+        }
+
+        // Add item to cart API when quantity dialog clicked.
+        viewModel.addItemToCartResp.observe(viewLifecycleOwner) {
+            it.getContentIfNotHandled()?.let { resource ->
+                val response = resource.data
+                when (response?.httpCode) {
+                    AppConstant.HTTP_OK -> {
+                        // Preferred Delivery Location has been reset on server
+                        // As such, we give the user the ability to set their location again
+                        val addToCartList = response.data
+                        addToCartList?.get(0)?.formexceptions?.get(0)?.let { formException ->
+                            when {
+                                formException.message.lowercase(Locale.getDefault())
+                                    .contains("unfortunately this product is now out of stock, please try again tomorrow") -> {
+                                    viewModel.addItemToCart.value?.catalogRefId?.let { catalogRefId ->
+                                        productOutOfStockErrorMessage(
+                                            catalogRefId
+                                        )
+                                    }
+                                }
+                                else -> {
+                                    response.response.desc = formException.message
+                                    Utils.displayValidationMessage(
+                                        requireContext(),
+                                        CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+                                        response.response.desc
+                                    )
+                                }
+                            }
+                            return@observe
+                        }
+
+                        when {
+                            KotlinUtils.isDeliveryOptionClickAndCollect() &&
+                                    response.data?.get(0)?.productCountMap?.quantityLimit?.foodLayoutColour != null -> {
+
+                                response.data?.get(0)?.productCountMap?.let {
+                                    viewModel.addItemToCart.value?.quantity?.let { count ->
+                                        ToastFactory.showItemsLimitToastOnAddToCart(
+                                            productsRecyclerView,
+                                            it,
+                                            requireActivity(),
+                                            count
+                                        )
+                                    }
+                                }
+                            }
+                            else -> {
+                                val addToCartBalloon by balloon(AddedToCartBalloonFactory::class)
+                                val bottomView =
+                                    (activity as? BottomNavigationActivity)?.bottomNavigationById
+                                val buttonView: Button =
+                                    addToCartBalloon.getContentView().findViewById(R.id.btnView)
+                                val tvAddedItem: TextView = addToCartBalloon.getContentView()
+                                    .findViewById(R.id.tvAddedItem)
+                                val quantityAdded =
+                                    viewModel.addItemToCart.value?.quantity?.toString()
+                                val quantityDesc =
+                                    "$quantityAdded ITEM${if (viewModel.addItemToCart.value?.quantity == 0) "" else "s"}"
+                                tvAddedItem.text = quantityDesc
+
+                                buttonView.setOnClickListener {
+                                    //                                    openCartActivity()
+                                    addToCartBalloon.dismiss()
+                                }
+
+                                bottomView?.let { bottomNavigationView ->
+                                    addToCartBalloon.showAlignBottom(
+                                        bottomNavigationView,
+                                        0,
+                                        16
+                                    )
+                                }
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    addToCartBalloon.dismiss()
+                                }, 3000)
+                            }
+                        }
+                    }
+
+                    AppConstant.HTTP_EXPECTATION_FAILED_417 -> {
+                        KotlinUtils.presentEditDeliveryGeoLocationActivity(
+                            requireActivity(),
+                            ProductListingFragment.SET_DELIVERY_LOCATION_REQUEST_CODE,
+                            KotlinUtils.getPreferredDeliveryType(),
+                            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
+                        )
+                    }
+                    AppConstant.HTTP_SESSION_TIMEOUT_440 -> {
+                        SessionUtilities.getInstance()
+                            .setSessionState(SessionDao.SESSION_STATE.INACTIVE)
+                        ScreenManager.presentSSOSignin(requireActivity())
+                    }
+
+                    else -> response?.response?.desc?.let { desc ->
+                        Utils.displayValidationMessage(
+                            requireContext(),
+                            CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+                            desc
+                        )
                     }
                 }
             }
@@ -399,14 +504,12 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     }
 
     override fun addFoodProductTypeToCart(addItemToCart: AddItemToCart?) {
-//        showProgressBar()
         val mAddItemsToCart = mutableListOf<AddItemToCart>()
         addItemToCart?.let { cartItem -> mAddItemsToCart.add(cartItem) }
+        viewModel.callToAddItemsToCart(mAddItemsToCart)
         PostItemToCart().make(mAddItemsToCart, object : IResponseListener<AddItemToCartResponse> {
             override fun onSuccess(response: AddItemToCartResponse?) {
-                if (!isAdded) return
                 activity?.apply {
-//                    dismissProgressBar()
                     when (response?.httpCode) {
                         AppConstant.HTTP_OK -> {
                             // Preferred Delivery Location has been reset on server

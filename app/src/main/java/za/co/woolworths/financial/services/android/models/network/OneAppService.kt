@@ -333,6 +333,16 @@ object OneAppService : RetrofitConfig() {
             getDeviceIdentityToken(),deliveryType, addToCart)
     }
 
+
+    suspend fun addItemsToCart(addToCart: MutableList<AddItemToCart>): retrofit2.Response<AddItemToCartResponse> {
+        return withContext(Dispatchers.IO) {
+            val deliveryType = KotlinUtils.getPreferredDeliveryType()?.type ?: ""
+
+            mApiInterface.addItemsToCart( "", "", getSessionToken(),
+                getDeviceIdentityToken(),deliveryType, addToCart)
+        }
+    }
+
     fun getShoppingCart(): Call<ShoppingCartResponse> {
         return mApiInterface.getShoppingCart( getSessionToken(), getDeviceIdentityToken())
     }
