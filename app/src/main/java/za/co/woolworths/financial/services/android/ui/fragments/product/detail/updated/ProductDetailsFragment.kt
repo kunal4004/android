@@ -1280,8 +1280,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         toCartAndFindInStoreLayout?.visibility = View.VISIBLE
         groupAddToCartAction?.visibility = View.GONE
         findInStoreAction?.visibility = View.VISIBLE
-        hideLowStockFromSelectedColor()
-        hideLowStockForSize()
+        if (hasColor) hideLowStockFromSelectedColor()
+        if (hasSize) hideLowStockForSize()
     }
 
     private fun showAddToCart() {
