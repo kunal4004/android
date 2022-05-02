@@ -211,7 +211,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/sixteen_dp"
                 android:layout_marginBottom="@dimen/fourteen_dp"
-                android:text="@string/my_preferences_linked_devices"
+                android:text="@string/my_preferences_linked_devices_title"
                 android:textAllCaps="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -301,6 +301,7 @@
                 android:layout_height="@dimen/seventy_dp">
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/tvMyPrefManageDevicesTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
