@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.integration.utils
 
+import android.content.Context
 import android.os.Build
 import android.util.Base64
 import android.view.View
@@ -8,6 +9,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.awfs.coordination.R
 import retrofit2.HttpException
 import za.co.absa.openbankingapi.AsymmetricCryptoHelper
 import za.co.absa.openbankingapi.DecryptionFailureException
@@ -126,5 +128,7 @@ fun Fragment.updateStatusBarColor(@ColorRes colorId: Int, isStatusBarFontDark: B
         }
     }
 }
+
+fun Context.displayLabel() : String? = resources?.getString(R.string.view_your_payment_plan)
 
 fun String.toMaskABSAPhoneNumber() = this.replace("\\d(?!\\d{0,2}\$|\\d{7,10}\$)".toRegex(), "*")
