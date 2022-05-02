@@ -85,11 +85,6 @@ class ShopViewModel @Inject constructor(
         _addItemToCart.value = addItemToCart
     }
 
-    fun setOnDemandCategoryData(response: RootCategories) {
-        _onDemandCategories.value = Event(Resource.success(response))
-        _isOnDemandCategoriesAvailable.value = response.onDemandCategories != null
-    }
-
     fun setValidatePlaceResponse (validateLocationResponse: ValidatePlace){
         validatePlaceResponse = validateLocationResponse
     }

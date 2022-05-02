@@ -173,6 +173,11 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                 viewModel.onDemandCategories.value?.peekContent()?.data?.onDemandCategories,
                                 resource.data?.productCatalogues
                             )
+                        } else {
+                            dashDeliveryAdapter.setData(
+                                null,
+                                resource.data?.productCatalogues
+                            )
                         }
                     }
                     Status.ERROR -> {
