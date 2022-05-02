@@ -46,11 +46,12 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.V
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import za.co.woolworths.financial.services.android.util.eliteplan.EligibilityImpl
+import za.co.woolworths.financial.services.android.util.eliteplan.PMApiStatusImpl
 import za.co.woolworths.financial.services.android.util.eliteplan.TakeUpPlanUtil
 import za.co.woolworths.financial.services.android.util.spannable.WSpannableStringBuilder
 import za.co.woolworths.financial.services.android.util.wenum.LinkType
 
-class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, EligibilityImpl {
+class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, EligibilityImpl,PMApiStatusImpl {
 
     lateinit var navController: NavController
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
@@ -72,6 +73,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, Eligib
         mAccountPresenter = (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter
         accountData = mAccountPresenter?.getMyAccountCardInfo()
         mAccountPresenter?.eligibilityImpl = this
+        mAccountPresenter?.pmaStatusImpl = this
 
         when (accountData?.first) {
             ApplyNowState.PERSONAL_LOAN -> {
@@ -189,6 +191,22 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, Eligib
         view?.apply {
             setOnClickListener(this@RemoveBlockOnCollectionFragment)
             AnimationUtilExtension.animateViewPushDown(this)
+        }
+    }
+    private fun navigateToDeepLinkView() {
+        if (activity is AccountSignedInActivity) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(AppConstant.DELAY_100_MS)
+                (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.apply {
+                    val deepLinkingObject = getDeepLinkData()
+                    when (deepLinkingObject?.get("feature")?.asString) {
+                        AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT -> {
+                            deleteDeepLinkData()
+                            incPayMyAccountButton?.performClick()
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -367,5 +385,9 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, Eligib
 
     override fun eligibilityFailed() {
         helpWithPaymentView.visibility = GONE
+    }
+
+    override fun pmaSuccess() {
+        navigateToDeepLinkView()
     }
 }

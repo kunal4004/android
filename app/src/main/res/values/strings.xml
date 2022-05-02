@@ -1984,8 +1984,8 @@
     <string name="please_select">Please Select</string>
 
     <!--  My Preferences - Link Devices -->
-    <string name="my_preferences_linked_devices">My linked devices</string>
-    <string name="my_preferences_linked_devices_desc">Transactions, statements and balance messages will only be sent to your primary device.</string>
+    <string name="my_preferences_linked_devices">Manage Devices</string>
+    <string name="my_preferences_linked_devices_desc">You can enable push notifications for select linked devices in order to receive transactions, statements and balance messages.</string>
     <string name="my_preferences_link_this_device">Link this device</string>
     <string name="unlink_device_title">Are you sure you want to unlink this device from your profile?</string>
     <string name="unlink_device_desc">This device will not have permission to access your profile unless it is manually linked again.</string>
@@ -1996,14 +1996,15 @@
     <string name="link_device_sending_otp_processing">Processing Request</string>
     <string name="link_device_error_title">There was a Problem Linking Your Device.</string>
     <string name="link_device_error_desc">Try linking your device again, or call us on 0861 50 20 20 for further assistance.</string>
-    <string name="unlink_device_change_to_primary">Change to Primary Device</string>
-    <string name="unlink_device_delete">Delete Device</string>
-    <string name="remove_device_title">Please select a new primary device to link to your profile.</string>
-    <string name="remove_device_desc">To remove this device, you need to select a new primary device.</string>
+    <string name="unlink_device_change_to_preferred">Change preferred device</string>
+    <string name="unlink_device_make_preferred">Make Preferred Device</string>
+    <string name="unlink_device_delete">Unlink Device</string>
+    <string name="remove_device_title">Select a New Preferred Device</string>
+    <string name="remove_device_desc">To remove this device, you need to select a new preferred device.</string>
 
     <!--  Changing Device Confirmation  -->
-    <string name="changing_primary_device_processing">Changing Primary Device</string>
-    <string name="changing_primary_device_result_success">Your Device Has \nBeen Successfully Changed.</string>
+    <string name="changing_preferred_device_processing">Changing Preferred Device</string>
+    <string name="changing_primary_device_result_success">Your Preferred Device Has \nBeen Successfully Changed.</string>
 
     <!--  Unlink Device Confirmation  -->
     <string name="unlink_device_unlinking_processing">Unlinking Your Device</string>
@@ -2031,10 +2032,12 @@
     <string name="unable_to_process_502">We are unable to process your request at the moment. Please Try Again Later.</string>
 
     <!-- View All Linked Devices -->
-    <string name="view_all_device_title">My Linked Devices</string>
-    <string name="select_primary_device_title">Select Primary Device</string>
+    <string name="view_all_device_preferred">Preferred Device</string>
+    <string name="view_all_device_preferred_desc">This device will receive transactions, statements \nand balance messages.</string>
+    <string name="view_all_device_title">Manage Devices</string>
+    <string name="select_preferred_device_title">Select Preferred Device</string>
     <string name="view_all_device_location_n_a">Location N/A</string>
-    <string name="view_all_primary_device_title">Primary Device</string>
+    <string name="view_all_preferred_device_title">Preferred Device</string>
     <string name="view_all_other_device_title">Other Linked Devices</string>
     <string name="view_all_device_linked_on">Linked %s</string>
     <string name="payment_options_label">Payment Options</string>
