@@ -28,9 +28,12 @@ import kotlinx.android.synthetic.main.checkout_grid_layout_other.*
 import kotlinx.android.synthetic.main.checkout_how_would_you_delivered.*
 import kotlinx.android.synthetic.main.edit_delivery_location_confirmation_fragment.view.*
 import kotlinx.android.synthetic.main.layout_delivering_to_details.*
+import kotlinx.android.synthetic.main.layout_native_checkout_age_confirmation.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
+import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.radioGroupFoodSubstitution
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_order_summary.*
+import kotlinx.android.synthetic.main.liquor_compliance_banner.*
 import kotlinx.android.synthetic.main.new_shopping_bags_layout.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
@@ -63,6 +66,7 @@ import za.co.woolworths.financial.services.android.util.Constant
 import za.co.woolworths.financial.services.android.util.Constant.Companion.LIQUOR_ORDER
 import za.co.woolworths.financial.services.android.util.Constant.Companion.NO_LIQUOR_IMAGE_URL
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
+import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPicture
 import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.regex.Pattern
@@ -198,7 +202,15 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
            liquorOrder=getBoolean(LIQUOR_ORDER)
           if(liquorOrder==true&&containsKey(NO_LIQUOR_IMAGE_URL)){
               liquorImageUrl=getString(NO_LIQUOR_IMAGE_URL)
+              ageConfirmationLayout?.visibility=View.VISIBLE
+              liquorComplianceBannerLayout?.visibility=View.VISIBLE;
+              setPicture(imgLiquorBanner, liquorImageUrl)
+
           }
+       }else{
+           ageConfirmationLayout?.visibility=View.GONE
+           liquorComplianceBannerLayout?.visibility=View.GONE;
+
        }
         }
     }
@@ -550,6 +562,29 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 radioGroupFoodSubstitutionShimmerFrameLayout,
                 radioGroupFoodSubstitution
             ),
+            Pair<ShimmerFrameLayout, View>(
+                ageConfirmationTitleShimmerFrameLayout,
+                txtAgeConfirmationTitle
+            ),
+
+            Pair<ShimmerFrameLayout, View>(
+                ageConfirmationTitleShimmerFrameLayout,
+                txtAgeConfirmationTitle
+            ),
+
+            Pair<ShimmerFrameLayout, View>(
+                ageConfirmationDescShimmerFrameLayout,
+                txtAgeConfirmationDesc),
+
+            Pair<ShimmerFrameLayout, View>(
+            ageConfirmationDescNoteShimmerFrameLayout,
+            txtAgeConfirmationDescNote),
+
+
+            Pair<ShimmerFrameLayout, View>(
+            radioGroupAgeConfirmationShimmerFrameLayout,
+            radioGroupAgeConfirmation),
+
             Pair<ShimmerFrameLayout, View>(
                 instructionTxtShimmerFrameLayout,
                 txtSpecialDeliveryInstruction

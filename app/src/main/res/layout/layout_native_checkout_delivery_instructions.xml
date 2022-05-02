@@ -21,6 +21,7 @@
         android:id="@+id/ageConfirmationLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ten_dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/newShoppingBagsLayout"
         layout="@layout/layout_native_checkout_age_confirmation"/>
