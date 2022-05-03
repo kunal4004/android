@@ -1994,7 +1994,8 @@
     <string name="please_select">Please Select</string>
 
     <!--  My Preferences - Link Devices -->
-    <string name="my_preferences_linked_devices">Manage Devices</string>
+    <string name="my_preferences_linked_devices">Manage Devices (%1$s)</string>
+    <string name="my_preferences_linked_devices_title">My Linked Devices</string>
     <string name="my_preferences_linked_devices_desc">You can enable push notifications for select linked devices in order to receive transactions, statements and balance messages.</string>
     <string name="my_preferences_link_this_device">Link this device</string>
     <string name="unlink_device_title">Are you sure you want to unlink this device from your profile?</string>
