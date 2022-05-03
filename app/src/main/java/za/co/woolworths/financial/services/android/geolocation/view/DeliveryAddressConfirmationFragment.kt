@@ -166,6 +166,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                             VALIDATE_RESPONSE, validateLocationResponse)
                         bundle?.putBoolean(
                             IS_COMING_CONFIRM_ADD, false)
+                        bundle?.putString(DELIVERY_TYPE, deliveryType)
                         findNavController().navigate(
                             R.id.action_deliveryAddressConfirmationFragment_to_clickAndCollectStoresFragment,
                             bundleOf(BUNDLE to bundle)
@@ -652,7 +653,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     private fun updateCollectionDetails() {
 
         validateLocationResponse?.validatePlace?.apply {
-            if (this?.stores?.isEmpty() == true || this?.deliverable == false) {
+            if (this?.stores?.isEmpty() == true || this?.stores?.getOrNull(0)?.deliverable == false) {
                 // Show no store available Bottom Dialog.
                 showNotDeliverablePopUp(getString(R.string.no_location_collection),
                     getString(R.string.no_location_desc),
