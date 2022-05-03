@@ -19,7 +19,6 @@ import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
 import kotlinx.android.synthetic.main.fragment_my_preferences.*
-import kotlinx.android.synthetic.main.link_card_fragment.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -32,6 +31,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.repository.AppStateRepository
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
@@ -173,6 +173,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
             val isDeviceIdentityIdPresent = verifyDeviceIdentityId(deviceList)
             updateLinkedDeviceView(isDeviceIdentityIdPresent)
         }
+        tvMyPrefManageDevicesTitle.text = bindString(R.string.my_preferences_linked_devices , (deviceList?.size ?: 0).toString())
     }
 
     private fun callLinkedDevicesAPI() {
@@ -196,6 +197,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                         deviceList = response?.userDevices
                         AppStateRepository().saveLinkedDevices(deviceList)
                         updateLinkedDeviceView(isDeviceIdentityIdPresent)
+                        tvMyPrefManageDevicesTitle.text = bindString(R.string.my_preferences_linked_devices , (deviceList?.size ?: 0).toString())
                     }
                     else -> {
                         spinningAnimation.cancel()
