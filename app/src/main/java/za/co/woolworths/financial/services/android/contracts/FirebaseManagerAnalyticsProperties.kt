@@ -363,6 +363,43 @@ open class FirebaseManagerAnalyticsProperties {
         const val CC_BPI_OPT_IN_START: String = "cc_bpi_optin_start"
         const val CC_BPI_OPT_IN_CONFIRM: String = "cc_bpi_optin_confirm"
         const val CC_BPI_OPT_IN_SEND_EMAIL: String = "cc_bpi_send_email"
+
+
+
+        //Geolocation
+        const val SHOP_DELIVERY_CLICK_COLLECT = "shop_dlvry_clk_cllct"
+        const val SHOP_NEW_ADDRESS = "shop_new_adrs"
+        const val SHOP_CONFIRM_LOCATION = "shop_cnfrm_lctn"
+        const val SHOP_UPDATE_ADDRESS = "shop_updte_addrss"
+        const val SHOP_SAVED_PLACES = "shop_svd_plcs"
+        const val SHOP_CONFIRM_ADDRESS = "shop_cnfrm_adrs"
+        const val SHOP_CONFIRM_DELIVERY_ADDRESS = "shop_cnfrm_delvry_adrs"
+        const val SHOP_EDIT_DELIVERY_ADDRESS = "shop_edit_delvry_adrs"
+        const val SHOP_CLICK_COLLECT = "shop_clk_cllct"
+        const val SHOP_STANDARD_EDIT = "shop_stnd_edt"
+        const val SHOP_STANDARD_CONFIRM = "shop_stnd_cnfrm"
+        const val SHOP_DELIVERY = "shop_delvry"
+        const val SHOP_CLICK_COLLECT_EDIT = "shop_clck_cllct_edt"
+        const val SHOP_STANDARD_CLICK_COLLECT_CONFIRM = "shop_stnd_cnfrm"
+        const val SHOP_CONFIRM_STORE = "shop_cnfrm_store"
+        const val SHOP_EDIT_LOCATION = "shop_edit_locatn"
+
+
+        //GeoLocation_CHECKOUT
+        const val CHECKOUT_ADDRESS_DETAILS_HOME = "chckout_adrs_dtls_hme"
+        const val CHECKOUT_ADDRESS_DETAILS_OFFICE = "chckout_adrs_dtls_offce"
+        const val CHECKOUT_ADDRESS_DETAILS_COMPLEX = "chckout_adrs_dtls_cmplx"
+        const val CHECKOUT_ADDRESS_DETAILS_APARTMENT = "chckout_adrs_dtls_aprtmnt"
+        const val CHECKOUT_ADDRESS_SAVE_ADDRESS = "chckout_adrs_sve_adrs"
+
+
+        const val ADDRESS_HOME = "Home"
+        const val ADDRESS_OFFICE = "Office"
+        const val ADDRESS_COMPLEX_ESTATE = "Complex / Estate"
+        const val ADDRESS_APARTMENT = "Apartment"
+
+
+
     }
 
     class PropertyNames {
@@ -506,6 +543,38 @@ open class FirebaseManagerAnalyticsProperties {
                 "Customer selected one of the Ride-along options"
             const val ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_CONFIRM_DETAILS: String =
                 "Customer confirms their added Click & Collect details"
+
+
+
+
+
+
+            //GeoLOcation_SHOP
+            const val ACTION_VALUE_SHOP_DELIVERY_CLICK_COLLECT: String = "Customer selects to choose between Standard Delivery or Click and Collect on the shop default page"
+            const val ACTION_VALUE_SHOP_NEW_ADDRESS: String = "Customer selects to enter a new address on the Standard Delivery, confirm address screen"
+            const val ACTION_VALUE_SHOP_CONFIRM_LOCATION: String = "Customer selects to confirm their current location on the confirm address screen"
+            const val ACTION_VALUE_SHOP_UPDATE_ADDRESS: String = "Customer selects and unverified address and the Call to action changes to ‘Update Address’. Customer selects the Call to action button"
+            const val ACTION_VALUE_SHOP_SAVED_PLACES: String = "Customer selects the saved places option on the confirm address screen"
+            const val ACTION_VALUE_SHOP_CONFIRM_ADDRESS: String = "Customer selects to confirm their address on the map view screen after selecting their address"
+            const val ACTION_VALUE_SHOP_CONFIRM_DELIVERY_ADDRESS: String = "Customer has saved addresses, signs in and pop up is displayed, customer selects to ‘Confirm’ their saved address"
+            const val ACTION_VALUE_SHOP_EDIT_DELIVERY_ADDRESS : String = "Customer has saved addresses, signs in and pop up is displayed, customer selects to ‘Edit Location' their saved address"
+            const val ACTION_VALUE_SHOP_CLICK_COLLECT: String = "Customer is defaulted to the Standard Delivery tab - selects “Click & Collect' at the top"
+            const val ACTION_VALUE_SHOP_STANDARD_EDIT: String = "Customer is defaulted to the Standard Delivery tab - selects to ‘Edit’ their address"
+            const val ACTION_VALUE_SHOP_STANDARD_CONFIRM: String = "Customer is defaulted to the Standard Delivery tab - selects to Confirm all the details of their selection"
+            const val ACTION_VALUE_SHOP_DELIVERY: String = "Customer has selected the Click and Collect option but chooses to select the Delivery option again at the top"
+            const val ACTION_VALUE_SHOP_CLICK_COLLECT_EDIT: String = "Customer selects to ‘Edit’ their province / store for Click and Collect"
+            const val ACTION_VALUE_SHOP_STANDARD_CLICK_COLLECT_CONFIRM: String = "Customer selects to Confirm all the details of their Click and Collect selection"
+            const val ACTION_VALUE_SHOP_CONFIRM_STORE: String = "Customer selects to change / edit their store, selects a new store and selects to ‘Confirm’ their store"
+            const val ACTION_VALUE_SHOP_EDIT_LOCATION: String = "Customer has saved store, signs in and pop up is displayed, customer selects to ‘Edit location' in the pop up that is displayed"
+
+
+
+            //GeoLOcation_CHECKOUT
+            const val ACTION_VALUE_CHECKOUT_ADDRESS_DETAILS_HOME: String = "Customer has selected Checkout and ‘Where are we delivering to’ page is displayed - Customer selects ‘Home’ under ‘My address details’"
+            const val ACTION_VALUE_CHECKOUT_ADDRESS_DETAILS_OFFICE: String = "Customer has selected Checkout and ‘Where are we delivering to’ page is displayed - Customer selects ‘Office’ under ‘My address details’"
+            const val ACTION_VALUE_CHECKOUT_ADDRESS_DETAILS_COMPLEX: String = "Customer has selected Checkout and ‘Where are we delivering to’ page is displayed - Customer selects ‘Complex / Estate’ under ‘My address details’"
+            const val ACTION_VALUE_CHECKOUT_ADDRESS_DETAILS_APARTMENT: String = "Customer has selected Checkout and ‘Where are we delivering to’ page is displayed - Customer selects ‘Apartment’ under ‘My address details’"
+            const val ACTION_VALUE_CHECKOUT_ADDRESS_SAVE_ADDRESS: String = "Customer has entered all the relevant details and selects to save their address"
 
         }
     }
