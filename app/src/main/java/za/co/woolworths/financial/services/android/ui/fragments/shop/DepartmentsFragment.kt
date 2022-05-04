@@ -67,7 +67,6 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
     private var fusedLocationClient: FusedLocationProviderClient? = null
     private var locationRequest: LocationRequest? = createLocationRequest()
     private var localPlaceId: String? = null
-    private var isValidateSelectedSuburbCallStopped = true
     private val shopViewModel: ShopViewModel by viewModels(
         ownerProducer = { requireParentFragment() }
     )
@@ -516,7 +515,9 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
             locationResult ?: return
             for (location in locationResult.locations) {
                 this@DepartmentsFragment.location = location
-                shopViewModel.setLocation(location)
+                if (isVisible) {
+                    shopViewModel.setLocation(location)
+                }
                 executeDepartmentRequest()
                 stopLocationUpdates()
                 break

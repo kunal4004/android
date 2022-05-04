@@ -94,6 +94,8 @@ import kotlin.coroutines.CoroutineContext
 class KotlinUtils {
     companion object {
 
+        var placeId: String? = null
+        var isLocationSame: Boolean? = false
         var isDeliveryLocationTabClicked: Boolean? = false
         var isCncTabClicked: Boolean? = false
         var isDashTabClicked: Boolean? = false
