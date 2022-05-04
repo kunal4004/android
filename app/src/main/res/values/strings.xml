@@ -694,6 +694,7 @@
     <string name="invoice_number">invoice number</string>
     <string name="tax_invoices">TAX INVOICES</string>
     <string name="shop_create_a_list">Create A New List</string>
+    <string name="shop_create_list">Create New List</string>
     <string name="shop_sign_out_order_title">sign in to view\nand create lists</string>
     <string name="shop_sign_out_order_desc">Search for products to start adding items to this list.</string>
     <string name="order_invoice_title_prefix">PDF:\u0020</string>
