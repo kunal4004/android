@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
+import za.co.woolworths.financial.services.android.util.Utils
 import java.lang.Exception
 
 sealed class Event {
@@ -38,13 +39,10 @@ class Locator(val activity: AppCompatActivity) {
                                      locationPermissionRationaleMessage: LocationPermissionRationaleMessage?
     ) {
         if (!::locationProvider.isInitialized) {
-            val locationProviderType = if (isGooglePlayServicesAvailable(activity)) LocationDelegate.GOOGLE else LocationDelegate.HUAWEI
+            val locationProviderType = if (Utils.isGooglePlayServicesAvailable()) LocationDelegate.GOOGLE else LocationDelegate.HUAWEI
             locationProvider = LocationProvider(activity, eventCallback, locationProviderType, locationPermissionRationaleMessage)
         }
     }
-
-    private fun isGooglePlayServicesAvailable(context: Context) =
-        GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS
 
     fun stopService() {
         if (::locationProvider.isInitialized) {

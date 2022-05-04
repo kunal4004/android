@@ -37,8 +37,11 @@ import com.google.common.reflect.TypeToken
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.installations.FirebaseInstallations
 import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import org.json.JSONObject
+import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_COLLECTING_DETAILS
@@ -65,6 +68,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiFailureHandler
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
@@ -78,11 +82,13 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import java.io.*
+import java.net.SocketException
 import java.text.NumberFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.coroutines.CoroutineContext
 
 class KotlinUtils {
     companion object {
@@ -95,12 +101,11 @@ class KotlinUtils {
         var GEO_REQUEST_CODE = -1
 
 
-
         fun highlightTextInDesc(
             context: Context?,
             spannableTitle: SpannableString,
             searchTerm: String,
-            textIsClickable: Boolean = true
+            textIsClickable: Boolean = true,
         ): SpannableString {
             var start = spannableTitle.indexOf(searchTerm)
             if (start == -1) {
@@ -312,7 +317,7 @@ class KotlinUtils {
 
         fun setAccountNavigationGraph(
             navigationController: NavController,
-            screenType: OnBoardingScreenType
+            screenType: OnBoardingScreenType,
         ) {
             val bundle = Bundle()
             bundle.putSerializable(ON_BOARDING_SCREEN_TYPE, screenType)
@@ -377,7 +382,7 @@ class KotlinUtils {
             isComingFromSlotSelection: Boolean = false,
             savedAddressResposne: SavedAddressResponse? = null,
             defaultAddress: Address? = null,
-            whoISCollecting: String? = null
+            whoISCollecting: String? = null,
         ) {
 
             activity?.apply {
@@ -402,7 +407,7 @@ class KotlinUtils {
             shoppingDeliveryLocation: ShoppingDeliveryLocation,
             tvDeliveringTo: WTextView,
             tvDeliveryLocation: WTextView,
-            deliverLocationIcon: ImageView?
+            deliverLocationIcon: ImageView?,
         ) {
             with(shoppingDeliveryLocation?.fulfillmentDetails) {
                 when (Delivery?.getType(deliveryType)) {
@@ -410,7 +415,7 @@ class KotlinUtils {
                         tvDeliveringTo?.text =
                             context?.resources?.getString(R.string.collecting_from)
                         tvDeliveryLocation?.text =
-                                context?.resources?.getString(R.string.store) + storeName?:""
+                            context?.resources?.getString(R.string.store) + storeName ?: ""
 
                         tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setBackgroundResource(R.drawable.icon_basket)
@@ -418,12 +423,12 @@ class KotlinUtils {
                     Delivery.STANDARD -> {
                         tvDeliveringTo.text = context?.resources?.getString(R.string.delivering_to)
                         tvDeliveryLocation.text =
-                                address?.address1?:""
+                            address?.address1 ?: ""
 
                         tvDeliveryLocation.visibility = View.VISIBLE
                         deliverLocationIcon?.setBackgroundResource(R.drawable.icon_delivery)
                     }
-                    else ->{ }
+                    else -> {}
                 }
             }
         }
@@ -477,7 +482,7 @@ class KotlinUtils {
             activity: Activity?,
             emailAddress: String,
             subjectLine: String?,
-            emailMessage: String
+            emailMessage: String,
         ) {
             val emailIntent = Intent(Intent.ACTION_SENDTO)
             emailIntent.data = Uri.parse(
@@ -509,7 +514,7 @@ class KotlinUtils {
         fun parseMoneyValue(
             value: String,
             groupingSeparator: String,
-            currencySymbol: String
+            currencySymbol: String,
         ): String =
             value.replace(groupingSeparator, "").replace(currencySymbol, "")
 
@@ -517,7 +522,7 @@ class KotlinUtils {
             locale: Locale,
             value: String,
             groupingSeparator: String,
-            currencySymbol: String
+            currencySymbol: String,
         ): Number {
             val valueWithoutSeparator = parseMoneyValue(value, groupingSeparator, currencySymbol)
             return try {
@@ -652,7 +657,7 @@ class KotlinUtils {
             description: String,
             title: String = "",
             actionText: String = "",
-            infoIcon: Int = 0
+            infoIcon: Int = 0,
         ) {
             val dialog =
                 GeneralInfoDialogFragment.newInstance(description, title, actionText, infoIcon)
@@ -847,7 +852,7 @@ class KotlinUtils {
             activity: Activity?,
             url: String?,
             treatmentPlan: Boolean,
-            collectionsExitUrl: String?
+            collectionsExitUrl: String?,
         ) {
             activity?.apply {
                 val openInternalWebView = Intent(this, WInternalWebPageActivity::class.java)
@@ -856,34 +861,38 @@ class KotlinUtils {
                     openInternalWebView.putExtra(TREATMENT_PLAN, treatmentPlan)
                     openInternalWebView.putExtra(COLLECTIONS_EXIT_URL, collectionsExitUrl)
                     startActivityForResult(openInternalWebView, RESULT_CODE_CLOSE_VIEW)
-                }else {
+                } else {
                     openInternalWebView.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     startActivity(openInternalWebView)
                 }
             }
         }
-        fun openTreatmenPlanUrl(activity: Activity?,eligibilityPlan: EligibilityPlan?){
+
+        fun openTreatmenPlanUrl(activity: Activity?, eligibilityPlan: EligibilityPlan?) {
             var collectionsUrl: String? = ""
             var exitUrl: String? = ""
             val accountOptions = AppConfigSingleton.accountOptions
 
             when (eligibilityPlan?.productGroupCode) {
                 ProductGroupCode.SC -> {
-                    collectionsUrl =accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
+                    collectionsUrl =
+                        accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
                     exitUrl = accountOptions?.showTreatmentPlanJourney?.storeCard?.exitUrl
                 }
 
                 ProductGroupCode.PL -> {
-                    collectionsUrl = accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
+                    collectionsUrl =
+                        accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
                     exitUrl = accountOptions?.showTreatmentPlanJourney?.personalLoan?.exitUrl
                 }
 
                 ProductGroupCode.CC -> {
-                    collectionsUrl = accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
+                    collectionsUrl =
+                        accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
                     exitUrl = accountOptions?.collectionsStartNewPlanJourney?.creditCard?.exitUrl
                 }
             }
-            val url =  collectionsUrl + eligibilityPlan?.appGuid
+            val url = collectionsUrl + eligibilityPlan?.appGuid
             openLinkInInternalWebView(
                 activity,
                 url,
@@ -896,11 +905,12 @@ class KotlinUtils {
             activity: Activity?,
             state: ApplyNowState,
             doJob: () -> Unit,
-            elseJob: () -> Unit
+            elseJob: () -> Unit,
         ) {
             if (MyAccountsFragment.verifyAppInstanceId() &&
                 (Utils.isGooglePlayServicesAvailable() ||
-                        Utils.isHuaweiMobileServicesAvailable())) {
+                        Utils.isHuaweiMobileServicesAvailable())
+            ) {
                 doJob()
                 activity?.let {
                     val intent = Intent(it, LinkDeviceConfirmationActivity::class.java)
@@ -958,23 +968,23 @@ class KotlinUtils {
 
         fun getUniqueDeviceID(result: (String?) -> Unit) {
             val deviceID = Utils.getSessionDaoValue(KEY.DEVICE_ID)
-            when(deviceID.isNullOrEmpty()){
+            when (deviceID.isNullOrEmpty()) {
                 true -> {
-                 FirebaseInstallations.getInstance().id.addOnCompleteListener { task ->
-                     if (task.isSuccessful) {
-                         val resultId = task.result
-                         Utils.sessionDaoSave(KEY.DEVICE_ID, resultId)
-                         result(resultId)
-                     }
+                    FirebaseInstallations.getInstance().id.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val resultId = task.result
+                            Utils.sessionDaoSave(KEY.DEVICE_ID, resultId)
+                            result(resultId)
+                        }
 
-                 }
+                    }
                 }
                 false -> result(deviceID)
             }
         }
 
 
-        fun lowercaseEditText(editText: EditText){
+        fun lowercaseEditText(editText: EditText) {
             editText.filters = arrayOf<InputFilter>(
                 object : InputFilter.AllCaps() {
                     override fun filter(
@@ -983,32 +993,48 @@ class KotlinUtils {
                         end: Int,
                         dest: Spanned?,
                         dstart: Int,
-                        dend: Int ): CharSequence {
+                        dend: Int,
+                    ): CharSequence {
                         return source.toString().lowercase()
                     }
                 }
             )
         }
 
-        fun saveAnonymousUserLocationDetails(shoppingDeliveryLocation: ShoppingDeliveryLocation){
-            Utils.sessionDaoSave(KEY.ANONYMOUS_USER_LOCATION_DETAILS,Utils.objectToJson(shoppingDeliveryLocation))
+        fun saveAnonymousUserLocationDetails(shoppingDeliveryLocation: ShoppingDeliveryLocation) {
+            Utils.sessionDaoSave(KEY.ANONYMOUS_USER_LOCATION_DETAILS,
+                Utils.objectToJson(shoppingDeliveryLocation))
         }
 
         fun getAnonymousUserLocationDetails(): ShoppingDeliveryLocation? {
             var location: ShoppingDeliveryLocation? = null
             try {
                 SessionDao.getByKey(KEY.ANONYMOUS_USER_LOCATION_DETAILS).value?.let {
-                    location = Utils.strToJson(it, ShoppingDeliveryLocation::class.java) as ShoppingDeliveryLocation?
+                    location = Utils.strToJson(it,
+                        ShoppingDeliveryLocation::class.java) as ShoppingDeliveryLocation?
                 }
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 FirebaseManager.logException(e)
             }
             return location
         }
 
-        fun clearAnonymousUserLocationDetails(){
+        fun clearAnonymousUserLocationDetails() {
             Utils.removeFromDb(KEY.ANONYMOUS_USER_LOCATION_DETAILS)
         }
     }
 
+    fun coroutineContextWithExceptionHandler(errorHandler: (AbsaApiFailureHandler) -> Unit): CoroutineContext {
+        return (Dispatchers.IO + CoroutineExceptionHandler { _, throwable ->
+            when (throwable) {
+                is SocketException -> errorHandler(AbsaApiFailureHandler.NoInternetApiFailure)
+                is HttpException -> errorHandler(AbsaApiFailureHandler.HttpException(throwable.message(),
+                    throwable.code()))
+                is Exception -> errorHandler(AbsaApiFailureHandler.Exception(throwable.message,
+                    throwable.hashCode()))
+                else -> errorHandler(AbsaApiFailureHandler.NoInternetApiFailure)
+            }
+        })
+    }
+}
 }
