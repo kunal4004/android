@@ -211,7 +211,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                                 }
                             }
                             else -> {
-                                /*TODO : show error screen*/
+                                blackToolTipLayout?.visibility = View.GONE
                             }
                         }
                     }
@@ -259,41 +259,16 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     override fun onResume() {
         super.onResume()
-        executeValidateSuburb()
+        if (KotlinUtils.isLocationSame == false && KotlinUtils.placeId !=null) {
+            executeValidateSuburb()
+        }
         if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails == null && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails == null) {
             return
         }
         if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType.isNullOrEmpty() && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
             return
         }
-
-        if (isUserAuthenticated()) {
-            Utils.getPreferredDeliveryLocation()?.apply {
-                updateCurrentTab(this.fulfillmentDetails?.deliveryType)
-                activity?.let {
-                    KotlinUtils.setDeliveryAddressView(
-                        it,
-                        this,
-                        tvToolbarTitle,
-                        tvToolbarSubtitle,
-                        imgToolbarStart
-                    )
-                }
-            }
-        } else {
-            KotlinUtils.getAnonymousUserLocationDetails()?.apply {
-                updateCurrentTab(this.fulfillmentDetails?.deliveryType)
-                activity?.let {
-                    KotlinUtils.setDeliveryAddressView(
-                        it,
-                        this,
-                        tvToolbarTitle,
-                        tvToolbarSubtitle,
-                        imgToolbarStart
-                    )
-                }
-            }
-        }
+        setDeliveryView()
     }
 
     private fun updateCurrentTab(deliveryType: String?) {
@@ -409,6 +384,36 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
     }
 
+    private fun setDeliveryView() {
+        if (isUserAuthenticated()) {
+            Utils.getPreferredDeliveryLocation()?.apply {
+                updateCurrentTab(this?.fulfillmentDetails?.deliveryType)
+                activity?.let {
+                    KotlinUtils.setDeliveryAddressView(
+                        it,
+                        this,
+                        tvToolbarTitle,
+                        tvToolbarSubtitle,
+                        imgToolbarStart
+                    )
+                }
+            }
+        } else {
+            KotlinUtils.getAnonymousUserLocationDetails()?.apply {
+                updateCurrentTab(this?.fulfillmentDetails?.deliveryType)
+                activity?.let {
+                    KotlinUtils.setDeliveryAddressView(
+                        it,
+                        this,
+                        tvToolbarTitle,
+                        tvToolbarSubtitle,
+                        imgToolbarStart
+                    )
+                }
+            }
+        }
+    }
+
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
@@ -423,7 +428,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 }, AppConstant.DELAY_1000_MS)
             }
         }
-
+        setDeliveryView()
         when (viewpager_main?.currentItem) {
             0 -> {
                 val departmentFragment = viewpager_main?.adapter?.instantiateItem(
@@ -918,6 +923,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
             WMaterialShowcaseView.Feature.DASH -> {
                 showDeliveryDetailsFeatureWalkThrough()
+            }
+            WMaterialShowcaseView.Feature.DELIVERY_DETAILS -> {
+                executeValidateSuburb()
             }
         }
     }
