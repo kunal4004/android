@@ -30,7 +30,7 @@ class AccountSignedInPresenterImpl(
     private var model: IAccountSignedInContract.MyAccountModel
 ) : IAccountSignedInContract.MyAccountPresenter {
 
-    var mApplyNowState: ApplyNowState = ApplyNowState.STORE_CARD
+    private var mApplyNowState: ApplyNowState = ApplyNowState.STORE_CARD
     private var mAccountResponse: AccountsResponse? = null
     private var mProductGroupCode: String? = null
     private var mDeepLinkingData: String? = null
@@ -165,7 +165,8 @@ class AccountSignedInPresenterImpl(
                             mainView?.removeBlocksOnCollectionCustomer()
                         }
                     } else {
-                        getAccount()?.let { mainView?.showAccountInArrears(account = it) }
+                        if (eligibilityPlan == null) mainView?.showAccountInArrears(
+                            account = getAccount()) else mainView?.showAboveSixMonthsAccountInDelinquencyPopup(eligibilityPlan)
                     }
                 }
                 ActionText.TAKE_UP_TREATMENT_PLAN.value -> {
@@ -176,7 +177,8 @@ class AccountSignedInPresenterImpl(
                             mainView?.showViewTreatmentPlan(state, response.eligibilityPlan)!!
                         }
                     } else {
-                        getAccount()?.let { mainView?.showAccountInArrears(account = it) }
+                        getAccount()?.let { mainView?.showAccountInArrears(
+                            account = it) }
                     }
                 }
 
@@ -187,6 +189,7 @@ class AccountSignedInPresenterImpl(
                                 mainView?.removeBlocksOnCollectionCustomer()
                                 return
                             }
+                            else -> Unit
                         }
                     }
                     if (productOffering.isViewTreatmentPlanSupported()) {
@@ -198,7 +201,8 @@ class AccountSignedInPresenterImpl(
                             )
                         }
                     } else {
-                        getAccount()?.let { mainView?.showAccountInArrears(account = it) }
+                        if (eligibilityPlan == null) mainView?.showAccountInArrears(
+                            account = getAccount()) else mainView?.showAboveSixMonthsAccountInDelinquencyPopup(eligibilityPlan)
                     }
                 }
             }
@@ -235,7 +239,8 @@ class AccountSignedInPresenterImpl(
                             showAccountHelp(getCardProductInformation(false))
                         }
 
-                        AccountOfferingState.AccountIsInArrears -> showAccountInArrears(account)
+                        AccountOfferingState.AccountIsInArrears -> showAccountInArrears(
+                            account)
 
                         AccountOfferingState.AccountIsChargedOff -> {
                             // account is in arrears for more than 6 months
@@ -243,7 +248,8 @@ class AccountSignedInPresenterImpl(
                             removeBlocksWhenChargedOff()
                             when (productGroupCode()) {
                                 ProductOfferingStatus.productGroupCodeSc, ProductOfferingStatus.productGroupCodePl -> {
-                                    getAccount()?.let { mainView?.showAccountInArrears(account = it) }
+                                    getAccount()?.let { mainView?.showAccountInArrears(
+                                        account = it) }
                                 }
                             }
                         }
@@ -271,8 +277,7 @@ class AccountSignedInPresenterImpl(
                                 {
                                     eligibilityImpl?.eligibilityFailed()
                                     if (showPopupIfNeeded && !isChargedOffCC()) showAccountInArrears(
-                                        account
-                                    )
+                                        account)
                                 })
                         }
                     }
