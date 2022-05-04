@@ -30,7 +30,6 @@ import kotlinx.android.synthetic.main.edit_delivery_location_confirmation_fragme
 import kotlinx.android.synthetic.main.layout_delivering_to_details.*
 import kotlinx.android.synthetic.main.layout_native_checkout_age_confirmation.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
-import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.radioGroupFoodSubstitution
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_order_summary.*
 import kotlinx.android.synthetic.main.liquor_compliance_banner.*
@@ -53,7 +52,6 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAd
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
 import za.co.woolworths.financial.services.android.models.network.ConfirmDeliveryAddressBody
@@ -62,7 +60,6 @@ import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerAct
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_EMPTY_CART
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART
-import za.co.woolworths.financial.services.android.util.Constant
 import za.co.woolworths.financial.services.android.util.Constant.Companion.LIQUOR_ORDER
 import za.co.woolworths.financial.services.android.util.Constant.Companion.NO_LIQUOR_IMAGE_URL
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
@@ -206,6 +203,19 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
               liquorComplianceBannerLayout?.visibility=View.VISIBLE;
               setPicture(imgLiquorBanner, liquorImageUrl)
 
+              ageConfirmationLayout.visibility = VISIBLE
+              liquorComplianceBannerSeparator.visibility = VISIBLE
+              liquorComplianceBannerLayout.visibility = VISIBLE
+
+              if(!radioBtnAgeConfirmation.isChecked) {
+                  Utils.fadeInFadeOutAnimation(txtContinueToPayment, true)
+                  radioBtnAgeConfirmation.isChecked = false
+                  txtContinueToPayment.isClickable = false
+              } else {
+                  Utils.fadeInFadeOutAnimation(txtContinueToPayment, false)
+                  txtContinueToPayment.isClickable = true
+                  radioBtnAgeConfirmation.isChecked = true
+              }
           }
        }else{
            ageConfirmationLayout?.visibility=View.GONE
@@ -486,6 +496,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         nextImgBtnFood.setOnClickListener(this)
         previousImgBtnOther.setOnClickListener(this)
         nextImgBtnOther.setOnClickListener(this)
+        radioBtnAgeConfirmation.setOnClickListener(this)
     }
 
     /**
@@ -554,6 +565,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 foodSubstitutionTitleShimmerFrameLayout,
                 txtFoodSubstitutionTitle
             ),
+
             Pair<ShimmerFrameLayout, View>(
                 foodSubstitutionDescShimmerFrameLayout,
                 txtFoodSubstitutionDesc
@@ -562,6 +574,36 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 radioGroupFoodSubstitutionShimmerFrameLayout,
                 radioGroupFoodSubstitution
             ),
+
+
+
+            Pair<ShimmerFrameLayout, View>(
+                ageConfirmationTitleShimmerFrameLayout,
+                txtAgeConfirmationTitle
+            ),
+
+            Pair<ShimmerFrameLayout, View>(
+                ageConfirmationTitleShimmerFrameLayout,
+                txtAgeConfirmationTitle
+            ),
+
+            Pair<ShimmerFrameLayout, View>(
+                ageConfirmationDescShimmerFrameLayout,
+                txtAgeConfirmationDesc),
+
+            Pair<ShimmerFrameLayout, View>(
+            ageConfirmationDescNoteShimmerFrameLayout,
+            txtAgeConfirmationDescNote),
+
+
+            Pair<ShimmerFrameLayout, View>(
+            radioGroupAgeConfirmationShimmerFrameLayout,
+            radioGroupAgeConfirmation),
+
+
+
+
+
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationTitleShimmerFrameLayout,
                 txtAgeConfirmationTitle
@@ -870,6 +912,17 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     activity)
                 onCheckoutPaymentClick()
             }
+            R.id.radioBtnAgeConfirmation -> {
+                if(!radioBtnAgeConfirmation.isChecked) {
+                    Utils.fadeInFadeOutAnimation(txtContinueToPayment, true)
+                    radioBtnAgeConfirmation.isChecked = false
+                    txtContinueToPayment.isClickable = false
+                } else {
+                    Utils.fadeInFadeOutAnimation(txtContinueToPayment, false)
+                    radioBtnAgeConfirmation.isChecked = true
+                    txtContinueToPayment.isClickable = true
+                }
+            }
         }
     }
 
@@ -910,6 +963,16 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     }
                 }
             })
+
+        if(liquorOrder == true && !radioBtnAgeConfirmation.isChecked) {
+            ageConfirmationLayout.visibility = VISIBLE
+            liquorComplianceBannerSeparator.visibility = VISIBLE
+            liquorComplianceBannerLayout.visibility = VISIBLE
+
+            Utils.fadeInFadeOutAnimation(txtContinueToPayment, false)
+        } else {
+            Utils.fadeInFadeOutAnimation(txtContinueToPayment, true)
+        }
     }
 
     private fun isInstructionsMissing(): Boolean {
