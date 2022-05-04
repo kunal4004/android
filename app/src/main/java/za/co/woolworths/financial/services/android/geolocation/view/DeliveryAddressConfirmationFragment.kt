@@ -225,6 +225,16 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             // change location button clicked as address is not deliverable.
             navigateToConfirmAddressScreen()
         }
+        setFragmentResultListener(MAP_LOCATION_RESULT) { _, bundle ->
+            // Assign new lat long and Reload the fragment.
+            val localBundle = bundle.getBundle(BUNDLE)
+            localBundle.apply {
+                latitude = this?.getString(KEY_LATITUDE, "")
+                longitude = this?.getString(KEY_LONGITUDE, "")
+                placeId = this?.getString(KEY_PLACE_ID, "")
+            }
+            initView()
+        }
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { _, _ ->
             // change location dismiss button clicked so land back on last delivery location tab.
             when (lastDeliveryType) {
@@ -439,6 +449,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     companion object {
 
         const val STORE_LOCATOR_REQUEST_CODE = "543"
+        const val MAP_LOCATION_RESULT = "8472"
 
         fun newInstance(latitude: String, longitude: String, placesId: String) =
             DeliveryAddressConfirmationFragment().withArgs {

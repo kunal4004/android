@@ -15,6 +15,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -51,6 +52,8 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_DASH_TAB
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_STORE_LOCATOR
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LATITUDE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LONGITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.io.IOException
@@ -486,6 +489,8 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
 
     private fun navigateToLastScreen(address: Address) {
         bundle?.apply {
+            putString(KEY_LATITUDE, address.latitude?.toString())
+            putString(KEY_LONGITUDE, address.longitude?.toString())
             putString(KEY_PLACE_ID, address.placesId)
             putString(ADDRESS, address.address1)
             putSerializable(DEFAULT_ADDRESS, address)
@@ -497,10 +502,15 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 bundleOf(BUNDLE to bundle)
             )
         } else {
-            findNavController().navigate(
-                R.id.actionToDeliveryAddressConfirmationFragment,
-                bundleOf(BUNDLE to bundle)
-            )
+            if (findNavController().navigateUp()) {
+                setFragmentResult(DeliveryAddressConfirmationFragment.MAP_LOCATION_RESULT,
+                    bundleOf(BUNDLE to bundle))
+            } else {
+                findNavController().navigate(
+                    R.id.actionToDeliveryAddressConfirmationFragment,
+                    bundleOf(BUNDLE to bundle)
+                )
+            }
         }
     }
 
