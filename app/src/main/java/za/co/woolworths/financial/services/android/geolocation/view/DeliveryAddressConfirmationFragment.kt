@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -634,10 +636,11 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     private fun updateDeliveryDetails() {
         if (validateLocationResponse?.validatePlace?.deliverable == false) {
             // Show not deliverable Bottom Dialog.
-            showNotDeliverablePopUp(getString(R.string.no_location_title),
-                getString(R.string.no_location_desc),
-                getString(R.string.change_location),
-                R.drawable.location_disabled, null)
+            showNotDeliverablePopUp(R.string.no_location_title,
+                R.string.no_location_desc,
+                R.string.change_location,
+                R.drawable.location_disabled,
+                null)
         }
         geoDeliveryView?.visibility = View.VISIBLE
         geoDeliveryText?.text =
@@ -655,10 +658,11 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         validateLocationResponse?.validatePlace?.apply {
             if (this?.stores?.isEmpty() == true || this?.stores?.getOrNull(0)?.deliverable == false) {
                 // Show no store available Bottom Dialog.
-                showNotDeliverablePopUp(getString(R.string.no_location_collection),
-                    getString(R.string.no_location_desc),
-                    getString(R.string.change_location),
-                    R.drawable.img_collection_bag, null)
+                showNotDeliverablePopUp(R.string.no_location_collection,
+                    R.string.no_location_desc,
+                    R.string.change_location,
+                    R.drawable.img_collection_bag,
+                    null)
             }
         }
 
@@ -678,24 +682,25 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             setVisibilityDeliveryDates(null, null, earliestDashDate)
         } else {
             // Show not deliverable Popup
-            showNotDeliverablePopUp(getString(R.string.no_location_title),
-                getString(R.string.no_location_desc),
-                getString(R.string.change_location),
-                R.drawable.location_disabled, null)
+            showNotDeliverablePopUp(R.string.no_location_title,
+                R.string.no_location_desc,
+                R.string.change_location,
+                R.drawable.location_disabled,
+                null)
         }
     }
 
     private fun showNotDeliverablePopUp(
-        title: String,
-        subTitle: String,
-        btnText: String,
-        imgUrl: Int,
+        @StringRes title: Int,
+        @StringRes subTitle: Int,
+        @StringRes btnText: Int,
+        @DrawableRes imgUrl: Int,
         dismissLinkText: String?,
     ) {
         val customBottomSheetDialogFragment =
-            CustomBottomSheetDialogFragment.newInstance(title,
-                subTitle,
-                btnText,
+            CustomBottomSheetDialogFragment.newInstance(getString(title),
+                getString(subTitle),
+                getString(btnText),
                 imgUrl,
                 dismissLinkText)
         customBottomSheetDialogFragment.show(requireFragmentManager(),
