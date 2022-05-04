@@ -18,7 +18,6 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.*
 import android.text.style.*
-import android.util.Pair
 import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
@@ -33,16 +32,11 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import com.awfs.coordination.R
-import com.google.android.gms.tasks.Task
 import com.google.common.reflect.TypeToken
-import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.installations.FirebaseInstallations
-import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.layout_link_device_validate_otp.*
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import org.json.JSONObject
@@ -53,10 +47,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY
-import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
-import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
-import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.Transaction
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionHeader
@@ -71,14 +62,12 @@ import za.co.woolworths.financial.services.android.ui.activities.click_and_colle
 import za.co.woolworths.financial.services.android.ui.extension.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiFailureHandler
-import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.NetworkState
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import java.io.*
 import java.net.SocketException
-import java.net.UnknownHostException
 import java.text.NumberFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -856,28 +845,38 @@ class KotlinUtils {
                 }
             }
         }
-        fun openTreatmenPlanUrl(activity: Activity?,eligibilityPlan: EligibilityPlan?){
-            var collectionsUrl: String? = ""
+        fun openTreatmentPlanUrl(activity: Activity?, eligibilityPlan: EligibilityPlan?){
+            var collectionsUrl: Pair<String?, String?>? = null
             var exitUrl: String? = ""
             val accountOptions = AppConfigSingleton.accountOptions
 
             when (eligibilityPlan?.productGroupCode) {
                 ProductGroupCode.SC -> {
-                    collectionsUrl =accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
+                    collectionsUrl =accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.storeCard?.collectionsDynamicUrl
                     exitUrl = accountOptions?.showTreatmentPlanJourney?.storeCard?.exitUrl
                 }
 
                 ProductGroupCode.PL -> {
-                    collectionsUrl = accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
+                    collectionsUrl = accountOptions?.collectionsStartNewPlanJourney?.personalLoan?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.personalLoan?.collectionsDynamicUrl
                     exitUrl = accountOptions?.showTreatmentPlanJourney?.personalLoan?.exitUrl
                 }
 
                 ProductGroupCode.CC -> {
-                    collectionsUrl = accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
+                    collectionsUrl = accountOptions?.collectionsStartNewPlanJourney?.creditCard?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.creditCard?.collectionsDynamicUrl
                     exitUrl = accountOptions?.collectionsStartNewPlanJourney?.creditCard?.exitUrl
                 }
             }
-            val url =  collectionsUrl + eligibilityPlan?.appGuid
+
+            /**
+             *  Use dynamic collection url when ("collectionsViewExistingPlan")
+             *  else use collection url
+             */
+            val viewCollectionUrl = when (eligibilityPlan?.actionText == ActionText.VIEW_TREATMENT_PLAN.value){
+                true -> collectionsUrl?.second
+                false -> collectionsUrl?.first
+            }
+
+            val url =  viewCollectionUrl + eligibilityPlan?.appGuid
             openLinkInInternalWebView(
                 activity,
                 url,
