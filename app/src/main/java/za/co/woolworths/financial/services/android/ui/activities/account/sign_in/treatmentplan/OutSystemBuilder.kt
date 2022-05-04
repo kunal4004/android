@@ -77,8 +77,8 @@ class OutSystemBuilder(
 
         val collectionUrlFromConfig = when (productGroupCode) {
             ProductGroupCode.SC -> collectionsStartNewPlanJourney?.storeCard?.collectionsUrl to showTreatmentPlanJourney?.storeCard?.collectionsDynamicUrl
-            ProductGroupCode.PL -> collectionsStartNewPlanJourney?.personalLoan?.collectionsUrl to showTreatmentPlanJourney?.storeCard?.collectionsDynamicUrl
-            else -> collectionsStartNewPlanJourney?.creditCard?.collectionsUrl to showTreatmentPlanJourney?.storeCard?.collectionsDynamicUrl
+            ProductGroupCode.PL -> collectionsStartNewPlanJourney?.personalLoan?.collectionsUrl to showTreatmentPlanJourney?.personalLoan?.collectionsDynamicUrl
+            else -> collectionsStartNewPlanJourney?.creditCard?.collectionsUrl to showTreatmentPlanJourney?.creditCard?.collectionsDynamicUrl
         }
 
         val options: ConfigShowTreatmentPlan? = when (eligibilityPlan == null) {
