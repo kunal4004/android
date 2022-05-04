@@ -444,7 +444,7 @@ class KotlinUtils {
                         tvDeliveryLocation.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_delivery_circle)
                     }
-                    else -> {
+                    Delivery.DASH -> {
                         val timeSlot: String? =
                             WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.firstAvailableFoodDeliveryTime
                         if (timeSlot == null) {
@@ -458,6 +458,15 @@ class KotlinUtils {
                         tvDeliveryLocation?.text = address?.address1 ?: ""
                         tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_dash_delivery_circle)
+                    }
+                    else -> {
+                        tvDeliveringTo.text =
+                            context?.resources?.getString(R.string.standard_delivery)
+                        tvDeliveryLocation.text =
+                            address?.address1 ?: ""
+
+                        tvDeliveryLocation.visibility = View.VISIBLE
+                        deliverLocationIcon?.setImageResource(R.drawable.ic_delivery_circle)
                     }
                 }
             }
@@ -963,7 +972,7 @@ class KotlinUtils {
             return Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId ?: ""
         }
 
-        fun getPreferredStoreName(): String {
+        private fun getPreferredStoreName(): String {
             return Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName ?: ""
         }
 
@@ -973,10 +982,7 @@ class KotlinUtils {
 
         fun getPreferredDeliveryAddressOrStoreName(): String {
             return when (getPreferredDeliveryType()) {
-                Delivery.CNC ->
-                    getPreferredStoreName()
-                Delivery.STANDARD ->
-                    getPreferredStoreName()
+                Delivery.CNC, Delivery.STANDARD, Delivery.DASH -> getPreferredStoreName()
                 else -> ""
             }
         }

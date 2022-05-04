@@ -87,7 +87,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.fragment_shop_department, container, false)
     }
@@ -99,6 +99,10 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
                 hasFocus
             )
         }
+        initView()
+    }
+
+    fun initView() {
         activity?.apply {
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         }
@@ -176,7 +180,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
 
             isRootCallInProgress = true
             val isLocationEnabled = if (context != null) Utils.isLocationEnabled(context) else false
-            rootCategoryCall = OneAppService.getRootCategory(isLocationEnabled, location)
+            rootCategoryCall = OneAppService.getRootCategory(isLocationEnabled, location, getDeliveryType())
             rootCategoryCall?.enqueue(CompletionHandler(object : IResponseListener<RootCategories> {
                 override fun onSuccess(response: RootCategories?) {
                     isRootCallInProgress = false
@@ -204,6 +208,19 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
         } else {
             noConnectionLayout(true)
         }
+    }
+
+    private fun getDeliveryType(): String {
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let { fulfillmentDetails ->
+               return Delivery.getType(fulfillmentDetails.deliveryType)?.name ?: BundleKeysConstants.STANDARD
+            }
+        } else {
+            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let { fulfillmentDetails ->
+                return Delivery.getType(fulfillmentDetails.deliveryType)?.name ?: BundleKeysConstants.STANDARD
+            }
+        }
+        return BundleKeysConstants.STANDARD
     }
 
     private fun bindDepartment() {
@@ -525,7 +542,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
         }
     }
 
-     fun reloadRequest() {
+    fun reloadRequest() {
         executeDepartmentRequest()
     }
 }

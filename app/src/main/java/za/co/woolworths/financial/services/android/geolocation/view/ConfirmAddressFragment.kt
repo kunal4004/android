@@ -35,6 +35,7 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.Checkou
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.model.MapData
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
+import za.co.woolworths.financial.services.android.geolocation.network.model.ConfirmAddressStoreLocator
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.SavedAddressAdapter
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
@@ -301,30 +302,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 ) {
                     selectedAddress.let {
                         if (it.placesId != null) {
-                            if (isFromDashTab) {
-                                // This comes from Dash Tab. So will check if validatePlace API has onDemand Object.
-                                // If yes then land back on Dash Tab with new ValidatePlace Object else show Not Deliverable PopUp.
-                                validateLocation(it.placesId!!)
-
-                            } else {
-                                bundle?.apply {
-                                    putString(KEY_PLACE_ID, it.placesId)
-                                    putString(ADDRESS, it.address1)
-                                    putSerializable(DEFAULT_ADDRESS, it)
-                                    putBoolean(IS_COMING_CONFIRM_ADD, true)
-                                }
-                                if (IS_FROM_STORE_LOCATOR) {
-                                    findNavController().navigate(
-                                        R.id.actionClickAndCollectStoresFragment,
-                                        bundleOf(BUNDLE to bundle)
-                                    )
-                                } else {
-                                    findNavController().navigate(
-                                        R.id.actionToDeliveryAddressConfirmationFragment,
-                                        bundleOf(BUNDLE to bundle)
-                                    )
-                                }
-                            }
+                            validateLocation(it)
                         } else
                             return
                     }
@@ -336,17 +314,20 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                     navigateToAddAddress(savedAddressResponse)
                 } else if (isComingFromCheckout && deliveryType == Delivery.CNC.name) {
                     //Navigate to map screen with delivery type or checkout type
-                    navigateToConfirmAddressForStoreLocator(mLastLocation?.latitude,
-                        mLastLocation?.longitude,
-                        false, deliveryType)
+                    val confirmAddressStoreLocator =
+                        ConfirmAddressStoreLocator(mLastLocation?.latitude,
+                            mLastLocation?.longitude,
+                            false, deliveryType)
+                    navigateToConfirmAddressForStoreLocator(confirmAddressStoreLocator)
                 } else if (!isComingFromCheckout && deliveryType == Delivery.DASH.name) {
                     // Navigate to Map screen
                     val getMapData =
-                        getDataForMapView(mLastLocation?.latitude, mLastLocation?.longitude,
-                            isAddAddress = false,
+                        MapData(mLastLocation?.latitude,
+                            mLastLocation?.longitude,
+                            false,
                             isComingFromCheckout = false,
                             isFromDashTab = isFromDashTab,
-                            deliveryType)
+                            deliveryType = deliveryType)
                     val directions =
                         ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
                             getMapData
@@ -354,11 +335,12 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                     findNavController().navigate(directions)
                 } else {
                     val getMapData =
-                        getDataForMapView(mLastLocation?.latitude, mLastLocation?.longitude,
-                            isAddAddress = false,
+                        MapData(mLastLocation?.latitude,
+                            mLastLocation?.longitude,
+                            false,
                             isComingFromCheckout = false,
                             isFromDashTab = false,
-                            deliveryType)
+                            deliveryType = deliveryType)
                     val directions =
                         ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
                             getMapData
@@ -392,12 +374,17 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                     navigateToAddAddress(savedAddressResponse)
                 } else if (isComingFromCheckout && deliveryType == Delivery.CNC.name) {
                     //Navigate to map screen with delivery type or checkout type
-                    navigateToConfirmAddressForStoreLocator(0.0, 0.0, true, deliveryType)
+                    val confirmAddressStoreLocator =
+                        ConfirmAddressStoreLocator(0.0, 0.0, true, deliveryType)
+                    navigateToConfirmAddressForStoreLocator(confirmAddressStoreLocator)
 
                 } else if (!isComingFromCheckout && deliveryType == Delivery.DASH.name) {
                     // Navigate to Map screen
                     val getMapData =
-                        getDataForMapView(0.0, 0.0, true, false, isFromDashTab, deliveryType)
+                        MapData(0.0, 0.0, true,
+                            isComingFromCheckout = false,
+                            isFromDashTab = isFromDashTab,
+                            deliveryType = deliveryType)
                     val directions =
                         ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
                             getMapData
@@ -405,7 +392,10 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                     findNavController().navigate(directions)
                 } else {
                     val getMapData =
-                        getDataForMapView(0.0, 0.0, true, false, false, deliveryType)
+                        MapData(0.0, 0.0, true,
+                            isComingFromCheckout = false,
+                            isFromDashTab = false,
+                            deliveryType = deliveryType)
                     val directions =
                         ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
                             getMapData
@@ -416,8 +406,8 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         }
     }
 
-    private fun validateLocation(placeId: String) {
-        if (placeId.isNullOrEmpty())
+    private fun validateLocation(address: Address) {
+        if (address.placesId.isNullOrEmpty())
             return
 
         // Make Validate Location Call
@@ -425,29 +415,68 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             progressBar?.visibility = View.VISIBLE
             try {
                 val validateLocationResponse =
-                    confirmAddressViewModel.getValidateLocation(placeId!!)
+                    confirmAddressViewModel.getValidateLocation(address.placesId!!)
                 progressBar?.visibility = View.GONE
                 if (validateLocationResponse != null) {
                     when (validateLocationResponse?.httpCode) {
                         AppConstant.HTTP_OK -> {
                             validateLocationResponse.validatePlace?.let { place ->
-                                if (place.onDemand != null && place.onDemand!!.deliverable == true) {
-                                    // directly go back to Dash landing screen. Don't call confirm location API as user only wants to browse Dash.
-                                    var intent = Intent()
-                                    intent.putExtra(BundleKeysConstants.VALIDATE_RESPONSE,
-                                        validateLocationResponse)
-                                    activity?.setResult(Activity.RESULT_OK, intent)
-                                    activity?.finish()
+
+                                if (isFromDashTab) {
+                                    // This comes from Dash Tab. So will check if validatePlace API has onDemand Object.
+                                    // If yes then land back on Dash Tab with new ValidatePlace Object else show Not Deliverable PopUp.
+
+                                    if (place.onDemand != null && place.onDemand!!.deliverable == true) {
+                                        // directly go back to Dash landing screen. Don't call confirm location API as user only wants to browse Dash.
+                                        KotlinUtils.isDashTabClicked =
+                                            address.placesId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId) // changing black tooltip flag as user changes his browsing location.
+                                        val intent = Intent()
+                                        intent.putExtra(BundleKeysConstants.VALIDATE_RESPONSE,
+                                            validateLocationResponse)
+                                        activity?.setResult(Activity.RESULT_OK, intent)
+                                        activity?.finish()
+                                    } else {
+                                        // Show not deliverable Bottom Dialog.
+                                        val customBottomSheetDialogFragment =
+                                            CustomBottomSheetDialogFragment.newInstance(
+                                                getString(R.string.no_location_title),
+                                                getString(R.string.no_location_desc),
+                                                getString(R.string.change_location),
+                                                R.drawable.location_disabled,
+                                                getString(R.string.dismiss))
+                                        customBottomSheetDialogFragment.show(requireFragmentManager(),
+                                            CustomBottomSheetDialogFragment::class.java.simpleName)
+                                    }
                                 } else {
-                                    // Show not deliverable Bottom Dialog.
-                                    val customBottomSheetDialogFragment =
-                                        CustomBottomSheetDialogFragment.newInstance(
-                                            getString(R.string.no_location_delivery),
-                                            getString(R.string.no_location_desc),
-                                            getString(R.string.change_location),
-                                            R.drawable.location_disabled)
-                                    customBottomSheetDialogFragment.show(requireFragmentManager(),
-                                        CustomBottomSheetDialogFragment::class.java.simpleName)
+
+                                    when (deliveryType) {
+                                        // As per delivery type first we will verify if it is deliverable for that or not.
+                                        Delivery.STANDARD.name -> {
+                                            if (place.deliverable == true) {
+                                                navigateToLastScreen(address)
+                                            } else
+                                                showChangeLocationDialog()
+                                        }
+                                        Delivery.CNC.name -> {
+                                            if (place.stores?.getOrNull(0)?.deliverable == true) {
+                                                navigateToLastScreen(address)
+                                            } else
+                                                showNoCollectionStores()
+                                        }
+                                        Delivery.DASH.name -> {
+                                            if (place.onDemand?.deliverable == true) {
+                                                navigateToLastScreen(address)
+                                            } else
+                                                showChangeLocationDialog()
+                                        }
+                                        else -> {
+                                            // This happens when there is no location. So delivery type might be null.
+                                            if (place.deliverable == true) {
+                                                navigateToLastScreen(address)
+                                            } else
+                                                showChangeLocationDialog()
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -460,43 +489,61 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         }
     }
 
-    private fun navigateToConfirmAddressForStoreLocator(
-        latitude: Double?,
-        longitude: Double?,
-        isAddAddress: Boolean?,
-        deliveryType: String?,
-    ) {
-        val getMapData =
-            getDataForMapView(
-                latitude, longitude,
-                isAddAddress = isAddAddress,
-                isComingFromCheckout = true,
-                isFromDashTab = false,
-                deliveryType = deliveryType
+    private fun navigateToLastScreen(address: Address) {
+        bundle?.apply {
+            putString(KEY_PLACE_ID, address.placesId)
+            putString(ADDRESS, address.address1)
+            putSerializable(DEFAULT_ADDRESS, address)
+            putBoolean(IS_COMING_CONFIRM_ADD, true)
+        }
+        if (IS_FROM_STORE_LOCATOR) {
+            findNavController().navigate(
+                R.id.actionClickAndCollectStoresFragment,
+                bundleOf(BUNDLE to bundle)
             )
+        } else {
+            findNavController().navigate(
+                R.id.actionToDeliveryAddressConfirmationFragment,
+                bundleOf(BUNDLE to bundle)
+            )
+        }
+    }
+
+    private fun showChangeLocationDialog() {
+        val customBottomSheetDialogFragment =
+            CustomBottomSheetDialogFragment.newInstance(
+                getString(R.string.no_location_title),
+                getString(R.string.no_location_desc),
+                getString(R.string.change_location),
+                R.drawable.location_disabled, getString(R.string.dismiss))
+        customBottomSheetDialogFragment.show(requireFragmentManager(),
+            CustomBottomSheetDialogFragment::class.java.simpleName)
+    }
+
+    private fun showNoCollectionStores() {
+        // Show no store available Bottom Dialog.
+        val customBottomSheetDialogFragment =
+            CustomBottomSheetDialogFragment.newInstance(getString(R.string.no_location_collection),
+                getString(R.string.no_location_desc),
+                getString(R.string.change_location),
+                R.drawable.img_collection_bag,
+                null)
+        customBottomSheetDialogFragment.show(requireFragmentManager(),
+            CustomBottomSheetDialogFragment::class.java.simpleName)
+    }
+
+    private fun navigateToConfirmAddressForStoreLocator(confirmAddressStoreLocator: ConfirmAddressStoreLocator) {
+        val getMapData = MapData(confirmAddressStoreLocator.latitude,
+            confirmAddressStoreLocator.longitude,
+            confirmAddressStoreLocator.isAddAddress,
+            isComingFromCheckout = true,
+            isFromDashTab = false,
+            deliveryType = confirmAddressStoreLocator.deliveryType)
         val directions =
             ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
                 getMapData
             )
         findNavController().navigate(directions)
-    }
-
-    private fun getDataForMapView(
-        latitude: Double?,
-        longitude: Double?,
-        isAddAddress: Boolean?,
-        isComingFromCheckout: Boolean,
-        isFromDashTab: Boolean,
-        deliveryType: String?,
-    ): MapData {
-        return MapData(
-            latitude = latitude,
-            longitude = longitude,
-            isAddAddress = isAddAddress,
-            isComingFromCheckout = isComingFromCheckout,
-            isFromDashTab = isFromDashTab,
-            deliveryType = deliveryType
-        )
     }
 
     private fun navigateToUpdateAddress(savedAddressResponse: SavedAddressResponse) {

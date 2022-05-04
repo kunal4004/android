@@ -57,6 +57,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LONGITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.*
 import javax.inject.Inject
 
@@ -152,7 +153,11 @@ class ConfirmAddressMapFragment :
     private fun addFragmentListner() {
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, _ ->
             // change location button clicked as address is not deliverable.
-            clearAddressText()
+            initView()
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                delay(AppConstant.DELAY_1500_MS)
+                clearAddressText()
+            }
         }
     }
 
@@ -208,37 +213,8 @@ class ConfirmAddressMapFragment :
                 ),
                 activity)
 
-            val bundle = Bundle()
-            if (isComingFromCheckout == true) {
-                bundle.apply {
-                    putString(
-                        KEY_PLACE_ID, placeId
-                    )
-                    putBoolean(
-                        IS_COMING_CONFIRM_ADD, true)
-                    findNavController().navigate(
-                        R.id.actionClickAndCollectStoresFragment,
-                        bundleOf(BUNDLE to bundle)
-                    )
-                }
-            } else if (isFromDashTab == true) {
-                validateLocation()
-            } else {
-                // normal geo flow
-                if (mLatitude != null && mLongitude != null && placeId != null) {
-
-                    bundle.apply {
-                        putString(KEY_LATITUDE, mLatitude)
-                        putString(KEY_LONGITUDE, mLongitude)
-                        putString(KEY_PLACE_ID, placeId)
-                        putString(BundleKeysConstants.DELIVERY_TYPE, deliveryType)
-                    }
-                    findNavController().navigate(
-                        R.id.action_confirmAddressMapFragment_to_deliveryAddressConfirmationFragment,
-                        bundleOf(BUNDLE to bundle)
-                    )
-                }
-            }
+            // first we will call validate Location API after successfull we will decide if it is deliverable for that delivery Type.
+            validateLocation()
         }
     }
 
@@ -257,34 +233,65 @@ class ConfirmAddressMapFragment :
                     when (validateLocationResponse?.httpCode) {
                         HTTP_OK -> {
                             validateLocationResponse.validatePlace?.let { place ->
-                                if (place.onDemand != null && place.onDemand!!.deliverable == true) {
-                                    if (!SessionUtilities.getInstance().isUserAuthenticated) {
-                                        // User not logged in that's why we are setting new location.
-                                        confirmSetAddress(validateLocationResponse)
-                                    } else {
-                                        val savedLocation = Utils.getPreferredDeliveryLocation()
-                                        if (savedLocation?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
-                                            // user logged in but don't have any location that's why we are setting new location.
+
+                                if (isFromDashTab == true) {
+                                    if (place.onDemand != null && place.onDemand!!.deliverable == true) {
+
+                                        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+                                            // User not logged in that's why we are setting new location.
+                                            KotlinUtils.isDashTabClicked =
+                                                placeId?.equals(KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId) // changing black tooltip flag as user changes his browsing location.
                                             confirmSetAddress(validateLocationResponse)
                                         } else {
-                                            // directly go back to Dash landing screen. Don't call confirm location API as user only wants to browse Dash.
-                                            var intent = Intent()
-                                            intent.putExtra(BundleKeysConstants.VALIDATE_RESPONSE,
-                                                validateLocationResponse)
-                                            activity?.setResult(Activity.RESULT_OK, intent)
-                                            activity?.finish()
+                                            KotlinUtils.isDashTabClicked =
+                                                placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId) // changing black tooltip flag as user changes his browsing location.
+                                            val savedLocation = Utils.getPreferredDeliveryLocation()
+                                            if (savedLocation?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
+                                                // user logged in but don't have any location that's why we are setting new location.
+                                                confirmSetAddress(validateLocationResponse)
+                                            } else {
+                                                // directly go back to Dash landing screen. Don't call confirm location API as user only wants to browse Dash.
+                                                var intent = Intent()
+                                                intent.putExtra(BundleKeysConstants.VALIDATE_RESPONSE,
+                                                    validateLocationResponse)
+                                                activity?.setResult(Activity.RESULT_OK, intent)
+                                                activity?.finish()
+                                            }
                                         }
+                                    } else {
+                                        // Show not deliverable Bottom Dialog.
+                                        showChangeLocationDialog()
                                     }
-                                } else {
-                                    // Show not deliverable Bottom Dialog.
-                                    val customBottomSheetDialogFragment =
-                                        CustomBottomSheetDialogFragment.newInstance(
-                                            getString(R.string.no_location_delivery),
-                                            getString(R.string.no_location_desc),
-                                            getString(R.string.change_location),
-                                            R.drawable.location_disabled)
-                                    customBottomSheetDialogFragment.show(requireFragmentManager(),
-                                        CustomBottomSheetDialogFragment::class.java.simpleName)
+                                    return@let
+                                }
+
+                                when (deliveryType) {
+                                    // As per delivery type first we will verify if it is deliverable for that or not.
+                                    Delivery.STANDARD.name -> {
+                                        if (place.deliverable == true) {
+                                            navigateToLastScreen()
+                                        } else
+                                            showChangeLocationDialog()
+                                    }
+                                    Delivery.CNC.name -> {
+                                        if (place.stores?.getOrNull(0)?.deliverable == true) {
+                                            navigateToLastScreen()
+                                        } else
+                                            showNoCollectionStores()
+                                    }
+                                    Delivery.DASH.name -> {
+                                        if (place.onDemand?.deliverable == true) {
+                                            navigateToLastScreen()
+                                        } else
+                                            showChangeLocationDialog()
+                                    }
+                                    else -> {
+                                        // This happens when there is no location. So delivery type might be null.
+                                        if (place.deliverable == true) {
+                                            navigateToLastScreen()
+                                        } else
+                                            showChangeLocationDialog()
+                                    }
                                 }
                             }
                         }
@@ -299,6 +306,61 @@ class ConfirmAddressMapFragment :
                 showErrorDialog()
             }
         }
+    }
+
+    private fun navigateToLastScreen() {
+        if (isComingFromCheckout == true) {
+            val bundle = Bundle()
+            bundle.apply {
+                putString(
+                    KEY_PLACE_ID, placeId
+                )
+                putBoolean(
+                    IS_COMING_CONFIRM_ADD, true)
+                findNavController().navigate(
+                    R.id.actionClickAndCollectStoresFragment,
+                    bundleOf(BUNDLE to bundle)
+                )
+            }
+        }
+        // normal geo flow
+        else if (mLatitude != null && mLongitude != null && placeId != null) {
+            val bundle = Bundle()
+            bundle.apply {
+                putString(KEY_LATITUDE, mLatitude)
+                putString(KEY_LONGITUDE, mLongitude)
+                putString(KEY_PLACE_ID, placeId)
+                putString(BundleKeysConstants.DELIVERY_TYPE,
+                    deliveryType)
+            }
+            findNavController().navigate(
+                R.id.action_confirmAddressMapFragment_to_deliveryAddressConfirmationFragment,
+                bundleOf(BUNDLE to bundle)
+            )
+        }
+    }
+
+    private fun showChangeLocationDialog() {
+        val customBottomSheetDialogFragment =
+            CustomBottomSheetDialogFragment.newInstance(
+                getString(R.string.no_location_title),
+                getString(R.string.no_location_desc),
+                getString(R.string.change_location),
+                R.drawable.location_disabled, getString(R.string.dismiss))
+        customBottomSheetDialogFragment.show(requireFragmentManager(),
+            CustomBottomSheetDialogFragment::class.java.simpleName)
+    }
+
+    private fun showNoCollectionStores() {
+        // Show no store available Bottom Dialog.
+        val customBottomSheetDialogFragment =
+            CustomBottomSheetDialogFragment.newInstance(getString(R.string.no_location_collection),
+                getString(R.string.no_location_desc),
+                getString(R.string.change_location),
+                R.drawable.img_collection_bag,
+                null)
+        customBottomSheetDialogFragment.show(requireFragmentManager(),
+            CustomBottomSheetDialogFragment::class.java.simpleName)
     }
 
     private fun confirmSetAddress(validateLocationResponse: ValidateLocationResponse) {

@@ -2479,10 +2479,9 @@
     <string name="walkthrough_delivery_details_desc">View and edit your delivery details, no matter where you are in the App.</string>
     <string name="walkthrough_delivery_details_action">set your delivery address</string>
     <string name="standard_delivery">Standard Delivery</string>
-    <string name="standard_delivery_title_text">R50 Delivery Fee. Free for orders over R450.</string>
     <string name="click_and_collect">Click &amp; Collect</string>
-    <string name="click_and_collect_title_text">Free Collection. \n Limited shop of 64 Items.</string>
-    <string name="dash_title_text">R35 Delivery Fee. Free for orders over R75. \n Limited shop of 42 Items.</string>
+    <string name="click_and_collect_title_text">Free Collection. \n Limited shop of %1$s Items.</string>
+    <string name="dash_title_text">R%1$s Delivery Fee. \n Limited shop of %2$s Items.</string>
     <string name="dash_delivery">Dash Delivery</string>
     <string name="dash_delivery_bold"><b>Dash Delivery</b></string>
     <string name="dash_product_search">Search name, product code or brand</string>
@@ -2518,7 +2517,6 @@
     <string name="geo_loc_error_msg">We can’t seem to find you. Please enter number and name of your street ,or drag the pin to your exact location.</string>
     <string name="fashion_beauty_geo">Fashion,Beauty,Home</string>
     <string name="no_location_collection">There Are No Collection Stores \n Available Near You.</string>
-    <string name="no_location_delivery">We Can’t Deliver To This Location Yet.</string>
     <string name="geo_map_address">%s %s %s</string>
     <string name="max_characters_allowed">Max 40 characters allowed</string>
 
