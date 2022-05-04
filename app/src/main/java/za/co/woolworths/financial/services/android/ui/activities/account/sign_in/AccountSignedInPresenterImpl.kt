@@ -254,10 +254,7 @@ class AccountSignedInPresenterImpl(
 
                         }
 
-                        AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig -> {
-                            showViewTreatmentPlan(true)
-                        }
-
+                        AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig,
                         AccountOfferingState.MakeGetEligibilityCall -> {
                             if (isChargedOff()) {
                                 removeBlocksWhenChargedOff()
