@@ -846,23 +846,23 @@ class KotlinUtils {
             }
         }
         fun openTreatmentPlanUrl(activity: Activity?, eligibilityPlan: EligibilityPlan?){
-            var collectionsUrl: Pair<String?, String?>? = null
+            var collectionUrlFromConfig: Pair<String?, String?>? = null
             var exitUrl: String? = ""
             val accountOptions = AppConfigSingleton.accountOptions
 
             when (eligibilityPlan?.productGroupCode) {
                 ProductGroupCode.SC -> {
-                    collectionsUrl =accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.storeCard?.collectionsDynamicUrl
+                    collectionUrlFromConfig =accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.storeCard?.collectionsDynamicUrl
                     exitUrl = accountOptions?.showTreatmentPlanJourney?.storeCard?.exitUrl
                 }
 
                 ProductGroupCode.PL -> {
-                    collectionsUrl = accountOptions?.collectionsStartNewPlanJourney?.personalLoan?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.personalLoan?.collectionsDynamicUrl
+                    collectionUrlFromConfig = accountOptions?.collectionsStartNewPlanJourney?.personalLoan?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.personalLoan?.collectionsDynamicUrl
                     exitUrl = accountOptions?.showTreatmentPlanJourney?.personalLoan?.exitUrl
                 }
 
                 ProductGroupCode.CC -> {
-                    collectionsUrl = accountOptions?.collectionsStartNewPlanJourney?.creditCard?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.creditCard?.collectionsDynamicUrl
+                    collectionUrlFromConfig = accountOptions?.collectionsStartNewPlanJourney?.creditCard?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.creditCard?.collectionsDynamicUrl
                     exitUrl = accountOptions?.collectionsStartNewPlanJourney?.creditCard?.exitUrl
                 }
             }
@@ -871,12 +871,14 @@ class KotlinUtils {
              *  Use dynamic collection url when ("collectionsViewExistingPlan")
              *  else use collection url
              */
-            val viewCollectionUrl = when (eligibilityPlan?.actionText == ActionText.VIEW_TREATMENT_PLAN.value){
-                true -> collectionsUrl?.second
-                false -> collectionsUrl?.first
-            }
+            val finalCollectionUrlFromConfig =
+                when (eligibilityPlan?.actionText == ActionText.VIEW_TREATMENT_PLAN.value
+                        || eligibilityPlan?.actionText == ActionText.VIEW_ELITE_PLAN.value) {
+                    true -> collectionUrlFromConfig?.second
+                    false -> collectionUrlFromConfig?.first
+                }
 
-            val url =  viewCollectionUrl + eligibilityPlan?.appGuid
+            val url =  finalCollectionUrlFromConfig + eligibilityPlan?.appGuid
             openLinkInInternalWebView(
                 activity,
                 url,

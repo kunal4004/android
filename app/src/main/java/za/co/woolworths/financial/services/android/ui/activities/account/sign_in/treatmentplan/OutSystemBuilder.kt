@@ -97,8 +97,8 @@ class OutSystemBuilder(
              *  Use dynamic collection url when ("collectionsViewExistingPlan")
              *  else use collection url
              */
-            var finalCollectionUrlFromConfig =
-                when (eligibilityPlan?.actionText == ActionText.VIEW_TREATMENT_PLAN.value) {
+            var finalCollectionUrlFromConfig = when (eligibilityPlan?.actionText == ActionText.VIEW_TREATMENT_PLAN.value ||
+                        eligibilityPlan?.actionText == ActionText.VIEW_ELITE_PLAN.value) {
                     true -> collectionUrlFromConfig.second
                     false -> collectionUrlFromConfig.first
                 }
