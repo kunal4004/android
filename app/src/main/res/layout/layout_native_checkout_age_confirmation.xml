@@ -77,33 +77,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/twenty_four_dp"
-        android:layout_marginTop="@dimen/ten_dp"
+        android:layout_marginTop="@dimen/twenty_two_dp"
         android:layout_marginBottom="@dimen/ten_dp"
         android:background="@color/shimmer_view_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ageConfirmationDescNoteShimmerFrameLayout">
 
-        <RadioGroup
-            android:id="@+id/radioGroupAgeConfirmation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            app:layout_constrainedWidth="true">
-
-            <androidx.appcompat.widget.AppCompatRadioButton
+            <androidx.appcompat.widget.AppCompatCheckBox
                 android:id="@+id/radioBtnAgeConfirmation"
                 style="@style/FoodSubstRadioButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/seven_dp"
+                android:background="@color/white"
+                app:layout_constrainedWidth="true"
                 android:fontFamily="@font/myriad_pro_regular"
                 android:paddingHorizontal="@dimen/ten_dp"
                 android:text="@string/native_checkout_delivery_age_confirm"
                 android:textColor="@color/color_444444"
                 android:textSize="@dimen/fifteen_sp" />
 
-        </RadioGroup>
     </com.facebook.shimmer.ShimmerFrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

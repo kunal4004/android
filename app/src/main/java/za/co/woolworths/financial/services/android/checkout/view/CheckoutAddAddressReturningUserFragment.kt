@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
+import android.widget.CompoundButton
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResultListener
@@ -75,7 +76,7 @@ import java.util.regex.Pattern
 class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFragment(),
     OnClickListener,
     CheckoutDeliveryTypeSelectionListAdapter.EventListner,
-    ShoppingBagsRadioGroupAdapter.EventListner {
+    ShoppingBagsRadioGroupAdapter.EventListner, CompoundButton.OnCheckedChangeListener {
 
     companion object {
         const val REGEX_DELIVERY_INSTRUCTIONS = "^\$|^[a-zA-Z0-9\\s<!>@#\$&().+,-/\\\"']+\$"
@@ -496,7 +497,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         nextImgBtnFood.setOnClickListener(this)
         previousImgBtnOther.setOnClickListener(this)
         nextImgBtnOther.setOnClickListener(this)
-        radioBtnAgeConfirmation.setOnClickListener(this)
+        radioBtnAgeConfirmation.setOnCheckedChangeListener(this)
     }
 
     /**
@@ -598,7 +599,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
             Pair<ShimmerFrameLayout, View>(
             radioGroupAgeConfirmationShimmerFrameLayout,
-            radioGroupAgeConfirmation),
+                    radioBtnAgeConfirmation),
 
 
 
@@ -625,7 +626,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
             Pair<ShimmerFrameLayout, View>(
             radioGroupAgeConfirmationShimmerFrameLayout,
-            radioGroupAgeConfirmation),
+                    radioBtnAgeConfirmation),
 
             Pair<ShimmerFrameLayout, View>(
                 instructionTxtShimmerFrameLayout,
@@ -911,17 +912,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     ),
                     activity)
                 onCheckoutPaymentClick()
-            }
-            R.id.radioBtnAgeConfirmation -> {
-                if(!radioBtnAgeConfirmation.isChecked) {
-                    Utils.fadeInFadeOutAnimation(txtContinueToPayment, true)
-                    radioBtnAgeConfirmation.isChecked = false
-                    txtContinueToPayment.isClickable = false
-                } else {
-                    Utils.fadeInFadeOutAnimation(txtContinueToPayment, false)
-                    radioBtnAgeConfirmation.isChecked = true
-                    txtContinueToPayment.isClickable = true
-                }
             }
         }
     }
@@ -1281,6 +1271,18 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     }
                 }
             }
+        }
+    }
+
+    override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
+        if(!isChecked) {
+            Utils.fadeInFadeOutAnimation(txtContinueToPayment, true)
+            radioBtnAgeConfirmation.isChecked = false
+            txtContinueToPayment.isClickable = false
+        } else {
+            Utils.fadeInFadeOutAnimation(txtContinueToPayment, false)
+            radioBtnAgeConfirmation.isChecked = true
+            txtContinueToPayment.isClickable = true
         }
     }
 }
