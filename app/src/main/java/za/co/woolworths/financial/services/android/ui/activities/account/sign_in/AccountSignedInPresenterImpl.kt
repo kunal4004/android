@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.ui.extension.deviceHeight
 import za.co.woolworths.financial.services.android.util.eliteplan.EligibilityImpl
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.eliteplan.PMApiStatusImpl
 
 
 class AccountSignedInPresenterImpl(
@@ -29,13 +30,14 @@ class AccountSignedInPresenterImpl(
     private var model: IAccountSignedInContract.MyAccountModel
 ) : IAccountSignedInContract.MyAccountPresenter {
 
-    private var mApplyNowState: ApplyNowState = ApplyNowState.STORE_CARD
+    var mApplyNowState: ApplyNowState = ApplyNowState.STORE_CARD
     private var mAccountResponse: AccountsResponse? = null
     private var mProductGroupCode: String? = null
     private var mDeepLinkingData: String? = null
     private var eligibilityPlan: EligibilityPlan? = null
     var isAccountInArrearsState: Boolean = false
     var eligibilityImpl: EligibilityImpl? = null
+    var pmaStatusImpl: PMApiStatusImpl? = null
 
     companion object {
         const val MY_ACCOUNT_RESPONSE = "MY_ACCOUNT_RESPONSE"
