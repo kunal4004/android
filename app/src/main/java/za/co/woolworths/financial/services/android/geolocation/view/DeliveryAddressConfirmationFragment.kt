@@ -298,6 +298,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                             HTTP_OK -> {
                                 // save details in cache
                                 if (SessionUtilities.getInstance().isUserAuthenticated) {
+                                    KotlinUtils.placeId = placeId
+                                    KotlinUtils.isLocationSame= placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
                                     KotlinUtils.isDeliveryLocationTabClicked =
                                         placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
                                     KotlinUtils.isCncTabClicked =
@@ -312,6 +314,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                     if (KotlinUtils.getAnonymousUserLocationDetails() != null)
                                         KotlinUtils.clearAnonymousUserLocationDetails()
                                 } else {
+                                    KotlinUtils.placeId = placeId
+                                    KotlinUtils.isLocationSame = placeId?.equals(KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId)
                                     KotlinUtils.isDeliveryLocationTabClicked =
                                         placeId?.equals(KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId)
                                     KotlinUtils.isCncTabClicked =
