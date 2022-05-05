@@ -367,7 +367,6 @@ open class FirebaseManagerAnalyticsProperties {
         const val VIEW_ITEM_LIST: String = "view_item_list"
         const val VIEW_ITEM_EVENT: String = "view_item"
         const val SELECT_ITEM_EVENT: String = "select_item"
-        const val BEGIN_CHECKOUT_CONFIRM: String = "begin_checkout"
         const val ADD_TO_CART_PDP: String = "add_to_cart"
         const val VIEW_CART: String = "view_cart"
         const val ADD_TO_WISHLIST: String = "add_to_wish_list"
