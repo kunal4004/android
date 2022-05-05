@@ -122,6 +122,7 @@ import za.co.woolworths.financial.services.android.util.pickimagecontract.PickIm
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageGalleryContract
 import java.io.File
 import android.graphics.Bitmap
+import com.google.firebase.analytics.FirebaseAnalytics
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
 import kotlin.collections.set
@@ -260,7 +261,26 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         mFuseLocationAPISingleton = FuseLocationAPISingleton
         initViews()
         setUniqueIds()
+        productDetails?.let { addViewItemEvent(it) }
+    }
 
+    //firebase event view_item
+    private fun addViewItemEvent(productDetails: ProductDetails) {
+        val mFirebaseAnalytics = FirebaseManager.getInstance().getAnalytics()
+        val viewItemListParams = Bundle()
+        viewItemListParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
+        for (products in 0..(productDetails.otherSkus?.size ?: 0)) {
+            val viewItem = Bundle()
+            viewItem.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
+            viewItem.putString(FirebaseAnalytics.Param.ITEM_NAME, productDetails?.productName)
+            viewItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, productDetails?.categoryName)
+            viewItem.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
+            viewItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT, productDetails?.colourSizeVariants)
+            viewItem.putString(FirebaseAnalytics.Param.PRICE, productDetails?.price.toString())
+            viewItemListParams.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, productDetails?.categoryName)
+            viewItemListParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(viewItem))
+        }
+        mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.VIEW_ITEM_EVENT, viewItemListParams)
     }
 
     override fun onAttach(context: Context) {
@@ -1500,22 +1520,30 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         )
                     }
                 }
-                val arguments = HashMap<String, String>()
-                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_ID] = productDetails?.productId?: ""
-                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CURRENCY] = FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
-                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_NAME] = productDetails?.productName?: ""
-                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.COUPON] = " "
-                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.DISCOUNT] = " "
-                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.INDEX] = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE
-                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.AFFILIATION] = FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE
-                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_BRAND] = productDetails?.brandText?: ""
-                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_CATEGORY] = productDetails?.categoryName?: ""
-                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_VARIANT] = productDetails?.colourSizeVariants?: ""
-                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_PRICE] = productDetails?.price?: ""
-                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CART_TOTAL_VALUE] = " "
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ADD_TO_CART_PDP,arguments, activity)
+                addToCartEvent(productDetails)
             }
         }
+    }
+    //firebase event add_to_cart
+    private fun addToCartEvent(productDetails: ProductDetails?) {
+        val mFirebaseAnalytics = FirebaseManager.getInstance().getAnalytics()
+        val addToCartParams = Bundle()
+        addToCartParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
+        addToCartParams.putString(FirebaseAnalytics.Param.VALUE, productDetails?.price.toString())
+        for (products in 0..(productDetails?.otherSkus?.size ?: 0)) {
+            val addToCartItem = Bundle()
+            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
+            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_NAME, productDetails?.productName)
+            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, productDetails?.categoryName)
+            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
+            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, productDetails?.categoryName)
+            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT, productDetails?.colourSizeVariants)
+            addToCartItem.putString(FirebaseAnalytics.Param.PRICE, productDetails?.price.toString())
+            addToCartItem.putString(FirebaseAnalytics.Param.AFFILIATION, FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
+            addToCartItem.putString(FirebaseAnalytics.Param.INDEX, FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE)
+            addToCartParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(addToCartItem))
+        }
+        mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.ADD_TO_CART_PDP, addToCartParams)
     }
 
     private fun addItemToShoppingList() {
@@ -1554,14 +1582,25 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 scrollView?.fullScroll(View.FOCUS_UP)
                 NavigateToShoppingList.openShoppingList(activity, listOfItems, "", false)
             }
-            val arguments = HashMap<String, String>()
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CURRENCY] = FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_VALUE] = productDetails?.price?: ""
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ADD_TO_WISHLIST,arguments, activity)
 
+            productDetails?.let { addToWishlistItemEvent(it) }
         } else {
             // Select size to continue
         }
+    }
+
+    private fun addToWishlistItemEvent(productDetails: ProductDetails) {
+        val mFirebaseAnalytics = FirebaseManager.getInstance().getAnalytics()
+        val addToWishlistParams = Bundle()
+        addToWishlistParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
+        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
+        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_NAME, productDetails?.productName)
+        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, productDetails?.categoryName)
+        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
+        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_VARIANT, productDetails?.colourSizeVariants)
+        addToWishlistParams.putString(FirebaseAnalytics.Param.PRICE, productDetails?.price.toString())
+        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, productDetails?.categoryName)
+        mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.ADD_TO_WISHLIST, addToWishlistParams)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -2201,10 +2240,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         activity?.apply {
             Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL)
         }
-
-        val arguments = HashMap<String, String>()
-        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CURRENCY] = FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VIEW_ITEM_EVENT,arguments, activity)
     }
 
     private fun isAllProductsOutOfStock(): Boolean {
