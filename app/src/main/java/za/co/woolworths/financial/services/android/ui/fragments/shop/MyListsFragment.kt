@@ -190,7 +190,12 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     }
 
     private fun locationSelectionClicked() {
-        activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, 0) }
+        KotlinUtils.presentEditDeliveryGeoLocationActivity(
+            requireActivity(),
+            0,
+            KotlinUtils.getPreferredDeliveryType(),
+            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
+        )
     }
 
     private fun showEmptyShoppingListView() {

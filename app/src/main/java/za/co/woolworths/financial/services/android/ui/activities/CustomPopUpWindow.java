@@ -62,12 +62,14 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.StatementUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.wenum.Delivery;
 
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.MODAL_LAYOUT.BIOMETRICS_SECURITY_INFO;
 
@@ -549,9 +551,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 WTextView tvLocation = findViewById(R.id.tvLocation);
                 ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation();
                 if (shoppingDeliveryLocation != null) {
-                    if (shoppingDeliveryLocation.suburb != null || shoppingDeliveryLocation.store!=null) {
-                        tvLocation.setText(shoppingDeliveryLocation.storePickup ? shoppingDeliveryLocation.store.getName() : shoppingDeliveryLocation.suburb.name + ", " + shoppingDeliveryLocation.province.getName());
-                    }
+                        tvLocation.setText(KotlinUtils.Companion.getPreferredDeliveryType() == Delivery.CNC ? shoppingDeliveryLocation.fulfillmentDetails.getStoreName() : shoppingDeliveryLocation.fulfillmentDetails.getAddress().getAddress1());
                 }
                 break;
 

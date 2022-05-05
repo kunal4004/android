@@ -81,10 +81,13 @@ class CheckoutDeliveryTypeSelectionListAdapter(
                         Html.fromHtml(it.description) else it.deliveryInDays
                     editAddressImageView.visibility = View.GONE
                     slotPriceButton.visibility = View.VISIBLE
-                    slotPriceButton.text = context.getString(R.string.currency).plus(
-                        it.amount?.toString()
-                    )
-
+                    if(it.amount!=0L){
+                        slotPriceButton.text = context.getString(R.string.currency).plus(
+                            it.amount?.toString()
+                        )
+                    }else{
+                        slotPriceButton.text = context.getString(R.string.free_delivery_slot)
+                    }
                     selector.isChecked = checkedItemPosition == position
                     addressSelectionLayout.setBackgroundColor(
                         if (selector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
