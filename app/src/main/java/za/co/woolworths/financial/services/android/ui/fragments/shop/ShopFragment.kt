@@ -728,6 +728,12 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             return
         }
 
+        if (validateLocationResponse?.validatePlace?.firstAvailableFoodDeliveryDate.isNullOrEmpty()
+            && validateLocationResponse?.validatePlace?.firstAvailableOtherDeliveryDate.isNullOrEmpty()) {
+            blackToolTipLayout?.visibility = View.GONE
+            return
+        }
+
         blackToolTipLayout?.visibility = View.VISIBLE
         KotlinUtils.isDeliveryLocationTabClicked = true
         validateLocationResponse?.validatePlace?.let {
@@ -736,6 +742,16 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             deliveryIconLayout?.visibility = View.VISIBLE
             fashionItemTitle?.visibility = View.VISIBLE
             deliveryIconLayout?.visibility = View.GONE
+
+            if (it.firstAvailableFoodDeliveryDate?.isNullOrEmpty() == true) {
+                deliveryCollectionTitle?.visibility = View.GONE
+                foodItemDateText?.visibility = View.GONE
+            }
+
+            if (it.firstAvailableOtherDeliveryDate?.isNullOrEmpty() == true) {
+                fashionItemTitle?.visibility = View.GONE
+                fashionItemDateText?.visibility = View.GONE
+            }
 
             deliveryCollectionTitle?.text = getString(R.string.earliest_delivery_dates)
             foodItemDateText?.text = it.firstAvailableFoodDeliveryDate
@@ -750,6 +766,16 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         if (KotlinUtils.isCncTabClicked == true) {
             blackToolTipLayout?.visibility = View.GONE
             return
+        }
+
+        if (isUserAuthenticated() && getFirstAvailableFoodDeliveryDate().isNullOrEmpty() == true) {
+            blackToolTipLayout?.visibility = View.GONE
+            return
+        } else {
+            if (getFirstAvailableFoodDeliveryDate().isNullOrEmpty() == true) {
+                blackToolTipLayout?.visibility = View.GONE
+                return
+            }
         }
         blackToolTipLayout?.visibility = View.VISIBLE
         KotlinUtils.isCncTabClicked = true
@@ -794,12 +820,44 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
     }
 
+    private fun getFirstAvailableFoodDeliveryDate(): String? {
+        validateLocationResponse?.validatePlace?.let { validatePlace ->
+            if (isUserAuthenticated()) {
+                Utils.getPreferredDeliveryLocation()?.let {
+                    val store = GeoUtils.getStoreDetails(
+                        it.fulfillmentDetails?.storeId,
+                        validatePlace.stores
+                    )
+                    return store?.firstAvailableFoodDeliveryDate
+                }
+
+            } else {
+                KotlinUtils.getAnonymousUserLocationDetails()?.let {
+                    val store = GeoUtils.getStoreDetails(
+                        it.fulfillmentDetails.storeId,
+                        validatePlace.stores
+                    )
+                    return store?.firstAvailableFoodDeliveryDate
+                }
+            }
+        }
+        return "";
+    }
+
+
     private fun showDashToolTip(validateLocationResponse: ValidateLocationResponse?) {
         val dashDeliverable = validateLocationResponse?.validatePlace?.onDemand?.deliverable
         if (KotlinUtils.isDashTabClicked == true || dashDeliverable == null || dashDeliverable == false) {
             blackToolTipLayout?.visibility = View.GONE
             return
         }
+
+        if (validateLocationResponse?.validatePlace?.
+            onDemand?.firstAvailableFoodDeliveryTime?.isNullOrEmpty() == true) {
+            blackToolTipLayout?.visibility = View.GONE
+            return
+        }
+
         blackToolTipLayout?.visibility = View.VISIBLE
         KotlinUtils.isDashTabClicked = true
         validateLocationResponse?.validatePlace?.let {
