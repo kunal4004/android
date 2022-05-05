@@ -13,7 +13,6 @@ import android.view.View
 import android.view.WindowManager
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProviders
 import com.awfs.coordination.R
@@ -237,7 +236,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     fun init() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        //TODO:: Handle notification for Android R
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && Build.VERSION.SDK_INT  < Build.VERSION_CODES.R) {
             NotificationUtils.createNotificationChannelIfNeeded(this)
         }
         // Disable first time launch splash video screen, remove to enable video on startup

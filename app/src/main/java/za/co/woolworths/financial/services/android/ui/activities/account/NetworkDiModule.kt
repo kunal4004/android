@@ -19,11 +19,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 class NetworkDiModule {
 
     @Provides
-    fun provideTreatmentPlanDataSource(): ITreatmentPlanDataSource {
-        return TreatmentPlanDataSource()
-    }
-
-    @Provides
     fun provideAccountProductLandingDao(): AccountProductLandingDao {
         return AccountProductLandingDao()
     }

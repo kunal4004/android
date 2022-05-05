@@ -14,7 +14,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import javax.inject.Inject
 
 interface IStoreCardDataSource {
-    val account: Account?
+    var account: Account?
     suspend fun getCreditCardToken(): Flow<CoreDataSource.IOTaskResult<CreditCardTokenResponse>>
     suspend fun getPaymentPAYUMethod(): Flow<CoreDataSource.IOTaskResult<PaymentMethodsResponse>>
     suspend fun queryServiceGetStoreCards(): Flow<CoreDataSource.IOTaskResult<StoreCardsResponse>>
@@ -27,7 +27,7 @@ class StoreCardDataSource @Inject constructor(
 ) : CoreDataSource(), IStoreCardDataSource, IAccountProductLandingDao by landingDao,
     AccountRemoteService by accountRemoteService, IManageCardFunctionalRequirement by manageCard {
 
-    override val account: Account? = product
+    override var account: Account? = product
 
     override suspend fun getCreditCardToken() = performSafeNetworkApiCall {
         getCreditCardToken(

@@ -5,6 +5,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import retrofit2.Retrofit
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.ITreatmentPlanDataSource
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.TreatmentPlanDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.StoreCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.AccountRemoteService
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.repository.storecard.StoreCardRepository
@@ -42,5 +45,10 @@ object AccountProductsModule {
     @Provides
     fun provideCreditCardDataSource(creditCardService: CreditCardService): CreditCardDataSource =
         CreditCardDataSource(creditCardService)
+
+    @Provides
+    fun provideTreatmentPlanDataSource(): ITreatmentPlanDataSource {
+        return TreatmentPlanDataSource()
+    }
 
 }
