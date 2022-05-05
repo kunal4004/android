@@ -193,7 +193,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             }
         }
     }
-
+    //LiquorCompliance
     private fun getLiquorComplianceDetails() {
         baseFragBundle?.apply {
        if(containsKey(LIQUOR_ORDER)){
@@ -210,12 +210,14 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
               if(!radioBtnAgeConfirmation.isChecked) {
                   Utils.fadeInFadeOutAnimation(txtContinueToPayment, true)
-                  radioBtnAgeConfirmation.isChecked = false
-                  txtContinueToPayment.isClickable = false
+                  radioBtnAgeConfirmation?.isChecked = false
+                  txtContinueToPayment?.isClickable = false
+                  txtContinueToPayment?.isEnabled = false
               } else {
                   Utils.fadeInFadeOutAnimation(txtContinueToPayment, false)
-                  txtContinueToPayment.isClickable = true
-                  radioBtnAgeConfirmation.isChecked = true
+                  txtContinueToPayment?.isClickable = true
+                  txtContinueToPayment?.isEnabled = true
+                  radioBtnAgeConfirmation?.isChecked = true
               }
           }
        }else{
@@ -566,7 +568,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 foodSubstitutionTitleShimmerFrameLayout,
                 txtFoodSubstitutionTitle
             ),
-
             Pair<ShimmerFrameLayout, View>(
                 foodSubstitutionDescShimmerFrameLayout,
                 txtFoodSubstitutionDesc
@@ -576,8 +577,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 radioGroupFoodSubstitution
             ),
 
-
-
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationTitleShimmerFrameLayout,
                 txtAgeConfirmationTitle
@@ -595,16 +594,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             Pair<ShimmerFrameLayout, View>(
             ageConfirmationDescNoteShimmerFrameLayout,
             txtAgeConfirmationDescNote),
-
 
             Pair<ShimmerFrameLayout, View>(
             radioGroupAgeConfirmationShimmerFrameLayout,
                     radioBtnAgeConfirmation),
 
-
-
-
-
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationTitleShimmerFrameLayout,
                 txtAgeConfirmationTitle
@@ -622,7 +616,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             Pair<ShimmerFrameLayout, View>(
             ageConfirmationDescNoteShimmerFrameLayout,
             txtAgeConfirmationDescNote),
-
 
             Pair<ShimmerFrameLayout, View>(
             radioGroupAgeConfirmationShimmerFrameLayout,
@@ -953,7 +946,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     }
                 }
             })
-
+        //liquor compliance: age confirmation
         if(liquorOrder == true && !radioBtnAgeConfirmation.isChecked) {
             ageConfirmationLayout.visibility = VISIBLE
             liquorComplianceBannerSeparator.visibility = VISIBLE
@@ -1275,14 +1268,15 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
+        //single checkbox age confirmation
         if(!isChecked) {
             Utils.fadeInFadeOutAnimation(txtContinueToPayment, true)
-            radioBtnAgeConfirmation.isChecked = false
-            txtContinueToPayment.isClickable = false
+            radioBtnAgeConfirmation?.isChecked = false
+            txtContinueToPayment?.isClickable = false
         } else {
             Utils.fadeInFadeOutAnimation(txtContinueToPayment, false)
-            radioBtnAgeConfirmation.isChecked = true
-            txtContinueToPayment.isClickable = true
+            radioBtnAgeConfirmation?.isChecked = true
+            txtContinueToPayment?.isClickable = true
         }
     }
 }
