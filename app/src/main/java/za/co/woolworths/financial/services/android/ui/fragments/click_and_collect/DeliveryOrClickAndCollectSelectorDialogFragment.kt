@@ -12,12 +12,13 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 class DeliveryOrClickAndCollectSelectorDialogFragment(var listener: IDeliveryOptionSelection?) : WBottomSheetDialogFragment(), View.OnClickListener {
 
 
     interface IDeliveryOptionSelection {
-        fun onDeliveryOptionSelected(deliveryType: DeliveryType)
+        fun onDeliveryOptionSelected(deliveryType: Delivery)
     }
 
     companion object {
@@ -42,15 +43,15 @@ class DeliveryOrClickAndCollectSelectorDialogFragment(var listener: IDeliveryOpt
         when (v?.id) {
             R.id.justBrowsing -> dismissAllowingStateLoss()
             R.id.delivery -> {
-                dismissDialogWithDeliveryOption(DeliveryType.DELIVERY)
+                dismissDialogWithDeliveryOption(Delivery.STANDARD)
             }
             R.id.clickAndCollect -> {
-                dismissDialogWithDeliveryOption(DeliveryType.STORE_PICKUP)
+                dismissDialogWithDeliveryOption(Delivery.CNC)
             }
         }
     }
 
-    fun dismissDialogWithDeliveryOption(deliveryType: DeliveryType) {
+    fun dismissDialogWithDeliveryOption(deliveryType:Delivery) {
         listener?.onDeliveryOptionSelected(deliveryType)
         dismissAllowingStateLoss()
     }
