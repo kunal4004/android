@@ -45,6 +45,7 @@ import za.co.woolworths.financial.services.android.chanel.views.adapter.BrandLan
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.BrandNavigationDetails
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -57,7 +58,6 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
-import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.*
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
@@ -85,6 +85,8 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.net.ConnectException
 import java.net.UnknownHostException
 import java.util.*
@@ -195,8 +197,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             setTitle()
             startProductRequest()
             setUniqueIds()
-            localSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
-            localStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
+            localPlaceId = KotlinUtils.getPreferredPlaceId()
             imgInfo?.setOnClickListener {
                 vtoBottomSheetDialog.showBottomSheetDialog(
                     this@ProductListingFragment,
@@ -238,19 +239,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
 
         if (activity is BottomNavigationActivity && (activity as BottomNavigationActivity).currentFragment is ProductListingFragment) {
-            val currentSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
-            val currentStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
-            if (currentStoreId == null && currentSuburbId == null) {
-                //Fresh install with no location selection.
-            } else if (currentSuburbId == null && !(currentStoreId?.equals(localStoreId))!!) {
-                localStoreId = currentStoreId
-                localSuburbId = null
-                isReloadNeeded = false
-                updateRequestForReload()
-                pushFragment()
-            } else if (currentStoreId == null && !(localSuburbId.equals(currentSuburbId))) {
-                localSuburbId = currentSuburbId
-                localStoreId = null
+            val currentPlaceId = KotlinUtils.getPreferredPlaceId()
+            if (currentPlaceId == null && !(currentPlaceId?.equals(localPlaceId))!!) {
+                localPlaceId = currentPlaceId
                 isReloadNeeded = false
                 updateRequestForReload()
                 pushFragment()
@@ -413,10 +404,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     ScreenManager.presentSSOSignin(activity, LOGIN_REQUEST_SUBURB_CHANGE)
                 } else {
                     activity?.apply {
-                        KotlinUtils.presentEditDeliveryLocationActivity(
+                        KotlinUtils.presentEditDeliveryGeoLocationActivity(
                             this,
                             LOGIN_REQUEST_SUBURB_CHANGE,
-                            DeliveryType.DELIVERY_LIQUOR
+                            KotlinUtils.getPreferredDeliveryType(),
+                            Utils.getPreferredDeliveryLocation().fulfillmentDetails?.address?.placeId
                         )
                     }
                 }
@@ -879,15 +871,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             }
             PDP_REQUEST_CODE, OPEN_CART_REQUEST -> {
                 if (resultCode == Activity.RESULT_CANCELED || resultCode == DISMISS_POP_WINDOW_CLICKED) {
-                    val currentSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
-                    val currentStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
-                    if (currentStoreId == null && currentSuburbId == null) {
+                    val currentPlaceId = KotlinUtils.getPreferredPlaceId()
+                    if (currentPlaceId == null) {
                         //Fresh install with no location selection.
                         return
-                    } else if ((currentSuburbId == null && !(currentStoreId?.equals(localStoreId))!!) || (currentStoreId == null && !(localSuburbId.equals(
-                            currentSuburbId
-                        )))
-                    )
+                    } else if (currentPlaceId != localPlaceId)
                         isBackPressed =
                             true // if PDP closes or cart fragment closed with location change.
                 }
@@ -895,10 +883,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             LOGIN_REQUEST_SUBURB_CHANGE -> {
                 if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
                     activity?.apply {
-                        KotlinUtils.presentEditDeliveryLocationActivity(
+                        KotlinUtils.presentEditDeliveryGeoLocationActivity(
                             this,
                             LOGIN_REQUEST_SUBURB_CHANGE,
-                            DeliveryType.DELIVERY_LIQUOR
+                            KotlinUtils.getPreferredDeliveryType(),
+                            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                         )
                     }
                 } else if (resultCode == RESULT_OK) {
@@ -1213,9 +1202,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
                         HTTP_EXPECTATION_FAILED_417 -> resources?.let {
                             activity?.apply {
-                                KotlinUtils.presentEditDeliveryLocationActivity(
+                                KotlinUtils.presentEditDeliveryGeoLocationActivity(
                                     this,
-                                    SET_DELIVERY_LOCATION_REQUEST_CODE
+                                    SET_DELIVERY_LOCATION_REQUEST_CODE,
+                                    KotlinUtils.getPreferredDeliveryType(),
+                                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                                 )
                             }
                         }
@@ -1376,8 +1367,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     companion object {
         private var isReloadNeeded = true
         private var localProductBody: ArrayList<Any> = ArrayList()
-        private var localSuburbId: String? = null
-        private var localStoreId: String? = null
+        private var localPlaceId: String? = null
         private var isBackPressed: Boolean = false
 
         /*const val REFINEMENT_DATA = "REFINEMENT_DATA"*/
@@ -1452,19 +1442,17 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
     }
 
-    override fun onDeliveryOptionSelected(deliveryType: DeliveryType) {
-        if (SessionUtilities.getInstance().isUserAuthenticated) {
-            activity?.apply {
-                KotlinUtils.presentEditDeliveryLocationActivity(
-                    this,
-                    EditDeliveryLocationActivity.REQUEST_CODE,
-                    deliveryType
-                )
-            }
-        } else {
-            ScreenManager.presentSSOSignin(activity, EDIT_LOCATION_LOGIN_REQUEST)
+    override fun onDeliveryOptionSelected(deliveryType: Delivery) {
+        activity?.apply {
+            KotlinUtils.presentEditDeliveryGeoLocationActivity(
+                this,
+                REQUEST_CODE,
+                deliveryType,
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
+            )
         }
     }
+
 
     private fun requestCartSummary() {
         showProgressBar()
@@ -1474,14 +1462,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
                 when (response?.httpCode) {
                     HTTP_OK -> {
-                        if (Utils.isCartSummarySuburbIDEmpty(response)) {
-                            activity?.apply {
-                                KotlinUtils.presentEditDeliveryLocationActivity(
-                                    this,
-                                    SET_DELIVERY_LOCATION_REQUEST_CODE
-                                )
-                            }
-                        } else confirmDeliveryLocation()
+                        confirmDeliveryLocation()
                     }
                 }
             }
@@ -1516,9 +1497,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     override fun onSetNewLocation() {
         activity?.apply {
-            KotlinUtils.presentEditDeliveryLocationActivity(
+            KotlinUtils.presentEditDeliveryGeoLocationActivity(
                 this,
-                SET_DELIVERY_LOCATION_REQUEST_CODE
+                SET_DELIVERY_LOCATION_REQUEST_CODE,
+                KotlinUtils.getPreferredDeliveryType(),
+                GeoUtils.getPlaceId()
             )
         }
     }

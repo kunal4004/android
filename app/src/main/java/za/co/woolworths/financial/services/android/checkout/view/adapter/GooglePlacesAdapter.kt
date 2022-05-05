@@ -12,7 +12,6 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.android.libraries.places.api.model.AutocompletePrediction
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
-import com.google.android.libraries.places.api.model.TypeFilter
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
 import com.google.android.libraries.places.api.net.PlacesClient
@@ -90,7 +89,9 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapte
                     notifyDataSetChanged()
                 } else {
                     // The API did not return any results, invalidate the data set.
-                    notifyDataSetInvalidated()
+                    if(constraint != null && constraint.toString().trim().length >= SEARCH_LENGTH){
+                         notifyDataSetInvalidated()
+                    }
                 }
             }
 
