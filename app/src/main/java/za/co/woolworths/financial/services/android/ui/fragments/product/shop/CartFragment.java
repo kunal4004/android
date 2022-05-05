@@ -20,6 +20,7 @@ import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -1078,10 +1079,24 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 } catch (Exception ex) {
                     FirebaseManager.Companion.logException(ex);
                 }
-                Map<String, String> arguments = new HashMap<>();
-                arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE);
-                arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_VALUE, String.valueOf(commerceItem.getPriceInfo().amount));
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.REMOVE_FROM_CART, arguments, getActivity());
+                removeItemFromCart();
+            }
+
+            void removeItemFromCart(){
+                FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
+
+                Bundle removeFromCartParams = new Bundle();
+                removeFromCartParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE);
+                removeFromCartParams.putString(FirebaseAnalytics.Param.VALUE,  String.valueOf(commerceItem.getPriceInfo().amount));
+                Bundle removeFromCartItem = new Bundle();
+                removeFromCartItem.putString(FirebaseAnalytics.Param.ITEM_ID,mCommerceItem.commerceItemInfo.productId);
+                removeFromCartItem.putString(FirebaseAnalytics.Param.ITEM_NAME, mCommerceItem.commerceItemInfo.productDisplayName);
+                removeFromCartItem.putString(FirebaseAnalytics.Param.PRICE, String.valueOf(commerceItem.getPriceInfo().amount));
+                removeFromCartItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, mCommerceItem.commerceItemInfo.productDisplayName);
+                removeFromCartItem.putString(FirebaseAnalytics.Param.QUANTITY, String.valueOf(mCommerceItem.commerceItemInfo.quantity));
+                removeFromCartParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS,  new Parcelable[]{ removeFromCartItem });
+
+                mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.REMOVE_FROM_CART, removeFromCartParams);
             }
 
             @Override
