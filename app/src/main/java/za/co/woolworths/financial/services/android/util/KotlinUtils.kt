@@ -18,7 +18,6 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.*
 import android.text.style.*
-import android.util.Pair
 import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
@@ -51,10 +50,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY
-import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
-import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
-import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.Transaction
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionHeader
@@ -867,32 +863,41 @@ class KotlinUtils {
                 }
             }
         }
-
-        fun openTreatmenPlanUrl(activity: Activity?, eligibilityPlan: EligibilityPlan?) {
-            var collectionsUrl: String? = ""
+        fun openTreatmentPlanUrl(activity: Activity?, eligibilityPlan: EligibilityPlan?){
+            var collectionUrlFromConfig: Pair<String?, String?>? = null
             var exitUrl: String? = ""
             val accountOptions = AppConfigSingleton.accountOptions
 
             when (eligibilityPlan?.productGroupCode) {
                 ProductGroupCode.SC -> {
-                    collectionsUrl =
-                        accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
+                    collectionUrlFromConfig =accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.storeCard?.collectionsDynamicUrl
                     exitUrl = accountOptions?.showTreatmentPlanJourney?.storeCard?.exitUrl
                 }
 
                 ProductGroupCode.PL -> {
-                    collectionsUrl =
-                        accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
+                    collectionUrlFromConfig = accountOptions?.collectionsStartNewPlanJourney?.personalLoan?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.personalLoan?.collectionsDynamicUrl
                     exitUrl = accountOptions?.showTreatmentPlanJourney?.personalLoan?.exitUrl
                 }
 
                 ProductGroupCode.CC -> {
-                    collectionsUrl =
-                        accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
+                    collectionUrlFromConfig = accountOptions?.collectionsStartNewPlanJourney?.creditCard?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.creditCard?.collectionsDynamicUrl
                     exitUrl = accountOptions?.collectionsStartNewPlanJourney?.creditCard?.exitUrl
                 }
             }
-            val url = collectionsUrl + eligibilityPlan?.appGuid
+
+            /**
+             *  Use dynamic collection url when ("collectionsViewExistingPlan")
+             *  else use collection url
+             */
+            val finalCollectionUrlFromConfig =
+                when (eligibilityPlan?.actionText == ActionText.VIEW_TREATMENT_PLAN.value
+                        || eligibilityPlan?.actionText == ActionText.VIEW_ELITE_PLAN.value) {
+                    true -> collectionUrlFromConfig?.second
+                    false -> collectionUrlFromConfig?.first
+                }
+
+            val url =  finalCollectionUrlFromConfig + eligibilityPlan?.appGuid
+
             openLinkInInternalWebView(
                 activity,
                 url,
