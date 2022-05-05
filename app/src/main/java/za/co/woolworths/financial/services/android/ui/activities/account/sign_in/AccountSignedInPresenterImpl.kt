@@ -192,7 +192,7 @@ class AccountSignedInPresenterImpl(
                             else -> Unit
                         }
                     }
-                    if (productOffering.isViewTreatmentPlanSupported()) {
+                    if (productOffering.isViewTreatmentPlanSupported() || productOffering.isTakeUpTreatmentPlanJourneyEnabled()) {
                         mainView?.showPlanButton(state, response.eligibilityPlan)
                         if (showPopupIfNeeded) {
                             mainView?.showViewTreatmentPlan(
@@ -201,9 +201,7 @@ class AccountSignedInPresenterImpl(
                             )
                         }
                     } else {
-                        if (eligibilityPlan == null) mainView?.showAccountInArrears(
-                            account = getAccount()) else mainView?.showAboveSixMonthsAccountInDelinquencyPopup(eligibilityPlan)
-                    }
+                      mainView?.showAccountInArrears(account = getAccount()) }
                 }
             }
         } else {

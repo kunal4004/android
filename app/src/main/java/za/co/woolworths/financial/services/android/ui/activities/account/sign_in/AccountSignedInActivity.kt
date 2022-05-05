@@ -319,12 +319,20 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     }
 
     private fun showAccountInArrearsDialog(
-        account: Pair<ApplyNowState, Account>) {
+        account: Pair<ApplyNowState, Account>, eligibilityPlan: EligibilityPlan? = null) {
         val accountApplyNowState = payMyAccountViewModel.getCardDetail()?.account
         if (accountApplyNowState == null)
             payMyAccountViewModel.setPMACardInfo(PMACardPopupModel(account = mAccountSignedInPresenter?.getMyAccountCardInfo()))
         val bundle = Bundle()
         bundle.putString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Gson().toJson(account))
+        bundle.putSerializable(
+            ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN,
+            eligibilityPlan
+        )
+        bundle.putSerializable(
+            ViewTreatmentPlanDialogFragment.APPLY_NOW_STATE,
+            payMyAccountViewModel.getApplyNowState()
+        )
         mAvailableFundsNavHost?.navController?.navigate(R.id.accountInArrearsDialogFragment, bundle)
     }
 
