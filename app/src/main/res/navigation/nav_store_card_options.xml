@@ -6,7 +6,7 @@
     app:startDestination="@id/storeCardAccountOptionsFragment">
     <fragment
         android:id="@+id/storeCardAccountOptionsFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.StoreCardAccountOptionsFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.StoreCardAccountOptionsMainFragment"
         android:label="StoreCardAccountOptionsFragment"
         tools:layout="@layout/store_card_account_options_fragment" />
 </navigation>
