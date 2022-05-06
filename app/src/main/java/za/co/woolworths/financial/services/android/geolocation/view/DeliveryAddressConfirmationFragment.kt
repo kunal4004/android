@@ -330,7 +330,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     ConfirmLocationRequest(DASH, confirmLocationAddress, mStoreId)
                 }
                 else -> {
-                    ConfirmLocationRequest(DASH, confirmLocationAddress, "")
+                    ConfirmLocationRequest(STANDARD, confirmLocationAddress, "")
                 }
             }
 
@@ -707,10 +707,15 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             validateLocationResponse?.validatePlace?.placeDetails?.address1
                 ?: getString(R.string.empty)
 
-        val earliestFoodDate =
+        var earliestFoodDate =
             validateLocationResponse?.validatePlace?.firstAvailableFoodDeliveryDate
-        val earliestFashionDate =
+        if (earliestFoodDate.isNullOrEmpty())
+            earliestFoodDate = getString(R.string.earliest_delivery_no_date_available)
+
+        var earliestFashionDate =
             validateLocationResponse?.validatePlace?.firstAvailableOtherDeliveryDate
+        if (earliestFashionDate.isNullOrEmpty())
+            earliestFashionDate = getString(R.string.earliest_delivery_no_date_available)
         setVisibilityDeliveryDates(earliestFoodDate, earliestFashionDate, null)
     }
 
@@ -719,8 +724,10 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         geoDeliveryView?.visibility = View.VISIBLE
         setGeoDeliveryTextForCnc()
 
-        val earliestFoodDate =
+        var earliestFoodDate =
             validateLocationResponse?.validatePlace?.firstAvailableFoodDeliveryDate
+        if (earliestFoodDate.isNullOrEmpty())
+            earliestFoodDate = getString(R.string.earliest_delivery_no_date_available)
         setVisibilityDeliveryDates(earliestFoodDate, null, null)
     }
 
@@ -729,8 +736,10 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         geoDeliveryText?.text =
             validateLocationResponse?.validatePlace?.onDemand?.storeName
                 ?: getString(R.string.empty)
-        val earliestDashDate =
+        var earliestDashDate =
             validateLocationResponse?.validatePlace?.onDemand?.firstAvailableFoodDeliveryTime
+        if (earliestDashDate.isNullOrEmpty())
+            earliestDashDate = getString(R.string.earliest_delivery_no_date_available)
         setVisibilityDeliveryDates(null, null, earliestDashDate)
     }
 
@@ -762,7 +771,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         } else {
             earliestDeliveryDateLabel?.visibility = View.VISIBLE
             earliestDeliveryDateValue?.visibility = View.VISIBLE
-            earliestDeliveryDateValue?.text = WFormatter.getFullMonthWithDate(earliestFoodDate)
+            //earliestDeliveryDateValue?.text = WFormatter.getFullMonthWithDate(earliestFoodDate)
+            earliestDeliveryDateValue?.text = earliestFoodDate
         }
 
         if (earliestFashionDate.isNullOrEmpty()) {
@@ -771,8 +781,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         } else {
             earliestFashionDeliveryDateLabel?.visibility = View.VISIBLE
             earliestFashionDeliveryDateValue?.visibility = View.VISIBLE
-            earliestFashionDeliveryDateValue?.text =
-                WFormatter.getFullMonthWithDate(earliestFashionDate)
+            //earliestFashionDeliveryDateValue?.text = WFormatter.getFullMonthWithDate(earliestFashionDate)
+            earliestFashionDeliveryDateValue?.text = earliestFashionDate
         }
         if (earliestDashDate.isNullOrEmpty()) {
             earliestDeliveryDashLabel?.visibility = View.GONE
