@@ -11,7 +11,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.util.Pair;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +21,7 @@ import java.util.ArrayList;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+import kotlin.Pair;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState;
@@ -191,7 +191,7 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
             FragmentManager fm = getSupportFragmentManager();
             Fragment fragmentId = fm.findFragmentById(R.id.flEStatement);
             if (fragmentId instanceof StatementFragment) {
-                ((StatementFragment) fragmentId).getPdfFile(mAccountWithApplyNowState.first);
+                ((StatementFragment) fragmentId).getPdfFile(mAccountWithApplyNowState.getFirst());
             }
         });
     }
