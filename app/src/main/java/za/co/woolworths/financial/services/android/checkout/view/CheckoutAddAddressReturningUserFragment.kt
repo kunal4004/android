@@ -212,11 +212,9 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                   Utils.fadeInFadeOutAnimation(txtContinueToPayment, true)
                   radioBtnAgeConfirmation?.isChecked = false
                   txtContinueToPayment?.isClickable = false
-                  txtContinueToPayment?.isEnabled = false
               } else {
                   Utils.fadeInFadeOutAnimation(txtContinueToPayment, false)
                   txtContinueToPayment?.isClickable = true
-                  txtContinueToPayment?.isEnabled = true
                   radioBtnAgeConfirmation?.isChecked = true
               }
           }
@@ -1273,10 +1271,12 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             Utils.fadeInFadeOutAnimation(txtContinueToPayment, true)
             radioBtnAgeConfirmation?.isChecked = false
             txtContinueToPayment?.isClickable = false
+            txtContinueToPayment?.isEnabled = false
         } else {
             Utils.fadeInFadeOutAnimation(txtContinueToPayment, false)
             radioBtnAgeConfirmation?.isChecked = true
             txtContinueToPayment?.isClickable = true
+            txtContinueToPayment?.isEnabled = true
         }
     }
 }
