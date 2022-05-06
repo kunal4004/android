@@ -2446,6 +2446,7 @@
     <string name="earliest_food_delivery_date">Earliest Food Delivery Date:</string>
     <string name="earliest_fashion_delivery_date">Earliest Fashion Delivery Date:</string>
     <string name="earliest_dash_delivery_timeslot">Dash Delivery Timeslot:</string>
+    <string name="earliest_delivery_no_date_available">No Date Available</string>
     <string name="all">All</string>
     <string name="unlimited">Unlimited</string>
     <string name="food">Food</string>
