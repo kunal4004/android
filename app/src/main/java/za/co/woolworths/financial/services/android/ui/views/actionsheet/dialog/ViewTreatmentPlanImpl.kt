@@ -74,18 +74,26 @@ class ViewTreatmentPlanImpl(
             true -> {
                 when (isCreditCardProduct && (productOfferingStatus.isViewTreatmentPlanSupported()
                         || productOfferingStatus.isTakeUpTreatmentPlanJourneyEnabled())) {
-                    true -> R.string.account_in_recovery_label to getViewTreatmentPlanDescription(
-                        applyNowState
-                    )
+                    true -> when(getPlanType()) {
+                        TreatmentPlanType.VIEW, TreatmentPlanType.ELITE -> R.string.account_in_recovery_label to getViewTreatmentPlanDescription(
+                            applyNowState
+                        )
+                        else -> R.string.remove_block_on_collection_dialog_title to bindString(R.string.remove_block_on_collection_dialog_desc)
+                    }
                     false -> R.string.remove_block_on_collection_dialog_title to bindString(R.string.remove_block_on_collection_dialog_desc)
                 }
             }
             false -> {
                 when (productOfferingStatus.isViewTreatmentPlanSupported()
                         || productOfferingStatus.isTakeUpTreatmentPlanJourneyEnabled()) {
-                    true -> R.string.account_in_recovery_label to getViewTreatmentPlanDescription(
-                        applyNowState
-                    )
+                    true ->when(getPlanType()){
+                        TreatmentPlanType.ELITE,TreatmentPlanType.VIEW -> R.string.account_in_recovery_label to getViewTreatmentPlanDescription(
+                            applyNowState)
+                        else -> R.string.payment_overdue_label to getString(
+                            stringId = R.string.payment_overdue_error_desc,
+                            amountOverdue
+                        )
+                    }
                     false -> R.string.payment_overdue_label to getString(
                         stringId = R.string.payment_overdue_error_desc,
                         amountOverdue
