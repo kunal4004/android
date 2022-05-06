@@ -89,6 +89,7 @@
                 style="@style/FoodSubstRadioButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:checked="false"
                 android:background="@color/white"
                 app:layout_constrainedWidth="true"
                 android:fontFamily="@font/myriad_pro_regular"

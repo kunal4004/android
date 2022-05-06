@@ -22,12 +22,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerFrameLayout
-import kotlinx.android.synthetic.main.checkout_add_address_new_user.*
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
 import kotlinx.android.synthetic.main.checkout_grid_layout_other.*
 import kotlinx.android.synthetic.main.checkout_how_would_you_delivered.*
-import kotlinx.android.synthetic.main.edit_delivery_location_confirmation_fragment.view.*
 import kotlinx.android.synthetic.main.layout_delivering_to_details.*
 import kotlinx.android.synthetic.main.layout_native_checkout_age_confirmation.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
@@ -908,10 +906,12 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     private fun onCheckoutPaymentClick() {
-        if (isRequiredFieldsMissing() || isInstructionsMissing()) {
+        if ((isRequiredFieldsMissing() || isInstructionsMissing())) {
             return
         }
-
+        if(isAgeConfirmationLiquorCompliance()) {
+            return
+        }
         val body = getShipmentDetailsBody()
         if (TextUtils.isEmpty(body.oddDeliverySlotId) && TextUtils.isEmpty(body.foodDeliverySlotId)
             && TextUtils.isEmpty(body.otherDeliverySlotId)
@@ -980,6 +980,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             }
             else -> false
         }
+    }
+    private fun isAgeConfirmationLiquorCompliance() : Boolean {
+        radioBtnAgeConfirmation.parent.requestChildFocus(radioBtnAgeConfirmation, radioBtnAgeConfirmation)
+        return liquorOrder == true && !radioBtnAgeConfirmation.isChecked
     }
 
     private fun isRequiredFieldsMissing(): Boolean {
@@ -1103,6 +1107,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 body.apply {
                     requestFrom = "express"
                     joinBasket = true
+                    ageConsentConfirmed = true
                     foodShipOnDate = selectedFoodSlot?.stringShipOnDate
                     otherShipOnDate = ""
                     foodDeliverySlotId = selectedFoodSlot?.slotId
