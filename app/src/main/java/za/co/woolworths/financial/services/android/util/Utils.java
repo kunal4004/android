@@ -960,10 +960,6 @@ public class Utils {
         Utils.removeFromDb(SessionDao.KEY.STORES_USER_SEARCH);
         Utils.removeFromDb(SessionDao.KEY.STORES_USER_LAST_LOCATION);
         Utils.removeFromDb(SessionDao.KEY.LIVE_CHAT_EXTRAS);
-
-        // Clear Device Security data
-        Utils.removeFromDb(SessionDao.KEY.DEVICE_ID);
-        FirebaseInstallations.getInstance().delete();
     }
 
     public static void truncateMaxLine(final TextView tv) {
