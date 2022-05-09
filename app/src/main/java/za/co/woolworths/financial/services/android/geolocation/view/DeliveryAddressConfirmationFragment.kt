@@ -96,6 +96,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     private var defaultAddress: Address? = null
     private var savedAddressResponse: SavedAddressResponse? = null
     private var whoIsCollecting: WhoIsCollectingDetails? = null
+    private var customBottomSheetDialogFragment: CustomBottomSheetDialogFragment? = null
     var store: Store? = null
 
     @Inject
@@ -114,6 +115,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         setUpViewModel()
         addFragmentListner()
         initView()
+        moveToTab(deliveryType)
+        geoDeliveryView?.visibility = View.GONE // just to override the moveToTab function.
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -157,22 +160,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 when (deliveryType) {
 
                     Delivery.CNC.name -> {
-                        Utils.triggerFireBaseEvents(
-                            FirebaseManagerAnalyticsProperties.SHOP_CLICK_COLLECT_EDIT,
-                            hashMapOf(
-                                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_CLICK_COLLECT_EDIT
-                            ),
-                            activity)
-                        bundle?.putSerializable(
-                            VALIDATE_RESPONSE, validateLocationResponse)
-                        bundle?.putBoolean(
-                            IS_COMING_CONFIRM_ADD, false)
-                        bundle?.putString(DELIVERY_TYPE, deliveryType)
-                        findNavController().navigate(
-                            R.id.action_deliveryAddressConfirmationFragment_to_clickAndCollectStoresFragment,
-                            bundleOf(BUNDLE to bundle)
-                        )
+                        moveToCnCEditStore()
                         return
                     }
 
@@ -201,20 +189,26 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             R.id.geoCollectTab -> {
                 if (progressBar?.visibility == View.VISIBLE)
                     return
-                else
+                else {
+                    lastDeliveryType = deliveryType
                     openCollectionTab()
+                }
             }
             R.id.geoDeliveryTab -> {
                 if (progressBar?.visibility == View.VISIBLE)
                     return
-                else
+                else {
+                    lastDeliveryType = deliveryType
                     openGeoDeliveryTab()
+                }
             }
             R.id.geoDashTab -> {
                 if (progressBar?.visibility == View.VISIBLE)
                     return
-                else
+                else {
+                    lastDeliveryType = deliveryType
                     openDashTab()
+                }
             }
             R.id.btnRetryConnection -> {
                 initView()
@@ -222,24 +216,86 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         }
     }
 
+    private fun moveToTab(receivedDeliveryType: String?) {
+        when (receivedDeliveryType) {
+            Delivery.STANDARD.name -> {
+                openGeoDeliveryTab()
+            }
+            Delivery.CNC.name -> {
+                openCollectionTab()
+            }
+            Delivery.DASH.name -> {
+                openDashTab()
+            }
+            else -> {
+                openGeoDeliveryTab()
+            }
+        }
+    }
+
+    private fun moveToCnCEditStore() {
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.SHOP_CLICK_COLLECT_EDIT,
+            hashMapOf(
+                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_CLICK_COLLECT_EDIT
+            ),
+            activity)
+        bundle?.putSerializable(
+            VALIDATE_RESPONSE, validateLocationResponse)
+        bundle?.putBoolean(
+            IS_COMING_CONFIRM_ADD, false)
+        bundle?.putString(DELIVERY_TYPE, deliveryType)
+        findNavController().navigate(
+            R.id.action_deliveryAddressConfirmationFragment_to_clickAndCollectStoresFragment,
+            bundleOf(BUNDLE to bundle)
+        )
+    }
+
     private fun addFragmentListner() {
+        setFragmentResultListener(STORE_LOCATOR_REQUEST_CODE) { _, bundle ->
+            store = bundle.get(BUNDLE) as Store
+            store?.let {
+                if (it?.storeName != null) {
+                    geoDeliveryText?.text = it?.storeName
+                }
+                editDelivery?.text = bindString(R.string.edit)
+                btnConfirmAddress?.isEnabled = true
+                btnConfirmAddress?.setBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.black
+                    )
+                )
+                mStoreName = it?.storeName.toString()
+                mStoreId = it?.storeId.toString()
+            }
+        }
+
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, _ ->
             // change location button clicked as address is not deliverable.
-            navigateToConfirmAddressScreen()
+            when (deliveryType) {
+                Delivery.STANDARD.name, Delivery.DASH.name -> {
+                    navigateToConfirmAddressScreen()
+                }
+                Delivery.CNC.name -> {
+                    moveToCnCEditStore()
+                }
+            }
+        }
+        setFragmentResultListener(MAP_LOCATION_RESULT) { _, bundle ->
+            // Assign new lat long and Reload the fragment.
+            val localBundle = bundle.getBundle(BUNDLE)
+            localBundle.apply {
+                latitude = this?.getString(KEY_LATITUDE, "")
+                longitude = this?.getString(KEY_LONGITUDE, "")
+                placeId = this?.getString(KEY_PLACE_ID, "")
+            }
+            placeId?.let { getDeliveryDetailsFromValidateLocation(it) }
         }
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { _, _ ->
             // change location dismiss button clicked so land back on last delivery location tab.
-            when (lastDeliveryType) {
-                Delivery.STANDARD.name -> {
-                    openGeoDeliveryTab()
-                }
-                Delivery.CNC.name -> {
-                    openCollectionTab()
-                }
-                Delivery.DASH.name -> {
-                    openDashTab()
-                }
-            }
+            moveToTab(lastDeliveryType)
         }
     }
 
@@ -283,7 +339,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     ConfirmLocationRequest(DASH, confirmLocationAddress, mStoreId)
                 }
                 else -> {
-                    ConfirmLocationRequest(DASH, confirmLocationAddress, "")
+                    ConfirmLocationRequest(STANDARD, confirmLocationAddress, "")
                 }
             }
 
@@ -299,7 +355,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                 // save details in cache
                                 if (SessionUtilities.getInstance().isUserAuthenticated) {
                                     KotlinUtils.placeId = placeId
-                                    KotlinUtils.isLocationSame= placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
+                                    KotlinUtils.isLocationSame =
+                                        placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
                                     KotlinUtils.isDeliveryLocationTabClicked =
                                         placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
                                     KotlinUtils.isCncTabClicked =
@@ -315,7 +372,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                         KotlinUtils.clearAnonymousUserLocationDetails()
                                 } else {
                                     KotlinUtils.placeId = placeId
-                                    KotlinUtils.isLocationSame = placeId?.equals(KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId)
+                                    KotlinUtils.isLocationSame =
+                                        placeId?.equals(KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId)
                                     KotlinUtils.isDeliveryLocationTabClicked =
                                         placeId?.equals(KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId)
                                     KotlinUtils.isCncTabClicked =
@@ -445,6 +503,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     companion object {
 
         const val STORE_LOCATOR_REQUEST_CODE = "543"
+        const val MAP_LOCATION_RESULT = "8472"
 
         fun newInstance(latitude: String, longitude: String, placesId: String) =
             DeliveryAddressConfirmationFragment().withArgs {
@@ -478,7 +537,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         geoDeliveryTab?.isEnabled = true
         geoCollectTab?.isEnabled = true
         geoDashTab?.isEnabled = true
-        addFragmentListener()
         isUnSellableItemsRemoved()
         placeId?.let {
             if (confirmAddressViewModel.isConnectedToInternet(requireActivity())) {
@@ -491,29 +549,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         btnRetryConnection?.setOnClickListener(this)
     }
 
-    private fun addFragmentListener() {
-        setFragmentResultListener(STORE_LOCATOR_REQUEST_CODE) { _, bundle ->
-            store = bundle.get(BUNDLE) as Store
-            store?.let {
-                if (it?.storeName != null) {
-                    geoDeliveryText?.text = it?.storeName
-                }
-                editDelivery?.text = bindString(R.string.edit)
-                btnConfirmAddress?.isEnabled = true
-                btnConfirmAddress?.setBackgroundColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.black
-                    )
-                )
-                mStoreName = it?.storeName.toString()
-                mStoreId = it?.storeId.toString()
-            }
-        }
-    }
-
     private fun openGeoDeliveryTab() {
-        lastDeliveryType = deliveryType
         deliveryType = Delivery.STANDARD.name
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_DELIVERY,
             hashMapOf(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_DELIVERY),
@@ -528,11 +564,22 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         editDelivery?.text = getString(R.string.edit)
         changeFulfillmentTitleTextView?.text = bindString(R.string.standard_delivery)
         changeFulfillmentSubTitleTextView?.text = bindString(R.string.empty)
+        if (validateLocationResponse != null && validateLocationResponse?.validatePlace?.deliverable == false && progressBar?.visibility == View.GONE) {
+            // Show not deliverable Bottom Dialog.
+            showNotDeliverablePopUp(R.string.no_location_title,
+                R.string.no_location_desc,
+                R.string.change_location,
+                R.drawable.location_disabled,
+                null)
+        } else {
+            if (customBottomSheetDialogFragment != null && customBottomSheetDialogFragment!!.isVisible) {
+                customBottomSheetDialogFragment!!.dismiss()
+            }
+        }
         updateDeliveryDetails()
     }
 
     private fun openCollectionTab() {
-        lastDeliveryType = deliveryType
         deliveryType = Delivery.CNC.name
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_CLICK_COLLECT,
             hashMapOf(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_CLICK_COLLECT),
@@ -546,11 +593,24 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         changeFulfillmentSubTitleTextView?.text =
             if (collectionQuantity != null) bindString(R.string.click_and_collect_title_text,
                 collectionQuantity.toString()) else bindString(R.string.empty)
+        validateLocationResponse?.validatePlace?.apply {
+            if ((this?.stores?.isEmpty() == true || this?.stores?.getOrNull(0)?.deliverable == false) && progressBar?.visibility == View.GONE) {
+                // Show no store available Bottom Dialog.
+                showNotDeliverablePopUp(R.string.no_location_collection,
+                    R.string.no_location_desc,
+                    R.string.change_location,
+                    R.drawable.img_collection_bag,
+                    null)
+            } else {
+                if (customBottomSheetDialogFragment != null && customBottomSheetDialogFragment!!.isVisible) {
+                    customBottomSheetDialogFragment!!.dismiss()
+                }
+            }
+        }
         updateCollectionDetails()
     }
 
     private fun openDashTab() {
-        lastDeliveryType = deliveryType
         deliveryType = Delivery.DASH.name
         selectATab(geoDashTab)
         deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
@@ -565,6 +625,19 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             if (deliveryFee != null || deliveryQuantity != null) bindString(R.string.dash_title_text,
                 deliveryFee.toString(),
                 deliveryQuantity.toString()) else bindString(R.string.empty)
+        val dashDeliverable = validateLocationResponse?.validatePlace?.onDemand?.deliverable
+        if (validateLocationResponse != null && (dashDeliverable == null || dashDeliverable == false) && progressBar?.visibility == View.GONE) {
+            // Show not deliverable Popup
+            showNotDeliverablePopUp(R.string.no_location_title,
+                R.string.no_location_desc,
+                R.string.change_location,
+                R.drawable.location_disabled,
+                null)
+        } else {
+            if (customBottomSheetDialogFragment != null && customBottomSheetDialogFragment!!.isVisible) {
+                customBottomSheetDialogFragment!!.dismiss()
+            }
+        }
         updateDashDetails()
     }
 
@@ -595,33 +668,20 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     private fun getDeliveryDetailsFromValidateLocation(placeId: String) {
-        if (placeId.isNullOrEmpty())
+        val oldPlaceId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
+        if (placeId.isNullOrEmpty() || (oldPlaceId != null && oldPlaceId == placeId))
             return
 
+        progressBar?.visibility = View.VISIBLE
         lifecycleScope.launch {
-            progressBar?.visibility = View.VISIBLE
             try {
                 validateLocationResponse =
                     confirmAddressViewModel.getValidateLocation(placeId)
                 progressBar?.visibility = View.GONE
-                geoDeliveryView?.visibility = View.VISIBLE
                 if (validateLocationResponse != null) {
                     when (validateLocationResponse?.httpCode) {
                         HTTP_OK -> {
-                            when (deliveryType) {
-                                Delivery.STANDARD.name -> {
-                                    openGeoDeliveryTab()
-                                }
-                                Delivery.CNC.name -> {
-                                    openCollectionTab()
-                                }
-                                Delivery.DASH.name -> {
-                                    openDashTab()
-                                }
-                                else -> {
-                                    openGeoDeliveryTab()
-                                }
-                            }
+                            moveToTab(deliveryType)
                         }
                         else -> {
                             showErrorDialog()
@@ -638,60 +698,45 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     private fun updateDeliveryDetails() {
-        if (validateLocationResponse?.validatePlace?.deliverable == false) {
-            // Show not deliverable Bottom Dialog.
-            showNotDeliverablePopUp(R.string.no_location_title,
-                R.string.no_location_desc,
-                R.string.change_location,
-                R.drawable.location_disabled,
-                null)
-        }
         geoDeliveryView?.visibility = View.VISIBLE
         geoDeliveryText?.text =
             validateLocationResponse?.validatePlace?.placeDetails?.address1
+                ?: getString(R.string.empty)
 
-        val earliestFoodDate =
+        var earliestFoodDate =
             validateLocationResponse?.validatePlace?.firstAvailableFoodDeliveryDate
-        val earliestFashionDate =
+        if (earliestFoodDate.isNullOrEmpty())
+            earliestFoodDate = getString(R.string.earliest_delivery_no_date_available)
+
+        var earliestFashionDate =
             validateLocationResponse?.validatePlace?.firstAvailableOtherDeliveryDate
+        if (earliestFashionDate.isNullOrEmpty())
+            earliestFashionDate = getString(R.string.earliest_delivery_no_date_available)
         setVisibilityDeliveryDates(earliestFoodDate, earliestFashionDate, null)
     }
 
     private fun updateCollectionDetails() {
 
-        validateLocationResponse?.validatePlace?.apply {
-            if (this?.stores?.isEmpty() == true || this?.stores?.getOrNull(0)?.deliverable == false) {
-                // Show no store available Bottom Dialog.
-                showNotDeliverablePopUp(R.string.no_location_collection,
-                    R.string.no_location_desc,
-                    R.string.change_location,
-                    R.drawable.img_collection_bag,
-                    null)
-            }
-        }
-
         geoDeliveryView?.visibility = View.VISIBLE
         setGeoDeliveryTextForCnc()
 
-        val earliestFoodDate =
+        var earliestFoodDate =
             validateLocationResponse?.validatePlace?.firstAvailableFoodDeliveryDate
+        if (earliestFoodDate.isNullOrEmpty())
+            earliestFoodDate = getString(R.string.earliest_delivery_no_date_available)
         setVisibilityDeliveryDates(earliestFoodDate, null, null)
     }
 
     private fun updateDashDetails() {
-        if (validateLocationResponse?.validatePlace?.onDemand?.deliverable == true) {
-            geoDeliveryView?.visibility = View.VISIBLE
-            val earliestDashDate =
-                validateLocationResponse?.validatePlace?.onDemand?.firstAvailableFoodDeliveryTime
-            setVisibilityDeliveryDates(null, null, earliestDashDate)
-        } else {
-            // Show not deliverable Popup
-            showNotDeliverablePopUp(R.string.no_location_title,
-                R.string.no_location_desc,
-                R.string.change_location,
-                R.drawable.location_disabled,
-                null)
-        }
+        geoDeliveryView?.visibility = View.VISIBLE
+        geoDeliveryText?.text =
+            validateLocationResponse?.validatePlace?.onDemand?.storeName
+                ?: getString(R.string.empty)
+        var earliestDashDate =
+            validateLocationResponse?.validatePlace?.onDemand?.firstAvailableFoodDeliveryTime
+        if (earliestDashDate.isNullOrEmpty())
+            earliestDashDate = getString(R.string.earliest_delivery_no_date_available)
+        setVisibilityDeliveryDates(null, null, earliestDashDate)
     }
 
     private fun showNotDeliverablePopUp(
@@ -701,13 +746,13 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         @DrawableRes imgUrl: Int,
         dismissLinkText: String?,
     ) {
-        val customBottomSheetDialogFragment =
+        customBottomSheetDialogFragment =
             CustomBottomSheetDialogFragment.newInstance(getString(title),
                 getString(subTitle),
                 getString(btnText),
                 imgUrl,
                 dismissLinkText)
-        customBottomSheetDialogFragment.show(requireFragmentManager(),
+        customBottomSheetDialogFragment!!.show(requireFragmentManager(),
             CustomBottomSheetDialogFragment::class.java.simpleName)
     }
 
@@ -722,7 +767,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         } else {
             earliestDeliveryDateLabel?.visibility = View.VISIBLE
             earliestDeliveryDateValue?.visibility = View.VISIBLE
-            earliestDeliveryDateValue?.text = WFormatter.getFullMonthWithDate(earliestFoodDate)
+            //earliestDeliveryDateValue?.text = WFormatter.getFullMonthWithDate(earliestFoodDate)
+            earliestDeliveryDateValue?.text = earliestFoodDate
         }
 
         if (earliestFashionDate.isNullOrEmpty()) {
@@ -731,8 +777,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         } else {
             earliestFashionDeliveryDateLabel?.visibility = View.VISIBLE
             earliestFashionDeliveryDateValue?.visibility = View.VISIBLE
-            earliestFashionDeliveryDateValue?.text =
-                WFormatter.getFullMonthWithDate(earliestFashionDate)
+            //earliestFashionDeliveryDateValue?.text = WFormatter.getFullMonthWithDate(earliestFashionDate)
+            earliestFashionDeliveryDateValue?.text = earliestFashionDate
         }
         if (earliestDashDate.isNullOrEmpty()) {
             earliestDeliveryDashLabel?.visibility = View.GONE
