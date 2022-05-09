@@ -844,6 +844,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         storeId = Utils.getPreferredDeliveryLocation()?.let {
             it.fulfillmentDetails.storeId
         }
+        deliveryType = Delivery.CNC.type
+        address = ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
     }
 
     private fun isGiftMessage(): Boolean {
