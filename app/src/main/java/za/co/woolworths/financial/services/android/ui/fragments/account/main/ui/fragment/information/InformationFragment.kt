@@ -9,7 +9,6 @@ import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentInformationBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.account_product_landing_main_fragment.*
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 
 
@@ -25,7 +24,7 @@ class InformationFragment :
         super.onViewCreated(view, savedInstanceState)
         setAdapter()
         onBackPressed()
-        setToolbar()
+        binding.ivInformationClose.setOnClickListener(this)
     }
 
     fun onBackPressed() {
@@ -42,18 +41,9 @@ class InformationFragment :
         binding.informationRcv.adapter = InformationAdapter(args.informationData.info)
     }
 
-    private fun setToolbar() {
-        navigateBackImageButton.setOnClickListener(this)
-        with (binding) {
-                    toolbarTitleTextView . visibility = View . VISIBLE
-                    toolbarTitleTextView.text = getString(R.string.information)
-                    accountInArrearsTextView . visibility = View . GONE
-        }
-    }
-
     override fun onClick(view: View?) {
         when (view) {
-            navigateBackImageButton -> {
+            binding.ivInformationClose, -> {
                 findNavController().popBackStack()
             }
         }
