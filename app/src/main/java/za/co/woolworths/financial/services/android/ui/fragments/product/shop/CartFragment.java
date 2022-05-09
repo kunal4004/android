@@ -20,6 +20,7 @@ import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -43,6 +44,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.awfs.coordination.R;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -64,14 +66,11 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
-import za.co.woolworths.financial.services.android.checkout.service.network.Address;
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse;
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils;
-import za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressFragment;
-import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
@@ -85,14 +84,11 @@ import za.co.woolworths.financial.services.android.models.dto.Data;
 import za.co.woolworths.financial.services.android.models.dto.GlobalMessages;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
-import za.co.woolworths.financial.services.android.models.dto.Province;
-import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
-import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap;
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode;
@@ -524,8 +520,14 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 &&  !TextUtils.isEmpty(response.getDefaultAddressNickname())
         )  {
            //   - CNAV : Checkout  activity
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT,
-                    getActivity());
+
+            //firebase event begin_checkout
+            FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
+            Bundle beginCheckoutParams = new Bundle();
+            beginCheckoutParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE);
+            beginCheckoutParams.putString(FirebaseAnalytics.Param.VALUE, String.valueOf(orderSummary.total));
+            mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT, beginCheckoutParams);
+
             Intent checkoutActivityIntent = new Intent(getActivity(), CheckoutActivity.class);
             checkoutActivityIntent.putExtra(SAVED_ADDRESS_KEY, response);
             checkoutActivityIntent.putExtra(GEO_SLOT_SELECTION, true);
@@ -1077,6 +1079,24 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 } catch (Exception ex) {
                     FirebaseManager.Companion.logException(ex);
                 }
+                removeItemFromCart();
+            }
+
+            void removeItemFromCart(){
+                FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
+
+                Bundle removeFromCartParams = new Bundle();
+                removeFromCartParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE);
+                removeFromCartParams.putString(FirebaseAnalytics.Param.VALUE,  String.valueOf(commerceItem.getPriceInfo().amount));
+                Bundle removeFromCartItem = new Bundle();
+                removeFromCartItem.putString(FirebaseAnalytics.Param.ITEM_ID,mCommerceItem.commerceItemInfo.productId);
+                removeFromCartItem.putString(FirebaseAnalytics.Param.ITEM_NAME, mCommerceItem.commerceItemInfo.productDisplayName);
+                removeFromCartItem.putString(FirebaseAnalytics.Param.PRICE, String.valueOf(commerceItem.getPriceInfo().amount));
+                removeFromCartItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, mCommerceItem.commerceItemInfo.productDisplayName);
+                removeFromCartItem.putString(FirebaseAnalytics.Param.QUANTITY, String.valueOf(mCommerceItem.commerceItemInfo.quantity));
+                removeFromCartParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS,  new Parcelable[]{ removeFromCartItem });
+
+                mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.REMOVE_FROM_CART, removeFromCartParams);
             }
 
             @Override
@@ -1255,6 +1275,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         if (lastDeliveryLocation != null) {
             setDeliveryLocation(lastDeliveryLocation);
         }
+
+        FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
+        Bundle removeFromCartParams = new Bundle();
+        removeFromCartParams.putString(FirebaseAnalytics.Param.CURRENCY,FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE);
+        removeFromCartParams.putString(FirebaseAnalytics.Param.VALUE, " ");
+        mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.VIEW_CART, removeFromCartParams);
     }
 
     @Override

@@ -927,6 +927,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             // disable tap to next view until account response completed
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSREGISTER, activity);
             ScreenManager.presentSSORegister(getActivity());
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SIGN_UP, activity);
         }
     };
 
