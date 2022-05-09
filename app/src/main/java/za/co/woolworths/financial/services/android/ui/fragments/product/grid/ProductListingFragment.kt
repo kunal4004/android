@@ -78,6 +78,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.net.ConnectException
 import java.net.UnknownHostException
 import java.util.*
@@ -89,7 +90,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     WMaterialShowcaseView.IWalkthroughActionListener,
     IOnConfirmDeliveryLocationActionListener, ChanelNavigationClickListener {
 
-    private var EDIT_LOCATION_LOGIN_REQUEST = 1919
     private var LOGIN_REQUEST_SUBURB_CHANGE = 1419
     private var lastVisibleItem: Int = 0
     internal var totalItemCount: Int = 0
@@ -118,6 +118,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var mBannerImage: String? = null
     private var mIsComingFromBLP: Boolean = false
     private var liquorDialog: Dialog? = null
+    private var deliveryType: Delivery = Delivery.STANDARD
+    private var placeId: String? = null
 
     @OpenTermAndLighting
     @Inject
@@ -201,6 +203,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 )
             }
         }
+        addressLayout?.setOnClickListener(this)
 
         layout_error_blp?.blp_error_back_btn?.setOnClickListener {
             (activity as? BottomNavigationActivity)?.popFragment()
@@ -292,6 +295,63 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
         toolbarPLPTitle.text =
             if (mSubCategoryName?.isEmpty() == true) mSearchTerm else mSubCategoryName
+
+        // set delivery type and icon
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
+                setDeliveryType(it.deliveryType, it.address?.placeId)
+            }
+        } else {
+            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let {
+                setDeliveryType(it.deliveryType, it.address?.placeId)
+            }
+        }
+    }
+
+    private fun setDeliveryType(deliveryType: String?, placeId: String?) {
+        this.placeId = placeId
+        when(deliveryType){
+            Delivery.STANDARD.type -> {
+                this.deliveryType = Delivery.STANDARD
+                toolbarPLPAddress.text = requireContext().getString(R.string.standard_delivery)
+                toolbarPLPIcon?.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.ic_delivery_circle
+                    )
+                )
+            }
+            Delivery.CNC.type -> {
+                this.deliveryType = Delivery.CNC
+                toolbarPLPAddress.text = requireContext().getString(R.string.click_collect)
+                toolbarPLPIcon?.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.ic_collection_circle
+                    )
+                )
+            }
+            Delivery.DASH.type -> {
+                this.deliveryType = Delivery.DASH
+                toolbarPLPAddress.text = requireContext().getString(R.string.dash_delivery)
+                toolbarPLPIcon?.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.ic_dash_delivery_circle
+                    )
+                )
+            }
+            else -> {
+                this.deliveryType = Delivery.STANDARD
+                toolbarPLPAddress.text = requireContext().getString(R.string.standard_delivery)
+                toolbarPLPIcon?.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.ic_delivery_circle
+                    )
+                )
+            }
+        }
     }
 
     override fun onLoadProductSuccess(response: ProductView, loadMoreData: Boolean) {
@@ -749,6 +809,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     )
                     productView?.sortOptions?.let { sortOption -> this.showShortOptions(sortOption) }
                 }
+                R.id.addressLayout -> {
+                    presentEditDeliveryActivity()
+                }
 
                 else -> return
             }
@@ -890,8 +953,20 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     AppConfigSingleton.isProductItemForLiquorInventoryPending = true
                 }
             }
+            BundleKeysConstants.REQUEST_CODE -> {
+                setTitle()
+            }
             else -> return
         }
+    }
+
+    private fun presentEditDeliveryActivity() {
+        KotlinUtils.presentEditDeliveryGeoLocationActivity(
+            requireActivity(),
+            BundleKeysConstants.REQUEST_CODE,
+            deliveryType,
+            placeId
+        )
     }
 
     private fun reloadProductsWithSortAndFilter() {

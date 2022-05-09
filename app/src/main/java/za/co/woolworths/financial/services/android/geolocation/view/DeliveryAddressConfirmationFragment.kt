@@ -116,7 +116,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         addFragmentListner()
         initView()
         moveToTab(deliveryType)
-        geoDeliveryView?.visibility = View.GONE // just to override the moveToTab function.
+        geoDeliveryView?.visibility = View.GONE // just to override the moveToTab function. Because moveToTab function will show everything while screen is loading.
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
