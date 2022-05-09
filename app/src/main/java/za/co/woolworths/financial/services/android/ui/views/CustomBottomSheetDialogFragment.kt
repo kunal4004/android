@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.views
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -112,5 +113,10 @@ class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
                 dismiss()
             }
         }
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        setFragmentResult(DIALOG_BUTTON_DISMISS_RESULT, bundleOf())
+        super.onCancel(dialog)
     }
 }

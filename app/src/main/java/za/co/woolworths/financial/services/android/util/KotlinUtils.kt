@@ -459,7 +459,7 @@ class KotlinUtils {
                         tvDeliveringTo.text =
                             context?.resources?.getString(R.string.standard_delivery)
                         tvDeliveryLocation.text =
-                            address?.address1 ?: ""
+                            context?.resources?.getString(R.string.default_location)
 
                         tvDeliveryLocation.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_delivery_circle)
