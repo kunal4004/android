@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
+import com.daasuu.bl.ArrowDirection
 import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.black_tool_tip_layout.*
@@ -45,6 +46,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ShopPagerAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment.Companion.DEPARTMENT_LOGIN_REQUEST
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.DISPLAY_TOAST_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
@@ -80,6 +82,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private var shoppingListsResponse: ShoppingListsResponse? = null
     private var user: String = ""
     private var validateLocationResponse: ValidateLocationResponse? = null
+    private var tabWidth: Float = 0f
 
     private val shopViewModel: ShopViewModel by viewModels(
         ownerProducer = { this }
@@ -360,6 +363,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     private fun prepareTabView(tab: TabLayout, pos: Int, tabTitle: MutableList<String>?): View? {
         val view = activity?.layoutInflater?.inflate(R.layout.shop_custom_tab, null)
+        tabWidth = view?.width?.toFloat()!!
         view?.tvTitle?.text = tabTitle?.get(pos)
         if (tab.getTabAt(pos)?.view?.isSelected == true) {
             val futuraFont =
@@ -723,16 +727,16 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun showStandardDeliveryToolTip() {
-        if (KotlinUtils.isDeliveryLocationTabClicked == true) {
-            blackToolTipLayout?.visibility = View.GONE
-            return
-        }
-
-        if (validateLocationResponse?.validatePlace?.firstAvailableFoodDeliveryDate.isNullOrEmpty()
-            && validateLocationResponse?.validatePlace?.firstAvailableOtherDeliveryDate.isNullOrEmpty()) {
-            blackToolTipLayout?.visibility = View.GONE
-            return
-        }
+//        if (KotlinUtils.isDeliveryLocationTabClicked == true) {
+//            blackToolTipLayout?.visibility = View.GONE
+//            return
+//        }
+//
+//        if (validateLocationResponse?.validatePlace?.firstAvailableFoodDeliveryDate.isNullOrEmpty()
+//            && validateLocationResponse?.validatePlace?.firstAvailableOtherDeliveryDate.isNullOrEmpty()) {
+//            blackToolTipLayout?.visibility = View.GONE
+//            return
+//        }
 
         blackToolTipLayout?.visibility = View.VISIBLE
         KotlinUtils.isDeliveryLocationTabClicked = true
@@ -758,25 +762,26 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             fashionItemDateText?.text = it.firstAvailableOtherDeliveryDate
             productAvailableText?.text = getString(R.string.all_products_available)
             cartIcon.setImageResource(R.drawable.icon_cart_white)
-            bubbleLayout?.arrowPosition = 200.0F
+            bubbleLayout?.setArrowDirection(ArrowDirection.TOP)
+            bubbleLayout?.arrowPosition = tabs_main.getTabAt(0)?.view?.width?.div(2)?.toFloat()!!
         }
     }
 
     private fun showClickAndCollectToolTip() {
-        if (KotlinUtils.isCncTabClicked == true) {
-            blackToolTipLayout?.visibility = View.GONE
-            return
-        }
+//        if (KotlinUtils.isCncTabClicked == true) {
+//            blackToolTipLayout?.visibility = View.GONE
+//            return
+//        }
 
-        if (isUserAuthenticated() && getFirstAvailableFoodDeliveryDate().isNullOrEmpty() == true) {
-            blackToolTipLayout?.visibility = View.GONE
-            return
-        } else {
-            if (getFirstAvailableFoodDeliveryDate().isNullOrEmpty() == true) {
-                blackToolTipLayout?.visibility = View.GONE
-                return
-            }
-        }
+//        if (isUserAuthenticated() && getFirstAvailableFoodDeliveryDate().isNullOrEmpty() == true) {
+//            blackToolTipLayout?.visibility = View.GONE
+//            return
+//        } else {
+//            if (getFirstAvailableFoodDeliveryDate().isNullOrEmpty() == true) {
+//                blackToolTipLayout?.visibility = View.GONE
+//                return
+//            }
+//        }
         blackToolTipLayout?.visibility = View.VISIBLE
         KotlinUtils.isCncTabClicked = true
         validateLocationResponse?.validatePlace?.let { validatePlace ->
@@ -816,7 +821,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             cartIcon?.setImageResource(R.drawable.icon_cart_white)
             deliveryIcon?.setImageResource(R.drawable.white_shopping_bag_icon)
             deliveryFeeText?.text = resources.getString(R.string.dash_free_collection)
-            bubbleLayout?.arrowPosition = 640.0F
+            bubbleLayout?.setArrowDirection(ArrowDirection.TOP_CENTER)
         }
     }
 
@@ -847,16 +852,16 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     private fun showDashToolTip(validateLocationResponse: ValidateLocationResponse?) {
         val dashDeliverable = validateLocationResponse?.validatePlace?.onDemand?.deliverable
-        if (KotlinUtils.isDashTabClicked == true || dashDeliverable == null || dashDeliverable == false) {
-            blackToolTipLayout?.visibility = View.GONE
-            return
-        }
-
-        if (validateLocationResponse?.validatePlace?.
-            onDemand?.firstAvailableFoodDeliveryTime?.isNullOrEmpty() == true) {
-            blackToolTipLayout?.visibility = View.GONE
-            return
-        }
+//        if (KotlinUtils.isDashTabClicked == true || dashDeliverable == null || dashDeliverable == false) {
+//            blackToolTipLayout?.visibility = View.GONE
+//            return
+//        }
+//
+//        if (validateLocationResponse?.validatePlace?.
+//            onDemand?.firstAvailableFoodDeliveryTime?.isNullOrEmpty() == true) {
+//            blackToolTipLayout?.visibility = View.GONE
+//            return
+//        }
 
         blackToolTipLayout?.visibility = View.VISIBLE
         KotlinUtils.isDashTabClicked = true
@@ -873,7 +878,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             foodItemDateText?.text = it.onDemand?.firstAvailableFoodDeliveryTime
             cartIcon?.setImageResource(R.drawable.icon_cart_white)
             deliveryIcon?.setImageResource(R.drawable.icon_scooter_white)
-            bubbleLayout?.arrowPosition = 1060.0F
+            bubbleLayout?.setArrowDirection(ArrowDirection.TOP)
+            bubbleLayout?.arrowPosition =  tabs_main.width - tabs_main.getTabAt(2)?.view?.width?.div(2)?.toFloat()!!
             productAvailableText?.text = resources.getString(
                 R.string.dash_item_limit,
                 it.onDemand?.quantityLimit?.foodMaximumQuantity
