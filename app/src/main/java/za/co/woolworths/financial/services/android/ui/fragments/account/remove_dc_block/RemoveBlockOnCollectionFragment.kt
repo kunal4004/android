@@ -290,7 +290,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, Eligib
             }
             requireActivity().apply { Utils.triggerFireBaseEvents(propertyName, this) }
             accountData?.second?.apply {
-                val intent = Intent(requireContext(), WTransactionsActivity::class.java)
+                val intent = Intent(activity, WTransactionsActivity::class.java)
                 intent.putExtra(
                     BundleKeysConstants.PRODUCT_OFFERINGID,
                     productOfferingId.toString()

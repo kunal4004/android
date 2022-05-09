@@ -98,8 +98,6 @@ class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.On
             setOnClickListener(this@RemoveBlockOnCollectionDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
-
-        setupMakePaymentButton()
     }
 
     override fun onClick(view: View?) {
