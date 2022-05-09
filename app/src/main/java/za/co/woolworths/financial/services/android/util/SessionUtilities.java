@@ -4,8 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.HashMap;
 
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -65,24 +68,74 @@ public class SessionUtilities {
 		}
 	}
 
+	public String getUserEmail() {
+		JWTDecodedModel userDetail = getJwt();
+		if (userDetail != null) {
+			return userDetail.email.get(0);
+		}
+		return null;
+	}
+
 	public String getSessionToken() {
 		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.USER_TOKEN);
 		return sessionDao.value == null ? "" : sessionDao.value;
 	}
 
+	public String getDeviceIdentityToken() {
+		migrateDeviceIdentityTokenIfNeeded();
+		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.USER_DEVICE_IDENTITY_TOKEN);
+		if (sessionDao.value != null && !sessionDao.value.isEmpty()) {
+			String userEmail = getUserEmail();
+			HashMap<String, String> mapUserDeviceIdentityToken = new Gson().fromJson(sessionDao.value, HashMap.class);
+			if (mapUserDeviceIdentityToken.containsKey(userEmail)) {
+				return mapUserDeviceIdentityToken.get(userEmail);
+			}
+		}
+		return "";
+	}
+
 	public void setDeviceIdentityToken(String deviceIdentityToken) {
-		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DEVICE_IDENTITY_TOKEN);
-		sessionDao.value = deviceIdentityToken;
+		Gson gson = new Gson();
+		String userEmail = getUserEmail();
+		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.USER_DEVICE_IDENTITY_TOKEN);
+		HashMap<String, String> mapUserDeviceIdentityToken;
+		if (sessionDao.value != null && !sessionDao.value.isEmpty()) {
+			mapUserDeviceIdentityToken = gson.fromJson(sessionDao.value, HashMap.class);
+		} else {
+			mapUserDeviceIdentityToken = new HashMap<>();
+		}
+		mapUserDeviceIdentityToken.put(userEmail, deviceIdentityToken);
+		sessionDao.value = gson.toJson(mapUserDeviceIdentityToken, HashMap.class);
 		try {
 			sessionDao.save();
 		} catch (Exception e) {
-			Log.e(SessionDao.KEY.DEVICE_IDENTITY_TOKEN.toString(), e.getMessage());
+			Log.e(SessionDao.KEY.USER_DEVICE_IDENTITY_TOKEN.toString(), e.getMessage());
 		}
 	}
 
-	public String getDeviceIdentityToken() {
+	public void removeCurrentDeviceIdentityToken() {
+		Gson gson = new Gson();
+		String userEmail = getUserEmail();
+		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.USER_DEVICE_IDENTITY_TOKEN);
+		HashMap<String, String> mapUserDeviceIdentityToken;
+		if (sessionDao.value != null && !sessionDao.value.isEmpty()) {
+			mapUserDeviceIdentityToken = gson.fromJson(sessionDao.value, HashMap.class);
+			mapUserDeviceIdentityToken.remove(userEmail);
+			sessionDao.value = gson.toJson(mapUserDeviceIdentityToken, HashMap.class);
+			try {
+				sessionDao.save();
+			} catch (Exception e) {
+				Log.e(SessionDao.KEY.USER_DEVICE_IDENTITY_TOKEN.toString(), e.getMessage());
+			}
+		}
+	}
+
+	public void migrateDeviceIdentityTokenIfNeeded() {
 		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DEVICE_IDENTITY_TOKEN);
-		return sessionDao.value == null ? "" : sessionDao.value;
+		if (sessionDao.value != null && !sessionDao.value.isEmpty()) {
+			setDeviceIdentityToken(sessionDao.value);
+			Utils.removeFromDb(SessionDao.KEY.DEVICE_IDENTITY_TOKEN);
+		}
 	}
 
 	public void setSessionState(SessionDao.SESSION_STATE state) {
