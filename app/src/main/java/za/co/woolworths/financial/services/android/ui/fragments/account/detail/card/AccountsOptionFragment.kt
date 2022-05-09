@@ -24,7 +24,6 @@ import kotlinx.android.synthetic.main.account_card_detail_fragment.logoIncreaseL
 import kotlinx.android.synthetic.main.account_card_detail_fragment.relIncreaseMyLimit
 import kotlinx.android.synthetic.main.account_cart_item.*
 import kotlinx.android.synthetic.main.account_detail_header_fragment.*
-import kotlinx.android.synthetic.main.account_options_credit_limit_increase_fragment.*
 import kotlinx.android.synthetic.main.account_options_layout.*
 import kotlinx.android.synthetic.main.bpi_covered_tag_layout.*
 import kotlinx.android.synthetic.main.common_account_detail.*

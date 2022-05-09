@@ -13,10 +13,11 @@ enum class DetermineCardToDisplay {
     StoreCardIsTemporaryBlocked,
     StoreCardIsPermanentlyBlocked,
     StoreCardIsInstantReplacementCardAndInactive,
-    StoreCardIsDefault
+    StoreCardIsDefault,
+    ActivateVirtualTempCard
 }
 
-enum class StoreCardType(type: String) {
+enum class StoreCardType(val type: String) {
     TEMPORARY("p"),
     PERMANENT("l")
 }
@@ -33,7 +34,7 @@ enum class StoreCardBlockType(private val type: String?) {
 }
 
 interface IManageCardFunctionalRequirement {
-    var storeCardResponse: StoreCardsResponse?
+    fun getStoreCardsResponse(): StoreCardsResponse?
     fun isPrimaryCardAvailable(): Boolean
     fun getPrimaryCards(): MutableList<StoreCard>?
     fun getStoreCardData(): StoreCardsData?
@@ -51,8 +52,7 @@ interface IManageCardFunctionalRequirement {
 
 class ManageCardFunctionalRequirementImpl @Inject constructor() : IManageCardFunctionalRequirement {
 
-    override var storeCardResponse: StoreCardsResponse? =
-        SaveResponseDao.getValue(SessionDao.KEY.STORE_CARE_RESPONSE_PAYLOAD)
+    override fun getStoreCardsResponse(): StoreCardsResponse? = SaveResponseDao.getValue(SessionDao.KEY.STORE_CARE_RESPONSE_PAYLOAD, StoreCardsResponse::class.java)
 
     /**
      * Determine which card to display
@@ -73,9 +73,10 @@ class ManageCardFunctionalRequirementImpl @Inject constructor() : IManageCardFun
         return when (isPrimaryCardAvailable()) {
             true -> when {
                 blockCode.isNullOrEmpty() -> DetermineCardToDisplay.StoreCardIsActive
-                blockCode == StoreCardType.TEMPORARY.name -> DetermineCardToDisplay.StoreCardIsTemporaryBlocked
-                blockCode == StoreCardType.PERMANENT.name -> when {
+                blockCode.equals(StoreCardType.TEMPORARY.type,ignoreCase = true) -> DetermineCardToDisplay.StoreCardIsTemporaryBlocked
+                blockCode.equals(StoreCardType.PERMANENT.type, ignoreCase = true) -> when {
                     isInstantCardReplacementJourneyEnabled(primaryCardIndex) -> DetermineCardToDisplay.StoreCardIsInstantReplacementCardAndInactive
+                    canUserGenerateVirtualTempCard(primaryCardIndex) -> DetermineCardToDisplay.ActivateVirtualTempCard
                     else -> DetermineCardToDisplay.StoreCardIsDefault
                 }
                 else -> DetermineCardToDisplay.StoreCardIsDefault
@@ -89,7 +90,7 @@ class ManageCardFunctionalRequirementImpl @Inject constructor() : IManageCardFun
 
     override fun getPrimaryCards() = getStoreCardData()?.primaryCards
 
-    override fun getStoreCardData(): StoreCardsData? = storeCardResponse?.storeCardsData
+    override fun getStoreCardData(): StoreCardsData? = getStoreCardsResponse()?.storeCardsData
 
     override fun getBlockCode(primaryCardIndex: Int) =
         getPrimaryCards()?.elementAt(primaryCardIndex)?.blockCode
@@ -150,7 +151,7 @@ class ManageCardFunctionalRequirementImpl @Inject constructor() : IManageCardFun
             storeCard.cardDisplay = card
         }
         storeCardsResponse.storeCardsData?.primaryCards = primaryCards
-        SaveResponseDao.setValue(SessionDao.KEY.STORE_CARE_RESPONSE_PAYLOAD, primaryCards)
+        SaveResponseDao.setValue(SessionDao.KEY.STORE_CARE_RESPONSE_PAYLOAD, storeCardsResponse)
     }
 
     override fun isVirtualCardObjectExist(): Pair<Boolean,StoreCard?> {
