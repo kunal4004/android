@@ -21,7 +21,7 @@ public class AppInstanceObject {
     public ArrayList<User> users;
 
     public static final int MAX_DELIVERY_LOCATION_HISTORY = 5;
-    public static final int MAX_USERS = 3;
+    public static final int MAX_USERS = 1;
     public boolean biometric;
     public FeatureWalkThrough featureWalkThrough;
     private InAppChatTipAcknowledgements inAppChatTipAcknowledgements;

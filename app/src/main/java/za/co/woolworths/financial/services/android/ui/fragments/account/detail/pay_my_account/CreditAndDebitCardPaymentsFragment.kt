@@ -29,7 +29,6 @@ import kotlinx.android.synthetic.main.pma_personal_loan_electronic_fund_transfer
 import kotlinx.android.synthetic.main.pma_whatsapp_chat_with_us.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
@@ -106,7 +105,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
     private fun onRetry() {
         payMyAccountViewModel.getNavigationResult().observe(viewLifecycleOwner) { result ->
             when (result) {
-                PayMyAccountViewModel.OnBackNavigation.RETRY -> {
+                PayMyAccountViewModel.OnNavigateBack.Retry -> {
                     queryServicePaymentMethod()
                 }
                 else -> return@observe

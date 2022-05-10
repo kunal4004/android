@@ -14,5 +14,6 @@ class CommonHeaderUtils {
         const val USER_AGENT_VERSION = "userAgentVersion"
         const val SESSION_TOKEN = "sessionToken"
         const val DEVICE_IDENTITY_TOKEN = "deviceIdentityToken"
+        const val APP_VERSION="appversion"
     }
 }
