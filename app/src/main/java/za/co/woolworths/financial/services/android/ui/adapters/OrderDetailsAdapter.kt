@@ -64,111 +64,133 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
 
     inner class OrderStatusViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
         override fun bind(position: Int) {
-            val item = dataList[position].item as OrderDetailsResponse
-            itemView.orderState.text = item.orderSummary?.state
-            itemView.purchaseDate.text =
-                WFormatter.formatOrdersDate(item.orderSummary?.submittedDate)
-            itemView.total.text =
-                CurrencyFormatter.formatAmountToRandAndCentWithSpace(item.orderSummary?.total!!)
-            itemView.total.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-            itemView.noOfItems.text =
-                item?.orderSummary?.totalItemsCount.toString() + if (item?.orderSummary?.totalItemsCount > 1) context.getString(
-                    R.string.no_of_items
-                ) else context.getString(R.string.no_of_item)
 
-            val delivery: String? = item.orderSummary?.fulfillmentDetails?.deliveryType
-            var deliveryType: Delivery?
-            if(delivery.isNullOrEmpty()) {
+            itemView?.apply {
+                val item = dataList[position].item as OrderDetailsResponse
+                item.orderSummary?.let{
+                    it.state?.let{
+                        orderState?.text = it
+                    }
+                    it.submittedDate?.let{
+                        purchaseDate?.text =
+                            WFormatter.formatOrdersDate(it)
+                    }
+                    it.total?.let{
+                        total?.text =
+                            CurrencyFormatter.formatAmountToRandAndCentWithSpace(it)
+                        total?.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                    }
+                    it.totalItemsCount?.let{
+                        noOfItems?.text =
+                            it.toString() + if (it > 1) context.getString(
+                                R.string.no_of_items
+                            ) else context.getString(R.string.no_of_item)
+                    }
 
-                val storePickup = item.orderSummary?.store != null
-                deliveryType = if (storePickup) Delivery.CNC else Delivery.STANDARD
+                    val delivery: String? = it.fulfillmentDetails?.deliveryType
+                    var deliveryType: Delivery?
+                    if (delivery.isNullOrEmpty()) {
+                        val storePickup = it.store != null
+                        deliveryType = if (storePickup) Delivery.CNC else Delivery.STANDARD
+                        if (it.suburb?.name != null && !storePickup)
+                            deliverySuburb?.text = it.suburb?.name
+                        if (storePickup)
+                            deliverySuburb?.text = it.store?.name
+                        deliverySuburbLbl?.visibility =
+                            if ((it.suburb?.name != null && !storePickup) || storePickup) View.VISIBLE else View.GONE
+                        deliverySuburbLbl?.text =
+                            context?.resources?.getString(if (storePickup) R.string.collection_location else R.string.delivery_suburb)
+                        deliverySuburbLbl?.contentDescription =
+                            context?.resources?.getString(if (storePickup) R.string.collection_location_title else R.string.delivery_suburb)
+                        deliverySuburb?.contentDescription =
+                            context?.resources?.getString(if (storePickup && it.suburb?.name == null) R.string.collection_location_value else R.string.delivery_suburb)
+                    } else {
+                        deliveryType = Delivery.getType(delivery)
+                        when (deliveryType) {
+                            Delivery.CNC -> {
+                                deliverySuburbLbl?.text =
+                                    context?.resources?.getString(R.string.collection_location)
+                                it.fulfillmentDetails.storeName?.let{
+                                    deliverySuburb?.text = it
 
-                if (item?.orderSummary?.suburb?.name != null && !storePickup)
-                    itemView.deliverySuburb?.text = item?.orderSummary?.suburb?.name
-                if (storePickup)
-                    itemView.deliverySuburb?.text = item?.orderSummary?.store?.name
-                itemView.deliverySuburbLbl?.visibility =
-                    if ((item?.orderSummary?.suburb?.name != null && !storePickup) || storePickup) View.VISIBLE else View.GONE
-                itemView.deliverySuburbLbl?.text =
-                    context?.resources.getString(if (storePickup) R.string.collection_location else R.string.delivery_suburb)
-                itemView.deliverySuburbLbl?.contentDescription =
-                    context?.resources.getString(if (storePickup) R.string.collection_location_title else R.string.delivery_suburb)
-                itemView.deliverySuburb?.contentDescription =
-                    context?.resources.getString(if (storePickup && item.orderSummary.suburb?.name == null) R.string.collection_location_value else R.string.delivery_suburb)
-            }else{
-                deliveryType = Delivery.getType(delivery)
-                when (deliveryType) {
-                    Delivery.CNC -> {
-                        itemView.deliverySuburbLbl?.text =
-                            context?.resources.getString(R.string.collection_location)
-                        itemView.deliverySuburb?.text =
-                            item.orderSummary?.fulfillmentDetails?.storeName
+                                }
+                                deliverySuburbLbl?.contentDescription =
+                                    context?.resources?.getString(R.string.collection_location_title)
+                                deliverySuburb?.contentDescription =
+                                    context?.resources?.getString(R.string.delivery_suburb)
 
-                        itemView.deliverySuburbLbl?.contentDescription =
-                            context?.resources.getString(R.string.collection_location_title)
-                        itemView.deliverySuburb?.contentDescription =
-                            context?.resources.getString(R.string.delivery_suburb)
+                            }
+                            Delivery.STANDARD -> {
+                                deliverySuburbLbl?.visibility =
+                                    if (item.orderSummary?.fulfillmentDetails?.address?.address1.isNullOrEmpty()) View.GONE else View.VISIBLE
+                                deliverySuburbLbl?.text =
+                                    context?.resources?.getString(R.string.delivery_address)
+                                deliverySuburb?.text =
+                                    item.orderSummary?.fulfillmentDetails?.address?.address1
+                            }
 
-                    }
-                    Delivery.STANDARD -> {
-                        itemView.deliverySuburbLbl?.visibility =
-                            if (item.orderSummary?.fulfillmentDetails?.address?.address1.isNullOrEmpty()) View.GONE else View.VISIBLE
-                        itemView.deliverySuburbLbl?.text =
-                            context?.resources.getString(R.string.delivery_address)
-                        itemView.deliverySuburb?.text =
-                            item.orderSummary?.fulfillmentDetails?.address?.address1
-                    }
-                    else -> {
-                    }
-                }
-            }
-            if (!item.orderSummary?.deliveryDates.isJsonNull) {
-                when (deliveryType) {
-                    Delivery.CNC -> {
-                        itemView.deliveryItemsType.text =
-                            context?.resources.getString(R.string.collection_date)
-                        itemView.deliveryItemsType.contentDescription =
-                            context?.resources.getString(R.string.collection_details_date_title)
-                        itemView.deliveryDate.contentDescription =
-                            context?.resources.getString(R.string.collection_details_date_value)
-                    }
-                    Delivery.STANDARD -> {
-                        itemView.deliveryItemsType.text =
-                            context?.resources.getString(R.string.delivery_date)
-                        itemView.deliveryItemsType.contentDescription =
-                            context?.resources.getString(R.string.delivery_location_title1)
-                        itemView.deliveryDate.contentDescription =
-                            context?.resources.getString(R.string.delivery_location_value)
-                    }
-                    else -> {
-                    }
-                }
-
-              itemView.deliveryDateContainer.removeAllViews()
-                val deliveryDates: HashMap<String, String> = hashMapOf()
-                for (i in 0 until item.orderSummary?.deliveryDates.asJsonArray.size()) {
-                    deliveryDates.putAll(Gson().fromJson<Map<String, String>>(item.orderSummary?.deliveryDates.asJsonArray.get(i).toString(), object : TypeToken<Map<String, String>>() {}.type))
-                }
-                when (deliveryDates.keys.size) {
-                    0 -> {
-                        itemView.deliveryDateLayout.visibility = View.GONE
-                    }
-                    1 -> {
-                        itemView.deliveryDate.text = deliveryDates.getValue(deliveryDates.keys.toList()[0])
-                    }
-                    else -> {
-                        deliveryDates.entries.forEach { entry ->
-                            val view = (context as Activity).layoutInflater.inflate(R.layout.order_deatils_delivery_date_item, null)
-                            val deliveryItemsType = view.findViewById<WTextView>(R.id.deliveryItemsType)
-                            val dateOfDelivery = view.findViewById<WTextView>(R.id.dateOfDelivery)
-                            deliveryItemsType.text = entry.key
-                            dateOfDelivery.text = entry.value
-                            itemView.deliveryDateContainer.addView(view)
                         }
                     }
+                    if (!item.orderSummary?.deliveryDates.isJsonNull) {
+                        when (deliveryType) {
+                            Delivery.CNC -> {
+                                deliveryItemsType.text =
+                                    context?.resources?.getString(R.string.collection_date)
+                                deliveryItemsType.contentDescription =
+                                    context?.resources?.getString(R.string.collection_details_date_title)
+                                deliveryDate.contentDescription =
+                                    context?.resources?.getString(R.string.collection_details_date_value)
+                            }
+                            Delivery.STANDARD -> {
+                                deliveryItemsType?.text =
+                                    context?.resources?.getString(R.string.delivery_date)
+                                deliveryItemsType?.contentDescription =
+                                    context?.resources?.getString(R.string.delivery_location_title1)
+                                deliveryDate?.contentDescription =
+                                    context?.resources?.getString(R.string.delivery_location_value)
+                            }
+
+                        }
+
+                        deliveryDateContainer.removeAllViews()
+                        val deliveryDates: HashMap<String, String> = hashMapOf()
+                        for (i in 0 until item.orderSummary?.deliveryDates.asJsonArray.size()) {
+                            deliveryDates.putAll(
+                                Gson().fromJson<Map<String, String>>(
+                                    item.orderSummary?.deliveryDates.asJsonArray.get(
+                                        i
+                                    ).toString(), object : TypeToken<Map<String, String>>() {}.type
+                                )
+                            )
+                        }
+                        when (deliveryDates.keys.size) {
+                            0 -> {
+                                deliveryDateLayout?.visibility = View.GONE
+                            }
+                            1 -> {
+                                deliveryDate?.text =
+                                    deliveryDates.getValue(deliveryDates.keys.toList()[0])
+                            }
+                            else -> {
+                                deliveryDates.entries.forEach { entry ->
+                                    val view = (context as Activity).layoutInflater.inflate(
+                                        R.layout.order_deatils_delivery_date_item,
+                                        null
+                                    )
+                                    val deliveryItemsType =
+                                        view.findViewById<WTextView>(R.id.deliveryItemsType)
+                                    val dateOfDelivery =
+                                        view.findViewById<WTextView>(R.id.dateOfDelivery)
+                                    deliveryItemsType?.text = entry.key
+                                    dateOfDelivery?.text = entry.value
+                                    deliveryDateContainer.addView(view)
+                                }
+                            }
+                        }
+                    } else {
+                        deliveryDateLayout?.visibility = View.GONE
+                    }
                 }
-            } else {
-                itemView.deliveryDateLayout.visibility = View.GONE
             }
         }
 
@@ -177,12 +199,15 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
     inner class OrderItemViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
         override fun bind(position: Int) {
             val item = dataList[position].item as CommerceItem
-            setProductImage(itemView.imProductImage, item.commerceItemInfo.externalImageRefV2)
-            itemView.itemName.text = item.commerceItemInfo.quantity.toString()+" x "+item.commerceItemInfo.productDisplayName
-            itemView.price.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item.priceInfo.amount)
-            itemView.price.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
 
-            itemView.setOnClickListener { listner.onOpenProductDetail(item) }
+            itemView?.apply {
+                setProductImage(imProductImage, item.commerceItemInfo.externalImageRefV2)
+                itemName?.text = item?.commerceItemInfo?.quantity?.toString()+" x "+item?.commerceItemInfo?.productDisplayName
+                price?.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item?.priceInfo?.amount)
+                price?.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                setOnClickListener { listner.onOpenProductDetail(item) }
+            }
+
         }
 
     }
