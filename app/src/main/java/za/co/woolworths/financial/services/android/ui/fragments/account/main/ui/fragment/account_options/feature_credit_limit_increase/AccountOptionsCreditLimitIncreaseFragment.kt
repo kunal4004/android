@@ -14,6 +14,7 @@ import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderFailure
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.loadingState
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
@@ -90,6 +91,7 @@ class AccountOptionsCreditLimitIncreaseFragment :
     }
 
     private fun AccountOptionsCreditLimitIncreaseFragmentBinding.showProgress(isLoading: Boolean = false) {
-        circularProgressBarIndicator.visibility = if (isLoading) VISIBLE else GONE
+        binding.cliSkeleton.loadingState(isLoading)
+
     }
 }
