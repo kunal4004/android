@@ -114,9 +114,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         super.onViewCreated(view, savedInstanceState)
         setUpViewModel()
         addFragmentListner()
+        moveToTabBeforeApiCalls(deliveryType)
         initView()
-        moveToTab(deliveryType)
-        geoDeliveryView?.visibility = View.GONE // just to override the moveToTab function. Because moveToTab function will show everything while screen is loading.
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -212,6 +211,24 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             }
             R.id.btnRetryConnection -> {
                 initView()
+            }
+        }
+    }
+
+    private fun moveToTabBeforeApiCalls(receivedDeliveryType: String?) {
+        geoDeliveryView?.visibility = View.GONE
+        when (receivedDeliveryType) {
+            Delivery.STANDARD.name -> {
+                showDeliveryTabView()
+            }
+            Delivery.CNC.name -> {
+                showCollectionTabView()
+            }
+            Delivery.DASH.name -> {
+                showDashTabView()
+            }
+            else -> {
+                showDeliveryTabView()
             }
         }
     }
@@ -549,6 +566,42 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         btnRetryConnection?.setOnClickListener(this)
     }
 
+    private fun showDeliveryTabView() {
+        selectATab(geoDeliveryTab)
+        deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
+            R.drawable.img_delivery_truck))
+        changeFulfillmentTitleTextView?.text = bindString(R.string.standard_delivery)
+        changeFulfillmentSubTitleTextView?.text = bindString(R.string.empty)
+    }
+
+    private fun showCollectionTabView() {
+        selectATab(geoCollectTab)
+        deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
+            R.drawable.img_collection_bag))
+        changeFulfillmentTitleTextView?.text = bindString(R.string.click_and_collect)
+        val collectionQuantity =
+            validateLocationResponse?.validatePlace?.stores?.getOrNull(0)?.quantityLimit?.foodMaximumQuantity
+        changeFulfillmentSubTitleTextView?.text =
+            if (collectionQuantity != null) bindString(R.string.click_and_collect_title_text,
+                collectionQuantity.toString()) else bindString(R.string.empty)
+    }
+
+    private fun showDashTabView() {
+        selectATab(geoDashTab)
+        deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
+            R.drawable.img_dash_delivery))
+        changeFulfillmentTitleTextView?.text = bindString(R.string.dash_delivery)
+        val deliveryFee =
+            validateLocationResponse?.validatePlace?.onDemand?.deliveryTimeSlots?.getOrNull(0)?.slotCost
+        val deliveryQuantity =
+            validateLocationResponse?.validatePlace?.onDemand?.quantityLimit?.foodMaximumQuantity
+
+        changeFulfillmentSubTitleTextView?.text =
+            if (deliveryFee != null || deliveryQuantity != null) bindString(R.string.dash_title_text,
+                deliveryFee.toString(),
+                deliveryQuantity.toString()) else bindString(R.string.empty)
+    }
+
     private fun openGeoDeliveryTab() {
         deliveryType = Delivery.STANDARD.name
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_DELIVERY,
@@ -669,8 +722,10 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     private fun getDeliveryDetailsFromValidateLocation(placeId: String) {
         val oldPlaceId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
-        if (placeId.isNullOrEmpty() || (oldPlaceId != null && oldPlaceId == placeId))
+        if (placeId.isNullOrEmpty() || (oldPlaceId != null && oldPlaceId == placeId)) {
+            moveToTab(deliveryType)
             return
+        }
 
         progressBar?.visibility = View.VISIBLE
         lifecycleScope.launch {
@@ -698,7 +753,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     private fun updateDeliveryDetails() {
-        geoDeliveryView?.visibility = View.VISIBLE
         geoDeliveryText?.text =
             validateLocationResponse?.validatePlace?.placeDetails?.address1
                 ?: getString(R.string.empty)
@@ -712,23 +766,22 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             validateLocationResponse?.validatePlace?.firstAvailableOtherDeliveryDate
         if (earliestFashionDate.isNullOrEmpty())
             earliestFashionDate = getString(R.string.earliest_delivery_no_date_available)
+        geoDeliveryView?.visibility = View.VISIBLE
         setVisibilityDeliveryDates(earliestFoodDate, earliestFashionDate, null)
     }
 
     private fun updateCollectionDetails() {
-
-        geoDeliveryView?.visibility = View.VISIBLE
         setGeoDeliveryTextForCnc()
 
         var earliestFoodDate =
             validateLocationResponse?.validatePlace?.firstAvailableFoodDeliveryDate
         if (earliestFoodDate.isNullOrEmpty())
             earliestFoodDate = getString(R.string.earliest_delivery_no_date_available)
+        geoDeliveryView?.visibility = View.VISIBLE
         setVisibilityDeliveryDates(earliestFoodDate, null, null)
     }
 
     private fun updateDashDetails() {
-        geoDeliveryView?.visibility = View.VISIBLE
         geoDeliveryText?.text =
             validateLocationResponse?.validatePlace?.onDemand?.storeName
                 ?: getString(R.string.empty)
@@ -736,6 +789,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             validateLocationResponse?.validatePlace?.onDemand?.firstAvailableFoodDeliveryTime
         if (earliestDashDate.isNullOrEmpty())
             earliestDashDate = getString(R.string.earliest_delivery_no_date_available)
+        geoDeliveryView?.visibility = View.VISIBLE
         setVisibilityDeliveryDates(null, null, earliestDashDate)
     }
 
@@ -746,6 +800,9 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         @DrawableRes imgUrl: Int,
         dismissLinkText: String?,
     ) {
+        if (customBottomSheetDialogFragment != null && customBottomSheetDialogFragment!!.isVisible) {
+            customBottomSheetDialogFragment!!.dismiss()
+        }
         customBottomSheetDialogFragment =
             CustomBottomSheetDialogFragment.newInstance(getString(title),
                 getString(subTitle),

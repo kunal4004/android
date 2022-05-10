@@ -42,8 +42,9 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        dashDeliveryAdapter = DashDeliveryAdapter(requireContext(), onDemandNavigationListener = this,
-            dashLandingNavigationListener = this)
+        dashDeliveryAdapter =
+            DashDeliveryAdapter(requireContext(), onDemandNavigationListener = this,
+                dashLandingNavigationListener = this)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -81,9 +82,17 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 showSetAddressScreen() // show set Address screen
             } else {
                 // User Logged in and have location.
-                val validatePlace = viewModel.getValidatePlaceResponse()
-                    ?: WoolworthsApplication.getValidatePlaceDetails()
-                if (validatePlace == null){
+
+                // now check if application class response has deliverable or local object of validatePlace has deliverable. Continue with that object which has deliverable.
+                val validatePlace =
+                    if (viewModel.getValidatePlaceResponse()?.onDemand?.deliverable == true)
+                        viewModel.getValidatePlaceResponse()
+                    else if (WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.deliverable == true)
+                        WoolworthsApplication.getValidatePlaceDetails()
+                    else
+                        viewModel.getValidatePlaceResponse()
+                            ?: WoolworthsApplication.getValidatePlaceDetails()
+                if (validatePlace == null) {
                     // This means user has location but validatePlace response from DB is null.
                     // So call validate place API again.
                     subscribeToObservers()
