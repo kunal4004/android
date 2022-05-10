@@ -156,7 +156,15 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     selectedDeliveryAddressType = savedAddress?.addressType
                     if (savedAddress != null) {
                         selectedAddress.savedAddress = savedAddress
-                        selectedAddress.provinceName = getProvinceName(savedAddress.region)
+                        var provinceName:String?=""
+                        provinceName =getProvinceName(savedAddress.region)
+                        if(!provinceName.isNullOrEmpty()){
+                            selectedAddress?.provinceName = provinceName
+                        }else{
+                            savedAddress?.region?.let {
+                                selectedAddress?.provinceName =it
+                            }
+                        }
                     }
                     setHasOptionsMenu(true)
                 }
@@ -981,7 +989,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             postalCode?.text.toString().trim(),
             cellphoneNumberEditText?.text.toString().trim(),
             "",
-            selectedAddress.savedAddress.region ?: "",
+            provinceAutocompleteEditText?.text?.toString()?:"",
             selectedAddress.savedAddress.suburbId ?: "",
             selectedAddress.provinceName,
             suburbEditText?.text.toString(),
