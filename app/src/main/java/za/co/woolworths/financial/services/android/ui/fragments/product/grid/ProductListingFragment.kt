@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.skydoves.balloon.balloon
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.blp_error_layout.view.*
@@ -241,6 +242,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_SEARCH_RESULTS
             )
         }
+
+        val arguments = HashMap<String, String>()
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_LIST_NAME] = mSubCategoryName!!
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST,arguments, activity)
 
         if (activity is BottomNavigationActivity && (activity as BottomNavigationActivity).currentFragment is ProductListingFragment) {
             val currentPlaceId = KotlinUtils.getPreferredPlaceId()
@@ -708,6 +713,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     startActivity(openSearchActivity)
                     overridePendingTransition(0, 0)
                 }
+                val arguments = HashMap<String, String>()
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SEARCH_TERM] = mSearchTerm.toString()
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SEARCH_TYPE] = mSearchType.toString()
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SEARCH, arguments, activity)
                 true
             }
             else -> false
@@ -964,6 +973,22 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun openProductDetailView(productList: ProductList) {
+        //firebase event select_item
+        val mFirebaseAnalytics = FirebaseManager.getInstance().getAnalytics()
+        val selectItemParams = Bundle()
+        selectItemParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_LIST_NAME, mSubCategoryName)
+        selectItemParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_BRAND, productList.brandText)
+        for (products in 0..(mProductList?.size ?: 0)) {
+            val selectItem = Bundle()
+            selectItem.putString(FirebaseAnalytics.Param.ITEM_ID, productList.productId)
+            selectItem.putString(FirebaseAnalytics.Param.ITEM_NAME, productList.productName)
+            selectItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, mSubCategoryName)
+            selectItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT, productList.productVariants)
+            selectItem.putString(FirebaseAnalytics.Param.PRICE, productList.price.toString())
+            selectItemParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(selectItem))
+        }
+        mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.SELECT_ITEM_EVENT, selectItemParams)
+
         val title = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
         (activity as? BottomNavigationActivity)?.openProductDetailFragment(
             title,

@@ -929,6 +929,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             // disable tap to next view until account response completed
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSREGISTER, activity);
             ScreenManager.presentSSORegister(getActivity());
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SIGN_UP, activity);
         }
     };
 
@@ -1177,8 +1178,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         boolean isLinked = false;
         UserDevice[] deviceList = new AppStateRepository().getLinkedDevices();
         if (deviceList != null && deviceList.length > 0) {
+            String uniqueDeviceId = Utils.getUniqueDeviceID();
             for (UserDevice device : deviceList) {
-                if (Objects.equals(device.getAppInstanceId(), Utils.getUniqueDeviceID())) {
+                if (Objects.equals(device.getAppInstanceId(), uniqueDeviceId)) {
                     isLinked = true;
                     break;
                 }
