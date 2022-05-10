@@ -8,6 +8,7 @@ import retrofit2.Call
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.Response
@@ -518,6 +519,17 @@ object OneAppService : RetrofitConfig() {
     fun validateSelectedSuburb(suburbId: String, isStore: Boolean): Call<ValidateSelectedSuburbResponse> {
         return mApiInterface.validateSelectedSuburb( "", "",
             getSessionToken(), getDeviceIdentityToken(), suburbId, isStore)
+    }
+
+    suspend fun getValidateLocation(placeId: String): retrofit2.Response<ValidateLocationResponse> {
+        return withContext(Dispatchers.IO) {
+            mApiInterface.validatePlace("",
+                getSit4Environment(),
+                "",
+                getSessionToken(),
+                getDeviceIdentityToken(),
+                placeId)
+        }
     }
 
     fun applyVouchers(vouchers: List<SelectedVoucher>): Call<ShoppingCartResponse> {
