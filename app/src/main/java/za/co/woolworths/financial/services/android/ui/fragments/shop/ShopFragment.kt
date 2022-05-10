@@ -22,6 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.black_tool_tip_layout.*
 import kotlinx.android.synthetic.main.fragment_shop.*
 import kotlinx.android.synthetic.main.geo_location_delivery_address.*
+import kotlinx.android.synthetic.main.shop_custom_tab.*
 import kotlinx.android.synthetic.main.shop_custom_tab.view.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -370,11 +371,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 Typeface.createFromAsset(activity?.assets, "fonts/MyriadPro-Semibold.otf")
             view?.tvTitle?.typeface = futuraFont
         }
-        if (pos == 2) {
-            foodOnlyText?.visibility = View.VISIBLE
-        }
-        if (pos == 1) {
-            clickCollectText?.visibility = View.VISIBLE
+        if (pos == 0) {
+            view?.foodOnlyText?.visibility = View.INVISIBLE
         }
         return view
     }
