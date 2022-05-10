@@ -214,7 +214,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         mGetStatementFile = new GetStatement(statement.docId, String.valueOf(WoolworthsApplication.getProductOfferingId()), statement.docDesc);
         if (activity instanceof StatementActivity) {
             StatementActivity statementActivity = (StatementActivity) activity;
-            statementActivity.checkPermission();
+            getPdfFile(statementActivity.getApplyNowStateForStatement());
         }
     }
 
