@@ -19,8 +19,8 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
-import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var dataList: ArrayList<OrderDetailsItem>) :  RecyclerView.Adapter<OrdersBaseViewHolder>() {
 
@@ -65,23 +65,86 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
     inner class OrderStatusViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
         override fun bind(position: Int) {
             val item = dataList[position].item as OrderDetailsResponse
-            val storePickup = item.orderSummary?.store != null
             itemView.orderState.text = item.orderSummary?.state
-            itemView.purchaseDate.text = WFormatter.formatOrdersDate(item.orderSummary?.submittedDate)
-            itemView.total.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item.orderSummary?.total!!)
+            itemView.purchaseDate.text =
+                WFormatter.formatOrdersDate(item.orderSummary?.submittedDate)
+            itemView.total.text =
+                CurrencyFormatter.formatAmountToRandAndCentWithSpace(item.orderSummary?.total!!)
             itemView.total.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-            itemView.noOfItems.text = item?.orderSummary?.totalItemsCount.toString()+if(item?.orderSummary?.totalItemsCount>1)context.getString(R.string.no_of_items) else context.getString(R.string.no_of_item)
-            if (item?.orderSummary?.suburb?.name != null && !storePickup)
-                itemView.deliverySuburb?.text = item?.orderSummary?.suburb?.name
-            itemView.deliverySuburbLbl?.visibility = if(item?.orderSummary?.suburb?.name != null && !storePickup) View.VISIBLE else View.GONE
-            itemView.deliverySuburbLbl?.text = context?.resources.getString(if(storePickup) R.string.collection_location else R.string.delivery_suburb)
-            itemView.deliverySuburbLbl?.contentDescription = context?.resources.getString(if(storePickup) R.string.collection_location_title else R.string.delivery_suburb)
-            itemView.deliverySuburb?.contentDescription = context?.resources.getString(if(storePickup && item.orderSummary.suburb?.name == null) R.string.collection_location_value else R.string.delivery_suburb)
+            itemView.noOfItems.text =
+                item?.orderSummary?.totalItemsCount.toString() + if (item?.orderSummary?.totalItemsCount > 1) context.getString(
+                    R.string.no_of_items
+                ) else context.getString(R.string.no_of_item)
+
+            val delivery: String? = item.orderSummary?.fulfillmentDetails?.deliveryType
+            var deliveryType: Delivery?
+            if(delivery.isNullOrEmpty()) {
+
+                val storePickup = item.orderSummary?.store != null
+                deliveryType = if (storePickup) Delivery.CNC else Delivery.STANDARD
+
+                if (item?.orderSummary?.suburb?.name != null && !storePickup)
+                    itemView.deliverySuburb?.text = item?.orderSummary?.suburb?.name
+                if (storePickup)
+                    itemView.deliverySuburb?.text = item?.orderSummary?.store?.name
+                itemView.deliverySuburbLbl?.visibility =
+                    if ((item?.orderSummary?.suburb?.name != null && !storePickup) || storePickup) View.VISIBLE else View.GONE
+                itemView.deliverySuburbLbl?.text =
+                    context?.resources.getString(if (storePickup) R.string.collection_location else R.string.delivery_suburb)
+                itemView.deliverySuburbLbl?.contentDescription =
+                    context?.resources.getString(if (storePickup) R.string.collection_location_title else R.string.delivery_suburb)
+                itemView.deliverySuburb?.contentDescription =
+                    context?.resources.getString(if (storePickup && item.orderSummary.suburb?.name == null) R.string.collection_location_value else R.string.delivery_suburb)
+            }else{
+                deliveryType = Delivery.getType(delivery)
+                when (deliveryType) {
+                    Delivery.CNC -> {
+                        itemView.deliverySuburbLbl?.text =
+                            context?.resources.getString(R.string.collection_location)
+                        itemView.deliverySuburb?.text =
+                            item.orderSummary?.fulfillmentDetails?.storeName
+
+                        itemView.deliverySuburbLbl?.contentDescription =
+                            context?.resources.getString(R.string.collection_location_title)
+                        itemView.deliverySuburb?.contentDescription =
+                            context?.resources.getString(R.string.delivery_suburb)
+
+                    }
+                    Delivery.STANDARD -> {
+                        itemView.deliverySuburbLbl?.visibility =
+                            if (item.orderSummary?.fulfillmentDetails?.address?.address1.isNullOrEmpty()) View.GONE else View.VISIBLE
+                        itemView.deliverySuburbLbl?.text =
+                            context?.resources.getString(R.string.delivery_address)
+                        itemView.deliverySuburb?.text =
+                            item.orderSummary?.fulfillmentDetails?.address?.address1
+                    }
+                    else -> {
+                    }
+                }
+            }
             if (!item.orderSummary?.deliveryDates.isJsonNull) {
-                itemView.deliveryItemsType.text = context?.resources.getString(if(storePickup) R.string.collection_date else R.string.delivery_date)
-                itemView.deliveryItemsType.contentDescription = context?.resources.getString(if(storePickup) R.string.collection_details_date_title else R.string.delivery_location_title1)
-                itemView.deliveryDate.contentDescription = context?.resources.getString(if(storePickup) R.string.collection_details_date_value else R.string.delivery_location_value)
-                itemView.deliveryDateContainer.removeAllViews()
+                when (deliveryType) {
+                    Delivery.CNC -> {
+                        itemView.deliveryItemsType.text =
+                            context?.resources.getString(R.string.collection_date)
+                        itemView.deliveryItemsType.contentDescription =
+                            context?.resources.getString(R.string.collection_details_date_title)
+                        itemView.deliveryDate.contentDescription =
+                            context?.resources.getString(R.string.collection_details_date_value)
+                    }
+                    Delivery.STANDARD -> {
+                        itemView.deliveryItemsType.text =
+                            context?.resources.getString(R.string.delivery_date)
+                        itemView.deliveryItemsType.contentDescription =
+                            context?.resources.getString(R.string.delivery_location_title1)
+                        itemView.deliveryDate.contentDescription =
+                            context?.resources.getString(R.string.delivery_location_value)
+                    }
+                    else -> {
+                    }
+                }
+
+              itemView.deliveryDateContainer.removeAllViews()
                 val deliveryDates: HashMap<String, String> = hashMapOf()
                 for (i in 0 until item.orderSummary?.deliveryDates.asJsonArray.size()) {
                     deliveryDates.putAll(Gson().fromJson<Map<String, String>>(item.orderSummary?.deliveryDates.asJsonArray.get(i).toString(), object : TypeToken<Map<String, String>>() {}.type))
