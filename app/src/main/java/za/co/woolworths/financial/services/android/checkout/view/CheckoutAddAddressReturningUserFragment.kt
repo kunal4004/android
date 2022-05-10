@@ -1119,6 +1119,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 if (switchGiftInstructions?.isChecked == true) edtTxtGiftInstructions?.text.toString() else ""
             suburbId = this@CheckoutAddAddressReturningUserFragment.suburbId
             storeId = ""
+            deliveryType = Delivery.STANDARD.type
+            address = ConfirmLocationAddress(placesId)
         }
 
         return body
