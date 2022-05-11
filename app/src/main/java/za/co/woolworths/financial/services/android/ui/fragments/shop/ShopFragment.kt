@@ -83,7 +83,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private var shoppingListsResponse: ShoppingListsResponse? = null
     private var user: String = ""
     private var validateLocationResponse: ValidateLocationResponse? = null
-    private var tabWidth: Float = 0f
+    private var tabWidth: Float? = 0f
 
     private val shopViewModel: ShopViewModel by viewModels(
         ownerProducer = { this }
@@ -364,7 +364,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     private fun prepareTabView(tab: TabLayout, pos: Int, tabTitle: MutableList<String>?): View? {
         val view = activity?.layoutInflater?.inflate(R.layout.shop_custom_tab, null)
-        tabWidth = view?.width?.toFloat()!!
+        tabWidth = view?.width?.let {
+            it.toFloat()
+        }
         view?.tvTitle?.text = tabTitle?.get(pos)
         if (tab.getTabAt(pos)?.view?.isSelected == true) {
             val futuraFont =
@@ -761,7 +763,11 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             productAvailableText?.text = getString(R.string.all_products_available)
             cartIcon.setImageResource(R.drawable.icon_cart_white)
             bubbleLayout?.setArrowDirection(ArrowDirection.TOP)
-            bubbleLayout?.arrowPosition = tabs_main.getTabAt(0)?.view?.width?.div(2)?.toFloat()!!
+            if (tabs_main?.getTabAt(0)?.view != null) {
+                bubbleLayout?.arrowPosition = tabs_main?.let {
+                    it?.getTabAt(0)?.view?.width?.div(2)?.toFloat()
+                }!!
+            }
         }
     }
 
