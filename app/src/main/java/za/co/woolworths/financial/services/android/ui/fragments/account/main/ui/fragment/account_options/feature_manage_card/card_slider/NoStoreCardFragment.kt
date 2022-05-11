@@ -2,10 +2,13 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 
 import android.os.Bundle
 import android.view.View
-import com.awfs.coordination.databinding.ManageCardScreenSliderFragmentBinding
+import com.awfs.coordination.databinding.InstantStoreCardReplacementCardFragmentBinding
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 
-class ScreenSlideFragment : ViewBindingFragment<ManageCardScreenSliderFragmentBinding>(ManageCardScreenSliderFragmentBinding::inflate) {
+class NoStoreCardFragment() :
+    ViewBindingFragment<InstantStoreCardReplacementCardFragmentBinding>(
+        InstantStoreCardReplacementCardFragmentBinding::inflate
+    ) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
