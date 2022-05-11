@@ -9,10 +9,18 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCard
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.disableNestedScrolling
 import javax.inject.Inject
 
-class CardViewPager @Inject constructor() {
+interface ICardViewPager {
+    fun ViewPager2.onPageChangeListener(
+        cardAdapter: ManageCardScreenSlidesAdapter,
+        onPageSwipeListener: (StoreCard?) -> Unit
+    )
+}
+
+class CardViewPager @Inject constructor() : ICardViewPager {
 
     companion object {
         private const val OFFSET = 100
@@ -71,13 +79,37 @@ class CardViewPager @Inject constructor() {
         }
     }
 
-    operator fun invoke(viewPager: ViewPager2?,tab: TabLayout,cardAdapter: ManageCardScreenSlidesAdapter) {
+    operator fun invoke(
+        viewPager: ViewPager2?,
+        tab: TabLayout,
+        cardAdapter: ManageCardScreenSlidesAdapter,
+        onPageSwipeListener: (StoreCard?) -> Unit
+    ) {
         viewPager?.apply {
             disableNestedScrolling()
             offscreenPageLimit = 3
             setPageTransformer(OffsetPageTransformer(OFFSET, OFFSET))
             adapter = cardAdapter
             TabLayoutMediator(tab, this) { _, _ -> }.attach()
+
+            onPageChangeListener(cardAdapter, onPageSwipeListener)
         }
     }
+
+    override fun ViewPager2.onPageChangeListener(
+        cardAdapter: ManageCardScreenSlidesAdapter,
+        onPageSwipeListener: (StoreCard?) -> Unit
+    ) {
+        registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                val listOfPrimaryStoreCards = cardAdapter.getListOfStoreCards()
+                if (listOfPrimaryStoreCards?.size ?: 0 > 0) {
+                    val storeCard = listOfPrimaryStoreCards?.get(position)
+                    onPageSwipeListener(storeCard)
+                }
+            }
+        })
+    }
+
 }
