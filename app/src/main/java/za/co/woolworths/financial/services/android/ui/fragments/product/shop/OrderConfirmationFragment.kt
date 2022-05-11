@@ -35,6 +35,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.Navig
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 
 class OrderConfirmationFragment : Fragment() {
@@ -111,19 +112,25 @@ class OrderConfirmationFragment : Fragment() {
     private fun setupDeliveryOrCollectionDetails(response: SubmittedOrderResponse?) {
         context?.let {
             deliveryCollectionDetailsConstraintLayout.visibility = VISIBLE
-            if (response?.orderSummary?.store?.name != null) {
-                optionImage.background =
-                    AppCompatResources.getDrawable(it, R.drawable.icon_collection_grey_bg)
-                optionTitle?.text = it.getText(R.string.collecting_from)
-                deliveryTextView?.text = it.getText(R.string.collection_semicolon)
-                optionLocation?.text = response.orderSummary?.store?.name
-
-            } else {
-                optionImage?.background =
-                    AppCompatResources.getDrawable(it, R.drawable.icon_delivery_grey_bg)
-                optionTitle?.text = it.getText(R.string.delivering_to)
-                deliveryTextView?.text = it.getText(R.string.delivery_semicolon)
-                optionLocation?.text = response?.deliveryDetails?.shippingAddress?.address1
+            when (Delivery.getType(response?.orderSummary?.fulfillmentDetails?.deliveryType)) {
+                Delivery.CNC -> {
+                    optionImage.background =
+                        AppCompatResources.getDrawable(it, R.drawable.icon_collection_grey_bg)
+                    optionTitle?.text = it.getText(R.string.collecting_from)
+                    deliveryTextView?.text = it.getText(R.string.collection_semicolon)
+                    optionLocation?.text =
+                        response?.orderSummary?.fulfillmentDetails?.storeName ?: ""
+                }
+                Delivery.STANDARD -> {
+                    optionImage?.background =
+                        AppCompatResources.getDrawable(it, R.drawable.icon_delivery_grey_bg)
+                    optionTitle?.text = it.getText(R.string.delivering_to)
+                    deliveryTextView?.text = it.getText(R.string.delivery_semicolon)
+                    optionLocation?.text =
+                        response?.orderSummary?.fulfillmentDetails?.address?.address1 ?: ""
+                }
+                else -> {
+                }
             }
 
             if (response?.deliveryDetails?.deliveryInfos?.size == 2) {
@@ -211,13 +218,21 @@ class OrderConfirmationFragment : Fragment() {
     }
 
     private fun setupOrderDetailsBottomSheet(response: SubmittedOrderResponse?) {
-        if (response?.orderSummary?.store?.name != null) {
-            deliveryLocationText?.text = context?.getText(R.string.collection_location_semicolon)
-            deliveryOrderDetailsTextView?.text = context?.getText(R.string.collection_semicolon)
-        } else {
-            deliveryLocationText?.text = context?.getText(R.string.delivery_location_semicolon)
-            deliveryOrderDetailsTextView?.text = context?.getText(R.string.delivery_semicolon)
+
+        when (Delivery.getType(response?.orderSummary?.fulfillmentDetails?.deliveryType)) {
+            Delivery.CNC -> {
+                deliveryLocationText?.text =
+                    context?.getText(R.string.collection_location_semicolon)
+                deliveryOrderDetailsTextView?.text = context?.getText(R.string.collection_semicolon)
+            }
+            Delivery.STANDARD -> {
+                deliveryLocationText?.text = context?.getText(R.string.delivery_location_semicolon)
+                deliveryOrderDetailsTextView?.text = context?.getText(R.string.delivery_semicolon)
+            }
+            else -> {
+            }
         }
+
         bottomSheetScrollView?.visibility = VISIBLE
         orderStatusTextView?.text = response?.orderSummary?.state
         deliveryLocationTextView?.text = optionLocation.text
