@@ -4,7 +4,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.Px
 import androidx.core.view.ViewCompat
-import androidx.core.view.size
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -15,9 +14,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.integration.util
 import javax.inject.Inject
 
 interface ICardViewPager {
-    fun ViewPager2.onPageChange(
+    fun ViewPager2.onPageChangeListener(
         cardAdapter: ManageCardScreenSlidesAdapter,
-        renderStoreCard: (StoreCard?) -> Unit
+        onPageSwipeListener: (StoreCard?) -> Unit
     )
 }
 
@@ -84,7 +83,7 @@ class CardViewPager @Inject constructor() : ICardViewPager {
         viewPager: ViewPager2?,
         tab: TabLayout,
         cardAdapter: ManageCardScreenSlidesAdapter,
-        renderStoreCard: (StoreCard?) -> Unit
+        onPageSwipeListener: (StoreCard?) -> Unit
     ) {
         viewPager?.apply {
             disableNestedScrolling()
@@ -93,13 +92,13 @@ class CardViewPager @Inject constructor() : ICardViewPager {
             adapter = cardAdapter
             TabLayoutMediator(tab, this) { _, _ -> }.attach()
 
-            onPageChange(cardAdapter, renderStoreCard)
+            onPageChangeListener(cardAdapter, onPageSwipeListener)
         }
     }
 
-    override fun ViewPager2.onPageChange(
+    override fun ViewPager2.onPageChangeListener(
         cardAdapter: ManageCardScreenSlidesAdapter,
-        renderStoreCard: (StoreCard?) -> Unit
+        onPageSwipeListener: (StoreCard?) -> Unit
     ) {
         registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -107,7 +106,7 @@ class CardViewPager @Inject constructor() : ICardViewPager {
                 val listOfPrimaryStoreCards = cardAdapter.getListOfStoreCards()
                 if (listOfPrimaryStoreCards?.size ?: 0 > 0) {
                     val storeCard = listOfPrimaryStoreCards?.get(position)
-                    renderStoreCard(storeCard)
+                    onPageSwipeListener(storeCard)
                 }
             }
         })
