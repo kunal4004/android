@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.models.dto;
 
-import android.os.Parcelable;
 
 public class LiquorCompliance  {
     private String liquorImageUrl;
