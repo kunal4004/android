@@ -329,18 +329,18 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     private fun sendConfirmLocation() {
         var unSellableCommerceItems: MutableList<UnSellableCommerceItem>? = ArrayList()
         when (deliveryType) {
-            Delivery.STANDARD.type -> {
+            Delivery.STANDARD.name -> {
                 unSellableCommerceItems =
                     validateLocationResponse?.validatePlace?.unSellableCommerceItems
             }
-            Delivery.CNC.type -> {
+            Delivery.CNC.name -> {
                 validateLocationResponse?.validatePlace?.stores?.forEach {
                     if (it.storeName.equals(mStoreName)) {
                         unSellableCommerceItems = it.unSellableCommerceItems
                     }
                 }
             }
-            Delivery.DASH.type -> {
+            Delivery.DASH.name -> {
                 unSellableCommerceItems =
                     validateLocationResponse?.validatePlace?.onDemand?.unSellableCommerceItems
             }
@@ -748,6 +748,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 if (validateLocationResponse != null) {
                     when (validateLocationResponse?.httpCode) {
                         HTTP_OK -> {
+                            mStoreName = validateLocationResponse?.validatePlace?.stores?.getOrNull(0)?.storeName
                             moveToTab(deliveryType)
                         }
                         else -> {

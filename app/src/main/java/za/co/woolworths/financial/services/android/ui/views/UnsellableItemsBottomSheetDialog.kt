@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.unsellable_items_fragment.*
+import kotlinx.android.synthetic.main.unsellable_items_bottom_sheet_dialog.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
@@ -46,7 +46,7 @@ class UnsellableItemsBottomSheetDialog: WBottomSheetDialogFragment(),
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(
-            R.layout.unsellable_items_fragment,
+            R.layout.unsellable_items_bottom_sheet_dialog,
             container,
             false
         )
@@ -65,13 +65,13 @@ class UnsellableItemsBottomSheetDialog: WBottomSheetDialogFragment(),
             commerceItems = getSerializable(KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS) as? ArrayList<UnSellableCommerceItem>
         }
         when(deliveryType) {
-            Delivery.STANDARD.type -> {
+            Delivery.STANDARD.name -> {
                 subTitle.text = getText(R.string.remove_items_standard_dialog_desc)
             }
-            Delivery.CNC.type -> {
+            Delivery.CNC.name -> {
                 subTitle.text = getText(R.string.remove_items_cnc_dialog_desc)
             }
-            Delivery.DASH.type -> {
+            Delivery.DASH.name -> {
                 subTitle.text = getText(R.string.remove_items_dash_dialog_desc)
             }
             else -> {
