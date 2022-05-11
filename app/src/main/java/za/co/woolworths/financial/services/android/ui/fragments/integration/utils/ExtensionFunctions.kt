@@ -1,6 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.integration.utils
 
-import android.content.res.Resources
+import android.content.Context
 import android.os.Build
 import android.util.Base64
 import android.view.View
@@ -9,13 +9,13 @@ import androidx.annotation.ColorRes
 import androidx.annotation.NavigationRes
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.awfs.coordination.R
 import retrofit2.HttpException
 import za.co.absa.openbankingapi.AsymmetricCryptoHelper
 import za.co.absa.openbankingapi.DecryptionFailureException
@@ -190,3 +190,6 @@ fun ViewPager2.disableNestedScrolling() {
         overScrollMode = View.OVER_SCROLL_NEVER
     }
 }
+fun Context.displayLabel() : String? = resources?.getString(R.string.view_your_payment_plan)
+
+fun String.toMaskABSAPhoneNumber() = this.replace("\\d(?!\\d{0,2}\$|\\d{7,10}\$)".toRegex(), "*")

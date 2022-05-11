@@ -1,13 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.WindowCompat
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -16,25 +15,30 @@ import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountProductLandingMainFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.bpi_covered_tag_layout.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.observeOn
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
+import za.co.woolworths.financial.services.android.models.dto.EligibilityPlanResponse
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.NavigationGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOfferingState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.DialogData
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.StoreCardAccountOptionsViewModel
+
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RED_HEX_COLOR
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 @AndroidEntryPoint
-class AccountProductsMainFragment :
-    ViewBindingFragment<AccountProductLandingMainFragmentBinding>(AccountProductLandingMainFragmentBinding::inflate) {
+class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMainFragmentBinding>(
+    AccountProductLandingMainFragmentBinding::inflate
+) {
+
     private var childNavController: NavController? = null
     val viewModel by viewModels<AccountProductsHomeViewModel>()
-    var navigationGraph: NavigationGraph = NavigationGraph()
+    val optionsViewModel : StoreCardAccountOptionsViewModel by activityViewModels()
+
+    private var navigationGraph: NavigationGraph = NavigationGraph()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -83,7 +87,7 @@ class AccountProductsMainFragment :
                     is AccountOfferingState.AccountInGoodStanding -> Unit
 
                     is AccountOfferingState.AccountIsInArrears -> {
-                        displayPopUp(DialogData.AccountInArrDialog())
+                        // showAccountInArrears(account)
                     }
 
                     is AccountOfferingState.AccountIsChargedOff -> {
@@ -135,6 +139,7 @@ class AccountProductsMainFragment :
             }
         }
     }
+
 
     fun displayPopUp(dialogData: DialogData, eligibilityPlan: EligibilityPlan? = null) {
         viewModel.apply {

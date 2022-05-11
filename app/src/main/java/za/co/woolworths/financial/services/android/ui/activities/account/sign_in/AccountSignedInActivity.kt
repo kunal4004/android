@@ -71,8 +71,8 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     }
 
     private var isReloadCacheAccountDataEnabled: Boolean = false
-    var mAccountOptionsNavHost: NavHostFragment? = null
-    var mAvailableFundsNavHost: NavHostFragment? = null
+    private var mAccountOptionsNavHost: NavHostFragment? = null
+    private var mAvailableFundsNavHost: NavHostFragment? = null
     private var mPeekHeight: Int = 0
     var mAccountSignedInPresenter: AccountSignedInPresenterImpl? = null
     private var sheetBehavior: BottomSheetBehavior<*>? = null
@@ -93,15 +93,6 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
             mAvailableFundsNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_available_fund_fragment) as? NavHostFragment
             mAccountOptionsNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_overlay_bottom_sheet_fragment) as? NavHostFragment
             setAvailableFundBundleInfo(mAvailableFundsNavHost?.navController, myAccountsRemoteApiViewModel)
-            mAvailableFundsNavHost =
-                supportFragmentManager.findFragmentById(R.id.nav_host_available_fund_fragment) as? NavHostFragment
-            mAccountOptionsNavHost =
-                supportFragmentManager.findFragmentById(R.id.nav_host_overlay_bottom_sheet_fragment) as? NavHostFragment
-
-            setAvailableFundBundleInfo(
-                mAvailableFundsNavHost?.navController,
-                myAccountsRemoteApiViewModel
-            )
             setAccountCardDetailInfo(mAccountOptionsNavHost?.navController)
 
             setToolbarTopMargin()
@@ -162,11 +153,19 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         toolbarTitleTextView?.text = title
     }
 
-    override fun showAccountInArrears(account: Account) {
+    override fun showAccountInArrears(account: Account?) {
         toolbarTitleTextView?.visibility = GONE
         accountInArrearsTextView?.visibility = VISIBLE
         mAccountSignedInPresenter?.getMyAccountCardInfo()
             ?.let { accountKeyPair -> showAccountInArrearsDialog(accountKeyPair) }
+    }
+
+    override fun showAboveSixMonthsAccountInDelinquencyPopup(eligibilityPlan: EligibilityPlan?) {
+        val removeBlockOnCollectionFragmentContainerView =
+            supportFragmentManager.findFragmentById(R.id.removeBlockOnCollectionFragmentContainerView) as? NavHostFragment
+        val navigationController: NavController? =
+            removeBlockOnCollectionFragmentContainerView?.navController
+        showAboveSixMonthsInDelinquencyPopup(navigationController = navigationController,eligibilityPlan)
     }
 
     override fun hideAccountInArrears(account: Account) {
@@ -242,20 +241,20 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
                 ApplyNowState.STORE_CARD, ApplyNowState.PERSONAL_LOAN -> {
                     navigationController?.graph?.startDestination = R.id.removeBlockDCFragment
                     navigationController?.setGraph(navigationController.graph, bundleOf())
-                    sixMonthsPopUP(navigationController,getEligibilityPlan())
+                    showAboveSixMonthsInDelinquencyPopup(navigationController,getEligibilityPlan())
                 }
                 else -> {
                     window?.decorView?.fitsSystemWindows = true
                     Utils.updateStatusBarBackground(this@AccountSignedInActivity)
                     setAccountSixMonthInArrears(navigationController)
                     when(getEligibilityPlan()?.planType) {
-                        ELITE_PLAN ->{sixMonthsPopUP(navigationController,getEligibilityPlan())}
+                        ELITE_PLAN ->{showAboveSixMonthsInDelinquencyPopup(navigationController,getEligibilityPlan())}
                     }
                 }
             }
         }
     }
-    private fun sixMonthsPopUP(navigationController:NavController?,eligibilityPlan: EligibilityPlan?){
+    private fun showAboveSixMonthsInDelinquencyPopup(navigationController:NavController?, eligibilityPlan: EligibilityPlan?){
         val bundle = Bundle()
         bundle.putSerializable(
             ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN,
@@ -312,12 +311,21 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
     }
 
-    private fun showAccountInArrearsDialog(account: Pair<ApplyNowState, Account>) {
+    private fun showAccountInArrearsDialog(
+        account: Pair<ApplyNowState, Account>, eligibilityPlan: EligibilityPlan? = null) {
         val accountApplyNowState = payMyAccountViewModel.getCardDetail()?.account
         if (accountApplyNowState == null)
             payMyAccountViewModel.setPMACardInfo(PMACardPopupModel(account = mAccountSignedInPresenter?.getMyAccountCardInfo()))
         val bundle = Bundle()
         bundle.putString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Gson().toJson(account))
+        bundle.putSerializable(
+            ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN,
+            eligibilityPlan
+        )
+        bundle.putSerializable(
+            ViewTreatmentPlanDialogFragment.APPLY_NOW_STATE,
+            payMyAccountViewModel.getApplyNowState()
+        )
         mAvailableFundsNavHost?.navController?.navigate(R.id.accountInArrearsDialogFragment, bundle)
     }
 

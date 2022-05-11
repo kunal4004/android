@@ -19,6 +19,7 @@ class CommonHeaderInterceptor : NetworkConfig(), Interceptor {
             .addHeader(CommonHeaderUtils.OS_VERSION, getOsVersion())
             .addHeader(CommonHeaderUtils.USER_AGENT, "")
             .addHeader(CommonHeaderUtils.USER_AGENT_VERSION, "")
+            .addHeader(CommonHeaderUtils.OS_VERSION, getOsVersion())
             .addHeader(CommonHeaderUtils.SESSION_TOKEN, getSessionToken())
         return chain.proceed(request.build())
     }

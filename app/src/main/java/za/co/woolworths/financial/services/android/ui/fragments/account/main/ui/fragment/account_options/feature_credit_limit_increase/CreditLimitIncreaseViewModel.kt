@@ -6,7 +6,11 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.cor
 import javax.inject.Inject
 
 @HiltViewModel
-class CreditLimitIncreaseViewModel @Inject constructor(private val cliApi: CreditLimitIncreaseDataSource) :
-    ViewModel(), ICreditLimitIncrease by cliApi {
+class CreditLimitIncreaseViewModel @Inject constructor(
+    private val creditLimitIncreaseDataSource: CreditLimitIncreaseDataSource,
+    private val handleCreditLimitIncreaseStatus: HandleCreditLimitIncreaseStatus
+) : ViewModel(), ICreditLimitIncrease by creditLimitIncreaseDataSource,
+    IHandleCreditLimitIncreaseStatus by handleCreditLimitIncreaseStatus {
 
-    suspend fun queryRemoteServiceCLIOfferActive() = getViewStateFlowForNetworkCall { queryCliServiceOfferActive() } }
+    suspend fun queryRemoteServiceCLIOfferActive() = getViewStateFlowForNetworkCall { queryCliServiceOfferActive() }
+}

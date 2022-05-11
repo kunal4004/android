@@ -51,6 +51,7 @@ public class ScreenManager {
         }
     }
 
+
     public static void presentCartSSOSignin(Activity activity) {
         Intent intent = new Intent(activity, SSOActivity.class);
         intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());

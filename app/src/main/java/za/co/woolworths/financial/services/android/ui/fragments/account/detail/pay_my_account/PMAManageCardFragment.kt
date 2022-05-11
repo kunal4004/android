@@ -70,20 +70,20 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
 
         payMyAccountViewModel.getNavigationResult().observe(viewLifecycleOwner) { result ->
             when (result) {
-                PayMyAccountViewModel.OnBackNavigation.REMOVE -> {
+                is PayMyAccountViewModel.OnNavigateBack.Remove -> {
                     CoroutineScope(Dispatchers.Main).launch {
                         delay(AppConstant.DELAY_300_MS)
-                        removeCardProduct(mTemporarySelectedPosition)
+                        removeCardProduct(if (result.isCardExpired) result.position else mTemporarySelectedPosition)
                     }
                 }
-                PayMyAccountViewModel.OnBackNavigation.ADD -> {
+               is PayMyAccountViewModel.OnNavigateBack.Add -> {
                     CoroutineScope(Dispatchers.Main).launch {
                         delay(AppConstant.DELAY_300_MS)
                         navController?.navigate(R.id.action_manageCardFragment_to_addNewPayUCardFragment)
                     }
                 }
 
-                PayMyAccountViewModel.OnBackNavigation.MAX_CARD_LIMIT -> {
+               is  PayMyAccountViewModel.OnNavigateBack.MaxCardLimit -> {
                     CoroutineScope(Dispatchers.Main).launch {
                         delay(AppConstant.DELAY_350_MS)
                         navController?.navigate(R.id.action_manageCardFragment_to_PMATenCardLimitDialogFragment)
@@ -118,7 +118,7 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
                 when (paymentMethod.cardExpired) {
                     true -> {
                         payMyAccountViewModel.mSelectExpiredPaymentMethod = paymentMethod
-                        navController?.navigate(R.id.action_manageCardFragment_to_PMACardExpiredFragment)
+                        navController?.navigate(PMAManageCardFragmentDirections.actionManageCardFragmentToPMACardExpiredFragment(true, position))
                     }
                     else->{
                         mTemporarySelectedPosition = position
@@ -305,5 +305,10 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
 
             super.onChildDraw(canvas, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         }
+    }
+
+    companion object {
+        const val EXPIRED_POSITION = "EXPIRED_POSITION"
+        const val CARD_HAS_EXPIRED = "CARD_HAS_EXPIRED"
     }
 }

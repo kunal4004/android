@@ -193,6 +193,13 @@ class SubCategoryFragment :
         // If while category drill down
         // ... brand is present in MobileConfig send filter content as false
         // ... brand is not present in MobileConfig send filter content as true
+
+        val subCategoryModel = mSubCategoryListModel?.get(mSelectedHeaderPosition)
+        val arguments = HashMap<String, String>()
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CATEGORY_NAME] = mRootCategory?.categoryName!!
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SUB_CATEGORY_NAME] = subCategoryModel?.name.toString()
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SUB_SUB_CATEGORY_NAME] =  subCategory.getCategoryName()
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SCREEN_VIEW_PLP,arguments, activity)
         val brandNavigationDetails = BrandNavigationDetails(
             brandText = subCategory.categoryName,
             displayName = subCategory.categoryName,
