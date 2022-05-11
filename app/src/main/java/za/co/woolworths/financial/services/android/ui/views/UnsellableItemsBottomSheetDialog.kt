@@ -13,7 +13,6 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivit
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.ui.adapters.UnsellableItemsListAdapter
-import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -33,9 +32,9 @@ class UnsellableItemsBottomSheetDialog: WBottomSheetDialogFragment(),
 
         fun newInstance(
             unsellableItemsList: ArrayList<UnSellableCommerceItem>,
-            deliveryType: String
+            deliveryType: String,
         ) =
-            CustomBottomSheetDialogFragment().withArgs {
+            UnsellableItemsBottomSheetDialog().withArgs {
                 putSerializable(KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS, unsellableItemsList)
                 putString(KEY_ARGS_DELIVERY_TYPE, deliveryType)
             }
@@ -67,16 +66,16 @@ class UnsellableItemsBottomSheetDialog: WBottomSheetDialogFragment(),
         }
         when(deliveryType) {
             Delivery.STANDARD.type -> {
-                subTitle.text = bindString(R.string.remove_items_standard_dialog_desc)
+                subTitle.text = getText(R.string.remove_items_standard_dialog_desc)
             }
             Delivery.CNC.type -> {
-                subTitle.text = bindString(R.string.remove_items_cnc_dialog_desc)
+                subTitle.text = getText(R.string.remove_items_cnc_dialog_desc)
             }
             Delivery.DASH.type -> {
-                subTitle.text = bindString(R.string.remove_items_dash_dialog_desc)
+                subTitle.text = getText(R.string.remove_items_dash_dialog_desc)
             }
             else -> {
-                subTitle.text = bindString(R.string.remove_items_standard_dialog_desc)
+                subTitle.text = getText(R.string.remove_items_standard_dialog_desc)
             }
         }
         if(activity is CheckoutActivity) {

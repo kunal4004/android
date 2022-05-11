@@ -974,16 +974,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     private fun navigateToUnsellableItemsFragment(
         unSellableCommerceItems: ArrayList<UnSellableCommerceItem>,
     ) {
-        /* findNavController()?.navigate(
-             R.id.action_deliveryAddressConfirmationFragment_to_geoUnsellableItemsFragment,
-             bundleOf(
-                 UnsellableItemsFragment.KEY_ARGS_BUNDLE to bundleOf(
-                     UnsellableItemsFragment.KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS to Utils.toJson(
-                         unSellableCommerceItems), KEY_ARGS_DELIVERY_TYPE to deliveryType
-                 )
-             )
-         )*/
-
         deliveryType?.let {
             val unsellableItemsBottomSheetDialog =
                 UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, it)
