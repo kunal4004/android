@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,33 +10,51 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_30sdp"
-        android:layout_marginTop="@dimen/_30sdp"
+        android:layout_marginBottom="@dimen/_32sdp"
         android:text="@string/my_card"
         android:textColor="@color/black"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/manageAndCardTextGuideline"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/manageCardText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_30sdp"
         android:layout_marginEnd="@dimen/_24sdp"
+        android:layout_marginBottom="@dimen/_32sdp"
         android:text="@string/manage_my_card_title"
         android:textColor="@color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/manageAndCardTextGuideline"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/accountOptionsManageCardViewPager"
+    <TextView
+        android:id="@+id/storeCardTagTextView"
+        style="@style/tag_sdp_badge_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/manageCardText"
+        app:layout_constraintEnd_toEndOf="@+id/manageCardText"
+        app:layout_constraintTop_toTopOf="@+id/manageCardText" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/manageAndCardTextGuideline"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_29sdp"
+        android:orientation="horizontal"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintGuide_begin="@dimen/_80sdp" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/accountCardViewPager"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:nestedScrollingEnabled="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardText" />
+        app:layout_constraintTop_toTopOf="@+id/manageAndCardTextGuideline" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
@@ -43,13 +62,14 @@
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/accountOptionsManageCardViewPager">
+        app:layout_constraintTop_toBottomOf="@+id/accountCardViewPager">
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center"
+            android:layout_marginTop="@dimen/_6sdp"
             android:background="@android:color/transparent"
             android:clipToPadding="true"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -68,18 +88,20 @@
             android:layout_marginEnd="0dp" />
 
         <RelativeLayout
-            android:id="@+id/viewTreatmentPlanLinearLayout"
+            android:id="@+id/menuItem1RelativeLayout"
             style="@style/accountOptionItemsStyle">
 
             <ImageView
-                android:id="@+id/viewTreatmentPlanLogoImageView"
+                android:id="@+id/storeCardItem1ImageView"
                 style="@style/accountOptionsImageviewStyle"
                 android:src="@drawable/icon_limit" />
 
             <TextView
-                android:id="@+id/viewTreatmentPlanTextView"
+                android:id="@+id/storeCardItem1TextView"
                 style="@style/accountOptionsLabelStyle"
-                android:text="@string/view_treatment_plan_caption" />
+                android:layout_width="wrap_content"
+                android:layout_toEndOf="@+id/storeCardItem1ImageView"
+                android:text="list item 1" />
 
             <ImageView
                 android:id="@+id/viewTreatmentPlanNext"
@@ -91,21 +113,21 @@
         <View style="@style/accountOptionsDivider" />
 
         <RelativeLayout
-            android:id="@+id/replacementCardLinearLayout"
+            android:id="@+id/menuItem2RelativeLayout"
             style="@style/accountOptionItemsStyle">
 
             <ImageView
-                android:id="@+id/replacementCardImageView"
+                android:id="@+id/storeCardItem2ImageView"
                 style="@style/accountOptionsImageviewStyle"
                 android:src="@drawable/icon_limit" />
 
             <TextView
-                android:id="@+id/replacementCardTextView"
+                android:id="@+id/storeCardItem2TextView"
                 style="@style/accountOptionsLabelStyle"
                 android:layout_width="match_parent"
                 android:layout_toStartOf="@+id/replacementCardNext"
-                android:layout_toEndOf="@+id/replacementCardImageView"
-                android:text="@string/view_treatment_plan_caption" />
+                android:layout_toEndOf="@+id/storeCardItem2ImageView"
+                android:text="list Item 2" />
 
             <ImageView
                 android:id="@+id/replacementCardNext"
