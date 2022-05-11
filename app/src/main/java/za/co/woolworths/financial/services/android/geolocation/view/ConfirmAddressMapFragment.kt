@@ -478,21 +478,11 @@ class ConfirmAddressMapFragment :
                                 hideKeyboard(requireActivity())
                                 autoCompleteTextView?.clearFocus()
                                 val place = response.place
-                                val location = place.name
-                                val addressList: MutableList<Address>?
-                                if (location != null || location == "") {
-                                    try {
-                                        val geocoder = Geocoder(context)
-                                        addressList = geocoder.getFromLocationName(location, 1)
-                                        val address = addressList?.getOrNull(0)
-                                        latLng = address?.latitude?.let {
-                                            LatLng(it, address.longitude)
-                                        }
-                                        isAddressSearch = true
-                                        moveMapCamera(latLng)
-                                    } catch (e: Exception) {
-                                        FirebaseManager.logException(e)
-                                    }
+                                try {
+                                    isAddressSearch = true
+                                    moveMapCamera(place.latLng)
+                                } catch (e: Exception) {
+                                    FirebaseManager.logException(e)
                                 }
                             }.addOnFailureListener {
                                 showErrorDialog()
