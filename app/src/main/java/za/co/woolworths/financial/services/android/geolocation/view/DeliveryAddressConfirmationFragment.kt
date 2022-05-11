@@ -46,9 +46,9 @@ import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerce
 import za.co.woolworths.financial.services.android.models.network.StorePickupInfoBody
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.*
@@ -327,17 +327,29 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     private fun sendConfirmLocation() {
-        var unSellableCommerceItems: MutableList<UnSellableCommerceItem>? = null
-        validateLocationResponse?.validatePlace?.stores?.forEach {
-            if (it.storeName.equals(mStoreName)) {
-                unSellableCommerceItems = it.unSellableCommerceItems
+        var unSellableCommerceItems: MutableList<UnSellableCommerceItem>? = ArrayList()
+        when (deliveryType) {
+            Delivery.STANDARD.type -> {
+                unSellableCommerceItems =
+                    validateLocationResponse?.validatePlace?.unSellableCommerceItems
+            }
+            Delivery.CNC.type -> {
+                validateLocationResponse?.validatePlace?.stores?.forEach {
+                    if (it.storeName.equals(mStoreName)) {
+                        unSellableCommerceItems = it.unSellableCommerceItems
+                    }
+                }
+            }
+            Delivery.DASH.type -> {
+                unSellableCommerceItems =
+                    validateLocationResponse?.validatePlace?.onDemand?.unSellableCommerceItems
             }
         }
+
         if (unSellableCommerceItems?.isNullOrEmpty() == false && isUnSellableItemsRemoved == false) {
             // show unsellable items
             unSellableCommerceItems?.let {
-                navigateToUnsellableItemsFragment(it)
-
+                navigateToUnsellableItemsFragment(it as ArrayList<UnSellableCommerceItem>)
             }
 
         } else {
@@ -960,17 +972,24 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
      * @see [UnSellableCommerceItem]
      */
     private fun navigateToUnsellableItemsFragment(
-        unSellableCommerceItems: MutableList<UnSellableCommerceItem>,
+        unSellableCommerceItems: ArrayList<UnSellableCommerceItem>,
     ) {
-        findNavController()?.navigate(
-            R.id.action_deliveryAddressConfirmationFragment_to_geoUnsellableItemsFragment,
-            bundleOf(
-                UnsellableItemsFragment.KEY_ARGS_BUNDLE to bundleOf(
-                    UnsellableItemsFragment.KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS to Utils.toJson(
-                        unSellableCommerceItems),
-                )
-            )
-        )
+        /* findNavController()?.navigate(
+             R.id.action_deliveryAddressConfirmationFragment_to_geoUnsellableItemsFragment,
+             bundleOf(
+                 UnsellableItemsFragment.KEY_ARGS_BUNDLE to bundleOf(
+                     UnsellableItemsFragment.KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS to Utils.toJson(
+                         unSellableCommerceItems), KEY_ARGS_DELIVERY_TYPE to deliveryType
+                 )
+             )
+         )*/
+
+        deliveryType?.let {
+            val unsellableItemsBottomSheetDialog =
+                UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, it)
+            unsellableItemsBottomSheetDialog.show(requireFragmentManager(),
+                UnsellableItemsBottomSheetDialog::class.java.simpleName)
+        }
     }
 
     private fun isUnSellableItemsRemoved() {

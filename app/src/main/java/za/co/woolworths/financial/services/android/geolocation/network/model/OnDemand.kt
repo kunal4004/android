@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.geolocation.network.model
 
 import com.google.gson.annotations.SerializedName
 import za.co.woolworths.financial.services.android.checkout.service.network.DeliveryStatus
+import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import java.io.Serializable
 
 class OnDemand : Serializable {
@@ -30,7 +31,7 @@ class OnDemand : Serializable {
     var firstAvailableFoodDeliveryCost: Int? = null
 
     @SerializedName("unSellableCommerceItems")
-    var unSellableCommerceItems: List<Any?>? = null
+    var unSellableCommerceItems: MutableList<UnSellableCommerceItem>? = null
 
     @SerializedName("deliveryStatus")
     var deliveryStatus: DeliveryStatus? = null

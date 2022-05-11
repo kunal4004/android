@@ -341,7 +341,7 @@ object OneAppService : RetrofitConfig() {
 
     fun getChangeQuantity(changeQuantity: ChangeQuantity): Call<ShoppingCartResponse> {
         return mApiInterface.changeQuantityRequest( "",
-                "", getSessionToken(), getDeviceIdentityToken(), changeQuantity.commerceId, changeQuantity)
+                "", getDev4Environment(), getSessionToken(), getDeviceIdentityToken(), changeQuantity.commerceId, changeQuantity)
     }
 
     fun removeCartItem(commerceId: String): Call<ShoppingCartResponse> {
