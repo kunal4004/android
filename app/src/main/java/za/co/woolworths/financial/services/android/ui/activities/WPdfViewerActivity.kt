@@ -132,19 +132,19 @@ class WPdfViewerActivity : AppCompatActivity(), PermissionResultCallback {
         permissionUtils?.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-    override fun PermissionGranted(request_code: Int) {
+    override fun permissionGranted(request_code: Int) {
         shareInvoice()
     }
 
-    override fun PartialPermissionGranted(
+    override fun partialPermissionGranted(
         request_code: Int,
         granted_permissions: ArrayList<String>?
     ) {
     }
 
-    override fun PermissionDenied(request_code: Int) {
+    override fun permissionDenied(request_code: Int) {
     }
 
-    override fun NeverAskAgain(request_code: Int) {
+    override fun neverAskAgain(request_code: Int) {
     }
 }
