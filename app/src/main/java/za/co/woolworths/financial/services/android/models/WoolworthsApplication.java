@@ -43,9 +43,9 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.wigroup.androidutils.Util;
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
-import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.bpi.BalanceProtectionInsurance;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
@@ -84,7 +84,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     private Activity mCurrentActivity = null;
 
-    private static ValidatedSuburbProducts validatedSuburbProducts;
+    private static ValidatePlace validatePlace;
 
 
     public static String getApiId() {
@@ -329,12 +329,12 @@ public class WoolworthsApplication extends Application implements Application.Ac
         this.mCurrentActivity = mCurrentActivity;
     }
 
-    public static ValidatedSuburbProducts getValidatedSuburbProducts() {
-        return validatedSuburbProducts;
+    public static ValidatePlace getValidatePlaceDetails() {
+        return validatePlace;
     }
 
-    public static void setValidatedSuburbProducts(ValidatedSuburbProducts validatedSuburbProducts) {
-        WoolworthsApplication.validatedSuburbProducts = validatedSuburbProducts;
+    public static void setValidatedSuburbProducts(ValidatePlace validatePlace) {
+        WoolworthsApplication.validatePlace = validatePlace;
     }
 
     public boolean isAnyActivityVisible() {

@@ -21,11 +21,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.TipsAndTricksViewPagerAdapter
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryLocationActivity
-import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
-import za.co.woolworths.financial.services.android.util.ScreenManager
-import za.co.woolworths.financial.services.android.util.SessionUtilities
-import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.*
 import kotlin.properties.Delegates
 
  class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener, ViewPager.OnPageChangeListener {
@@ -234,7 +230,7 @@ import kotlin.properties.Delegates
 
     private fun presentEditDeliveryLocation() {
         if (SessionUtilities.getInstance().isUserAuthenticated) {
-            presentEditDeliveryLocationActivity(this, 0)
+            KotlinUtils.presentEditDeliveryGeoLocationActivity(this, 0)
         } else {
             ScreenManager.presentSSOSignin(this, REQUEST_CODE_DELIVERY_LOCATION)
         }

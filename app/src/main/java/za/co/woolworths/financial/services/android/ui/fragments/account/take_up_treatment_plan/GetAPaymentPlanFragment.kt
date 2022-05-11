@@ -49,7 +49,7 @@ class GetAPaymentPlanFragment : Fragment() {
 
         with(binding.viewPlanOptionsButton) {
             setOnClickListener {
-                KotlinUtils.openTreatmenPlanUrl(activity, mEligibilityPlan)
+                KotlinUtils.openTreatmentPlanUrl(activity, mEligibilityPlan)
             }
         }
     }

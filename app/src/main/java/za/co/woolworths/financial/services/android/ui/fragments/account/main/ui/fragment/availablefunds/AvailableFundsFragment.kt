@@ -46,7 +46,8 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 @AndroidEntryPoint
-open class AvailableFundsFragment : ViewBindingFragment<AvailableFundsFragmentBinding>(AvailableFundsFragmentBinding::inflate) {
+open class AvailableFundsFragment :
+    ViewBindingFragment<AvailableFundsFragmentBinding>(AvailableFundsFragmentBinding::inflate) {
 
     val viewModel by viewModels<AvailableFundsViewModel>()
     val payMyAccountViewModel by viewModels<PayMyAccountViewModel>()
@@ -63,7 +64,7 @@ open class AvailableFundsFragment : ViewBindingFragment<AvailableFundsFragmentBi
 
         viewModel.getNavigationResult().observe(viewLifecycleOwner) { result ->
             when (result) {
-                PayMyAccountViewModel.OnBackNavigation.RETRY -> {
+                PayMyAccountViewModel.OnNavigateBack.Retry -> {
                     activity?.runOnUiThread {
                         viewModel.isQueryPayUPaymentMethodComplete = false
                         queryPaymentMethod()
@@ -338,7 +339,7 @@ open class AvailableFundsFragment : ViewBindingFragment<AvailableFundsFragmentBi
         }
     }
 
-    fun initShimmer(state: Boolean) {
+    private fun initShimmer(state: Boolean) {
         binding.incPayMyAccountButton.viewPaymentOptionImageShimmerLayout.loadingState(state)
         binding.incPayMyAccountButton.viewPaymentOptionTextShimmerLayout.loadingState(state)
     }

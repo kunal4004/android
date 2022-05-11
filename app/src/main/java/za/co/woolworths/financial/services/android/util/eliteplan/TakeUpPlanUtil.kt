@@ -7,7 +7,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class TakeUpPlanUtil {
     companion object {
-        fun takeUpPlanActionAndEventPair(applyNowState: ApplyNowState):Pair<String,String>{
+        fun takeUpPlanActionAndEventPair(applyNowState: ApplyNowState?):Pair<String,String>{
             when (applyNowState) {
                 ApplyNowState.STORE_CARD -> {
                     return Pair(
@@ -30,7 +30,7 @@ class TakeUpPlanUtil {
             }
 
         }
-        fun takeUpPlanEventLog(applyNowState: ApplyNowState, activity: Activity) {
+        fun takeUpPlanEventLog(applyNowState: ApplyNowState?, activity: Activity) {
             val (action, eventName) = takeUpPlanActionAndEventPair(
                 applyNowState
             )
