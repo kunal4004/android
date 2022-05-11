@@ -18,7 +18,7 @@ sealed class StoreCardFeatureType : Parcelable {
     data class StoreCardIsActive(var storeCard: StoreCard?) : StoreCardFeatureType()
 
     @Parcelize
-    data class StoreCardIsTemporaryFreeze(var storeCard: StoreCard?) : StoreCardFeatureType()
+    data class StoreCardIsTemporaryFreeze(var storeCard: StoreCard?, var isStoreCardFrozen : Boolean = true) : StoreCardFeatureType()
 
     @Parcelize
     data class StoreCardIsPermanentlyBlocked(var storeCard: StoreCard?) : StoreCardFeatureType()
@@ -101,7 +101,7 @@ class ManageCardFunctionalRequirementImpl @Inject constructor() : IManageCardFun
                 blockCode.equals(
                     StoreCardType.TEMPORARY.type,
                     ignoreCase = true
-                ) -> StoreCardFeatureType.StoreCardIsTemporaryFreeze(storeCard)
+                ) -> StoreCardFeatureType.StoreCardIsTemporaryFreeze(storeCard, true)
                 blockCode.equals(StoreCardType.PERMANENT.type, ignoreCase = true) -> when {
                     isInstantCardReplacementJourneyEnabled(primaryCardIndex) -> StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive(
                         storeCard

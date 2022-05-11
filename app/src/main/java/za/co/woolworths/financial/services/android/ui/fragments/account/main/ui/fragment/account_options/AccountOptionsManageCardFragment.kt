@@ -46,7 +46,7 @@ class AccountOptionsManageCardFragment :
         val pager = CardViewPager()
 
         setupCard(pager, items = mutableListOf(StoreCardFeatureType.OnStart)) { feature ->
-            binding.showItemsList(feature)
+            binding.showStoreCardItems(feature)
             dotIndicatorVisibility(adapter.getListOfStoreCards())
         }
 
@@ -55,15 +55,23 @@ class AccountOptionsManageCardFragment :
                 queryServiceGetStoreCardCards().collect { response ->
                     with(response) {
                         renderSuccess {
-                            SaveResponseDao.setValue(SessionDao.KEY.STORE_CARD_RESPONSE_PAYLOAD, this.output)
-                            val listOfStoreCardFeatures = storeCardDataSource.getStoreCardListByFeatureType()
+                            SaveResponseDao.setValue(
+                                SessionDao.KEY.STORE_CARD_RESPONSE_PAYLOAD,
+                                this.output
+                            )
+                            val listOfStoreCardFeatures =
+                                storeCardDataSource.getStoreCardListByFeatureType()
                             adapter.setItem(listOfStoreCardFeatures)
                         }
                         renderFailure { Log.e("renderStatus", "renderFailure") }
                         renderEmpty { Log.e("renderStatus", "renderEmpty") }
                         renderLoading {
                             when (isLoading) {
-                                true -> binding.shouldHideAllListItems(true)
+                                true -> {
+                                    binding.isAllMenuListItemsVisible(true)
+                                    binding.isTemporaryFreezeCardVisible(false)
+                                    binding.isAccountOptionsDividerVisible(false)
+                                }
                                 false -> Unit
                             }
                         }
@@ -73,32 +81,49 @@ class AccountOptionsManageCardFragment :
         }
     }
 
-    private fun AccountOptionsManageCardFragmentBinding.shouldHideAllListItems(isHidden: Boolean) {
+    private fun AccountOptionsManageCardFragmentBinding.isAccountOptionsDividerVisible(isVisible: Boolean) {
+        accountOptionsDividerView.visibility= if (isVisible) VISIBLE else GONE
+    }
+    private fun AccountOptionsManageCardFragmentBinding.isAllMenuListItemsVisible(isHidden: Boolean) {
         menuItem1RelativeLayout.visibility = if (isHidden) GONE else VISIBLE
         menuItem2RelativeLayout.visibility = if (isHidden) GONE else VISIBLE
     }
 
-    private fun AccountOptionsManageCardFragmentBinding.showItemsList(storeCardFeatureType: StoreCardFeatureType?) =
+    private fun AccountOptionsManageCardFragmentBinding.isTemporaryFreezeCardVisible(isVisible: Boolean) {
+        menuItem3RelativeLayout.visibility = if (isVisible) VISIBLE else GONE
+        isAllMenuListItemsVisible(isVisible)
+        isAccountOptionsDividerVisible(!isVisible)
+    }
+
+    private fun AccountOptionsManageCardFragmentBinding.showStoreCardItems(storeCardFeatureType: StoreCardFeatureType?) =
         CoroutineScope(Dispatchers.Main).launch {
             when (storeCardFeatureType) {
                 is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive -> {
-                    shouldHideAllListItems(isHidden = false)
-                    cardLabelVisibility(isVisible = false)
-                    manageCardLabelVisibility(isVisible = false, isLabelUnderline = true)
+                    isAllMenuListItemsVisible(false)
+                    cardLabelVisibility(false)
+                    manageCardLabelVisibility(false, true)
                     setListItems1Info(R.string.replacement_card_label, R.drawable.icon_card)
                     setListItems2Info(R.string.link_new_card, R.drawable.link_icon)
-                    setStoreCardTag(R.string.inactive, R.string.red_tag,  true)
+                    setStoreCardTag(R.string.inactive, R.string.red_tag, isVisible = true)
+                    isTemporaryFreezeCardVisible(false)
                 }
-               is StoreCardFeatureType.StoreCardIsTemporaryFreeze -> {
-                    manageCardLabelVisibility(true, true)
-                    cardLabelVisibility(true)
-                    setStoreCardTag(R.string.freeze_temp_label, R.string.orange_tag, false)
+                is StoreCardFeatureType.StoreCardIsTemporaryFreeze -> {
+                    when(storeCardFeatureType.isStoreCardFrozen){
+                        true -> {
+                            manageCardLabelVisibility(true, true)
+                            cardLabelVisibility(true)
+                            setStoreCardTag(R.string.freeze_temp_label, R.string.orange_tag, false)
+                            isTemporaryFreezeCardVisible(true)
+                        }
+                        false -> {
+
+                        }
+                    }
                 }
                 else -> {
-                    shouldHideAllListItems(true)
+                    isAllMenuListItemsVisible(true)
                     cardLabelVisibility(true)
                     setStoreCardTag(R.string.inactive, R.string.red_tag, false)
-
                 }
             }
         }
@@ -108,8 +133,10 @@ class AccountOptionsManageCardFragment :
         isLabelUnderline: Boolean = false
     ) {
         manageCardText.visibility = if (isVisible) VISIBLE else INVISIBLE
-        manageCardText.paintFlags = if (isLabelUnderline) manageCardText.paintFlags or Paint.UNDERLINE_TEXT_FLAG else 0
+        manageCardText.paintFlags =
+            if (isLabelUnderline) manageCardText.paintFlags or Paint.UNDERLINE_TEXT_FLAG else 0
     }
+
     private fun AccountOptionsManageCardFragmentBinding.cardLabelVisibility(isVisible: Boolean) {
         cardText.visibility = if (isVisible) VISIBLE else GONE
     }
@@ -141,6 +168,7 @@ class AccountOptionsManageCardFragment :
         )
     }
 
+
     private fun AccountOptionsManageCardFragmentBinding.setListItems1Info(
         @StringRes titleId: Int,
         @DrawableRes iconId: Int
@@ -160,17 +188,17 @@ class AccountOptionsManageCardFragment :
         items: MutableList<StoreCardFeatureType>?,
         onPageSwipeListener: (StoreCardFeatureType?) -> Unit
     ) {
-            with(adapter) {
-                setItem(items)
-                binding.cardLabelVisibility(true)
-                binding.manageCardLabelVisibility(true, true)
-                dotIndicatorVisibility(getListOfStoreCards())
-                cardViewPager.invoke(
-                    binding.accountCardViewPager,
-                    binding.tab,
-                    this,
-                    onPageSwipeListener
-                )
+        with(adapter) {
+            setItem(items)
+            binding.cardLabelVisibility(true)
+            binding.manageCardLabelVisibility(true, true)
+            dotIndicatorVisibility(getListOfStoreCards())
+            cardViewPager.invoke(
+                binding.accountCardViewPager,
+                binding.tab,
+                this,
+                onPageSwipeListener
+            )
         }
     }
 
