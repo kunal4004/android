@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options
 
+import android.graphics.Paint
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -17,17 +18,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCard
-import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card_slider.CardViewPager
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card_slider.ManageCardScreenSlidesAdapter
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.DetermineCardToDisplay
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class AccountOptionsManageCardFragment :
@@ -45,8 +45,8 @@ class AccountOptionsManageCardFragment :
 
         val pager = CardViewPager()
 
-        setupCard(pager, items = mutableListOf()) { storeCard ->
-            binding.showItemsList(storeCard)
+        setupCard(pager, items = mutableListOf(StoreCardFeatureType.OnStart)) { feature ->
+            binding.showItemsList(feature)
             dotIndicatorVisibility(adapter.getListOfStoreCards())
         }
 
@@ -55,8 +55,9 @@ class AccountOptionsManageCardFragment :
                 queryServiceGetStoreCardCards().collect { response ->
                     with(response) {
                         renderSuccess {
-                            storeCardDataSource.addCardToDisplayStateToPrimaryCardObject(this.output)
-                            adapter.setItem(this.output.storeCardsData?.primaryCards)
+                            SaveResponseDao.setValue(SessionDao.KEY.STORE_CARD_RESPONSE_PAYLOAD, this.output)
+                            val listOfStoreCardFeatures = storeCardDataSource.getStoreCardListByFeatureType()
+                            adapter.setItem(listOfStoreCardFeatures)
                         }
                         renderFailure { Log.e("renderStatus", "renderFailure") }
                         renderEmpty { Log.e("renderStatus", "renderEmpty") }
@@ -77,29 +78,40 @@ class AccountOptionsManageCardFragment :
         menuItem2RelativeLayout.visibility = if (isHidden) GONE else VISIBLE
     }
 
-    private fun AccountOptionsManageCardFragmentBinding.showItemsList(storeCard: StoreCard?) =
+    private fun AccountOptionsManageCardFragmentBinding.showItemsList(storeCardFeatureType: StoreCardFeatureType?) =
         CoroutineScope(Dispatchers.Main).launch {
-            when (storeCard?.cardDisplay) {
-                DetermineCardToDisplay.StoreCardIsInstantReplacementCardAndInactive -> {
-                    shouldHideAllListItems(false)
-                    manageCardAndCardLabel(false)
+            when (storeCardFeatureType) {
+                is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive -> {
+                    shouldHideAllListItems(isHidden = false)
+                    cardLabelVisibility(isVisible = false)
+                    manageCardLabelVisibility(isVisible = false, isLabelUnderline = true)
                     setListItems1Info(R.string.replacement_card_label, R.drawable.icon_card)
                     setListItems2Info(R.string.link_new_card, R.drawable.link_icon)
-                    setStoreCardTag(R.string.inactive, R.string.red_tag, true)
+                    setStoreCardTag(R.string.inactive, R.string.red_tag,  true)
+                }
+               is StoreCardFeatureType.StoreCardIsTemporaryFreeze -> {
+                    manageCardLabelVisibility(true, true)
+                    cardLabelVisibility(true)
+                    setStoreCardTag(R.string.freeze_temp_label, R.string.orange_tag, false)
                 }
                 else -> {
                     shouldHideAllListItems(true)
-                    manageCardAndCardLabel(true)
+                    cardLabelVisibility(true)
                     setStoreCardTag(R.string.inactive, R.string.red_tag, false)
 
                 }
             }
         }
 
-    private fun AccountOptionsManageCardFragmentBinding.manageCardAndCardLabel(isVisible: Boolean) {
-        cardText.visibility = if (isVisible) VISIBLE else GONE
+    private fun AccountOptionsManageCardFragmentBinding.manageCardLabelVisibility(
+        isVisible: Boolean,
+        isLabelUnderline: Boolean = false
+    ) {
         manageCardText.visibility = if (isVisible) VISIBLE else INVISIBLE
-
+        manageCardText.paintFlags = if (isLabelUnderline) manageCardText.paintFlags or Paint.UNDERLINE_TEXT_FLAG else 0
+    }
+    private fun AccountOptionsManageCardFragmentBinding.cardLabelVisibility(isVisible: Boolean) {
+        cardText.visibility = if (isVisible) VISIBLE else GONE
     }
 
     private fun AccountOptionsManageCardFragmentBinding.setStoreCardTag(
@@ -145,15 +157,13 @@ class AccountOptionsManageCardFragment :
 
     private fun setupCard(
         cardViewPager: CardViewPager,
-        items: MutableList<StoreCard>?,
-        onPageSwipeListener: (StoreCard?) -> Unit
+        items: MutableList<StoreCardFeatureType>?,
+        onPageSwipeListener: (StoreCardFeatureType?) -> Unit
     ) {
-        val storeCardsResponse: StoreCardsResponse? =
-            SaveResponseDao.getValue(SessionDao.KEY.STORE_CARE_RESPONSE_PAYLOAD)
-        storeCardsResponse?.apply {
             with(adapter) {
                 setItem(items)
-                binding.manageCardAndCardLabel(true)
+                binding.cardLabelVisibility(true)
+                binding.manageCardLabelVisibility(true, true)
                 dotIndicatorVisibility(getListOfStoreCards())
                 cardViewPager.invoke(
                     binding.accountCardViewPager,
@@ -161,11 +171,10 @@ class AccountOptionsManageCardFragment :
                     this,
                     onPageSwipeListener
                 )
-            }
         }
     }
 
-    private fun dotIndicatorVisibility(items: MutableList<StoreCard>?) {
+    private fun dotIndicatorVisibility(items: MutableList<StoreCardFeatureType>?) {
         binding.tab.visibility = if (items?.size ?: 0 <= 1) INVISIBLE else VISIBLE
     }
 }

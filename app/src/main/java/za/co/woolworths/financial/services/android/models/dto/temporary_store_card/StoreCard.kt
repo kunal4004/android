@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.models.dto.temporary_store_c
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.DetermineCardToDisplay
 
 @Parcelize
 data class StoreCard(
@@ -18,6 +17,5 @@ data class StoreCard(
     val number: String,
     val dateOpened: String,
     val dateLastMaintained: String,
-    var blockType: String? = "",
-    var cardDisplay: DetermineCardToDisplay? = DetermineCardToDisplay.StoreCardIsDefault
+    var blockType: String? = ""
 ):Parcelable

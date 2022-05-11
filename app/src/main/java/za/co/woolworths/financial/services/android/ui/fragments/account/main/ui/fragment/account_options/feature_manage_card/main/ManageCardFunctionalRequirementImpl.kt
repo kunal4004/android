@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCard
@@ -8,14 +10,30 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.SaveResponseDao
 import javax.inject.Inject
 
-enum class DetermineCardToDisplay {
-    StoreCardInGoodStanding,
-    StoreCardIsActive ,
-    StoreCardIsTemporaryBlocked,
-    StoreCardIsPermanentlyBlocked,
-    StoreCardIsInstantReplacementCardAndInactive,
-    StoreCardIsDefault,
-    ActivateVirtualTempCard
+sealed class StoreCardFeatureType : Parcelable {
+    @Parcelize
+    data class StoreCardInGoodStanding(var storeCard: StoreCard?) : StoreCardFeatureType()
+
+    @Parcelize
+    data class StoreCardIsActive(var storeCard: StoreCard?) : StoreCardFeatureType()
+
+    @Parcelize
+    data class StoreCardIsTemporaryFreeze(var storeCard: StoreCard?) : StoreCardFeatureType()
+
+    @Parcelize
+    data class StoreCardIsPermanentlyBlocked(var storeCard: StoreCard?) : StoreCardFeatureType()
+
+    @Parcelize
+    data class StoreCardIsInstantReplacementCardAndInactive(var storeCard: StoreCard?) : StoreCardFeatureType()
+
+    @Parcelize
+    data class StoreCardIsDefault(var storeCard: StoreCard?) : StoreCardFeatureType()
+
+    @Parcelize
+    data class ActivateVirtualTempCard(var storeCard: StoreCard?) : StoreCardFeatureType()
+
+    @Parcelize
+    object OnStart : StoreCardFeatureType()
 }
 
 enum class StoreCardType(val type: String) {
@@ -39,7 +57,7 @@ interface IManageCardFunctionalRequirement {
     fun isPrimaryCardAvailable(): Boolean
     fun getPrimaryCards(): MutableList<StoreCard>?
     fun getStoreCardData(): StoreCardsData?
-    fun determineCardDisplay(primaryCardIndex: Int): DetermineCardToDisplay
+    fun determineCardDisplay(primaryCardIndex: Int, storeCard: StoreCard?): StoreCardFeatureType
     fun getBlockCode(primaryCardIndex: Int): String?
     fun getBlockType(primaryCardIndex: Int): StoreCardBlockType?
     fun isGenerateVirtualCard(): Boolean
@@ -47,13 +65,16 @@ interface IManageCardFunctionalRequirement {
     fun isTemporaryCardEnabled(primaryCardIndex: Int): Boolean
     fun isInstantCardReplacementJourneyEnabled(primaryCardIndex: Int): Boolean
     fun addManageMyCardsLinkOnStoreCardLandingScreen()
-    fun addCardToDisplayStateToPrimaryCardObject(storeCardsResponse: StoreCardsResponse)
+    fun getStoreCardListByFeatureType(): MutableList<StoreCardFeatureType>?
     fun isVirtualCardObjectExist(): Pair<Boolean, StoreCard?>
 }
 
 class ManageCardFunctionalRequirementImpl @Inject constructor() : IManageCardFunctionalRequirement {
 
-    override fun getStoreCardsResponse(): StoreCardsResponse? = SaveResponseDao.getValue(SessionDao.KEY.STORE_CARE_RESPONSE_PAYLOAD, StoreCardsResponse::class.java)
+    override fun getStoreCardsResponse(): StoreCardsResponse? = SaveResponseDao.getValue(
+        SessionDao.KEY.STORE_CARD_RESPONSE_PAYLOAD,
+        StoreCardsResponse::class.java
+    )
 
     /**
      * Determine which card to display
@@ -69,20 +90,31 @@ class ManageCardFunctionalRequirementImpl @Inject constructor() : IManageCardFun
      * card is permanently blocked
      * display an inactive card
      */
-    override fun determineCardDisplay(primaryCardIndex: Int): DetermineCardToDisplay {
+    override fun determineCardDisplay(
+        primaryCardIndex: Int,
+        storeCard: StoreCard?
+    ): StoreCardFeatureType {
         val blockCode = getBlockCode(primaryCardIndex)?.lowercase()
         return when (isPrimaryCardAvailable()) {
             true -> when {
-                blockCode.isNullOrEmpty() -> DetermineCardToDisplay.StoreCardIsActive
-                blockCode.equals(StoreCardType.TEMPORARY.type,ignoreCase = true) -> DetermineCardToDisplay.StoreCardIsTemporaryBlocked
+                blockCode.isNullOrEmpty() -> StoreCardFeatureType.StoreCardIsActive(storeCard)
+                blockCode.equals(
+                    StoreCardType.TEMPORARY.type,
+                    ignoreCase = true
+                ) -> StoreCardFeatureType.StoreCardIsTemporaryFreeze(storeCard)
                 blockCode.equals(StoreCardType.PERMANENT.type, ignoreCase = true) -> when {
-                    isInstantCardReplacementJourneyEnabled(primaryCardIndex) -> DetermineCardToDisplay.StoreCardIsInstantReplacementCardAndInactive
-                    canUserGenerateVirtualTempCard(primaryCardIndex) -> DetermineCardToDisplay.ActivateVirtualTempCard
-                    else -> DetermineCardToDisplay.StoreCardIsDefault
+                    isInstantCardReplacementJourneyEnabled(primaryCardIndex) -> StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive(
+                        storeCard
+                    )
+                    canUserGenerateVirtualTempCard(primaryCardIndex) -> StoreCardFeatureType.ActivateVirtualTempCard(
+                        storeCard
+                    )
+
+                    else -> StoreCardFeatureType.StoreCardIsDefault(storeCard)
                 }
-                else -> DetermineCardToDisplay.StoreCardIsDefault
+                else -> StoreCardFeatureType.StoreCardIsDefault(storeCard)
             }
-            false -> DetermineCardToDisplay.StoreCardIsDefault
+            false -> StoreCardFeatureType.StoreCardIsDefault(storeCard)
         }
     }
 
@@ -111,7 +143,8 @@ class ManageCardFunctionalRequirementImpl @Inject constructor() : IManageCardFun
      */
     override fun canUserGenerateVirtualTempCard(primaryCardIndex: Int): Boolean {
         val isGenerateVirtualCard = isGenerateVirtualCard()
-        val isVirtualTempCardFromAppConfigEnabled = AppConfigSingleton.virtualTempCard?.isEnabled ?: false
+        val isVirtualTempCardFromAppConfigEnabled =
+            AppConfigSingleton.virtualTempCard?.isEnabled ?: false
         return isGenerateVirtualCard && isVirtualTempCardFromAppConfigEnabled
     }
 
@@ -144,19 +177,18 @@ class ManageCardFunctionalRequirementImpl @Inject constructor() : IManageCardFun
 
     }
 
-    override fun addCardToDisplayStateToPrimaryCardObject(storeCardsResponse: StoreCardsResponse) {
-        SaveResponseDao.setValue(SessionDao.KEY.STORE_CARE_RESPONSE_PAYLOAD, storeCardsResponse)
-        val primaryCards = getPrimaryCards()
+    override fun getStoreCardListByFeatureType(): MutableList<StoreCardFeatureType>? {
+        val primaryCards = getStoreCardsResponse()?.storeCardsData?.primaryCards
+        val listOfStoreCardFeatures = mutableListOf<StoreCardFeatureType>()
         primaryCards?.forEachIndexed { index, storeCard ->
-            val card = determineCardDisplay(index)
-            storeCard.cardDisplay = card
+            val card = determineCardDisplay(index, storeCard)
+            listOfStoreCardFeatures.add(card)
         }
-        storeCardsResponse.storeCardsData?.primaryCards = primaryCards
-        SaveResponseDao.setValue(SessionDao.KEY.STORE_CARE_RESPONSE_PAYLOAD, storeCardsResponse)
+        return listOfStoreCardFeatures
     }
 
-    override fun isVirtualCardObjectExist(): Pair<Boolean,StoreCard?> {
+    override fun isVirtualCardObjectExist(): Pair<Boolean, StoreCard?> {
         val storeCardData = getStoreCardData()
-        return Pair(storeCardData?.virtualCard == null,storeCardData?.virtualCard)
+        return Pair(storeCardData?.virtualCard == null, storeCardData?.virtualCard)
     }
 }
