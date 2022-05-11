@@ -2,18 +2,25 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 
 import android.view.View.GONE
 import com.awfs.coordination.R
+import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.ActionText
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.DialogData
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.ProductLandingGroupCode
 import javax.inject.Inject
 
 interface IEligibilityImpl {
+    fun isCreditCard(account: Account?):Boolean
     fun getPopUpData(eligibilityPlan: EligibilityPlan?): DialogData
 }
 
 class EligibilityImpl @Inject constructor(
 ) : IEligibilityImpl {
+    override fun isCreditCard(account: Account?) :Boolean{
+        return account?.productGroupCode.equals(ProductLandingGroupCode.CreditCard().name)
+    }
+
     override fun getPopUpData(eligibilityPlan: EligibilityPlan?): DialogData {
         eligibilityPlan?.apply {
             when (productGroupCode?.value?.equals(eligibilityPlan.productGroupCode?.value)) {
