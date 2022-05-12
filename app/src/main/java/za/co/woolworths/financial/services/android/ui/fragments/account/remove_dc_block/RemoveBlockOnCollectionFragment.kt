@@ -170,7 +170,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, Eligib
             }
 
             ActionText.VIEW_ELITE_PLAN.value -> {
-                KotlinUtils.openTreatmenPlanUrl(activity, mAccountPresenter?.getEligibilityPlan())
+                KotlinUtils.openTreatmentPlanUrl(activity, mAccountPresenter?.getEligibilityPlan())
             }
         }
     }
@@ -288,7 +288,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, Eligib
                 ApplyNowState.STORE_CARD -> FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDTRANSACTIONS
                 else -> ""
             }
-            activity?.apply { Utils.triggerFireBaseEvents(propertyName, this) }
+            requireActivity().apply { Utils.triggerFireBaseEvents(propertyName, this) }
             accountData?.second?.apply {
                 val intent = Intent(activity, WTransactionsActivity::class.java)
                 intent.putExtra(

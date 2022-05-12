@@ -708,6 +708,14 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 FIRST.week,
                 ONLY_FOOD
             )
+            val foodItemDate = confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.food
+            val arguments = HashMap<String, String>()
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CURRENCY] = FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ORDER_TOTAL_VALUE] = selectedSlotResponseFood?.orderSummary?.total.toString()
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_DATE] = foodItemDate.toString()
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SHIPPING_TIER] = FirebaseManagerAnalyticsProperties.PropertyValues.SHIPPING_TIER_VALUE_FOOD
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ADD_SHIPPING_INFO, arguments,activity)
+
         } else if (OTHER.type == selectedSlotResponseFood?.fulfillmentTypes?.join && OTHER.type == selectedSlotResponseFood?.fulfillmentTypes?.other) {
             // For mix basket
             foodType = MIXED_FOOD
@@ -725,6 +733,13 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     MIXED_OTHER
                 ) // Sending params MIXED_OTHER here to get mixed_other grid while click on timeslot radiobutton.
             }
+            val foodItemDate = confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.food
+            val arguments = HashMap<String, String>()
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CURRENCY] = FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ORDER_TOTAL_VALUE] = selectedSlotResponseFood?.orderSummary?.total.toString()
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_DATE] = foodItemDate.toString()
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SHIPPING_TIER] = FirebaseManagerAnalyticsProperties.PropertyValues.SHIPPING_TIER_VALUE_MIXED
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ADD_SHIPPING_INFO, arguments,activity)
         } else {
             // for Other
             if (selectedSlotResponseFood?.requiredToDisplayODD == true) {
@@ -740,6 +755,13 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             txtNeedBags.visibility = GONE
             newShoppingBagsLayout.visibility = GONE
         }
+        val foodItemDate = confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.food
+        val arguments = HashMap<String, String>()
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CURRENCY] = FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ORDER_TOTAL_VALUE] = selectedSlotResponseFood?.orderSummary?.total.toString()
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_DATE] = foodItemDate.toString()
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SHIPPING_TIER] = FirebaseManagerAnalyticsProperties.PropertyValues.SHIPPING_TIER_VALUE_OTHER
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ADD_SHIPPING_INFO, arguments,activity)
     }
 
     private fun showDeliverySubTypeShimmerView() {
@@ -1097,6 +1119,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 if (switchGiftInstructions?.isChecked == true) edtTxtGiftInstructions?.text.toString() else ""
             suburbId = this@CheckoutAddAddressReturningUserFragment.suburbId
             storeId = ""
+            deliveryType = Delivery.STANDARD.type
+            address = ConfirmLocationAddress(placesId)
         }
 
         return body

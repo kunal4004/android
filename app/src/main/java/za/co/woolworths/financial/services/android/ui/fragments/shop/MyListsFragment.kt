@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -101,7 +102,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
         swipeToRefresh.setOnRefreshListener { getShoppingList(true) }
     }
 
-    private fun getShoppingList(isPullToRefresh: Boolean) {
+     fun getShoppingList(isPullToRefresh: Boolean) {
         if (isPullToRefresh) swipeToRefresh.isRefreshing = true else loadShoppingList(true)
         noNetworkConnectionLayout(false)
         mGetShoppingListRequest = OneAppService.getShoppingLists().apply {
@@ -161,6 +162,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
 
                 else -> {
                     rlCreateAList?.visibility = VISIBLE
+                    clSignOutTemplate?.visibility = GONE
                     mAddToShoppingListAdapter?.setShoppingList(shoppingList)
                     mAddToShoppingListAdapter?.notifyDataSetChanged()
                 }
@@ -181,13 +183,22 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
 
     private fun setYourDeliveryLocation() {
         Utils.getPreferredDeliveryLocation()?.apply {
-            rightArrowDelivery?.visibility = GONE
             activity?.let {
                 KotlinUtils.setDeliveryAddressView(it,
                     this,
                     tvDeliveringTo,
                     tvDeliveryLocation,
                     deliverLocationIcon)
+            }
+        }
+
+        Utils.getPreferredDeliveryLocation()?.apply {
+            activity?.let {
+                KotlinUtils.setDeliveryAddressView(it,
+                    this,
+                    tvDeliveringEmptyTo,
+                    tvDeliveryEmptyLocation,
+                    truckIcon)
             }
         }
     }
@@ -235,7 +246,17 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     }
 
     private fun showEmptyShoppingListView() {
-        clSignOutTemplate.visibility = VISIBLE
+        rlCreateAList?.visibility = GONE
+        clSignOutTemplate?.visibility = VISIBLE
+        Utils.getPreferredDeliveryLocation()?.apply {
+            activity?.let {
+                KotlinUtils.setDeliveryAddressView(it,
+                    this,
+                    tvDeliveringEmptyTo,
+                    tvDeliveryEmptyLocation,
+                    truckIcon)
+            }
+        }
         imEmptyIcon.setImageResource(R.drawable.empty_list_icon)
         imEmptyIcon.alpha = 1.0f
         txtEmptyStateTitle.text = getString(R.string.title_no_shopping_lists)

@@ -84,7 +84,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private val shopViewModel: ShopViewModel by viewModels(
         ownerProducer = { this }
     )
-    val confirmAddressViewModel: ConfirmAddressViewModel by lazy {
+    private val confirmAddressViewModel: ConfirmAddressViewModel by lazy {
         ViewModelProvider(
             this,
             GeoLocationViewModelFactory(GeoLocationApiHelper())
@@ -192,16 +192,18 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                                     viewLifecycleOwner.lifecycleScope.launch {
                                         delay(DELAY_3000_MS)
                                         if (isUserAuthenticated()) {
-                                            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
-                                                Delivery.getType(it.deliveryType)?.let {
-                                                    showBlackToolTip(it)
-                                                }
+                                            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let { fulfillmentDetails ->
+                                                Delivery.getType(fulfillmentDetails.deliveryType)
+                                                    ?.let {
+                                                        showBlackToolTip(it)
+                                                    }
                                             }
                                         } else {
-                                            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let {
-                                                Delivery.getType(it.deliveryType)?.let {
-                                                    showBlackToolTip(it)
-                                                }
+                                            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let { fulfillmentDetails ->
+                                                Delivery.getType(fulfillmentDetails.deliveryType)
+                                                    ?.let {
+                                                        showBlackToolTip(it)
+                                                    }
                                             }
                                         }
 
@@ -209,7 +211,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                                 }
                             }
                             else -> {
-                                /*TODO : show error screen*/
+                                blackToolTipLayout?.visibility = View.GONE
                             }
                         }
                     }
@@ -257,53 +259,28 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     override fun onResume() {
         super.onResume()
-        executeValidateSuburb()
+        if (KotlinUtils.isLocationSame == false && KotlinUtils.placeId !=null) {
+            executeValidateSuburb()
+        }
         if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails == null && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails == null) {
             return
         }
         if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType.isNullOrEmpty() && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
             return
         }
-
-        if (isUserAuthenticated()) {
-            Utils.getPreferredDeliveryLocation()?.apply {
-                updateCurrentTab(this?.fulfillmentDetails?.deliveryType)
-                activity?.let {
-                    KotlinUtils.setDeliveryAddressView(
-                        it,
-                        this,
-                        tvToolbarTitle,
-                        tvToolbarSubtitle,
-                        imgToolbarStart
-                    )
-                }
-            }
-        } else {
-            KotlinUtils.getAnonymousUserLocationDetails()?.apply {
-                updateCurrentTab(this?.fulfillmentDetails?.deliveryType)
-                activity?.let {
-                    KotlinUtils.setDeliveryAddressView(
-                        it,
-                        this,
-                        tvToolbarTitle,
-                        tvToolbarSubtitle,
-                        imgToolbarStart
-                    )
-                }
-            }
-        }
+        setDeliveryView()
     }
 
     private fun updateCurrentTab(deliveryType: String?) {
         when (deliveryType) {
             BundleKeysConstants.STANDARD -> {
-                viewpager_main.setCurrentItem(0)
+                viewpager_main.currentItem = 0
             }
             BundleKeysConstants.CNC -> {
-                viewpager_main.setCurrentItem(1)
+                viewpager_main.currentItem = 1
             }
             BundleKeysConstants.DASH -> {
-                viewpager_main.setCurrentItem(2)
+                viewpager_main.currentItem = 2
             }
         }
     }
@@ -314,11 +291,11 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
 
         if (isUserAuthenticated()) {
-            if (Utils.getPreferredDeliveryLocation()!=null) {
+            if (Utils.getPreferredDeliveryLocation() != null) {
                 return
             }
         } else {
-            if (KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails != null){
+            if (KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails != null) {
                 return
             }
         }
@@ -387,7 +364,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         if (tab.getTabAt(pos)?.view?.isSelected == true) {
             val futuraFont =
                 Typeface.createFromAsset(activity?.assets, "fonts/MyriadPro-Semibold.otf")
-            view?.tvTitle?.setTypeface(futuraFont)
+            view?.tvTitle?.typeface = futuraFont
         }
         if (pos == 2) {
             foodOnlyText?.visibility = View.VISIBLE
@@ -407,6 +384,36 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
     }
 
+    private fun setDeliveryView() {
+        if (isUserAuthenticated()) {
+            Utils.getPreferredDeliveryLocation()?.apply {
+                updateCurrentTab(this?.fulfillmentDetails?.deliveryType)
+                activity?.let {
+                    KotlinUtils.setDeliveryAddressView(
+                        it,
+                        this,
+                        tvToolbarTitle,
+                        tvToolbarSubtitle,
+                        imgToolbarStart
+                    )
+                }
+            }
+        } else {
+            KotlinUtils.getAnonymousUserLocationDetails()?.apply {
+                updateCurrentTab(this?.fulfillmentDetails?.deliveryType)
+                activity?.let {
+                    KotlinUtils.setDeliveryAddressView(
+                        it,
+                        this,
+                        tvToolbarTitle,
+                        tvToolbarSubtitle,
+                        imgToolbarStart
+                    )
+                }
+            }
+        }
+    }
+
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
@@ -421,7 +428,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 }, AppConstant.DELAY_1000_MS)
             }
         }
-
+        setDeliveryView()
         when (viewpager_main?.currentItem) {
             0 -> {
                 val departmentFragment = viewpager_main?.adapter?.instantiateItem(
@@ -549,12 +556,27 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 BundleKeysConstants.VALIDATE_RESPONSE
             ) as? ValidateLocationResponse
             validateLocationResponse?.validatePlace?.let { shopViewModel.setValidatePlaceResponse(it) }
-            refreshViewPagerFragment()
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                // delay added because onResume() sets current item back to deliveryType tab.
+                // But we want forcefully user to come on Dash tab even though the location is not dash.
+                delay(AppConstant.DELAY_500_MS)
+                updateCurrentTab(BundleKeysConstants.DASH)
+                refreshViewPagerFragment()
+                showDashToolTip(validateLocationResponse) // externally showing dash tooltip as delivery type is not same.
+            }
         }
     }
 
     fun refreshViewPagerFragment() {
         when (viewpager_main.currentItem) {
+            0 -> {
+                val departmentsFragment =
+                    viewpager_main?.adapter?.instantiateItem(
+                        viewpager_main,
+                        viewpager_main.currentItem
+                    ) as? DepartmentsFragment
+                departmentsFragment?.initView()
+            }
             1 -> {
                 val changeFullfilmentCollectionStoreFragment =
                     viewpager_main?.adapter?.instantiateItem(
@@ -617,7 +639,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         this.rootCategories = rootCategories
     }
 
-    fun setShoppingListResponseData(shoppingListsResponse: ShoppingListsResponse?) {
+    private fun setShoppingListResponseData(shoppingListsResponse: ShoppingListsResponse?) {
         this.shoppingListsResponse = shoppingListsResponse
     }
 
@@ -637,12 +659,12 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         return ordersResponse
     }
 
-    fun isDifferentUser(): Boolean? {
+    fun isDifferentUser(): Boolean {
         return user != AppInstanceObject.get()?.currentUserObject?.id ?: false
     }
 
     fun clearCachedData() {
-        if (isDifferentUser()!!) {
+        if (isDifferentUser()) {
             setOrdersResponseData(null)
             setShoppingListResponseData(null)
         }
@@ -688,7 +710,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 showClickAndCollectToolTip()
             }
             Delivery.DASH -> {
-                showDashToolTip()
+                showDashToolTip(validateLocationResponse)
             }
         }
 
@@ -772,8 +794,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
     }
 
-    private fun showDashToolTip() {
-        if (KotlinUtils.isDashTabClicked == true) {
+    private fun showDashToolTip(validateLocationResponse: ValidateLocationResponse?) {
+        val dashDeliverable = validateLocationResponse?.validatePlace?.onDemand?.deliverable
+        if (KotlinUtils.isDashTabClicked == true || dashDeliverable == null || dashDeliverable == false) {
             blackToolTipLayout?.visibility = View.GONE
             return
         }
@@ -795,7 +818,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             bubbleLayout?.arrowPosition = 1060.0F
             productAvailableText?.text = resources.getString(
                 R.string.dash_item_limit,
-                it?.onDemand?.quantityLimit?.foodMaximumQuantity
+                it.onDemand?.quantityLimit?.foodMaximumQuantity
             )
             /*TODO deliveryFee value will come from config*/
             deliveryFeeText?.text = "Free for orders over R75"
@@ -900,6 +923,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
             WMaterialShowcaseView.Feature.DASH -> {
                 showDeliveryDetailsFeatureWalkThrough()
+            }
+            WMaterialShowcaseView.Feature.DELIVERY_DETAILS -> {
+                executeValidateSuburb()
             }
         }
     }

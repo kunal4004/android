@@ -37,6 +37,12 @@ class ValidateAddressAndTimeSlotPresenterImpl(var mainView: ValidateAddressAndTi
                                 mainView?.onAvailableTimeSlotsSuccess(this)
                         }
                         440 -> mainView?.onSessionTimeout()
+                        502 -> {
+                            if (this.response?.code.equals("1071"))
+                                mainView?.onNoTimeSlotsAvailable()
+                            else
+                                mainView?.onAvailableTimeSlotsFailure()
+                        }
                         else -> mainView?.onAvailableTimeSlotsFailure()
                     }
                 }

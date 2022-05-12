@@ -92,11 +92,11 @@ object OneAppService : RetrofitConfig() {
         val loc = getMyLocation()
         return if (startRadius != null && startRadius == "") {
             //This should never happen for now
-            mApiInterface.getStoresLocationItem("", "", loc.getLatitude().toString(),
-                loc.getLongitude().toString(), getSessionToken(), getDeviceIdentityToken(), sku, startRadius, endRadius, true)
+            mApiInterface.getStoresLocationItem("", "", loc.latitude.toString(),
+                loc.longitude.toString(), getSessionToken(), getDeviceIdentityToken(), sku, startRadius, endRadius, true)
         } else {
-            mApiInterface.getStoresLocationItem("", "", loc.getLatitude().toString(),
-                loc.getLongitude().toString(), getSessionToken(), getDeviceIdentityToken(), sku, startRadius, endRadius, true)
+            mApiInterface.getStoresLocationItem("", "", loc.latitude.toString(),
+                loc.longitude.toString(), getSessionToken(), getDeviceIdentityToken(), sku, startRadius, endRadius, true)
         }
     }
 
@@ -174,7 +174,7 @@ object OneAppService : RetrofitConfig() {
             getDeviceIdentityToken())
     }
 
-    fun getRootCategory(locationEnabled: Boolean, location: Location?): Call<RootCategories> {
+    fun getRootCategory(locationEnabled: Boolean, location: Location?, deliveryType: String): Call<RootCategories> {
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
         // Pass storeId value of 01 fulfillment type
         var locationCord = location
@@ -184,7 +184,7 @@ object OneAppService : RetrofitConfig() {
 
         return mApiInterface.getRootCategories(
             getSessionToken(),
-            getDeviceIdentityToken(), locationCord?.latitude, locationCord?.longitude, suburbId, storeId, null)
+            getDeviceIdentityToken(), locationCord?.latitude, locationCord?.longitude, suburbId, storeId, deliveryType)
     }
 
     suspend fun getDashCategoryNavigation(location: Location?): retrofit2.Response<RootCategories> {
@@ -265,7 +265,7 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun getCartSummary(): Call<CartSummaryResponse> {
-        return mApiInterface.getCartSummary( "", "", getSessionToken(),
+        return mApiInterface.getCartSummary( "", getDev4Environment(), "", getSessionToken(),
             getDeviceIdentityToken())
     }
 
@@ -282,7 +282,6 @@ object OneAppService : RetrofitConfig() {
 
 
     fun getProducts(requestParams: ProductsRequestParams): Call<ProductView> {
-        val loc = getMyLocation()
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
 
         return if (Utils.isLocationEnabled(appContext())) {
@@ -300,8 +299,8 @@ object OneAppService : RetrofitConfig() {
     }
 
     private fun getSuburbOrStoreId(): Pair<String?, String?> {
-        var suburbId: String? = null
-        var storeId: String? = null
+        val suburbId: String? = null
+        val storeId: String? = null
         return Pair(suburbId, storeId)
     }
 
@@ -344,7 +343,7 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun getShoppingCart(): Call<ShoppingCartResponse> {
-        return mApiInterface.getShoppingCart( getSessionToken(), getDeviceIdentityToken())
+        return mApiInterface.getShoppingCart( getSessionToken(), getDev4Environment(), getDeviceIdentityToken())
     }
 
     fun getChangeQuantity(changeQuantity: ChangeQuantity): Call<ShoppingCartResponse> {
@@ -711,7 +710,7 @@ object OneAppService : RetrofitConfig() {
     fun getConfirmDeliveryAddressDetails(body: ConfirmLocationRequest): Call<ConfirmDeliveryAddressResponse>{
         return mApiInterface.confirmLocation("",
             "",
-            getEnvironment(),
+            getSit4Environment(),
             getSessionToken(),
             getDeviceIdentityToken(),
             body
