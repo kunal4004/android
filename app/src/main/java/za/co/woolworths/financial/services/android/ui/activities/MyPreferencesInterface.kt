@@ -4,4 +4,5 @@ interface MyPreferencesInterface {
 
     fun setToolbarTitle(title: String)
     fun setToolbarTitleGravity(gravity: Int)
+    fun hideToolbar()
 }

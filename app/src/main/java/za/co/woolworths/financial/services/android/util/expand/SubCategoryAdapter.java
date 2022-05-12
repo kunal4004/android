@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.util.expand;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -8,11 +9,15 @@ import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dto.SubCategory;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryNavigator;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 public class SubCategoryAdapter extends ExpandableRecyclerAdapter<HeaderViewHolder, ParentSubCategoryViewHolder, SubCategoryViewHolder> {
 
@@ -59,6 +64,10 @@ public class SubCategoryAdapter extends ExpandableRecyclerAdapter<HeaderViewHold
 					parentSubCategoryViewHolder.collapseView();
 					return;
 				}
+				Map<String, String> arguments = new HashMap<>();
+				arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.PROMOTION_NAME, subCategoryModel.getName());
+				if(subCategoryModel.getName().equals("Promotions"))
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VIEW_PROMOTION, arguments, (Activity) mContext);
 
 				if (subCategoryModel.getChildItemList() != null) {
 					parentSubCategoryViewHolder.retrieveChildVisibility(false);

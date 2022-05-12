@@ -14,14 +14,13 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_otp_confirmation_fragment.*
-import za.co.absa.openbankingapi.woolworths.integration.AbsaCreateAliasRequest
-import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateSureCheckRequest
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiFailureHandler
+import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.toMaskABSAPhoneNumber
 import za.co.woolworths.financial.services.android.ui.fragments.integration.viewmodel.AbsaIntegrationViewModel
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 
@@ -108,7 +107,8 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
     }
 
     private fun initViewsAndEvents() {
-        otpDescription.text = bindString(R.string.absa_otp_screen_description) + userCellNumber
+        val description = "${bindString(R.string.absa_otp_screen_description)} ${userCellNumber?.toMaskABSAPhoneNumber()}"
+        otpDescription.text = description
         activity?.apply { (this as ABSAOnlineBankingRegistrationActivity).setPageTitle(getString(R.string.absa_registration_title_step_1)) }
         ivNavigateToDigitFragment.setOnClickListener(this)
         enterOTPEditText.setOnKeyPreImeListener { activity?.onBackPressed() }

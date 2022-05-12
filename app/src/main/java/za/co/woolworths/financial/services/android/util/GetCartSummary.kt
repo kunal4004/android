@@ -27,23 +27,10 @@ class GetCartSummary {
     }
 
     private fun cacheSuburbFromCartSummary(cartSummaryResponse: CartSummaryResponse?) {
-        cartSummaryResponse?.data?.get(0)?.apply {
-            if (TextUtils.isEmpty(suburbName) || TextUtils.isEmpty(provinceName)) return
-            val province = getProvince(this)
-            val suburb = suburb
-            val store = store
-            if (store != null) {
-                Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(province, null, store))
-            } else {
-                Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(province, suburb, null))
+        cartSummaryResponse?.data?.get(0)?.fulfillmentDetails?.apply {
+            this.deliveryType?.let {
+                Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(this))
             }
         }
-    }
-
-    private fun getProvince(cart: CartSummary): Province {
-        val province = Province()
-        province.name = cart.provinceName
-        province.id = cart.provinceId
-        return province
     }
 }
