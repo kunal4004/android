@@ -10,7 +10,7 @@ import za.co.woolworths.financial.services.android.util.NetworkManager
 class GeoLocationApiHelper : RetrofitConfig() {
 
     suspend fun getSavedAddress() =
-        mApiInterface.getSavedAddresses("", "", getSessionToken(), getDeviceIdentityToken()).await()
+        mApiInterface.getSavedAddresses("", "", getSit4Environment(), getSessionToken(), getDeviceIdentityToken()).await()
 
     suspend fun getValidateLocation(placeId: String) =
         mApiInterface.geoValidateLocation("",

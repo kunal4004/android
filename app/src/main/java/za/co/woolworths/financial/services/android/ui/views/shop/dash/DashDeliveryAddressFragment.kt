@@ -42,8 +42,9 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        dashDeliveryAdapter = DashDeliveryAdapter(requireContext(), onDemandNavigationListener = this,
-            dashLandingNavigationListener = this)
+        dashDeliveryAdapter =
+            DashDeliveryAdapter(requireContext(), onDemandNavigationListener = this,
+                dashLandingNavigationListener = this)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -81,8 +82,22 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 showSetAddressScreen() // show set Address screen
             } else {
                 // User Logged in and have location.
-                val validatePlace = viewModel.getValidatePlaceResponse()
-                    ?: WoolworthsApplication.getValidatePlaceDetails()
+
+                // now check if application class response has deliverable or local object of validatePlace has deliverable. Continue with that object which has deliverable.
+                val validatePlace =
+                    if (viewModel.getValidatePlaceResponse()?.onDemand?.deliverable == true)
+                        viewModel.getValidatePlaceResponse()
+                    else if (WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.deliverable == true)
+                        WoolworthsApplication.getValidatePlaceDetails()
+                    else
+                        viewModel.getValidatePlaceResponse()
+                            ?: WoolworthsApplication.getValidatePlaceDetails()
+                if (validatePlace == null) {
+                    // This means user has location but validatePlace response from DB is null.
+                    // So call validate place API again.
+                    subscribeToObservers()
+                    callValidatePlace(savedLocation?.fulfillmentDetails?.address?.placeId)
+                }
                 if (validatePlace?.onDemand != null && validatePlace?.onDemand?.deliverable == true) {
                     // Show categories.
                     setupRecyclerView()
@@ -93,6 +108,12 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 }
             }
         }
+    }
+
+    private fun callValidatePlace(placeId: String?) {
+        if (placeId.isNullOrEmpty())
+            return
+        viewModel.getValidateLocationResponse(placeId)
     }
 
     private fun showSetAddressScreen() {
@@ -205,6 +226,27 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                 viewModel.dashLandingDetails.value?.peekContent()?.data?.productCatalogues,
                             )
                         }
+                        progressBar.visibility = View.GONE
+                    }
+                }
+            }
+        }
+
+        // Validate Place API
+        viewModel.validatePlaceDetails.observe(viewLifecycleOwner) {
+            it.getContentIfNotHandled()?.let { resource ->
+                when (resource.status) {
+                    Status.LOADING -> {
+                        progressBar.visibility = View.VISIBLE
+                    }
+                    Status.SUCCESS -> {
+                        resource.data?.validatePlace?.let { it1 ->
+                            viewModel.setValidatePlaceResponse(it1)
+                            initViews()
+                        }
+                        progressBar.visibility = View.GONE
+                    }
+                    Status.ERROR -> {
                         progressBar.visibility = View.GONE
                     }
                 }

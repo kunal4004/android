@@ -13,6 +13,7 @@
         android:background="@color/white">
 
         <RelativeLayout
+            android:id="@+id/addressLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"

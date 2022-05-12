@@ -185,28 +185,26 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     if (validateLocationResponse != null) {
                         when (validateLocationResponse?.httpCode) {
                             AppConstant.HTTP_OK -> {
-                                if (validateLocationResponse?.validatePlace?.deliverable == true) {
-                                    WoolworthsApplication.setValidatedSuburbProducts(
-                                        validateLocationResponse?.validatePlace
-                                    )
-                                    viewLifecycleOwner.lifecycleScope.launch {
-                                        delay(DELAY_3000_MS)
-                                        if (isUserAuthenticated()) {
-                                            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let { fulfillmentDetails ->
-                                                Delivery.getType(fulfillmentDetails.deliveryType)
-                                                    ?.let {
-                                                        showBlackToolTip(it)
-                                                    }
-                                            }
-                                        } else {
-                                            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let { fulfillmentDetails ->
-                                                Delivery.getType(fulfillmentDetails.deliveryType)
-                                                    ?.let {
-                                                        showBlackToolTip(it)
-                                                    }
-                                            }
+                                WoolworthsApplication.setValidatedSuburbProducts(
+                                    validateLocationResponse?.validatePlace
+                                )
+                                setDeliveryView()
+                                viewLifecycleOwner.lifecycleScope.launch {
+                                    delay(DELAY_3000_MS)
+                                    if (isUserAuthenticated()) {
+                                        Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let { fulfillmentDetails ->
+                                            Delivery.getType(fulfillmentDetails.deliveryType)
+                                                ?.let {
+                                                    showBlackToolTip(it)
+                                                }
                                         }
-
+                                    } else {
+                                        KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let { fulfillmentDetails ->
+                                            Delivery.getType(fulfillmentDetails.deliveryType)
+                                                ?.let {
+                                                    showBlackToolTip(it)
+                                                }
+                                        }
                                     }
                                 }
                             }
@@ -259,7 +257,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     override fun onResume() {
         super.onResume()
-        if (KotlinUtils.isLocationSame == false && KotlinUtils.placeId !=null) {
+        if ((KotlinUtils.isLocationSame == false && KotlinUtils.placeId != null) || WoolworthsApplication.getValidatePlaceDetails() == null) {
             executeValidateSuburb()
         }
         if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails == null && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails == null) {
