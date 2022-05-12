@@ -1,28 +1,26 @@
-package za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.store_card
+package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.availablefunds
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentAvailableFundBinding
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.WBottomSheetBehaviour
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.availablefunds.AvailableFundsCommand
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.availablefunds.AvailableFundsViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MyStoreCardFragment @Inject constructor() : ViewBindingFragment<FragmentAvailableFundBinding>(FragmentAvailableFundBinding::inflate) {
+class MyStoreCardFragment @Inject constructor() :
+    ViewBindingFragment<FragmentAvailableFundBinding>(FragmentAvailableFundBinding::inflate),
+    View.OnClickListener {
 
     private val viewModel by viewModels<AvailableFundsViewModel>()
     private val homeViewModel by viewModels<AccountProductsHomeViewModel>()
 
     @Inject
-    lateinit var  bottomSheet: WBottomSheetBehaviour
+    lateinit var bottomSheet: WBottomSheetBehaviour
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -30,6 +28,13 @@ class MyStoreCardFragment @Inject constructor() : ViewBindingFragment<FragmentAv
         setGuideline()
         setAccountInArrearsUI()
         background()
+        clickListeners()
+    }
+
+    private fun clickListeners() {
+        binding.incViewStatementButton.root.setOnClickListener(this)
+        binding.incRecentTransactionButton.root.setOnClickListener(this)
+        binding.incPayMyAccountButton.root.setOnClickListener(this)
     }
 
     private fun background() {
@@ -71,4 +76,20 @@ class MyStoreCardFragment @Inject constructor() : ViewBindingFragment<FragmentAv
             amountPayableNowAmountTextView.text = amountOverdue
         }
     }
+
+    override fun onClick(view: View?) {
+        with(homeViewModel) {
+            when (view) {
+                binding.incViewStatementButton.root -> {
+                    navigateToStatementActivity(activity, product)
+                }
+                binding.incRecentTransactionButton.root -> {
+                    navigateToRecentTransactionActivity(activity, product,cardType =  product!!.productGroupCode)
+                }
+
+            }
+        }
+    }
+
+
 }
