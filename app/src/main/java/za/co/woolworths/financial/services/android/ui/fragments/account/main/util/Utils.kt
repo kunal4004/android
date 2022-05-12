@@ -6,6 +6,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.core.app.ActivityCompat.startActivityForResult
 import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerFrameLayout
@@ -64,16 +66,18 @@ inline fun <reified T : Activity> Context.openActivityForResult(vararg params: P
     startActivityForResult((this as Activity),intent,requestCode,null)
 }
 
-fun ShimmerFrameLayout.loadingState(state: Boolean){
+fun ShimmerFrameLayout.loadingState(state: Boolean,targetedShimmerLayout:View? = null){
         when (state) {
             true -> {
-                this.visibility = View.VISIBLE
+                this.visibility = VISIBLE
+                targetedShimmerLayout?.visibility = GONE
                 val shimmer = Shimmer.AlphaHighlightBuilder().build()
                 this.setShimmer(shimmer)
                 this.startShimmer()
             }
             false -> {
-                this.visibility = View.GONE
+                this.visibility = GONE
+                targetedShimmerLayout?.visibility = VISIBLE
                 this.stopShimmer()
                 this.setShimmer(null)
             }
