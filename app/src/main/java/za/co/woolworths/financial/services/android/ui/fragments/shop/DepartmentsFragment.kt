@@ -188,7 +188,6 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
                         200 -> {
                             version = response.response?.version
                             parentFragment?.setCategoryResponseData(response)
-                            shopViewModel.setOnDemandCategoryData(response)
                             bindDepartment()
                         }
                         else -> response?.response?.desc?.let { showErrorDialog(it) }

@@ -6,7 +6,6 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -16,23 +15,30 @@ import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import kotlinx.android.synthetic.main.item_banner_carousel.view.*
 import kotlinx.android.synthetic.main.item_long_banner_list.view.*
+import kotlinx.android.synthetic.main.item_product_carousel_list.view.*
 import kotlinx.android.synthetic.main.product_listing_page_row.view.*
 import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
 import kotlinx.android.synthetic.main.product_listing_promotional_images.view.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages
 import za.co.woolworths.financial.services.android.models.dto.shop.Banner
 import za.co.woolworths.financial.services.android.models.dto.shop.ProductCatalogue
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.holder.PriceItem
 import za.co.woolworths.financial.services.android.ui.adapters.shop.dash.DashDeliveryAdapter.Companion.TYPE_EMPTY
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.OnDashLandingNavigationListener
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.util.ImageManager
+import za.co.woolworths.financial.services.android.util.Utils
 
 class DashCategoryAdapter(
     val context: Context,
-    private val dashLandingNavigationListener: OnDashLandingNavigationListener
+    private val dashLandingNavigationListener: OnDashLandingNavigationListener?,
+    private val iProductListing: IProductListing?
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var type: String? = null
@@ -142,7 +148,7 @@ class DashCategoryAdapter(
                     position,
                     list[position] as ProductList,
                     list as List<ProductList>,
-                    dashLandingNavigationListener
+                    iProductListing
                 )
             }
         }
@@ -184,11 +190,11 @@ class BannerCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
         context: Context,
         position: Int,
         banner: Banner,
-        dashLandingNavigationListener: OnDashLandingNavigationListener
+        dashLandingNavigationListener: OnDashLandingNavigationListener?
     ) {
         itemView.tvCategoryTitle?.text = banner.displayName
         itemView.dashBannerCarouselContainer?.setOnClickListener {
-            dashLandingNavigationListener.onDashLandingNavigationClicked(view = it, banner)
+            dashLandingNavigationListener?.onDashLandingNavigationClicked(view = it, banner)
         }
         Glide.with(context)
             .load(banner.externalImageRefV2)
@@ -208,10 +214,10 @@ class BannerGridItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemVie
         context: Context,
         position: Int,
         banner: Banner,
-        dashLandingNavigationListener: OnDashLandingNavigationListener
+        dashLandingNavigationListener: OnDashLandingNavigationListener?
     ) {
-        itemView.dashBannerCarouselContainer?.setOnClickListener {
-            dashLandingNavigationListener.onDashLandingNavigationClicked(view = it, banner)
+        itemView.setOnClickListener {
+            dashLandingNavigationListener?.onDashLandingNavigationClicked(view = it, banner)
         }
         Glide.with(context)
             .load(banner.externalImageRefV2)
@@ -231,7 +237,7 @@ class LongBannerCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder
         context: Context,
         position: Int,
         banner: Banner,
-        dashLandingNavigationListener: OnDashLandingNavigationListener
+        dashLandingNavigationListener: OnDashLandingNavigationListener?
     ) {
         itemView.longBannerListContainer?.setOnClickListener {
             dashLandingNavigationListener?.onDashLandingNavigationClicked(it, banner)
@@ -257,7 +263,7 @@ class LongBannerListItemViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
         context: Context,
         position: Int,
         banner: Banner,
-        dashLandingNavigationListener: OnDashLandingNavigationListener
+        dashLandingNavigationListener: OnDashLandingNavigationListener?
     ) {
         itemView.longBannerListContainer?.setOnClickListener {
             dashLandingNavigationListener?.onDashLandingNavigationClicked(it, banner)
@@ -284,14 +290,10 @@ class ProductCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(it
         position: Int,
         productList: ProductList,
         list: List<ProductList>,
-        dashLandingNavigationListener: OnDashLandingNavigationListener
+        iProductListing: IProductListing?
     ) {
         val nextProduct = if (position % 2 != 0) list.getOrNull(position + 1) else null
         val previousProduct = if (position % 2 == 0) list.getOrNull(position - 1) else null
-        val navigator = context as? IProductListing
-
-        itemView.constProductContainer?.background =
-            ContextCompat.getDrawable(context, R.color.color_separator_light_grey)
 
         with(productList) {
             setProductImage(this)
@@ -303,12 +305,35 @@ class ProductCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(it
             priceItem.setPrice(productList, itemView)
             setProductVariant(this)
             quickShopAddToCartSwitch(this)
-            navigator?.let { setOnClickListener(it, this) }
+            iProductListing?.let { navigator ->
+                itemView.row_layout?.setOnClickListener {
+                    navigator.openProductDetailView(this)
+                }
+                setQuickshopListener(context, navigator, this)
+            }
         }
     }
 
-    private fun setOnClickListener(navigator: IProductListing, productList: ProductList) {
-        itemView.setOnClickListener { navigator.openProductDetailView(productList) }
+    private fun setQuickshopListener(
+        context: Context,
+        navigator: IProductListing?,
+        productList: ProductList
+    ) {
+        itemView.imQuickShopAddToCartIcon?.setOnClickListener {
+
+            Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART,
+                context as? BottomNavigationActivity
+            )
+            val fulfilmentTypeId = AppConfigSingleton.quickShopDefaultValues?.foodFulfilmentTypeId
+            fulfilmentTypeId?.let { id ->
+                navigator?.queryInventoryForStore(
+                    id,
+                    AddItemToCart(productList.productId, productList.sku, 0),
+                    productList
+                )
+            }
+        }
     }
 
     private fun setProductName(productList: ProductList?) = with(itemView) {

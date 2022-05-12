@@ -335,6 +335,16 @@ object OneAppService : RetrofitConfig() {
             getDeviceIdentityToken(),deliveryType, addToCart)
     }
 
+
+    suspend fun addItemsToCart(addToCart: MutableList<AddItemToCart>): retrofit2.Response<AddItemToCartResponse> {
+        return withContext(Dispatchers.IO) {
+            val deliveryType = KotlinUtils.getPreferredDeliveryType()?.type ?: ""
+
+            mApiInterface.addItemsToCart( "", "", getSessionToken(),
+                getDeviceIdentityToken(),deliveryType, getSit4Environment(), addToCart)
+        }
+    }
+
     fun getShoppingCart(): Call<ShoppingCartResponse> {
         return mApiInterface.getShoppingCart( getSessionToken(), getDev4Environment(), getDeviceIdentityToken())
     }
@@ -395,6 +405,12 @@ object OneAppService : RetrofitConfig() {
     fun getInventorySkuForStore(store_id: String, multipleSku: String): Call<SkusInventoryForStoreResponse> {
         return mApiInterface.getInventorySKUForStore( getSessionToken(), getDeviceIdentityToken(), getDev4Environment(), store_id, multipleSku)
 
+    }
+
+    suspend fun fetchInventorySkuForStore(store_id: String, multipleSku: String): retrofit2.Response<SkusInventoryForStoreResponse> {
+        return withContext(Dispatchers.IO) {
+            mApiInterface.fetchInventorySKUForStore( getSessionToken(), getDeviceIdentityToken(), getSit4Environment(), store_id, multipleSku)
+        }
     }
 
     fun getPDFResponse(getStatement: GetStatement): Call<ResponseBody> {

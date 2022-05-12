@@ -12,7 +12,9 @@ class AppConstant {
 
         const val WOOLWOORTH_CALL_CENTER_NUMBER: String = "0861 50 20 20"
 
-        //Delays
+        /*****************************************************************************************
+         * Delays
+         *****************************************************************************************/
         const val DELAY_10_MS: Long = 10
         const val DELAY_100_MS: Long = 100
         const val DELAY_200_MS: Long = 200
@@ -26,10 +28,14 @@ class AppConstant {
         const val DELAY_4000_MS: Long = 4000
         const val DELAY_500_MS: Long = 500
 
-        // Durations
+        /*****************************************************************************************
+         * Durations
+         *****************************************************************************************/
         const val DURATION_1000_MS: Long = 1000
 
-        //API Response Code
+        /*****************************************************************************************
+         * API Response Code
+         *****************************************************************************************/
         const val HTTP_OK: Int = 200
         const val HTTP_OK_201: Int = 201
         const val HTTP_EXPECTATION_FAILED_417: Int = 417
@@ -37,6 +43,17 @@ class AppConstant {
         const val HTTP_EXPECTATION_FAILED_502: Int = 502
         const val HTTP_SESSION_TIMEOUT_400: Int = 400
 
+        /*****************************************************************************************
+         * Request Codes
+         *****************************************************************************************/
+        //Dash
+        const val REQUEST_CODE_QUERY_INVENTORY_FOR_STORE = 3343
+        //order details
+        const val REQUEST_CODE_ORDER_DETAILS_PAGE = 1989
+
+        /*****************************************************************************************
+         * Miscellaneous
+         *****************************************************************************************/
         const val KEY_DASH_WOOLIES_DOWNLOAD_LINK: String = "download_link"
 
         const val DP_LINKING_PRODUCT_LISTING = "Product Listing"
@@ -70,14 +87,13 @@ class AppConstant {
         const val ALPHA_1F: Float = 1.0F
         const val ALPHA_POINT_3F: Float = 0.3F
 
-
         //order details
         const val TAG_ORDER_DETAILS_FRAGMENT: String = "OrderDetailsFragment"
         const val TAG_ORDER_TO_CART_FRAGMENT: String = "OrderToCartFragment"
         const val TAG_TAX_INVOICE_FRAGMENT: String = "TaxInvoiceFragment"
         const val ORDER_ID: String = "ORDER_ID"
-        const val REQUEST_CODE_ORDER_DETAILS_PAGE = 1989
         const val NAVIGATED_FROM_MY_ACCOUNTS = "NAVIGATED_FROM_MY_ACCOUNTS"
+
     }
 
     enum class DashDetailsViewType(val value: Int) { HEADER_TITLE(0), APP_FEATURE_LIST(1), TERMS_AND_CONDITION(2) }
