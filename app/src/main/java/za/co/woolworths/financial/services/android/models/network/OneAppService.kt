@@ -338,7 +338,7 @@ object OneAppService : RetrofitConfig() {
             val deliveryType = KotlinUtils.getPreferredDeliveryType()?.type ?: ""
 
             mApiInterface.addItemsToCart( "", "", getSessionToken(),
-                getDeviceIdentityToken(),deliveryType, addToCart)
+                getDeviceIdentityToken(),deliveryType, getSit4Environment(), addToCart)
         }
     }
 
@@ -406,7 +406,7 @@ object OneAppService : RetrofitConfig() {
 
     suspend fun fetchInventorySkuForStore(store_id: String, multipleSku: String): retrofit2.Response<SkusInventoryForStoreResponse> {
         return withContext(Dispatchers.IO) {
-            mApiInterface.fetchInventorySKUForStore( getSessionToken(), getDeviceIdentityToken(), store_id, multipleSku)
+            mApiInterface.fetchInventorySKUForStore( getSessionToken(), getDeviceIdentityToken(), getSit4Environment(), store_id, multipleSku)
         }
     }
 

@@ -638,6 +638,7 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("deliveryType") deliveryType: String,
+            @Header("environment") environment: String,
             @Body addItemToCart: MutableList<AddItemToCart>): retrofit2.Response<AddItemToCartResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -648,7 +649,7 @@ interface ApiInterface {
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("commerceId") commerceId: String): Call<ShoppingCartResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "environment: www-win-dev4")
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/cart/summary")
     fun getCartSummary(
 
@@ -780,6 +781,7 @@ interface ApiInterface {
    suspend fun fetchInventorySKUForStore(
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
+            @Header("environment") environment: String,
             @Path("store_id") store_id: String,
             @Path("multipleSku") multipleSku: String): retrofit2.Response<SkusInventoryForStoreResponse>
 
