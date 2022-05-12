@@ -2543,4 +2543,8 @@
 
     <!-- My Cart   -->
     <string name="cart_default_location">Default Location</string>
+
+    <!-- Common Errors -->
+    <string name="error_unknown">An unknown error occurred</string>
+    <string name="error_internet_connection">Couldn\'t reach the server. Check your internet connection.</string>
 </resources>

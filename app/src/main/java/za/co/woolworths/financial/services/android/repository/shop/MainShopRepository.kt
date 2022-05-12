@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.repository.shop
 
 import android.location.Location
+import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
@@ -23,15 +24,15 @@ class MainShopRepository : ShopRepository {
                         AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
                             Resource.success(it)
                         else ->
-                            Resource.error("An unknown error occurred", it)
+                            Resource.error(R.string.error_unknown, it)
                     }
-                } ?: Resource.error("An unknown error occurred", null)
+                } ?: Resource.error(R.string.error_unknown, null)
             } else {
-                Resource.error("An unknown error occurred", null)
+                Resource.error(R.string.error_unknown, null)
             }
         } catch (e: IOException) {
             FirebaseManager.logException(e)
-            Resource.error("Couldn't reach the server. Check your internet connection", null)
+            Resource.error(R.string.error_internet_connection, null)
         }
     }
 
@@ -45,15 +46,15 @@ class MainShopRepository : ShopRepository {
                         AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
                             Resource.success(it)
                         else ->
-                            Resource.error("An unknown error occurred", it)
+                            Resource.error(R.string.error_unknown, it)
                     }
-                } ?: Resource.error("An unknown error occurred", null)
+                } ?: Resource.error(R.string.error_unknown, null)
             } else {
-                Resource.error("An unknown error occurred", null)
+                Resource.error(R.string.error_unknown, null)
             }
         } catch (e: IOException) {
             FirebaseManager.logException(e)
-            Resource.error("Couldn't reach the server. Check your internet connection", null)
+            Resource.error(R.string.error_internet_connection, null)
         }
     }
 
@@ -70,15 +71,15 @@ class MainShopRepository : ShopRepository {
                         AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
                             Resource.success(it)
                         else ->
-                            Resource.error("An unknown error occurred", it)
+                            Resource.error(R.string.error_unknown, it)
                     }
-                } ?: Resource.error("An unknown error occurred", null)
+                } ?: Resource.error(R.string.error_unknown, null)
             } else {
-                Resource.error("An unknown error occurred", null)
+                Resource.error(R.string.error_unknown, null)
             }
         } catch (e: IOException) {
             FirebaseManager.logException(e)
-            Resource.error("Couldn't reach the server. Check your internet connection", null)
+            Resource.error(R.string.error_internet_connection, null)
         }
     }
 
@@ -92,15 +93,15 @@ class MainShopRepository : ShopRepository {
                         AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
                             Resource.success(it)
                         else ->
-                            Resource.error("An unknown error occurred", it)
+                            Resource.error(R.string.error_unknown, it)
                     }
-                } ?: Resource.error("An unknown error occurred", null)
+                } ?: Resource.error(R.string.error_unknown, null)
             } else {
-                Resource.error("An unknown error occurred", null)
+                Resource.error(R.string.error_unknown, null)
             }
         } catch (e: IOException) {
             FirebaseManager.logException(e)
-            Resource.error("Couldn't reach the server. Check your internet connection", null)
+            Resource.error(R.string.error_internet_connection, null)
         }
     }
 }
