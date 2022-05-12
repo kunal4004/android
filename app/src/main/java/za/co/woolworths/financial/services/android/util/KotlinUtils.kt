@@ -18,7 +18,6 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.*
 import android.text.style.*
-import android.util.Pair
 import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
@@ -52,10 +51,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY
-import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
-import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
-import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.Transaction
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionHeader
@@ -94,6 +90,8 @@ import kotlin.coroutines.CoroutineContext
 class KotlinUtils {
     companion object {
 
+        var placeId: String? = null
+        var isLocationSame: Boolean? = false
         var isDeliveryLocationTabClicked: Boolean? = false
         var isCncTabClicked: Boolean? = false
         var isDashTabClicked: Boolean? = false
@@ -442,7 +440,7 @@ class KotlinUtils {
                         tvDeliveryLocation.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_delivery_circle)
                     }
-                    else -> {
+                    Delivery.DASH -> {
                         val timeSlot: String? =
                             WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.firstAvailableFoodDeliveryTime
                         if (timeSlot == null) {
@@ -456,6 +454,15 @@ class KotlinUtils {
                         tvDeliveryLocation?.text = address?.address1 ?: ""
                         tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_dash_delivery_circle)
+                    }
+                    else -> {
+                        tvDeliveringTo.text =
+                            context?.resources?.getString(R.string.standard_delivery)
+                        tvDeliveryLocation.text =
+                            context?.resources?.getString(R.string.default_location)
+
+                        tvDeliveryLocation.visibility = View.VISIBLE
+                        deliverLocationIcon?.setImageResource(R.drawable.ic_delivery_circle)
                     }
                 }
             }
@@ -895,32 +902,41 @@ class KotlinUtils {
                 }
             }
         }
-
-        fun openTreatmenPlanUrl(activity: Activity?, eligibilityPlan: EligibilityPlan?) {
-            var collectionsUrl: String? = ""
+        fun openTreatmentPlanUrl(activity: Activity?, eligibilityPlan: EligibilityPlan?){
+            var collectionUrlFromConfig: Pair<String?, String?>? = null
             var exitUrl: String? = ""
             val accountOptions = AppConfigSingleton.accountOptions
 
             when (eligibilityPlan?.productGroupCode) {
                 ProductGroupCode.SC -> {
-                    collectionsUrl =
-                        accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
+                    collectionUrlFromConfig =accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.storeCard?.collectionsDynamicUrl
                     exitUrl = accountOptions?.showTreatmentPlanJourney?.storeCard?.exitUrl
                 }
 
                 ProductGroupCode.PL -> {
-                    collectionsUrl =
-                        accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
+                    collectionUrlFromConfig = accountOptions?.collectionsStartNewPlanJourney?.personalLoan?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.personalLoan?.collectionsDynamicUrl
                     exitUrl = accountOptions?.showTreatmentPlanJourney?.personalLoan?.exitUrl
                 }
 
                 ProductGroupCode.CC -> {
-                    collectionsUrl =
-                        accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
+                    collectionUrlFromConfig = accountOptions?.collectionsStartNewPlanJourney?.creditCard?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.creditCard?.collectionsDynamicUrl
                     exitUrl = accountOptions?.collectionsStartNewPlanJourney?.creditCard?.exitUrl
                 }
             }
-            val url = collectionsUrl + eligibilityPlan?.appGuid
+
+            /**
+             *  Use dynamic collection url when ("collectionsViewExistingPlan")
+             *  else use collection url
+             */
+            val finalCollectionUrlFromConfig =
+                when (eligibilityPlan?.actionText == ActionText.VIEW_TREATMENT_PLAN.value
+                        || eligibilityPlan?.actionText == ActionText.VIEW_ELITE_PLAN.value) {
+                    true -> collectionUrlFromConfig?.second
+                    false -> collectionUrlFromConfig?.first
+                }
+
+            val url =  finalCollectionUrlFromConfig + eligibilityPlan?.appGuid
+
             openLinkInInternalWebView(
                 activity,
                 url,
@@ -961,7 +977,7 @@ class KotlinUtils {
             return Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId ?: ""
         }
 
-        fun getPreferredStoreName(): String {
+        private fun getPreferredStoreName(): String {
             return Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName ?: ""
         }
 
@@ -971,10 +987,7 @@ class KotlinUtils {
 
         fun getPreferredDeliveryAddressOrStoreName(): String {
             return when (getPreferredDeliveryType()) {
-                Delivery.CNC ->
-                    getPreferredStoreName()
-                Delivery.STANDARD ->
-                    getPreferredStoreName()
+                Delivery.CNC, Delivery.STANDARD, Delivery.DASH -> getPreferredStoreName()
                 else -> ""
             }
         }

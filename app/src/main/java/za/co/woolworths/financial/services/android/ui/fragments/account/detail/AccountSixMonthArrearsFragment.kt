@@ -186,7 +186,7 @@ class AccountSixMonthArrearsFragment : Fragment(), EligibilityImpl {
             }
 
             ActionText.VIEW_ELITE_PLAN.value -> {
-                KotlinUtils.openTreatmenPlanUrl(activity, mAccountPresenter?.getEligibilityPlan())
+                KotlinUtils.openTreatmentPlanUrl(activity, mAccountPresenter?.getEligibilityPlan())
             }
         }
     }

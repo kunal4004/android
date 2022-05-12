@@ -121,7 +121,7 @@ class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.On
     private fun cannotAffordClickHandler() {
         when (eligibilityPlan?.actionText) {
             ActionText.VIEW_ELITE_PLAN.value -> {
-                KotlinUtils.openTreatmenPlanUrl(activity, eligibilityPlan)
+                KotlinUtils.openTreatmentPlanUrl(activity, eligibilityPlan)
             }
             else -> {
                 activity?.apply {
