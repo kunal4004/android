@@ -3,10 +3,9 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 import android.os.Bundle
 import android.view.View
 import com.awfs.coordination.databinding.InstantStoreCardReplacementCardFragmentBinding
-import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCard
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.DetermineCardToDisplay
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 
 class InstantStoreCardReplacementCardFragment() :
     ViewBindingFragment<InstantStoreCardReplacementCardFragmentBinding>(
@@ -14,20 +13,18 @@ class InstantStoreCardReplacementCardFragment() :
     ) {
 
     companion object {
-        private const val STORE_CARD = "STORE_CARD"
-        fun newInstance(storeCard: StoreCard?) =
+        private const val STORE_CARD_FEATURE_TYPE = "STORE_CARD_FEATURE_TYPE"
+        fun newInstance(storeCard: StoreCardFeatureType?) =
             InstantStoreCardReplacementCardFragment().withArgs {
-                putParcelable(STORE_CARD, storeCard)
+                putParcelable(STORE_CARD_FEATURE_TYPE, storeCard)
             }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val storeCard = arguments?.getParcelable<StoreCard?>(STORE_CARD)
-        when (storeCard?.cardDisplay) {
-            DetermineCardToDisplay.StoreCardIsInstantReplacementCardAndInactive -> binding.cardImageView.alpha = 0.3f
+        when (arguments?.getParcelable<StoreCardFeatureType?>(STORE_CARD_FEATURE_TYPE)) {
+           is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive -> binding.cardImageView.alpha = 0.3f
             else -> Unit
         }
     }
-
 }

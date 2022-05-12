@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.NavigationGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOfferingState
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.DialogData
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.StoreCardAccountOptionsViewModel
 
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RED_HEX_COLOR
@@ -44,7 +45,6 @@ class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMai
         activity?.window?.let { WindowCompat.setDecorFitsSystemWindows(it, false) }
         setToolbar()
         setupLandingScreen()
-        setupObservers()
     }
 
     private fun setToolbar() {
@@ -78,7 +78,7 @@ class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMai
                 bundleOf()
             )
 
-            getPopupDialogStatus { state ->
+         getPopupDialogStatus { state ->
                 when (state) {
                     /* when productOfferingGoodStanding == true
                    hideAccountInArrears(account)
@@ -91,65 +91,62 @@ class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMai
                     }
 
                     is AccountOfferingState.AccountIsChargedOff -> {
-
-                        // account is in arrears for more than 6 months
-                        // removeBlocksOnCollectionCustomer()
+                        when(isCreditCard(product)){
+                            false -> displayPopUp(DialogData.ChargedOff())
+                        }
                     }
 
                     is AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff -> {
+                        when(isCreditCard(product)){
+                            false -> displayPopUp(DialogData.ViewPlanDialog())
+                            true-> displayPopUp(DialogData.ChargedOff(
+                                firstButtonTitle = R.string.view_your_payment_plan,
+                                secondButtonVisibility = GONE
+                            ))
+                        }
 
                     }
 
                     is AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig -> {
+                        displayPopUp(DialogData.ViewPlanDialog())
 
                     }
 
                     is AccountOfferingState.MakeGetEligibilityCall -> {
-                        lifecycleScope.launchWhenStarted {
-                            viewModel.eligibilityPlanResponse().collect { response ->
-                                when (response) {
-                                    is ViewState.RenderSuccess -> {
-                                        val eligibilityPlanResponse = response.output as? EligibilityPlanResponse
-                                        eligibilityPlanResponse?.eligibilityPlan?.let {
-                                            optionsViewModel.eligibilityPlanState.value = it
-                                            displayPopUp(it)
-                                        }
-
-                                    }
-                                    is ViewState.RenderFailure -> {
-                                        displayPopUp()
-                                    }
-                                    is ViewState.Loading -> {
-                                        //TODO :: Handle eligibility loading state
-                                    }
-
-                                    is ViewState.RenderEmpty -> {
-                                        //TODO :: Handle empty state
-                                    }
-                                }
-                            }
-                        }
+                        callEligibility()
                     }
                 }
             }
         }
     }
 
-
-    private fun setupObservers() {
-        with(viewModel) {
-            eligibilityPlanResponseLiveData.observe(viewLifecycleOwner) { response ->
-
+    private fun callEligibility() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.eligibilityPlanResponse().collect { response ->
+                when (response) {
+                    is ViewState.RenderSuccess -> {
+                        response.output.eligibilityPlan.let {
+                            displayPopUp(viewModel.getPopUpData(it), it)
+                        }
+                    }
+                    is ViewState.RenderFailure -> {
+                        displayPopUp(DialogData.AccountInArrDialog())
+                    }
+                    is ViewState.Loading -> {
+                    }
+                    ViewState.RenderEmpty -> {}
+                }
             }
         }
     }
 
-    private fun displayPopUp(eligibilityPlan: EligibilityPlan? = null) {
+
+    fun displayPopUp(dialogData: DialogData, eligibilityPlan: EligibilityPlan? = null) {
         viewModel.apply {
             findNavController().navigate(
                 AccountProductsMainFragmentDirections.actionAccountProductsMainFragmentToAccountLandingDialogFragment(
                     product,
-                    viewModel.getPopUpData(eligibilityPlan), eligibilityPlan
+                    dialogData, eligibilityPlan
                 )
             )
         }

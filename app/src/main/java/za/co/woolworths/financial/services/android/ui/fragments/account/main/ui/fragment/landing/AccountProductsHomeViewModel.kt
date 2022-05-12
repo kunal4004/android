@@ -16,9 +16,6 @@ import javax.inject.Inject
 @HiltViewModel
 class AccountProductsHomeViewModel @Inject constructor(screen: AccountProductLandingScreenStatus, account: AccountProductLandingDao, eligibilityImpl: EligibilityImpl, private val collectionRepository: CollectionRepository) : ViewModel(), IAccountProductLandingDao by account, IAccountProductLandingScreen by screen, IEligibilityImpl by eligibilityImpl, ICollectionRepository by collectionRepository {
 
-    val eligibilityPlanResponseLiveData: MutableLiveData<ViewState<EligibilityPlanResponse>> by lazy {
-        MutableLiveData<ViewState<EligibilityPlanResponse>>()
-    }
 
     suspend fun eligibilityPlanResponse() = getViewStateFlowForNetworkCall { queryServiceCheckCustomerEligibilityPlan() }
 }
