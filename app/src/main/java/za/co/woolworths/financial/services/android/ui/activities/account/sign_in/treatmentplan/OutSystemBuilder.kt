@@ -4,6 +4,7 @@ import android.app.Activity
 import android.os.Bundle
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.ActionText
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.app_config.account_options.ConfigShowTreatmentPlan
@@ -62,37 +63,58 @@ class OutSystemBuilder(
 
     override fun renderMode(eligibilityPlan: EligibilityPlan?) {
 
+        val showTreatmentPlanJourney: ConfigShowTreatmentPlan? =
+            AppConfigSingleton.accountOptions?.showTreatmentPlanJourney
+        val collectionsStartNewPlanJourney: ConfigShowTreatmentPlan? =
+            AppConfigSingleton.accountOptions?.collectionsStartNewPlanJourney
+
+
+        /**
+         *  Use dynamic collection url when ("collectionsViewExistingPlan")
+         *  else use collection url
+         *  Duplicated in KotlinUtils.openLinkInInternalWebView() method
+         */
+
+        val collectionUrlFromConfig = when (productGroupCode) {
+            ProductGroupCode.SC -> collectionsStartNewPlanJourney?.storeCard?.collectionsUrl to showTreatmentPlanJourney?.storeCard?.collectionsDynamicUrl
+            ProductGroupCode.PL -> collectionsStartNewPlanJourney?.personalLoan?.collectionsUrl to showTreatmentPlanJourney?.personalLoan?.collectionsDynamicUrl
+            else -> collectionsStartNewPlanJourney?.creditCard?.collectionsUrl to showTreatmentPlanJourney?.creditCard?.collectionsDynamicUrl
+        }
+
         val options: ConfigShowTreatmentPlan? = when (eligibilityPlan == null) {
             true -> AppConfigSingleton.accountOptions?.showTreatmentPlanJourney
             false -> AppConfigSingleton.accountOptions?.collectionsStartNewPlanJourney
         }
 
         options?.apply {
-
-            var collectionUrlFromConfig = when (productGroupCode) {
-                ProductGroupCode.SC -> storeCard.collectionsUrl
-                ProductGroupCode.PL -> personalLoan.collectionsUrl
-                else -> creditCard.collectionsUrl
-            }
-
             val exitUrl = when (productGroupCode) {
                 ProductGroupCode.SC -> storeCard.exitUrl
                 ProductGroupCode.PL -> personalLoan.exitUrl
                 else -> creditCard.exitUrl
             }
 
+            /**
+             *  Use dynamic collection url when ("collectionsViewExistingPlan")
+             *  else use collection url
+             */
+            var finalCollectionUrlFromConfig = when (eligibilityPlan?.actionText == ActionText.VIEW_TREATMENT_PLAN.value ||
+                        eligibilityPlan?.actionText == ActionText.VIEW_ELITE_PLAN.value) {
+                    true -> collectionUrlFromConfig.second
+                    false -> collectionUrlFromConfig.first
+                }
+
             if (eligibilityPlan != null) {
-                collectionUrlFromConfig += eligibilityPlan.appGuid
+                finalCollectionUrlFromConfig += eligibilityPlan.appGuid
             }
 
             when (renderMode) {
                 AvailableFundFragment.NATIVE_BROWSER -> KotlinUtils.openUrlInPhoneBrowser(
-                    collectionUrlFromConfig,
+                    finalCollectionUrlFromConfig,
                     activity
                 )
                 else -> KotlinUtils.openLinkInInternalWebView(
                     activity,
-                    collectionUrlFromConfig,
+                    finalCollectionUrlFromConfig,
                     true,
                     exitUrl
                 )
