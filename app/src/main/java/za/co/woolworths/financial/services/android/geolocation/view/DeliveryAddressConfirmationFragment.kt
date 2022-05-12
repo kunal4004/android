@@ -416,13 +416,14 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 geoDeliveryText?.text =
                     HtmlCompat.fromHtml(getString(R.string.collecting_from_geo, it?.storeName),
                         HtmlCompat.FROM_HTML_MODE_LEGACY)
+                itemLimitValue?.text  = it?.quantityLimit?.foodMaximumQuantity.toString()
             }
             editDelivery?.text = bindString(R.string.edit)
             btnConfirmAddress?.isEnabled = true
             btnConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
             mStoreName = it?.storeName.toString()
             mStoreId = it?.storeId.toString()
-            itemLimitValue?.text  = it?.quantityLimit?.foodMaximumQuantity.toString()
+
         })
         isUnSellableItemsRemoved()
         placeId?.let {
