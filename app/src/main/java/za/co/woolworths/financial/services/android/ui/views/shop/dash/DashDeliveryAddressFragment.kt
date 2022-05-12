@@ -29,6 +29,7 @@ import za.co.woolworths.financial.services.android.models.dto.shop.Banner
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.adapters.shop.dash.DashDeliveryAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
@@ -196,7 +197,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     }
                     Status.ERROR -> {
                         progressBar.visibility = View.GONE
-                        showErrorView(resource.message, resource.data)
+                        showErrorView(requireContext().getString(resource.message), resource.data)
                     }
                 }
             }
@@ -366,7 +367,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                 tvAddedItem.text = quantityDesc
 
                                 buttonView.setOnClickListener {
-                                    //                                    openCartActivity()
+                                    openCartActivity()
                                     addToCartBalloon.dismiss()
                                 }
 
@@ -407,6 +408,12 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     }
                 }
             }
+        }
+    }
+
+    private fun openCartActivity() {
+        (activity as? BottomNavigationActivity)?.apply {
+            navigateToTabIndex(INDEX_CART, null)
         }
     }
 
@@ -575,7 +582,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                 tvAddedItem.text = quantityDesc
 
                                 buttonView.setOnClickListener {
-//                                    openCartActivity()
+                                    openCartActivity()
                                     addToCartBalloon.dismiss()
                                 }
 
@@ -620,7 +627,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             }
 
             override fun onFailure(error: Throwable?) {
-//                activity?.runOnUiThread { dismissProgressBar() }
+                //DO nothing meaning item not added to cart and toast is not shown.
             }
         })
     }
