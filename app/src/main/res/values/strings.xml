@@ -1586,9 +1586,9 @@
     <string name="change_delivery_option">CHANGE DELIVERY OPTION</string>
     <string name="remove_items_dialog_title">These items will be removed</string>
     <string name="remove_items_dialog_desc">We always show you items available at the store closest to your location. When you change this location, the items you see may change too.</string>
-    <string name="remove_items_dash_dialog_desc">This item cannot be delivered by a <b><font color='#000000'>Dash driver.</font></b> \n The following will be removed from your cart:</string>
-    <string name="remove_items_standard_dialog_desc">This item cannot be delivered using <b><font color='#000000'>Standard Delivery.</font></b> \n The following will be removed from your cart:</string>
-    <string name="remove_items_cnc_dialog_desc">This item cannot be collected using <b><font color='#000000'>Click &amp; Collect.</font></b> \nThe following will be removed from your cart:</string>
+    <string name="remove_items_dash_dialog_desc">This item cannot be delivered using <b><font color='#000000'>Dash Delivery.</font></b> The following will be removed from your cart:</string>
+    <string name="remove_items_standard_dialog_desc">This item cannot be delivered using <b><font color='#000000'>Standard Delivery.</font></b> The following will be removed from your cart:</string>
+    <string name="remove_items_cnc_dialog_desc">This item cannot be collected using <b><font color='#000000'>Click &amp; Collect.</font></b> The following will be removed from your cart:</string>
     <string name="no_stores_for_province_message">Sorry, we currently do not have stores that support this feature in\u0020</string>
     <string name="no_stores_available">No Stores Available</string>
     <string name="set_your_collection_location">Set your Collection Location</string>
