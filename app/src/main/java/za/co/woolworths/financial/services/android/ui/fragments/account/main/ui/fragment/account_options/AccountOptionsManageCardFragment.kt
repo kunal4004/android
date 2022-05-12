@@ -205,5 +205,10 @@ class AccountOptionsManageCardFragment :
     private fun dotIndicatorVisibility(items: MutableList<StoreCardFeatureType>?) {
         binding.tab.visibility = if (items?.size ?: 0 <= 1) INVISIBLE else VISIBLE
     }
+
+    override fun onPause() {
+        super.onPause()
+        binding.accountCardViewPager.adapter = null
+    }
 }
 
