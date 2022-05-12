@@ -24,9 +24,6 @@ abstract class RuntimePermissionActivity : AppCompatActivity(), PermissionResult
         onRuntimePermissionRequestGranted()
     }
 
-    override fun partialPermissionGranted(request_code: Int, granted_permissions: ArrayList<String>?) {
-    }
-
     override fun permissionDenied(request_code: Int) {
         onRuntimePermissonRequestDenied()
     }

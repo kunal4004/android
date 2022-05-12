@@ -162,15 +162,6 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
 
     }
 
-    override fun partialPermissionGranted(request_code: Int, granted_permissions: ArrayList<String>?) {
-    }
-
-    override fun permissionDenied(request_code: Int) {
-    }
-
-    override fun neverAskAgain(request_code: Int) {
-    }
-
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == DepartmentsFragment.REQUEST_CODE_FINE_GPS && viewpager_main.currentItem == 0) {

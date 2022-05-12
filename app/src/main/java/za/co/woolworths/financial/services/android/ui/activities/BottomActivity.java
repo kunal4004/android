@@ -186,18 +186,6 @@ public abstract class BottomActivity extends AppCompatActivity implements Permis
 		}
 	}
 
-	public void partialPermissionGranted(int request_code, ArrayList<String> granted_permissions) {
-
-	}
-
-	public void permissionDenied(int request_code) {
-
-	}
-
-	public void neverAskAgain(int request_code) {
-
-	}
-
 	public void setCurrentSection(int currentSection) {
 		this.currentSection = currentSection;
 	}

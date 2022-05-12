@@ -1735,18 +1735,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         findItemInStore()
     }
 
-    override fun partialPermissionGranted(
-        request_code: Int,
-        granted_permissions: ArrayList<String>?,
-    ) {
-    }
-
-    override fun permissionDenied(request_code: Int) {
-    }
-
-    override fun neverAskAgain(request_code: Int) {
-    }
-
     override fun onLocationChange(location: Location?) {
         activity?.apply {
             Utils.saveLastLocation(location, this)

@@ -988,21 +988,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
     }
 
-    @Override
-    public void partialPermissionGranted(int request_code, ArrayList<String> granted_permissions) {
-
-    }
-
-    @Override
-    public void permissionDenied(int request_code) {
-
-    }
-
-    @Override
-    public void neverAskAgain(int request_code) {
-
-    }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

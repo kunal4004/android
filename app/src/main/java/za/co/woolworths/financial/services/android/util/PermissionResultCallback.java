@@ -6,9 +6,15 @@ import java.util.ArrayList;
 public interface PermissionResultCallback {
 	void permissionGranted(int request_code);
 
-	void partialPermissionGranted(int request_code, ArrayList<String> granted_permissions);
+	default void partialPermissionGranted(int request_code, ArrayList<String> granted_permissions) {
 
-	void permissionDenied(int request_code);
+	}
 
-	void neverAskAgain(int request_code);
+	default void permissionDenied(int request_code) {
+
+	}
+
+	default void neverAskAgain(int request_code) {
+
+	}
 }
