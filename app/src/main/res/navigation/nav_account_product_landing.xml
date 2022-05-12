@@ -19,6 +19,11 @@
         <action
             android:id="@+id/action_accountProductsMainFragment_to_removeBlockOnCollectionFragment2"
             app:destination="@id/removeBlockOnCollectionFragment2" />
+
+        <action
+            android:id="@+id/action_accountProductsMainFragment_to_accountInformationFragment"
+            app:destination="@id/accountInfoFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
     <fragment
         android:id="@+id/accountProductsHomeFragment"
@@ -50,4 +55,14 @@
         android:label="RemoveBlockOnCollectionFragment"
         tools:layout="@layout/remove_block_dc_main_fragment" />
 
+    <fragment
+        android:id="@+id/accountInfoFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.information.InformationFragment"
+        android:label="AccountInformationFragment"
+        tools:layout="@layout/fragment_information" >
+        <argument
+            android:name="informationData"
+            app:argType="za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.InformationData"
+            app:nullable="false" />
+    </fragment>
 </navigation>
