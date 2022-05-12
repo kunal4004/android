@@ -26,6 +26,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.cor
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card_slider.CardViewPager
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card_slider.ManageCardScreenSlidesAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.DetermineCardToDisplay
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.loadingState
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import javax.inject.Inject
 
@@ -61,6 +62,7 @@ class AccountOptionsManageCardFragment :
                         renderFailure { Log.e("renderStatus", "renderFailure") }
                         renderEmpty { Log.e("renderStatus", "renderEmpty") }
                         renderLoading {
+                            binding.cardShimmer.loadingState(isLoading,shimmerContainer = binding.rltCardShimmer)
                             when (isLoading) {
                                 true -> binding.shouldHideAllListItems(true)
                                 false -> Unit
