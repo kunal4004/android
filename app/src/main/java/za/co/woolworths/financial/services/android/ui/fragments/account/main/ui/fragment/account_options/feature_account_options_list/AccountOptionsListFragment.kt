@@ -2,10 +2,13 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 
 import android.os.Bundle
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountOptionsListFragmentBinding
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType
@@ -13,6 +16,7 @@ import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOptionsScreenUI
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.StoreCardAccountOptionsViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.loadingState
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 class AccountOptionsListFragment : ViewBindingFragment<AccountOptionsListFragmentBinding>(AccountOptionsListFragmentBinding::inflate) {
@@ -26,6 +30,7 @@ class AccountOptionsListFragment : ViewBindingFragment<AccountOptionsListFragmen
 
     private fun subscribeObservers() {
         with(binding) {
+            accountOptionsSkeleton.loadingState(true,targetedShimmerLayout = accountOptionsLayout)
             lifecycleScope.launch {
                 viewModel.viewState.collect { items ->
                     items.forEach { item ->
@@ -45,6 +50,8 @@ class AccountOptionsListFragment : ViewBindingFragment<AccountOptionsListFragmen
                                 is AccountOptionsScreenUI.DebitOrder -> showDebitOrder(isActive)
                             }
                         }
+                    }.apply {
+                        accountOptionsSkeleton.loadingState(false,targetedShimmerLayout = accountOptionsLayout)
                     }
                 }
             }
