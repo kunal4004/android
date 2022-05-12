@@ -10,13 +10,14 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCard
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.disableNestedScrolling
 import javax.inject.Inject
 
 interface ICardViewPager {
     fun ViewPager2.onPageChangeListener(
         cardAdapter: ManageCardScreenSlidesAdapter,
-        onPageSwipeListener: (StoreCard?) -> Unit
+        onPageSwipeListener: (StoreCardFeatureType?) -> Unit
     )
 }
 
@@ -83,7 +84,7 @@ class CardViewPager @Inject constructor() : ICardViewPager {
         viewPager: ViewPager2?,
         tab: TabLayout,
         cardAdapter: ManageCardScreenSlidesAdapter,
-        onPageSwipeListener: (StoreCard?) -> Unit
+        onPageSwipeListener: (StoreCardFeatureType?) -> Unit
     ) {
         viewPager?.apply {
             disableNestedScrolling()
@@ -98,7 +99,7 @@ class CardViewPager @Inject constructor() : ICardViewPager {
 
     override fun ViewPager2.onPageChangeListener(
         cardAdapter: ManageCardScreenSlidesAdapter,
-        onPageSwipeListener: (StoreCard?) -> Unit
+        onPageSwipeListener: (StoreCardFeatureType?) -> Unit
     ) {
         registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -111,5 +112,4 @@ class CardViewPager @Inject constructor() : ICardViewPager {
             }
         })
     }
-
 }
