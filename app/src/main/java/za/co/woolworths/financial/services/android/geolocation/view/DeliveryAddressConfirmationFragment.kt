@@ -23,6 +23,7 @@ import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.geo_location_delivery_address.*
 import kotlinx.android.synthetic.main.no_connection.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
@@ -569,7 +570,10 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         isUnSellableItemsRemoved()
         placeId?.let {
             if (confirmAddressViewModel.isConnectedToInternet(requireActivity())) {
-                getDeliveryDetailsFromValidateLocation(it)
+                viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                    delay(AppConstant.DELAY_300_MS)
+                    getDeliveryDetailsFromValidateLocation(it)
+                }
                 connectionLayout?.visibility = View.GONE
             } else {
                 connectionLayout?.visibility = View.VISIBLE
@@ -748,7 +752,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 if (validateLocationResponse != null) {
                     when (validateLocationResponse?.httpCode) {
                         HTTP_OK -> {
-                            mStoreName = validateLocationResponse?.validatePlace?.stores?.getOrNull(0)?.storeName
+                            mStoreName =
+                                validateLocationResponse?.validatePlace?.stores?.getOrNull(0)?.storeName
                             moveToTab(deliveryType)
                         }
                         else -> {
