@@ -88,8 +88,8 @@
             app:tabTextColor="@android:color/transparent" />
 
         <View
-            android:id="@+id/accountOptionsDividerView"
-            style="@style/accountOptionsDivider"
+            android:id="@+id/menuLandingDividerStyleView"
+            style="@style/menuLandingDividerStyle"
             android:layout_marginStart="0dp"
             android:layout_marginEnd="0dp" />
 
@@ -116,7 +116,7 @@
 
         </RelativeLayout>
 
-        <View style="@style/accountOptionsDivider" />
+        <View style="@style/menuLandingDividerStyle" />
 
         <RelativeLayout
             android:id="@+id/menuItem1RelativeLayout"
@@ -141,7 +141,7 @@
 
         </RelativeLayout>
 
-        <View style="@style/accountOptionsDivider" />
+        <View style="@style/menuLandingDividerStyle" />
 
         <RelativeLayout
             android:id="@+id/menuItem2RelativeLayout"
@@ -162,6 +162,31 @@
 
             <ImageView
                 android:id="@+id/replacementCardNext"
+                style="@style/accountOptionsNextImageViewStyle"
+                android:src="@drawable/ic_caret_black" />
+        </RelativeLayout>
+
+        <View style="@style/menuLandingDividerStyle" />
+
+        <RelativeLayout
+            android:id="@+id/menuItem4RelativeLayout"
+            style="@style/accountOptionItemsStyle">
+
+            <ImageView
+                android:id="@+id/storeCardItem4ImageView"
+                style="@style/accountOptionsImageviewStyle"
+                android:src="@drawable/icon_limit" />
+
+            <TextView
+                android:id="@+id/storeCardItem4TextView"
+                style="@style/accountOptionsLabelStyle"
+                android:layout_width="match_parent"
+                android:layout_toStartOf="@+id/item4ArrowImageView"
+                android:layout_toEndOf="@+id/storeCardItem4ImageView"
+                android:text="list Item 4" />
+
+            <ImageView
+                android:id="@+id/item4ArrowImageView"
                 style="@style/accountOptionsNextImageViewStyle"
                 android:src="@drawable/ic_caret_black" />
         </RelativeLayout>

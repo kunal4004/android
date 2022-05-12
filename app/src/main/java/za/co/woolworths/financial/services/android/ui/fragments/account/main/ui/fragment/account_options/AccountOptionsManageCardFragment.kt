@@ -82,7 +82,7 @@ class AccountOptionsManageCardFragment :
     }
 
     private fun AccountOptionsManageCardFragmentBinding.isAccountOptionsDividerVisible(isVisible: Boolean) {
-        accountOptionsDividerView.visibility= if (isVisible) VISIBLE else GONE
+       // accountOptionsDividerView.visibility= if (isVisible) VISIBLE else GONE
     }
     private fun AccountOptionsManageCardFragmentBinding.isAllMenuListItemsVisible(isHidden: Boolean) {
         menuItem1RelativeLayout.visibility = if (isHidden) GONE else VISIBLE
