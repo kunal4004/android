@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse
@@ -55,6 +56,9 @@ class ShopViewModel @Inject constructor(
     private val _dashLandingDetails = MutableLiveData<Event<Resource<DashCategories>>>()
     val dashLandingDetails: LiveData<Event<Resource<DashCategories>>> = _dashLandingDetails
 
+    private val _validatePlaceDetails = MutableLiveData<Event<Resource<ValidateLocationResponse>>>()
+    val validatePlaceDetails: LiveData<Event<Resource<ValidateLocationResponse>>> = _validatePlaceDetails
+
     private var validatePlaceResponse: ValidatePlace? = null
 
     fun getDashLandingDetails() {
@@ -92,6 +96,14 @@ class ShopViewModel @Inject constructor(
                 // Ensure counter is always updated after a successful add to cart
                 QueryBadgeCounter.instance.queryCartSummaryCount()
             }
+        }
+    }
+
+    fun getValidateLocationResponse(placeId: String) {
+        _validatePlaceDetails.value = Event(Resource.loading(null))
+        viewModelScope.launch {
+            val response = shopRepository.validateLocation(placeId)
+            _validatePlaceDetails.value = Event(response)
         }
     }
 
