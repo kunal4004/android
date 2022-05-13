@@ -2548,6 +2548,7 @@
     <string name="delivery_address">Delivery Address:</string>
     <string name="timeslot">Timeslot:</string>
     <string name="order_id">Order #%s</string>
+    <string name="time_slot_value">%s:</string>
     <!-- My Cart   -->
     <string name="cart_default_location">Default Location</string>
 

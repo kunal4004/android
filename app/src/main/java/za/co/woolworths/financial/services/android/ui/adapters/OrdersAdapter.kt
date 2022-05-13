@@ -76,7 +76,7 @@ class OrdersAdapter(val context: Context, val iPresentOrderDetailInterface: IPre
                             val view = (context as Activity).layoutInflater.inflate(R.layout.orders_list_delivery_date_item, null)
                             val deliveryItemsType = view.findViewById<TextView>(R.id.deliveryItemsType)
                             val dateOfDelivery = view.findViewById<TextView>(R.id.dateOfDelivery)
-                            deliveryItemsType.text = entry.key
+                            deliveryItemsType.text = context.getString(R.string.time_slot_value,entry.key)
                             dateOfDelivery.text = entry.value
                            itemView.deliveryDateContainer.addView(view)
                         }
