@@ -121,8 +121,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             placeId = this.getString(KEY_PLACE_ID, "")
             isComingFromSlotSelection = this.getBoolean(IS_COMING_FROM_SLOT_SELECTION, false)
             isComingFromCheckout = this.getBoolean(IS_COMING_FROM_CHECKOUT, false)
-            //deliveryType = this.getString(DELIVERY_TYPE, Delivery.STANDARD.name)
-
              //added this condition during the app Upgrade
           when(this.getString(DELIVERY_TYPE, Delivery.STANDARD.name))
           {
