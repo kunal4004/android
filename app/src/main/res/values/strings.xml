@@ -682,7 +682,7 @@
     <string name="add_items_to_shopping_list">Add Items to Shopping List</string>
     <string name="number_of_items">Number of items:</string>
     <string name="purchase_date">Purchase Date:</string>
-    <string name="past_orders">PAST ORDERS</string>
+    <string name="past_orders">Past Orders</string>
     <string name="order_items">order items</string>
     <string name="order_page_title_prefix">ORDER:\u0020</string>
     <string name="empty_order_view_title">No order history</string>
@@ -2538,7 +2538,12 @@
     <string name="account_in_recovery_sc_payment_due_unavailable_desc">Your Store Card is currently in a payment plan. Please remember to make your next payment.</string>
     <string name="account_in_recovery_pl_payment_due_unavailable_desc">Your Personal Loan is currently in a payment plan. Please remember to make your next payment.</string>
     <string name="account_in_recovery_cc_payment_due_unavailable_desc">Your Credit Card is currently in a payment plan. Please remember to make your next payment.</string>
-
+    <!--order history-->
+    <string name="order_type">Order Type:</string>
+    <string name="delivery_address">Delivery Address:</string>
+    <string name="timeslot">Timeslot:</string>
+    <string name="order_id">Order #%s</string>
     <!-- My Cart   -->
-    <string name="cart_default_location">Default Location</string> 
+    <string name="cart_default_location">Default Location</string>
+
 </resources>
