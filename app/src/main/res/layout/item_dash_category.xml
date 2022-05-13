@@ -20,7 +20,7 @@
         <ImageView
             android:padding="@dimen/ten_dp"
             android:id="@+id/imgCategory"
-            android:background="@color/color_E5E5E5"
+            android:background="@color/color_F3F3F3"
             android:layout_width="@dimen/fourty_dp"
             android:layout_height="@dimen/fourty_dp" />
 

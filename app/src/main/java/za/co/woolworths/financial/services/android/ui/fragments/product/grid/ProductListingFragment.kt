@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.skydoves.balloon.balloon
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.blp_error_layout.view.*
@@ -78,6 +79,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.net.ConnectException
 import java.net.UnknownHostException
 import java.util.*
@@ -89,7 +91,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     WMaterialShowcaseView.IWalkthroughActionListener,
     IOnConfirmDeliveryLocationActionListener, ChanelNavigationClickListener {
 
-    private var EDIT_LOCATION_LOGIN_REQUEST = 1919
     private var LOGIN_REQUEST_SUBURB_CHANGE = 1419
     private var lastVisibleItem: Int = 0
     internal var totalItemCount: Int = 0
@@ -118,6 +119,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var mBannerImage: String? = null
     private var mIsComingFromBLP: Boolean = false
     private var liquorDialog: Dialog? = null
+    private var deliveryType: Delivery = Delivery.STANDARD
+    private var placeId: String? = null
 
     @OpenTermAndLighting
     @Inject
@@ -201,6 +204,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 )
             }
         }
+        addressLayout?.setOnClickListener(this)
 
         layout_error_blp?.blp_error_back_btn?.setOnClickListener {
             (activity as? BottomNavigationActivity)?.popFragment()
@@ -241,6 +245,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_SEARCH_RESULTS
             )
         }
+
+        val arguments = HashMap<String, String>()
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_LIST_NAME] = mSubCategoryName!!
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST,arguments, activity)
 
         if (activity is BottomNavigationActivity && (activity as BottomNavigationActivity).currentFragment is ProductListingFragment) {
             val currentPlaceId = KotlinUtils.getPreferredPlaceId()
@@ -292,6 +300,63 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
         toolbarPLPTitle.text =
             if (mSubCategoryName?.isEmpty() == true) mSearchTerm else mSubCategoryName
+
+        // set delivery type and icon
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
+                setDeliveryType(it.deliveryType, it.address?.placeId)
+            }
+        } else {
+            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let {
+                setDeliveryType(it.deliveryType, it.address?.placeId)
+            }
+        }
+    }
+
+    private fun setDeliveryType(deliveryType: String?, placeId: String?) {
+        this.placeId = placeId
+        when(deliveryType){
+            Delivery.STANDARD.type -> {
+                this.deliveryType = Delivery.STANDARD
+                toolbarPLPAddress.text = requireContext().getString(R.string.standard_delivery)
+                toolbarPLPIcon?.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.ic_delivery_circle
+                    )
+                )
+            }
+            Delivery.CNC.type -> {
+                this.deliveryType = Delivery.CNC
+                toolbarPLPAddress.text = requireContext().getString(R.string.click_collect)
+                toolbarPLPIcon?.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.ic_collection_circle
+                    )
+                )
+            }
+            Delivery.DASH.type -> {
+                this.deliveryType = Delivery.DASH
+                toolbarPLPAddress.text = requireContext().getString(R.string.dash_delivery)
+                toolbarPLPIcon?.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.ic_dash_delivery_circle
+                    )
+                )
+            }
+            else -> {
+                this.deliveryType = Delivery.STANDARD
+                toolbarPLPAddress.text = requireContext().getString(R.string.standard_delivery)
+                toolbarPLPIcon?.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.ic_delivery_circle
+                    )
+                )
+            }
+        }
     }
 
     override fun onLoadProductSuccess(response: ProductView, loadMoreData: Boolean) {
@@ -708,6 +773,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     startActivity(openSearchActivity)
                     overridePendingTransition(0, 0)
                 }
+                val arguments = HashMap<String, String>()
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SEARCH_TERM] = mSearchTerm.toString()
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SEARCH_TYPE] = mSearchType.toString()
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SEARCH, arguments, activity)
                 true
             }
             else -> false
@@ -748,6 +817,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                         activity
                     )
                     productView?.sortOptions?.let { sortOption -> this.showShortOptions(sortOption) }
+                }
+                R.id.addressLayout -> {
+                    presentEditDeliveryActivity()
                 }
 
                 else -> return
@@ -890,8 +962,20 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     AppConfigSingleton.isProductItemForLiquorInventoryPending = true
                 }
             }
+            BundleKeysConstants.REQUEST_CODE -> {
+                setTitle()
+            }
             else -> return
         }
+    }
+
+    private fun presentEditDeliveryActivity() {
+        KotlinUtils.presentEditDeliveryGeoLocationActivity(
+            requireActivity(),
+            BundleKeysConstants.REQUEST_CODE,
+            deliveryType,
+            placeId
+        )
     }
 
     private fun reloadProductsWithSortAndFilter() {
@@ -964,6 +1048,22 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun openProductDetailView(productList: ProductList) {
+        //firebase event select_item
+        val mFirebaseAnalytics = FirebaseManager.getInstance().getAnalytics()
+        val selectItemParams = Bundle()
+        selectItemParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_LIST_NAME, mSubCategoryName)
+        selectItemParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_BRAND, productList.brandText)
+        for (products in 0..(mProductList?.size ?: 0)) {
+            val selectItem = Bundle()
+            selectItem.putString(FirebaseAnalytics.Param.ITEM_ID, productList.productId)
+            selectItem.putString(FirebaseAnalytics.Param.ITEM_NAME, productList.productName)
+            selectItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, mSubCategoryName)
+            selectItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT, productList.productVariants)
+            selectItem.putString(FirebaseAnalytics.Param.PRICE, productList.price.toString())
+            selectItemParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(selectItem))
+        }
+        mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.SELECT_ITEM_EVENT, selectItemParams)
+
         val title = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
         (activity as? BottomNavigationActivity)?.openProductDetailFragment(
             title,

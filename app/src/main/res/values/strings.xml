@@ -1586,6 +1586,9 @@
     <string name="change_delivery_option">CHANGE DELIVERY OPTION</string>
     <string name="remove_items_dialog_title">These items will be removed</string>
     <string name="remove_items_dialog_desc">We always show you items available at the store closest to your location. When you change this location, the items you see may change too.</string>
+    <string name="remove_items_dash_dialog_desc">This item cannot be delivered using <b><font color='#000000'>Dash Delivery.</font></b> The following will be removed from your cart:</string>
+    <string name="remove_items_standard_dialog_desc">This item cannot be delivered using <b><font color='#000000'>Standard Delivery.</font></b> The following will be removed from your cart:</string>
+    <string name="remove_items_cnc_dialog_desc">This item cannot be collected using <b><font color='#000000'>Click &amp; Collect.</font></b> The following will be removed from your cart:</string>
     <string name="no_stores_for_province_message">Sorry, we currently do not have stores that support this feature in\u0020</string>
     <string name="no_stores_available">No Stores Available</string>
     <string name="set_your_collection_location">Set your Collection Location</string>
@@ -2446,6 +2449,7 @@
     <string name="earliest_food_delivery_date">Earliest Food Delivery Date:</string>
     <string name="earliest_fashion_delivery_date">Earliest Fashion Delivery Date:</string>
     <string name="earliest_dash_delivery_timeslot">Dash Delivery Timeslot:</string>
+    <string name="earliest_delivery_no_date_available">No Date Available</string>
     <string name="all">All</string>
     <string name="unlimited">Unlimited</string>
     <string name="food">Food</string>
@@ -2538,12 +2542,19 @@
     <string name="account_in_recovery_sc_payment_due_unavailable_desc">Your Store Card is currently in a payment plan. Please remember to make your next payment.</string>
     <string name="account_in_recovery_pl_payment_due_unavailable_desc">Your Personal Loan is currently in a payment plan. Please remember to make your next payment.</string>
     <string name="account_in_recovery_cc_payment_due_unavailable_desc">Your Credit Card is currently in a payment plan. Please remember to make your next payment.</string>
+    <string name="delivery_address">Delivery Address:</string>
+
     <!--order history-->
     <string name="order_type">Order Type:</string>
     <string name="delivery_address">Delivery Address:</string>
     <string name="timeslot">Timeslot:</string>
     <string name="order_id">Order #%s</string>
     <!-- My Cart   -->
+    <string name="cart_default_location">Default Location</string>
+
+    <!-- Common Errors -->
+    <string name="error_unknown">An unknown error occurred</string>
+    <string name="error_internet_connection">Couldn\'t reach the server. Check your internet connection.</string>
     <string name="cart_default_location">Default Location</string>
 
 </resources>

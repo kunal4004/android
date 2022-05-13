@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.geolocation.view
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.location.Address
@@ -11,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -42,6 +44,7 @@ import za.co.woolworths.financial.services.android.geolocation.model.request.Sav
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
+import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment.Companion.MAP_LOCATION_RESULT
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -157,6 +160,7 @@ class ConfirmAddressMapFragment :
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 delay(AppConstant.DELAY_1500_MS)
                 clearAddressText()
+                clearMapDetails()
             }
         }
     }
@@ -199,6 +203,12 @@ class ConfirmAddressMapFragment :
         autoCompleteTextView.setText("")
         errorMassageDivider.visibility = View.GONE
         errorMessage.visibility = View.GONE
+    }
+
+    private fun clearMapDetails() {
+        mLatitude = null
+        mLongitude = null
+        binding?.confirmAddress?.isEnabled = false
     }
 
     private fun confirmAddressClick() {
@@ -308,6 +318,7 @@ class ConfirmAddressMapFragment :
         }
     }
 
+    @SuppressLint("RestrictedApi")
     private fun navigateToLastScreen() {
         if (isComingFromCheckout == true) {
             val bundle = Bundle()
@@ -333,10 +344,19 @@ class ConfirmAddressMapFragment :
                 putString(BundleKeysConstants.DELIVERY_TYPE,
                     deliveryType)
             }
-            findNavController().navigate(
-                R.id.action_confirmAddressMapFragment_to_deliveryAddressConfirmationFragment,
-                bundleOf(BUNDLE to bundle)
-            )
+
+            findNavController().navigateUp() // This will land on confirmAddress fragment.
+            if (findNavController().graph.startDestination != findNavController().currentDestination?.id) {
+                // if it's not a first time user then it must have change fulfillment screen in nav graph. so again navigateUp() will land on changeFulfillment screen.
+                findNavController().navigateUp()
+                setFragmentResult(MAP_LOCATION_RESULT, bundleOf(BUNDLE to bundle))
+            } else {
+                // directly go to change fulfillment screen.
+                findNavController().navigate(
+                    R.id.actionToDeliveryAddressConfirmationFragment,
+                    bundleOf(BUNDLE to bundle)
+                )
+            }
         }
     }
 
@@ -458,21 +478,11 @@ class ConfirmAddressMapFragment :
                                 hideKeyboard(requireActivity())
                                 autoCompleteTextView?.clearFocus()
                                 val place = response.place
-                                val location = place.name
-                                val addressList: MutableList<Address>?
-                                if (location != null || location == "") {
-                                    try {
-                                        val geocoder = Geocoder(context)
-                                        addressList = geocoder.getFromLocationName(location, 1)
-                                        val address = addressList?.getOrNull(0)
-                                        latLng = address?.latitude?.let {
-                                            LatLng(it, address.longitude)
-                                        }
-                                        isAddressSearch = true
-                                        moveMapCamera(latLng)
-                                    } catch (e: Exception) {
-                                        FirebaseManager.logException(e)
-                                    }
+                                try {
+                                    isAddressSearch = true
+                                    moveMapCamera(place.latLng)
+                                } catch (e: Exception) {
+                                    FirebaseManager.logException(e)
                                 }
                             }.addOnFailureListener {
                                 showErrorDialog()

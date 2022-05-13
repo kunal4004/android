@@ -148,7 +148,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
 
         payMyAccountViewModel.getNavigationResult().observe(viewLifecycleOwner) { result ->
             when (result) {
-                PayMyAccountViewModel.OnBackNavigation.RETRY -> {
+                PayMyAccountViewModel.OnNavigateBack.Retry -> {
                     activity?.runOnUiThread {
                         payMyAccountViewModel.isQueryPayUPaymentMethodComplete = false
                         queryPaymentMethod()

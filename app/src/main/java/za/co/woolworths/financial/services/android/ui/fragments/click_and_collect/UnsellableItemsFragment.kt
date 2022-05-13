@@ -14,14 +14,16 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.unsellable_items_fragment.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
-import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.Province
+import za.co.woolworths.financial.services.android.models.dto.Suburb
+import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.ui.adapters.UnsellableItemsListAdapter
 import za.co.woolworths.financial.services.android.util.Utils
 
 class UnsellableItemsFragment : AppCompatDialogFragment(), View.OnClickListener {
 
-    var selectedSuburb: Suburb? = null
-    var selectedProvince: Province? = null
+    private var selectedSuburb: Suburb? = null
+    private var selectedProvince: Province? = null
     var bundle: Bundle? = null
     private var fromScreenName: String? = ""
     private var commerceItems: ArrayList<UnSellableCommerceItem>? = null
@@ -87,7 +89,7 @@ class UnsellableItemsFragment : AppCompatDialogFragment(), View.OnClickListener 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.changeStore -> {
-                /*CANCEl button */
+                /*CANCEL button */
                 UnSellableItemsLiveData.value = false
                 confirmRemoveItems()
             }
