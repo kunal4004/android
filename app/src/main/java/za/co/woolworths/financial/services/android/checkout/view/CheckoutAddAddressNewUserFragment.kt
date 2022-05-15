@@ -872,7 +872,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
         } else {
             isNickNameExist()
-            if (selectedDeliveryAddressType == null) {
+            if (selectedDeliveryAddressType.isNullOrEmpty()) {
                 deliveringAddressTypesErrorMsg.visibility = View.VISIBLE
                 showAnimationErrorMessage(deliveringAddressTypesErrorMsg, View.VISIBLE, 0)
             }
