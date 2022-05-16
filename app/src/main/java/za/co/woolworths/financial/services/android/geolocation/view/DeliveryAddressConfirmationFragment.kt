@@ -129,8 +129,24 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             placeId = this.getString(KEY_PLACE_ID, "")
             isComingFromSlotSelection = this.getBoolean(IS_COMING_FROM_SLOT_SELECTION, false)
             isComingFromCheckout = this.getBoolean(IS_COMING_FROM_CHECKOUT, false)
-            deliveryType = this.getString(DELIVERY_TYPE, Delivery.STANDARD.name)
             lastDeliveryType = this.getString(DELIVERY_TYPE, Delivery.STANDARD.name)
+            //added this condition during the app Upgrade
+            deliveryType = when (this.getString(DELIVERY_TYPE, Delivery.STANDARD.name)) {
+                Delivery.STANDARD.name -> {
+                    Delivery.STANDARD.name
+                }
+                Delivery.CNC.name -> {
+                    Delivery.CNC.name
+                }
+                Delivery.DASH.name -> {
+                    Delivery.DASH.name
+                }
+                else -> {
+                    Delivery.STANDARD.name
+                }
+            }
+
+
             getString(CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS)?.let {
                 whoIsCollecting =
                     Gson().fromJson(it, object : TypeToken<WhoIsCollectingDetails>() {}.type)
