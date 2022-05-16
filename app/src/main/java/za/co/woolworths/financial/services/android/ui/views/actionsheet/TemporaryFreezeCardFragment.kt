@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.temporary_freeze_cart_layout.*
 import za.co.woolworths.financial.services.android.contracts.ITemporaryCardFreeze
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-class TemporaryFreezeCardFragment(private val iTemporaryCardFreeze: ITemporaryCardFreeze?) : WBottomSheetDialogFragment() {
+class TemporaryFreezeCardFragment : WBottomSheetDialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.temporary_freeze_cart_layout, container, false)
@@ -23,7 +23,6 @@ class TemporaryFreezeCardFragment(private val iTemporaryCardFreeze: ITemporaryCa
         cancelTextView?.apply {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
             setOnClickListener {
-                iTemporaryCardFreeze?.onTemporaryCardFreezeCanceled()
                 dismiss()
             }
             AnimationUtilExtension.animateViewPushDown(this)
@@ -31,7 +30,7 @@ class TemporaryFreezeCardFragment(private val iTemporaryCardFreeze: ITemporaryCa
 
         confirmFreezeCardButton?.apply {
             setOnClickListener {
-                iTemporaryCardFreeze?.onTemporaryCardFreezeConfirmed()
+               // iTemporaryCardFreeze?.onTemporaryCardFreezeConfirmed()
                 dismiss()
             }
             AnimationUtilExtension.animateViewPushDown(this)
@@ -40,6 +39,6 @@ class TemporaryFreezeCardFragment(private val iTemporaryCardFreeze: ITemporaryCa
 
     override fun onCancel(dialog: DialogInterface) {
         super.onCancel(dialog)
-        iTemporaryCardFreeze?.onTemporaryCardFreezeCanceled()
+        //iTemporaryCardFreeze?.onTemporaryCardFreezeCanceled()
     }
 }

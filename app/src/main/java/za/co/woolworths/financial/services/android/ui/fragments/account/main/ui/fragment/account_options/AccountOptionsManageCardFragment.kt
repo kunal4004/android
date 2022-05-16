@@ -5,11 +5,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.View.*
-import androidx.annotation.DrawableRes
+import android.widget.RelativeLayout
 import androidx.annotation.StringRes
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountOptionsManageCardFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,7 +28,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
 class AccountOptionsManageCardFragment :
     ViewBindingFragment<AccountOptionsManageCardFragmentBinding>(
@@ -39,17 +38,24 @@ class AccountOptionsManageCardFragment :
     lateinit var adapter: ManageCardScreenSlidesAdapter
 
     private val viewModel: MyAccountsRemoteApiViewModel by activityViewModels()
+    private val pager by lazy { CardViewPager() }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val pager = CardViewPager()
+        initCardViewPager()
+        binding.setupTemporaryFreezeCardSwipe()
+        subscribeObservers()
+    }
 
+    private fun initCardViewPager() {
         setupCard(pager, items = mutableListOf(StoreCardFeatureType.OnStart)) { feature ->
             binding.showStoreCardItems(feature)
             dotIndicatorVisibility(adapter.getListOfStoreCards())
         }
+    }
 
+    private fun subscribeObservers() {
         lifecycleScope.launchWhenStarted {
             with(viewModel) {
                 queryServiceGetStoreCardCards().collect { response ->
@@ -70,7 +76,6 @@ class AccountOptionsManageCardFragment :
                                 true -> {
                                     binding.isAllMenuListItemsVisible(true)
                                     binding.isTemporaryFreezeCardVisible(false)
-                                    binding.isAccountOptionsDividerVisible(false)
                                 }
                                 false -> Unit
                             }
@@ -81,36 +86,61 @@ class AccountOptionsManageCardFragment :
         }
     }
 
-    private fun AccountOptionsManageCardFragmentBinding.isAccountOptionsDividerVisible(isVisible: Boolean) {
-       // accountOptionsDividerView.visibility= if (isVisible) VISIBLE else GONE
-    }
     private fun AccountOptionsManageCardFragmentBinding.isAllMenuListItemsVisible(isHidden: Boolean) {
-        menuItem1RelativeLayout.visibility = if (isHidden) GONE else VISIBLE
-        menuItem2RelativeLayout.visibility = if (isHidden) GONE else VISIBLE
+//        menuItem1RelativeLayout.visibility = if (isHidden) GONE else VISIBLE
+//        menuItem2RelativeLayout.visibility = if (isHidden) GONE else VISIBLE
+        isLinkNewCardUIVisible(!isHidden)
+        isActivateVirtualTempCardUIVisible(!isHidden)
+        isInstantReplacementCardUIVisible(!isHidden)
+        isMenuItem2UIVisible(!isHidden)
+        isMenuItem4UIVisible(!isHidden)
+        isTemporaryFreezeCardVisible(!isHidden)
     }
 
     private fun AccountOptionsManageCardFragmentBinding.isTemporaryFreezeCardVisible(isVisible: Boolean) {
-        menuItem3RelativeLayout.visibility = if (isVisible) VISIBLE else GONE
-        isAllMenuListItemsVisible(isVisible)
-        isAccountOptionsDividerVisible(!isVisible)
+        temporaryFreezeCardDivider.visibility = if (isVisible) VISIBLE else GONE
+        temporaryFreezeCardRelativeLayout.visibility = if (isVisible) VISIBLE else GONE
+    }
+
+    private fun AccountOptionsManageCardFragmentBinding.setupTemporaryFreezeCardSwipe() {
+        switchTemporaryFreezeCard.setOnCheckedChangeListener { _, isChecked ->
+            when (isChecked) {
+                true -> {
+                    findNavController().navigate(AccountOptionsManageCardFragmentDirections.actionAccountOptionsManageCardFragmentToTemporaryFreezeCardFragment2())
+                }
+                false -> {
+                }
+            }
+        }
     }
 
     private fun AccountOptionsManageCardFragmentBinding.showStoreCardItems(storeCardFeatureType: StoreCardFeatureType?) =
         CoroutineScope(Dispatchers.Main).launch {
+            isAllMenuListItemsVisible(true)
             when (storeCardFeatureType) {
-                is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive -> {
-                    isAllMenuListItemsVisible(false)
+
+                is StoreCardFeatureType.ActivateVirtualTempCard -> {
                     cardLabelVisibility(false)
-                    manageCardLabelVisibility(false, true)
-                    setListItems1Info(R.string.replacement_card_label, R.drawable.icon_card)
-                    setListItems2Info(R.string.link_new_card, R.drawable.link_icon)
+                    manageCardLabelVisibility(isVisible = false, isLabelUnderline = true)
+                    isActivateVirtualTempCardUIVisible(true)
+                    isActivateVirtualTempCardUIVisible(true)
+                    setStoreCardTag(R.string.inactive, R.string.red_tag, isVisible = true)
+                    isLinkNewCardUIVisible(true)
+                    isTemporaryFreezeCardVisible(false)
+                }
+
+                is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive -> {
+                    cardLabelVisibility(false)
+                    manageCardLabelVisibility(isVisible = false, isLabelUnderline = true)
+                    isInstantReplacementCardUIVisible(true)
+                    isLinkNewCardUIVisible(true)
                     setStoreCardTag(R.string.inactive, R.string.red_tag, isVisible = true)
                     isTemporaryFreezeCardVisible(false)
                 }
                 is StoreCardFeatureType.StoreCardIsTemporaryFreeze -> {
-                    when(storeCardFeatureType.isStoreCardFrozen){
+                    when (storeCardFeatureType.isStoreCardFrozen) {
                         true -> {
-                            manageCardLabelVisibility(true, true)
+                            manageCardLabelVisibility(isVisible = true, isLabelUnderline = true)
                             cardLabelVisibility(true)
                             setStoreCardTag(R.string.freeze_temp_label, R.string.orange_tag, false)
                             isTemporaryFreezeCardVisible(true)
@@ -120,8 +150,8 @@ class AccountOptionsManageCardFragment :
                         }
                     }
                 }
+
                 else -> {
-                    isAllMenuListItemsVisible(true)
                     cardLabelVisibility(true)
                     setStoreCardTag(R.string.inactive, R.string.red_tag, false)
                 }
@@ -133,8 +163,7 @@ class AccountOptionsManageCardFragment :
         isLabelUnderline: Boolean = false
     ) {
         manageCardText.visibility = if (isVisible) VISIBLE else INVISIBLE
-        manageCardText.paintFlags =
-            if (isLabelUnderline) manageCardText.paintFlags or Paint.UNDERLINE_TEXT_FLAG else 0
+        manageCardText.paintFlags = if (isLabelUnderline) manageCardText.paintFlags or Paint.UNDERLINE_TEXT_FLAG else 0
     }
 
     private fun AccountOptionsManageCardFragmentBinding.cardLabelVisibility(isVisible: Boolean) {
@@ -155,34 +184,6 @@ class AccountOptionsManageCardFragment :
         }
     }
 
-    private fun AccountOptionsManageCardFragmentBinding.setListItems2Info(
-        titleId: Int,
-        iconId: Int
-    ) {
-        storeCardItem2TextView.text = getString(titleId)
-        storeCardItem2ImageView.setImageDrawable(
-            ContextCompat.getDrawable(
-                requireContext(),
-                iconId
-            )
-        )
-    }
-
-
-    private fun AccountOptionsManageCardFragmentBinding.setListItems1Info(
-        @StringRes titleId: Int,
-        @DrawableRes iconId: Int
-    ) {
-        storeCardItem1TextView.text = getString(titleId)
-        storeCardItem1ImageView.setImageDrawable(
-            ContextCompat.getDrawable(
-                requireContext(),
-                iconId
-            )
-        )
-        storeCardItem1ImageView.alpha = 0.3f
-    }
-
     private fun setupCard(
         cardViewPager: CardViewPager,
         items: MutableList<StoreCardFeatureType>?,
@@ -191,7 +192,7 @@ class AccountOptionsManageCardFragment :
         with(adapter) {
             setItem(items)
             binding.cardLabelVisibility(true)
-            binding.manageCardLabelVisibility(true, true)
+            binding.manageCardLabelVisibility(isVisible = true, isLabelUnderline = true)
             dotIndicatorVisibility(getListOfStoreCards())
             cardViewPager.invoke(
                 binding.accountCardViewPager,
@@ -205,5 +206,40 @@ class AccountOptionsManageCardFragment :
     private fun dotIndicatorVisibility(items: MutableList<StoreCardFeatureType>?) {
         binding.tab.visibility = if (items?.size ?: 0 <= 1) INVISIBLE else VISIBLE
     }
+
+    private fun AccountOptionsManageCardFragmentBinding.isInstantReplacementCardUIVisible(isVisible: Boolean) =
+        isMenuItemVisible(replacementCardDivider, replacementCardRelativeLayout, isVisible)
+
+    private fun AccountOptionsManageCardFragmentBinding.isLinkNewCardUIVisible(isVisible: Boolean) =
+        isMenuItemVisible(linkNewCardDivider, linkNewCardRelativeLayout, isVisible)
+
+    private fun AccountOptionsManageCardFragmentBinding.isActivateVirtualTempCardUIVisible(isVisible: Boolean) =
+        isMenuItemVisible(
+            activateVirtualTempCardDivider,
+            activateVirtualTempCardRelativeLayout,
+            isVisible
+        )
+
+    private fun AccountOptionsManageCardFragmentBinding.isMenuItem2UIVisible(isVisible: Boolean) =
+        isMenuItemVisible(menuItem2Divider, menuItem2RelativeLayout, isVisible)
+
+    private fun AccountOptionsManageCardFragmentBinding.isMenuItem4UIVisible(isVisible: Boolean) =
+        isMenuItemVisible(menuItem4Divider, menuItem4RelativeLayout, isVisible)
+
+    private fun isMenuItemVisible(
+        divider: View,
+        rootContainer: RelativeLayout,
+        isVisible: Boolean
+    ) =
+        when (isVisible) {
+            true -> {
+                divider.visibility = VISIBLE
+                rootContainer.visibility = VISIBLE
+            }
+            false -> {
+                divider.visibility = GONE
+                rootContainer.visibility = GONE
+            }
+        }
 }
 

@@ -30,12 +30,11 @@ class ManageCardScreenSlidesAdapter @Inject constructor(fragment: Fragment) :
     override fun createFragment(position: Int): Fragment {
         return when (isListOfItemsNullOrEmpty()) {
             true -> NoStoreCardFragment()
-            else -> {
-                when (val card = items?.get(position)) {
-                    is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive -> InstantStoreCardReplacementCardFragment.newInstance(card)
-                    is StoreCardFeatureType.StoreCardIsTemporaryFreeze -> FreezeUnFreezeStoreCardFragment()
-                    else -> NoStoreCardFragment()
-                }
+            else -> when (val card = items?.get(position)) {
+                is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive -> InstantStoreCardReplacementCardFragment.newInstance(card)
+                is StoreCardFeatureType.StoreCardIsTemporaryFreeze -> FreezeUnFreezeStoreCardFragment()
+                is StoreCardFeatureType.ActivateVirtualTempCard -> ActivateVirtualTempCardFragment()
+                else -> NoStoreCardFragment()
             }
         }
     }

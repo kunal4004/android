@@ -61,7 +61,7 @@ interface IManageCardFunctionalRequirement {
     fun getBlockCode(primaryCardIndex: Int): String?
     fun getBlockType(primaryCardIndex: Int): StoreCardBlockType?
     fun isGenerateVirtualCard(): Boolean
-    fun canUserGenerateVirtualTempCard(primaryCardIndex: Int): Boolean
+    fun isActivateVirtualTempCard(primaryCardIndex: Int): Boolean
     fun isTemporaryCardEnabled(primaryCardIndex: Int): Boolean
     fun isInstantCardReplacementJourneyEnabled(primaryCardIndex: Int): Boolean
     fun addManageMyCardsLinkOnStoreCardLandingScreen()
@@ -103,12 +103,8 @@ class ManageCardFunctionalRequirementImpl @Inject constructor() : IManageCardFun
                     ignoreCase = true
                 ) -> StoreCardFeatureType.StoreCardIsTemporaryFreeze(storeCard, true)
                 blockCode.equals(StoreCardType.PERMANENT.type, ignoreCase = true) -> when {
-                    isInstantCardReplacementJourneyEnabled(primaryCardIndex) -> StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive(
-                        storeCard
-                    )
-                    canUserGenerateVirtualTempCard(primaryCardIndex) -> StoreCardFeatureType.ActivateVirtualTempCard(
-                        storeCard
-                    )
+                    isInstantCardReplacementJourneyEnabled(primaryCardIndex) -> StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive(storeCard)
+                    isActivateVirtualTempCard(primaryCardIndex) -> StoreCardFeatureType.ActivateVirtualTempCard(storeCard)
 
                     else -> StoreCardFeatureType.StoreCardIsDefault(storeCard)
                 }
@@ -141,7 +137,7 @@ class ManageCardFunctionalRequirementImpl @Inject constructor() : IManageCardFun
      * display Activate Virtual Temp Card
      * display Link New Card
      */
-    override fun canUserGenerateVirtualTempCard(primaryCardIndex: Int): Boolean {
+    override fun isActivateVirtualTempCard(primaryCardIndex: Int): Boolean {
         val isGenerateVirtualCard = isGenerateVirtualCard()
         val isVirtualTempCardFromAppConfigEnabled =
             AppConfigSingleton.virtualTempCard?.isEnabled ?: false

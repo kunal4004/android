@@ -236,5 +236,8 @@
     <item name="bottom_view_guideline" type="dimen" format="float">0.7</item>
     <dimen name="two_hundred_ten_dp">210dp</dimen>
     <dimen name="two_hundred_eight_dp">208dp</dimen>
+    <dimen name="switch_thumb_padding">@dimen/_2sdp</dimen>
+    <dimen name="switch_track_radius">@dimen/_24sdp</dimen>
+    <dimen name="switch_track_height">@dimen/_24sdp</dimen>
 </resources>
 

@@ -43,8 +43,8 @@ open class TemporaryFreezeStoreCard(private val storeCardResponse: StoreCardsRes
     }
 
     fun showFreezeStoreCardDialog(childFragmentManager: FragmentManager?) {
-        val temporaryFreezeCardFragment = TemporaryFreezeCardFragment(temporaryCardFreezeInterface)
-        childFragmentManager?.let { cfm -> temporaryFreezeCardFragment.show(cfm, TemporaryFreezeCardFragment::class.java.simpleName) }
+       // val temporaryFreezeCardFragment = TemporaryFreezeCardFragment(temporaryCardFreezeInterface)
+       // childFragmentManager?.let { cfm -> temporaryFreezeCardFragment.show(cfm, TemporaryFreezeCardFragment::class.java.simpleName) }
     }
 
     fun showUnFreezeStoreCardDialog(childFragmentManager: FragmentManager?) {

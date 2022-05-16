@@ -9,6 +9,14 @@
         android:id="@+id/accountOptionsManageCardFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.AccountOptionsManageCardFragment"
         android:label="AccountOptionsManageCardFragment"
-        tools:layout="@layout/account_options_manage_card_fragment" />
+        tools:layout="@layout/account_options_manage_card_fragment" >
+        <action
+            android:id="@+id/action_accountOptionsManageCardFragment_to_temporaryFreezeCardFragment2"
+            app:destination="@id/temporaryFreezeCardFragment2" />
+    </fragment>
+    <dialog
+        android:id="@+id/temporaryFreezeCardFragment2"
+        android:name="za.co.woolworths.financial.services.android.ui.views.actionsheet.TemporaryFreezeCardFragment"
+        android:label="TemporaryFreezeCardFragment" />
 
 </navigation>
