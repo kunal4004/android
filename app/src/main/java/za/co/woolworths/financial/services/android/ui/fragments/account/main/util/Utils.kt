@@ -66,9 +66,14 @@ inline fun <reified T : Activity> Context.openActivityForResult(vararg params: P
     startActivityForResult((this as Activity),intent,requestCode,null)
 }
 
-fun ShimmerFrameLayout.loadingState(state: Boolean,targetedShimmerLayout:View? = null){
+/**
+ * targetedShimmerLayout is the layout which we want to add the shimmer over it
+ * shimmerContainer is the layout that contains the shimmerFrame as child
+ * */
+fun ShimmerFrameLayout.loadingState(state: Boolean,targetedShimmerLayout:View? = null,shimmerContainer:View? = null){
         when (state) {
             true -> {
+                shimmerContainer?.visibility = VISIBLE
                 this.visibility = VISIBLE
                 targetedShimmerLayout?.visibility = GONE
                 val shimmer = Shimmer.AlphaHighlightBuilder().build()
@@ -76,6 +81,7 @@ fun ShimmerFrameLayout.loadingState(state: Boolean,targetedShimmerLayout:View? =
                 this.startShimmer()
             }
             false -> {
+                shimmerContainer?.visibility = GONE
                 this.visibility = GONE
                 targetedShimmerLayout?.visibility = VISIBLE
                 this.stopShimmer()
