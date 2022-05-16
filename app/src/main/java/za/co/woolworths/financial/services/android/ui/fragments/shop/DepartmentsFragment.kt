@@ -126,7 +126,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
             if (isPermissionGranted && Utils.isLocationEnabled(context)) {
                 fusedLocationClient?.lastLocation?.addOnSuccessListener {
                     this@DepartmentsFragment.location = it
-                    shopViewModel.setLocation(it)
+                    //shopViewModel.setLocation(it)
                     initializeRootCategoryList()
                 }
             } else {
