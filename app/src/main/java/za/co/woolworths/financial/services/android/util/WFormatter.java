@@ -144,6 +144,14 @@ public class WFormatter {
         return new SimpleDateFormat("dd MMMM yyyy").format(m_ISO8601Local.parse(validFromDate));
     }
 
+    public static String formatOrdersHistoryDate(String validFromDate) throws ParseException {
+        if (validFromDate == null) {
+            return "N/A";
+        }
+        DateFormat m_ISO8601Local = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        return new SimpleDateFormat("EEEE d MMMM").format(m_ISO8601Local.parse(validFromDate));
+    }
+
     public static String formatStatementsDate(String validFromDate) throws ParseException {
         if (validFromDate == null) {
             return "N/A";
