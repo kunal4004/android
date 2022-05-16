@@ -131,20 +131,22 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             isComingFromCheckout = this.getBoolean(IS_COMING_FROM_CHECKOUT, false)
             lastDeliveryType = this.getString(DELIVERY_TYPE, Delivery.STANDARD.name)
             //added this condition during the app Upgrade
-            when (this.getString(DELIVERY_TYPE, Delivery.STANDARD.name)) {
+            deliveryType = when (this.getString(DELIVERY_TYPE, Delivery.STANDARD.name)) {
                 Delivery.STANDARD.name -> {
-                    deliveryType = Delivery.STANDARD.name
+                    Delivery.STANDARD.name
                 }
                 Delivery.CNC.name -> {
-                    deliveryType = Delivery.CNC.name
+                    Delivery.CNC.name
                 }
                 Delivery.DASH.name -> {
-                    deliveryType = Delivery.DASH.name
+                    Delivery.DASH.name
                 }
                 else -> {
-                    deliveryType = Delivery.STANDARD.name
+                    Delivery.STANDARD.name
                 }
             }
+
+
             getString(CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS)?.let {
                 whoIsCollecting =
                     Gson().fromJson(it, object : TypeToken<WhoIsCollectingDetails>() {}.type)
