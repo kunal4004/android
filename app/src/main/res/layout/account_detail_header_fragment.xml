@@ -7,25 +7,19 @@
     android:layout_height="wrap_content"
     android:background="@drawable/card_header_background">
 
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/myCardTextViewShimmerFrameLayout"
+    <TextView
+        android:id="@+id/myCardTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:letterSpacing="0.1"
+        android:text="@string/my_card_title"
+        android:textAllCaps="true"
+        android:textColor="@color/black"
+        android:textSize="12sp"
         app:layout_constraintStart_toStartOf="@+id/startGuide"
-        app:layout_constraintTop_toTopOf="@+id/topGuide">
-
-        <TextView
-            android:id="@+id/myCardTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/futura_semi_bold_ttf"
-            android:letterSpacing="0.1"
-            android:text="@string/my_card_title"
-            android:textAllCaps="true"
-            android:textColor="@color/black"
-            android:textSize="12sp"
-            tools:ignore="UnusedAttribute" />
-    </com.facebook.shimmer.ShimmerFrameLayout>
+        app:layout_constraintTop_toTopOf="@+id/topGuide"
+        tools:ignore="UnusedAttribute" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/startGuide"
@@ -85,7 +79,7 @@
         app:layout_constraintGuide_percent="0.20"
         app:layout_constraintHeight_percent="0.15" />
 
-    <com.facebook.shimmer.ShimmerFrameLayout
+    <FrameLayout
         android:id="@+id/tempFreezeTextViewShimmerFrameLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -114,13 +108,13 @@
             android:id="@+id/myCardDetailTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:clickable="true"
+            android:enabled="true"
+            android:focusable="true"
             android:fontFamily="@font/futura_medium_ttf"
             android:letterSpacing="0.15"
             android:text="@string/label_card_details"
             android:textAllCaps="true"
-            android:clickable="true"
-            android:focusable="true"
-            android:enabled="true"
             android:textColor="@color/black"
             android:textSize="@dimen/twelve_sp"
             tools:ignore="UnusedAttribute" />
@@ -132,9 +126,10 @@
             android:layout_height="wrap_content"
             android:visibility="gone" />
 
-    </com.facebook.shimmer.ShimmerFrameLayout>
+    </FrameLayout>
 
-    <com.facebook.shimmer.ShimmerFrameLayout
+
+    <FrameLayout
         android:id="@+id/cardDetailImageShimmerFrameLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -143,7 +138,7 @@
         android:transitionName="accountCardImageViewTransition"
         app:layout_constraintEnd_toStartOf="@+id/imageGuideLineEnd"
         app:layout_constraintStart_toStartOf="@+id/imageGuideLine"
-        app:layout_constraintTop_toBottomOf="@+id/myCardTextViewShimmerFrameLayout">
+        app:layout_constraintTop_toBottomOf="@+id/myCardTextView">
 
         <ImageView
             android:id="@+id/cardDetailImageView"
@@ -154,7 +149,8 @@
             app:srcCompat="@drawable/w_black_credit_card"
             tools:ignore="ContentDescription" />
 
-    </com.facebook.shimmer.ShimmerFrameLayout>
+    </FrameLayout>
+
 
     <View
         android:id="@+id/bottomCardSpace"
@@ -174,7 +170,6 @@
         android:fontFamily="@font/myriad_pro_regular_otf"
         android:shadowColor="@color/black"
         android:shadowRadius="1"
-        tools:text="Thuli Sandile"
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="12sp"
@@ -202,19 +197,33 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bottomCardSpace" />
 
-    <include
+    <RelativeLayout
         android:id="@+id/includeManageMyCard"
-        layout="@layout/account_cart_item"
         android:layout_width="0dp"
         android:layout_height="70dp"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="16dp"
-        android:paddingStart="24dp"
-        android:paddingEnd="24dp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/manageCardDivider" />
+        app:layout_constraintTop_toBottomOf="@+id/manageCardDivider">
+
+        <include
+            android:id="@+id/includeManageMyCardMainView"
+            layout="@layout/account_cart_item"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/includeManageMyCardSkeleton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <include layout="@layout/account_options_item_skeleton" />
+        </com.facebook.shimmer.ShimmerFrameLayout>
+    </RelativeLayout>
+
 
     <View
         android:id="@+id/bottomView"
@@ -241,6 +250,14 @@
         android:visibility="gone"
         app:constraint_referenced_ids="linkNewCardDividerView,includeLinkNewCard" />
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/storeCardDetailsGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        android:alpha="0.0"
+        app:constraint_referenced_ids="cardDetailImageShimmerFrameLayout,myCardTextView,tempFreezeTextViewShimmerFrameLayout" />
+
     <View
         android:id="@+id/linkNewCardDividerView"
         style="@style/horizontal_divider_how_to_pay"
@@ -265,5 +282,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/includeManageMyCard" />
 
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/storeCardDetailShimmer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@id/endGuide"
+        app:layout_constraintStart_toStartOf="@+id/startGuide"
+        app:layout_constraintBottom_toTopOf="@+id/bottomCardSpace"
+        app:layout_constraintTop_toTopOf="parent">
 
+        <include layout="@layout/account_activate_credit_card_plcae_holder_layout" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
