@@ -127,7 +127,7 @@
         app:layout_constraintEnd_toEndOf="@id/editAmountImageView"
         android:gravity="center"
         android:textSize="@dimen/_10ssp"
-        android:visibility="visible"
+        android:visibility="gone"
         android:layout_marginTop="-50dp"/>
 
     <EditText
