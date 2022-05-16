@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.temporary_freeze_cart_layout.*
-import za.co.woolworths.financial.services.android.contracts.ITemporaryCardFreeze
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class TemporaryFreezeCardFragment : WBottomSheetDialogFragment() {

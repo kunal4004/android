@@ -26,10 +26,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_40sdp"
-        android:src="@drawable/modal_icon_freeze_on"
         android:contentDescription="@string/app_name"
         android:minWidth="@dimen/_64sdp"
         android:minHeight="@dimen/_49sdp"
+        android:src="@drawable/modal_icon_freeze_on"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/incSwipeCloseIndicator" />
@@ -76,19 +76,19 @@
         app:layout_constraintGuide_end="@dimen/_24sdp" />
 
 
-    <Button
+    <TextView
         android:id="@+id/confirmFreezeCardButton"
-        style="?android:attr/borderlessButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_50sdp"
         android:layout_marginStart="@dimen/_24sdp"
         android:layout_marginTop="@dimen/_28sdp"
         android:layout_marginEnd="@dimen/_24sdp"
         android:background="@color/black"
+        android:enabled="true"
         android:fontFamily="@font/futura_semi_bold_ttf"
+        android:gravity="center"
         android:letterSpacing="0.18"
         android:text="@string/confirm"
-        android:enabled="true"
         android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="@dimen/_12ssp"
