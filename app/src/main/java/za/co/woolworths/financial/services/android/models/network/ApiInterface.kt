@@ -792,8 +792,8 @@ interface ApiInterface {
             @Path("multipleSku") multipleSku: String): Call<SkusInventoryForStoreResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("wfs/app/v4/inventory/store/{store_id}/multiSku/{multipleSku}")
-   suspend fun fetchInventorySKUForStore(
+    @GET("wfs/app/v4/isninventory/multi/{store_id}/{multipleSku}")
+   suspend fun fetchDashInventorySKUForStore(
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Header("environment") environment: String,
