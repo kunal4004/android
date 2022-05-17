@@ -871,8 +871,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         }
 
         if (earliestFashionDate.isNullOrEmpty()) {
-            earliestFashionDeliveryDateLabel?.visibility = View.GONE
-            earliestFashionDeliveryDateValue?.visibility = View.GONE
+            earliestFashionDeliveryDateLabel?.visibility = View.INVISIBLE
+            earliestFashionDeliveryDateValue?.visibility = View.INVISIBLE
         } else {
             earliestFashionDeliveryDateLabel?.visibility = View.VISIBLE
             earliestFashionDeliveryDateValue?.visibility = View.VISIBLE
