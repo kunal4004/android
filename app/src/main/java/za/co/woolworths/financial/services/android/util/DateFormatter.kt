@@ -28,8 +28,7 @@ class DateFormatter {
             return false
         }
 
-        fun formatDateTOddMMMYYYY(validFromDate: String?): String? {
-            val toPattern = "dd MMM yyyy"
+        fun formatDateTOddMMMYYYY(validFromDate: String?, toPattern : String = "dd MMM yyyy"): String? {
             val fromPattern = "yyyy-MM-dd"
             if (TextUtils.isEmpty(validFromDate)) {
                 return UNDEFINED

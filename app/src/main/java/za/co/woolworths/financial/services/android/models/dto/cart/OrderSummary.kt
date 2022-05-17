@@ -25,4 +25,5 @@ class OrderSummary {
     var totalOrderCount: Double = 0.0
     var savedAmount: Double = 0.0
     var deliveryDates: Any? = null
+    var fulfillmentDetails: FulfillmentDetails? = null
 }

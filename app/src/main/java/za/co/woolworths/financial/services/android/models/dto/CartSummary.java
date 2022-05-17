@@ -3,6 +3,8 @@ package za.co.woolworths.financial.services.android.models.dto;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails;
+
 public class CartSummary {
 	@SerializedName("totalItemsCount")
 	@Expose
@@ -28,4 +30,7 @@ public class CartSummary {
 	@SerializedName("store")
 	@Expose
 	public Store store;
+	@SerializedName("fulfillmentDetails")
+	@Expose
+	public FulfillmentDetails fulfillmentDetails;
 }

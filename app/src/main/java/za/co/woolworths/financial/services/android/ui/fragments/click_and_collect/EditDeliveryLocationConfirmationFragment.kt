@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.edit_delivery_location_confirmation_fragme
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.Suburb
-import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -31,7 +31,7 @@ class EditDeliveryLocationConfirmationFragment : Fragment() {
         super.onCreate(savedInstanceState)
         bundle = arguments?.getBundle("bundle")
         bundle?.apply {
-            deliveryType = DeliveryType.valueOf(getString(EditDeliveryLocationActivity.DELIVERY_TYPE, DeliveryType.DELIVERY.name))
+            deliveryType = DeliveryType.valueOf(getString(DELIVERY_TYPE, DeliveryType.DELIVERY.name))
             selectedSuburb = Utils.jsonStringToObject(getString("SUBURB"), Suburb::class.java) as Suburb?
             selectedProvince = Utils.jsonStringToObject(getString("PROVINCE"), Province::class.java) as Province?
         }

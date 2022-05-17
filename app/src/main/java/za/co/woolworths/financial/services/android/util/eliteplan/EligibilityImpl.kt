@@ -6,3 +6,7 @@ interface EligibilityImpl {
     fun eligibilityResponse(eligibilityPlan: EligibilityPlan?)
     fun eligibilityFailed()
 }
+
+interface PMApiStatusImpl {
+    fun pmaSuccess()
+}
