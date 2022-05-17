@@ -1,43 +1,39 @@
 package za.co.woolworths.financial.services.android.ui.views.actionsheet
 
-import android.content.DialogInterface
 import android.graphics.Paint
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.temporary_freeze_cart_layout.*
-import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
+import com.awfs.coordination.databinding.TemporaryFreezeCartLayoutBinding
+import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.ui.base.ViewBindingBottomSheetDialog
+import za.co.woolworths.financial.services.android.ui.extension.onClick
 
-class TemporaryFreezeCardFragment : WBottomSheetDialogFragment() {
+@AndroidEntryPoint
+class TemporaryFreezeCardFragment :
+    ViewBindingBottomSheetDialog<TemporaryFreezeCartLayoutBinding>(TemporaryFreezeCartLayoutBinding::inflate) {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.temporary_freeze_cart_layout, container, false)
+    companion object {
+        const val TEMPORARY_FREEZE_CARD_FRAGMENT_CONFIRM_RESULT = "TEMPORARY_FREEZE_CARD_FRAGMENT_CONFIRM_RESULT"
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        cancelTextView?.apply {
-            paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            setOnClickListener {
-                dismiss()
-            }
-            AnimationUtilExtension.animateViewPushDown(this)
-        }
-
-        confirmFreezeCardButton?.apply {
-            setOnClickListener {
-               // iTemporaryCardFreeze?.onTemporaryCardFreezeConfirmed()
-                dismiss()
-            }
-            AnimationUtilExtension.animateViewPushDown(this)
-        }
+        initView()
     }
 
-    override fun onCancel(dialog: DialogInterface) {
-        super.onCancel(dialog)
-        //iTemporaryCardFreeze?.onTemporaryCardFreezeCanceled()
+    private fun initView() {
+        with(binding.cancelTextView) {
+            paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            onClick {
+                dismiss()
+            }
+        }
+
+        binding.confirmFreezeCardButton.onClick {
+            setFragmentResult(TEMPORARY_FREEZE_CARD_FRAGMENT_CONFIRM_RESULT, bundleOf())
+            dismiss()
+        }
     }
 }

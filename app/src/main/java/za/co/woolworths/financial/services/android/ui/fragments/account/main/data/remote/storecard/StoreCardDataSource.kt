@@ -18,6 +18,7 @@ interface IStoreCardDataSource {
     suspend fun getCreditCardToken(): Flow<CoreDataSource.IOTaskResult<CreditCardTokenResponse>>
     suspend fun getPaymentPAYUMethod(): Flow<CoreDataSource.IOTaskResult<PaymentMethodsResponse>>
     suspend fun queryServiceGetStoreCards(): Flow<CoreDataSource.IOTaskResult<StoreCardsResponse>>
+    //suspend fun queryServiceBlockUnBlockStoreCard(): Flow<CoreDataSource.IOTaskResult<StoreCardsResponse>>
 }
 
 class StoreCardDataSource @Inject constructor(
@@ -55,6 +56,7 @@ class StoreCardDataSource @Inject constructor(
             productOfferingId = productOfferingId
         )
 
+        //TODO :: Retrieve Locations...
         queryServiceStoreCards(
             deviceIdentityToken,
             -33.8899,
@@ -63,4 +65,26 @@ class StoreCardDataSource @Inject constructor(
         )
 
     }
+
+//    override suspend fun queryServiceBlockUnBlockStoreCard() = performSafeNetworkApiCall {
+//        val productOfferingId = getProductOfferingId()
+//        val visionAccountNumber = getVisionAccountNumber()
+//        val deviceIdentityToken = super.getDeviceIdentityToken()
+//        val storeCardNumber = s?.number ?: ""
+
+//        val storeCardRequest = StoreCardsRequestBody(
+//            visionAccountNumber = visionAccountNumber,
+//            productOfferingId = productOfferingId
+//        )
+
+       // val blockStoreCardRequestBody = BlockCardRequestBody(visionAccountNumber, storeCardNumber, sequenceNumber, TemporaryFreezeStoreCard.BLOCK_REASON)
+
+//        queryServiceBlockStoreCard(
+//            deviceIdentityToken,
+//            -33.8899,
+//            18.5066,
+//            storeCardRequest
+//        )
+
+  //  }
 }

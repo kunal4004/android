@@ -8,6 +8,7 @@ import android.view.View.*
 import android.widget.RelativeLayout
 import androidx.annotation.StringRes
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
@@ -26,6 +27,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card_slider.ManageCardScreenSlidesAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.loadingState
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.TemporaryFreezeCardFragment.Companion.TEMPORARY_FREEZE_CARD_FRAGMENT_CONFIRM_RESULT
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import javax.inject.Inject
 
@@ -47,6 +49,17 @@ class AccountOptionsManageCardFragment :
         initCardViewPager()
         binding.setupTemporaryFreezeCardSwipe()
         subscribeObservers()
+        setResultListeners()
+    }
+
+    private fun setResultListeners() {
+        setFragmentResultListener(TEMPORARY_FREEZE_CARD_FRAGMENT_CONFIRM_RESULT) { key , _ ->
+                when(key){
+                    TEMPORARY_FREEZE_CARD_FRAGMENT_CONFIRM_RESULT -> {
+                        binding.cardShimmer.loadingState(true,shimmerContainer = binding.rltCardShimmer)
+                    }
+                }
+        }
     }
 
     private fun initCardViewPager() {
