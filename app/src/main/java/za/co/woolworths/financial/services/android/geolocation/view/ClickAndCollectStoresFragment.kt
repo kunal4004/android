@@ -50,6 +50,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.VALIDATE_RESPONSE
 import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
@@ -183,7 +184,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
         mValidateLocationResponse: ValidateLocationResponse?
     ) {
         tvStoresNearMe?.text = resources.getString(R.string.near_stores, address?.size)
-        tvAddress?.text = mValidateLocationResponse?.validatePlace?.placeDetails?.address1
+        tvAddress?.text = KotlinUtils.capitaliseFirstLetter(mValidateLocationResponse?.validatePlace?.placeDetails?.address1)
         setStoreList(address)
     }
 

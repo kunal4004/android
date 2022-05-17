@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.geolocation.view
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +24,7 @@ import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.geo_location_delivery_address.*
 import kotlinx.android.synthetic.main.no_connection.*
+import kotlinx.android.synthetic.main.shop_custom_tab.view.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -291,7 +293,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             store = bundle.get(BUNDLE) as Store
             store?.let {
                 if (it?.storeName != null) {
-                    geoDeliveryText?.text = it?.storeName
+                    geoDeliveryText?.text = KotlinUtils.capitaliseFirstLetter(it?.storeName)
                 }
                 editDelivery?.text = bindString(R.string.edit)
                 btnConfirmAddress?.isEnabled = true
@@ -728,6 +730,9 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     private fun selectATab(selectedTab: AppCompatTextView) {
         selectedTab?.setBackgroundResource(R.drawable.bg_geo_selected_tab)
+        val futuraFont =
+            Typeface.createFromAsset(activity?.assets, "fonts/MyriadPro-Semibold.otf")
+        selectedTab?.typeface = futuraFont
         selectedTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
         when (selectedTab) {
             geoDeliveryTab -> {
@@ -747,6 +752,9 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     private fun unSelectATab(unSelectedTab: AppCompatTextView) {
         unSelectedTab?.apply {
+            val myriadProRegularFont =
+                Typeface.createFromAsset(activity?.assets, "fonts/MyriadPro-Regular.otf")
+            typeface = myriadProRegularFont
             setBackgroundResource(R.drawable.bg_geo_unselected_tab)
             setTextColor(ContextCompat.getColor(requireContext(), R.color.color_444444))
         }
@@ -788,8 +796,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     private fun updateDeliveryDetails() {
         geoDeliveryText?.text =
-            validateLocationResponse?.validatePlace?.placeDetails?.address1
-                ?: getString(R.string.empty)
+            KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1
+                ?: getString(R.string.empty))
 
         var earliestFoodDate =
             validateLocationResponse?.validatePlace?.firstAvailableFoodDeliveryDate
@@ -817,8 +825,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     private fun updateDashDetails() {
         geoDeliveryText?.text =
-            validateLocationResponse?.validatePlace?.onDemand?.storeName
-                ?: getString(R.string.empty)
+            KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.onDemand?.storeName
+                ?: getString(R.string.empty))
         var earliestDashDate =
             validateLocationResponse?.validatePlace?.onDemand?.firstAvailableFoodDeliveryTime
         if (earliestDashDate.isNullOrEmpty())
@@ -890,7 +898,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             return
         } else if (SessionUtilities.getInstance().isUserAuthenticated) {
             if (store != null) {
-                geoDeliveryText?.text = store?.storeName
+                geoDeliveryText?.text = KotlinUtils.capitaliseFirstLetter(store?.storeName)
                 editDelivery?.text = bindString(R.string.edit)
                 btnConfirmAddress?.isEnabled = true
                 btnConfirmAddress?.setBackgroundColor(
@@ -906,7 +914,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 return
             }
             Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
-                geoDeliveryText?.text = it.storeName
+                geoDeliveryText?.text = KotlinUtils.capitaliseFirstLetter(it.storeName)
                 editDelivery?.text = bindString(R.string.edit)
                 btnConfirmAddress?.isEnabled = true
                 btnConfirmAddress?.setBackgroundColor(
@@ -919,7 +927,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             }
         } else {
             if (store != null) {
-                geoDeliveryText?.text = store?.storeName
+                geoDeliveryText?.text = KotlinUtils.capitaliseFirstLetter(store?.storeName)
                 editDelivery?.text = bindString(R.string.edit)
                 btnConfirmAddress?.isEnabled = true
                 btnConfirmAddress?.setBackgroundColor(
@@ -936,7 +944,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 return
             }
             KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let {
-                geoDeliveryText?.text = it.storeName
+                geoDeliveryText?.text = KotlinUtils.capitaliseFirstLetter(it.storeName)
                 editDelivery?.text = bindString(R.string.edit)
                 btnConfirmAddress?.isEnabled = true
                 btnConfirmAddress?.setBackgroundColor(
@@ -952,7 +960,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     private fun whereToCollect() {
         geoDeliveryText?.text =
-            getNearestStore(validateLocationResponse?.validatePlace?.stores)
+            KotlinUtils.capitaliseFirstLetter(getNearestStore(validateLocationResponse?.validatePlace?.stores))
         mStoreId = getNearestStoreId(validateLocationResponse?.validatePlace?.stores)
         editDelivery?.text = bindString(R.string.edit)
         btnConfirmAddress?.isEnabled = true
