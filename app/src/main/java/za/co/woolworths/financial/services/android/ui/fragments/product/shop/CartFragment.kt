@@ -180,7 +180,6 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                     }
                 }
         )
-        initializeLoggedInUserCartUI()
     }
 
     private fun initializeLoggedInUserCartUI() {
@@ -1149,6 +1148,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
 
     override fun onResume() {
         super.onResume()
+        initializeLoggedInUserCartUI()
         val activity: Activity = requireActivity()
         Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.CART_LIST)
         activity.registerReceiver(
