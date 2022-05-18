@@ -825,7 +825,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     private fun updateDashDetails() {
         geoDeliveryText?.text =
-            KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.onDemand?.storeName
+            KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1
                 ?: getString(R.string.empty))
         var earliestDashDate =
             validateLocationResponse?.validatePlace?.onDemand?.firstAvailableFoodDeliveryTime
