@@ -61,6 +61,11 @@ class EnquiriesListViewModel @Inject constructor() : ViewModel() {
         val userDetail = SessionUtilities.getInstance().jwt
         return if (userDetail.email != null)  userDetail.email[0] else ""
     }
+
+    fun userName(): String? {
+        val userDetail = SessionUtilities.getInstance().jwt
+        return if (userDetail.name != null) ( userDetail.name[0] + " " +userDetail.family_name[0]) else ""
+    }
 }
 
 sealed class ValidationErrors {

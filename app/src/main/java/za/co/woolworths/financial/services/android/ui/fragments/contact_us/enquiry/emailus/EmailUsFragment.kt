@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enqui
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.list.EnquiriesListViewModel.Companion.EMAIL_US_REQUEST
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.list.ValidationErrors
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.loading.EmailUsLoadingActivity
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 
 @AndroidEntryPoint
 class EmailUsFragment : Fragment(), View.OnClickListener, TextWatcher {
@@ -57,9 +58,12 @@ class EmailUsFragment : Fragment(), View.OnClickListener, TextWatcher {
     private fun initViews() {
         setupToolbar()
         observers()
-        binding.etEmailUsEmail.setText(viewModel.userEmailAddress())
         binding.btnEmailUs.setOnClickListener(this)
         binding.etEmailUsEnquiry.setOnClickListener(this)
+        if (SessionUtilities.getInstance().isUserAuthenticated()) {
+            binding.etEmailUsEmail.setText(viewModel.userEmailAddress())
+            binding.etEmailUsName.setText(viewModel.userName())
+        }
     }
 
     private fun editTextListeners() {
