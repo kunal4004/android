@@ -88,7 +88,6 @@
                 android:lineSpacingExtra="8sp"
                 android:text="@string/email_us_email_validation"
                 android:textSize="@dimen/_8ssp"
-                android:visibility="gone"
                 app:WTextView_font="medium" />
         </LinearLayout>
 

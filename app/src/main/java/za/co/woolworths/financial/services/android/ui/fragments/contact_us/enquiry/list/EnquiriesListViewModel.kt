@@ -3,15 +3,11 @@ package za.co.woolworths.financial.services.android.ui.fragments.contact_us.enqu
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigOptions
-import za.co.woolworths.financial.services.android.models.network.GenericResponse
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.ContactUsModel
-import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.ContactUsDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.EmailUsRequest
-import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.ApiResult
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -59,6 +55,11 @@ class EnquiriesListViewModel @Inject constructor() : ViewModel() {
         val pattern = Pattern.compile(".+@.+\\.[a-z]+")
         val matcher = pattern.matcher(email)
         return matcher.matches()
+    }
+
+    fun userEmailAddress(): String? {
+        val userDetail = SessionUtilities.getInstance().jwt
+        return if (userDetail.email != null)  userDetail.email[0] else ""
     }
 }
 

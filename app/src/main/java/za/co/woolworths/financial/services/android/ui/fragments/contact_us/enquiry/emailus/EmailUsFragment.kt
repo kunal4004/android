@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.contact_us.enqu
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -14,7 +15,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentEmailUsBinding
+import com.google.firebase.perf.session.SessionManager
 import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
@@ -54,6 +57,7 @@ class EmailUsFragment : Fragment(), View.OnClickListener, TextWatcher {
     private fun initViews() {
         setupToolbar()
         observers()
+        binding.etEmailUsEmail.setText(viewModel.userEmailAddress())
         binding.btnEmailUs.setOnClickListener(this)
         binding.etEmailUsEnquiry.setOnClickListener(this)
     }
@@ -70,7 +74,10 @@ class EmailUsFragment : Fragment(), View.OnClickListener, TextWatcher {
             binding.apply {
                 when (it) {
                     ValidationErrors.EmailNotValid -> {
-                        binding.tvEmailUsEmailValidation.visibility = VISIBLE
+                        binding.tvEmailUsEmailValidation.apply {
+                            setTextColor(Color.RED)
+                            text = bindString(R.string.enter_valid_email)
+                        }
 
                     }
                     ValidationErrors.EnquiryNotValid -> {
@@ -128,7 +135,8 @@ class EmailUsFragment : Fragment(), View.OnClickListener, TextWatcher {
                             etEmailUsName.text.toString(),
                             etEmailUsEmail.text.toString(),
                             etEmailUsMessage.text.toString()
-                        )){
+                        )
+                    ) {
                         mBottomNavigator?.popFragment()
                         val intent = Intent(activity, EmailUsLoadingActivity::class.java)
                         intent.putExtra(EMAIL_US_REQUEST, viewModel.emailUsRequest.value)
@@ -148,7 +156,6 @@ class EmailUsFragment : Fragment(), View.OnClickListener, TextWatcher {
 
     private fun resetViews() {
         binding.tvEmailUsEnquiry.setTextColor(resources.getColor(R.color.color_222222))
-        binding.tvEmailUsEmailValidation.visibility = GONE
     }
 
     override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
