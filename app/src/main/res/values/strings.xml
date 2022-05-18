@@ -2440,8 +2440,8 @@
     <string name="email_us_email_validation">Please ensure that the email address is correct</string>
     <string name="email_us_enquiry">Enquiry Type: *</string>
     <string name="email_us_message">Message: *</string>
-    <string name="sending_enquiry">Sending Email</string>
-    <string name="enquiry_successfully_sent">Email Successfully Sent</string>
+    <string name="sending_enquiry">Sending Enquiry</string>
+    <string name="enquiry_successfully_sent">Enquiry Successfully Sent</string>
     <string name="thanks_for_message">Thank you for your message. Our support \n team will be in touch with you soon.</string>
     <string name="enquiry_failed_retry">Please try again.</string>
     <string name="enquiry_failed">Request failed.</string>
