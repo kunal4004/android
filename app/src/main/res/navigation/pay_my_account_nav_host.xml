@@ -128,14 +128,14 @@
             android:id="@+id/action_manageCardFragment_to_displayVendorCardDetailFragment"
             app:destination="@id/displayVendorCardDetailFragment" />
         <action
-            android:id="@+id/action_manageCardFragment_to_PMACardExpiredFragment"
-            app:destination="@id/PMACardExpiredFragment" />
-        <action
             android:id="@+id/action_manageCardFragment_to_PMATenCardLimitDialogFragment"
             app:destination="@id/PMATenCardLimitDialogFragment" />
         <action
             android:id="@+id/action_manageCardFragment_to_PMADeleteCardAPIErrorFragment"
             app:destination="@id/PMADeleteCardAPIErrorFragment" />
+        <action
+            android:id="@+id/action_manageCardFragment_to_PMACardExpiredFragment"
+            app:destination="@id/PMACardExpiredFragment" />
     </fragment>
     <fragment
         android:id="@+id/pmaProcessRequestFragment"
@@ -194,6 +194,12 @@
         <action
             android:id="@+id/action_PMACardExpiredFragment_to_PMATenCardLimitDialogFragment"
             app:destination="@id/PMATenCardLimitDialogFragment" />
+        <argument
+            android:name="cardHasExpired"
+            app:argType="boolean" />
+        <argument
+            android:name="expiredCardPosition"
+            app:argType="integer" />
     </dialog>
     <fragment
         android:id="@+id/PMA3DSecureProcessRequestFragment"

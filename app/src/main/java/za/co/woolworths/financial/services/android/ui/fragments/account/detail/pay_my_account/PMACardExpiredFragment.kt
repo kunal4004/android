@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.pma_card_has_expired_dialog.*
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
@@ -13,6 +14,8 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 class PMACardExpiredFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
     val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
+
+    val pmaCardExpiredFragmentArgs : PMACardExpiredFragmentArgs by navArgs()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.pma_card_has_expired_dialog, container, false)
@@ -37,12 +40,12 @@ class PMACardExpiredFragment : WBottomSheetDialogFragment(), View.OnClickListene
     override fun onClick(v: View?) {
         with(payMyAccountViewModel) {
             when (v?.id) {
-                R.id.removeCardButton -> setNavigationResult(PayMyAccountViewModel.OnBackNavigation.REMOVE)
+                R.id.removeCardButton -> setNavigationResult(PayMyAccountViewModel.OnNavigateBack.Remove(pmaCardExpiredFragmentArgs.expiredCardPosition, pmaCardExpiredFragmentArgs.cardHasExpired))
                 R.id.addNewCardExpiredButton -> {
                     if (isPaymentMethodListSizeLimitedToTenItem()) {
-                        setNavigationResult(PayMyAccountViewModel.OnBackNavigation.MAX_CARD_LIMIT)
+                        setNavigationResult(PayMyAccountViewModel.OnNavigateBack.MaxCardLimit)
                     } else {
-                        setNavigationResult(PayMyAccountViewModel.OnBackNavigation.ADD)
+                        setNavigationResult(PayMyAccountViewModel.OnNavigateBack.Add)
                     }
                 }
             }

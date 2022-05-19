@@ -449,7 +449,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
 
     override fun openSetSuburbProcess() {
         activity?.apply {
-            KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE)
+            KotlinUtils.presentEditDeliveryGeoLocationActivity(this, REQUEST_SUBURB_CHANGE)
         }
     }
 

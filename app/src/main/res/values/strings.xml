@@ -213,7 +213,7 @@
     <string name="added_to_shopping_list">added to shopping list</string>
     <string name="added_to_shopping_list_desc">Your shopping list items can be found in Accounts</string>
     <string name="view_shopping_list">view shopping list</string>
-    <string name="contact_us_financial_services_desc">Store Card, Credit Card and Personal Loan</string>
+    <string name="contact_us_financial_services_desc">Store Card /Credit Card and Personal Loan</string>
     <string name="contact_us_customer_service_desc">General enquiries, Online, WRewards, MySchool</string>
     <string name="general_enquiry_desc">Products and instore</string>
     <string name="woolworths_online">Woolworths online</string>
@@ -504,6 +504,7 @@
     <string name="favourite_delivery_location_description">In order to improve your shopping experience you can set your favourite delivery location. We will use this as your default delivery location.</string>
     <string name="product_unavailable_desc">Sorry, this product is unavailable in your delivery location</string>
     <string name="delivering_to">Delivering to</string>
+    <string name="delivering_to_geo"> <![CDATA[Delivering to <font color=\'#000000\'><b>%s</b></font>]]></string>
     <string name="delivering_location_popup_message">Your Delivery Location must match your Delivery Address in Checkout. Changing your Delivery Location can affect the product availability of items in your cart.</string>
     <string name="confirm_size_range_desc">size range</string>
     <string name="set_up_device_biometrics_title">BIOMETRICS&#47;PIN</string>
@@ -1575,6 +1576,7 @@
     <string name="select_a_store">Select a Store</string>
     <string name="delivery_or_collection">Delivery or Collection?</string>
     <string name="collecting_from">Collecting from</string>
+    <string name="collecting_from_geo"> <![CDATA[Collecting from <font color=\'#000000\'><b>%s</b></font>]]></string>
     <string name="select_your_collection_store">Select your collection store:</string>
     <string name="select_your_delivery_location">Select your delivery location:</string>
     <string name="remove_these_items_continue">remove these items &amp; continue</string>
@@ -1984,8 +1986,9 @@
     <string name="please_select">Please Select</string>
 
     <!--  My Preferences - Link Devices -->
-    <string name="my_preferences_linked_devices">My linked devices</string>
-    <string name="my_preferences_linked_devices_desc">Transactions, statements and balance messages will only be sent to your primary device.</string>
+    <string name="my_preferences_linked_devices">Manage Devices (%1$s)</string>
+    <string name="my_preferences_linked_devices_title">My Linked Devices</string>
+    <string name="my_preferences_linked_devices_desc">You can enable push notifications for select linked devices in order to receive transactions, statements and balance messages.</string>
     <string name="my_preferences_link_this_device">Link this device</string>
     <string name="unlink_device_title">Are you sure you want to unlink this device from your profile?</string>
     <string name="unlink_device_desc">This device will not have permission to access your profile unless it is manually linked again.</string>
@@ -1996,14 +1999,15 @@
     <string name="link_device_sending_otp_processing">Processing Request</string>
     <string name="link_device_error_title">There was a Problem Linking Your Device.</string>
     <string name="link_device_error_desc">Try linking your device again, or call us on 0861 50 20 20 for further assistance.</string>
-    <string name="unlink_device_change_to_primary">Change to Primary Device</string>
-    <string name="unlink_device_delete">Delete Device</string>
-    <string name="remove_device_title">Please select a new primary device to link to your profile.</string>
-    <string name="remove_device_desc">To remove this device, you need to select a new primary device.</string>
+    <string name="unlink_device_change_to_preferred">Change preferred device</string>
+    <string name="unlink_device_make_preferred">Make Preferred Device</string>
+    <string name="unlink_device_delete">Unlink Device</string>
+    <string name="remove_device_title">Select a New Preferred Device</string>
+    <string name="remove_device_desc">To remove this device, you need to select a new preferred device.</string>
 
     <!--  Changing Device Confirmation  -->
-    <string name="changing_primary_device_processing">Changing Primary Device</string>
-    <string name="changing_primary_device_result_success">Your Device Has \nBeen Successfully Changed.</string>
+    <string name="changing_preferred_device_processing">Changing Preferred Device</string>
+    <string name="changing_primary_device_result_success">Your Preferred Device Has \nBeen Successfully Changed.</string>
 
     <!--  Unlink Device Confirmation  -->
     <string name="unlink_device_unlinking_processing">Unlinking Your Device</string>
@@ -2031,10 +2035,12 @@
     <string name="unable_to_process_502">We are unable to process your request at the moment. Please Try Again Later.</string>
 
     <!-- View All Linked Devices -->
-    <string name="view_all_device_title">My Linked Devices</string>
-    <string name="select_primary_device_title">Select Primary Device</string>
+    <string name="view_all_device_preferred">Preferred Device</string>
+    <string name="view_all_device_preferred_desc">This device will receive transactions, statements \nand balance messages.</string>
+    <string name="view_all_device_title">Manage Devices</string>
+    <string name="select_preferred_device_title">Select Preferred Device</string>
     <string name="view_all_device_location_n_a">Location N/A</string>
-    <string name="view_all_primary_device_title">Primary Device</string>
+    <string name="view_all_preferred_device_title">Preferred Device</string>
     <string name="view_all_other_device_title">Other Linked Devices</string>
     <string name="view_all_device_linked_on">Linked %s</string>
     <string name="payment_options_label">Payment Options</string>
@@ -2077,7 +2083,6 @@
     <string name="woolies_chat_active">Chat is currently active</string>
 
     <string name="shop_liquor_in_our_app">Shop Liquor</string>
-    <string name="select_suburb">Select Suburb</string>
     <string name="delivery_liquor_description"><![CDATA[Liquor is not available for Click & Collect.]]></string>
 
     <string name="balance_protection_insurance_claim_form">Balance Protection Insurance Claim Form</string>
@@ -2279,7 +2284,7 @@
 
     <!-- Native Checkout : Food Substitution    -->
     <string name="native_checkout_delivery_food_substitution_title">Food Substitutions</string>
-    <string name="native_checkout_delivery_food_substitution_desc">If an item is out of stock, how should we handle substitutes for you? If no substitutes are found the difference is not charged.</string>
+    <string name="native_checkout_delivery_food_substitution_desc">Would you like us to substitute food items if something is out of stock? If no substitutes are found, you will not be charged.</string>
     <string name="native_checkout_delivery_food_substitution_phone_confirm">Phone me to confirm any substitutions</string>
     <string name="native_checkout_delivery_food_substitution_similar_subst">Substitute for similar items if one is available</string>
     <string name="native_checkout_delivery_food_substitution_no_thanks">No thanks, don’t substitute</string>
@@ -2309,9 +2314,9 @@
     <string name="my_address_details">My Address Details</string>
     <string name="address_nickname_text_view">Address Nickname: *</string>
     <string name="unit_complex_floor_text_view">Unit No/Complex/Floor/Building:</string>
-    <string name="suburb_colon_text_view">Suburb: *</string>
-    <string name="province_colon_text_view">Province: *</string>
-    <string name="postal_code_colon_text_view">Postal Code: *</string>
+    <string name="suburb_colon_text_view">Suburb:</string>
+    <string name="province_colon_text_view">Province:</string>
+    <string name="postal_code_colon_text_view">Postal Code:</string>
     <string name="optional_hint">Optional</string>
     <string name="places_autocomplete_tv_hint">Enter a new address</string>
     <string name="add_a_new_address">Add A New Address</string>
@@ -2333,7 +2338,7 @@
     <string name="product_item">item found</string>
     <string name="goldCreditCard_title">Gold Credit Card</string>
     <string name="silverCreditCard_title">Silver Credit Card</string>
-    <!--vto-->
+     <!--vto-->
     <string name="capture">Capture Image</string>
     <string name="use_live_camera">Use Live Camera</string>
     <string name="take_a_photo">Take a Photo</string>
@@ -2391,8 +2396,8 @@
     <string name="bpi_checkbox_text">I agree with the <u>Comprehensive Balance Protection Terms &amp; Conditions</u></string>
     <string name="bpi_opt_in_text">opt in</string>
     <string name="bpi_opt_in_for_balance_protection_insurance">Opt in for Balance Protection Insurance</string>
-    <string name="bpi_confirm_opt_in_desc1">You may cancel this policy at any time. If you<br /> cancel within the first 31 days after which you have<br /> received the policy terms and conditions,<br /> we will reverse any premiums paid,<br /> provided have not claimed.</string>
-    <string name="bpi_confirm_opt_in_desc2">Should you require more information, need to<br /> submit a claim, log a complaint, wish to cancel or<br /> have not received your policy wording within 30<br /> days, please contact Woolworth Financial Services<br /> on 0861502020</string>
+    <string name="bpi_confirm_opt_in_desc1">You may cancel this policy at any time. If you<br/> cancel within the first 31 days after which you have<br/> received the policy terms and conditions,<br/> we will reverse any premiums paid,<br/> provided have not claimed.</string>
+    <string name="bpi_confirm_opt_in_desc2">Should you require more information, need to<br/> submit a claim, log a complaint, wish to cancel or<br/> have not received your policy wording within 30<br/> days, please contact Woolworth Financial Services<br/> on 0861502020</string>
     <string name="bpi_confirm_opt_in_desc_call_services">0861502020</string>
     <string name="bpi_email_me_a_copy">Email me a copy</string>
     <string name="bpi_terms_conditions_title">Terms &amp; Conditions</string>
@@ -2405,6 +2410,12 @@
     <string name="unavailable_item">Unfortunately this item is unavailable in %1$s. Try changing your delivery location and try again.</string>
     <string name="out_of_stock_item">Unfortunately this item is out of stock in %1$s. Try changing your delivery location and try again.</string>
     <string name="absa_statement_error_try_again_later">We\'re unable to retrieve your Statement. Please try again later.</string>
+    <string name="confirm_your_address">Confirm Your Address</string>
+    <string name="we_use_your_location_to_give_you_the_most_naccurate_stock_availabilty_and_pricing">We use your location to give you the most \naccurate stock availabilty and pricing.</string>
+    <string name="enter_new_location">Enter new location</string>
+    <string name="my_saved_addresses">My Saved Addresses</string>
+    <string name="current_location">Current Location</string>
+    <string name="update_address">Update Address</string>
 
     <string name="security_check_successful_label">Security Check Successful.</string>
     <string name="lets_set_up_your_passcode_label">Lets set up your passcode.</string>
@@ -2418,33 +2429,59 @@
     <string name="treatment_plan_desc_2">Make payments on the Woolies app.</string>
     <string name="treatment_plan_desc_3">Track your payment plan history and schedule.</string>
     <string name="treatment_plan_desc_4">Simple and easy to manage from the palm of your hand.</string>
-
+    <string name="geoloc_delivery">Standard Delivery</string>
+    <string name="products_available_title">Products available:</string>
+    <string name="item_limit">Item limit:</string>
+    <string name="geo_delivery_fee">Delivery fee:</string>
+    <string name="earliest_food_delivery_date">Earliest Food Delivery Date:</string>
+    <string name="earliest_fashion_delivery_date">Earliest Fashion Delivery Date:</string>
+    <string name="all">All</string>
+    <string name="unlimited">Unlimited</string>
+    <string name="food">Food</string>
+    <string name="fashion_beauty">Fashion and Beauty</string>
+    <string name="geoloc_ClickNCollectValue">28 Eastlake Isla...</string>
+    <string name="collection_store_title">There Are No Collection Stores Available Near You</string>
+    <string name="change_location">CHANGE LOCATION</string>
+    <string name="enter_your_street_number_and_name">Enter your street number and name</string>
+    <string name="no_location_title">We Can’t Deliver \n To This Location Yet.</string>
+    <string name="no_location_desc">However, we’re growing quickly, \n so please check back soon</string>
+    <string name="confirm_delivery_location_title">Confirm Your Delivery Location</string>
+    <string name="current_delivery_location_desc">Your current delivery location is set to</string>
+    <string name="confirm_collection_location_title">Confirm Your Collection Store</string>
+    <string name="confirm_collection_location_desc">Your current collection store is set to </string>
+    <string name="confirm_btn">Confirm</string>
+    <string name="edt_location">EDIT LOCATION </string>
+    <string name="please_select_the_store_you_are_collecting_from">Please select the store you\nare collecting from.</string>
+    <string name="search_by_store_or_location">Search by store or location</string>
+    <string name="change">change</string>
+    <string name="near_stores">%d Strores near me.</string>
+    <string name="where_do_you_want_to_collect">Where do you want to collect?.</string>
     <string name="product_listing_price_from">From</string>
     <string name="product_details_color_count">+ %d More</string>
+    <string name="geo_loc_error_msg">We can’t seem to find you. Please enter number and name of your street ,or drag the pin to your exact location.</string>
+    <string name="fashion_beauty_geo">Fashion,Beauty,Home</string>
+    <string name="no_location_collection">There Are No Collection Stores \n Available Near You.</string>
+    <string name="no_location_delivery">We Can’t Deliver To This Location Yet.</string>
+    <string name="geo_map_address">%s %s %s</string>
+    <string name="max_characters_allowed">Max 40 characters allowed</string>
 
     <!--Elite Plan -->
     <string name="amount_payable">Amount Payable</string>
     <string name="you_saved">You Save %1$s</string>
     <string name="amount_you_save">Amount You Save</string>
     <string name="get_help_repayment">GET HELP WITH YOUR REPAYMENTS</string>
-    <string name="view_your_payment_plan">VIEW YOUR PAYMENT PLAN</string>
+    <string name="view_your_payment_plan">VIEW PAYMENT PLAN</string>
     <string name="total_amount_you_saving">This is the total amount you are saving as agreed \n upon in your settlement plan</string>
     <string name="pay_now">PAY NOW</string>
+    <string name="account_in_recovery_label">Account in Recovery</string>
+    <string name="account_in_recovery_desc">Your account is in arrears. Have you already agreed to a repayment plan? View your plan or make a payment now.</string>
 
-    <!--ContactUs Financial Services -->
-    <string name="send_enquiry">Send Us An Enquiry</string>
-    <string name="enquiry_type">SELECT AN ENQUIRY TYPE</string>
-    <string name="send">SEND</string>
-    <string name="email_us_name">Name: *</string>
-    <string name="email_us_email">Email Address: *</string>
-    <string name="email_us_email_validation">Please ensure that the email address is correct</string>
-    <string name="email_us_enquiry">Enquiry Type: *</string>
-    <string name="email_us_message">Message: *</string>
-    <string name="sending_enquiry">Sending Enquiry</string>
-    <string name="enquiry_successfully_sent">Enquiry Successfully Sent</string>
-    <string name="thanks_for_message">Thank you for your message. Our support \n team will be in touch with you soon.</string>
-    <string name="enquiry_failed_retry">Please try again.</string>
-    <string name="enquiry_failed">Request failed.</string>
-    <string name="enter_valid_email">Please enter valid email.</string>
+    <string name="account_in_recovery_sc_desc">Your Store Card is currently in a payment plan. Please remember to make your next payment by its due date of %1$s.</string>
+    <string name="account_in_recovery_pl_desc">Your Personal Loan is currently in a payment plan. Please remember to make your next payment by its due date of %1$s.</string>
+    <string name="account_in_recovery_cc_desc">Your Credit Card is currently in a payment plan. Please remember to make your next payment by its due date of %1$s.</string>
 
+    <string name="account_in_recovery_sc_payment_due_unavailable_desc">Your Store Card is currently in a payment plan. Please remember to make your next payment.</string>
+    <string name="account_in_recovery_pl_payment_due_unavailable_desc">Your Personal Loan is currently in a payment plan. Please remember to make your next payment.</string>
+    <string name="account_in_recovery_cc_payment_due_unavailable_desc">Your Credit Card is currently in a payment plan. Please remember to make your next payment.</string>
+    <string name="delivery_address">Delivery Address:</string>
 </resources>

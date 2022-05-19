@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/confirm_delivery_location_nav_host">
+
+    <fragment
+        android:id="@+id/confirmAddressLocationFragment"
+        android:name="za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressFragment"
+        android:label="ConfirmAddressFragment"
+        tools:layout="@layout/confirm_address_bottom_sheet_dialog">
+
+        <argument
+            android:name="mapData"
+            app:argType="za.co.woolworths.financial.services.android.geolocation.model.MapData" />
+
+        <action
+            android:id="@+id/actionToConfirmAddressMapFragment"
+            app:destination="@id/confirmAddressMapFragment2"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right" />
+
+        <action
+            android:id="@+id/actionToDeliveryAddressConfirmationFragment"
+            app:destination="@id/deliveryAddressConfirmationFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right" />
+        <action
+            android:id="@+id/action_confirmAddressLocationFragment_to_checkoutAddAddressNewUserFragment"
+            app:destination="@id/checkoutAddAddressNewUserFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
+        <action
+            android:id="@+id/actionClickAndCollectStoresFragment"
+            app:destination="@id/clickAndCollectStoresFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/confirmAddressMapFragment2"
+        android:name="za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressMapFragment"
+        android:label="ConfirmAddressMapFragment">
+
+        <argument
+            android:name="mapData"
+            app:argType="za.co.woolworths.financial.services.android.geolocation.model.MapData" />
+
+
+        <action
+            android:id="@+id/action_confirmAddressMapFragment_to_deliveryAddressConfirmationFragment"
+            app:destination="@id/deliveryAddressConfirmationFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right" />
+        <action
+            android:id="@+id/actionClickAndCollectStoresFragment"
+            app:destination="@id/clickAndCollectStoresFragment" />
+
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/deliveryAddressConfirmationFragment"
+        android:name="za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment"
+        android:label="DeliveryAddressConfirmationFragment">
+
+        <action
+            android:id="@+id/action_deliveryAddressConfirmationFragment_to_clickAndCollectStoresFragment"
+            app:destination="@id/clickAndCollectStoresFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right" />
+
+        <action
+            android:id="@+id/action_deliveryAddressConfirmationFragment_to_confirmDeliveryLocationFragment"
+            app:destination="@id/confirmAddressLocationFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right" />
+
+        <action
+            android:id="@+id/action_deliveryAddressConfirmationFragment_to_geoUnsellableItemsFragment"
+            app:destination="@id/geoUnsellableItemsFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right" />
+        <action
+            android:id="@+id/action_deliveryAddressConfirmationFragment_to_geoCheckoutCollectingFragment"
+            app:destination="@id/geoCheckoutCollectingFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
+    </fragment>
+
+    <dialog
+        android:id="@+id/clickAndCollectStoresFragment"
+        android:name="za.co.woolworths.financial.services.android.geolocation.view.ClickAndCollectStoresFragment"
+        android:label="ClickAndCollectStoresFragment">
+
+        <action
+            android:id="@+id/action_clickAndCollectStoresFragment_to_confirmDeliveryLocationFragment"
+            app:destination="@id/confirmAddressLocationFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_clickAndCollectStoresFragment_to_confirmAddressLocationFragment"
+            app:destination="@id/confirmAddressLocationFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
+        <action
+            android:id="@+id/action_clickAndCollectStoresFragment_to_deliveryAddressConfirmationFragment"
+            app:destination="@id/deliveryAddressConfirmationFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
+
+    </dialog>
+    <fragment
+        android:id="@+id/checkoutAddAddressNewUserFragment"
+        android:name="za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment"
+        android:label="CheckoutAddAddressNewUserFragment" >
+        <action
+            android:id="@+id/actionOpenErrorHandlerBottomSheetDialog"
+            app:destination="@id/errorHandlerBottomSheetDialog2"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
+        <action
+            android:id="@+id/action_to_suburbSelectorFragment"
+            app:destination="@id/suburbSelectorFragment2"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
+        <action
+            android:id="@+id/action_checkoutAddAddressNewUserFragment_to_confirmAddressLocationFragment"
+            app:destination="@id/confirmAddressLocationFragment"
+            />
+        <action
+            android:id="@+id/action_checkoutAddAddressNewUserFragment_to_geoSuburbNotDeliverableBottomsheetDialogFragment"
+            app:destination="@id/geoSuburbNotDeliverableBottomsheetDialogFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
+        <action
+            android:id="@+id/action_checkoutAddAddressNewUserFragment_to_geoUnsellableItemsFragment"
+            app:destination="@id/geoUnsellableItemsFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
+        <action
+            android:id="@+id/action_checkoutAddAddressNewUserFragment_to_deliveryAddressConfirmationFragment"
+            app:destination="@id/deliveryAddressConfirmationFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
+    </fragment>
+    <dialog
+        android:id="@+id/errorHandlerBottomSheetDialog2"
+        android:name="za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBottomSheetDialog"
+        android:label="ErrorHandlerBottomSheetDialog" >
+    </dialog>
+    <fragment
+        android:id="@+id/suburbSelectorFragment2"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.SuburbSelectorFragment"
+        android:label="SuburbSelectorFragment" />
+
+    <fragment
+        android:id="@+id/geoCheckoutCollectingFragment"
+        android:name="za.co.woolworths.financial.services.android.checkout.view.CheckoutWhoIsCollectingFragment"
+        android:label="CheckoutWhoIsCollectingFragment" />
+
+    <dialog
+        android:id="@+id/geoSuburbNotDeliverableBottomsheetDialogFragment"
+        android:name="za.co.woolworths.financial.services.android.checkout.view.SuburbNotDeliverableBottomsheetDialogFragment"
+        android:label="SuburbNotDeliverableBottomsheetDialogFragment"
+        tools:layout="@layout/fragment_suburb_not_deliverable_bottomsheet_dialog" />
+    <dialog
+        android:id="@+id/geoUnsellableItemsFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment"
+        android:label="UnsellableItemsFragment" />
+
+
+</navigation>
