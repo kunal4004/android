@@ -10,5 +10,6 @@ class CommonHeaderUtils {
         const val NETWORK = "network"
         const val OS = "os"
         const val OS_VERISON = "osVersion"
+        const val APP_VERSION="appversion"
     }
 }

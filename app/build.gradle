@@ -10,11 +10,11 @@ apply plugin: 'dagger.hilt.android.plugin'
 
 android {
 
-    def major = "8"
-    def minor = "9"
+    def major = "9"
+    def minor = "0"
     def fix = "0"
-    def jobNumberProduction = 177
-    def jobNumberQa = 575
+    def jobNumberProduction = 183
+    def jobNumberQa = 588
     def jobNumberFeature = 15450
 
     dataBinding {
@@ -345,6 +345,8 @@ dependencies {
     // Hilt DI
     implementation "com.google.dagger:hilt-android:2.38.1"
     kapt "com.google.dagger:hilt-android-compiler:2.37"
+    implementation 'com.google.maps:google-maps-services:2.0.0'
+
 
     // Huawei
     huaweiQaImplementation 'com.huawei.hms:location:5.1.0.303'
