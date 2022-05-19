@@ -745,9 +745,9 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     private fun selectATab(selectedTab: AppCompatTextView) {
         selectedTab?.setBackgroundResource(R.drawable.bg_geo_selected_tab)
-        val futuraFont =
+        val myRiadSemiBoldFont =
             Typeface.createFromAsset(activity?.assets, "fonts/MyriadPro-Semibold.otf")
-        selectedTab?.typeface = futuraFont
+        selectedTab?.typeface = myRiadSemiBoldFont
         selectedTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
         when (selectedTab) {
             geoDeliveryTab -> {
