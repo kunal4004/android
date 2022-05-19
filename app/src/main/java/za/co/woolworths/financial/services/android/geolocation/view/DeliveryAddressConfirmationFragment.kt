@@ -24,6 +24,7 @@ import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.geo_location_delivery_address.*
 import kotlinx.android.synthetic.main.no_connection.*
+import kotlinx.android.synthetic.main.no_connection.view.*
 import kotlinx.android.synthetic.main.shop_custom_tab.view.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -228,7 +229,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     openDashTab()
                 }
             }
-            R.id.btnRetryConnection -> {
+            R.id.btnRetry -> {
                 initView()
             }
         }
@@ -346,6 +347,15 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     private fun sendConfirmLocation() {
+
+        if (!confirmAddressViewModel.isConnectedToInternet(requireActivity())) {
+            dash_no_connection_view?.visibility = View.GONE
+            geoDeliveryView?.visibility = View.GONE
+            connectionLayout?.visibility = View.VISIBLE
+            connectionLayout?.no_connection_layout?.visibility = View.VISIBLE
+            return
+        }
+
         var unSellableCommerceItems: MutableList<UnSellableCommerceItem>? = ArrayList()
         when (deliveryType) {
             Delivery.STANDARD.name -> {
@@ -592,12 +602,16 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     delay(AppConstant.DELAY_300_MS)
                     getDeliveryDetailsFromValidateLocation(it)
                 }
+                dash_no_connection_view.visibility = View.VISIBLE
                 connectionLayout?.visibility = View.GONE
+                connectionLayout?.no_connection_layout?.visibility = View.GONE
             } else {
+                dash_no_connection_view.visibility = View.GONE
                 connectionLayout?.visibility = View.VISIBLE
+                connectionLayout?.no_connection_layout?.visibility = View.VISIBLE
             }
         }
-        btnRetryConnection?.setOnClickListener(this)
+        btnRetry?.setOnClickListener(this)
     }
 
     private fun showDeliveryTabView() {

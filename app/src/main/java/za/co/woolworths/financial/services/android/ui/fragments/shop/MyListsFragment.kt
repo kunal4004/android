@@ -67,8 +67,10 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        if (!hidden)
+        if (!hidden) {
             setupToolbar()
+            getShoppingList(false)
+        }
     }
 
     private fun initUI() {
@@ -77,11 +79,11 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
             val itemDecorator = DividerItemDecoration(it, DividerItemDecoration.VERTICAL)
             ContextCompat.getDrawable(it, R.drawable.divider)
                 ?.let { it1 -> itemDecorator.setDrawable(it1) }
-            rcvShoppingLists.addItemDecoration(itemDecorator)
-            rcvShoppingLists.layoutManager =
+            rcvShoppingLists?.addItemDecoration(itemDecorator)
+            rcvShoppingLists?.layoutManager =
                 LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false)
             mAddToShoppingListAdapter = ViewShoppingListAdapter(mutableListOf(), this)
-            rcvShoppingLists.adapter = mAddToShoppingListAdapter
+            rcvShoppingLists?.adapter = mAddToShoppingListAdapter
         }
     }
 
@@ -94,12 +96,12 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     }
 
     private fun setListener() {
-        locationSelectedLayout.setOnClickListener(this)
-        btnGoToProduct.setOnClickListener(this)
-        rlCreateAList.setOnClickListener(this)
-        btnRetry.setOnClickListener(this)
-        rlDeliveryLocationLayout.setOnClickListener(this)
-        swipeToRefresh.setOnRefreshListener { getShoppingList(true) }
+        locationSelectedLayout?.setOnClickListener(this)
+        btnGoToProduct?.setOnClickListener(this)
+        rlCreateAList?.setOnClickListener(this)
+        btnRetry?.setOnClickListener(this)
+        rlDeliveryLocationLayout?.setOnClickListener(this)
+        swipeToRefresh?.setOnRefreshListener { getShoppingList(true) }
     }
 
      fun getShoppingList(isPullToRefresh: Boolean) {
@@ -156,7 +158,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     private fun bindShoppingListToUI() {
         val shoppingList: MutableList<ShoppingList> = shoppingListsResponse?.lists
             ?: mutableListOf()
-        shoppingList.let {
+        shoppingList?.let {
             when (it.size) {
                 0 -> showEmptyShoppingListView() //no list found
 
