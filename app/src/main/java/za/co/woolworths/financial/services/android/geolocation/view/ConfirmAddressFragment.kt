@@ -125,7 +125,8 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             if (confirmAddressViewModel.isConnectedToInternet(requireActivity()))
                 fetchAddress()
             else {
-                no_connection_layout?.visibility = View.VISIBLE
+                noAddressConnectionLayout?.visibility = View.VISIBLE
+                noAddressConnectionLayout?.no_connection_layout?.visibility = View.VISIBLE
             }
             rvSavedAddressList?.visibility = View.VISIBLE
         } else {
@@ -148,14 +149,15 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             if (confirmAddressViewModel.isConnectedToInternet(requireActivity()))
                 fetchAddress()
             else {
-                no_connection_layout?.visibility = View.VISIBLE
+                noAddressConnectionLayout?.visibility = View.VISIBLE
+                noAddressConnectionLayout?.no_connection_layout?.visibility = View.VISIBLE
             }
         } else {
             inSavedAddress?.visibility = View.VISIBLE
             tvConfirmAddress?.visibility = View.GONE
         }
         setButtonUI(false)
-        no_connection_layout?.btnRetryConnection?.setOnClickListener {
+        no_connection_layout?.btnRetry?.setOnClickListener {
             initViews()
         }
 
