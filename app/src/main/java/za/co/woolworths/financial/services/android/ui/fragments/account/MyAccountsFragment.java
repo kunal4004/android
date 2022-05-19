@@ -99,6 +99,7 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.repository.AppStateRepository;
+import za.co.woolworths.financial.services.android.ui.activities.CreditReportTUActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
@@ -1059,14 +1060,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 break;
             case R.id.creditReport:
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Myaccounts_creditview, activity);
-                startActivity(new Intent(getActivity(), FicaActivity.class));
+                startActivity(new Intent(getActivity(), CreditReportTUActivity.class));
                 getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
-
-//                RefreshStatus refreshStatus = new RefreshStatus(true,"AWeA5l4lhNmIM9aW7Rb7OYxouP6NDszZRWa2TeI1qfXxy18Ivubz6xBDcvb99vYv");
-//                Intent intent = new Intent(getActivity(), FicaActivity.class);
-//                intent.putExtra(GET_REFRESH_STATUS,refreshStatus);
-//                startActivity(intent);
-//                getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
                 break;
             default:
                 break;
