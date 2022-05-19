@@ -462,8 +462,8 @@ class ConfirmAddressMapFragment :
             postalCode,
             state,
             suburb)
-        viewLifecycleOwner.lifecycleScope.launch {
-            confirmAddressViewModel.postSaveAddress(saveAddressLocationRequest)
+        viewLifecycleOwner?.lifecycleScope?.launch {
+            confirmAddressViewModel?.postSaveAddress(saveAddressLocationRequest)
         }
     }
 
