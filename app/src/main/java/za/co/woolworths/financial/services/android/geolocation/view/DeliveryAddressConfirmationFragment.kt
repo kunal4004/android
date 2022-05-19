@@ -172,12 +172,17 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.apply {
                 if (deliveryType == Delivery.CNC.type) {
+                    //storeName will only be used in CnC flow. But storeId will be use in CnC or Dash.
                     mStoreName = this.storeName
                 }
                 mStoreId = this.storeId
             }
         } else {
             KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.apply {
+                if (deliveryType == Delivery.CNC.type) {
+                    //storeName will only be used in CnC flow. But storeId will be use in CnC or Dash.
+                    mStoreName = this.storeName
+                }
                 mStoreId = this.storeId
             }
         }
