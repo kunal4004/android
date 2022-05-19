@@ -118,17 +118,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         setUpViewModel()
         addFragmentListner()
         moveToTabBeforeApiCalls(deliveryType)
-        if (SessionUtilities.getInstance().isUserAuthenticated) {
-            Utils.getPreferredDeliveryLocation().fulfillmentDetails.apply {
-                mStoreName = this.storeName
-                mStoreId = this.storeId
-            }
-        } else {
-            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails.apply {
-                mStoreName = this?.storeName
-                mStoreId = this?.storeId
-            }
-        }
         initView()
     }
 
@@ -176,6 +165,19 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             ) {
                 savedAddressResponse =
                     this.getSerializable(SAVED_ADDRESS_RESPONSE) as SavedAddressResponse
+            }
+        }
+
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.apply {
+                if (deliveryType == Delivery.CNC.type) {
+                    mStoreName = this.storeName
+                }
+                mStoreId = this.storeId
+            }
+        } else {
+            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.apply {
+                mStoreId = this.storeId
             }
         }
     }
@@ -360,6 +362,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         var unSellableCommerceItems: MutableList<UnSellableCommerceItem>? = ArrayList()
         when (deliveryType) {
             Delivery.STANDARD.name -> {
+                mStoreId = ""
                 unSellableCommerceItems =
                     validateLocationResponse?.validatePlace?.unSellableCommerceItems
             }
@@ -371,6 +374,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 }
             }
             Delivery.DASH.name -> {
+                mStoreId = validateLocationResponse?.validatePlace?.onDemand?.storeId
                 unSellableCommerceItems =
                     validateLocationResponse?.validatePlace?.onDemand?.unSellableCommerceItems
             }
@@ -787,8 +791,11 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 if (validateLocationResponse != null) {
                     when (validateLocationResponse?.httpCode) {
                         HTTP_OK -> {
-                            if (isNewLocation || (mStoreName.isNullOrEmpty() && mStoreId.isNullOrEmpty())) {
-                                // Todo: update mStoreName and mStoreId
+                            if (isNewLocation || (mStoreName.isNullOrEmpty() || mStoreId.isNullOrEmpty())) {
+                                mStoreName =
+                                    getNearestStore(validateLocationResponse?.validatePlace?.stores)
+                                mStoreId =
+                                    getNearestStoreId(validateLocationResponse?.validatePlace?.stores)
                             }
                             moveToTab(deliveryType)
                         }
@@ -902,49 +909,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     private fun setGeoDeliveryTextForCnc() {
-
-        if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName?.isNullOrEmpty() == true
-            && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.storeName?.isNullOrEmpty() == true
-        ) {
-            whereToCollect()
-            return
-        } else if (SessionUtilities.getInstance().isUserAuthenticated) {
-            if (!mStoreName.isNullOrEmpty()) {
-                setCollectionAddressTextView(mStoreName)
-                return
-            }
-            if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName == null) {
-                whereToCollect()
-                return
-            }
-            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
-                setCollectionAddressTextView(it.storeName)
-                return
-            }
-        } else {
-            if (!mStoreName.isNullOrEmpty()) {
-                setCollectionAddressTextView(mStoreName)
-                return
-            }
-
-            if (KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails == null) {
-                whereToCollect()
-                return
-            }
-            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let {
-                setCollectionAddressTextView(it.storeName)
-                return
-            }
-        }
-    }
-
-    private fun whereToCollect() {
-        mStoreId = getNearestStoreId(validateLocationResponse?.validatePlace?.stores)
-        setCollectionAddressTextView(getNearestStore(validateLocationResponse?.validatePlace?.stores))
-    }
-
-    private fun setCollectionAddressTextView(addressText: String?) {
-        geoDeliveryText?.text = KotlinUtils.capitaliseFirstLetter(addressText)
+        geoDeliveryText?.text = KotlinUtils.capitaliseFirstLetter(mStoreName)
         editDelivery?.text = bindString(R.string.edit)
         btnConfirmAddress?.isEnabled = true
         btnConfirmAddress?.setBackgroundColor(
