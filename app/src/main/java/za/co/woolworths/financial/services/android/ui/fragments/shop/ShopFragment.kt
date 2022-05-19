@@ -11,7 +11,6 @@ import android.os.Handler
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
@@ -22,7 +21,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.black_tool_tip_layout.*
 import kotlinx.android.synthetic.main.fragment_shop.*
 import kotlinx.android.synthetic.main.geo_location_delivery_address.*
-import kotlinx.android.synthetic.main.shop_custom_tab.*
 import kotlinx.android.synthetic.main.shop_custom_tab.view.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -47,7 +45,6 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ShopPagerAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment.Companion.DEPARTMENT_LOGIN_REQUEST
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.DISPLAY_TOAST_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
@@ -62,7 +59,6 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 
 
 /**
@@ -85,9 +81,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private var validateLocationResponse: ValidateLocationResponse? = null
     private var tabWidth: Float? = 0f
 
-    private val shopViewModel: ShopViewModel by viewModels(
-        ownerProducer = { this }
-    )
     private val confirmAddressViewModel: ConfirmAddressViewModel by lazy {
         ViewModelProvider(
             this,
@@ -557,7 +550,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             val validateLocationResponse = data?.getSerializableExtra(
                 BundleKeysConstants.VALIDATE_RESPONSE
             ) as? ValidateLocationResponse
-            validateLocationResponse?.validatePlace?.let { shopViewModel.setValidatePlaceResponse(it) }
+            validateLocationResponse?.validatePlace?.let { WoolworthsApplication.setDashBrowsingValidatePlaceDetails(it) }
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 // delay added because onResume() sets current item back to deliveryType tab.
                 // But we want forcefully user to come on Dash tab even though the location is not dash.

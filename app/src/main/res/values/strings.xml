@@ -2513,7 +2513,13 @@
     <string name="add_street_address">Street Address:</string>
     <string name="dash_free_collection">"Free Collection"</string>
     <string name="dash_item_limit">%d Item Limit</string>
-
+    <string name="change_your_delivery_method_title">You’re About To Change Your Delivery Method</string>
+    <string name="change_your_delivery_method_standard">By adding this item to your cart, you will checkout using <b><font color='#000000'>Standard Delivery</font></b> instead.</string>
+    <string name="change_your_delivery_method_dash">By adding this item to your cart, you will checkout using <b><font color='#000000'>Dash Delivery</font></b> instead.</string>
+    <string name="change_your_delivery_method_cnc">By adding this item to your cart, you will checkout using <b><font color='#000000'>Click &amp; Collect.</font></b> instead.</string>
+    <string name="continue_with_standard_delivery">CONTINUE WITH STANDARD DELIVERY</string>
+    <string name="continue_with_cnc_delivery">CONTINUE WITH Click &amp;</string>
+    <string name="continue_with_dash_delivery">CONTINUE WITH DASH DELIVERY</string>
 
 
     <string name="product_listing_price_from">From</string>
