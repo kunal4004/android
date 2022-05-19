@@ -436,9 +436,9 @@ class KotlinUtils {
                     Delivery.STANDARD -> {
                         tvDeliveringTo.text =
                             context?.resources?.getString(R.string.standard_delivery)
-                        tvDeliveryLocation.text = capitaliseFirstLetter(address?.address1 ?: "")
+                        tvDeliveryLocation?.text = capitaliseFirstLetter(address?.address1 ?: "")
 
-                        tvDeliveryLocation.visibility = View.VISIBLE
+                        tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_delivery_circle)
                     }
                     Delivery.DASH -> {
@@ -461,10 +461,10 @@ class KotlinUtils {
                     else -> {
                         tvDeliveringTo.text =
                             context?.resources?.getString(R.string.standard_delivery)
-                        tvDeliveryLocation.text =
+                        tvDeliveryLocation?.text =
                             context?.resources?.getString(R.string.default_location)
 
-                        tvDeliveryLocation.visibility = View.VISIBLE
+                        tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_delivery_circle)
                     }
                 }
