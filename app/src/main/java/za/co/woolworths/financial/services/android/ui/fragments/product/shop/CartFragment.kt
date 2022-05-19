@@ -1276,7 +1276,10 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                         buildAddToCartSuccessToast(rlCheckOut, false, activity, null)
                     }
                 }
-                REQUEST_SUBURB_CHANGE -> loadShoppingCartAndSetDeliveryLocation()
+                REQUEST_SUBURB_CHANGE ->  {
+                    initializeLoggedInUserCartUI()
+                    loadShoppingCartAndSetDeliveryLocation()
+                }
                 REDEEM_VOUCHERS_REQUEST_CODE, APPLY_PROMO_CODE_REQUEST_CODE -> {
                     val shoppingCartResponse = Utils.strToJson(
                         data?.getStringExtra("ShoppingCartResponse"),
@@ -1308,6 +1311,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             }
         }
         if (requestCode == REQUEST_SUBURB_CHANGE) {
+            initializeLoggedInUserCartUI()
             loadShoppingCartAndSetDeliveryLocation()
         }
         if (requestCode == ScreenManager.CART_LAUNCH_VALUE && resultCode == SSOActivity.SSOActivityResult.STATE_MISMATCH.rawValue()) {

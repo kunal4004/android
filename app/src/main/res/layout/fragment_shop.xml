@@ -118,7 +118,7 @@
             android:layout_height="@dimen/fourty_dp"
             android:layout_marginStart="@dimen/sixteen_dp"
             android:layout_marginTop="@dimen/sixteen_dp"
-            android:layout_marginEnd="@dimen/sixteen_dp"
+            android:layout_marginEnd="@dimen/eight_dp"
             android:layout_marginBottom="@dimen/sixteen_dp"
             android:layout_toStartOf="@+id/imBarcodeScanner"
             android:background="@color/shop_search_color"
