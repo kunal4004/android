@@ -57,6 +57,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.Transactio
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionHeader
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionItem
 import za.co.woolworths.financial.services.android.models.dto.app_config.chat.ConfigTradingHours
+import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity
@@ -95,6 +96,7 @@ class KotlinUtils {
         var isDeliveryLocationTabClicked: Boolean? = false
         var isCncTabClicked: Boolean? = false
         var isDashTabClicked: Boolean? = false
+        var browsingDeliveryType: String? = getPreferredDeliveryType()?.name
         const val DELAY: Long = 900
         const val collectionsIdUrl = "woolworths.wfs.co.za/CustomerCollections/IdVerification"
         const val COLLECTIONS_EXIT_URL = "collectionsExitUrl"
@@ -417,12 +419,12 @@ class KotlinUtils {
 
         fun setDeliveryAddressView(
             context: Activity?,
-            shoppingDeliveryLocation: ShoppingDeliveryLocation,
+            fulfillmentDetails: FulfillmentDetails,
             tvDeliveringTo: TextView,
             tvDeliveryLocation: TextView,
             deliverLocationIcon: ImageView?,
         ) {
-            with(shoppingDeliveryLocation?.fulfillmentDetails) {
+            with(fulfillmentDetails) {
                 when (Delivery?.getType(deliveryType)) {
                     Delivery.CNC -> {
                         tvDeliveringTo?.text =
@@ -978,6 +980,14 @@ class KotlinUtils {
             return Delivery.getType(
                 Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType ?: ""
             )
+        }
+
+        fun getDeliveryType(): FulfillmentDetails? {
+            return if (SessionUtilities.getInstance().isUserAuthenticated) {
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails
+            } else{
+                getAnonymousUserLocationDetails()?.fulfillmentDetails
+            }
         }
 
         fun getPreferredPlaceId(): String {

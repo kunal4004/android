@@ -1605,7 +1605,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             requireActivity().apply {
                 setDeliveryAddressView(
                     this,
-                    shoppingDeliveryLocation,
+                    shoppingDeliveryLocation.fulfillmentDetails,
                     tvDeliveryTitle,
                     tvDeliverySubtitle,
                     imgCartDelivery

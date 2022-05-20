@@ -57,6 +57,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DE
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_ORDER_DETAILS_PAGE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DASH_SET_ADDRESS_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
 import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
@@ -155,23 +156,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
 
     private fun executeValidateSuburb() {
-        var placeId: String? = null
+       val placeId = getDeliveryType()?.address?.placeId ?: return
 
-        if (isUserAuthenticated()) {
-            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
-                placeId = it.address?.placeId
-            }
-        } else {
-            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let {
-                placeId = it.address?.placeId
-            }
-        }
-
-        if (placeId == null) {
-            return
-        }
-
-        placeId?.let {
+        placeId.let {
             lifecycleScope.launch {
                 progressBar?.visibility = View.VISIBLE
                 try {
@@ -188,20 +175,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                                 setDeliveryView()
                                 viewLifecycleOwner.lifecycleScope.launch {
                                     delay(DELAY_3000_MS)
-                                    if (isUserAuthenticated()) {
-                                        Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let { fulfillmentDetails ->
-                                            Delivery.getType(fulfillmentDetails.deliveryType)
-                                                ?.let {
-                                                    showBlackToolTip(it)
-                                                }
-                                        }
-                                    } else {
-                                        KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let { fulfillmentDetails ->
-                                            Delivery.getType(fulfillmentDetails.deliveryType)
-                                                ?.let {
-                                                    showBlackToolTip(it)
-                                                }
-                                        }
+                                    Delivery.getType(getDeliveryType()?.deliveryType)?.let {
+                                        showBlackToolTip(it)
                                     }
                                 }
                             }
@@ -219,21 +194,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun onEditDeliveryLocation() {
-        var deliveryType: Delivery? = Delivery.STANDARD
-        var placeId = ""
-
-        if (isUserAuthenticated()) {
-            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
-                deliveryType = Delivery.getType(it.deliveryType)
-                placeId = it.address?.placeId ?: ""
-            }
-        } else {
-            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let {
-                deliveryType = Delivery.getType(it.deliveryType)
-                placeId = it.address?.placeId ?: ""
-            }
-        }
-
         Utils.triggerFireBaseEvents(
             FirebaseManagerAnalyticsProperties.SHOP_DELIVERY_CLICK_COLLECT,
             hashMapOf(
@@ -243,12 +203,11 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             activity
         )
 
-
         KotlinUtils.presentEditDeliveryGeoLocationActivity(
             requireActivity(),
             REQUEST_CODE,
-            deliveryType,
-            placeId
+            Delivery.getType(getDeliveryType()?.deliveryType),
+            getDeliveryType()?.address?.placeId ?: ""
         )
     }
 
@@ -284,15 +243,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         if (tabPosition < 0) {
             return
         }
-
-        if (isUserAuthenticated()) {
-            if (Utils.getPreferredDeliveryLocation() != null) {
-                return
-            }
-        } else {
-            if (KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails != null) {
-                return
-            }
+        if (getDeliveryType() != null) {
+            return
         }
 
         when (tabPosition) {
@@ -380,31 +332,16 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun setDeliveryView() {
-        if (isUserAuthenticated()) {
-            Utils.getPreferredDeliveryLocation()?.apply {
-                updateCurrentTab(this?.fulfillmentDetails?.deliveryType)
-                activity?.let {
-                    KotlinUtils.setDeliveryAddressView(
-                        it,
-                        this,
-                        tvToolbarTitle,
-                        tvToolbarSubtitle,
-                        imgToolbarStart
-                    )
-                }
-            }
-        } else {
-            KotlinUtils.getAnonymousUserLocationDetails()?.apply {
-                updateCurrentTab(this?.fulfillmentDetails?.deliveryType)
-                activity?.let {
-                    KotlinUtils.setDeliveryAddressView(
-                        it,
-                        this,
-                        tvToolbarTitle,
-                        tvToolbarSubtitle,
-                        imgToolbarStart
-                    )
-                }
+        updateCurrentTab(getDeliveryType()?.deliveryType)
+        activity?.let {
+            getDeliveryType()?.let { fulfillmentDetails ->
+                KotlinUtils.setDeliveryAddressView(
+                    it,
+                    fulfillmentDetails,
+                    tvToolbarTitle,
+                    tvToolbarSubtitle,
+                    imgToolbarStart
+                )
             }
         }
     }
@@ -550,7 +487,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             val validateLocationResponse = data?.getSerializableExtra(
                 BundleKeysConstants.VALIDATE_RESPONSE
             ) as? ValidateLocationResponse
-            validateLocationResponse?.validatePlace?.let { WoolworthsApplication.setDashBrowsingValidatePlaceDetails(it) }
+            validateLocationResponse?.validatePlace?.let {
+                WoolworthsApplication.setDashBrowsingValidatePlaceDetails(it)
+            }
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 // delay added because onResume() sets current item back to deliveryType tab.
                 // But we want forcefully user to come on Dash tab even though the location is not dash.
@@ -724,7 +663,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
 
         if (validateLocationResponse?.validatePlace?.firstAvailableFoodDeliveryDate.isNullOrEmpty()
-            && validateLocationResponse?.validatePlace?.firstAvailableOtherDeliveryDate.isNullOrEmpty()) {
+            && validateLocationResponse?.validatePlace?.firstAvailableOtherDeliveryDate.isNullOrEmpty()
+        ) {
             blackToolTipLayout?.visibility = View.GONE
             return
         }
@@ -786,32 +726,15 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             fashionItemTitle?.visibility = View.GONE
             deliveryIconLayout?.visibility = View.VISIBLE
 
-            if (isUserAuthenticated()) {
-                Utils.getPreferredDeliveryLocation()?.let {
-                    val store = GeoUtils.getStoreDetails(
-                        it.fulfillmentDetails?.storeId,
-                        validatePlace.stores
-                    )
-                    foodItemDateText?.text = store?.firstAvailableFoodDeliveryDate
-                    productAvailableText?.text = resources.getString(
-                        R.string.dash_item_limit,
-                        store?.quantityLimit?.foodMaximumQuantity
-                    )
-                }
-            } else {
-                KotlinUtils.getAnonymousUserLocationDetails()?.let {
-                    val store = GeoUtils.getStoreDetails(
-                        it.fulfillmentDetails.storeId,
-                        validatePlace.stores
-                    )
-
-                    foodItemDateText?.text = store?.firstAvailableFoodDeliveryDate
-                    productAvailableText?.text = resources.getString(
-                        R.string.dash_item_limit,
-                        store?.quantityLimit?.foodMaximumQuantity
-                    )
-                }
-            }
+            val store = GeoUtils.getStoreDetails(
+                getDeliveryType()?.storeId,
+                validatePlace.stores
+            )
+            foodItemDateText?.text = store?.firstAvailableFoodDeliveryDate
+            productAvailableText?.text = resources.getString(
+                R.string.dash_item_limit,
+                store?.quantityLimit?.foodMaximumQuantity
+            )
 
             cartIcon?.setImageResource(R.drawable.icon_cart_white)
             deliveryIcon?.setImageResource(R.drawable.white_shopping_bag_icon)
@@ -822,28 +745,14 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     private fun getFirstAvailableFoodDeliveryDate(): String? {
         validateLocationResponse?.validatePlace?.let { validatePlace ->
-            if (isUserAuthenticated()) {
-                Utils.getPreferredDeliveryLocation()?.let {
-                    val store = GeoUtils.getStoreDetails(
-                        it.fulfillmentDetails?.storeId,
-                        validatePlace.stores
-                    )
-                    return store?.firstAvailableFoodDeliveryDate
-                }
-
-            } else {
-                KotlinUtils.getAnonymousUserLocationDetails()?.let {
-                    val store = GeoUtils.getStoreDetails(
-                        it.fulfillmentDetails.storeId,
-                        validatePlace.stores
-                    )
-                    return store?.firstAvailableFoodDeliveryDate
-                }
-            }
+            val store = GeoUtils.getStoreDetails(
+                getDeliveryType()?.storeId,
+                validatePlace.stores
+            )
+            return store?.firstAvailableFoodDeliveryDate
         }
         return "";
     }
-
 
     private fun showDashToolTip(validateLocationResponse: ValidateLocationResponse?) {
         val dashDeliverable = validateLocationResponse?.validatePlace?.onDemand?.deliverable
@@ -852,8 +761,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             return
         }
 
-        if (validateLocationResponse?.validatePlace?.
-            onDemand?.firstAvailableFoodDeliveryTime?.isNullOrEmpty() == true) {
+        if (validateLocationResponse?.validatePlace?.onDemand?.firstAvailableFoodDeliveryTime?.isNullOrEmpty() == true) {
             blackToolTipLayout?.visibility = View.GONE
             return
         }
@@ -874,7 +782,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             cartIcon?.setImageResource(R.drawable.icon_cart_white)
             deliveryIcon?.setImageResource(R.drawable.icon_scooter_white)
             bubbleLayout?.setArrowDirection(ArrowDirection.TOP)
-            bubbleLayout?.arrowPosition =  tabs_main.width - tabs_main.getTabAt(2)?.view?.width?.div(2)?.toFloat()!!
+            bubbleLayout?.arrowPosition =
+                tabs_main.width - tabs_main.getTabAt(2)?.view?.width?.div(2)?.toFloat()!!
             productAvailableText?.text = resources.getString(
                 R.string.dash_item_limit,
                 it.onDemand?.quantityLimit?.foodMaximumQuantity
