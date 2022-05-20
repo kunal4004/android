@@ -24,6 +24,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.com
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOfferingState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.DialogData
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.InformationData
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.StoreCardAccountOptionsViewModel
 
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RED_HEX_COLOR
@@ -32,11 +33,11 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 @AndroidEntryPoint
 class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMainFragmentBinding>(
     AccountProductLandingMainFragmentBinding::inflate
-) {
+), View.OnClickListener {
 
     private var childNavController: NavController? = null
     val viewModel by viewModels<AccountProductsHomeViewModel>()
-    val optionsViewModel : StoreCardAccountOptionsViewModel by activityViewModels()
+    val optionsViewModel: StoreCardAccountOptionsViewModel by activityViewModels()
 
     private var navigationGraph: NavigationGraph = NavigationGraph()
 
@@ -48,6 +49,8 @@ class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMai
     }
 
     private fun setToolbar() {
+        binding.infoIconImageView.setOnClickListener(this)
+        binding.navigateBackImageButton.setOnClickListener(this)
         with(binding) {
             when (viewModel.isProductInGoodStanding()) {
                 true -> {
@@ -78,7 +81,7 @@ class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMai
                 bundleOf()
             )
 
-         getPopupDialogStatus { state ->
+            getPopupDialogStatus { state ->
                 when (state) {
                     /* when productOfferingGoodStanding == true
                    hideAccountInArrears(account)
@@ -91,18 +94,20 @@ class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMai
                     }
 
                     is AccountOfferingState.AccountIsChargedOff -> {
-                        when(isCreditCard(product)){
+                        when (isCreditCard(product)) {
                             false -> displayPopUp(DialogData.ChargedOff())
                         }
                     }
 
                     is AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff -> {
-                        when(isCreditCard(product)){
+                        when (isCreditCard(product)) {
                             false -> displayPopUp(DialogData.ViewPlanDialog())
-                            true-> displayPopUp(DialogData.ChargedOff(
-                                firstButtonTitle = R.string.view_your_payment_plan,
-                                secondButtonVisibility = GONE
-                            ))
+                            true -> displayPopUp(
+                                DialogData.ChargedOff(
+                                    firstButtonTitle = R.string.view_your_payment_plan,
+                                    secondButtonVisibility = GONE
+                                )
+                            )
                         }
 
                     }
@@ -134,7 +139,8 @@ class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMai
                     }
                     is ViewState.Loading -> {
                     }
-                    ViewState.RenderEmpty -> {}
+                    ViewState.RenderEmpty -> {
+                    }
                 }
             }
         }
@@ -150,6 +156,26 @@ class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMai
                 )
             )
         }
+    }
 
+    private fun navigateToInformation() {
+        viewModel.apply {
+            findNavController().navigate(
+                AccountProductsMainFragmentDirections.actionAccountProductsMainFragmentToAccountInformationFragment(
+                    if (isProductInGoodStanding()) InformationData.GoodStanding() else InformationData.Arrears()
+                )
+            )
+        }
+    }
+
+    override fun onClick(view: View?) {
+        when (view) {
+            binding.infoIconImageView -> {
+                navigateToInformation()
+            }
+            binding.navigateBackImageButton -> {
+                activity?.finish()
+            }
+        }
     }
 }

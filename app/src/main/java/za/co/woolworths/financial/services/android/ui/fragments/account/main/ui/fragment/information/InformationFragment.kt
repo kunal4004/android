@@ -43,7 +43,7 @@ class InformationFragment :
 
     override fun onClick(view: View?) {
         when (view) {
-            binding.ivInformationClose, -> {
+            binding.ivInformationClose -> {
                 findNavController().popBackStack()
             }
         }

@@ -15,6 +15,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dom
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.BalanceProtectionInsuranceImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.IAccountProductLandingDao
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.IBalanceProtectionInsurance
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.IStoreCardNavigator
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.StoreCardNavigator
 
 @Module
 @InstallIn(FragmentComponent::class)
@@ -35,4 +37,6 @@ object AccountProductsLandingModule {
     fun provideBalanceProtectionInsurance(product : AccountProductLandingDao?): IBalanceProtectionInsurance =
         BalanceProtectionInsuranceImpl(product)
 
+    @Provides
+    fun provideStoreCardNavigator(): IStoreCardNavigator = StoreCardNavigator()
 }

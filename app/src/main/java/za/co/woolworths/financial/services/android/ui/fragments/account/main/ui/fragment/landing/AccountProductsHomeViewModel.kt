@@ -11,10 +11,13 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dat
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.EligibilityImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.IEligibilityImpl
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.IStoreCardNavigator
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.StoreCardNavigator
 import javax.inject.Inject
 
 @HiltViewModel
-class AccountProductsHomeViewModel @Inject constructor(screen: AccountProductLandingScreenStatus, account: AccountProductLandingDao, eligibilityImpl: EligibilityImpl, private val collectionRepository: CollectionRepository) : ViewModel(), IAccountProductLandingDao by account, IAccountProductLandingScreen by screen, IEligibilityImpl by eligibilityImpl, ICollectionRepository by collectionRepository {
+class AccountProductsHomeViewModel @Inject constructor(screen: AccountProductLandingScreenStatus, account: AccountProductLandingDao, eligibilityImpl: EligibilityImpl, private val collectionRepository: CollectionRepository, val storeCardNavigator: StoreCardNavigator) : ViewModel(), IAccountProductLandingDao by account, IAccountProductLandingScreen by screen, IEligibilityImpl by eligibilityImpl,
+    ICollectionRepository by collectionRepository, IStoreCardNavigator by storeCardNavigator {
 
 
     suspend fun eligibilityPlanResponse() = getViewStateFlowForNetworkCall { queryServiceCheckCustomerEligibilityPlan() }
