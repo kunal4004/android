@@ -375,8 +375,8 @@ class ConfirmAddressMapFragment :
                 }
             }).await()
 
-        placeId = results.getOrNull(0)?.placeId.toString()
-      if (isStreetNumberAndRouteFromSearch == false) {
+        if (isStreetNumberAndRouteFromSearch == false) {
+            placeId = results.getOrNull(0)?.placeId.toString()
             getStreetNumberAndRoute(placeId)
         }
         isStreetNumberAndRouteFromSearch = false
@@ -462,8 +462,8 @@ class ConfirmAddressMapFragment :
             postalCode,
             state,
             suburb)
-        viewLifecycleOwner.lifecycleScope.launch {
-            confirmAddressViewModel.postSaveAddress(saveAddressLocationRequest)
+        viewLifecycleOwner?.lifecycleScope?.launch {
+            confirmAddressViewModel?.postSaveAddress(saveAddressLocationRequest)
         }
     }
 
