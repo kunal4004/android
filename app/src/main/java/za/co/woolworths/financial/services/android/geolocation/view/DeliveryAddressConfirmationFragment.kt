@@ -121,7 +121,21 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             placeId = this.getString(KEY_PLACE_ID, "")
             isComingFromSlotSelection = this.getBoolean(IS_COMING_FROM_SLOT_SELECTION, false)
             isComingFromCheckout = this.getBoolean(IS_COMING_FROM_CHECKOUT, false)
-            deliveryType = this.getString(DELIVERY_TYPE, Delivery.STANDARD.name)
+             //added this condition during the app Upgrade
+          when(this.getString(DELIVERY_TYPE, Delivery.STANDARD.name))
+          {
+              Delivery.STANDARD.name->{
+                  deliveryType=Delivery.STANDARD.name
+              }
+              Delivery.CNC.name->{
+                  deliveryType=Delivery.CNC.name
+              }
+            else->{
+                  deliveryType=Delivery.STANDARD.name
+              }
+          }
+
+
             getString(CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS)?.let {
                 whoIsCollecting =
                     Gson().fromJson(it, object : TypeToken<WhoIsCollectingDetails>() {}.type)
@@ -416,13 +430,14 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 geoDeliveryText?.text =
                     HtmlCompat.fromHtml(getString(R.string.collecting_from_geo, it?.storeName),
                         HtmlCompat.FROM_HTML_MODE_LEGACY)
+                itemLimitValue?.text  = it?.quantityLimit?.foodMaximumQuantity.toString()
             }
             editDelivery?.text = bindString(R.string.edit)
             btnConfirmAddress?.isEnabled = true
             btnConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
             mStoreName = it?.storeName.toString()
             mStoreId = it?.storeId.toString()
-            itemLimitValue?.text  = it?.quantityLimit?.foodMaximumQuantity.toString()
+
         })
         isUnSellableItemsRemoved()
         placeId?.let {
@@ -440,6 +455,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     private fun openGeoDeliveryTab() {
+        deliveryType = Delivery.STANDARD.name
 
         Utils.triggerFireBaseEvents(
             FirebaseManagerAnalyticsProperties.SHOP_DELIVERY,
@@ -461,6 +477,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     private fun openCollectionTab() {
+        deliveryType = Delivery.CNC.name
 
         Utils.triggerFireBaseEvents(
             FirebaseManagerAnalyticsProperties.SHOP_CLICK_COLLECT,

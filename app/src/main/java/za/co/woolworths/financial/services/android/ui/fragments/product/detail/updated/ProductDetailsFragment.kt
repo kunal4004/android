@@ -276,7 +276,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             viewItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, productDetails?.categoryName)
             viewItem.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
             viewItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT, productDetails?.colourSizeVariants)
-            viewItem.putString(FirebaseAnalytics.Param.PRICE, productDetails?.price.toString())
+            viewItem.putString(FirebaseAnalytics.Param.PRICE, productDetails?.price?.toString())
             viewItemListParams.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, productDetails?.categoryName)
             viewItemListParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(viewItem))
         }
