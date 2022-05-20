@@ -856,6 +856,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                                         navigateToAddressConfirmation(response.address.placesId)
 
                                     }
+                                    KeyboardUtils.hideKeyboardIfVisible(activity)
                                 }
 
                                 AppConstant.HTTP_SESSION_TIMEOUT_400, AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
@@ -1037,6 +1038,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                                                 Utils.toJson(savedAddressResponse)
                                             )
                                         }
+                                    KeyboardUtils.hideKeyboardIfVisible(activity)
                                     navController?.navigateUp()
                                 }
                             }
