@@ -168,7 +168,10 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                                 activity,
                                 Locale.getDefault()
                             ).getFromLocation(it.latitude, it.longitude, 1)
-                            tvCurrentLocation.text = addresses[0].getAddressLine(0)
+                            addresses[0]?.getAddressLine(0)?.let{ addressLine ->
+                                tvCurrentLocation?.text = addressLine
+                            }
+
                         } catch (io: IOException) {
                             FirebaseManager.logException(io)
                         }

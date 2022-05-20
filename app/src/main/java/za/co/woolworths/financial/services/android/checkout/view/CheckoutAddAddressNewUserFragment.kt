@@ -138,7 +138,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     fun handleBundleResponse() {
         bundle = arguments?.getBundle(BUNDLE)
         bundle?.apply {
-           isComingFromCheckout = getBoolean(IS_COMING_FROM_CHECKOUT, false)
+            isComingFromCheckout = getBoolean(IS_COMING_FROM_CHECKOUT, false)
             isComingFromSlotSelection = getBoolean(IS_COMING_FROM_SLOT_SELECTION, false)
             if (containsKey(EDIT_SAVED_ADDRESS_RESPONSE_KEY)) {
                 //Edit new Address from delivery
@@ -149,14 +149,22 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                         SavedAddressResponse::class.java
                     ) as? SavedAddressResponse)
                     baseFragBundle?.putString(SAVED_ADDRESS_KEY, Utils.toJson(savedAddressResponse))
-                    selectedAddressPosition = getInt(EDIT_ADDRESS_POSITION_KEY,-1)
+                    selectedAddressPosition = getInt(EDIT_ADDRESS_POSITION_KEY, -1)
                     val savedAddress =
                         savedAddressResponse?.addresses?.get(getInt(EDIT_ADDRESS_POSITION_KEY))
                     selectedAddressId = savedAddress?.id.toString()
                     selectedDeliveryAddressType = savedAddress?.addressType
                     if (savedAddress != null) {
                         selectedAddress.savedAddress = savedAddress
-                        selectedAddress.provinceName = getProvinceName(savedAddress.region)
+                        var provinceName: String? = ""
+                        provinceName = getProvinceName(savedAddress.region)
+                        if (!provinceName.isNullOrEmpty()) {
+                            selectedAddress?.provinceName = provinceName
+                        } else {
+                            savedAddress?.region?.let {
+                                selectedAddress?.provinceName = it
+                            }
+                        }
                     }
                     setHasOptionsMenu(true)
                 }
@@ -271,10 +279,11 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             ) {
 
             } else if (savedAddressResponse?.addresses?.size!! > 1
-                && (!getSelectedDefaultName(savedAddressResponse,selectedAddressPosition))) {
+                && (!getSelectedDefaultName(savedAddressResponse, selectedAddressPosition))
+            ) {
                 deleteTextView?.visibility = View.VISIBLE
                 deleteTextView?.setOnClickListener(this)
-            } else if (getSelectedDefaultName(savedAddressResponse,selectedAddressPosition)) {
+            } else if (getSelectedDefaultName(savedAddressResponse, selectedAddressPosition)) {
                 deleteTextView?.visibility = View.GONE
             }
             saveAddress?.text = bindString(R.string.change_details)
@@ -775,6 +784,17 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     fun onSaveAddressClicked() {
+        if (selectedDeliveryAddressType.isNullOrEmpty()) {
+            deliveringAddressTypesErrorMsg.visibility = View.VISIBLE
+            showAnimationErrorMessage(deliveringAddressTypesErrorMsg, View.VISIBLE, 0)
+            listOfInputFields?.forEach {
+                if (it is EditText) {
+                    if (it.text.toString().trim().isEmpty())
+                        showErrorInputField(it, View.VISIBLE)
+                }
+            }
+            return
+        }
         if (selectedAddress.savedAddress.address1.isNullOrEmpty()) {
             showErrorDialog()
             return
@@ -833,9 +853,10 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                                         Utils.toJson(savedAddressResponse)
                                     )
                                     response.address.nickname?.let { nickName ->
-                                       navigateToAddressConfirmation(response.address.placesId)
+                                        navigateToAddressConfirmation(response.address.placesId)
 
                                     }
+                                    KeyboardUtils.hideKeyboardIfVisible(activity)
                                 }
 
                                 AppConstant.HTTP_SESSION_TIMEOUT_400, AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
@@ -864,7 +885,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
         } else {
             isNickNameExist()
-            if (selectedDeliveryAddressType == null) {
+            if (selectedDeliveryAddressType.isNullOrEmpty()) {
                 deliveringAddressTypesErrorMsg.visibility = View.VISIBLE
                 showAnimationErrorMessage(deliveringAddressTypesErrorMsg, View.VISIBLE, 0)
             }
@@ -957,7 +978,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             bundleOf(
                 KEY_ARGS_BUNDLE to bundleOf(
                     SAVED_ADDRESS_KEY to savedAddressResponse,
-                   DELIVERY_TYPE to DeliveryType.DELIVERY.name,
+                    DELIVERY_TYPE to DeliveryType.DELIVERY.name,
                     KEY_ARGS_SUBURB to Utils.toJson(suburb),
                     KEY_ARGS_PROVINCE to Utils.toJson(province),
                     KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS to Utils.toJson(unSellableCommerceItems),
@@ -976,7 +997,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             postalCode?.text.toString().trim(),
             cellphoneNumberEditText?.text.toString().trim(),
             "",
-            selectedAddress.savedAddress.region ?: "",
+            provinceAutocompleteEditText?.text?.toString() ?: "",
             selectedAddress.savedAddress.suburbId ?: "",
             selectedAddress.provinceName,
             suburbEditText?.text.toString(),
@@ -1017,6 +1038,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                                                 Utils.toJson(savedAddressResponse)
                                             )
                                         }
+                                    KeyboardUtils.hideKeyboardIfVisible(activity)
                                     navController?.navigateUp()
                                 }
                             }
@@ -1162,12 +1184,18 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
     private fun navigateToAddressConfirmation(placesId: String?) {
         baseFragBundle?.putString(KEY_PLACE_ID, placesId)
-        baseFragBundle?.putBoolean(IS_COMING_FROM_CHECKOUT,
-            isComingFromCheckout)
-        baseFragBundle?.putBoolean(IS_COMING_FROM_SLOT_SELECTION,
-            isComingFromSlotSelection)
-        baseFragBundle?.putSerializable(SAVED_ADDRESS_RESPONSE,
-            savedAddressResponse)
+        baseFragBundle?.putBoolean(
+            IS_COMING_FROM_CHECKOUT,
+            isComingFromCheckout
+        )
+        baseFragBundle?.putBoolean(
+            IS_COMING_FROM_SLOT_SELECTION,
+            isComingFromSlotSelection
+        )
+        baseFragBundle?.putSerializable(
+            SAVED_ADDRESS_RESPONSE,
+            savedAddressResponse
+        )
         findNavController().navigate(
             R.id.action_checkoutAddAddressNewUserFragment_to_deliveryAddressConfirmationFragment,
             bundleOf(BUNDLE to baseFragBundle)

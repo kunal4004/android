@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Pair
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
@@ -33,7 +32,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.integration.view
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.linkDeviceIfNecessary
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
-import java.util.*
 
 class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.ActionListners {
 

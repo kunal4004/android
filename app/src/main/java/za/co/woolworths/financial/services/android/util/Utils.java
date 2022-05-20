@@ -679,16 +679,14 @@ public class Utils {
         AtomicReference<String> deviceID = new AtomicReference<>(getSessionDaoValue(SessionDao.KEY.DEVICE_ID));
         if (deviceID.get() == null) {
             FirebaseInstallations.getInstance().getId().addOnCompleteListener(task -> {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     deviceID.set(task.getResult());
                     sessionDaoSave(SessionDao.KEY.DEVICE_ID, deviceID.get());
-                }
-                else if(!task.isSuccessful()){
+                } else if (!task.isSuccessful()) {
                     FirebaseManager.logException("Utils.getUniqueDeviceID() task failed");
                 }
             });
         }
-
         return deviceID.get();
     }
 
@@ -854,7 +852,7 @@ public class Utils {
     public static ShoppingDeliveryLocation getPreferredDeliveryLocation() {
         ShoppingDeliveryLocation preferredDeliveryLocation = null;
         AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
-        return (currentUserObject.preferredShoppingDeliveryLocation != null) ? currentUserObject.preferredShoppingDeliveryLocation : preferredDeliveryLocation;
+        return (currentUserObject.preferredShoppingDeliveryLocation != null && currentUserObject.preferredShoppingDeliveryLocation.fulfillmentDetails != null) ? currentUserObject.preferredShoppingDeliveryLocation : preferredDeliveryLocation;
     }
 
     public static void savePreferredDeliveryLocation(ShoppingDeliveryLocation shoppingDeliveryLocation) {
@@ -992,7 +990,7 @@ public class Utils {
 
     @Nullable
     public static String retrieveStoreId(String fulFillmentType) {
-        if (fulFillmentType.length() == 1)
+        if (fulFillmentType!=null&&fulFillmentType.length() == 1)
             fulFillmentType = "0" + fulFillmentType;
         return KotlinUtils.Companion.retrieveFulfillmentStoreId(fulFillmentType);
     }
@@ -1394,6 +1392,7 @@ public class Utils {
     public static String aes256EncryptStringAsBase64String(String entry) throws DecryptionFailureException {
         return Base64.encodeToString(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, entry), Base64.DEFAULT);
     }
+
     public static void updateUserVirtualTempCardState(Boolean state) {
         AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
         currentUserObject.isVirtualTemporaryStoreCardPopupShown = state;
@@ -1557,8 +1556,8 @@ public class Utils {
         return HuaweiApiAvailability.getInstance().isHuaweiMobileServicesAvailable(WoolworthsApplication.getAppContext()) == ConnectionResult.SUCCESS;
     }
 
-   public static String formatAnalyticsButtonText(String btnName){
-       String  btnText =  btnName.replaceAll("[^a-zA-Z0-9\\s]", "").trim();
-       return btnText.replace(" ", "_").toLowerCase();
-   }
+    public static String formatAnalyticsButtonText(String btnName) {
+        String btnText = btnName.replaceAll("[^a-zA-Z0-9\\s]", "").trim();
+        return btnText.replace(" ", "_").toLowerCase();
+    }
 }
