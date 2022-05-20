@@ -394,7 +394,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     ConfirmLocationRequest(CNC, confirmLocationAddress, mStoreId)
                 }
                 Delivery.DASH.name -> {
-                    ConfirmLocationRequest(DASH, confirmLocationAddress, mStoreId)
+                    ConfirmLocationRequest(DASH, confirmLocationAddress, validateLocationResponse?.validatePlace?.onDemand?.storeId)
                 }
                 else -> {
                     ConfirmLocationRequest(STANDARD, confirmLocationAddress, "")
@@ -929,6 +929,10 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 return
             }
             Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
+                if (it.deliveryType.equals(Delivery.DASH.type)) {
+                    whereToCollect()
+                    return
+                }
                 geoDeliveryText?.text = KotlinUtils.capitaliseFirstLetter(it.storeName)
                 editDelivery?.text = bindString(R.string.edit)
                 btnConfirmAddress?.isEnabled = true
@@ -958,7 +962,12 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 whereToCollect()
                 return
             }
+
             KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let {
+                if (it.deliveryType.equals(Delivery.DASH.type)) {
+                    whereToCollect()
+                    return
+                }
                 geoDeliveryText?.text = KotlinUtils.capitaliseFirstLetter(it.storeName)
                 editDelivery?.text = bindString(R.string.edit)
                 btnConfirmAddress?.isEnabled = true

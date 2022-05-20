@@ -327,10 +327,10 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                     return@observe
                                 }
 
-//                                if (response.orderSummary?.totalItemsCount ?: 0 <= 0) {
-//                                    showEmptyCart()
-//                                    return@observe
-//                                }
+                                if (response.orderSummary?.totalItemsCount ?: 0 <= 0) {
+                                    showEmptyCart()
+                                    return@observe
+                                }
                                 response.orderSummary?.fulfillmentDetails?.let {
                                     if (!it.deliveryType.isNullOrEmpty()) {
                                         Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(
