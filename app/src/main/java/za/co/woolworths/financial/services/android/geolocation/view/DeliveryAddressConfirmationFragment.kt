@@ -168,6 +168,24 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     this.getSerializable(SAVED_ADDRESS_RESPONSE) as SavedAddressResponse
             }
         }
+
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.apply {
+                if (deliveryType == Delivery.CNC.type) {
+                    //storeName will only be used in CnC flow. But storeId will be use in CnC or Dash.
+                    mStoreName = this.storeName
+                }
+                mStoreId = this.storeId
+            }
+        } else {
+            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.apply {
+                if (deliveryType == Delivery.CNC.type) {
+                    //storeName will only be used in CnC flow. But storeId will be use in CnC or Dash.
+                    mStoreName = this.storeName
+                }
+                mStoreId = this.storeId
+            }
+        }
     }
 
     override fun onClick(v: View?) {
@@ -328,7 +346,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 longitude = this?.getString(KEY_LONGITUDE, "")
                 placeId = this?.getString(KEY_PLACE_ID, "")
             }
-            placeId?.let { getDeliveryDetailsFromValidateLocation(it) }
+            placeId?.let { getDeliveryDetailsFromValidateLocation(it, true) }
         }
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { _, _ ->
             // change location dismiss button clicked so land back on last delivery location tab.
@@ -359,17 +377,19 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         var unSellableCommerceItems: MutableList<UnSellableCommerceItem>? = ArrayList()
         when (deliveryType) {
             Delivery.STANDARD.name -> {
+                mStoreId = ""
                 unSellableCommerceItems =
                     validateLocationResponse?.validatePlace?.unSellableCommerceItems
             }
             Delivery.CNC.name -> {
                 validateLocationResponse?.validatePlace?.stores?.forEach {
-                    if (it.storeName.equals(mStoreName)) {
+                    if (it.storeId.equals(mStoreId)) {
                         unSellableCommerceItems = it.unSellableCommerceItems
                     }
                 }
             }
             Delivery.DASH.name -> {
+                mStoreId = validateLocationResponse?.validatePlace?.onDemand?.storeId
                 unSellableCommerceItems =
                     validateLocationResponse?.validatePlace?.onDemand?.unSellableCommerceItems
             }
@@ -600,7 +620,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             if (confirmAddressViewModel.isConnectedToInternet(requireActivity())) {
                 viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                     delay(AppConstant.DELAY_300_MS)
-                    getDeliveryDetailsFromValidateLocation(it)
+                    getDeliveryDetailsFromValidateLocation(it, false)
                 }
                 dash_no_connection_view.visibility = View.VISIBLE
                 connectionLayout?.visibility = View.GONE
@@ -774,7 +794,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         }
     }
 
-    private fun getDeliveryDetailsFromValidateLocation(placeId: String) {
+    private fun getDeliveryDetailsFromValidateLocation(placeId: String, isNewLocation: Boolean) {
         val oldPlaceId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
         if (placeId.isNullOrEmpty() || (oldPlaceId != null && oldPlaceId == placeId)) {
             moveToTab(deliveryType)
@@ -790,8 +810,12 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 if (validateLocationResponse != null) {
                     when (validateLocationResponse?.httpCode) {
                         HTTP_OK -> {
-                            mStoreName =
-                                validateLocationResponse?.validatePlace?.stores?.getOrNull(0)?.storeName
+                            if (isNewLocation || (mStoreName.isNullOrEmpty() || mStoreId.isNullOrEmpty())) {
+                                mStoreName =
+                                    getNearestStore(validateLocationResponse?.validatePlace?.stores)
+                                mStoreId =
+                                    getNearestStoreId(validateLocationResponse?.validatePlace?.stores)
+                            }
                             moveToTab(deliveryType)
                         }
                         else -> {
@@ -839,7 +863,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     private fun updateDashDetails() {
         geoDeliveryText?.text =
-            KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.onDemand?.storeName
+            KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1
                 ?: getString(R.string.empty))
         var earliestDashDate =
             validateLocationResponse?.validatePlace?.onDemand?.firstAvailableFoodDeliveryTime
@@ -904,78 +928,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     private fun setGeoDeliveryTextForCnc() {
-
-        if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName?.isNullOrEmpty() == true
-            && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.storeName?.isNullOrEmpty() == true
-        ) {
-            whereToCollect()
-            return
-        } else if (SessionUtilities.getInstance().isUserAuthenticated) {
-            if (store != null) {
-                geoDeliveryText?.text = KotlinUtils.capitaliseFirstLetter(store?.storeName)
-                editDelivery?.text = bindString(R.string.edit)
-                btnConfirmAddress?.isEnabled = true
-                btnConfirmAddress?.setBackgroundColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.black
-                    )
-                )
-                return
-            }
-            if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName == null) {
-                whereToCollect()
-                return
-            }
-            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
-                geoDeliveryText?.text = KotlinUtils.capitaliseFirstLetter(it.storeName)
-                editDelivery?.text = bindString(R.string.edit)
-                btnConfirmAddress?.isEnabled = true
-                btnConfirmAddress?.setBackgroundColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.black
-                    )
-                )
-                return
-            }
-        } else {
-            if (store != null) {
-                geoDeliveryText?.text = KotlinUtils.capitaliseFirstLetter(store?.storeName)
-                editDelivery?.text = bindString(R.string.edit)
-                btnConfirmAddress?.isEnabled = true
-                btnConfirmAddress?.setBackgroundColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.black
-                    )
-                )
-                return
-            }
-
-            if (KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails == null) {
-                whereToCollect()
-                return
-            }
-            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let {
-                geoDeliveryText?.text = KotlinUtils.capitaliseFirstLetter(it.storeName)
-                editDelivery?.text = bindString(R.string.edit)
-                btnConfirmAddress?.isEnabled = true
-                btnConfirmAddress?.setBackgroundColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.black
-                    )
-                )
-                return
-            }
-        }
-    }
-
-    private fun whereToCollect() {
-        geoDeliveryText?.text =
-            KotlinUtils.capitaliseFirstLetter(getNearestStore(validateLocationResponse?.validatePlace?.stores))
-        mStoreId = getNearestStoreId(validateLocationResponse?.validatePlace?.stores)
+        geoDeliveryText?.text = KotlinUtils.capitaliseFirstLetter(mStoreName)
         editDelivery?.text = bindString(R.string.edit)
         btnConfirmAddress?.isEnabled = true
         btnConfirmAddress?.setBackgroundColor(
