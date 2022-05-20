@@ -12,13 +12,16 @@ import za.co.woolworths.financial.services.android.geolocation.model.request.Sav
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
 import za.co.woolworths.financial.services.android.models.dto.Response
 import za.co.woolworths.financial.services.android.models.dto.bpi.BPIBody
 import za.co.woolworths.financial.services.android.models.dto.bpi.InsuranceTypeOptInBody
+import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
-import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.*
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.AvailableTimeSlotsResponse
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.PossibleAddressResponse
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.ScheduleDeliveryRequest
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkDeviceBody
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAllLinkedDeviceResponse
@@ -37,12 +40,11 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardResponse
-import za.co.woolworths.financial.services.android.models.dto.voc.SurveyRepliesBody
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetailsResponse
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyOptOutBody
+import za.co.woolworths.financial.services.android.models.dto.voc.SurveyRepliesBody
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
-import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 
 interface ApiInterface {
 
@@ -353,7 +355,7 @@ interface ApiInterface {
         @Header("longitude") long: Double?,
         @Query("suburbId") suburbId: String?,
         @Query("storeId") storeId: String?,
-        @Query("deliveryType") deliveryType: String? = BundleKeysConstants.DASH
+        @Query("deliveryType") deliveryType: String?
     ): retrofit2.Response<RootCategories>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "Accept-Encoding: gzip")
@@ -791,8 +793,8 @@ interface ApiInterface {
             @Path("multipleSku") multipleSku: String): Call<SkusInventoryForStoreResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("wfs/app/v4/inventory/store/{store_id}/multiSku/{multipleSku}")
-   suspend fun fetchInventorySKUForStore(
+    @GET("wfs/app/v4/isninventory/multi/{store_id}/{multipleSku}")
+   suspend fun fetchDashInventorySKUForStore(
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Header("environment") environment: String,

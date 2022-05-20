@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -20,6 +21,8 @@
         android:id="@+id/connectionLayout"
         layout="@layout/no_connection"
         android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -70,9 +73,9 @@
         android:background="@drawable/bg_geo_selected_tab"
         android:fontFamily="@font/myriad_pro_regular"
         android:gravity="center"
-        android:maxLines="1"
-        android:paddingStart="@dimen/_5sdp"
-        android:paddingEnd="@dimen/_5sdp"
+        android:maxLines="2"
+        android:paddingStart="@dimen/_4sdp"
+        android:paddingEnd="@dimen/_4sdp"
         android:text="@string/geoloc_delivery"
         android:textAllCaps="false"
         android:textColor="@color/white"
@@ -86,13 +89,13 @@
         android:id="@+id/geoCollectTab"
         android:layout_width="0dp"
         android:layout_height="@dimen/_30sdp"
-        android:layout_marginStart="@dimen/_5sdp"
+        android:layout_marginStart="@dimen/_4sdp"
         android:background="@drawable/bg_geo_unselected_tab"
         android:fontFamily="@font/myriad_pro_regular"
         android:gravity="center"
         android:maxLines="1"
-        android:paddingStart="@dimen/_5sdp"
-        android:paddingEnd="@dimen/_5sdp"
+        android:paddingStart="@dimen/_4sdp"
+        android:paddingEnd="@dimen/_4sdp"
         android:text="@string/click_collect"
         android:textAllCaps="false"
         android:textColor="@color/color_444444"
@@ -106,13 +109,13 @@
         android:id="@+id/geoDashTab"
         android:layout_width="0dp"
         android:layout_height="@dimen/_30sdp"
-        android:layout_marginStart="@dimen/_5sdp"
+        android:layout_marginStart="@dimen/_4sdp"
         android:background="@drawable/bg_geo_unselected_tab"
         android:fontFamily="@font/myriad_pro_regular"
         android:gravity="center"
         android:maxLines="1"
-        android:paddingStart="@dimen/_5sdp"
-        android:paddingEnd="@dimen/_5sdp"
+        android:paddingStart="@dimen/_4sdp"
+        android:paddingEnd="@dimen/_4sdp"
         android:text="@string/dash_delivery"
         android:textAllCaps="false"
         android:textColor="@color/color_444444"
@@ -162,77 +165,78 @@
         android:id="@+id/tabsDivider"
         android:layout_width="0dp"
         android:layout_height="@dimen/_1sdp"
-        android:layout_marginTop="@dimen/_50sdp"
+        android:layout_marginBottom="@dimen/_24sdp"
         android:background="@color/swatch_border_color"
+        app:layout_constraintBottom_toTopOf="@id/earliestDeliveryDateLabel"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@+id/geoDashTab" />
+        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/earliestDeliveryDateLabel"
         style="@style/myriad_pro_regular"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/_8sdp"
         android:ellipsize="end"
         android:maxLines="1"
         android:minWidth="@dimen/_55sdp"
         android:text="@string/earliest_food_delivery_date"
         android:textColor="@color/color_666666"
         android:textSize="@dimen/_13ssp"
-        app:layout_constraintBottom_toTopOf="@+id/geoDivider"
+        app:layout_constraintBottom_toTopOf="@+id/earliestFashionDeliveryDateLabel"
         app:layout_constraintEnd_toStartOf="@+id/earliestDeliveryDateValue"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@+id/tabsDivider" />
+        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/earliestDeliveryDateValue"
         style="@style/myriad_pro_semi_bold"
         android:layout_marginStart="@dimen/_10sdp"
-        android:layout_marginBottom="@dimen/_8sdp"
         android:ellipsize="end"
         android:gravity="end"
         android:maxLines="1"
         android:textColor="@color/black"
         android:textSize="@dimen/_12ssp"
-        app:layout_constraintBottom_toTopOf="@+id/geoDivider"
+        app:layout_constraintBottom_toTopOf="@+id/earliestFashionDeliveryDateLabel"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toEndOf="@id/earliestDeliveryDateLabel"
-        app:layout_constraintTop_toBottomOf="@+id/tabsDivider" />
+        app:layout_constraintStart_toEndOf="@id/earliestDeliveryDateLabel" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/earliestFashionDeliveryDateLabel"
         style="@style/myriad_pro_regular"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_6sdp"
+        android:layout_marginBottom="@dimen/_24sdp"
         android:ellipsize="end"
         android:maxLines="1"
         android:minWidth="@dimen/_55sdp"
         android:text="@string/earliest_fashion_delivery_date"
         android:textColor="@color/color_666666"
         android:textSize="@dimen/_13ssp"
+        app:layout_constraintBottom_toTopOf="@+id/geoDivider"
         app:layout_constraintEnd_toStartOf="@+id/earliestFashionDeliveryDateValue"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@+id/earliestDeliveryDateLabel" />
+        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/earliestFashionDeliveryDateValue"
         style="@style/myriad_pro_semi_bold"
         android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_6sdp"
+        android:layout_marginBottom="@dimen/_24sdp"
         android:ellipsize="end"
         android:gravity="end"
         android:maxLines="1"
         android:textColor="@color/black"
         android:textSize="@dimen/_12ssp"
+        app:layout_constraintBottom_toTopOf="@+id/geoDivider"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toEndOf="@id/earliestFashionDeliveryDateLabel"
-        app:layout_constraintTop_toBottomOf="@+id/earliestDeliveryDateLabel" />
+        app:layout_constraintStart_toEndOf="@id/earliestFashionDeliveryDateLabel" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/earliestDeliveryDashLabel"
         style="@style/myriad_pro_regular"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_24sdp"
         android:ellipsize="end"
         android:maxLines="1"
         android:minWidth="@dimen/_55sdp"
@@ -241,13 +245,13 @@
         android:textSize="@dimen/_13ssp"
         app:layout_constraintBottom_toTopOf="@+id/geoDivider"
         app:layout_constraintEnd_toStartOf="@+id/earliestDeliveryDashValue"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@+id/tabsDivider" />
+        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/earliestDeliveryDashValue"
         style="@style/myriad_pro_semi_bold"
         android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_24sdp"
         android:ellipsize="end"
         android:gravity="end"
         android:maxLines="1"
@@ -255,8 +259,7 @@
         android:textSize="@dimen/_12ssp"
         app:layout_constraintBottom_toTopOf="@+id/geoDivider"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toEndOf="@id/earliestDeliveryDashLabel"
-        app:layout_constraintTop_toBottomOf="@+id/tabsDivider" />
+        app:layout_constraintStart_toEndOf="@id/earliestDeliveryDashLabel" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -282,11 +285,20 @@
         earliestDeliveryDashValue, imgDelIcon,tabsDivider,geoDivider,
         earliestFashionDeliveryDateLabel,btnConfirmAddress,editDelivery,geoDeliveryText" />
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/dash_no_connection_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:constraint_referenced_ids="deliveryBagIcon,
+        changeFulfillmentTitleTextView,geoDeliveryTab,geoCollectTab,
+        geoDashTab,txtNewFeature,txtNewFeatureCnC" />
+
     <View
         android:id="@+id/geoDivider"
         android:layout_width="0dp"
         android:layout_height="@dimen/_1sdp"
-        android:layout_marginBottom="@dimen/_30sdp"
+        android:layout_marginTop="@dimen/_24sdp"
+        android:layout_marginBottom="@dimen/_24sdp"
         android:background="@color/swatch_border_color"
         app:layout_constraintBottom_toTopOf="@id/imgDelIcon"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
@@ -296,7 +308,7 @@
         android:id="@+id/imgDelIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/_30sdp"
+        android:layout_marginBottom="@dimen/_24sdp"
         android:background="@drawable/mapview"
         app:layout_constraintBottom_toTopOf="@id/btnConfirmAddress"
         app:layout_constraintHorizontal_chainStyle="spread"
@@ -309,7 +321,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_6sdp"
         android:layout_marginEnd="@dimen/_10sdp"
-        android:layout_marginBottom="@dimen/_32sdp"
+        android:layout_marginBottom="@dimen/_26sdp"
         android:ellipsize="end"
         android:maxLines="1"
         android:textSize="@dimen/_15ssp"
@@ -322,7 +334,7 @@
         android:id="@+id/editDelivery"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/_22sdp"
-        android:layout_marginBottom="@dimen/_30sdp"
+        android:layout_marginBottom="@dimen/_24sdp"
         android:background="@drawable/bg_change_button"
         android:fontFamily="@font/futura_semi_bold"
         android:gravity="center"
@@ -340,8 +352,9 @@
         style="@style/blackButtonStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sixteen_dp"
         android:background="@color/black"
-        android:fontFamily="@font/futura_medium"
+        android:fontFamily="@font/futura_semi_bold"
         android:text="@string/confirm"
         app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
@@ -352,21 +365,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="@dimen/_16sdp" />
+        app:layout_constraintGuide_end="@dimen/sixteen_dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineStart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="@dimen/_16sdp" />
+        app:layout_constraintGuide_begin="@dimen/sixteen_dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineBottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_end="@dimen/_16sdp" />
+        app:layout_constraintGuide_end="@dimen/sixteen_dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineTop"
