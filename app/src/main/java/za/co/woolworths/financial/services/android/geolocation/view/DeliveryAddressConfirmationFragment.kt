@@ -462,22 +462,24 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                 }
 
                                 if (isComingFromCheckout) {
-                                    if (deliveryType == Delivery.STANDARD.name) {
+                                    if (deliveryType == Delivery.STANDARD.name || deliveryType == Delivery.DASH.name) {
                                         if (isComingFromSlotSelection) {
                                             /*Navigate to slot selection page with updated saved address*/
-
                                             val checkoutActivityIntent =
                                                 Intent(activity,
                                                     CheckoutActivity::class.java
                                                 )
                                             checkoutActivityIntent.putExtra(
                                                 CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
-                                                savedAddressResponse)
-
-                                            checkoutActivityIntent.putExtra(
-                                                CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION,
-                                                true
+                                                savedAddressResponse
                                             )
+                                            val result = when(deliveryType) {
+                                                Delivery.STANDARD.name -> CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION
+                                                else -> CheckoutAddressManagementBaseFragment.DASH_SLOT_SELECTION
+                                            }
+
+                                            checkoutActivityIntent.putExtra(result, true)
+
                                             activity?.apply {
                                                 startActivityForResult(
                                                     checkoutActivityIntent,
@@ -518,7 +520,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                                 bundleOf(BUNDLE to bundle))
                                         }
                                     }
-
                                 } else {
                                     // navigate to shop/list/cart tab
                                     activity?.setResult(Activity.RESULT_OK)

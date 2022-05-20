@@ -9,7 +9,6 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -65,15 +64,12 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.removeRandFromAmount
-import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.regex.Pattern
 
 class CheckoutReturningUserCollectionFragment : Fragment(),
-    ShoppingBagsRadioGroupAdapter.EventListner, View.OnClickListener, CollectionTimeSlotsListener,
-    CustomDriverTipBottomSheetDialog.ClickListner {
+    ShoppingBagsRadioGroupAdapter.EventListner, View.OnClickListener, CollectionTimeSlotsListener {
 
     private var selectedTimeSlot: Slot? = null
     private var selectedPosition: Int = 0
@@ -85,9 +81,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     private var whoIsCollectingDetails: WhoIsCollectingDetails? = null
     private var shimmerComponentArray: List<Pair<ShimmerFrameLayout, View>> = ArrayList()
     private var navController: NavController? = null
-    private var driverTipOptionsList: ArrayList<String>? = null
-    private var selectedDriverTipValue: String? = null
-    private var driverTipTextView: View? = null
+
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun afterTextChanged(s: Editable?) {
@@ -296,7 +290,6 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
         initializeFoodSubstitution()
         initializeDeliveryInstructions()
-        initializeDriverTipView()
     }
 
     private fun setupViewModel() {
@@ -334,10 +327,10 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                     return@observe
                                 }
 
-                                if (response.orderSummary?.totalItemsCount ?: 0 <= 0) {
-                                    showEmptyCart()
-                                    return@observe
-                                }
+//                                if (response.orderSummary?.totalItemsCount ?: 0 <= 0) {
+//                                    showEmptyCart()
+//                                    return@observe
+//                                }
                                 response.orderSummary?.fulfillmentDetails?.let {
                                     if (!it.deliveryType.isNullOrEmpty()) {
                                         Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(
@@ -477,104 +470,6 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 }
             }
         }
-    }
-
-    private fun initializeDriverTipView() {
-        //Todo This value will come from Config once it is available.
-        driverTipOptionsList = ArrayList()
-        driverTipOptionsList!!.add("R10")
-        driverTipOptionsList!!.add("R20")
-        driverTipOptionsList!!.add("R30")
-        driverTipOptionsList!!.add("Own Amount")
-        showDriverTipView()
-    }
-
-    private fun showDriverTipView() {
-        if (!driverTipOptionsList.isNullOrEmpty()) {
-            layoutDriverTip.visibility = View.VISIBLE
-            for ((index, options) in driverTipOptionsList!!.withIndex()) {
-                driverTipTextView =
-                    View.inflate(context, R.layout.where_are_we_delivering_items, null)
-                val titleTextView: TextView? = driverTipTextView?.findViewById(R.id.titleTv)
-                titleTextView?.tag = index
-                titleTextView?.text = options
-                if (!selectedDriverTipValue.isNullOrEmpty() && selectedDriverTipValue.equals(
-                        options
-                    )
-                ) {
-                    titleTextView?.background =
-                        bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
-                    titleTextView?.setTextColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.white
-                        )
-                    )
-                    tipNoteTextView?.visibility = View.VISIBLE
-                }
-                titleTextView?.setOnClickListener {
-                    var isSameSelection =
-                        true // Because we want to change this view after the value entered from user.
-                    if (it.tag == driverTipOptionsList!!.lastIndex) {
-                        val tipValue = if (titleTextView.text.toString()
-                                .equals(driverTipOptionsList!!.lastOrNull())
-                        ) getString(R.string.empty) else removeRandFromAmount(titleTextView.text.toString()
-                            .trim())
-                        val customDriverTipDialog = CustomDriverTipBottomSheetDialog.newInstance(
-                            getString(R.string.tip_your_dash_driver),
-                            getString(R.string.enter_your_own_amount), tipValue, this)
-                        customDriverTipDialog.show(requireFragmentManager(),
-                            CustomDriverTipBottomSheetDialog::class.java.simpleName)
-                    } else {
-                        isSameSelection = resetAllDriverTip(it.tag as Int)
-                        if (isSameSelection)
-                            tipNoteTextView?.visibility = View.GONE
-                    }
-                    selectedDriverTipValue = (it as TextView).text as? String
-                    if (!isSameSelection) {
-                        // Change background of selected Tip as it's not unselection.
-                        it.background =
-                            bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
-                        it.setTextColor(
-                            ContextCompat.getColor(
-                                requireContext(),
-                                R.color.white
-                            )
-                        )
-                        tipNoteTextView?.visibility = View.VISIBLE
-                    }
-                }
-                tip_options_layout?.addView(driverTipTextView)
-            }
-        }
-    }
-
-    private fun resetAllDriverTip(selectedTag: Int): Boolean {
-        //change background of all unselected Tip
-        var sameSelection = false
-        for ((index) in driverTipOptionsList!!.withIndex()) {
-            val titleTextView: TextView? = view?.findViewWithTag(index)
-            if (titleTextView?.textColors?.defaultColor?.equals(ContextCompat.getColor(
-                    requireContext(),
-                    R.color.white)) == true && titleTextView.tag.equals(
-                    selectedTag)
-            ) {
-                sameSelection = true
-            }
-            if (index == driverTipOptionsList?.size?.minus(1) ?: null) {
-                titleTextView?.setText(driverTipOptionsList?.lastOrNull())
-                titleTextView?.setCompoundDrawables(null, null, null, null)
-            }
-            titleTextView?.background =
-                bindDrawable(R.drawable.checkout_delivering_title_round_button)
-            titleTextView?.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.checkout_delivering_title
-                )
-            )
-        }
-        return sameSelection
     }
 
     private fun clearSelectedTimeSlot() {
@@ -1037,22 +932,4 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         storePickupInfoResponse = mockStorePickupInfoResponse
     }
 
-    override fun onConfirmClick(tipValue: String) {
-        val titleTextView: TextView? =
-            driverTipTextView?.findViewWithTag(driverTipOptionsList?.lastIndex)
-        driverTipOptionsList?.lastIndex?.let { resetAllDriverTip(it) }
-        titleTextView?.text = "R$tipValue "
-        val image = context?.resources?.getDrawable(R.drawable.edit_icon_white)
-        image?.setBounds(0, 0, image.intrinsicWidth, image.intrinsicHeight)
-        titleTextView?.setCompoundDrawables(null, null, image, null)
-        titleTextView?.background =
-            bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
-        titleTextView?.setTextColor(
-            ContextCompat.getColor(
-                requireContext(),
-                R.color.white
-            )
-        )
-        tipNoteTextView?.visibility = View.VISIBLE
-    }
 }

@@ -53,14 +53,12 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAd
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
-import za.co.woolworths.financial.services.android.models.network.StorePickupInfoBody
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -90,7 +88,6 @@ class CheckoutDashCollectionFragment : Fragment(),
     private var confirmDeliveryAddressResponse: ConfirmDeliveryAddressResponse? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private var selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
-    private var whoIsCollectingDetails: WhoIsCollectingDetails? = null
     private var shimmerComponentArray: List<Pair<ShimmerFrameLayout, View>> = ArrayList()
     private var navController: NavController? = null
     private var driverTipOptionsList: ArrayList<String>? = null
@@ -116,7 +113,6 @@ class CheckoutDashCollectionFragment : Fragment(),
 
     companion object {
         const val REQUEST_KEY_SELECTED_COLLECTION_DATE: String = "SELECTED_COLLECTION_DATE"
-        var COLLECTION_SLOT_SLECTION_REQUEST_CODE = 6789
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -147,20 +143,16 @@ class CheckoutDashCollectionFragment : Fragment(),
         initializeDeliveringToView()
         initializeCollectingDetailsView()
         initializeCollectionTimeSlots()
-        hideFoodSubstitutionLayout()
         hideInstructionLayout()
         callConfirmLocationAPI()
         txtContinueToPaymentCollection?.setOnClickListener(this)
         setFragmentResults()
+        checkoutCollectingFromLayout?.setOnClickListener(this)
     }
 
     private fun hideInstructionLayout() {
         txtNeedBags?.visibility = View.GONE
         switchNeedBags?.visibility = View.GONE
-    }
-
-    private fun hideFoodSubstitutionLayout() {
-      //  nativeCheckoutFoodSubstitutionLayout?.visiblity = View.GONE
     }
 
     private fun setFragmentResults() {
@@ -190,21 +182,10 @@ class CheckoutDashCollectionFragment : Fragment(),
             ),
             Pair<ShimmerFrameLayout, View>(forwardImgViewShimmerFrameLayout, imageViewCaretForward),
             Pair<ShimmerFrameLayout, View>(
-                foodSubstitutionTitleShimmerFrameLayout,
-                txtFoodSubstitutionTitle
-            ),
-            Pair<ShimmerFrameLayout, View>(
                 collectionTimeDetailsShimmerLayout,
                 collectionTimeDetailsConstraintLayout
             ),
-            Pair<ShimmerFrameLayout, View>(
-                foodSubstitutionDescShimmerFrameLayout,
-                txtFoodSubstitutionDesc
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                radioGroupFoodSubstitutionShimmerFrameLayout,
-                radioGroupFoodSubstitution
-            ),
+
             Pair<ShimmerFrameLayout, View>(
                 instructionTxtShimmerFrameLayout,
                 txtSpecialDeliveryInstruction
@@ -310,8 +291,6 @@ class CheckoutDashCollectionFragment : Fragment(),
 
         txtNeedBags?.visibility = View.VISIBLE
         switchNeedBags?.visibility = View.VISIBLE
-
-        initializeFoodSubstitution()
         initializeDeliveryInstructions()
         initializeDriverTipView()
     }
@@ -454,18 +433,6 @@ class CheckoutDashCollectionFragment : Fragment(),
         return null
     }
 
-    private fun getStorePickupInfoBody() = StorePickupInfoBody().apply {
-        firstName = whoIsCollectingDetails?.recipientName
-        primaryContactNo = whoIsCollectingDetails?.phoneNumber
-        storeId = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeId ?: ""
-        vehicleModel = whoIsCollectingDetails?.vehicleModel ?: ""
-        vehicleColour = whoIsCollectingDetails?.vehicleColor ?: ""
-        vehicleRegistration = whoIsCollectingDetails?.vehicleRegistration ?: ""
-        taxiOpted = whoIsCollectingDetails?.isMyVehicle != true
-        deliveryType = Delivery.CNC.name
-        address =
-            ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
-    }
 
     private fun showEmptyCart() {
         activity?.let {
@@ -758,36 +725,6 @@ class CheckoutDashCollectionFragment : Fragment(),
     }
 
     /**
-     * Initializes food substitution view and Set by default selection to [FoodSubstitution.SIMILAR_SUBSTITUTION]
-     *
-     * @see [FoodSubstitution]
-     */
-    fun initializeFoodSubstitution() {
-        selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
-        radioGroupFoodSubstitution?.setOnCheckedChangeListener { _, checkedId ->
-            when (checkedId) {
-                R.id.radioBtnPhoneConfirmation -> {
-                    Utils.triggerFireBaseEvents(
-                        FirebaseManagerAnalyticsProperties.CHECKOUT_FOOD_SUBSTITUTE_PHONE_ME,
-                        activity
-                    )
-                    selectedFoodSubstitution = FoodSubstitution.PHONE_CONFIRM
-                }
-                R.id.radioBtnSimilarSubst -> {
-                    selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
-                }
-                R.id.radioBtnNoThanks -> {
-                    Utils.triggerFireBaseEvents(
-                        FirebaseManagerAnalyticsProperties.CHECKOUT_FOOD_SUBSTITUTE_NO_THANKS,
-                        activity
-                    )
-                    selectedFoodSubstitution = FoodSubstitution.NO_THANKS
-                }
-            }
-        }
-    }
-
-    /**
      * Initializes Order Summary data from confirmDeliveryAddress or storePickUp API .
      */
     private fun initializeOrderSummary(orderSummary: OrderSummary?) {
@@ -845,15 +782,14 @@ class CheckoutDashCollectionFragment : Fragment(),
 
                 KotlinUtils.presentEditDeliveryGeoLocationActivity(
                     requireActivity(),
-                    COLLECTION_SLOT_SLECTION_REQUEST_CODE,
-                    GeoUtils.getDelivertyType(),
-                    GeoUtils.getPlaceId(),
+                    CheckoutAddAddressReturningUserFragment.SLOT_SELECTION_REQUEST_CODE,
+                    KotlinUtils.getPreferredDeliveryType(),
+                    placesId,
                     false,
                     true,
                     true,
-                    null,
-                    null,
-                    Utils.toJson(whoIsCollectingDetails)
+                    savedAddress,
+                    defaultAddress
                 )
                 activity?.finish()
             }
@@ -1064,21 +1000,6 @@ class CheckoutDashCollectionFragment : Fragment(),
             R.id.action_checkoutDashCollectionFragment_to_checkoutPaymentWebFragment,
             bundleOf(CheckoutPaymentWebFragment.KEY_ARGS_WEB_TOKEN to webTokens)
         )
-    }
-
-    @VisibleForTesting
-    fun testSetShimmerArray(mockedArray: List<Pair<ShimmerFrameLayout, View>>) {
-        shimmerComponentArray = mockedArray
-    }
-
-    @VisibleForTesting
-    fun testSetViewModelInstance(viewModel: CheckoutAddAddressNewUserViewModel) {
-        checkoutAddAddressNewUserViewModel = viewModel
-    }
-
-    @VisibleForTesting
-    fun testSetStorePickupInfoResponse(mockStorePickupInfoResponse: ConfirmDeliveryAddressResponse) {
-        confirmDeliveryAddressResponse = mockStorePickupInfoResponse
     }
 
     override fun onConfirmClick(tipValue: String) {
