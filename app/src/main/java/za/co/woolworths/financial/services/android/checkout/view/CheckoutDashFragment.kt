@@ -11,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
@@ -51,7 +50,6 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.Collect
 import za.co.woolworths.financial.services.android.checkout.view.adapter.ShoppingBagsRadioGroupAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
-import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
@@ -70,7 +68,7 @@ import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_E
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.regex.Pattern
 
-class CheckoutDashCollectionFragment : Fragment(),
+class CheckoutDashFragment : Fragment(),
     ShoppingBagsRadioGroupAdapter.EventListner, View.OnClickListener, CollectionTimeSlotsListener,
     CustomDriverTipBottomSheetDialog.ClickListner {
 
@@ -84,7 +82,7 @@ class CheckoutDashCollectionFragment : Fragment(),
     private var selectedTimeSlot: Slot? = null
     private var selectedPosition: Int = 0
     private var selectedShoppingBagType: Double? = null
-    private lateinit var collectionTimeSlotsAdapter: CollectionTimeSlotsAdapter
+    private lateinit var dashTimeSlotsAdapter: CollectionTimeSlotsAdapter
     private var confirmDeliveryAddressResponse: ConfirmDeliveryAddressResponse? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private var selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
@@ -117,7 +115,7 @@ class CheckoutDashCollectionFragment : Fragment(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        collectionTimeSlotsAdapter = CollectionTimeSlotsAdapter(this)
+        dashTimeSlotsAdapter = CollectionTimeSlotsAdapter(this)
     }
 
     override fun onCreateView(
@@ -140,13 +138,12 @@ class CheckoutDashCollectionFragment : Fragment(),
             showBackArrowWithTitle(bindString(R.string.checkout))
         }
         setupViewModel()
-        initializeDeliveringToView()
-        initializeCollectingDetailsView()
-        initializeCollectionTimeSlots()
+        initializeDashingToView()
+        initializeDashTimeSlots()
         hideInstructionLayout()
         callConfirmLocationAPI()
-        txtContinueToPaymentCollection?.setOnClickListener(this)
         setFragmentResults()
+        txtContinueToPaymentCollection?.setOnClickListener(this)
         checkoutCollectingFromLayout?.setOnClickListener(this)
     }
 
@@ -241,22 +238,6 @@ class CheckoutDashCollectionFragment : Fragment(),
                 radioGroupShoppingBags
             ),
             Pair<ShimmerFrameLayout, View>(
-                imgUserProfileShimmerFrameLayout,
-                imgUserProfile
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                tvCollectionUserNameShimmerFrameLayout,
-                tvCollectionUserName
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                tvCollectionUserPhoneNumberShimmerFrameLayout,
-                tvCollectionUserPhoneNumber
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                imageViewCaretForwardCollectionShimmerFrameLayout,
-                imageViewCaretForwardCollection
-            ),
-            Pair<ShimmerFrameLayout, View>(
                 tipDashDriverTitleShimmerFrameLayout,
                 tipDashDriverTitle
             ),
@@ -333,10 +314,10 @@ class CheckoutDashCollectionFragment : Fragment(),
                                     return@observe
                                 }
 
-//                                if (response.orderSummary?.totalItemsCount ?: 0 <= 0) {
-//                                    showEmptyCart()
-//                                    return@observe
-//                                }
+                                if (response.orderSummary?.totalItemsCount ?: 0 <= 0) {
+                                    showEmptyCart()
+                                    return@observe
+                                }
                                 response.orderSummary?.fulfillmentDetails?.let {
                                     if (!it.deliveryType.isNullOrEmpty()) {
                                         Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(
@@ -348,7 +329,7 @@ class CheckoutDashCollectionFragment : Fragment(),
                                     val firstAvailableDateSlot = getFirstAvailableSlot(this)
                                     initializeDatesAndTimeSlots(firstAvailableDateSlot)
                                     // Set default time slot selected
-                                    collectionTimeSlotsAdapter.setSelectedItem(0)
+                                    dashTimeSlotsAdapter.setSelectedItem(0)
                                 }
                             }
                             else -> {
@@ -405,8 +386,8 @@ class CheckoutDashCollectionFragment : Fragment(),
         }
 
         setSelectedDateTimeSlots(slots)
-        chooseDateLayout?.setOnClickListener(this@CheckoutDashCollectionFragment)
-        firstAvailableDateLayout?.setOnClickListener(this@CheckoutDashCollectionFragment)
+        chooseDateLayout?.setOnClickListener(this@CheckoutDashFragment)
+        firstAvailableDateLayout?.setOnClickListener(this@CheckoutDashFragment)
     }
 
     private fun setSelectedDateTimeSlots(slots: List<Slot>?) {
@@ -414,7 +395,7 @@ class CheckoutDashCollectionFragment : Fragment(),
         if (slots.isNullOrEmpty()) {
             return
         }
-        collectionTimeSlotsAdapter.setCollectionTimeSlotData(ArrayList(slots))
+        dashTimeSlotsAdapter.setCollectionTimeSlotData(ArrayList(slots))
     }
 
     fun getFirstAvailableSlot(list: List<SortedJoinDeliverySlot>): Week? {
@@ -445,15 +426,15 @@ class CheckoutDashCollectionFragment : Fragment(),
         }
     }
 
-    private fun initializeCollectionTimeSlots() {
+    private fun initializeDashTimeSlots() {
 
-        checkoutCollectingTimeDetailsLayout?.tvCollectionTimeDetailsTitle?.text = "Select Delivery Timeslot"
-        checkoutCollectingTimeDetailsLayout?.tvCollectionTimeDetailsDate?.text = "Delivery Date"
-        checkoutCollectingTimeDetailsLayout?.tvCollectionTimeDetailsTimeSlot?.text = "Delivery Timeslot"
+        checkoutCollectingTimeDetailsLayout?.tvCollectionTimeDetailsTitle?.text = getString(R.string.select_delivery_timeslot)
+        checkoutCollectingTimeDetailsLayout?.tvCollectionTimeDetailsDate?.text = getString(R.string.dash_delivery_date)
+        checkoutCollectingTimeDetailsLayout?.tvCollectionTimeDetailsTimeSlot?.text = getString(R.string.dash_delivery_timeslot)
         recyclerViewCollectionTimeSlots?.apply {
             layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
-            adapter = collectionTimeSlotsAdapter
-            collectionTimeSlotsAdapter.setCollectionTimeSlotData(null)
+            adapter = dashTimeSlotsAdapter
+            dashTimeSlotsAdapter.setCollectionTimeSlotData(null)
         }
 
         /**
@@ -570,10 +551,10 @@ class CheckoutDashCollectionFragment : Fragment(),
 
     private fun clearSelectedTimeSlot() {
         selectedTimeSlot = null
-        collectionTimeSlotsAdapter.clearSelection()
+        dashTimeSlotsAdapter.clearSelection()
     }
 
-    private fun initializeDeliveringToView() {
+    private fun initializeDashingToView() {
         tvNativeCheckoutDeliveringTitle?.text = getString(R.string.dashing_to)
         chooseDateLayout?.visibility = View.GONE
         if (arguments == null) {
@@ -648,9 +629,6 @@ class CheckoutDashCollectionFragment : Fragment(),
         }
     }
 
-    private fun initializeCollectingDetailsView() {
-        checkoutCollectingUserInfoLayout?.visibility = View.GONE
-    }
 
     fun initializeDeliveryInstructions() {
         edtTxtSpecialDeliveryInstruction?.addTextChangedListener(deliveryInstructionsTextWatcher)
@@ -910,7 +888,7 @@ class CheckoutDashCollectionFragment : Fragment(),
             errorType
         )
         view?.findNavController()?.navigate(
-            R.id.action_checkoutDashCollectionFragment_to_errorHandlerBottomSheetDialog,
+            R.id.action_checkoutDashFragment_to_errorHandlerBottomSheetDialog,
             bundle
         )
     }
@@ -997,7 +975,7 @@ class CheckoutDashCollectionFragment : Fragment(),
 
     private fun navigateToPaymentWebpage(webTokens: ShippingDetailsResponse) {
         view?.findNavController()?.navigate(
-            R.id.action_checkoutDashCollectionFragment_to_checkoutPaymentWebFragment,
+            R.id.action_checkoutDashFragment_to_checkoutPaymentWebFragment,
             bundleOf(CheckoutPaymentWebFragment.KEY_ARGS_WEB_TOKEN to webTokens)
         )
     }

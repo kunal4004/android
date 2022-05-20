@@ -30,16 +30,6 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <include
-                android:id="@+id/checkoutCollectingUserInfoLayout"
-                layout="@layout/layout_collection_user_information"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/ten_dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/checkoutCollectingFromLayout" />
-
-            <include
                 android:id="@+id/checkoutCollectingTimeDetailsLayout"
                 layout="@layout/layout_collection_time_details"
                 android:layout_width="match_parent"
@@ -47,7 +37,7 @@
                 android:layout_marginTop="@dimen/ten_dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/checkoutCollectingUserInfoLayout" />
+                app:layout_constraintTop_toBottomOf="@id/checkoutCollectingFromLayout" />
 
             <include
                 android:id="@+id/layoutCollectionInstructions"

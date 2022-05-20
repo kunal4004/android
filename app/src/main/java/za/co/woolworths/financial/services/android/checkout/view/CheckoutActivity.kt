@@ -142,7 +142,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             dashSlotSelection == true -> {
-                R.id.checkoutDashCollectionFragment
+                R.id.checkoutDashFragment
             }
 
             baseFragBundle?.containsKey(IS_DELIVERY) == true && baseFragBundle?.getBoolean(IS_DELIVERY) == false -> {
