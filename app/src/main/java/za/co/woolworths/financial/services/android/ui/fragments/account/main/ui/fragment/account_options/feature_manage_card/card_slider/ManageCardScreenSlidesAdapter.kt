@@ -34,6 +34,8 @@ class ManageCardScreenSlidesAdapter @Inject constructor(fragment: Fragment) :
                 is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive -> InstantStoreCardReplacementCardFragment.newInstance(card)
                 is StoreCardFeatureType.StoreCardIsTemporaryFreeze -> FreezeUnFreezeStoreCardFragment()
                 is StoreCardFeatureType.ActivateVirtualTempCard -> ActivateVirtualTempCardFragment()
+                is StoreCardFeatureType.TemporaryCardEnabled -> TemporaryCardFragment()
+                is StoreCardFeatureType.ManageMyCard -> NoStoreCardFragment()
                 else -> NoStoreCardFragment()
             }
         }

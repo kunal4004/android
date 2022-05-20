@@ -3,6 +3,8 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.da
 import kotlinx.coroutines.flow.Flow
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
+import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardRequestBody
+import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
 import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
@@ -18,7 +20,7 @@ interface IStoreCardDataSource {
     suspend fun getCreditCardToken(): Flow<CoreDataSource.IOTaskResult<CreditCardTokenResponse>>
     suspend fun getPaymentPAYUMethod(): Flow<CoreDataSource.IOTaskResult<PaymentMethodsResponse>>
     suspend fun queryServiceGetStoreCards(): Flow<CoreDataSource.IOTaskResult<StoreCardsResponse>>
-    //suspend fun queryServiceBlockUnBlockStoreCard(): Flow<CoreDataSource.IOTaskResult<StoreCardsResponse>>
+    suspend fun queryServiceBlockUnBlockStoreCard(blockReason: Int? = null, position : Int): Flow<CoreDataSource.IOTaskResult<BlockMyCardResponse>>
 }
 
 class StoreCardDataSource @Inject constructor(
@@ -27,6 +29,10 @@ class StoreCardDataSource @Inject constructor(
     private val manageCard: ManageCardFunctionalRequirementImpl,
 ) : CoreDataSource(), IStoreCardDataSource, IAccountProductLandingDao by landingDao,
     AccountRemoteService by accountRemoteService, IManageCardFunctionalRequirement by manageCard {
+
+    companion object {
+        const val BLOCK_REASON = 6
+    }
 
     override var account: Account? = product
 
@@ -66,25 +72,28 @@ class StoreCardDataSource @Inject constructor(
 
     }
 
-//    override suspend fun queryServiceBlockUnBlockStoreCard() = performSafeNetworkApiCall {
-//        val productOfferingId = getProductOfferingId()
-//        val visionAccountNumber = getVisionAccountNumber()
-//        val deviceIdentityToken = super.getDeviceIdentityToken()
-//        val storeCardNumber = s?.number ?: ""
+    override suspend fun queryServiceBlockUnBlockStoreCard(blockReason: Int?, position : Int) =
+        performSafeNetworkApiCall {
+            val productOfferingId = getProductOfferingId()
+            val visionAccountNumber = getVisionAccountNumber()
+            val deviceIdentityToken = super.getDeviceIdentityToken()
+            val blockCardReason = blockReason ?: BLOCK_REASON
+            val cardNumber = getCardNumber(position)
+            val sequenceNumber = getSequenceNumber(position)
 
-//        val storeCardRequest = StoreCardsRequestBody(
-//            visionAccountNumber = visionAccountNumber,
-//            productOfferingId = productOfferingId
-//        )
+            val blockStoreCardRequestBody =
+                BlockCardRequestBody(
+                    visionAccountNumber,
+                    cardNumber ?: "",
+                    sequenceNumber ?: -1,
+                    blockCardReason
+                )
 
-       // val blockStoreCardRequestBody = BlockCardRequestBody(visionAccountNumber, storeCardNumber, sequenceNumber, TemporaryFreezeStoreCard.BLOCK_REASON)
+            queryServiceBlockStoreCard(
+                deviceIdentityToken = deviceIdentityToken,
+                productOfferingId = productOfferingId.toString(),
+                blockStoreCardRequestBody
+            )
 
-//        queryServiceBlockStoreCard(
-//            deviceIdentityToken,
-//            -33.8899,
-//            18.5066,
-//            storeCardRequest
-//        )
-
-  //  }
+        }
 }

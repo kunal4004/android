@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard
 
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
@@ -85,10 +84,10 @@ interface AccountRemoteService {
         "Media-Type: application/json"
     )
     @POST("wfs/app/v4/accounts/storecard/blockStoreCard/{productOfferingId}")
-    fun queryServiceBlockStoreCard(
+    suspend fun queryServiceBlockStoreCard(
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Path("productOfferingId") productOfferingId: String,
         @Body blockCardRequestBody: BlockCardRequestBody
-    ): Call<BlockMyCardResponse>
+    ): Response<BlockMyCardResponse>
 
 }

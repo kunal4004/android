@@ -436,7 +436,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         showPayWithCardProgressBar(VISIBLE)
         val unblockStoreCardRequestBody = mStoreCard?.let {
             UnblockStoreCardRequestBody(mStoreCardsResponse?.storeCardsData?.visionAccountNumber
-                    ?: "", it.number, it.sequence, otp, OTPMethodType.SMS.name)
+                    ?: "", it.number, it.sequence.toString(), otp, OTPMethodType.SMS.name)
         }
         unblockStoreCardRequestBody?.let {
             StoreCardAPIRequest().unblockCard(mStoreCardsResponse?.storeCardsData?.productOfferingId

@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.views.actionsheet
 
+import android.content.DialogInterface
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.View
@@ -9,13 +10,19 @@ import com.awfs.coordination.databinding.TemporaryFreezeCartLayoutBinding
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.extension.onClick
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.AccountOptionsManageCardFragment.Companion.MANAGE_CARD_ACCOUNT_OPTIONS
 
 @AndroidEntryPoint
 class TemporaryFreezeCardFragment :
     ViewBindingBottomSheetDialog<TemporaryFreezeCartLayoutBinding>(TemporaryFreezeCartLayoutBinding::inflate) {
 
+    private var mBundle0f: Bundle = bundleOf(MANAGE_CARD_ACCOUNT_OPTIONS to TEMPORARY_FREEZE_CARD_FRAGMENT_CANCEL_RESULT)
+
     companion object {
-        const val TEMPORARY_FREEZE_CARD_FRAGMENT_CONFIRM_RESULT = "TEMPORARY_FREEZE_CARD_FRAGMENT_CONFIRM_RESULT"
+        const val TEMPORARY_FREEZE_CARD_FRAGMENT_CONFIRM_RESULT =
+            "TEMPORARY_FREEZE_CARD_FRAGMENT_CONFIRM_RESULT"
+        const val TEMPORARY_FREEZE_CARD_FRAGMENT_CANCEL_RESULT =
+            "TEMPORARY_FREEZE_CARD_FRAGMENT_CANCEL_RESULT"
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -27,13 +34,19 @@ class TemporaryFreezeCardFragment :
         with(binding.cancelTextView) {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
             onClick {
+                mBundle0f = bundleOf(MANAGE_CARD_ACCOUNT_OPTIONS to TEMPORARY_FREEZE_CARD_FRAGMENT_CANCEL_RESULT)
                 dismiss()
             }
         }
 
         binding.confirmFreezeCardButton.onClick {
-            setFragmentResult(TEMPORARY_FREEZE_CARD_FRAGMENT_CONFIRM_RESULT, bundleOf())
+            mBundle0f = bundleOf(MANAGE_CARD_ACCOUNT_OPTIONS to TEMPORARY_FREEZE_CARD_FRAGMENT_CONFIRM_RESULT)
             dismiss()
         }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        setFragmentResult(MANAGE_CARD_ACCOUNT_OPTIONS, mBundle0f)
     }
 }

@@ -18,13 +18,17 @@ sealed class StoreCardFeatureType : Parcelable {
     data class StoreCardIsActive(var storeCard: StoreCard?) : StoreCardFeatureType()
 
     @Parcelize
-    data class StoreCardIsTemporaryFreeze(var storeCard: StoreCard?, var isStoreCardFrozen : Boolean = true) : StoreCardFeatureType()
+    data class StoreCardIsTemporaryFreeze(
+        var storeCard: StoreCard?,
+        var isStoreCardFrozen: Boolean = true
+    ) : StoreCardFeatureType()
 
     @Parcelize
     data class StoreCardIsPermanentlyBlocked(var storeCard: StoreCard?) : StoreCardFeatureType()
 
     @Parcelize
-    data class StoreCardIsInstantReplacementCardAndInactive(var storeCard: StoreCard?) : StoreCardFeatureType()
+    data class StoreCardIsInstantReplacementCardAndInactive(var storeCard: StoreCard?) :
+        StoreCardFeatureType()
 
     @Parcelize
     data class StoreCardIsDefault(var storeCard: StoreCard?) : StoreCardFeatureType()
@@ -34,6 +38,12 @@ sealed class StoreCardFeatureType : Parcelable {
 
     @Parcelize
     object OnStart : StoreCardFeatureType()
+
+    @Parcelize
+    data class TemporaryCardEnabled(val isBlockTypeNullInVirtualCardObject: Boolean, var storeCard: StoreCard?) : StoreCardFeatureType()
+
+    @Parcelize
+    object ManageMyCard : StoreCardFeatureType()
 }
 
 enum class StoreCardType(val type: String) {
@@ -41,7 +51,7 @@ enum class StoreCardType(val type: String) {
     PERMANENT("l")
 }
 
-enum class StoreCardBlockType(private val type: String?) {
+enum class StoreCardBlockType(val type: String?) {
     TEMPORARY("temporary"),
     PERMANENT("permanent"),
     NONE("");
@@ -57,9 +67,11 @@ interface IManageCardFunctionalRequirement {
     fun isPrimaryCardAvailable(): Boolean
     fun getPrimaryCards(): MutableList<StoreCard>?
     fun getStoreCardData(): StoreCardsData?
-    fun determineCardDisplay(primaryCardIndex: Int, storeCard: StoreCard?): StoreCardFeatureType
+    fun splitStoreCardByCardType(primaryCardIndex: Int, storeCard: StoreCard?): StoreCardFeatureType
     fun getBlockCode(primaryCardIndex: Int): String?
     fun getBlockType(primaryCardIndex: Int): StoreCardBlockType?
+    fun getCardNumber(position: Int): String?
+    fun getSequenceNumber(position: Int): Int?
     fun isGenerateVirtualCard(): Boolean
     fun isActivateVirtualTempCard(primaryCardIndex: Int): Boolean
     fun isTemporaryCardEnabled(primaryCardIndex: Int): Boolean
@@ -67,6 +79,9 @@ interface IManageCardFunctionalRequirement {
     fun addManageMyCardsLinkOnStoreCardLandingScreen()
     fun getStoreCardListByFeatureType(): MutableList<StoreCardFeatureType>?
     fun isVirtualCardObjectExist(): Pair<Boolean, StoreCard?>
+    fun getVirtualCard(): StoreCard?
+    fun isBlockTypeNullInVirtualCardObject(): Boolean
+    fun isBlockTypeFromPrimaryCardNotNull(primaryCardIndex: Int): Boolean
 }
 
 class ManageCardFunctionalRequirementImpl @Inject constructor() : IManageCardFunctionalRequirement {
@@ -75,44 +90,6 @@ class ManageCardFunctionalRequirementImpl @Inject constructor() : IManageCardFun
         SessionDao.KEY.STORE_CARD_RESPONSE_PAYLOAD,
         StoreCardsResponse::class.java
     )
-
-    /**
-     * Determine which card to display
-     * check if primaryCards object exists
-     * Determine if card is ACTIVE or Permanently BLOCKED or Temporarily BLOCKED.
-     * If blockCode == null || empty
-     * card is ACTIVE
-     * display active store card
-     * else   blockCode == P
-     * card is temporarily blocked
-     * display the frozen card according to FREEZE CCARD - Temp Block FRS
-     * else if blockCode == L
-     * card is permanently blocked
-     * display an inactive card
-     */
-    override fun determineCardDisplay(
-        primaryCardIndex: Int,
-        storeCard: StoreCard?
-    ): StoreCardFeatureType {
-        val blockCode = getBlockCode(primaryCardIndex)?.lowercase()
-        return when (isPrimaryCardAvailable()) {
-            true -> when {
-                blockCode.isNullOrEmpty() -> StoreCardFeatureType.StoreCardIsActive(storeCard)
-                blockCode.equals(
-                    StoreCardType.TEMPORARY.type,
-                    ignoreCase = true
-                ) -> StoreCardFeatureType.StoreCardIsTemporaryFreeze(storeCard, true)
-                blockCode.equals(StoreCardType.PERMANENT.type, ignoreCase = true) -> when {
-                    isInstantCardReplacementJourneyEnabled(primaryCardIndex) -> StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive(storeCard)
-                    isActivateVirtualTempCard(primaryCardIndex) -> StoreCardFeatureType.ActivateVirtualTempCard(storeCard)
-
-                    else -> StoreCardFeatureType.StoreCardIsDefault(storeCard)
-                }
-                else -> StoreCardFeatureType.StoreCardIsDefault(storeCard)
-            }
-            false -> StoreCardFeatureType.StoreCardIsDefault(storeCard)
-        }
-    }
 
     // check if primaryCards object exists
     override fun isPrimaryCardAvailable(): Boolean = getPrimaryCards()?.isNotEmpty() ?: false
@@ -128,6 +105,10 @@ class ManageCardFunctionalRequirementImpl @Inject constructor() : IManageCardFun
         StoreCardBlockType.getEnum(
             getPrimaryCards()?.elementAt(primaryCardIndex)?.blockType?.lowercase() ?: ""
         )
+
+    override fun getCardNumber(position: Int) = getPrimaryCards()?.get(position)?.number
+
+    override fun getSequenceNumber(position: Int) = getPrimaryCards()?.get(position)?.sequence
 
     override fun isGenerateVirtualCard(): Boolean = getStoreCardData()?.generateVirtualCard ?: false
 
@@ -145,11 +126,11 @@ class ManageCardFunctionalRequirementImpl @Inject constructor() : IManageCardFun
     }
 
     override fun isTemporaryCardEnabled(primaryCardIndex: Int): Boolean {
-        val storeCardData = getStoreCardData()
-        val isVirtualCardNotNull = storeCardData?.virtualCard != null
-        val isVirtualCardNumberNotNull = storeCardData?.virtualCard?.number != null
-        val blockType = getBlockType(primaryCardIndex)
-        return blockType == StoreCardBlockType.PERMANENT && isVirtualCardNotNull && isVirtualCardNumberNotNull
+        val virtualCard = getVirtualCard()
+        val isVirtualCardNotNull = virtualCard != null
+        val isVirtualCardNumberNotNull = virtualCard?.number != null
+        val blockType = virtualCard?.blockType
+        return !blockType.equals(StoreCardBlockType.PERMANENT.type, ignoreCase = true)  && isVirtualCardNotNull && isVirtualCardNumberNotNull
     }
 
     /**
@@ -177,7 +158,7 @@ class ManageCardFunctionalRequirementImpl @Inject constructor() : IManageCardFun
         val primaryCards = getStoreCardsResponse()?.storeCardsData?.primaryCards
         val listOfStoreCardFeatures = mutableListOf<StoreCardFeatureType>()
         primaryCards?.forEachIndexed { index, storeCard ->
-            val card = determineCardDisplay(index, storeCard)
+            val card = splitStoreCardByCardType(index, storeCard)
             listOfStoreCardFeatures.add(card)
         }
         return listOfStoreCardFeatures
@@ -186,5 +167,54 @@ class ManageCardFunctionalRequirementImpl @Inject constructor() : IManageCardFun
     override fun isVirtualCardObjectExist(): Pair<Boolean, StoreCard?> {
         val storeCardData = getStoreCardData()
         return Pair(storeCardData?.virtualCard == null, storeCardData?.virtualCard)
+    }
+
+    override fun getVirtualCard() = getStoreCardData()?.virtualCard
+
+    override fun isBlockTypeNullInVirtualCardObject(): Boolean {
+        val virtualCard = getVirtualCard()
+        return !virtualCard?.blockType.isNullOrEmpty() || StoreCardBlockType.TEMPORARY.type.equals(
+            virtualCard?.blockType,
+            ignoreCase = true
+        )
+    }
+
+    override fun isBlockTypeFromPrimaryCardNotNull(primaryCardIndex: Int): Boolean {
+        return getBlockType(primaryCardIndex) == StoreCardBlockType.TEMPORARY
+    }
+
+    /**
+     * Determine which card to display
+     * check if primaryCards object exists
+     * Determine if card is ACTIVE or Permanently BLOCKED or Temporarily BLOCKED.
+     * If blockCode == null || empty
+     * card is ACTIVE
+     * display active store card
+     * else   blockCode == P
+     * card is temporarily blocked
+     * display the frozen card according to FREEZE CCARD - Temp Block FRS
+     * else if blockCode == L
+     * card is permanently blocked
+     * display an inactive card
+     */
+    override fun splitStoreCardByCardType(
+        primaryCardIndex: Int,
+        storeCard: StoreCard?
+    ): StoreCardFeatureType {
+        val blockCode = getBlockCode(primaryCardIndex)?.lowercase()
+        return  when {
+            isActivateVirtualTempCard(primaryCardIndex) -> StoreCardFeatureType.ActivateVirtualTempCard(storeCard)
+            isTemporaryCardEnabled(primaryCardIndex) -> StoreCardFeatureType.TemporaryCardEnabled(isBlockTypeNullInVirtualCardObject = isBlockTypeNullInVirtualCardObject(), storeCard = storeCard)
+            isInstantCardReplacementJourneyEnabled(primaryCardIndex) -> StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive(storeCard)
+            //Unfreeze my card
+            isBlockTypeFromPrimaryCardNotNull(primaryCardIndex) -> StoreCardFeatureType.StoreCardIsTemporaryFreeze(storeCard, true)
+            blockCode.equals(
+                StoreCardType.TEMPORARY.type,
+                ignoreCase = true
+            ) -> StoreCardFeatureType.StoreCardIsTemporaryFreeze(storeCard, true)
+
+            // Manage your card
+            else -> StoreCardFeatureType.ManageMyCard
+        }
     }
 }

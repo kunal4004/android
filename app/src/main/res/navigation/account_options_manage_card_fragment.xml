@@ -9,14 +9,23 @@
         android:id="@+id/accountOptionsManageCardFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.AccountOptionsManageCardFragment"
         android:label="AccountOptionsManageCardFragment"
-        tools:layout="@layout/account_options_manage_card_fragment" >
+        tools:layout="@layout/account_options_manage_card_fragment">
         <action
-            android:id="@+id/action_accountOptionsManageCardFragment_to_temporaryFreezeCardFragment2"
-            app:destination="@id/temporaryFreezeCardFragment2" />
+            android:id="@+id/action_accountOptionsManageCardFragment_to_temporaryFreezeCardFragment"
+            app:destination="@id/temporaryFreezeCardFragment" />
+        <action
+            android:id="@+id/action_accountOptionsManageCardFragment_to_temporaryUnFreezeCardFragment"
+            app:destination="@id/temporaryUnFreezeCardFragment" />
     </fragment>
+
     <dialog
-        android:id="@+id/temporaryFreezeCardFragment2"
+        android:id="@+id/temporaryFreezeCardFragment"
         android:name="za.co.woolworths.financial.services.android.ui.views.actionsheet.TemporaryFreezeCardFragment"
         android:label="TemporaryFreezeCardFragment" />
+
+    <dialog
+        android:id="@+id/temporaryUnFreezeCardFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.views.actionsheet.TemporaryUnFreezeCardFragment"
+        android:label="TemporaryUnFreezeCardFragment" />
 
 </navigation>

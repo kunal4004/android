@@ -5,7 +5,7 @@ import android.view.View
 import com.awfs.coordination.databinding.InstantStoreCardReplacementCardFragmentBinding
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 
-class NoStoreCardFragment() :
+class NoStoreCardFragment :
     ViewBindingFragment<InstantStoreCardReplacementCardFragmentBinding>(
         InstantStoreCardReplacementCardFragmentBinding::inflate
     ) {

@@ -48,8 +48,8 @@ open class TemporaryFreezeStoreCard(private val storeCardResponse: StoreCardsRes
     }
 
     fun showUnFreezeStoreCardDialog(childFragmentManager: FragmentManager?) {
-        val temporaryUnFreezeCardFragment = TemporaryUnFreezeCardFragment(temporaryCardFreezeInterface)
-        childFragmentManager?.let { cfm -> temporaryUnFreezeCardFragment.show(cfm, TemporaryUnFreezeCardFragment::class.java.simpleName) }
+//        val temporaryUnFreezeCardFragment = TemporaryUnFreezeCardFragment(temporaryCardFreezeInterface)
+//        childFragmentManager?.let { cfm -> temporaryUnFreezeCardFragment.show(cfm, TemporaryUnFreezeCardFragment::class.java.simpleName) }
     }
 
     fun showActiveTemporaryFreezeCard(

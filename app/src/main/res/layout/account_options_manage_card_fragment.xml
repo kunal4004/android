@@ -126,6 +126,36 @@
         </RelativeLayout>
 
         <View
+            android:id="@+id/manageCardDivider"
+            style="@style/menuLandingDividerStyle" />
+
+        <RelativeLayout
+            android:id="@+id/manageCardRelativeLayout"
+            style="@style/accountOptionItemsStyle">
+
+            <ImageView
+                android:id="@+id/manageCardIconImageView"
+                style="@style/accountOptionsImageviewStyle"
+                android:alpha="0.3"
+                android:src="@drawable/icon_card" />
+
+            <TextView
+                android:id="@+id/manageCardCaptionTextView"
+                style="@style/accountOptionsLabelStyle"
+                android:layout_width="wrap_content"
+                android:layout_alignTop="@+id/manageCardNext"
+                android:layout_alignBottom="@+id/manageCardNext"
+                android:layout_toEndOf="@+id/manageCardIconImageView"
+                android:text="@string/manage_my_card_title" />
+
+            <ImageView
+                android:id="@+id/manageCardNext"
+                style="@style/accountOptionsNextImageViewStyle"
+                android:src="@drawable/ic_caret_black" />
+
+        </RelativeLayout>
+
+        <View
             android:id="@+id/replacementCardDivider"
             style="@style/menuLandingDividerStyle" />
 
