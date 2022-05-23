@@ -24,8 +24,7 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AccountOptionsCreditLimitIncreaseFragment :
-    Fragment(R.layout.account_options_credit_limit_increase_fragment), View.OnClickListener {
+class AccountOptionsCreditLimitIncreaseFragment : Fragment(R.layout.account_options_credit_limit_increase_fragment), View.OnClickListener {
 
     @Inject
     lateinit var myAccountsUtils: MyAccountsUtils

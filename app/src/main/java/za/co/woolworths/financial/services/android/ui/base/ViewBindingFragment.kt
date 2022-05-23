@@ -8,8 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.autoCleared
 
+// TODO :: Check against fragment documentation
 abstract class ViewBindingFragment<VB : ViewBinding>(private val inflate: Inflate<VB>) : Fragment() {
-
     private var _binding: VB by autoCleared()
 
     val binding: VB
