@@ -32,7 +32,8 @@ class PayMyAccountRetryErrorFragment : WBottomSheetDialogFragment(), View.OnClic
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.pmaErrorRetryButton -> {
-                payMyAccountViewModel.setNavigationResult(PayMyAccountViewModel.OnBackNavigation.RETRY)
+                payMyAccountViewModel.setNavigationResult(
+                    PayMyAccountViewModel.OnNavigateBack.Retry)
                 dismiss()
             }
         }

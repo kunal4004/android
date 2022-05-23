@@ -228,6 +228,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private MyAccountsPresenter myAccountsPresenter;
     private View applyNowSpacingView;
     private TextView appVersionNameInfoTextView;
+    private TextView fspNumberInfoTextView;
 
     public MyAccountsFragment() {
         // Required empty public constructor
@@ -330,8 +331,12 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             creditReportView = view.findViewById(R.id.creditReport);
             creditReportIcon = view.findViewById(R.id.creditReportIcon);
             applyNowSpacingView = view.findViewById(R.id.applyNowSpacingView);
+
             appVersionNameInfoTextView = view.findViewById(R.id.appVersionNameInfoTextView);
             appVersionNameInfoTextView.setText(myAccountsPresenter.appVersionInfo());
+
+            fspNumberInfoTextView = view.findViewById(R.id.fspNumberInfoTextView);
+            fspNumberInfoTextView.setText(myAccountsPresenter.fspNumberInfo());
 
             retryStoreCardTextView = view.findViewById(R.id.retryStoreCardTextView);
             retryStoreCardImageView = view.findViewById(R.id.retryStoreCardImageView);
@@ -861,6 +866,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             showView(updatePasswordRelativeLayout);
             showView(preferenceRelativeLayout);
             showView(appVersionNameInfoTextView);
+            showView(fspNumberInfoTextView);
             showView(loginUserOptionsLayout);
             if (AppConfigSingleton.INSTANCE.getCreditView() != null && AppConfigSingleton.INSTANCE.getCreditView().isEnabled())
                 showView(creditReportView);
@@ -880,6 +886,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             mUpdateMyAccount.swipeToRefreshAccount(false);
             showView(loggedOutHeaderLayout);
             showView(appVersionNameInfoTextView);
+            showView(fspNumberInfoTextView);
         }
         displayViewApplicationStatus();
     }
@@ -899,6 +906,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         hideView(creditReportView);
         hideView(viewApplicationStatusRelativeLayout);
         hideView(appVersionNameInfoTextView);
+        hideView(fspNumberInfoTextView);
     }
 
     private final OnClickListener btnSignin_onClick = new OnClickListener() {
@@ -919,6 +927,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             // disable tap to next view until account response completed
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSREGISTER, activity);
             ScreenManager.presentSSORegister(getActivity());
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SIGN_UP, activity);
         }
     };
 
@@ -1153,8 +1162,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         boolean isLinked = false;
         UserDevice[] deviceList = new AppStateRepository().getLinkedDevices();
         if (deviceList != null && deviceList.length > 0) {
+            String uniqueDeviceId = Utils.getUniqueDeviceID();
             for (UserDevice device : deviceList) {
-                if (Objects.equals(device.getAppInstanceId(), Utils.getUniqueDeviceID())) {
+                if (Objects.equals(device.getAppInstanceId(), uniqueDeviceId)) {
                     isLinked = true;
                     break;
                 }

@@ -72,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/four_dp"
                 android:gravity="center_vertical"
-                android:text="@string/unlink_device_change_to_primary" />
+                android:text="@string/unlink_device_make_preferred" />
         </LinearLayout>
 
         <ImageView
