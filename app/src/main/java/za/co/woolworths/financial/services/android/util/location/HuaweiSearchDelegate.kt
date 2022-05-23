@@ -37,13 +37,17 @@ class HuaweiSearchDelegate(val activity: Activity,
         }
         val locationRequest = LocationRequest.create()
             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-            .setInterval(10 * 1000)        // 10 seconds, in milliseconds
+            .setInterval(10 * 1000) // 10 seconds, in milliseconds
             .setFastestInterval(1 * 1000)
 
         huaweiFusedLocationClient.requestLocationUpdates(
             locationRequest,
             locationCallback,
-            Looper.getMainLooper())
+            Looper.getMainLooper()
+        )
+            .addOnFailureListener {
+                onLocationNotFound()
+            }
     }
 
     fun stopSearchForCurrentLocation() {

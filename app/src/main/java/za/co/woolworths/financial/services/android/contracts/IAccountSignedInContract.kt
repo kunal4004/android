@@ -16,7 +16,8 @@ interface IAccountSignedInContract {
 
     interface MyAccountView {
         fun toolbarTitle(title: String)
-        fun showAccountInArrears(account: Account)
+        fun showAccountInArrears(account: Account?)
+        fun showAboveSixMonthsAccountInDelinquencyPopup(eligibilityPlan: EligibilityPlan?)
         fun hideAccountInArrears(account: Account)
         fun showAccountHelp(informationModelAccount: MutableList<AccountHelpInformation>)
         fun removeBlocksWhenChargedOff()
@@ -50,6 +51,7 @@ interface IAccountSignedInContract {
         fun isAccountInDelinquencyMoreThan6Months(): Boolean
         fun chatWithCollectionAgent()
         fun getDeepLinkData(): JsonObject?
+        fun getEligibilityPlan(): EligibilityPlan?
         fun deleteDeepLinkData()
         fun isProductInGoodStanding():Boolean
         fun setAvailableFundBundleInfo(

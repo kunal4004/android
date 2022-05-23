@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.models.network
 
 import com.google.gson.annotations.SerializedName
+import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 
 class StorePickupInfoBody {
 
@@ -27,4 +28,10 @@ class StorePickupInfoBody {
 
     @SerializedName("navSuburbId")
     var navSuburbId: String = ""
+
+    @SerializedName("deliveryType")
+    var deliveryType: String = ""
+
+    @SerializedName("address")
+    var address: ConfirmLocationAddress? =null
 }

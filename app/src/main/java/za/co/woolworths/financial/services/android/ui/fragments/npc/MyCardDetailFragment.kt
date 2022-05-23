@@ -34,6 +34,7 @@ import za.co.woolworths.financial.services.android.ui.activities.store_card.Requ
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.HowToUseTemporaryStoreCardActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.StoreCardNotReceivedDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard.Companion.ACTIVATE_UNBLOCK_CARD_ON_LANDING
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard.Companion.NOW
@@ -84,6 +85,25 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupCard()
+        setupCardReceived()
+        autoConnectDetector()
+    }
+
+    private fun setupCardReceived() {
+        mStoreCard?.apply {
+            val cardNotReceivedWasShown = Utils.getSessionDaoValue(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN)
+            //if (isCardNotReceived && cardNotReceivedWasShown == null) {
+                val dialog = StoreCardNotReceivedDialogFragment.newInstance()
+                dialog.show(
+                    childFragmentManager,
+                    StoreCardNotReceivedDialogFragment::class.java.simpleName
+                )
+           // }
+        }
+    }
+
+    private fun setupCard() {
         arguments?.apply {
             mStoreCardDetail = getString(STORE_CARD_DETAIL, "")
             mShouldActivateBlockCardOnLanding = getBoolean(ACTIVATE_UNBLOCK_CARD_ON_LANDING, false)
@@ -93,13 +113,13 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                 mStoreCardDetail?.let { cardValue ->
                     mStoreCardsResponse = Gson().fromJson(cardValue, StoreCardsResponse::class.java)
                     mStoreCard = mStoreCardsResponse?.storeCardsData?.let { it ->
-                        if (isUserGotVirtualCard(it)) it.virtualCard else it.primaryCards?.get(PRIMARY_CARD_POSITION)
+                        if (isUserGotVirtualCard(it)) it.virtualCard else it.primaryCards?.get(
+                            PRIMARY_CARD_POSITION
+                        )
                     }
                 }
             }
         }
-
-        autoConnectDetector()
     }
 
     private fun autoConnectDetector() {

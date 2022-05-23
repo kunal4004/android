@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
 import android.animation.ObjectAnimator
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,9 +21,13 @@ import kotlinx.android.synthetic.main.vehicle_details_layout.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_COLLECTING_DETAILS
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CNC_SELETION
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.regex.Pattern
 
@@ -36,7 +41,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
     private lateinit var listOfTaxiInputFields: List<View>
     private var isMyVehicle = true
     private var navController: NavController? = null
-
+    private var isComingFromCnc: Boolean? = false
     companion object {
         const val REGEX_VEHICLE_TEXT: String = "^\$|^[a-zA-Z0-9\\s<!>@\$&().+,-/\\\"']+\$"
     }
@@ -53,6 +58,10 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
         super.onViewCreated(view, savedInstanceState)
         if (navController == null)
             navController = Navigation.findNavController(view)
+        val bundle = arguments?.getBundle(BUNDLE)
+        bundle?.apply {
+            isComingFromCnc = getBoolean(IS_COMING_FROM_CNC_SELETION, false)}
+
         initView()
     }
 
@@ -155,15 +164,32 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
             if (isMyVehicle) vehicleRegistrationEditText.text.toString() else "",
             isMyVehicle
         )
+        startCheckoutActivity(Utils.toJson(whoIsCollectingDetails))
+    }
 
-        val bundle = Bundle()
-        bundle.apply {
-            putString(
-                KEY_COLLECTING_DETAILS,
-                Utils.toJson(whoIsCollectingDetails)
+    private fun startCheckoutActivity(toJson: String) {
+        val checkoutActivityIntent = Intent(activity, CheckoutActivity::class.java)
+        checkoutActivityIntent.putExtra(
+            KEY_COLLECTING_DETAILS,
+            toJson
+        )
+        checkoutActivityIntent.putExtra(
+            IS_COMING_FROM_CNC_SELETION,
+            isComingFromCnc
+        )
+        activity?.let {
+            startActivityForResult(
+                checkoutActivityIntent,
+                CartFragment.REQUEST_PAYMENT_STATUS
             )
+
+            it.overridePendingTransition(
+                R.anim.slide_from_right,
+                R.anim.slide_out_to_left
+            )
+            it.finish()
         }
-        navController?.navigate(R.id.checkoutReturningUserCollectionFragment, bundle)
+
     }
 
     private fun isErrorInputFields(listOfInputFields: List<View>): Boolean {

@@ -14,14 +14,13 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_otp_confirmation_fragment.*
-import za.co.absa.openbankingapi.woolworths.integration.AbsaCreateAliasRequest
-import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateSureCheckRequest
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiFailureHandler
+import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.toMaskABSAPhoneNumber
 import za.co.woolworths.financial.services.android.ui.fragments.integration.viewmodel.AbsaIntegrationViewModel
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 
@@ -68,43 +67,48 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
 
     private fun absaApiResultObservers() {
         with(mViewModel){
-            createAliasId.observe(viewLifecycleOwner, { aliasId ->
+            createAliasId.observe(viewLifecycleOwner) { aliasId ->
                 replaceFragment(
-                    fragment = AbsaFiveDigitCodeFragment.newInstance(aliasId,mCreditCardToken),
-                    tag = AbsaFiveDigitCodeFragment::class.java.simpleName,
+                    fragment = AbsaSecurityCheckSuccessfulFragment.newInstance(
+                        aliasId,
+                        mCreditCardToken
+                    ),
+                    tag = AbsaSecurityCheckSuccessfulFragment::class.java.simpleName,
                     containerViewId = R.id.flAbsaOnlineBankingToDevice,
-                    allowStateLoss = true,
-                    enterAnimation = R.anim.slide_in_from_right,
-                    exitAnimation = R.anim.slide_to_left,
-                    popEnterAnimation = R.anim.slide_from_left,
-                    popExitAnimation = R.anim.slide_to_right
+                    allowStateLoss = false
                 )
-            })
+            }
 
-            failureHandler.observe(viewLifecycleOwner, { failure ->
+            failureHandler.observe(viewLifecycleOwner) { failure ->
                 progressIndicator(View.GONE)
                 clearPin()
                 when (failure) {
                     is AbsaApiFailureHandler.NoInternetApiFailure -> ErrorHandlerView(activity).showToast()
-                    is AbsaApiFailureHandler.FeatureValidateCardAndPin.InvalidValidateSureCheckContinuePolling -> {showCommonError()}
+                    is AbsaApiFailureHandler.FeatureValidateCardAndPin.InvalidValidateSureCheckContinuePolling -> {
+                        showCommonError()
+                    }
                     is AbsaApiFailureHandler.HttpException -> handleFatalError(failure)
                     else -> showCommonError()
                 }
-            })
+            }
 
-            validateSureCheckResponseProperty.observe(viewLifecycleOwner,{ validateSureCheckResponseProperty ->
-                when(validateSureCheckResponseProperty?.result?.lowercase()){
-                    "rejected" -> { validateSureCheckResponseProperty.let { if (it.otpRetriesLeft > 0) showWrongOTPMessage() else showCommonError() }
+            validateSureCheckResponseProperty.observe(viewLifecycleOwner) { validateSureCheckResponseProperty ->
+                when (validateSureCheckResponseProperty?.result?.lowercase()) {
+                    "rejected" -> {
+                        validateSureCheckResponseProperty.let { if (it.otpRetriesLeft > 0) showWrongOTPMessage() else showCommonError() }
                     }
-                    "processed" -> {fetchCreateAlias()}
+                    "processed" -> {
+                        fetchCreateAlias()
+                    }
                     else -> showCommonError()
                 }
-            })
+            }
         }
     }
 
     private fun initViewsAndEvents() {
-        otpDescription.text = bindString(R.string.absa_otp_screen_description) + userCellNumber
+        val description = "${bindString(R.string.absa_otp_screen_description)} ${userCellNumber?.toMaskABSAPhoneNumber()}"
+        otpDescription.text = description
         activity?.apply { (this as ABSAOnlineBankingRegistrationActivity).setPageTitle(getString(R.string.absa_registration_title_step_1)) }
         ivNavigateToDigitFragment.setOnClickListener(this)
         enterOTPEditText.setOnKeyPreImeListener { activity?.onBackPressed() }
@@ -198,7 +202,6 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
     }
 
     private fun showCommonError() {
-        cancelRequest()
         progressIndicator(View.INVISIBLE)
         clearPin()
         showErrorScreen(ErrorHandlerActivity.WITH_NO_ACTION)
@@ -230,16 +233,6 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        cancelRequest()
-    }
-
-    private fun cancelRequest() {
-        cancelVolleyRequest(AbsaValidateSureCheckRequest::class.java.simpleName)
-        cancelVolleyRequest(AbsaCreateAliasRequest::class.java.simpleName)
-    }
-
     private fun showErrorScreen(errorType: Int) {
         activity?.let {
             val intent = Intent(it, ErrorHandlerActivity::class.java)
@@ -257,7 +250,6 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
 
     private fun showWrongOTPMessage() {
         wrongOTP?.visibility = View.VISIBLE
-        cancelRequest()
         progressIndicator(View.INVISIBLE)
         clearPin()
     }
