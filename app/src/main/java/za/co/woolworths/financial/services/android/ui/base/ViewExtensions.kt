@@ -7,3 +7,8 @@ fun View.onClick(clickListener: (View) -> Unit) {
     setOnClickListener(clickListener)
     AnimationUtilExtension.animateViewPushDown(this)
 }
+
+fun View.onClick(view : View.OnClickListener) {
+    AnimationUtilExtension.animateViewPushDown(this)
+    setOnClickListener(view)
+}

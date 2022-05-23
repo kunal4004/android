@@ -17,11 +17,21 @@ import za.co.wigroup.androidutils.Util
 import za.co.woolworths.financial.services.android.models.network.RetrofitConfig
 import za.co.woolworths.financial.services.android.models.network.WfsApiInterceptor
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.data.remote.interceptors.CommonHeaderInterceptor
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountProductLandingDao
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.IMyAccountsUtils
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.MyAccountsUtils
 import java.util.concurrent.TimeUnit
 
 @Module
 @InstallIn(SingletonComponent::class)
-object RetrofitModule {
+object AppModule {
+
+    @Singleton
+    @Provides
+    fun provideAccountProductLandingDao(): AccountProductLandingDao {
+        return AccountProductLandingDao()
+    }
+
     @Singleton
     @Provides
     fun provideRetrofit( httpBuilder: OkHttpClient.Builder) : Retrofit  = Retrofit.Builder()
@@ -47,4 +57,9 @@ object RetrofitModule {
         logging.level = if (Util.isDebug(appContext)) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
         return logging
     }
+
+    @Singleton
+    @Provides
+    fun provideMyAccountsUtils() : IMyAccountsUtils = MyAccountsUtils()
+
 }

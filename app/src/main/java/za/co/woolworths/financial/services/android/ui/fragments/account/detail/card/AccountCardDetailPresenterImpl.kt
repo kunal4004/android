@@ -350,7 +350,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         }
         val primaryCard = storeCardsData.primaryCards?.get(PRIMARY_CARD_POSITION)
         val blockType = primaryCard?.blockType?.toLowerCase(Locale.getDefault())
-        return !storeCardsData?.generateVirtualCard && AppConfigSingleton.instantCardReplacement?.isEnabled == true
+        return !storeCardsData.generateVirtualCard && AppConfigSingleton.instantCardReplacement?.isEnabled == true
                 && TemporaryFreezeStoreCard.PERMANENT.equals(blockType, ignoreCase = true)
     }
 
