@@ -453,7 +453,7 @@ class KotlinUtils {
                                     .plus("\t" + timeSlot)
                         }
                         tvDeliveryLocation?.text =
-                            capitaliseFirstLetter(WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.storeName
+                            capitaliseFirstLetter(WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
                                 ?: address?.address1 ?: "")
                         tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_dash_delivery_circle)

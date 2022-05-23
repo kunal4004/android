@@ -42,7 +42,7 @@ open class DepartmentExtensionFragment : Fragment() {
         activity?.let {
             val fm = it.supportFragmentManager
             val singleButtonDialogFragment = SingleButtonDialogFragment.newInstance(message)
-            singleButtonDialogFragment.show(fm, SingleButtonDialogFragment::class.java.simpleName)
+            singleButtonDialogFragment?.show(fm, SingleButtonDialogFragment::class.java.simpleName)
         }
     }
 
