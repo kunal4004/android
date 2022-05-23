@@ -2101,6 +2101,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         defaultLocationPlaceholder.text =
                             getString(R.string.delivering_to_pdp)
                     }
+                    Delivery.DASH -> {
+                        currentDeliveryLocation.text =
+                            it.address?.address1 ?: ""
+                        defaultLocationPlaceholder.text =
+                            getString(R.string.dashing_to)
+                    }
                     else -> {
                     }
 
