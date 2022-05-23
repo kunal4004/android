@@ -2497,8 +2497,8 @@
     <string name="sending_enquiry">Sending Enquiry</string>
     <string name="enquiry_successfully_sent">Enquiry Successfully Sent</string>
     <string name="thanks_for_message">Thank you for your message. Our support \n team will be in touch with you soon.</string>
-    <string name="enquiry_failed_retry">Please try again.</string>
-    <string name="enquiry_failed">Request failed.</string>
+    <string name="enquiry_failed_retry">Something went wrong. Please try again.</string>
+    <string name="enquiry_failed">Failed To Send Enquiry.</string>
     <string name="enter_valid_email">Please enter valid email.</string>
 
 </resources>
