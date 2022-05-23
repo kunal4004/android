@@ -86,8 +86,11 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
             placeId = this.getString(KEY_PLACE_ID, "")
             isComingFromConfirmAddress = getBoolean(IS_COMING_CONFIRM_ADD,false)
             if(containsKey(VALIDATE_RESPONSE)){
-                mValidateLocationResponse =
-                    getSerializable(VALIDATE_RESPONSE) as ValidateLocationResponse
+                getSerializable(VALIDATE_RESPONSE)?.let {
+                    mValidateLocationResponse =
+                        it as ValidateLocationResponse
+                }
+
             }
 
         }
