@@ -10,7 +10,7 @@ data class StoreCard(
     val expiryDate: String?,
     val daysUntilExpiry: String?,
     val idRequired: Boolean?,
-    val sequence: String,
+    val sequence: Int,
     val embossedName: String?,
     val usage: String?,
     var blockCode: String? = "",

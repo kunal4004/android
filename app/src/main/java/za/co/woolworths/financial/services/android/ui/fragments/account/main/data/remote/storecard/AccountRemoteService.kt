@@ -5,6 +5,8 @@ import retrofit2.http.*
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlanResponse
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
+import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardRequestBody
+import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
 import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
@@ -76,5 +78,16 @@ interface AccountRemoteService {
         @Query("productOfferingId") productOfferingId: String
     ): Response<OfferActive>
 
+    @Headers(
+        "Content-Type: application/json",
+        "Accept: application/json",
+        "Media-Type: application/json"
+    )
+    @POST("wfs/app/v4/accounts/storecard/blockStoreCard/{productOfferingId}")
+    suspend fun queryServiceBlockStoreCard(
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("productOfferingId") productOfferingId: String,
+        @Body blockCardRequestBody: BlockCardRequestBody
+    ): Response<BlockMyCardResponse>
 
 }

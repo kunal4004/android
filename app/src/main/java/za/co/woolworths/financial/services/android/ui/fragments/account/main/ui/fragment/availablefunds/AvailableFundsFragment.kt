@@ -341,7 +341,7 @@ open class AvailableFundsFragment :
 
     private fun initShimmer(state: Boolean) {
         binding.incPayMyAccountButton.viewPaymentOptionImageShimmerLayout.loadingState(state)
-        binding.incPayMyAccountButton.viewPaymentOptionTextShimmerLayout.loadingState(state)
+    //    binding.incPayMyAccountButton.viewPaymentOptionTextShimmerLayout.loadingState(state)
     }
 
     fun navigateToPayMyAccount(openCardOptionsDialog: () -> Unit) {

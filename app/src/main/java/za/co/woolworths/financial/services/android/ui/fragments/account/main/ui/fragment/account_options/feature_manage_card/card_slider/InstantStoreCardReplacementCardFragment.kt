@@ -7,7 +7,7 @@ import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 
-class InstantStoreCardReplacementCardFragment() :
+class InstantStoreCardReplacementCardFragment :
     ViewBindingFragment<InstantStoreCardReplacementCardFragmentBinding>(
         InstantStoreCardReplacementCardFragmentBinding::inflate
     ) {

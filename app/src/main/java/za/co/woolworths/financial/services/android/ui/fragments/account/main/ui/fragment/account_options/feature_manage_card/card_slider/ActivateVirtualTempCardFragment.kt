@@ -5,13 +5,12 @@ import android.view.View
 import com.awfs.coordination.databinding.InstantStoreCardReplacementCardFragmentBinding
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 
-class NoStoreCardFragment :
-    ViewBindingFragment<InstantStoreCardReplacementCardFragmentBinding>(
-        InstantStoreCardReplacementCardFragmentBinding::inflate
-    ) {
+class ActivateVirtualTempCardFragment : ViewBindingFragment<InstantStoreCardReplacementCardFragmentBinding>(
+InstantStoreCardReplacementCardFragmentBinding::inflate
+) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.cardImageView.alpha = 0.3f
     }
-
 }

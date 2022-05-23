@@ -27,6 +27,8 @@ sealed class ViewState<out T> where T : Any? {
      */
     data class RenderFailure(val throwable: Throwable) : ViewState<Nothing>()
 
+    data class RenderFailureScenario<T>(val output: T) : ViewState<T>()
+
     object RenderEmpty : ViewState<Nothing>()
 
 }

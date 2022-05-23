@@ -6,7 +6,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlanResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.IStoreCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.StoreCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.ApiResult
 import javax.inject.Inject
@@ -36,4 +35,7 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
     }
 
     suspend fun queryServiceGetStoreCardCards() = getViewStateFlowForNetworkCall { storeCardDataSource.queryServiceGetStoreCards() }
+
+    suspend fun queryServiceBlockUnblockStoreCard(position : Int) = getViewStateFlowForNetworkCall { storeCardDataSource.queryServiceBlockUnBlockStoreCard(position = position) }
+
 }

@@ -91,7 +91,6 @@ class AccountOptionsCreditLimitIncreaseFragment :
     }
 
     private fun AccountOptionsCreditLimitIncreaseFragmentBinding.showProgress(isLoading: Boolean = false) {
-        binding.cliSkeleton.loadingState(isLoading)
-
+        cliSkeleton.loadingState(isLoading)
     }
 }

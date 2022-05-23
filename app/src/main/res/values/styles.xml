@@ -1648,7 +1648,7 @@
     </style>
 
     <style name="dialog_description_text_style" parent="dialog_title_text_style">
-        <item name="android:textSize">@dimen/fourteen_sp</item>
+        <item name="android:textSize">@dimen/_12ssp</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
         <item name="android:lineSpacingMultiplier">1.13</item>
@@ -2872,6 +2872,11 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_marginStart">@dimen/_24sdp</item>
         <item name="android:layout_marginEnd">@dimen/_24sdp</item>
+        <item name="android:layout_height">@dimen/_1sdp</item>
+    </style>
+
+    <style name="menuLandingDividerStyle" parent="creditLimitDividerStyle">
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/_1sdp</item>
     </style>
 

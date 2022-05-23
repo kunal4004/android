@@ -89,13 +89,13 @@
             app:tabTextColor="@android:color/transparent" />
 
         <View
-            android:id="@+id/accountOptionsDividerView"
-            style="@style/accountOptionsDivider"
+            android:id="@+id/temporaryFreezeCardDivider"
+            style="@style/menuLandingDividerStyle"
             android:layout_marginStart="0dp"
             android:layout_marginEnd="0dp" />
 
         <RelativeLayout
-            android:id="@+id/menuItem3RelativeLayout"
+            android:id="@+id/temporaryFreezeCardRelativeLayout"
             style="@style/accountOptionItemsStyle">
 
             <ImageView
@@ -106,34 +106,77 @@
             <TextView
                 android:id="@+id/storeCardItem3TextView"
                 style="@style/accountOptionsLabelStyle"
-                android:layout_width="match_parent"
-                android:layout_toStartOf="@+id/switchTemporaryFreezeCard"
+                android:layout_width="wrap_content"
+                android:layout_alignTop="@+id/switchTemporaryFreezeCard"
+                android:layout_alignBottom="@+id/switchTemporaryFreezeCard"
+                android:layout_marginStart="21dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="-5dp"
                 android:layout_toEndOf="@+id/storeCardItem3ImageView"
                 android:text="@string/temporary_card_freeze_title" />
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/switchTemporaryFreezeCard"
-                style="@style/accountOptionsNextImageViewStyle" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:theme="@style/SwitchTheme" />
 
         </RelativeLayout>
 
-        <View style="@style/accountOptionsDivider" />
+        <View
+            android:id="@+id/manageCardDivider"
+            style="@style/menuLandingDividerStyle" />
 
         <RelativeLayout
-            android:id="@+id/menuItem1RelativeLayout"
+            android:id="@+id/manageCardRelativeLayout"
             style="@style/accountOptionItemsStyle">
 
             <ImageView
-                android:id="@+id/storeCardItem1ImageView"
+                android:id="@+id/manageCardIconImageView"
                 style="@style/accountOptionsImageviewStyle"
-                android:src="@drawable/icon_limit" />
+                android:alpha="0.3"
+                android:src="@drawable/icon_card" />
 
             <TextView
-                android:id="@+id/storeCardItem1TextView"
+                android:id="@+id/manageCardCaptionTextView"
                 style="@style/accountOptionsLabelStyle"
                 android:layout_width="wrap_content"
-                android:layout_toEndOf="@+id/storeCardItem1ImageView"
-                android:text="list item 1" />
+                android:layout_alignTop="@+id/manageCardNext"
+                android:layout_alignBottom="@+id/manageCardNext"
+                android:layout_toEndOf="@+id/manageCardIconImageView"
+                android:text="@string/manage_my_card_title" />
+
+            <ImageView
+                android:id="@+id/manageCardNext"
+                style="@style/accountOptionsNextImageViewStyle"
+                android:src="@drawable/ic_caret_black" />
+
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/replacementCardDivider"
+            style="@style/menuLandingDividerStyle" />
+
+        <RelativeLayout
+            android:id="@+id/replacementCardRelativeLayout"
+            style="@style/accountOptionItemsStyle">
+
+            <ImageView
+                android:id="@+id/replacementCardIconImageView"
+                style="@style/accountOptionsImageviewStyle"
+                android:alpha="0.3"
+                android:src="@drawable/icon_card" />
+
+            <TextView
+                android:id="@+id/replacementCardCaptionTextView"
+                style="@style/accountOptionsLabelStyle"
+                android:layout_width="wrap_content"
+                android:layout_alignTop="@+id/viewTreatmentPlanNext"
+                android:layout_alignBottom="@+id/viewTreatmentPlanNext"
+                android:layout_toEndOf="@+id/replacementCardIconImageView"
+                android:text="@string/replacement_card_label" />
 
             <ImageView
                 android:id="@+id/viewTreatmentPlanNext"
@@ -142,11 +185,14 @@
 
         </RelativeLayout>
 
-        <View style="@style/accountOptionsDivider" />
+        <View
+            android:id="@+id/menuItem2Divider"
+            style="@style/menuLandingDividerStyle" />
 
         <RelativeLayout
             android:id="@+id/menuItem2RelativeLayout"
-            style="@style/accountOptionItemsStyle">
+            style="@style/accountOptionItemsStyle"
+            android:visibility="visible">
 
             <ImageView
                 android:id="@+id/storeCardItem2ImageView"
@@ -157,12 +203,107 @@
                 android:id="@+id/storeCardItem2TextView"
                 style="@style/accountOptionsLabelStyle"
                 android:layout_width="match_parent"
+                android:layout_alignTop="@+id/replacementCardNext"
+                android:layout_alignBottom="@+id/replacementCardNext"
                 android:layout_toStartOf="@+id/replacementCardNext"
                 android:layout_toEndOf="@+id/storeCardItem2ImageView"
                 android:text="list Item 2" />
 
             <ImageView
                 android:id="@+id/replacementCardNext"
+                style="@style/accountOptionsNextImageViewStyle"
+                android:src="@drawable/ic_caret_black" />
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/menuItem4Divider"
+            style="@style/menuLandingDividerStyle" />
+
+        <RelativeLayout
+            android:id="@+id/menuItem4RelativeLayout"
+            style="@style/accountOptionItemsStyle">
+
+            <ImageView
+                android:id="@+id/storeCardItem4ImageView"
+                style="@style/accountOptionsImageviewStyle"
+                android:src="@drawable/icon_limit" />
+
+            <TextView
+                android:id="@+id/storeCardItem4TextView"
+                style="@style/accountOptionsLabelStyle"
+                android:layout_width="match_parent"
+                android:layout_alignTop="@+id/item4ArrowImageView"
+                android:layout_alignBottom="@+id/item4ArrowImageView"
+                android:layout_toStartOf="@+id/item4ArrowImageView"
+                android:layout_toEndOf="@+id/storeCardItem4ImageView"
+                android:text="list Item 4" />
+
+            <ImageView
+                android:id="@+id/item4ArrowImageView"
+                style="@style/accountOptionsNextImageViewStyle"
+                android:src="@drawable/ic_caret_black" />
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/activateVirtualTempCardDivider"
+            style="@style/menuLandingDividerStyle"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp" />
+
+        <RelativeLayout
+            android:id="@+id/activateVirtualTempCardRelativeLayout"
+            style="@style/accountOptionItemsStyle">
+
+            <ImageView
+                android:id="@+id/activateVirtualTempCardImageView"
+                style="@style/accountOptionsImageviewStyle"
+                android:src="@drawable/ic_activate_vtc_grey" />
+
+            <TextView
+                android:id="@+id/activateVirtualTempCardTextView"
+                style="@style/accountOptionsLabelStyle"
+                android:layout_width="match_parent"
+                android:layout_alignTop="@+id/activateVirtualTempCardArrowImageView"
+                android:layout_alignBottom="@+id/activateVirtualTempCardArrowImageView"
+                android:layout_marginTop="0dp"
+                android:layout_toStartOf="@+id/activateVirtualTempCardArrowImageView"
+                android:layout_toEndOf="@+id/activateVirtualTempCardImageView"
+                android:text="@string/activate_vtc_title" />
+
+            <ImageView
+                android:id="@+id/activateVirtualTempCardArrowImageView"
+                style="@style/accountOptionsNextImageViewStyle"
+                android:src="@drawable/ic_caret_black" />
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/linkNewCardDivider"
+            style="@style/menuLandingDividerStyle"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp" />
+
+        <RelativeLayout
+            android:id="@+id/linkNewCardRelativeLayout"
+            style="@style/accountOptionItemsStyle">
+
+            <ImageView
+                android:id="@+id/linkNewCardImageView"
+                style="@style/accountOptionsImageviewStyle"
+                android:src="@drawable/link_icon" />
+
+            <TextView
+                android:id="@+id/linkNewCardTextView"
+                style="@style/accountOptionsLabelStyle"
+                android:layout_width="match_parent"
+                android:layout_alignTop="@+id/linkNewCardArrowImageView"
+                android:layout_alignBottom="@+id/linkNewCardArrowImageView"
+                android:layout_marginTop="0dp"
+                android:layout_toStartOf="@+id/linkNewCardArrowImageView"
+                android:layout_toEndOf="@+id/linkNewCardImageView"
+                android:text="@string/link_new_card" />
+
+            <ImageView
+                android:id="@+id/linkNewCardArrowImageView"
                 style="@style/accountOptionsNextImageViewStyle"
                 android:src="@drawable/ic_caret_black" />
         </RelativeLayout>
