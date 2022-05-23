@@ -135,14 +135,17 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                                 this
                             )
                             showBlackToolTip(Delivery.STANDARD)
+                            KotlinUtils.browsingDeliveryType = Delivery.STANDARD.name
                         }
                         1 -> {
                             //Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS, this)
                             showBlackToolTip(Delivery.CNC)
+                            KotlinUtils.browsingDeliveryType = Delivery.CNC.name
                         }
                         2 -> {
                             // Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYORDERS, this)
                             showBlackToolTip(Delivery.DASH)
+                            KotlinUtils.browsingDeliveryType = Delivery.DASH.name
                         }
                     }
                     setupToolbar(position)
@@ -172,6 +175,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                                 WoolworthsApplication.setValidatedSuburbProducts(
                                     validateLocationResponse?.validatePlace
                                 )
+                                updateCurrentTab(getDeliveryType()?.deliveryType)
                                 setDeliveryView()
                                 viewLifecycleOwner.lifecycleScope.launch {
                                     delay(DELAY_3000_MS)
@@ -312,9 +316,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
         view?.tvTitle?.text = tabTitle?.get(pos)
         if (tab.getTabAt(pos)?.view?.isSelected == true) {
-            val futuraFont =
+            val myRiadFont =
                 Typeface.createFromAsset(activity?.assets, "fonts/MyriadPro-Semibold.otf")
-            view?.tvTitle?.typeface = futuraFont
+            view?.tvTitle?.typeface = myRiadFont
         }
         if (pos == 0) {
             view?.foodOnlyText?.visibility = View.INVISIBLE
@@ -332,7 +336,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun setDeliveryView() {
-        updateCurrentTab(getDeliveryType()?.deliveryType)
         activity?.let {
             getDeliveryType()?.let { fulfillmentDetails ->
                 KotlinUtils.setDeliveryAddressView(
@@ -475,7 +478,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             refreshViewPagerFragment()
         }
 
-        if (requestCode == REQUEST_CODE || requestCode == DEPARTMENT_LOGIN_REQUEST && viewpager_main.currentItem == 0) {
+        if ((requestCode == REQUEST_CODE && resultCode == RESULT_OK)
+            || requestCode == DEPARTMENT_LOGIN_REQUEST && viewpager_main.currentItem == 0) {
+            updateCurrentTab(getDeliveryType()?.deliveryType)
             val fragment = viewpager_main?.adapter?.instantiateItem(
                 viewpager_main,
                 viewpager_main.currentItem
