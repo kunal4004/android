@@ -150,7 +150,6 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/user/locations")
     fun getStoresLocation(
-
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1258,17 +1257,15 @@ interface ApiInterface {
     ): EligibilityPlanResponse
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-<<<<<<< HEAD
     @GET("wfs/app/v4/accounts/notifyCardNotYetReceived")
     suspend fun queryServiceNotifyCardNotYetReceived(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
         @Header("sessionToken") sessionToken: String
     ): Response
-=======
+
     @POST("wfs/app/v4/cartV2/confirmLocation")
     fun confirmLocation(
-
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
         @Header("sessionToken") sessionToken: String,
@@ -1285,7 +1282,6 @@ interface ApiInterface {
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body saveAddressLocationRequest: SaveAddressLocationRequest
     ): Call<GenericResponse>
->>>>>>> 4d20d859de6f39a73d8edf0a7c427a748a6efda8
 
 }
 
