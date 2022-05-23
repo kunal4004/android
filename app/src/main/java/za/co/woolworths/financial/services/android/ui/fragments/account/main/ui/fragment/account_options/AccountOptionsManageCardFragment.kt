@@ -319,5 +319,11 @@ class AccountOptionsManageCardFragment :
                 rootContainer.visibility = GONE
             }
         }
+
+    override fun onPause() {
+        super.onPause()
+        binding.accountCardViewPager.adapter = null
+    }
+
 }
 

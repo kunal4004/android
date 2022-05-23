@@ -23,6 +23,8 @@
         <action
             android:id="@+id/action_accountProductsMainFragment_to_accountInformationFragment"
             app:destination="@id/accountInfoFragment"
+            app:enterAnim="@anim/slide_up_anim"
+            app:popExitAnim="@anim/slide_down_anim"
             app:popUpToInclusive="true" />
     </fragment>
     <fragment
