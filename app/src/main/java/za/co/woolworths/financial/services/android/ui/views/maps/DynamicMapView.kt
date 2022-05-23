@@ -5,26 +5,32 @@ import android.content.Context
 import android.os.Bundle
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.awfs.coordination.R
 import com.google.android.gms.maps.*
-import com.google.android.gms.maps.OnMapReadyCallback as GoogleOnMapReadyCallback
+import com.huawei.hms.maps.HuaweiMap
+import za.co.woolworths.financial.services.android.ui.views.maps.adapter.GoogleMapWindowAdapter
+import za.co.woolworths.financial.services.android.ui.views.maps.adapter.HuaweiMapWindowAdapter
+import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
+import za.co.woolworths.financial.services.android.util.Utils
+import com.google.android.gms.maps.CameraUpdateFactory as GoogleCameraUpdateFactory
 import com.google.android.gms.maps.MapView as GoogleMapView
-import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.OnMapReadyCallback as GoogleOnMapReadyCallback
+import com.google.android.gms.maps.model.BitmapDescriptorFactory as GoogleBitmapDescriptorFactory
+import com.google.android.gms.maps.model.CameraPosition as GoogleCameraPosition
 import com.google.android.gms.maps.model.LatLng as GoogleLatLng
 import com.google.android.gms.maps.model.Marker as GoogleMarker
 import com.google.android.gms.maps.model.MarkerOptions as GoogleMarkerOptions
-import com.huawei.hms.maps.HuaweiMap
-import com.huawei.hms.maps.model.MarkerOptions as HuaweiMarkerOptions
-import za.co.woolworths.financial.services.android.ui.views.maps.adapter.GoogleMapWindowAdapter
-import za.co.woolworths.financial.services.android.ui.views.maps.adapter.HuaweiMapWindowAdapter
-import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicLatLng
-import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
-import com.huawei.hms.maps.OnMapReadyCallback as HuaweiOnMapReadyCallback
+import com.huawei.hms.maps.CameraUpdateFactory as HuaweiCameraUpdateFactory
 import com.huawei.hms.maps.MapView as HuaweiMapView
 import com.huawei.hms.maps.MapsInitializer as HuaweiMapsInitializer
+import com.huawei.hms.maps.OnMapReadyCallback as HuaweiOnMapReadyCallback
+import com.huawei.hms.maps.model.BitmapDescriptorFactory as HuaweiBitmapDescriptorFactory
+import com.huawei.hms.maps.model.CameraPosition as HuaweiCameraPosition
+import com.huawei.hms.maps.model.LatLng as HuaweiLatLng
 import com.huawei.hms.maps.model.Marker as HuaweiMarker
-import za.co.woolworths.financial.services.android.util.Utils
+import com.huawei.hms.maps.model.MarkerOptions as HuaweiMarkerOptions
 
 class DynamicMapView @JvmOverloads constructor(
     context: Context,
@@ -157,43 +163,102 @@ class DynamicMapView @JvmOverloads constructor(
         }
     }
 
-    fun addMarker(point: DynamicLatLng, bitmapDescriptor: BitmapDescriptor?): DynamicMapMarker? {
-        if (point.googleLatLng != null) {
+    fun addMarker(latitude: Double, longitude: Double, @DrawableRes icon: Int?): DynamicMapMarker? {
+        return if (isGooglePlayServicesAvailable) {
             val markerOptions = GoogleMarkerOptions()
-            markerOptions.position(point.googleLatLng!!)
-            markerOptions.icon(bitmapDescriptor)
-            return DynamicMapMarker(googleMarker = googleMap?.addMarker(markerOptions))
-        } else if (point.huaweiLatLng != null) {
+            markerOptions.position(GoogleLatLng(latitude, longitude))
+            icon?.apply {
+                markerOptions.icon(GoogleBitmapDescriptorFactory.fromResource(this))
+            }
+            DynamicMapMarker(googleMarker = googleMap?.addMarker(markerOptions))
+        } else {
             val markerOptions = HuaweiMarkerOptions()
-            markerOptions.position(point.huaweiLatLng!!)
-//            markerOptions.icon(bitmapDescriptor) // TODO
-            return DynamicMapMarker(huaweiMarker = huaweiMap?.addMarker(markerOptions))
+            markerOptions.position(HuaweiLatLng(latitude, longitude))
+            icon?.apply {
+                markerOptions.icon(HuaweiBitmapDescriptorFactory.fromResource(this))
+            }
+            DynamicMapMarker(huaweiMarker = huaweiMap?.addMarker(markerOptions))
         }
     }
 
-    fun animateCamera(marker: Marker?, duration: Int = CAMERA_ANIMATION_DURATION_FAST) {
+    fun animateCamera(marker: DynamicMapMarker?, duration: Int = CAMERA_ANIMATION_DURATION_FAST) {
         if (isGooglePlayServicesAvailable) {
             googleMap
                 ?.animateCamera(
-                    CameraUpdateFactory.newLatLngZoom(marker?.position, 13f),
+                    GoogleCameraUpdateFactory.newLatLngZoom(marker?.googleMarker?.position, 13f),
                     duration,
                     null
                 )
         } else {
-            // TODO
+            huaweiMap
+                ?.animateCamera(
+                    HuaweiCameraUpdateFactory.newLatLngZoom(marker?.huaweiMarker?.position, 13f),
+                    duration,
+                    null
+                )
         }
     }
 
-    fun animateCamera(cameraUpdate: CameraUpdate, duration: Int = CAMERA_ANIMATION_DURATION_FAST) {
+    fun animateCamera(
+        latitude: Double?,
+        longitude: Double?,
+        duration: Int = CAMERA_ANIMATION_DURATION_FAST
+    ) {
+        if (latitude == null || longitude == null) return
         if (isGooglePlayServicesAvailable) {
             googleMap
                 ?.animateCamera(
-                    cameraUpdate,
+                    GoogleCameraUpdateFactory.newLatLng(GoogleLatLng(latitude, longitude)),
                     duration,
                     null
                 )
         } else {
-            // TODO
+            huaweiMap
+                ?.animateCamera(
+                    HuaweiCameraUpdateFactory.newLatLng(HuaweiLatLng(latitude, longitude)),
+                    duration,
+                    null
+                )
+        }
+    }
+
+    fun animateCamera(
+        latitude: Double?,
+        longitude: Double?,
+        zoom: Float,
+        bearing: Float,
+        tilt: Float,
+        duration: Int = CAMERA_ANIMATION_DURATION_FAST
+    ) {
+        if (latitude == null || longitude == null) return
+        if (isGooglePlayServicesAvailable) {
+            googleMap
+                ?.animateCamera(
+                    GoogleCameraUpdateFactory.newCameraPosition(
+                        GoogleCameraPosition.builder()
+                            .target(GoogleLatLng(latitude, longitude))
+                            .zoom(zoom)
+                            .bearing(bearing)
+                            .tilt(tilt)
+                            .build()
+                    ),
+                    duration,
+                    null
+                )
+        } else {
+            huaweiMap
+                ?.animateCamera(
+                    HuaweiCameraUpdateFactory.newCameraPosition(
+                        HuaweiCameraPosition.builder()
+                            .target(HuaweiLatLng(latitude, longitude))
+                            .zoom(zoom)
+                            .bearing(bearing)
+                            .tilt(tilt)
+                            .build()
+                    ),
+                    duration,
+                    null
+                )
         }
     }
 
@@ -201,7 +266,7 @@ class DynamicMapView @JvmOverloads constructor(
         if (isGooglePlayServicesAvailable) {
             googleMapView?.onResume()
         } else {
-            // TODO
+            huaweiMapView?.onResume()
         }
     }
 
@@ -209,7 +274,7 @@ class DynamicMapView @JvmOverloads constructor(
         if (isGooglePlayServicesAvailable) {
             googleMapView?.onPause()
         } else {
-            // TODO
+            huaweiMapView?.onPause()
         }
     }
 
@@ -217,7 +282,7 @@ class DynamicMapView @JvmOverloads constructor(
         if (isGooglePlayServicesAvailable) {
             googleMapView?.onDestroy()
         } else {
-            // TODO
+            huaweiMapView?.onDestroy()
         }
     }
 
@@ -225,7 +290,7 @@ class DynamicMapView @JvmOverloads constructor(
         if (isGooglePlayServicesAvailable) {
             googleMapView?.onLowMemory()
         } else {
-            // TODO
+            huaweiMapView?.onLowMemory()
         }
     }
 
@@ -233,7 +298,7 @@ class DynamicMapView @JvmOverloads constructor(
         if (isGooglePlayServicesAvailable) {
             googleMapView?.onSaveInstanceState(outState)
         } else {
-            // TODO
+            huaweiMapView?.onSaveInstanceState(outState)
         }
     }
 }

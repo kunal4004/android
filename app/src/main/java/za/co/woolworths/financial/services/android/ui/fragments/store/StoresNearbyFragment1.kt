@@ -21,6 +21,7 @@ import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -28,14 +29,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
-import com.google.android.gms.maps.*
-import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.fragment_stores_nearby1.*
-import kotlinx.android.synthetic.main.fragment_stores_nearby1.cardPager
-import kotlinx.android.synthetic.main.fragment_stores_nearby1.close
-import kotlinx.android.synthetic.main.fragment_stores_nearby1.layoutLocationServiceOn
-import kotlinx.android.synthetic.main.fragment_stores_nearby1.sliding_layout
-import kotlinx.android.synthetic.main.fragment_stores_nearby1.storesProgressBar
 import kotlinx.android.synthetic.main.location_service_off_layout.*
 import kotlinx.android.synthetic.main.store_details_layout_common.*
 import retrofit2.Call
@@ -63,7 +57,6 @@ import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDeleg
 import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapView
 import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
 import za.co.woolworths.financial.services.android.util.*
-import java.util.*
 
 class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageChangeListener, ILocationProvider {
 
@@ -77,16 +70,18 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     }
 
     private var mBottomNavigator: BottomNavigator? = null
-    var unSelectedIcon: BitmapDescriptor? = null
-    var selectedIcon: BitmapDescriptor? = null
+    @DrawableRes
+    var unSelectedIcon: Int? = null
+    @DrawableRes
+    var selectedIcon: Int? = null
     var mMarkers: HashMap<String, Int>? = null
-    var markers: ArrayList<Marker>? = null
-    var previousmarker: Marker? = null
+    var markers: ArrayList<DynamicMapMarker>? = null
+    var previousMarker: DynamicMapMarker? = null
     var currentStorePosition = 0
     var storeDetailsList: List<StoreDetails>? = null
     private var updateMap = false
     var callIntent: Intent? = null
-    var myLocation: Marker? = null
+    var myLocation: DynamicMapMarker? = null
     private var navigateMenuState = false
     private var mPopWindowValidationMessage: PopWindowValidationMessage? = null
     private var mErrorHandlerView: ErrorHandlerView? = null
@@ -114,7 +109,7 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
 
         dynamicMapView?.initializeMap(savedInstanceState, this)
         mMarkers = HashMap<String, Int>()
-        markers = ArrayList<Marker>()
+        markers = ArrayList<DynamicMapMarker>()
 
         mPopWindowValidationMessage = PopWindowValidationMessage(activity)
         storesProgressBar?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
@@ -207,8 +202,8 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
 
     private fun selectUnSelectMarkerDrawable() {
         try {
-            unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin)
-            selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin)
+            unSelectedIcon = R.drawable.unselected_pin
+            selectedIcon = R.drawable.selected_pin
         } catch (ex: NullPointerException) {
             FirebaseManager.logException(ex)
         }
@@ -230,29 +225,34 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     }
 
     override fun onMapReady() {
-        unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin)
-        selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin)
+        unSelectedIcon = R.drawable.unselected_pin
+        selectedIcon = R.drawable.selected_pin
     }
 
-    private fun drawMarker(point: LatLng, bitmapDescriptor: BitmapDescriptor?, pos: Int) {
-        val marker = dynamicMapView?.addMarker(point, bitmapDescriptor)
-        mMarkers?.set(marker!!.id, pos)
-        marker?.let { markers?.add(it) }
+    private fun drawMarker(latitude: Double, longitude: Double, @DrawableRes icon: Int?, pos: Int) {
+        val marker = dynamicMapView?.addMarker(latitude, longitude, icon)
+        marker?.apply {
+            getId()?.let { id ->
+                mMarkers?.set(id, pos)
+            }
+            markers?.add(this)
+        }
         if (pos == 0) {
             dynamicMapView?.animateCamera(marker)
-            previousmarker = marker
+            previousMarker = marker
         }
     }
 
     override fun onPageSelected(position: Int) {
-        previousmarker?.setIcon(unSelectedIcon)
+        previousMarker?.setIcon(unSelectedIcon)
         markers?.get(position)?.setIcon(selectedIcon)
         dynamicMapView?.animateCamera(markers?.get(position))
-        previousmarker = markers?.get(position)
+        previousMarker = markers?.get(position)
         /*
 		 *InfoWindow shows description above a marker.
          *Make info window invisible to make selected marker come in front of unselected marker.
-         */previousmarker?.showInfoWindow()
+         */
+        previousMarker?.showInfoWindow()
     }
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
@@ -260,10 +260,10 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
 
     override fun onMarkerClicked(marker: DynamicMapMarker) {
         try {
-            val id = mMarkers?.get(marker.id)
-            previousmarker?.setIcon(unSelectedIcon)
+            val id = mMarkers?.get(marker.getId())
+            previousMarker?.setIcon(unSelectedIcon)
             marker.setIcon(selectedIcon)
-            previousmarker = marker
+            previousMarker = marker
             cardPager?.currentItem = id ?: 0
         } catch (ex: NullPointerException) {
             FirebaseManager.logException(ex)
@@ -292,10 +292,9 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
         val center = dynamicMapView?.getCameraPositionTargetLatitude()
         val northMap = dynamicMapView?.getVisibleRegionNortheastLatitude()
         val diff = northMap?.let { center?.minus(it) }
-        val newLat = markers?.get(position)?.position?.latitude?.plus(diff?.div(1.5)!!)
-        val centerCam =
-                CameraUpdateFactory.newLatLng(markers?.get(position)?.position?.longitude?.let { newLat?.let { latitude -> LatLng(latitude, it) } })
-        dynamicMapView?.animateCamera(centerCam)
+        val newLat = markers?.get(position)?.getPositionLatitude()?.plus(diff?.div(1.5)!!)
+        val newLng = markers?.get(position)?.getPositionLongitude()
+        dynamicMapView?.animateCamera(newLat, newLng)
         dynamicMapView?.setScrollGesturesEnabled(isEnabled = false)
         if (sliding_layout?.anchorPoint == 1.0f) {
             val toolbar = mBottomNavigator?.toolbar()
@@ -305,17 +304,17 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
         }
     }
 
-    private fun hideMarkers(markers: ArrayList<Marker>?, pos: Int) {
+    private fun hideMarkers(markers: ArrayList<DynamicMapMarker>?, pos: Int) {
         val indices = markers?.indices
         for (i in indices!!) {
-            if (i != pos) markers[i].isVisible = false
+            if (i != pos) markers[i].setVisibility(isVisible = false)
         }
     }
 
-    private fun showAllMarkers(markers: ArrayList<Marker>?) {
+    private fun showAllMarkers(markers: ArrayList<DynamicMapMarker>?) {
         val indices = markers?.indices
         for (i in indices!!) {
-            markers[i].isVisible = true
+            markers[i].setVisibility(isVisible = true)
         }
     }
 
@@ -324,8 +323,8 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
             updateMyCurrentLocationOnMap(mLocation)
             for (i in storeDetailsList.indices) {
                 if (i == 0) {
-                    drawMarker(LatLng(storeDetailsList[i].latitude, storeDetailsList[i].longitude), selectedIcon, i)
-                } else drawMarker(LatLng(storeDetailsList[i].latitude, storeDetailsList[i].longitude), unSelectedIcon, i)
+                    drawMarker(storeDetailsList[i].latitude, storeDetailsList[i].longitude, selectedIcon, i)
+                } else drawMarker(storeDetailsList[i].latitude, storeDetailsList[i].longitude, unSelectedIcon, i)
             }
             cardPager?.adapter = CardsOnMapAdapter(activity, storeDetailsList)
         }
@@ -467,9 +466,9 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
 
             if (myLocation == null) {
                 myLocation =
-                    dynamicMapView?.addMarker(LatLng(latitude, longitude), BitmapDescriptorFactory.fromResource(R.drawable.mapcurrentlocation))
+                    dynamicMapView?.addMarker(latitude, longitude, R.drawable.mapcurrentlocation)
             } else {
-                myLocation?.position = LatLng(latitude, longitude)
+                myLocation?.setPosition(latitude, longitude)
             }
             dynamicMapView?.animateCamera(myLocation)
         } catch (ex: Exception) {
@@ -491,11 +490,6 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
             R.id.action_locate -> Utils.getLastSavedLocation()?.let { location -> zoomToLocation(location) }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    private fun goToUser(mLocation: CameraPosition?) {
-        // The duration must be strictly positive so we make it at least 1.
-        dynamicMapView?.animateCamera(CameraUpdateFactory.newCameraPosition(mLocation), 2000.coerceAtLeast(1))
     }
 
     fun showProgressBar() {
@@ -556,13 +550,14 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     }
 
     private fun zoomToLocation(location: Location) {
-        val mLocation = CameraPosition.Builder().target(LatLng(location.latitude, location
-                .longitude))
-                .zoom(13f)
-                .bearing(0f)
-                .tilt(25f)
-                .build()
-        goToUser(mLocation)
+        dynamicMapView?.animateCamera(
+            location.latitude,
+            location.longitude,
+            zoom = 13f,
+            bearing = 0f,
+            tilt = 25f,
+            duration = 2000.coerceAtLeast(1) // The duration must be strictly positive so we make it at least 1.
+        )
     }
 
     var broadcastCall: BroadcastReceiver = object : BroadcastReceiver() {
