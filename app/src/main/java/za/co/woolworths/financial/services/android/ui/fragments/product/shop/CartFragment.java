@@ -536,10 +536,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             Intent checkoutActivityIntent = new Intent(getActivity(), CheckoutActivity.class);
             checkoutActivityIntent.putExtra(SAVED_ADDRESS_KEY, response);
             checkoutActivityIntent.putExtra(IS_DELIVERY, !Utils.getPreferredDeliveryLocation().storePickup);
-            if(liquorCompliance!=null&&liquorCompliance.isLiquorOrder()&&liquorCompliance.getLiquorImageUrl()!=null&&!liquorCompliance.getLiquorImageUrl().isEmpty()){
+            if(liquorCompliance!=null&&liquorCompliance.isLiquorOrder()&&AppConfigSingleton.INSTANCE.getLiquor().getNoLiquorImgUrl()!=null&&!AppConfigSingleton.INSTANCE.getLiquor().getNoLiquorImgUrl().isEmpty()){
                 checkoutActivityIntent.putExtra(Constant.LIQUOR_ORDER, liquorCompliance.isLiquorOrder());
-                checkoutActivityIntent.putExtra(Constant.NO_LIQUOR_IMAGE_URL, liquorCompliance.getLiquorImageUrl());
-
+                checkoutActivityIntent.putExtra(Constant.NO_LIQUOR_IMAGE_URL, AppConfigSingleton.INSTANCE.getLiquor().getNoLiquorImgUrl());
             }
             activity.startActivityForResult(checkoutActivityIntent, REQUEST_PAYMENT_STATUS);
             activity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_to_left);

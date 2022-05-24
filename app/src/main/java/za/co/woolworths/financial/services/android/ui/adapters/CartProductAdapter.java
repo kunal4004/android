@@ -365,8 +365,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                 });
                 if(liquorComplianceInfo!=null&&liquorComplianceInfo.isLiquorOrder()){
                     priceHolder.liquorBannerRootConstraintLayout.setVisibility(View.VISIBLE);
-                   if(liquorComplianceInfo.getLiquorImageUrl()!=null&&!liquorComplianceInfo.getLiquorImageUrl().isEmpty())
-                    ImageManager.Companion.setPicture(priceHolder.imgLiBanner, liquorComplianceInfo.getLiquorImageUrl());
+                   if(AppConfigSingleton.INSTANCE.getLiquor().getNoLiquorImgUrl()!=null&&!AppConfigSingleton.INSTANCE.getLiquor().getNoLiquorImgUrl().isEmpty())
+                    ImageManager.Companion.setPicture(priceHolder.imgLiBanner, AppConfigSingleton.INSTANCE.getLiquor().getNoLiquorImgUrl());
                 }else{
                     priceHolder.liquorBannerRootConstraintLayout.setVisibility(View.GONE);
                 }
