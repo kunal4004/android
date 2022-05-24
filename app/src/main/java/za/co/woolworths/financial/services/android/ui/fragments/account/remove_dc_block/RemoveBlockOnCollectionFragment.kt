@@ -37,20 +37,21 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl.Companion.ELITE_PLAN
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.displayLabel
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import za.co.woolworths.financial.services.android.util.eliteplan.EligibilityImpl
+import za.co.woolworths.financial.services.android.util.eliteplan.PMApiStatusImpl
 import za.co.woolworths.financial.services.android.util.eliteplan.TakeUpPlanUtil
 import za.co.woolworths.financial.services.android.util.spannable.WSpannableStringBuilder
 import za.co.woolworths.financial.services.android.util.wenum.LinkType
 
-class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, EligibilityImpl {
+class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, EligibilityImpl,PMApiStatusImpl {
 
     lateinit var navController: NavController
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
@@ -72,6 +73,8 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, Eligib
         mAccountPresenter = (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter
         accountData = mAccountPresenter?.getMyAccountCardInfo()
         mAccountPresenter?.eligibilityImpl = this
+        mAccountPresenter?.pmaStatusImpl = this
+
         when (accountData?.first) {
             ApplyNowState.PERSONAL_LOAN -> {
                 removeBlockBackgroundConstraintLayout?.setBackgroundResource(R.drawable.personal_loan_background)
@@ -108,7 +111,8 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, Eligib
         stopProgress()
 
         setFragmentResultListener(RemoveBlockOnCollectionDialogFragment::class.java.simpleName) { _, bundle ->
-            GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+            CoroutineScope(Dispatchers.Main).launch {
+                delay(AppConstant.DELAY_100_MS)
                 when (bundle.getString(
                     RemoveBlockOnCollectionDialogFragment::class.java.simpleName,
                     "N/A"
@@ -166,7 +170,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, Eligib
             }
 
             ActionText.VIEW_ELITE_PLAN.value -> {
-                KotlinUtils.openTreatmenPlanUrl(activity, mAccountPresenter?.getEligibilityPlan())
+                KotlinUtils.openTreatmentPlanUrl(activity, mAccountPresenter?.getEligibilityPlan())
             }
         }
     }
@@ -187,6 +191,22 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, Eligib
         view?.apply {
             setOnClickListener(this@RemoveBlockOnCollectionFragment)
             AnimationUtilExtension.animateViewPushDown(this)
+        }
+    }
+    private fun navigateToDeepLinkView() {
+        if (activity is AccountSignedInActivity) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(AppConstant.DELAY_100_MS)
+                (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.apply {
+                    val deepLinkingObject = getDeepLinkData()
+                    when (deepLinkingObject?.get("feature")?.asString) {
+                        AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT -> {
+                            deleteDeepLinkData()
+                            incPayMyAccountButton?.performClick()
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -268,7 +288,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, Eligib
                 ApplyNowState.STORE_CARD -> FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDTRANSACTIONS
                 else -> ""
             }
-            activity?.apply { Utils.triggerFireBaseEvents(propertyName, this) }
+            requireActivity().apply { Utils.triggerFireBaseEvents(propertyName, this) }
             accountData?.second?.apply {
                 val intent = Intent(activity, WTransactionsActivity::class.java)
                 intent.putExtra(
@@ -279,7 +299,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, Eligib
                     ChatFragment.ACCOUNTS,
                     Gson().toJson(Pair(applyNowState, this))
                 )
-                intent.putExtra("cardType", productGroupCode?.toUpperCase())
+                intent.putExtra("cardType", productGroupCode?.uppercase())
                 activity.startActivityForResult(intent, 0)
                 activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
             }
@@ -350,21 +370,24 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, Eligib
     }
 
     override fun eligibilityResponse(eligibilityPlan: EligibilityPlan?) {
-        eligibilityPlan.let {
-            when (it?.actionText) {
-                ActionText.VIEW_ELITE_PLAN.value -> {
-                    helpWithPayment.text = bindString(R.string.view_your_payment_plan)
-                }
+        eligibilityPlan.let { plan ->
+            helpWithPayment.text =  when (plan?.actionText.equals(ActionText.VIEW_ELITE_PLAN.value, ignoreCase = true)) {
+                true -> requireContext().displayLabel()
+                false ->   bindString( R.string.get_help_repayment)
             }
+
             viewLifecycleOwner.lifecycleScope.launch {
                 delay(AppConstant.DELAY_1000_MS)
-                helpWithPaymentView.visibility =
-                    if (it?.planType.equals(ELITE_PLAN)) VISIBLE else GONE
+                helpWithPaymentView.visibility = if (plan?.planType.equals(ELITE_PLAN)) VISIBLE else GONE
             }
         }
     }
 
     override fun eligibilityFailed() {
         helpWithPaymentView.visibility = GONE
+    }
+
+    override fun pmaSuccess() {
+        navigateToDeepLinkView()
     }
 }

@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.checkout.view
 
 import android.content.Intent
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.filters.LargeTest
@@ -42,74 +41,5 @@ class CheckoutAddAddressNewUserFragmentUITest {
         )
         textView.check(matches(withText("Where Are We Delivering?")))
 
-        val editText = onView(
-            allOf(
-                withId(R.id.progressbarGetSuburb),
-                withParent(
-                    allOf(
-                        withId(R.id.selectSuburbLayout),
-                        withParent(withId(R.id.recipientAddressLayout))
-                    )
-                ),
-                isDisplayed()
-            )
-        )
-        editText.check(doesNotExist())
-
-        val editText4 = onView(
-            allOf(
-                withId(R.id.dropdownGetSuburbImg),
-                withParent(
-                    allOf(
-                        withId(R.id.selectSuburbLayout),
-                        withParent(withId(R.id.recipientAddressLayout))
-                    )
-                ),
-                isDisplayed()
-            )
-        )
-        editText4.check(doesNotExist())
-
-        val editText5 = onView(
-            allOf(
-                withId(R.id.dropdownGetSuburbImg),
-                withParent(
-                    allOf(
-                        withId(R.id.selectSuburbLayout),
-                        withParent(withId(R.id.recipientAddressLayout))
-                    )
-                ),
-                isDisplayed()
-            )
-        )
-        editText5.check(doesNotExist())
-
-        val editText2 = onView(
-            allOf(
-                withId(R.id.progressbarGetProvinces),
-                withParent(
-                    allOf(
-                        withId(R.id.selectProvinceLayout),
-                        withParent(withId(R.id.recipientAddressLayout))
-                    )
-                ),
-                isDisplayed()
-            )
-        )
-        editText2.check(doesNotExist())
-
-        val editText3 = onView(
-            allOf(
-                withId(R.id.dropdownGetProvincesImg),
-                withParent(
-                    allOf(
-                        withId(R.id.selectProvinceLayout),
-                        withParent(withId(R.id.recipientAddressLayout))
-                    )
-                ),
-                isDisplayed()
-            )
-        )
-        editText3.check(doesNotExist())
     }
 }

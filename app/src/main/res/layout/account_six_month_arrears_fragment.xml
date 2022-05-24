@@ -133,6 +133,7 @@
         android:text="@string/view_payment_plans_button_label"
         android:textAllCaps="true"
         android:visibility="gone"
+        android:layout_marginBottom="@dimen/twenty_four_dp"
         app:layout_constraintEnd_toStartOf="@+id/endGuideline"
         app:layout_constraintStart_toStartOf="@+id/startGuideline"
         app:layout_constraintBottom_toTopOf="@+id/callTheCallCenterUnderlinedButton"/>

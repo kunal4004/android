@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.checkout.service.network
 
 import com.google.gson.annotations.SerializedName
-import com.google.gson.annotations.Expose
+import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import java.io.Serializable
 
 class ShippingDetailsBody : Serializable {
@@ -61,4 +61,10 @@ class ShippingDetailsBody : Serializable {
 
     @SerializedName("storeId")
     var storeId: String? = null
+
+    @SerializedName("deliveryType")
+    var deliveryType: String = ""
+
+    @SerializedName("address")
+    var address: ConfirmLocationAddress? =null
 }
