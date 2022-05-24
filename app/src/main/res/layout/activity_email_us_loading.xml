@@ -73,13 +73,28 @@
         android:text="@string/got_it"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
+        app:layout_constraintBottom_toTopOf="@+id/btn_email_us_loading_dismiss"/>
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/btn_email_us_loading_dismiss"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:letterSpacing="0.1"
+        android:text="@string/vto_dismiss"
+        android:textAllCaps="true"
+        android:gravity="center"
+        android:textColor="@color/gray"
+        android:textSize="@dimen/_10ssp"
+        app:WTextView_font="light"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/group_image_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="btn_email_us_loading_got_it,iv_email_us_loading"/>
+        app:constraint_referenced_ids="btn_email_us_loading_got_it,iv_email_us_loading,btn_email_us_loading_dismiss"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

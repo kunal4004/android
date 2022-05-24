@@ -28,6 +28,7 @@ class EmailUsLoadingActivity : AppCompatActivity(), View.OnClickListener {
     private fun initView() {
         viewModel.start(intent.extras?.getParcelable(EnquiriesListViewModel.EMAIL_US_REQUEST)!!)
         binding.btnEmailUsLoadingGotIt.setOnClickListener(this)
+        binding.btnEmailUsLoadingDismiss.setOnClickListener(this)
         viewModel.emailUsResponse.observe(this) {
             binding.pbEmailUsLoading.visibility = GONE
             when (it) {
@@ -48,6 +49,7 @@ class EmailUsLoadingActivity : AppCompatActivity(), View.OnClickListener {
     private fun handleError(error: String) {
         binding.apply {
             groupImageButton.visibility = VISIBLE
+            btnEmailUsLoadingDismiss.visibility = VISIBLE
             btnEmailUsLoadingGotIt.text = bindString(R.string.retry)
             tvEmailUsLoadingTitle.text = bindString(R.string.enquiry_failed)
             tvEmailUsLoadingDesc.text = bindString(R.string.enquiry_failed_retry)
@@ -59,6 +61,7 @@ class EmailUsLoadingActivity : AppCompatActivity(), View.OnClickListener {
     private fun handleSuccess() {
         binding.apply {
             groupImageButton.visibility = VISIBLE
+            btnEmailUsLoadingDismiss.visibility = GONE
             tvEmailUsLoadingTitle.text = bindString(R.string.enquiry_successfully_sent)
             tvEmailUsLoadingDesc.text = bindString(R.string.thanks_for_message)
         }
@@ -72,6 +75,9 @@ class EmailUsLoadingActivity : AppCompatActivity(), View.OnClickListener {
                 } else {
                     finish()
                 }
+            }
+            binding.btnEmailUsLoadingDismiss -> {
+                finish()
             }
         }
     }
