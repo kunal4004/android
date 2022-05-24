@@ -723,8 +723,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         // Now first check for if delivery location and browsing location is same.
         // if same no issues. If not then show changing delivery location popup.
         if (!KotlinUtils.getDeliveryType()?.deliveryType.equals(KotlinUtils.browsingDeliveryType)) {
-            showChangeDeliveryTypeDialog()
-            return
+            // Todo This code will be uncommented in next PR APP1-356
+            //showChangeDeliveryTypeDialog()
+            //return
         }
 
         if (getSelectedSku() == null) {
