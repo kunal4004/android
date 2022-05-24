@@ -12,6 +12,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentEmailUsBinding
@@ -78,9 +79,9 @@ class EmailUsFragment : Fragment(), View.OnClickListener, TextWatcher {
             binding.apply {
                 when (it) {
                     ValidationErrors.EmailNotValid -> {
+                        binding.etEmailUsEmail.background = ContextCompat.getDrawable(requireActivity(), R.drawable.input_error_background)
                         binding.tvEmailUsEmailValidation.apply {
                             setTextColor(Color.RED)
-                            text = bindString(R.string.enter_valid_email)
                         }
 
                     }
