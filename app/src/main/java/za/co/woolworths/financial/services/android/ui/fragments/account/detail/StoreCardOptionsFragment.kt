@@ -11,10 +11,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
 import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.account_cart_item.*
 import kotlinx.android.synthetic.main.account_detail_header_fragment.*
 import kotlinx.android.synthetic.main.account_options_layout.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ITemporaryCardFreeze
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -38,6 +42,7 @@ import za.co.woolworths.financial.services.android.util.location.*
 import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 
+@AndroidEntryPoint
 class StoreCardOptionsFragment : AccountsOptionFragment() {
 
     private var accountStoreCardCallWasCompleted = false
@@ -145,7 +150,7 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
 
         when (storeCardResponse.httpCode) {
             200 -> {
-                GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+                CoroutineScope(Dispatchers.Main).launch {
                     setStoreCardTag()
                     VoiceOfCustomerManager.showPendingSurveyIfNeeded(context)
                 }

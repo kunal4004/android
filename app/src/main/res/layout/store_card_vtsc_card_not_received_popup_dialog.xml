@@ -65,17 +65,18 @@
         app:layout_constraintStart_toStartOf="@+id/start_guideline"
         app:layout_constraintTop_toBottomOf="@+id/headerTextView" />
 
-    <Button
-        android:id="@+id/actionButton"
+    <TextView
+        android:id="@+id/actionButtonTextView"
         android:layout_width="0dp"
         android:layout_height="@dimen/_52sdp"
         android:layout_marginTop="@dimen/_36sdp"
-        android:background="@drawable/black_button_drawable_state"
+        android:background="@color/black"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:letterSpacing="0.1"
         android:stateListAnimator="@null"
         android:text="@string/vtsc_card_not_arrived_button_caption"
         android:textAllCaps="true"
+        android:gravity="center"
         android:textColor="@color/white"
         android:textSize="@dimen/_12ssp"
         app:layout_constraintEnd_toStartOf="@+id/end_guideline"
@@ -89,18 +90,20 @@
         android:layout_height="@dimen/_24sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/actionButton" />
+        app:layout_constraintTop_toBottomOf="@+id/actionButtonTextView" />
 
     <ProgressBar
         android:id="@+id/notifyCardNotReceivedProgressbar"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_gravity="center"
+        android:visibility="gone"
+        android:padding="@dimen/_2sdp"
         android:indeterminateTint="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/bottomView"
         app:layout_constraintEnd_toStartOf="@+id/end_guideline"
         app:layout_constraintStart_toStartOf="@+id/start_guideline"
-        app:layout_constraintTop_toTopOf="@+id/actionButton" />
+        app:layout_constraintTop_toTopOf="@+id/actionButtonTextView" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
