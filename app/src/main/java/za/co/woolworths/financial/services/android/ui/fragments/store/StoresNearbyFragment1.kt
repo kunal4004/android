@@ -69,11 +69,12 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
         const val REQUEST_CODE_FINE_GPS = 5123
     }
 
-    private var mBottomNavigator: BottomNavigator? = null
     @DrawableRes
     var unSelectedIcon: Int? = null
     @DrawableRes
     var selectedIcon: Int? = null
+
+    private var mBottomNavigator: BottomNavigator? = null
     var mMarkers: HashMap<String, Int>? = null
     var markers: ArrayList<DynamicMapMarker>? = null
     var previousMarker: DynamicMapMarker? = null
@@ -108,8 +109,8 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
         super.onViewCreated(v, savedInstanceState)
 
         dynamicMapView?.initializeMap(savedInstanceState, this)
-        mMarkers = HashMap<String, Int>()
-        markers = ArrayList<DynamicMapMarker>()
+        mMarkers = HashMap()
+        markers = ArrayList()
 
         mPopWindowValidationMessage = PopWindowValidationMessage(activity)
         storesProgressBar?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
@@ -244,6 +245,8 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     }
 
     override fun onPageSelected(position: Int) {
+        if (dynamicMapView?.isMapInstantiated() == false) return
+
         previousMarker?.setIcon(unSelectedIcon)
         markers?.get(position)?.setIcon(selectedIcon)
         dynamicMapView?.animateCamera(markers?.get(position))
@@ -279,8 +282,14 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     }
 
     fun backToAllStoresPage(position: Int) {
-        dynamicMapView?.setScrollGesturesEnabled(isEnabled = true)
-        dynamicMapView?.animateCamera(markers?.get(position), DynamicMapView.CAMERA_ANIMATION_DURATION_SLOW)
+        if (dynamicMapView?.isMapInstantiated() == true) {
+            dynamicMapView?.setScrollGesturesEnabled(isEnabled = true)
+            dynamicMapView?.animateCamera(
+                markers?.get(position),
+                DynamicMapView.CAMERA_ANIMATION_DURATION_SLOW
+            )
+        }
+
         val toolbar = mBottomNavigator?.toolbar()
         toolbar?.animate()?.translationY(toolbar.top.toFloat())?.setInterpolator(AccelerateInterpolator())?.start()
         showAllMarkers(markers)
@@ -288,14 +297,18 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
 
     private fun showStoreDetails(position: Int) {
         storeDetailsList?.get(position)?.let { storeDetails -> initStoreDetailsView(storeDetails) }
-        hideMarkers(markers, position)
-        val center = dynamicMapView?.getCameraPositionTargetLatitude()
-        val northMap = dynamicMapView?.getVisibleRegionNortheastLatitude()
-        val diff = northMap?.let { center?.minus(it) }
-        val newLat = markers?.get(position)?.getPositionLatitude()?.plus(diff?.div(1.5)!!)
-        val newLng = markers?.get(position)?.getPositionLongitude()
-        dynamicMapView?.animateCamera(newLat, newLng)
-        dynamicMapView?.setScrollGesturesEnabled(isEnabled = false)
+
+        if (dynamicMapView?.isMapInstantiated() == true) {
+            hideMarkers(markers, position)
+            val center = dynamicMapView?.getCameraPositionTargetLatitude()
+            val northMap = dynamicMapView?.getVisibleRegionNortheastLatitude()
+            val diff = northMap?.let { center?.minus(it) }
+            val newLat = markers?.get(position)?.getPositionLatitude()?.plus(diff?.div(1.5)!!)
+            val newLng = markers?.get(position)?.getPositionLongitude()
+            dynamicMapView?.animateCamera(newLat, newLng)
+            dynamicMapView?.setScrollGesturesEnabled(isEnabled = false)
+        }
+
         if (sliding_layout?.anchorPoint == 1.0f) {
             val toolbar = mBottomNavigator?.toolbar()
             toolbar?.animate()?.translationY(-toolbar.bottom.toFloat())?.setInterpolator(AccelerateInterpolator())?.start()
@@ -305,16 +318,18 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     }
 
     private fun hideMarkers(markers: ArrayList<DynamicMapMarker>?, pos: Int) {
-        val indices = markers?.indices
-        for (i in indices!!) {
-            if (i != pos) markers[i].setVisibility(isVisible = false)
+        markers?.indices?.let { indices ->
+            for (i in indices) {
+                if (i != pos) markers[i].setVisibility(isVisible = false)
+            }
         }
     }
 
     private fun showAllMarkers(markers: ArrayList<DynamicMapMarker>?) {
-        val indices = markers?.indices
-        for (i in indices!!) {
-            markers[i].setVisibility(isVisible = true)
+        markers?.indices?.let { indices ->
+            for (i in indices) {
+                markers[i].setVisibility(isVisible = true)
+            }
         }
     }
 
@@ -326,8 +341,8 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
                     drawMarker(storeDetailsList[i].latitude, storeDetailsList[i].longitude, selectedIcon, i)
                 } else drawMarker(storeDetailsList[i].latitude, storeDetailsList[i].longitude, unSelectedIcon, i)
             }
-            cardPager?.adapter = CardsOnMapAdapter(activity, storeDetailsList)
         }
+        cardPager?.adapter = CardsOnMapAdapter(activity, storeDetailsList)
     }
 
     @SuppressLint("InflateParams", "SetTextI18n")

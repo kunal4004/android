@@ -1589,11 +1589,15 @@ public class Utils {
     }
 
     public static Boolean isGooglePlayServicesAvailable() {
-        return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(WoolworthsApplication.getAppContext()) == ConnectionResult.SUCCESS && false; // TODO revert
+        // TODO revert
+        return false;
+//        return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(WoolworthsApplication.getAppContext()) == ConnectionResult.SUCCESS;
     }
 
     public static Boolean isHuaweiMobileServicesAvailable() {
-        return HuaweiApiAvailability.getInstance().isHuaweiMobileServicesAvailable(WoolworthsApplication.getAppContext()) == ConnectionResult.SUCCESS;
+        // TODO revert
+        return true;
+//        return HuaweiApiAvailability.getInstance().isHuaweiMobileServicesAvailable(WoolworthsApplication.getAppContext()) == ConnectionResult.SUCCESS;
     }
 
    public static String formatAnalyticsButtonText(String btnName){
