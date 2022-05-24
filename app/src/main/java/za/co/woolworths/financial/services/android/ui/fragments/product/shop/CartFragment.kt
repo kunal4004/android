@@ -420,7 +420,8 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
 
     private fun navigateToCheckout(response: SavedAddressResponse?) {
         val activity: Activity = requireActivity()
-        if (((getPreferredDeliveryType() == Delivery.STANDARD) && !TextUtils.isEmpty(response?.defaultAddressNickname))) {
+        if (((getPreferredDeliveryType() == Delivery.STANDARD)
+                    && !TextUtils.isEmpty(response?.defaultAddressNickname))) {
             //   - CNAV : Checkout  activity
             Utils.triggerFireBaseEvents(
                 FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT,
@@ -433,6 +434,25 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             )
             checkoutActivityIntent.putExtra(
                 CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION,
+                true
+            )
+            activity.startActivityForResult(
+                checkoutActivityIntent,
+                REQUEST_PAYMENT_STATUS
+            )
+            activity.overridePendingTransition(
+                R.anim.slide_from_right,
+                R.anim.slide_out_to_left
+            )
+        }  else if (getPreferredDeliveryType() == Delivery.DASH &&
+             !TextUtils.isEmpty(response?.defaultAddressNickname)) {
+            val checkoutActivityIntent = Intent(activity, CheckoutActivity::class.java)
+            checkoutActivityIntent.putExtra(
+                CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
+                response
+            )
+            checkoutActivityIntent.putExtra(
+                CheckoutAddressManagementBaseFragment.DASH_SLOT_SELECTION,
                 true
             )
             activity.startActivityForResult(

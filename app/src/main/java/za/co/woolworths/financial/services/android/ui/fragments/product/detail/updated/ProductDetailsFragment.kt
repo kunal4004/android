@@ -2179,7 +2179,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         currentDeliveryLocation.text =
                             it.address?.address1 ?: ""
                         defaultLocationPlaceholder.text =
-                            getString(R.string.dashing_to)
+                            getString(R.string.dashing_to_space)
                     }
                     else -> {
                     }
