@@ -786,6 +786,9 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
     }
 
     public int getAppliedVouchersCount() {
+        if(voucherDetails == null) {
+            return -1;
+        }
         return CartUtils.Companion.getAppliedVouchersCount(voucherDetails.getVouchers());
     }
 }
