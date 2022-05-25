@@ -1309,11 +1309,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
         if (!nickNameErrorMessage.isNullOrEmpty()) {
             showNickNameServerError(nickNameErrorMessage)
-            presentErrorDialog(
-                nickNameErrorMessage!!,
-                "",
-                ERROR_TYPE_ADD_ADDRESS
-            )
         } else {
             presentErrorDialog(
                 getString(R.string.common_error_unfortunately_something_went_wrong),
