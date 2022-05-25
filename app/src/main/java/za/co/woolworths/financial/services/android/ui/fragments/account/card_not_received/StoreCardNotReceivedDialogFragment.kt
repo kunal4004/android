@@ -11,10 +11,12 @@ import androidx.fragment.app.viewModels
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.StoreCardVtscCardNotReceivedPopupDialogBinding
 import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.Response
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingBottomSheetFragment
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.ApiResult
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 @AndroidEntryPoint
@@ -37,7 +39,6 @@ class StoreCardNotReceivedDialogFragment : ViewBindingBottomSheetFragment<StoreC
         super.onViewCreated(view, savedInstanceState)
         setupViews()
         subscribeObserver()
-        queryAPIServiceGetCardNotReceived()
     }
 
     private fun setupViews() {
@@ -65,16 +66,9 @@ class StoreCardNotReceivedDialogFragment : ViewBindingBottomSheetFragment<StoreC
     private fun subscribeObserver() {
         viewModel.notifyCardNotReceived.observe(viewLifecycleOwner) { result ->
             when (result) {
-                is ApiResult.Success -> {
-                    showProgress(false)
-                    successNotificationView()
-                }
-                is ApiResult.Failure -> {
-                    httpErrorFromServer(result.data)
-                }
-                is ApiResult.Error -> {
-                    errorMessage()
-                }
+                is ApiResult.Success -> successNotificationView()
+                is ApiResult.Failure -> httpErrorFromServer(result.data)
+                is ApiResult.Error -> errorMessage()
             }
         }
     }
@@ -110,9 +104,10 @@ class StoreCardNotReceivedDialogFragment : ViewBindingBottomSheetFragment<StoreC
         when (view?.id) {
             R.id.actionButtonTextView -> {
                 activity ?: return
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VTSC_CARD_NOT_DELIVERED, requireActivity())
                 when (binding.actionButtonTextView.text.toString().lowercase()) {
                     getString(R.string.try_again).lowercase(),
-                    getString(R.string.vtsc_card_not_arrived_button_caption) -> queryAPIServiceGetCardNotReceived()
+                    getString(R.string.vtsc_card_not_arrived_button_caption).lowercase() -> queryAPIServiceGetCardNotReceived()
                     getString(R.string.got_it).lowercase() -> { dismiss() }
                 }
             }

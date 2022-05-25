@@ -92,7 +92,6 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
     private fun setupCardReceived() {
         mStoreCard?.apply {
-            cardNotReceived = true
             if (cardNotReceived) {
                 val dialog = StoreCardNotReceivedDialogFragment.newInstance()
                 dialog.show(

@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.data
 
+import android.content.Context
 import com.google.gson.Gson
+import dagger.hilt.android.qualifiers.ApplicationContext
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.models.dto.Response
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
@@ -8,6 +10,7 @@ import za.co.woolworths.financial.services.android.models.dto.pma.ErrorResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.fragments.integration.remote.RemoteDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.ApiResult
+import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import javax.inject.Inject
 
@@ -23,7 +26,8 @@ data class CardNotReceived(
     val productGroupCode: String? = null
 )
 
-class CardNotReceivedDataSource @Inject constructor() : ICardNotReceivedService {
+class CardNotReceivedDataSource @Inject constructor(@ApplicationContext val context: Context) :
+    ICardNotReceivedService {
 
     override suspend fun queryServiceNotifyCardNotYetReceived(): ApiResult<Response> {
         val jwtDecodedModel = SessionUtilities.getInstance().jwt
