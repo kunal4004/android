@@ -1276,7 +1276,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                         buildAddToCartSuccessToast(rlCheckOut, false, activity, null)
                     }
                 }
-                REQUEST_SUBURB_CHANGE ->  {
+                REQUEST_SUBURB_CHANGE -> {
                     initializeLoggedInUserCartUI()
                     loadShoppingCartAndSetDeliveryLocation()
                 }
@@ -1770,11 +1770,10 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         navigateToAvailableVouchersPage()
     }
 
-    fun navigateToAvailableVouchersPage() {
+    private fun navigateToAvailableVouchersPage() {
         val intent = Intent(context, AvailableVouchersToRedeemInCart::class.java)
         intent.putExtra(
-            "VoucherDetails", Utils
-                .toJson(voucherDetails)
+            "VoucherDetails", Utils.toJson(voucherDetails)
         )
         startActivityForResult(
             intent, REDEEM_VOUCHERS_REQUEST_CODE
