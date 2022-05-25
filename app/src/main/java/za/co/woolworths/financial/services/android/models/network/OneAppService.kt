@@ -42,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.net.URLEncoder
 
@@ -403,8 +404,10 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun getInventorySkuForStore(store_id: String, multipleSku: String): Call<SkusInventoryForStoreResponse> {
-        return mApiInterface.getInventorySKUForStore( getSessionToken(), getDeviceIdentityToken(), getDev4Environment(), store_id, multipleSku)
-
+        return if (KotlinUtils.browsingDeliveryType == Delivery.DASH.name) {
+            mApiInterface.getDashInventorySKUForStore(getSessionToken(), getDeviceIdentityToken(), getSit4Environment(), store_id, multipleSku)
+        } else
+            mApiInterface.getInventorySKUForStore(getSessionToken(), getDeviceIdentityToken(), getDev4Environment(), store_id, multipleSku)
     }
 
     suspend fun fetchInventorySkuForStore(store_id: String, multipleSku: String): retrofit2.Response<SkusInventoryForStoreResponse> {
