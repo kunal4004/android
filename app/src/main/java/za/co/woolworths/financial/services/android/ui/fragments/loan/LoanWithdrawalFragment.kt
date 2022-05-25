@@ -66,6 +66,7 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as? LoanWithdrawalActivity)?.setContentDescriptionForActionBarHomeIcon("closeIcon")
         mErrorHandlerView = ErrorHandlerView(activity)
         configureEditText()
         menuItemVisible(false)
@@ -302,7 +303,9 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
                                     else -> {
                                         showLoanWithdrawalPopup(
                                             LoanWithdrawalPopupDialog.LoanWithdrawalPopupType.GenericPopup(
-                                                response?.desc
+                                                response?.desc,
+                                                contentDescriptionForMessage = "responseDescription",
+                                                contentDescriptionForActionButtonOk = "btnOk"
                                             )
                                         )
                                     }

@@ -114,19 +114,22 @@
         android:id="@+id/loanWithdrawalLogoImageView"
         style="@style/style_loan_logo_img"
         android:src="@drawable/money"
+        android:contentDescription="withdrawCashNowIcon"
         app:layout_constraintBottom_toBottomOf="@+id/withdrawCashView"
         app:layout_constraintStart_toStartOf="@+id/withdrawCashView"
-        app:layout_constraintTop_toTopOf="@+id/withdrawCashView" />
+        app:layout_constraintTop_toTopOf="@+id/withdrawCashView"
+        tools:ignore="HardcodedText" />
 
 
     <ImageView
         android:id="@+id/iconDrawnDownAmount"
         style="@style/style_loan_img"
         android:src="@drawable/ic_caret_black"
+        android:contentDescription="withdrawCashNowArrowIcon"
         app:layout_constraintBottom_toBottomOf="@+id/loanWithdrawalLogoImageView"
         app:layout_constraintEnd_toEndOf="@+id/withdrawCashView"
         app:layout_constraintTop_toTopOf="@+id/loanWithdrawalLogoImageView"
-        tools:ignore="UnusedAttribute" />
+        tools:ignore="HardcodedText,UnusedAttribute" />
 
     <TextView
         android:id="@+id/withdrawCashTextView"
@@ -150,9 +153,11 @@
         android:id="@+id/withdrawCashViewGroup"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:contentDescription="withdrawCashNow"
         android:visibility="gone"
         app:constraint_referenced_ids="withdrawCashView,loanWithdrawalLogoImageView,iconDrawnDownAmount,withdrawCashTextView,withdrawCashDivider"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="HardcodedText" />
 
     <View
         android:id="@+id/viewTreatmentPlanOptions"
