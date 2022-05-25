@@ -303,9 +303,7 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
                                     else -> {
                                         showLoanWithdrawalPopup(
                                             LoanWithdrawalPopupDialog.LoanWithdrawalPopupType.GenericPopup(
-                                                response?.desc,
-                                                contentDescriptionForMessage = "responseDescription",
-                                                contentDescriptionForActionButtonOk = "btnOk"
+                                                response?.desc
                                             )
                                         )
                                     }
