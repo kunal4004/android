@@ -1042,15 +1042,15 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                                     navController?.navigateUp()
                                 }
                             }
-                            AppConstant.HTTP_SESSION_TIMEOUT_400, AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
+                            AppConstant.HTTP_SESSION_TIMEOUT_400 -> {
                                 addAddressErrorResponse(response, R.string.update_address_error)
                             }
+                            AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
+
+                                validateNickNameWithServerError(response)
+                            }
                             else -> {
-                                presentErrorDialog(
-                                    getString(R.string.common_error_unfortunately_something_went_wrong),
-                                    getString(R.string.no_internet_subtitle),
-                                    ERROR_TYPE_ADD_ADDRESS
-                                )
+                                validateNickNameWithServerError(response)
                             }
                         }
                     }
@@ -1214,6 +1214,18 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
 
+    private fun showNickNameServerError(errorMsg: String?) {
+        addressNicknameEditText?.setBackgroundResource(R.drawable.input_error_background)
+        addressNicknameErrorMsg?.visibility = View.VISIBLE
+        addressNicknameErrorMsg?.text = errorMsg
+        showAnimationErrorMessage(
+            addressNicknameErrorMsg,
+            View.VISIBLE,
+            recipientAddressLayout.y.toInt()
+        )
+    }
+
+
     private fun showErrorInputField(editText: EditText?, visible: Int) {
         editText?.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_error_background else R.drawable.recipient_details_input_edittext_bg)
         if (editText != null) {
@@ -1283,5 +1295,32 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     @VisibleForTesting
     fun testGetSavedAddress(): SavedAddressResponse? {
         return savedAddressResponse
+    }
+
+    private fun validateNickNameWithServerError(response: AddAddressResponse) {
+        var nickNameErrorMessage: String? = ""
+        response?.validationErrors?.let {
+            nickNameErrorMessage = it.stream().filter { error ->
+                error?.getField().equals(BundleKeysConstants.NICK_NAME)
+                    .and(!error?.getField().isNullOrEmpty())
+                    .and(!error?.getMessage().isNullOrEmpty())
+            }.findFirst().orElse(null)?.getMessage()
+        }
+
+        if (!nickNameErrorMessage.isNullOrEmpty()) {
+            showNickNameServerError(nickNameErrorMessage)
+            presentErrorDialog(
+                nickNameErrorMessage!!,
+                "",
+                ERROR_TYPE_ADD_ADDRESS
+            )
+        } else {
+            presentErrorDialog(
+                getString(R.string.common_error_unfortunately_something_went_wrong),
+                getString(R.string.no_internet_subtitle),
+                ERROR_TYPE_ADD_ADDRESS
+            )
+
+        }
     }
 }
