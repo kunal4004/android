@@ -24,7 +24,8 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
-
+import za.co.woolworths.financial.services.android.util.Constant.Companion.LIQUOR_ORDER
+import za.co.woolworths.financial.services.android.util.Constant.Companion.NO_LIQUOR_IMAGE_URL
 
 /**
  * Created by Kunal Uttarwar on 26/05/21.
@@ -56,6 +57,11 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                 whoIsCollectingString
             )
             baseFragBundle?.putBoolean(IS_DELIVERY, if (containsKey(IS_DELIVERY)) getBoolean(IS_DELIVERY) else true)
+            if(containsKey(LIQUOR_ORDER)&&containsKey(NO_LIQUOR_IMAGE_URL)){
+                baseFragBundle?.putBoolean(LIQUOR_ORDER , getBoolean(LIQUOR_ORDER))
+                baseFragBundle?.putString(NO_LIQUOR_IMAGE_URL,getString(NO_LIQUOR_IMAGE_URL))
+            }
+
         }
         loadNavHostFragment()
     }
