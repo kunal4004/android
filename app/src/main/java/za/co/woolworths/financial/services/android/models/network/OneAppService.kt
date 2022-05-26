@@ -42,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.net.URLEncoder
 
@@ -291,13 +292,16 @@ object OneAppService : RetrofitConfig() {
             mApiInterface.getProducts("", "", getSit4Environment(),  "",
                 "", getSessionToken(), getDeviceIdentityToken(), requestParams.searchTerm, requestParams.searchType.value,
                 requestParams.responseType.value, requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption,
-                requestParams.refinement, suburbId = suburbId, storeId = storeId, filterContent = requestParams.filterContent
+                requestParams.refinement, suburbId = suburbId, storeId = storeId, filterContent = requestParams.filterContent,
+                KotlinUtils.browsingDeliveryType ?: Delivery.STANDARD.type, deliveryDetails = null
             )
         } else {
             mApiInterface.getProductsWithoutLocation("", "", getSit4Environment(), getSessionToken(),
                 getDeviceIdentityToken(), requestParams.searchTerm, requestParams.searchType.value, requestParams.responseType.value,
                 requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption, requestParams.refinement, suburbId = suburbId,
-                storeId = storeId, filterContent =  requestParams.filterContent)
+                storeId = storeId, filterContent =  requestParams.filterContent,
+                deliveryType = KotlinUtils.browsingDeliveryType ?: Delivery.STANDARD.type, deliveryDetails = null
+            )
         }
     }
 
