@@ -26,6 +26,11 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import kotlinx.android.synthetic.main.checkout_add_address_new_user.*
 import kotlinx.android.synthetic.main.checkout_new_user_address_details.*
 import kotlinx.android.synthetic.main.checkout_new_user_recipient_details.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.ProvinceSuburbType.*
@@ -82,13 +87,14 @@ import java.net.HttpURLConnection.HTTP_OK
 import java.util.*
 import java.util.regex.Pattern
 import kotlin.collections.ArrayList
+import kotlin.coroutines.CoroutineContext
 
 
 /**
  * Created by Kunal Uttarwar on 29/05/21.
  */
 class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(),
-    View.OnClickListener {
+    View.OnClickListener, CoroutineScope {
 
     private var deliveringOptionsList: List<String>? = null
     private var navController: NavController? = null
@@ -105,7 +111,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     private var selectedAddressPosition: Int = -1
     private var isComingFromCheckout: Boolean = false
     private var isComingFromSlotSelection: Boolean = false
-
+    private var isValidAddress: Boolean = false;
 
     companion object {
         const val PROVINCE_SELECTION_BACK_PRESSED = "5645"
@@ -134,6 +140,11 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         super.onCreate(savedInstanceState)
         handleBundleResponse()
     }
+
+
+    private val job = Job()
+    override val coroutineContext: CoroutineContext
+        get() = job + Main
 
     fun handleBundleResponse() {
         bundle = arguments?.getBundle(BUNDLE)
@@ -506,6 +517,18 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                 }
             }
         }
+
+        if (addressText1.isNullOrEmpty() && addressText2.isNullOrEmpty()) {
+            isValidAddress = false
+            launch(Dispatchers.Main) {
+                autocompletePlaceErrorMsg?.text =
+                    getString(R.string.geo_loc_error_msg_on_edit_address)
+                showAnimationErrorMessage(autocompletePlaceErrorMsg, View.VISIBLE, 0)
+            }
+        } else {
+            isValidAddress = true
+
+        }
         if (!selectedAddress.provinceName.isNullOrEmpty() && !selectedAddress.savedAddress.suburb.isNullOrEmpty())
             selectedAddress.savedAddress.region = ""
         selectedAddress.savedAddress.apply {
@@ -797,6 +820,11 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         }
         if (selectedAddress.savedAddress.address1.isNullOrEmpty()) {
             showErrorDialog()
+            return
+        }
+        if (!isValidAddress) {
+            autocompletePlaceErrorMsg.text = getString(R.string.geo_loc_error_msg_on_edit_address)
+            showAnimationErrorMessage(autocompletePlaceErrorMsg, View.VISIBLE, 0)
             return
         }
         Utils.triggerFireBaseEvents(

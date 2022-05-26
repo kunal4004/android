@@ -2338,7 +2338,7 @@
     <string name="product_item">item found</string>
     <string name="goldCreditCard_title">Gold Credit Card</string>
     <string name="silverCreditCard_title">Silver Credit Card</string>
-     <!--vto-->
+    <!--vto-->
     <string name="capture">Capture Image</string>
     <string name="use_live_camera">Use Live Camera</string>
     <string name="take_a_photo">Take a Photo</string>
@@ -2396,8 +2396,8 @@
     <string name="bpi_checkbox_text">I agree with the <u>Comprehensive Balance Protection Terms &amp; Conditions</u></string>
     <string name="bpi_opt_in_text">opt in</string>
     <string name="bpi_opt_in_for_balance_protection_insurance">Opt in for Balance Protection Insurance</string>
-    <string name="bpi_confirm_opt_in_desc1">You may cancel this policy at any time. If you<br/> cancel within the first 31 days after which you have<br/> received the policy terms and conditions,<br/> we will reverse any premiums paid,<br/> provided have not claimed.</string>
-    <string name="bpi_confirm_opt_in_desc2">Should you require more information, need to<br/> submit a claim, log a complaint, wish to cancel or<br/> have not received your policy wording within 30<br/> days, please contact Woolworth Financial Services<br/> on 0861502020</string>
+    <string name="bpi_confirm_opt_in_desc1">You may cancel this policy at any time. If you<br /> cancel within the first 31 days after which you have<br /> received the policy terms and conditions,<br /> we will reverse any premiums paid,<br /> provided have not claimed.</string>
+    <string name="bpi_confirm_opt_in_desc2">Should you require more information, need to<br /> submit a claim, log a complaint, wish to cancel or<br /> have not received your policy wording within 30<br /> days, please contact Woolworth Financial Services<br /> on 0861502020</string>
     <string name="bpi_confirm_opt_in_desc_call_services">0861502020</string>
     <string name="bpi_email_me_a_copy">Email me a copy</string>
     <string name="bpi_terms_conditions_title">Terms &amp; Conditions</string>
@@ -2459,6 +2459,8 @@
     <string name="product_listing_price_from">From</string>
     <string name="product_details_color_count">+ %d More</string>
     <string name="geo_loc_error_msg">We can’t seem to find you. Please enter number and name of your street ,or drag the pin to your exact location.</string>
+    <string name="geo_loc_error_msg_on_edit_address">We can’t seem to find you. Please enter number and name of your street , to get
+        your exact location.</string>
     <string name="fashion_beauty_geo">Fashion,Beauty,Home</string>
     <string name="no_location_collection">There Are No Collection Stores \n Available Near You.</string>
     <string name="no_location_delivery">We Can’t Deliver To This Location Yet.</string>
