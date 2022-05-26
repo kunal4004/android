@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white">
 
     <LinearLayout
@@ -78,16 +77,36 @@
                 android:src="@drawable/ic_caret_black" />
         </RelativeLayout>
 
-        <View style="@style/accountOptionsDivider" />
+        <View android:id="@+id/paymentOptionView" style="@style/accountOptionsDivider" />
 
-        <include
-            android:id="@+id/incScPaymentOptions"
-            layout="@layout/include_sc_payment_options" />
+        <RelativeLayout
+            android:id="@+id/payMyAccountRelativeLayout"
+            style="@style/accountOptionItemsStyle">
+
+            <ImageView
+                android:id="@+id/payMyAccountImageView"
+                style="@style/accountOptionsImageviewStyle"
+                android:contentDescription="@string/payment_option_title"
+                android:src="@drawable/payment_options_grey" />
+
+            <TextView
+                android:id="@+id/payMyAccountTextView"
+                style="@style/accountOptionsLabelStyle"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@+id/paymentOptionArrowImageView"
+                android:layout_toEndOf="@+id/payMyAccountImageView"
+                android:text="@string/payment_option_title" />
+
+            <ImageView
+                android:id="@+id/paymentOptionArrowImageView"
+                style="@style/accountOptionsNextImageViewStyle"
+                android:src="@drawable/ic_caret_black" />
+        </RelativeLayout>
 
         <View style="@style/accountOptionsDivider" />
 
         <RelativeLayout
-            android:id="@+id/balanceProtectionInsuranceView"
+            android:id="@+id/balanceProtectionInsuranceRelativeLayout"
             style="@style/accountOptionItemsStyle">
 
             <ImageView
@@ -146,7 +165,7 @@
             style="@style/accountOptionsDivider" />
 
         <RelativeLayout
-            android:id="@+id/debitOrderView"
+            android:id="@+id/debitOrderRelativeLayout"
             style="@style/accountOptionItemsStyle">
 
             <ImageView

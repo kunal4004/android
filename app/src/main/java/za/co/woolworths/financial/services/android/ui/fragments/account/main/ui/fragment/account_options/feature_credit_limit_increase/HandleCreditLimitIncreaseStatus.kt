@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import javax.inject.Inject
 
@@ -23,6 +24,7 @@ enum class CreditLimitIncreaseStates(private val status: String) {
 
 interface IHandleCreditLimitIncreaseStatus {
     fun getStatus(offerActive: OfferActive?): CLILandingUIState
+    fun isOfferDisabled(offerActive: OfferActive?): Boolean
 }
 
 sealed class CLILandingUIState {
@@ -30,6 +32,12 @@ sealed class CLILandingUIState {
     data class CommonStatus(var offerActive: OfferActive?) : CLILandingUIState()
     data class Unavailable(var offerActive: OfferActive?) : CLILandingUIState()
 }
+
+data class CreditLimitIncreaseLanding(
+    val productOfferingId: Int,
+    val offerActive: OfferActive?,
+    val applyNowState: ApplyNowState
+)
 
 class HandleCreditLimitIncreaseStatus @Inject constructor() : IHandleCreditLimitIncreaseStatus {
     override fun getStatus(offerActive: OfferActive?): CLILandingUIState {
@@ -42,7 +50,22 @@ class HandleCreditLimitIncreaseStatus @Inject constructor() : IHandleCreditLimit
             CreditLimitIncreaseStates.POI_REQUIRED.value,
             CreditLimitIncreaseStates.INCOME_AND_EXPENSE.value,
             CreditLimitIncreaseStates.OFFER.value -> CLILandingUIState.CommonStatus(offerActive)
-            else -> CLILandingUIState.Unavailable(offerActive?.apply { messageSummary = bindString(R.string.status_unavailable) })
+            else -> CLILandingUIState.Unavailable(offerActive?.apply {
+                messageSummary = bindString(R.string.status_unavailable)
+            })
         }
     }
+
+    override fun isOfferDisabled(offerActive: OfferActive?): Boolean {
+        val nextStep = offerActive?.nextStep
+        val cliStatus = offerActive?.cliStatus
+        return nextStep.isNullOrEmpty() ||
+                nextStep == CreditLimitIncreaseStates.IN_PROGRESS.value ||
+                nextStep == CreditLimitIncreaseStates.DECLINE.value ||
+                nextStep == CreditLimitIncreaseStates.CONTACT_US.value ||
+                nextStep == CreditLimitIncreaseStates.UNAVAILABLE.value ||
+                (nextStep == CreditLimitIncreaseStates.COMPLETE.value
+                        && cliStatus != CreditLimitIncreaseStates.CLI_CONCLUDED.value)
+    }
+
 }

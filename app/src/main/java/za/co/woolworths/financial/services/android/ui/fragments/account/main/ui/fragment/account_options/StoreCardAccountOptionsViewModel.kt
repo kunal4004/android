@@ -14,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class StoreCardAccountOptionsViewModel @Inject constructor(
     private val accountProduct: AccountProductLandingDao,
-    private val accountOptions: AccountOptionsImpl,
+    val accountOptions: AccountOptionsImpl,
 ) : ViewModel(), IAccountProductLandingDao by accountProduct,
     IAccountOptions by accountOptions {
 

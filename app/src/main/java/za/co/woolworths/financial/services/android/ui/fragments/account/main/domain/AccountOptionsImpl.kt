@@ -15,8 +15,8 @@ interface IAccountOptions {
 }
 
 class AccountOptionsImpl @Inject constructor(
-    private val account: AccountProductLandingDao?,
-    private val bpi: BalanceProtectionInsuranceImpl
+     val account: AccountProductLandingDao?,
+     val bpi: BalanceProtectionInsuranceImpl
 ) : IAccountOptions, IBalanceProtectionInsurance by bpi {
 
     private var listOfAccountOptionsItem: MutableList<AccountOptionsScreenUI>

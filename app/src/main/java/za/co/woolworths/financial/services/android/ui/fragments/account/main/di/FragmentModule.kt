@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.di
 
-
 import android.content.Context
 import dagger.Module
 import dagger.Provides
@@ -17,24 +16,34 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dom
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.IBalanceProtectionInsurance
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.IStoreCardNavigator
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.StoreCardNavigator
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.*
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.IProductLandingRouter
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 
 @Module
 @InstallIn(FragmentComponent::class)
-object AccountProductsLandingModule {
+object FragmentModule {
+
+    @Provides
+    fun provideProductLandingRouterImpl(accountOptions: AccountOptionsImpl): IProductLandingRouter =
+        ProductLandingRouterImpl(accountOptions)
 
     @Provides
     fun provideNavigationGraph(): INavigationGraph = NavigationGraph()
 
     @Provides
-    fun provideBottomSheetBehaviour(@ApplicationContext context: Context, accountDao: AccountProductLandingDao): IBottomSheetBehaviour =
-        WBottomSheetBehaviour(context,accountDao)
+    fun provideBottomSheetBehaviour(
+        @ApplicationContext context: Context,
+        accountDao: AccountProductLandingDao
+    ): IBottomSheetBehaviour =
+        WBottomSheetBehaviour(context, accountDao)
 
     @Provides
     fun provideAccountProductLiveEvent(): IAccountProductLandingDao =
         AccountProductLandingDao()
 
     @Provides
-    fun provideBalanceProtectionInsurance(product : AccountProductLandingDao?): IBalanceProtectionInsurance =
+    fun provideBalanceProtectionInsurance(product: AccountProductLandingDao?): IBalanceProtectionInsurance =
         BalanceProtectionInsuranceImpl(product)
 
     @Provides
