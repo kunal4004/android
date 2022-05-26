@@ -458,6 +458,7 @@ class CheckoutDashFragment : Fragment(),
         driverTipOptionsList!!.add("R20")
         driverTipOptionsList!!.add("R30")
         driverTipOptionsList!!.add("Own Amount")
+        selectedDriverTipValue = null
         showDriverTipView()
     }
 
@@ -487,6 +488,8 @@ class CheckoutDashFragment : Fragment(),
                 titleTextView?.setOnClickListener {
                     var isSameSelection =
                         true // Because we want to change this view after the value entered from user.
+                    selectedDriverTipValue = (it as TextView).text as? String
+
                     if (it.tag == driverTipOptionsList!!.lastIndex) {
                         val tipValue = if (titleTextView.text.toString()
                                 .equals(driverTipOptionsList!!.lastOrNull())
@@ -499,10 +502,12 @@ class CheckoutDashFragment : Fragment(),
                             CustomDriverTipBottomSheetDialog::class.java.simpleName)
                     } else {
                         isSameSelection = resetAllDriverTip(it.tag as Int)
-                        if (isSameSelection)
+                        if (isSameSelection) {
+                            selectedDriverTipValue = null
                             tipNoteTextView?.visibility = View.GONE
+                        }
                     }
-                    selectedDriverTipValue = (it as TextView).text as? String
+
                     if (!isSameSelection) {
                         // Change background of selected Tip as it's not unselection.
                         it.background =
@@ -925,6 +930,7 @@ class CheckoutDashFragment : Fragment(),
         }
         deliveryType = Delivery.DASH.type
         address = ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
+        driverTip = removeRandFromAmount(selectedDriverTipValue ?: "0.0").toDouble()
     }
 
     private fun isGiftMessage(): Boolean {
@@ -997,5 +1003,6 @@ class CheckoutDashFragment : Fragment(),
             )
         )
         tipNoteTextView?.visibility = View.VISIBLE
+        selectedDriverTipValue = tipValue
     }
 }
