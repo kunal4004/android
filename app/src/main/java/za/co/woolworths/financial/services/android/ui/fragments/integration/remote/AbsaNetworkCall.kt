@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.integration.remote
 
 import com.awfs.coordination.BuildConfig
-import com.huawei.agconnect.annotation.Singleton
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -78,7 +77,6 @@ object AbsaRemoteApi {
     }
 }
 
-@Singleton
 object RemoteDataSource {
     val service: ApiInterface by lazy {
         AbsaNetworkCall().build(ApiInterface::class.java, BuildConfig.HOST + "/" )

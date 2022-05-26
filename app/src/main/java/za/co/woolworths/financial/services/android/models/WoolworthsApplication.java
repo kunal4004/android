@@ -43,9 +43,9 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.wigroup.androidutils.Util;
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
-import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.bpi.BalanceProtectionInsurance;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
@@ -62,7 +62,6 @@ import static za.co.woolworths.financial.services.android.ui.fragments.account.c
 @HiltAndroidApp
 public class WoolworthsApplication extends Application implements Application.ActivityLifecycleCallbacks, LifecycleObserver {
 
-    private static Context context;
     private static Context mContextApplication;
     private UserManager mUserManager;
     private Tracker mTracker;
@@ -85,7 +84,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     private Activity mCurrentActivity = null;
 
-    private static ValidatedSuburbProducts validatedSuburbProducts;
+    private static ValidatePlace validatePlace;
 
 
     public static String getApiId() {
@@ -130,7 +129,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
     public void onCreate() {
         super.onCreate();
         mInstance = this;
-        WoolworthsApplication.context = this.getApplicationContext();
         this.registerActivityLifecycleCallbacks(this);
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -147,15 +145,15 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
         TimeZone.setDefault(TimeZone.getTimeZone("Africa/Johannesburg"));
 
-        ImagePipelineConfig config = ImagePipelineConfig.newBuilder(context)
+        ImagePipelineConfig config = ImagePipelineConfig.newBuilder(this)
                 .setDownsampleEnabled(true)
                 .build();
         Fresco.initialize(this, config);
         //wake up FirebaseManager that will instantiate
         //FirebaseApp
         FirebaseManager.Companion.getInstance();
-        FacebookSdk.sdkInitialize(WoolworthsApplication.this);
-        AppEventsLogger.activateApp(WoolworthsApplication.this);
+        FacebookSdk.sdkInitialize(this);
+        AppEventsLogger.activateApp(this);
         mWGlobalState = new WGlobalState();
         updateBankDetail = new UpdateBankDetail();
         // set app context
@@ -331,12 +329,12 @@ public class WoolworthsApplication extends Application implements Application.Ac
         this.mCurrentActivity = mCurrentActivity;
     }
 
-    public static ValidatedSuburbProducts getValidatedSuburbProducts() {
-        return validatedSuburbProducts;
+    public static ValidatePlace getValidatePlaceDetails() {
+        return validatePlace;
     }
 
-    public static void setValidatedSuburbProducts(ValidatedSuburbProducts validatedSuburbProducts) {
-        WoolworthsApplication.validatedSuburbProducts = validatedSuburbProducts;
+    public static void setValidatedSuburbProducts(ValidatePlace validatePlace) {
+        WoolworthsApplication.validatePlace = validatePlace;
     }
 
     public boolean isAnyActivityVisible() {

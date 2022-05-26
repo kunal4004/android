@@ -37,7 +37,7 @@ class PayMyAccountViewModel : ViewModel() {
     private var mQueryServiceDeletePaymentMethod: Call<DeleteResponse>? = null
     private var mQueryServiceGetPaymentMethods: Call<PaymentMethodsResponse>? = null
     private var paymentMethodsResponse: MutableLiveData<PaymentMethodsResponse?> = MutableLiveData()
-    private var onDialogDismiss: MutableLiveData<OnBackNavigation> = MutableLiveData()
+    private var onDialogDismiss: MutableLiveData<OnNavigateBack> = MutableLiveData()
     private val pmaFirebaseEvent: PMATrackFirebaseEvent = PMATrackFirebaseEvent()
     private var addCardResponse: MutableLiveData<AddCardResponse> = MutableLiveData()
     private var isQueryServiceGetRedirectionCompleted: Boolean = false
@@ -56,8 +56,15 @@ class PayMyAccountViewModel : ViewModel() {
     var pma3dSecureRedirection: PMARedirection? = null
 
     enum class PAYUMethodType { CREATE_USER, CARD_UPDATE, ERROR }
-    enum class OnBackNavigation { RETRY, REMOVE, ADD, NONE, MAX_CARD_LIMIT } // TODO: Navigation graph: Communicate result from dialog to fragment destination
 
+    sealed class OnNavigateBack {
+        object Retry : OnNavigateBack()
+        data class Remove (var position : Int, var isCardExpired : Boolean = false) : OnNavigateBack()
+        object Add : OnNavigateBack()
+        object None : OnNavigateBack()
+        object MaxCardLimit : OnNavigateBack()
+
+    }
     companion object {
         const val DEFAULT_RAND_CURRENCY = "R 0.00"
         const val MAX_AMOUNT_LIMIT = 50000
@@ -75,7 +82,7 @@ class PayMyAccountViewModel : ViewModel() {
                 ?: "", paymentMethod?.type ?: "")
         return AddCardResponse(paymentMethod?.token ?: "", pmaCard, false)
     }
-
+    fun getSelectedPosition() = getCardDetail()?.selectedCardPosition ?: 0
     fun getPaymentMethodList(): MutableList<GetPaymentMethod>? {
         val cardDetail = getCardDetail()
         val paymentList = cardDetail?.paymentMethodList
@@ -146,14 +153,12 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun getCardDetailInStringFormat(): String? = Gson().toJson(getCardDetail())
 
-    fun setNavigationResult(onDismiss: OnBackNavigation) {
+    fun setNavigationResult(onDismiss: OnNavigateBack) {
         onDialogDismiss.value = onDismiss
-        onDialogDismiss.value = OnBackNavigation.NONE
     }
 
-    fun getNavigationResult(): MutableLiveData<OnBackNavigation> {
-        return onDialogDismiss
-    }
+    fun getNavigationResult(): MutableLiveData<OnNavigateBack> = onDialogDismiss
+
 
     fun queryServicePayUPaymentMethod(onSuccessResult: (MutableList<GetPaymentMethod>?) -> Unit, onSessionExpired: (String?) -> Unit, onGeneralError: (String) -> Unit, onFailureHandler: (Throwable?) -> Unit) {
         var payUMethodType: PAYUMethodType
@@ -439,7 +444,11 @@ class PayMyAccountViewModel : ViewModel() {
     fun resetAmountEnteredToDefault() {
         val card = getCardDetail()
         if (isAccountChargedOff()) {
-            card?.amountEntered = getCurrentBalance()
+            if (elitePlanModel !=null ){
+                card?.amountEntered = elitePlanModel!!.settlementAmount
+            }else{
+                card?.amountEntered = getCurrentBalance()
+            }
         } else {
             card?.amountEntered = getOverdueAmount()
         }

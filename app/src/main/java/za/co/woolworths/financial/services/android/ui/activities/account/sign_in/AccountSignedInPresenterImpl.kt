@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.ui.extension.deviceHeight
 import za.co.woolworths.financial.services.android.util.eliteplan.EligibilityImpl
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.eliteplan.PMApiStatusImpl
 
 
 class AccountSignedInPresenterImpl(
@@ -36,6 +37,7 @@ class AccountSignedInPresenterImpl(
     private var eligibilityPlan: EligibilityPlan? = null
     var isAccountInArrearsState: Boolean = false
     var eligibilityImpl: EligibilityImpl? = null
+    var pmaStatusImpl: PMApiStatusImpl? = null
 
     companion object {
         const val MY_ACCOUNT_RESPONSE = "MY_ACCOUNT_RESPONSE"
@@ -150,14 +152,21 @@ class AccountSignedInPresenterImpl(
             ApplyNowState.PERSONAL_LOAN -> ProductGroupCode.PL
             else -> ProductGroupCode.CC
         }
-        eligibilityImpl?.eligibilityResponse(response.eligibilityPlan)
+        if (productOffering.isTakeUpTreatmentPlanJourneyEnabled() || productOffering.isViewTreatmentPlanSupported()) {
+            eligibilityImpl?.eligibilityResponse(response.eligibilityPlan)
+        }
         eligibilityPlan = response.eligibilityPlan
 
         if (eligibilityPlan?.productGroupCode == eligibleState) {
             when (eligibilityPlan?.actionText) {
                 ActionText.START_NEW_ELITE_PLAN.value -> {
-                    if (eligibilityPlan?.planType.equals(ELITE_PLAN) && showPopupIfNeeded) {
-                        mainView?.removeBlocksOnCollectionCustomer()
+                    if (productOffering.isTakeUpTreatmentPlanJourneyEnabled()) {
+                        if (eligibilityPlan?.planType.equals(ELITE_PLAN) && showPopupIfNeeded) {
+                            mainView?.removeBlocksOnCollectionCustomer()
+                        }
+                    } else {
+                        if (eligibilityPlan == null) mainView?.showAccountInArrears(
+                            account = getAccount()) else mainView?.showAboveSixMonthsAccountInDelinquencyPopup(eligibilityPlan)
                     }
                 }
                 ActionText.TAKE_UP_TREATMENT_PLAN.value -> {
@@ -168,39 +177,44 @@ class AccountSignedInPresenterImpl(
                             mainView?.showViewTreatmentPlan(state, response.eligibilityPlan)!!
                         }
                     } else {
-                        getAccount()?.let { mainView?.showAccountInArrears(account = it) }
+                        getAccount()?.let { mainView?.showAccountInArrears(
+                            account = it) }
                     }
                 }
 
                 ActionText.VIEW_TREATMENT_PLAN.value, ActionText.VIEW_ELITE_PLAN.value -> {
-                    if (productOffering.isViewTreatmentPlanSupported()) {
+                    if (eligibilityPlan?.planType.equals(ELITE_PLAN)) {
+                        when (state) {
+                            ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD -> {
+                                mainView?.removeBlocksOnCollectionCustomer()
+                                return
+                            }
+                            else -> Unit
+                        }
+                    }
+                    if (productOffering.isViewTreatmentPlanSupported() || productOffering.isTakeUpTreatmentPlanJourneyEnabled()) {
                         mainView?.showPlanButton(state, response.eligibilityPlan)
                         if (showPopupIfNeeded) {
-                            if (eligibilityPlan?.planType.equals(ELITE_PLAN)){
-                                when(state){
-                                    ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD -> {
-                                        mainView?.removeBlocksOnCollectionCustomer()
-                                        return
-                                    }
-                                }
-                            }
                             mainView?.showViewTreatmentPlan(
                                 state,
                                 response.eligibilityPlan
                             )
                         }
                     } else {
-                        getAccount()?.let { mainView?.showAccountInArrears(account = it) }
-                    }
+                      mainView?.showAccountInArrears(account = getAccount()) }
                 }
             }
         } else {
+            eligibilityImpl?.eligibilityFailed()
             showAccountInArrears(account)
         }
     }
 
     private fun showAccountInArrears(account: Account?) {
         account ?: return
+        if (ProductOfferingStatus(account).isChargedOffCC()) {
+            return
+        }
         mainView?.showAccountInArrears(account)
         mainView?.showAccountHelp(getCardProductInformation(true))
     }
@@ -223,26 +237,28 @@ class AccountSignedInPresenterImpl(
                             showAccountHelp(getCardProductInformation(false))
                         }
 
-                        AccountOfferingState.AccountIsInArrears -> showAccountInArrears(account)
+                        AccountOfferingState.AccountIsInArrears -> showAccountInArrears(
+                            account)
 
                         AccountOfferingState.AccountIsChargedOff -> {
                             // account is in arrears for more than 6 months
-                            removeBlocksOnCollectionCustomer()
-                        }
-
-                        AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff -> {
+                            // with showTreatmentPlanJourney and collectionsStartNewPlanJourney disabled
                             removeBlocksWhenChargedOff()
                             when (productGroupCode()) {
                                 ProductOfferingStatus.productGroupCodeSc, ProductOfferingStatus.productGroupCodePl -> {
-                                    showViewTreatmentPlan(true)
+                                    getAccount()?.let { mainView?.showAccountInArrears(
+                                        account = it) }
                                 }
                             }
                         }
 
-                        AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig -> {
+                        AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff -> {
+                            removeBlocksWhenChargedOff(true)
                             showViewTreatmentPlan(true)
+
                         }
 
+                        AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig,
                         AccountOfferingState.MakeGetEligibilityCall -> {
                             if (isChargedOff()) {
                                 removeBlocksWhenChargedOff()
@@ -256,7 +272,11 @@ class AccountSignedInPresenterImpl(
                                         showPopupIfNeeded
                                     )
                                 },
-                                { if (showPopupIfNeeded) showAccountInArrears(account) })
+                                {
+                                    eligibilityImpl?.eligibilityFailed()
+                                    if (showPopupIfNeeded && !isChargedOffCC()) showAccountInArrears(
+                                        account)
+                                })
                         }
                     }
                 }

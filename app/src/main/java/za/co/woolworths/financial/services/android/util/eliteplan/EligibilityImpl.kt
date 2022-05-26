@@ -4,4 +4,9 @@ import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 
 interface EligibilityImpl {
     fun eligibilityResponse(eligibilityPlan: EligibilityPlan?)
+    fun eligibilityFailed()
+}
+
+interface PMApiStatusImpl {
+    fun pmaSuccess()
 }
