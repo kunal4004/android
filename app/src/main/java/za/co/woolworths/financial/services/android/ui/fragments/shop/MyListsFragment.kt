@@ -187,7 +187,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
         Utils.getPreferredDeliveryLocation()?.apply {
             activity?.let {
                 KotlinUtils.setDeliveryAddressView(it,
-                    this,
+                    this.fulfillmentDetails,
                     tvDeliveringTo,
                     tvDeliveryLocation,
                     deliverLocationIcon)
@@ -197,7 +197,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
         Utils.getPreferredDeliveryLocation()?.apply {
             activity?.let {
                 KotlinUtils.setDeliveryAddressView(it,
-                    this,
+                    this.fulfillmentDetails,
                     tvDeliveringEmptyTo,
                     tvDeliveryEmptyLocation,
                     truckIcon)
@@ -253,7 +253,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
         Utils.getPreferredDeliveryLocation()?.apply {
             activity?.let {
                 KotlinUtils.setDeliveryAddressView(it,
-                    this,
+                    this.fulfillmentDetails,
                     tvDeliveringEmptyTo,
                     tvDeliveryEmptyLocation,
                     truckIcon)

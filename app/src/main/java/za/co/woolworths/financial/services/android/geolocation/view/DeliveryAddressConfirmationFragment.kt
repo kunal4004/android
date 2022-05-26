@@ -25,13 +25,15 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.geo_location_delivery_address.*
 import kotlinx.android.synthetic.main.no_connection.*
 import kotlinx.android.synthetic.main.no_connection.view.*
-import kotlinx.android.synthetic.main.shop_custom_tab.view.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
-import za.co.woolworths.financial.services.android.checkout.view.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
@@ -49,7 +51,6 @@ import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.models.network.StorePickupInfoBody
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
@@ -311,8 +312,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         setFragmentResultListener(STORE_LOCATOR_REQUEST_CODE) { _, bundle ->
             store = bundle.get(BUNDLE) as Store
             store?.let {
-                if (it?.storeName != null) {
-                    geoDeliveryText?.text = KotlinUtils.capitaliseFirstLetter(it?.storeName)
+                if (it.storeName != null) {
+                    geoDeliveryText?.text = KotlinUtils.capitaliseFirstLetter(it.storeName)
                 }
                 editDelivery?.text = bindString(R.string.edit)
                 btnConfirmAddress?.isEnabled = true
@@ -322,8 +323,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                         R.color.black
                     )
                 )
-                mStoreName = it?.storeName.toString()
-                mStoreId = it?.storeId.toString()
+                mStoreName = it.storeName.toString()
+                mStoreId = it.storeId.toString()
             }
         }
 
@@ -581,23 +582,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     companion object {
-
         const val STORE_LOCATOR_REQUEST_CODE = "543"
         const val MAP_LOCATION_RESULT = "8472"
-
-        fun newInstance(latitude: String, longitude: String, placesId: String) =
-            DeliveryAddressConfirmationFragment().withArgs {
-                putString(KEY_LATITUDE, latitude)
-                putString(KEY_LONGITUDE, longitude)
-                putString(KEY_PLACE_ID, placesId)
-            }
-
-        @JvmStatic
-        fun newInstance(placesId: String?, deliveryType: Delivery? = Delivery.STANDARD) =
-            DeliveryAddressConfirmationFragment().withArgs {
-                putString(KEY_PLACE_ID, placesId)
-                putString(DELIVERY_TYPE, deliveryType?.name)
-            }
     }
 
     private fun setUpViewModel() {
@@ -717,7 +703,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             if (collectionQuantity != null) bindString(R.string.click_and_collect_title_text,
                 collectionQuantity.toString()) else bindString(R.string.empty)
         validateLocationResponse?.validatePlace?.apply {
-            if ((this?.stores?.isEmpty() == true || this?.stores?.getOrNull(0)?.deliverable == false) && progressBar?.visibility == View.GONE) {
+            if ((this.stores?.isEmpty() == true || this.stores?.getOrNull(0)?.deliverable == false) && progressBar?.visibility == View.GONE) {
                 // Show no store available Bottom Dialog.
                 showNotDeliverablePopUp(R.string.no_location_collection,
                     R.string.no_location_desc,
@@ -964,7 +950,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     /**
      * This function is to navigate to Unsellable Items screen.
      * @param [unSellableCommerceItems] list of items that are not deliverable in the selected location
-     * @param [deliverable] boolean flag to determine if provided list of items are deliverable
      *
      * @see [Suburb]
      * @see [Province]

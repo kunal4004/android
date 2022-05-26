@@ -32,14 +32,14 @@ class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
 
         fun newInstance(
             title: String,
-            subTitle: String,
+            subTitle: CharSequence,
             dialog_button_text: String,
             dialog_title_img: Int,
             dismissLinkText: String?
         ) =
             CustomBottomSheetDialogFragment().withArgs {
                 putString(DIALOG_TITLE, title)
-                putString(DIALOG_SUB_TITLE, subTitle)
+                putCharSequence(DIALOG_SUB_TITLE, subTitle)
                 putString(DIALOG_BUTTON_TEXT, dialog_button_text)
                 putInt(DIALOG_TITLE_IMG, dialog_title_img)
                 putString(DIALOG_DISMISS_LINK_TEXT, dismissLinkText)
@@ -72,7 +72,7 @@ class CustomBottomSheetDialogFragment : WBottomSheetDialogFragment(),
                 tvTitle?.visibility = View.VISIBLE
                 tvTitle?.text = title
             }
-            val subTitle = getString(DIALOG_SUB_TITLE, "")
+            val subTitle = getCharSequence(DIALOG_SUB_TITLE, "")
             if (subTitle.isNullOrEmpty()) {
                 tvDescription?.visibility = View.GONE
             } else {
