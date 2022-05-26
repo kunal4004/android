@@ -105,12 +105,12 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
                 // now check if application class response has deliverable or local object of validatePlace has deliverable. Continue with that object which has deliverable.
                 val validatePlace =
-                    if (viewModel.getValidatePlaceResponse()?.onDemand?.deliverable == true)
-                        viewModel.getValidatePlaceResponse()
+                    if (WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.onDemand?.deliverable == true)
+                        WoolworthsApplication.getDashBrowsingValidatePlaceDetails()
                     else if (WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.deliverable == true)
                         WoolworthsApplication.getValidatePlaceDetails()
                     else
-                        viewModel.getValidatePlaceResponse()
+                        WoolworthsApplication.getDashBrowsingValidatePlaceDetails()
                             ?: WoolworthsApplication.getValidatePlaceDetails()
                 if (validatePlace == null) {
                     // This means user has location but validatePlace response from DB is null.
@@ -445,8 +445,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                         progressBar.visibility = View.VISIBLE
                     }
                     Status.SUCCESS -> {
-                        resource.data?.validatePlace?.let { it1 ->
-                            viewModel.setValidatePlaceResponse(it1)
+                        resource.data?.validatePlace?.let { validatePlaceResponse ->
+                            WoolworthsApplication.setDashBrowsingValidatePlaceDetails(validatePlaceResponse)
                             initViews()
                         }
                         progressBar.visibility = View.GONE

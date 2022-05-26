@@ -114,12 +114,4 @@ class ShopViewModel @Inject constructor(
     fun setAddItemToCart(addItemToCart: AddItemToCart?) {
         _addItemToCart.value = addItemToCart
     }
-
-    fun setValidatePlaceResponse (validateLocationResponse: ValidatePlace){
-        validatePlaceResponse = validateLocationResponse
-    }
-
-    fun getValidatePlaceResponse() : ValidatePlace?{
-        return validatePlaceResponse
-    }
 }
