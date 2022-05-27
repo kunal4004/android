@@ -14,7 +14,6 @@ import android.graphics.Typeface
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
 import android.view.*
@@ -53,7 +52,6 @@ import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout.PanelState
 import za.co.woolworths.financial.services.android.ui.views.WButton
 import za.co.woolworths.financial.services.android.ui.views.WTextView
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment.Companion.ACCESS_MY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate
 import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapView
@@ -62,7 +60,6 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator
-import za.co.woolworths.financial.services.android.util.location.Logger
 
 class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageChangeListener {
 
@@ -150,9 +147,10 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
                 when (newState) {
                     PanelState.COLLAPSED -> {
                         /*
-					 * Previous result: Application would exit completely when back button is pressed
-                     * New result: Panel just returns to its previous position (Panel collapses)
-                     */sliding_layout?.isFocusableInTouchMode = true
+                         * Previous result: Application would exit completely when back button is pressed
+                         * New result: Panel just returns to its previous position (Panel collapses)
+                         */
+                        sliding_layout?.isFocusableInTouchMode = true
                         sliding_layout?.setOnKeyListener(View.OnKeyListener { _, keyCode, _ ->
                             if (keyCode == KeyEvent.KEYCODE_BACK) {
                                 sliding_layout?.panelState = PanelState.COLLAPSED
