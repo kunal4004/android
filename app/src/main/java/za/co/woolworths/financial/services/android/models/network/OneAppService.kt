@@ -409,7 +409,7 @@ object OneAppService : RetrofitConfig() {
 
     suspend fun fetchInventorySkuForStore(store_id: String, multipleSku: String): retrofit2.Response<SkusInventoryForStoreResponse> {
         return withContext(Dispatchers.IO) {
-            mApiInterface.fetchInventorySKUForStore( getSessionToken(), getDeviceIdentityToken(), getSit4Environment(), store_id, multipleSku)
+            mApiInterface.fetchDashInventorySKUForStore( getSessionToken(), getDeviceIdentityToken(), getSit4Environment(), store_id, multipleSku)
         }
     }
 

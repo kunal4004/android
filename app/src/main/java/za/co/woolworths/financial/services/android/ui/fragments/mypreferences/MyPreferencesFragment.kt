@@ -477,7 +477,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         deliverLocationIcon.setBackgroundResource(R.drawable.tick_cli_active)
         shoppingDeliveryLocation?.let {
             setDeliveryAddressView(activity,
-                shoppingDeliveryLocation,
+                shoppingDeliveryLocation.fulfillmentDetails,
                 tvDeliveringTo,
                 tvDeliveryLocation,
                 null)

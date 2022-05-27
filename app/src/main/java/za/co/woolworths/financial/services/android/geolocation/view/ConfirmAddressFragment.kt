@@ -125,7 +125,8 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             if (confirmAddressViewModel.isConnectedToInternet(requireActivity()))
                 fetchAddress()
             else {
-                no_connection_layout?.visibility = View.VISIBLE
+                noAddressConnectionLayout?.visibility = View.VISIBLE
+                noAddressConnectionLayout?.no_connection_layout?.visibility = View.VISIBLE
             }
             rvSavedAddressList?.visibility = View.VISIBLE
         } else {
@@ -148,14 +149,15 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             if (confirmAddressViewModel.isConnectedToInternet(requireActivity()))
                 fetchAddress()
             else {
-                no_connection_layout?.visibility = View.VISIBLE
+                noAddressConnectionLayout?.visibility = View.VISIBLE
+                noAddressConnectionLayout?.no_connection_layout?.visibility = View.VISIBLE
             }
         } else {
             inSavedAddress?.visibility = View.VISIBLE
             tvConfirmAddress?.visibility = View.GONE
         }
         setButtonUI(false)
-        no_connection_layout?.btnRetryConnection?.setOnClickListener {
+        no_connection_layout?.btnRetry?.setOnClickListener {
             initViews()
         }
 
@@ -173,7 +175,10 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                                 activity,
                                 Locale.getDefault()
                             ).getFromLocation(it.latitude, it.longitude, 1)
-                            tvCurrentLocation.text = addresses[0].getAddressLine(0)
+                            addresses[0]?.getAddressLine(0)?.let{ addressLine ->
+                                tvCurrentLocation?.text = addressLine
+                            }
+
                         } catch (io: IOException) {
                             FirebaseManager.logException(io)
                         }

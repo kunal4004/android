@@ -57,6 +57,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.Transactio
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionHeader
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionItem
 import za.co.woolworths.financial.services.android.models.dto.app_config.chat.ConfigTradingHours
+import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity
@@ -95,6 +96,7 @@ class KotlinUtils {
         var isDeliveryLocationTabClicked: Boolean? = false
         var isCncTabClicked: Boolean? = false
         var isDashTabClicked: Boolean? = false
+        var browsingDeliveryType: String? = getPreferredDeliveryType()?.name
         const val DELAY: Long = 900
         const val collectionsIdUrl = "woolworths.wfs.co.za/CustomerCollections/IdVerification"
         const val COLLECTIONS_EXIT_URL = "collectionsExitUrl"
@@ -267,7 +269,9 @@ class KotlinUtils {
             return ""
         }
 
-        fun capitaliseFirstLetter(str: String): CharSequence? {
+        fun capitaliseFirstLetter(str: String?): CharSequence? {
+            if (str.isNullOrEmpty())
+                return str
             val value = str.toLowerCase()
             val words = value.split(" ").toMutableList()
             var output = ""
@@ -415,18 +419,18 @@ class KotlinUtils {
 
         fun setDeliveryAddressView(
             context: Activity?,
-            shoppingDeliveryLocation: ShoppingDeliveryLocation,
+            fulfillmentDetails: FulfillmentDetails,
             tvDeliveringTo: TextView,
             tvDeliveryLocation: TextView,
             deliverLocationIcon: ImageView?,
         ) {
-            with(shoppingDeliveryLocation?.fulfillmentDetails) {
+            with(fulfillmentDetails) {
                 when (Delivery?.getType(deliveryType)) {
                     Delivery.CNC -> {
                         tvDeliveringTo?.text =
                             context?.resources?.getString(R.string.collecting_from)
                         tvDeliveryLocation?.text =
-                            context?.resources?.getString(R.string.store) + storeName ?: ""
+                            capitaliseFirstLetter(context?.resources?.getString(R.string.store) + storeName)
 
                         tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_collection_circle)
@@ -434,10 +438,9 @@ class KotlinUtils {
                     Delivery.STANDARD -> {
                         tvDeliveringTo.text =
                             context?.resources?.getString(R.string.standard_delivery)
-                        tvDeliveryLocation.text =
-                            address?.address1 ?: ""
+                        tvDeliveryLocation?.text = capitaliseFirstLetter(address?.address1 ?: "")
 
-                        tvDeliveryLocation.visibility = View.VISIBLE
+                        tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_delivery_circle)
                     }
                     Delivery.DASH -> {
@@ -451,17 +454,19 @@ class KotlinUtils {
                                 context?.resources?.getString(R.string.dash_delivery_bold)
                                     .plus("\t" + timeSlot)
                         }
-                        tvDeliveryLocation?.text = WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.storeName ?: address?.address1
+                        tvDeliveryLocation?.text =
+                            capitaliseFirstLetter(WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
+                                ?: address?.address1 ?: "")
                         tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_dash_delivery_circle)
                     }
                     else -> {
                         tvDeliveringTo.text =
                             context?.resources?.getString(R.string.standard_delivery)
-                        tvDeliveryLocation.text =
+                        tvDeliveryLocation?.text =
                             context?.resources?.getString(R.string.default_location)
 
-                        tvDeliveryLocation.visibility = View.VISIBLE
+                        tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_delivery_circle)
                     }
                 }
@@ -902,24 +907,28 @@ class KotlinUtils {
                 }
             }
         }
-        fun openTreatmentPlanUrl(activity: Activity?, eligibilityPlan: EligibilityPlan?){
+
+        fun openTreatmentPlanUrl(activity: Activity?, eligibilityPlan: EligibilityPlan?) {
             var collectionUrlFromConfig: Pair<String?, String?>? = null
             var exitUrl: String? = ""
             val accountOptions = AppConfigSingleton.accountOptions
 
             when (eligibilityPlan?.productGroupCode) {
                 ProductGroupCode.SC -> {
-                    collectionUrlFromConfig =accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.storeCard?.collectionsDynamicUrl
+                    collectionUrlFromConfig =
+                        accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.storeCard?.collectionsDynamicUrl
                     exitUrl = accountOptions?.showTreatmentPlanJourney?.storeCard?.exitUrl
                 }
 
                 ProductGroupCode.PL -> {
-                    collectionUrlFromConfig = accountOptions?.collectionsStartNewPlanJourney?.personalLoan?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.personalLoan?.collectionsDynamicUrl
+                    collectionUrlFromConfig =
+                        accountOptions?.collectionsStartNewPlanJourney?.personalLoan?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.personalLoan?.collectionsDynamicUrl
                     exitUrl = accountOptions?.showTreatmentPlanJourney?.personalLoan?.exitUrl
                 }
 
                 ProductGroupCode.CC -> {
-                    collectionUrlFromConfig = accountOptions?.collectionsStartNewPlanJourney?.creditCard?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.creditCard?.collectionsDynamicUrl
+                    collectionUrlFromConfig =
+                        accountOptions?.collectionsStartNewPlanJourney?.creditCard?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.creditCard?.collectionsDynamicUrl
                     exitUrl = accountOptions?.collectionsStartNewPlanJourney?.creditCard?.exitUrl
                 }
             }
@@ -935,7 +944,7 @@ class KotlinUtils {
                     false -> collectionUrlFromConfig?.first
                 }
 
-            val url =  finalCollectionUrlFromConfig + eligibilityPlan?.appGuid
+            val url = finalCollectionUrlFromConfig + eligibilityPlan?.appGuid
 
             openLinkInInternalWebView(
                 activity,
@@ -971,6 +980,14 @@ class KotlinUtils {
             return Delivery.getType(
                 Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType ?: ""
             )
+        }
+
+        fun getDeliveryType(): FulfillmentDetails? {
+            return if (SessionUtilities.getInstance().isUserAuthenticated) {
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails
+            } else{
+                getAnonymousUserLocationDetails()?.fulfillmentDetails
+            }
         }
 
         fun getPreferredPlaceId(): String {

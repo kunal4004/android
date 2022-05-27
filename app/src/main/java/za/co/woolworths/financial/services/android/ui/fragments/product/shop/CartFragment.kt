@@ -420,7 +420,8 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
 
     private fun navigateToCheckout(response: SavedAddressResponse?) {
         val activity: Activity = requireActivity()
-        if (((getPreferredDeliveryType() == Delivery.STANDARD) && !TextUtils.isEmpty(response?.defaultAddressNickname))) {
+        if (((getPreferredDeliveryType() == Delivery.STANDARD)
+                    && !TextUtils.isEmpty(response?.defaultAddressNickname))) {
             //   - CNAV : Checkout  activity
             Utils.triggerFireBaseEvents(
                 FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT,
@@ -433,6 +434,25 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             )
             checkoutActivityIntent.putExtra(
                 CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION,
+                true
+            )
+            activity.startActivityForResult(
+                checkoutActivityIntent,
+                REQUEST_PAYMENT_STATUS
+            )
+            activity.overridePendingTransition(
+                R.anim.slide_from_right,
+                R.anim.slide_out_to_left
+            )
+        }  else if (getPreferredDeliveryType() == Delivery.DASH &&
+             !TextUtils.isEmpty(response?.defaultAddressNickname)) {
+            val checkoutActivityIntent = Intent(activity, CheckoutActivity::class.java)
+            checkoutActivityIntent.putExtra(
+                CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
+                response
+            )
+            checkoutActivityIntent.putExtra(
+                CheckoutAddressManagementBaseFragment.DASH_SLOT_SELECTION,
                 true
             )
             activity.startActivityForResult(
@@ -1256,7 +1276,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                         buildAddToCartSuccessToast(rlCheckOut, false, activity, null)
                     }
                 }
-                REQUEST_SUBURB_CHANGE ->  {
+                REQUEST_SUBURB_CHANGE -> {
                     initializeLoggedInUserCartUI()
                     loadShoppingCartAndSetDeliveryLocation()
                 }
@@ -1605,7 +1625,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             requireActivity().apply {
                 setDeliveryAddressView(
                     this,
-                    shoppingDeliveryLocation,
+                    shoppingDeliveryLocation.fulfillmentDetails,
                     tvDeliveryTitle,
                     tvDeliverySubtitle,
                     imgCartDelivery
@@ -1750,11 +1770,10 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         navigateToAvailableVouchersPage()
     }
 
-    fun navigateToAvailableVouchersPage() {
+    private fun navigateToAvailableVouchersPage() {
         val intent = Intent(context, AvailableVouchersToRedeemInCart::class.java)
         intent.putExtra(
-            "VoucherDetails", Utils
-                .toJson(voucherDetails)
+            "VoucherDetails", Utils.toJson(voucherDetails)
         )
         startActivityForResult(
             intent, REDEEM_VOUCHERS_REQUEST_CODE

@@ -50,6 +50,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.VALIDATE_RESPONSE
 import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
@@ -85,8 +86,11 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
             placeId = this.getString(KEY_PLACE_ID, "")
             isComingFromConfirmAddress = getBoolean(IS_COMING_CONFIRM_ADD,false)
             if(containsKey(VALIDATE_RESPONSE)){
-                mValidateLocationResponse =
-                    getSerializable(VALIDATE_RESPONSE) as ValidateLocationResponse
+                getSerializable(VALIDATE_RESPONSE)?.let {
+                    mValidateLocationResponse =
+                        it as ValidateLocationResponse
+                }
+
             }
 
         }
@@ -183,7 +187,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
         mValidateLocationResponse: ValidateLocationResponse?
     ) {
         tvStoresNearMe?.text = resources.getString(R.string.near_stores, address?.size)
-        tvAddress?.text = mValidateLocationResponse?.validatePlace?.placeDetails?.address1
+        tvAddress?.text = KotlinUtils.capitaliseFirstLetter(mValidateLocationResponse?.validatePlace?.placeDetails?.address1)
         setStoreList(address)
     }
 

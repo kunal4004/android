@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.geolocation.view
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -23,12 +24,16 @@ import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.geo_location_delivery_address.*
 import kotlinx.android.synthetic.main.no_connection.*
+import kotlinx.android.synthetic.main.no_connection.view.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
-import za.co.woolworths.financial.services.android.checkout.view.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
@@ -46,7 +51,6 @@ import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.models.network.StorePickupInfoBody
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
@@ -165,6 +169,24 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     this.getSerializable(SAVED_ADDRESS_RESPONSE) as SavedAddressResponse
             }
         }
+
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.apply {
+                if (deliveryType == Delivery.CNC.type) {
+                    //storeName will only be used in CnC flow. But storeId will be use in CnC or Dash.
+                    mStoreName = this.storeName
+                }
+                mStoreId = this.storeId
+            }
+        } else {
+            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.apply {
+                if (deliveryType == Delivery.CNC.type) {
+                    //storeName will only be used in CnC flow. But storeId will be use in CnC or Dash.
+                    mStoreName = this.storeName
+                }
+                mStoreId = this.storeId
+            }
+        }
     }
 
     override fun onClick(v: View?) {
@@ -226,7 +248,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     openDashTab()
                 }
             }
-            R.id.btnRetryConnection -> {
+            R.id.btnRetry -> {
                 initView()
             }
         }
@@ -290,8 +312,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         setFragmentResultListener(STORE_LOCATOR_REQUEST_CODE) { _, bundle ->
             store = bundle.get(BUNDLE) as Store
             store?.let {
-                if (it?.storeName != null) {
-                    geoDeliveryText?.text = it?.storeName
+                if (it.storeName != null) {
+                    geoDeliveryText?.text = KotlinUtils.capitaliseFirstLetter(it.storeName)
                 }
                 editDelivery?.text = bindString(R.string.edit)
                 btnConfirmAddress?.isEnabled = true
@@ -301,8 +323,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                         R.color.black
                     )
                 )
-                mStoreName = it?.storeName.toString()
-                mStoreId = it?.storeId.toString()
+                mStoreName = it.storeName.toString()
+                mStoreId = it.storeId.toString()
             }
         }
 
@@ -325,7 +347,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 longitude = this?.getString(KEY_LONGITUDE, "")
                 placeId = this?.getString(KEY_PLACE_ID, "")
             }
-            placeId?.let { getDeliveryDetailsFromValidateLocation(it) }
+            placeId?.let { getDeliveryDetailsFromValidateLocation(it, true) }
         }
         setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_DISMISS_RESULT) { _, _ ->
             // change location dismiss button clicked so land back on last delivery location tab.
@@ -344,20 +366,31 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     private fun sendConfirmLocation() {
+
+        if (!confirmAddressViewModel.isConnectedToInternet(requireActivity())) {
+            dash_no_connection_view?.visibility = View.GONE
+            geoDeliveryView?.visibility = View.GONE
+            connectionLayout?.visibility = View.VISIBLE
+            connectionLayout?.no_connection_layout?.visibility = View.VISIBLE
+            return
+        }
+
         var unSellableCommerceItems: MutableList<UnSellableCommerceItem>? = ArrayList()
         when (deliveryType) {
             Delivery.STANDARD.name -> {
+                mStoreId = ""
                 unSellableCommerceItems =
                     validateLocationResponse?.validatePlace?.unSellableCommerceItems
             }
             Delivery.CNC.name -> {
                 validateLocationResponse?.validatePlace?.stores?.forEach {
-                    if (it.storeName.equals(mStoreName)) {
+                    if (it.storeId.equals(mStoreId)) {
                         unSellableCommerceItems = it.unSellableCommerceItems
                     }
                 }
             }
             Delivery.DASH.name -> {
+                mStoreId = validateLocationResponse?.validatePlace?.onDemand?.storeId
                 unSellableCommerceItems =
                     validateLocationResponse?.validatePlace?.onDemand?.unSellableCommerceItems
             }
@@ -450,22 +483,24 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                 }
 
                                 if (isComingFromCheckout) {
-                                    if (deliveryType == Delivery.STANDARD.name) {
+                                    if (deliveryType == Delivery.STANDARD.name || deliveryType == Delivery.DASH.name) {
                                         if (isComingFromSlotSelection) {
                                             /*Navigate to slot selection page with updated saved address*/
-
                                             val checkoutActivityIntent =
                                                 Intent(activity,
                                                     CheckoutActivity::class.java
                                                 )
                                             checkoutActivityIntent.putExtra(
                                                 CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
-                                                savedAddressResponse)
-
-                                            checkoutActivityIntent.putExtra(
-                                                CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION,
-                                                true
+                                                savedAddressResponse
                                             )
+                                            val result = when(deliveryType) {
+                                                Delivery.STANDARD.name -> CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION
+                                                else -> CheckoutAddressManagementBaseFragment.DASH_SLOT_SELECTION
+                                            }
+
+                                            checkoutActivityIntent.putExtra(result, true)
+
                                             activity?.apply {
                                                 startActivityForResult(
                                                     checkoutActivityIntent,
@@ -547,23 +582,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     companion object {
-
         const val STORE_LOCATOR_REQUEST_CODE = "543"
         const val MAP_LOCATION_RESULT = "8472"
-
-        fun newInstance(latitude: String, longitude: String, placesId: String) =
-            DeliveryAddressConfirmationFragment().withArgs {
-                putString(KEY_LATITUDE, latitude)
-                putString(KEY_LONGITUDE, longitude)
-                putString(KEY_PLACE_ID, placesId)
-            }
-
-        @JvmStatic
-        fun newInstance(placesId: String?, deliveryType: Delivery? = Delivery.STANDARD) =
-            DeliveryAddressConfirmationFragment().withArgs {
-                putString(KEY_PLACE_ID, placesId)
-                putString(DELIVERY_TYPE, deliveryType?.name)
-            }
     }
 
     private fun setUpViewModel() {
@@ -588,14 +608,18 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             if (confirmAddressViewModel.isConnectedToInternet(requireActivity())) {
                 viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                     delay(AppConstant.DELAY_300_MS)
-                    getDeliveryDetailsFromValidateLocation(it)
+                    getDeliveryDetailsFromValidateLocation(it, false)
                 }
+                dash_no_connection_view.visibility = View.VISIBLE
                 connectionLayout?.visibility = View.GONE
+                connectionLayout?.no_connection_layout?.visibility = View.GONE
             } else {
+                dash_no_connection_view.visibility = View.GONE
                 connectionLayout?.visibility = View.VISIBLE
+                connectionLayout?.no_connection_layout?.visibility = View.VISIBLE
             }
         }
-        btnRetryConnection?.setOnClickListener(this)
+        btnRetry?.setOnClickListener(this)
     }
 
     private fun showDeliveryTabView() {
@@ -679,7 +703,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             if (collectionQuantity != null) bindString(R.string.click_and_collect_title_text,
                 collectionQuantity.toString()) else bindString(R.string.empty)
         validateLocationResponse?.validatePlace?.apply {
-            if ((this?.stores?.isEmpty() == true || this?.stores?.getOrNull(0)?.deliverable == false) && progressBar?.visibility == View.GONE) {
+            if ((this.stores?.isEmpty() == true || this.stores?.getOrNull(0)?.deliverable == false) && progressBar?.visibility == View.GONE) {
                 // Show no store available Bottom Dialog.
                 showNotDeliverablePopUp(R.string.no_location_collection,
                     R.string.no_location_desc,
@@ -728,6 +752,9 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     private fun selectATab(selectedTab: AppCompatTextView) {
         selectedTab?.setBackgroundResource(R.drawable.bg_geo_selected_tab)
+        val myRiadSemiBoldFont =
+            Typeface.createFromAsset(activity?.assets, "fonts/MyriadPro-Semibold.otf")
+        selectedTab?.typeface = myRiadSemiBoldFont
         selectedTab?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
         when (selectedTab) {
             geoDeliveryTab -> {
@@ -747,12 +774,15 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     private fun unSelectATab(unSelectedTab: AppCompatTextView) {
         unSelectedTab?.apply {
+            val myriadProRegularFont =
+                Typeface.createFromAsset(activity?.assets, "fonts/MyriadPro-Regular.otf")
+            typeface = myriadProRegularFont
             setBackgroundResource(R.drawable.bg_geo_unselected_tab)
             setTextColor(ContextCompat.getColor(requireContext(), R.color.color_444444))
         }
     }
 
-    private fun getDeliveryDetailsFromValidateLocation(placeId: String) {
+    private fun getDeliveryDetailsFromValidateLocation(placeId: String, isNewLocation: Boolean) {
         val oldPlaceId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
         if (placeId.isNullOrEmpty() || (oldPlaceId != null && oldPlaceId == placeId)) {
             moveToTab(deliveryType)
@@ -768,8 +798,12 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 if (validateLocationResponse != null) {
                     when (validateLocationResponse?.httpCode) {
                         HTTP_OK -> {
-                            mStoreName =
-                                validateLocationResponse?.validatePlace?.stores?.getOrNull(0)?.storeName
+                            if (isNewLocation || (mStoreName.isNullOrEmpty() || mStoreId.isNullOrEmpty())) {
+                                mStoreName =
+                                    getNearestStore(validateLocationResponse?.validatePlace?.stores)
+                                mStoreId =
+                                    getNearestStoreId(validateLocationResponse?.validatePlace?.stores)
+                            }
                             moveToTab(deliveryType)
                         }
                         else -> {
@@ -788,8 +822,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     private fun updateDeliveryDetails() {
         geoDeliveryText?.text =
-            validateLocationResponse?.validatePlace?.placeDetails?.address1
-                ?: getString(R.string.empty)
+            KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1
+                ?: getString(R.string.empty))
 
         var earliestFoodDate =
             validateLocationResponse?.validatePlace?.firstAvailableFoodDeliveryDate
@@ -817,8 +851,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     private fun updateDashDetails() {
         geoDeliveryText?.text =
-            validateLocationResponse?.validatePlace?.onDemand?.storeName
-                ?: getString(R.string.empty)
+            KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1
+                ?: getString(R.string.empty))
         var earliestDashDate =
             validateLocationResponse?.validatePlace?.onDemand?.firstAvailableFoodDeliveryTime
         if (earliestDashDate.isNullOrEmpty())
@@ -863,8 +897,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         }
 
         if (earliestFashionDate.isNullOrEmpty()) {
-            earliestFashionDeliveryDateLabel?.visibility = View.GONE
-            earliestFashionDeliveryDateValue?.visibility = View.GONE
+            earliestFashionDeliveryDateLabel?.visibility = View.INVISIBLE
+            earliestFashionDeliveryDateValue?.visibility = View.INVISIBLE
         } else {
             earliestFashionDeliveryDateLabel?.visibility = View.VISIBLE
             earliestFashionDeliveryDateValue?.visibility = View.VISIBLE
@@ -882,78 +916,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     }
 
     private fun setGeoDeliveryTextForCnc() {
-
-        if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName?.isNullOrEmpty() == true
-            && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.storeName?.isNullOrEmpty() == true
-        ) {
-            whereToCollect()
-            return
-        } else if (SessionUtilities.getInstance().isUserAuthenticated) {
-            if (store != null) {
-                geoDeliveryText?.text = store?.storeName
-                editDelivery?.text = bindString(R.string.edit)
-                btnConfirmAddress?.isEnabled = true
-                btnConfirmAddress?.setBackgroundColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.black
-                    )
-                )
-                return
-            }
-            if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName == null) {
-                whereToCollect()
-                return
-            }
-            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
-                geoDeliveryText?.text = it.storeName
-                editDelivery?.text = bindString(R.string.edit)
-                btnConfirmAddress?.isEnabled = true
-                btnConfirmAddress?.setBackgroundColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.black
-                    )
-                )
-                return
-            }
-        } else {
-            if (store != null) {
-                geoDeliveryText?.text = store?.storeName
-                editDelivery?.text = bindString(R.string.edit)
-                btnConfirmAddress?.isEnabled = true
-                btnConfirmAddress?.setBackgroundColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.black
-                    )
-                )
-                return
-            }
-
-            if (KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails == null) {
-                whereToCollect()
-                return
-            }
-            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let {
-                geoDeliveryText?.text = it.storeName
-                editDelivery?.text = bindString(R.string.edit)
-                btnConfirmAddress?.isEnabled = true
-                btnConfirmAddress?.setBackgroundColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.black
-                    )
-                )
-                return
-            }
-        }
-    }
-
-    private fun whereToCollect() {
-        geoDeliveryText?.text =
-            getNearestStore(validateLocationResponse?.validatePlace?.stores)
-        mStoreId = getNearestStoreId(validateLocationResponse?.validatePlace?.stores)
+        geoDeliveryText?.text = KotlinUtils.capitaliseFirstLetter(mStoreName)
         editDelivery?.text = bindString(R.string.edit)
         btnConfirmAddress?.isEnabled = true
         btnConfirmAddress?.setBackgroundColor(
@@ -987,7 +950,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     /**
      * This function is to navigate to Unsellable Items screen.
      * @param [unSellableCommerceItems] list of items that are not deliverable in the selected location
-     * @param [deliverable] boolean flag to determine if provided list of items are deliverable
      *
      * @see [Suburb]
      * @see [Province]
