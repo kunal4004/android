@@ -2563,15 +2563,12 @@
     <string name="time_slot_value">%s:</string>
     <string name="collection_store">Collection Store:</string>
     <string name="order_total_history">Order Total</string>
-<!--    <string name="chat_to_your_shopper">Chat to Your Shopper, Refilwe</string>-->
+    <string name="track_your_order">Track Your Order</string>
     <string name="chat_to_your_shopper"> <![CDATA[Chat to Your Shopper, <font color=\'#000000\'><b>%s</b></font>]]></string>
     <!-- My Cart   -->
     <string name="cart_default_location">Default Location</string>
-
     <!-- Common Errors -->
     <string name="error_unknown">An unknown error occurred</string>
     <string name="error_internet_connection">Couldn\'t reach the server. Check your internet connection.</string>
-    <string name="track_your_order">Track Your Order</string>
-
 
 </resources>
