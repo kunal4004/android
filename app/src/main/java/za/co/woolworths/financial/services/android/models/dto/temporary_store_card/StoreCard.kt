@@ -14,5 +14,5 @@ data class StoreCard(
     val dateOpened: String,
     val dateLastMaintained: String,
     var blockType: String? = "",
-    var cardNotReceived: Boolean = true
+    var cardNotReceived: Boolean = false
 )
