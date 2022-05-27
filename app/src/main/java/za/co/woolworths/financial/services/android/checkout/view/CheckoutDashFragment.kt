@@ -143,7 +143,7 @@ class CheckoutDashFragment : Fragment(),
         hideInstructionLayout()
         callConfirmLocationAPI()
         setFragmentResults()
-        txtContinueToPaymentCollection?.setOnClickListener(this)
+        txtContinueToPayment?.setOnClickListener(this)
         checkoutCollectingFromLayout?.setOnClickListener(this)
     }
 
@@ -179,10 +179,21 @@ class CheckoutDashFragment : Fragment(),
             ),
             Pair<ShimmerFrameLayout, View>(forwardImgViewShimmerFrameLayout, imageViewCaretForward),
             Pair<ShimmerFrameLayout, View>(
-                collectionTimeDetailsShimmerLayout,
-                collectionTimeDetailsConstraintLayout
+                foodSubstitutionTitleShimmerFrameLayout,
+                txtFoodSubstitutionTitle
             ),
-
+            Pair<ShimmerFrameLayout, View>(
+                foodSubstitutionDescShimmerFrameLayout,
+                txtFoodSubstitutionDesc
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                foodSubstitutionDescShimmerFrameLayout,
+                txtFoodSubstitutionDesc
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                radioGroupFoodSubstitutionShimmerFrameLayout,
+                radioGroupFoodSubstitution
+            ),
             Pair<ShimmerFrameLayout, View>(
                 instructionTxtShimmerFrameLayout,
                 txtSpecialDeliveryInstruction
@@ -214,16 +225,20 @@ class CheckoutDashFragment : Fragment(),
             ),
             Pair<ShimmerFrameLayout, View>(summaryNoteShimmerFrameLayout, txtOrderSummaryNote),
             Pair<ShimmerFrameLayout, View>(
-                txtOrderTotalCollectionShimmerFrameLayout,
-                txtOrderTotalTitleCollection
+                txtOrderTotalShimmerFrameLayout,
+                txtOrderTotalTitle
             ),
             Pair<ShimmerFrameLayout, View>(
-                orderTotalValueCollectionShimmerFrameLayout,
-                txtOrderTotalValueCollection
+                orderTotalValueShimmerFrameLayout,
+                txtOrderTotalValue
             ),
             Pair<ShimmerFrameLayout, View>(
-                continuePaymentTxtCollectionShimmerFrameLayout,
-                txtContinueToPaymentCollection
+                continuePaymentTxtShimmerFrameLayout,
+                txtContinueToPayment
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                collectionTimeDetailsShimmerLayout,
+                collectionTimeDetailsConstraintLayout
             ),
             Pair<ShimmerFrameLayout, View>(
                 newShoppingBagsTitleShimmerFrameLayout,
@@ -779,7 +794,7 @@ class CheckoutDashFragment : Fragment(),
             R.id.chooseDateLayout -> {
                 onChooseDateClicked()
             }
-            R.id.txtContinueToPaymentCollection -> {
+            R.id.txtContinueToPayment -> {
                 onCheckoutPaymentClick()
             }
         }
