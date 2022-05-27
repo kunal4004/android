@@ -48,6 +48,7 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturni
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
@@ -98,7 +99,7 @@ class KotlinUtils {
         var isDeliveryLocationTabClicked: Boolean? = false
         var isCncTabClicked: Boolean? = false
         var isDashTabClicked: Boolean? = false
-        var browsingDeliveryType: String? = getPreferredDeliveryType()?.name
+        var browsingDeliveryType: Delivery? = getPreferredDeliveryType()
         const val DELAY: Long = 900
         const val collectionsIdUrl = "woolworths.wfs.co.za/CustomerCollections/IdVerification"
         const val COLLECTIONS_EXIT_URL = "collectionsExitUrl"
@@ -475,23 +476,23 @@ class KotlinUtils {
             }
         }
 
-        fun getUnsellableList(): MutableList<UnSellableCommerceItem>? {
+        fun getUnsellableList(validatePlace: ValidatePlace?): MutableList<UnSellableCommerceItem>? {
             return when (browsingDeliveryType) {
-                Delivery.STANDARD.name -> {
-                    WoolworthsApplication.getValidatePlaceDetails()?.unSellableCommerceItems
+                Delivery.STANDARD -> {
+                    validatePlace?.unSellableCommerceItems
                 }
-                Delivery.CNC.name -> {
-                    checkStoreHasUnsellable()
+                Delivery.CNC -> {
+                    checkStoreHasUnsellable(validatePlace)
                 }
-                Delivery.DASH.name -> {
-                    WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.onDemand?.unSellableCommerceItems
+                Delivery.DASH -> {
+                    validatePlace?.onDemand?.unSellableCommerceItems
                 }
-                else -> WoolworthsApplication.getValidatePlaceDetails()?.unSellableCommerceItems
+                else -> validatePlace?.unSellableCommerceItems
             }
         }
 
-        private fun checkStoreHasUnsellable(): MutableList<UnSellableCommerceItem>? {
-            WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores?.forEach {
+        private fun checkStoreHasUnsellable(validatePlace: ValidatePlace?): MutableList<UnSellableCommerceItem>? {
+            validatePlace?.stores?.forEach {
                 val mStoreId = "124" // todo get this storeId from browsing storeId.
                 if (it.storeId.equals(mStoreId)) {
                     return it.unSellableCommerceItems
@@ -503,26 +504,27 @@ class KotlinUtils {
         fun getConfirmLocationRequest(): ConfirmLocationRequest {
             val mStoreId = "124" // todo get this storeId from browsing storeId.
             return when (browsingDeliveryType) {
-                Delivery.STANDARD.name -> {
+                Delivery.STANDARD -> {
                     ConfirmLocationRequest(BundleKeysConstants.STANDARD,
                         ConfirmLocationAddress(WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId),
                         "")
                 }
-                Delivery.CNC.name -> {
+                Delivery.CNC -> {
                     ConfirmLocationRequest(BundleKeysConstants.CNC,
-                        ConfirmLocationAddress(if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.placeDetails?.placeId != null)
+                        ConfirmLocationAddress(if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() != null)
                             WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.placeDetails?.placeId
                         else WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId),
                         mStoreId)
                 }
-                Delivery.DASH.name -> {
+                Delivery.DASH -> {
                     ConfirmLocationRequest(BundleKeysConstants.DASH,
-                        ConfirmLocationAddress(if (WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.placeDetails?.placeId != null)
+                        ConfirmLocationAddress(if (WoolworthsApplication.getDashBrowsingValidatePlaceDetails() != null)
                             WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.placeDetails?.placeId
                         else WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId),
-                        if (WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.onDemand?.storeId != null)
+                        if (WoolworthsApplication.getDashBrowsingValidatePlaceDetails() != null)
                             WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.onDemand?.storeId
-                        else WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.storeId)
+                        else WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.storeId
+                    )
                 }
                 else -> {
                     ConfirmLocationRequest(BundleKeysConstants.STANDARD,

@@ -135,17 +135,17 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                                 this
                             )
                             showBlackToolTip(Delivery.STANDARD)
-                            KotlinUtils.browsingDeliveryType = Delivery.STANDARD.name
+                            KotlinUtils.browsingDeliveryType = Delivery.STANDARD
                         }
                         1 -> {
                             //Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS, this)
                             showBlackToolTip(Delivery.CNC)
-                            KotlinUtils.browsingDeliveryType = Delivery.CNC.name
+                            KotlinUtils.browsingDeliveryType = Delivery.CNC
                         }
                         2 -> {
                             // Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYORDERS, this)
                             showBlackToolTip(Delivery.DASH)
-                            KotlinUtils.browsingDeliveryType = Delivery.DASH.name
+                            KotlinUtils.browsingDeliveryType = Delivery.DASH
                         }
                     }
                     setupToolbar(position)
