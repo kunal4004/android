@@ -679,16 +679,14 @@ public class Utils {
         AtomicReference<String> deviceID = new AtomicReference<>(getSessionDaoValue(SessionDao.KEY.DEVICE_ID));
         if (deviceID.get() == null) {
             FirebaseInstallations.getInstance().getId().addOnCompleteListener(task -> {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     deviceID.set(task.getResult());
                     sessionDaoSave(SessionDao.KEY.DEVICE_ID, deviceID.get());
-                }
-                else if(!task.isSuccessful()){
+                } else if (!task.isSuccessful()) {
                     FirebaseManager.logException("Utils.getUniqueDeviceID() task failed");
                 }
             });
         }
-
         return deviceID.get();
     }
 
@@ -854,11 +852,10 @@ public class Utils {
     public static ShoppingDeliveryLocation getPreferredDeliveryLocation() {
         ShoppingDeliveryLocation preferredDeliveryLocation = null;
         AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
-        return (currentUserObject.preferredShoppingDeliveryLocation != null) ? currentUserObject.preferredShoppingDeliveryLocation : preferredDeliveryLocation;
+        return (currentUserObject.preferredShoppingDeliveryLocation != null && currentUserObject.preferredShoppingDeliveryLocation.fulfillmentDetails != null) ? currentUserObject.preferredShoppingDeliveryLocation : preferredDeliveryLocation;
     }
 
     public static void savePreferredDeliveryLocation(ShoppingDeliveryLocation shoppingDeliveryLocation) {
-        shoppingDeliveryLocation.storePickup = shoppingDeliveryLocation.store != null;
         AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
         currentUserObject.preferredShoppingDeliveryLocation = shoppingDeliveryLocation;
         currentUserObject.save();
@@ -993,47 +990,9 @@ public class Utils {
 
     @Nullable
     public static String retrieveStoreId(String fulFillmentType) {
-        JsonParser parser = new JsonParser();
-        ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation();
-        String fulfillmentStore = "";
-        if (shoppingDeliveryLocation == null) return "";
-        if (shoppingDeliveryLocation.storePickup) {
-            if (shoppingDeliveryLocation.store != null && shoppingDeliveryLocation.store.getFulfillmentStores() != null)
-                fulfillmentStore = Utils.toJson(shoppingDeliveryLocation.store.getFulfillmentStores());
-            else return "";
-        } else {
-            if (shoppingDeliveryLocation.suburb != null && shoppingDeliveryLocation.suburb.fulfillmentStores != null)
-                fulfillmentStore = Utils.toJson(shoppingDeliveryLocation.suburb.fulfillmentStores);
-            else return "";
-        }
-        String swapFulFillmentStore = TextUtils.isEmpty(fulfillmentStore.replaceAll("null", "")) ? "" : fulfillmentStore;
-        JsonElement suburbFulfillment = parser.parse(swapFulFillmentStore);
-        String storeId = "";
-        if (!suburbFulfillment.isJsonNull()) {
-            if (suburbFulfillment.isJsonArray()) {
-                JsonArray suburbFulfillmentArray = suburbFulfillment.getAsJsonArray();
-                for (JsonElement jsonElement : suburbFulfillmentArray) {
-                    JsonObject fulfillmentObj = jsonElement.getAsJsonObject();
-                    JsonElement fulFillmentTypeId = fulfillmentObj.get("fulFillmentTypeId");
-                    if (!fulFillmentTypeId.isJsonNull()) {
-                        if (!TextUtils.isEmpty(fulFillmentTypeId.getAsString()) && !TextUtils.isEmpty(fulFillmentType)) {
-                            if (Integer.valueOf(fulFillmentTypeId.getAsString()) == Integer.valueOf(fulFillmentType)) {
-                                JsonElement fulFillmentStoreId = fulfillmentObj.get("fulFillmentStoreId");
-                                if (fulFillmentStoreId != null)
-                                    storeId = fulfillmentObj.get("fulFillmentStoreId").getAsString();
-                            }
-                        }
-                    }
-                }
-            } else {
-                if (fulFillmentType.length() == 1)
-                    fulFillmentType = "0" + fulFillmentType;
-                JsonObject jsSuburbFulfillment = suburbFulfillment.getAsJsonObject();
-                if (jsSuburbFulfillment.has(fulFillmentType))
-                    storeId = jsSuburbFulfillment.get(fulFillmentType).getAsString();
-            }
-        }
-        return storeId;
+        if (fulFillmentType!=null&&fulFillmentType.length() == 1)
+            fulFillmentType = "0" + fulFillmentType;
+        return KotlinUtils.Companion.retrieveFulfillmentStoreId(fulFillmentType);
     }
 
     public static void toggleStatusBarColor(final Activity activity, int color) {
@@ -1433,6 +1392,7 @@ public class Utils {
     public static String aes256EncryptStringAsBase64String(String entry) throws DecryptionFailureException {
         return Base64.encodeToString(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, entry), Base64.DEFAULT);
     }
+
     public static void updateUserVirtualTempCardState(Boolean state) {
         AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
         currentUserObject.isVirtualTemporaryStoreCardPopupShown = state;
@@ -1596,8 +1556,8 @@ public class Utils {
         return HuaweiApiAvailability.getInstance().isHuaweiMobileServicesAvailable(WoolworthsApplication.getAppContext()) == ConnectionResult.SUCCESS;
     }
 
-   public static String formatAnalyticsButtonText(String btnName){
-       String  btnText =  btnName.replaceAll("[^a-zA-Z0-9\\s]", "").trim();
-       return btnText.replace(" ", "_").toLowerCase();
-   }
+    public static String formatAnalyticsButtonText(String btnName) {
+        String btnText = btnName.replaceAll("[^a-zA-Z0-9\\s]", "").trim();
+        return btnText.replace(" ", "_").toLowerCase();
+    }
 }

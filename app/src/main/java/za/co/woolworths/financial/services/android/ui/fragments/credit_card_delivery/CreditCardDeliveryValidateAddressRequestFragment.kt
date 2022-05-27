@@ -55,6 +55,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
         confirmAddress?.setOnClickListener(this)
         editAddress?.setOnClickListener(this)
         contactCourier?.setOnClickListener(this)
+        callCourierPartner?.setOnClickListener(this)
         retryOnInvalidAddress?.setOnClickListener(this)
         retryOnValidateAddressFailure?.setOnClickListener(this)
         retryGetTimeSlots?.setOnClickListener(this)

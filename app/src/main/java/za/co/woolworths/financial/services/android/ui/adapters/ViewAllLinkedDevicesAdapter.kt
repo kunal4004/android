@@ -59,7 +59,8 @@ class ViewAllLinkedDevicesAdapter(val context: Context, val onClickListener: Vie
         fun bind() {
             itemView.apply {
                 val primaryDevice = getPrimaryDevice()
-                viewAllDevicesTitleTextView?.text = context?.getString(R.string.view_all_primary_device_title)
+                viewAllDevicesDescTextView?.visibility =  View.VISIBLE
+                viewAllDevicesTitleTextView?.text = context?.getString(R.string.view_all_preferred_device_title)
                 viewAllDeviceNameTextView?.text = URLDecoder.decode(primaryDevice?.deviceName, "UTF8")
                 viewAllDeviceLocationTextView?.text = if (TextUtils.isEmpty(primaryDevice?.locationLinked)) context.getString(R.string.view_all_device_location_n_a) else primaryDevice?.locationLinked
                 viewAllDeviceSubtitleTextView?.text = context.getString(R.string.view_all_device_linked_on, primaryDevice?.linkedDate)

@@ -148,7 +148,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
 
         payMyAccountViewModel.getNavigationResult().observe(viewLifecycleOwner) { result ->
             when (result) {
-                PayMyAccountViewModel.OnBackNavigation.RETRY -> {
+                PayMyAccountViewModel.OnNavigateBack.Retry -> {
                     activity?.runOnUiThread {
                         payMyAccountViewModel.isQueryPayUPaymentMethodComplete = false
                         queryPaymentMethod()
@@ -178,6 +178,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                         { // onSuccessResult
                             if (!isAdded) return@queryServicePayUPaymentMethod
                             stopProgress()
+                            (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.pmaStatusImpl?.pmaSuccess()
                             payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
                             navigateToDeepLinkView(DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT, incPayMyAccountButton)
                         }, { onSessionExpired ->
