@@ -101,6 +101,7 @@ class DynamicMapView @JvmOverloads constructor(
                 context
             )
         )
+        googleMap?.uiSettings?.isZoomControlsEnabled = false
         googleMap?.setOnMarkerClickListener(this)
         delegate?.onMapReady()
     }
@@ -122,6 +123,7 @@ class DynamicMapView @JvmOverloads constructor(
                 context
             )
         )
+        huaweiMap?.uiSettings?.isZoomControlsEnabled = false
         huaweiMap?.setOnMarkerClickListener(this)
         delegate?.onMapReady()
     }
