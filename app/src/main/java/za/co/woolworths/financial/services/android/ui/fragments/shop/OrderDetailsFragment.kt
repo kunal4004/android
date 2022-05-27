@@ -158,19 +158,18 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         val dataList = arrayListOf<OrderDetailsItem>()
 
         dataList.add(OrderDetailsItem(ordersResponse, OrderDetailsItem.ViewType.ORDER_STATUS))
+
         order?.apply {
-            when {
-                taxNoteNumbers.isNotEmpty() ->
-                    dataList.add(OrderDetailsItem(null, OrderDetailsItem.ViewType.VIEW_TAX_INVOICE))
-                ordersResponse.orderSummary?.isChatEnabled == true ->
-                    dataList.add(OrderDetailsItem(ordersResponse,
-                        OrderDetailsItem.ViewType.CHAT_VIEW))
-                ordersResponse.orderSummary?.isDriverTrackingEnabled == true ->
-                    dataList.add(OrderDetailsItem(null,
-                        OrderDetailsItem.ViewType.TRACK_ORDER))
-                orderCancellable && !requestCancellation ->
-                    dataList.add(OrderDetailsItem(null, OrderDetailsItem.ViewType.CANCEL_ORDER))
-            }
+            if (taxNoteNumbers.isNotEmpty())
+                dataList.add(OrderDetailsItem(null, OrderDetailsItem.ViewType.VIEW_TAX_INVOICE))
+            if (orderCancellable && !requestCancellation)
+                dataList.add(OrderDetailsItem(null, OrderDetailsItem.ViewType.CANCEL_ORDER))
+            if (ordersResponse.orderSummary?.isChatEnabled == true)
+                dataList.add(OrderDetailsItem(ordersResponse,
+                    OrderDetailsItem.ViewType.CHAT_VIEW))
+            if (ordersResponse.orderSummary?.isDriverTrackingEnabled == true)
+                dataList.add(OrderDetailsItem(null,
+                    OrderDetailsItem.ViewType.TRACK_ORDER))
         }
         dataList.add(OrderDetailsItem(null, OrderDetailsItem.ViewType.ADD_TO_LIST_LAYOUT))
         dataList.add(OrderDetailsItem(ordersResponse, OrderDetailsItem.ViewType.ORDER_TOTAL))
