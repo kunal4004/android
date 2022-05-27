@@ -23,6 +23,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -34,7 +35,6 @@ import kotlinx.android.synthetic.main.location_service_off_layout.*
 import kotlinx.android.synthetic.main.store_details_layout_common.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
@@ -53,12 +53,18 @@ import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout.PanelState
 import za.co.woolworths.financial.services.android.ui.views.WButton
 import za.co.woolworths.financial.services.android.ui.views.WTextView
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment.Companion.ACCESS_MY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate
 import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapView
 import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.location.Event
+import za.co.woolworths.financial.services.android.util.location.EventType
+import za.co.woolworths.financial.services.android.util.location.Locator
+import za.co.woolworths.financial.services.android.util.location.Logger
 
-class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageChangeListener, ILocationProvider {
+class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageChangeListener {
 
     companion object {
         private const val TAG = "StoresNearbyFragment1"
@@ -68,6 +74,8 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
         const val REQUEST_CHECK_SETTINGS = 99
         const val REQUEST_CODE_FINE_GPS = 5123
     }
+
+    private lateinit var locator: Locator
 
     @DrawableRes
     var unSelectedIcon: Int? = null
@@ -86,10 +94,8 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     private var navigateMenuState = false
     private var mPopWindowValidationMessage: PopWindowValidationMessage? = null
     private var mErrorHandlerView: ErrorHandlerView? = null
-    private val mLocation: Location? = null
     var searchMenu: MenuItem? = null
     private var isSearchMenuEnabled = true
-    var isLocationServiceButtonClicked = false
     private var mLocationAPIRequest: Call<LocationResponse>? = null
 
     override fun onAttach(context: Context) {
@@ -108,6 +114,7 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     override fun onViewCreated(v: View, savedInstanceState: Bundle?) {
         super.onViewCreated(v, savedInstanceState)
 
+        locator = Locator(activity as AppCompatActivity)
         dynamicMapView?.initializeMap(savedInstanceState, this)
         mMarkers = HashMap()
         markers = ArrayList()
@@ -174,14 +181,7 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
          */
         buttonLocationOn?.setOnClickListener {
             updateMap = true
-            if (checkLocationPermission()) {
-                val locIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                activity?.startActivity(locIntent)
-                activity?.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-            } else {
-                isLocationServiceButtonClicked = true
-                checkLocationPermission()
-            }
+            KotlinUtils.openAccessMyLocationDeviceSettings(ACCESS_MY_LOCATION_REQUEST_CODE, activity)
         }
         v.findViewById<WButton>(R.id.btnRetry)?.setOnClickListener {
             if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
@@ -212,17 +212,39 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
 
     private fun initLocationCheck() {
         val locationServiceIsEnabled = Utils.isLocationServiceEnabled(activity)
-        val lastKnownLocationIsNull = Utils.getLastSavedLocation() == null
-        if (!locationServiceIsEnabled and lastKnownLocationIsNull) {
-            checkLocationServiceAndSetLayout(false)
-        } else if (locationServiceIsEnabled && lastKnownLocationIsNull) {
-            checkLocationServiceAndSetLayout(true)
-            startLocationUpdates()
-        } else if (!locationServiceIsEnabled) {
-            updateMap(Utils.getLastSavedLocation())
-        } else {
-            startLocationUpdates()
+        val lastKnownLocation = Utils.getLastSavedLocation()
+        when {
+            lastKnownLocation != null -> {
+                updateMap(Utils.getLastSavedLocation())
+            }
+            locationServiceIsEnabled -> {
+                checkLocationServiceAndSetLayout(true)
+                startLocationDiscoveryProcess()
+            }
+            else -> {
+                checkLocationServiceAndSetLayout(false)
+            }
         }
+    }
+
+    private fun startLocationDiscoveryProcess() {
+        locator.getCurrentLocation { locationEvent ->
+            when (locationEvent) {
+                is Event.Location -> handleLocationEvent(locationEvent)
+                is Event.Permission -> handlePermissionEvent(locationEvent)
+            }
+        }
+    }
+
+    private fun handlePermissionEvent(permissionEvent: Event.Permission) {
+        if (permissionEvent.event == EventType.LOCATION_PERMISSION_NOT_GRANTED) {
+            Utils.saveLastLocation(null, activity)
+            checkLocationServiceAndSetLayout(false)
+        }
+    }
+
+    private fun handleLocationEvent(locationEvent: Event.Location) {
+        updateMap(locationEvent.locationData)
     }
 
     override fun onMapReady() {
@@ -333,9 +355,9 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
         }
     }
 
-    fun bindDataWithUI(storeDetailsList: List<StoreDetails>) {
+    fun bindDataWithUI(storeDetailsList: List<StoreDetails>, currentLocation: Location?) {
         if (dynamicMapView?.isMapInstantiated() == true && storeDetailsList.size >= 0) {
-            updateMyCurrentLocationOnMap(mLocation)
+            updateMyCurrentLocationOnMap(currentLocation)
             for (i in storeDetailsList.indices) {
                 if (i == 0) {
                     drawMarker(storeDetailsList[i].latitude, storeDetailsList[i].longitude, selectedIcon, i)
@@ -418,7 +440,7 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
                 hideProgressBar()
                 storeDetailsList = ArrayList()
                 storeDetailsList = locationResponse?.Locations
-                storeDetailsList?.let { listDetail -> bindDataWithUI(listDetail) }
+                storeDetailsList?.let { listDetail -> bindDataWithUI(listDetail, location) }
             }
 
             override fun onFailure(error: Throwable?) {
@@ -471,6 +493,7 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
                 sliding_layout?.panelState = PanelState.COLLAPSED
                 sliding_layout?.isFocusable = false
             }
+            ACCESS_MY_LOCATION_REQUEST_CODE -> startLocationDiscoveryProcess()
         }
     }
 
@@ -515,19 +538,6 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
         storesProgressBar?.visibility = View.GONE
     }
 
-    private fun startLocationUpdates() {
-        val activity = activity ?: return
-        if (checkLocationPermission()) {
-            if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                onLocationLoadStart()
-                FuseLocationAPISingleton.addLocationChangeListener(this)
-                FuseLocationAPISingleton.startLocationUpdate()
-            }
-        } else {
-            checkLocationPermission()
-        }
-    }
-
     private fun updateMap(location: Location?) {
         if (location != null) {
             Utils.saveLastLocation(location, activity)
@@ -535,11 +545,6 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
             updateMyCurrentLocationOnMap(location)
             locationAPIRequest(location)
         }
-        stopLocationUpdate()
-    }
-
-    private fun stopLocationUpdate() {
-        FuseLocationAPISingleton.stopLocationUpdate()
     }
 
     @SuppressLint("NewApi")
@@ -618,27 +623,6 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
-            REQUEST_CODE_FINE_GPS -> {
-
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    val activity = activity ?: return
-                    // permission was granted. Do the
-                    // contacts-related task you need to do.
-                    if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                        if (isLocationServiceButtonClicked) {
-                            val locIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                            activity.startActivityForResult(locIntent, REQUEST_CHECK_SETTINGS)
-                            activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-                        } else {
-                            startLocationUpdates()
-                            dynamicMapView?.setMyLocationEnabled(isEnabled = false)
-                        }
-                    }
-                }
-                return
-            }
             REQUEST_CALL -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) startActivity(callIntent)
         }
     }
@@ -692,14 +676,6 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
 
     fun layoutIsAnchored(): Boolean {
         return if (sliding_layout == null) false else sliding_layout?.panelState == PanelState.ANCHORED
-    }
-
-    override fun onLocationChange(location: Location?) {
-        updateMap(location)
-    }
-
-    override fun onPopUpLocationDialogMethod() {
-        hideProgressBar()
     }
 
     fun collapseSlidingPanel() { sliding_layout.panelState = PanelState.COLLAPSED }
