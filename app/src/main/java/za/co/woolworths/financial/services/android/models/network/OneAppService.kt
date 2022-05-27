@@ -423,11 +423,11 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun getOrders(): Call<OrdersResponse> {
-        return mApiInterface.getOrders(getSessionToken(), getDeviceIdentityToken())
+        return mApiInterface.getOrders(getSessionToken(),getDev4Environment(), getDeviceIdentityToken())
     }
 
     fun getOrderDetails(orderId: String): Call<OrderDetailsResponse> {
-        return mApiInterface.getOrderDetails( getSessionToken(), getDeviceIdentityToken(), orderId)
+        return mApiInterface.getOrderDetails( getSessionToken(), getDev4Environment(),getDeviceIdentityToken(), orderId)
     }
 
     fun addOrderToList(orderId: String, orderToShoppingListRequestBody: OrderToShoppingListRequestBody): Call<OrderToListReponse> {

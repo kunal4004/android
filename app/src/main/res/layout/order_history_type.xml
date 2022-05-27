@@ -278,12 +278,33 @@
             app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
             app:layout_constraintEnd_toStartOf="@id/imgOrderHistory" />
 
+        <View
+            android:id="@+id/spaceForHistoryDetails"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_16sdp"
+            app:layout_constraintTop_toBottomOf="@+id/deliveryDateContainer" />
+
+        <View
+            android:id="@+id/dividerSpaceForDetailsScreen"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_8sdp"
+            android:background="@color/orders_bg"
+            app:layout_constraintTop_toBottomOf="@+id/spaceForHistoryDetails" />
+
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/orderTotalView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:constraint_referenced_ids="orderAmount,imgOrderHistory,orderTotalTitle,orderTotalDivider" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/orderHistoryDetailsView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="orderTypeTitle,orderType,numberItemTitle,numberItem,
+            deliveryAddressTitle,deliveryAddress,spaceForHistoryDetails,dividerSpaceForDetailsScreen" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
