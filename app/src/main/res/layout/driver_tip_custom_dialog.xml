@@ -82,6 +82,7 @@
         android:layout_marginBottom="@dimen/twenty_four_dp"
         android:background="@color/black"
         android:text="@string/confirm"
+        app:WButton_font="medium_bold"
         app:layout_constraintBottom_toBottomOf="@id/bottom_guideline"
         app:layout_constraintEnd_toEndOf="@+id/right_guideline"
         app:layout_constraintStart_toStartOf="@+id/left_guideline"
