@@ -26,6 +26,14 @@ class DynamicMapMarker (
         }
     }
 
+    fun setVisible(isVisible: Boolean) {
+        googleMarker?.let {
+            it.isVisible = isVisible
+        } ?: huaweiMarker?.let {
+            it.isVisible = isVisible
+        }
+    }
+
     fun showInfoWindow() {
         googleMarker?.apply {
             showInfoWindow()

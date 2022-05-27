@@ -14,30 +14,30 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.GeolocationConfirmAddressBinding
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.maps.GeoApiContext
 import com.google.maps.GeocodingApi
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.fragment_stores_nearby1.*
 import kotlinx.android.synthetic.main.geolocation_confirm_address.*
-import kotlinx.android.synthetic.main.geolocation_confirm_address.autoCompleteTextView
+import kotlinx.android.synthetic.main.geolocation_confirm_address.dynamicMapView
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
+import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate
+import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_CONFIRM_ADD
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LATITUDE
@@ -47,19 +47,15 @@ import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
 import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.*
-import za.co.woolworths.financial.services.android.util.AppConstant
 import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class ConfirmAddressMapFragment :
-    Fragment(), OnMapReadyCallback, VtoTryAgainListener {
+    Fragment(), DynamicMapDelegate, VtoTryAgainListener {
 
-    private var mMap: GoogleMap? = null
     private var mAddress: String? = null
     private var placeId: String? = null
-    private var latLng: LatLng? = null
     private var mLatitude: String? = null
     private var mLongitude: String? = null
     private var address1: String? = null
@@ -97,29 +93,31 @@ class ConfirmAddressMapFragment :
         view: View, savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
-        initView()
 
+        dynamicMapView?.initializeMap(savedInstanceState, this)
+        initView()
     }
 
     private fun initView() {
-
         val bundle = arguments ?: return
+
         val args = ConfirmAddressMapFragmentArgs.fromBundle(bundle)
         latitude = args.mapData.latitude
         longitude = args.mapData.longitude
         isAddAddress = args.mapData.isAddAddress
         isComingFromCheckout = args.mapData.isComingFromCheckout
+
         setUpViewModel()
         clearAddress()
         confirmAddressClick()
 
         if (confirmAddressViewModel.isConnectedToInternet(requireActivity())) {
             initMap()
-            mMap?.uiSettings?.setAllGesturesEnabled(true)
+            dynamicMapView?.setAllGesturesEnabled(true)
         } else {
             binding?.apply {
                 autoCompleteTextView.isEnabled = false
-                mMap?.uiSettings?.setAllGesturesEnabled(false)
+                dynamicMapView?.setAllGesturesEnabled(false)
                 showErrorDialog()
             }
         }
@@ -137,17 +135,17 @@ class ConfirmAddressMapFragment :
         }
     }
 
-    private fun checkNetwork(mapFragment: SupportMapFragment?) {
+    private fun checkNetwork() {
         activity?.let {
             ConnectivityLiveData.observe(viewLifecycleOwner, { isNetworkAvailable ->
                 binding?.apply {
                     if (isNetworkAvailable) {
-                        mapFragment?.view?.visibility = View.VISIBLE
+                        dynamicMapView?.visibility = View.VISIBLE
                         mapFrameLayout.visibility = View.VISIBLE
                         imgMapMarker.visibility = View.VISIBLE
                         autoCompleteTextView.isEnabled = true
                         confirmAddress.isEnabled = true
-                        mMap?.uiSettings?.setAllGesturesEnabled(true)
+                        dynamicMapView?.setAllGesturesEnabled(true)
                         if (isAddAddress!! && isAddressSearch == false) {
                             confirmAddress.isEnabled = false
                             imgMapMarker.visibility = View.GONE
@@ -155,7 +153,7 @@ class ConfirmAddressMapFragment :
                     } else {
                         autoCompleteTextView.isEnabled = false
                         confirmAddress.isEnabled = false
-                        mMap?.uiSettings?.setAllGesturesEnabled(false)
+                        dynamicMapView?.setAllGesturesEnabled(false)
                         showErrorDialog()
                     }
                 }
@@ -224,10 +222,7 @@ class ConfirmAddressMapFragment :
     }
 
     private fun initMap() {
-        val mapFragment =
-            childFragmentManager.findFragmentById(R.id.gMap) as SupportMapFragment?
-        mapFragment?.getMapAsync(this)
-        checkNetwork(mapFragment)
+        checkNetwork()
         activity?.applicationContext?.let { context ->
             Places.initialize(context, getString(R.string.maps_google_api_key))
             val placesClient = Places.createClient(context)
@@ -265,7 +260,7 @@ class ConfirmAddressMapFragment :
                                 val place = response.place
                                 try {
                                     isAddressSearch = true
-                                    moveMapCamera(place.latLng)
+                                    moveMapCamera(place.latLng?.latitude, place.latLng?.longitude)
                                 } catch (e: Exception) {
                                     FirebaseManager.logException(e)
                                 }
@@ -291,33 +286,37 @@ class ConfirmAddressMapFragment :
         }
     }
 
-    override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
+    override fun onMapReady() {
         if (!isAddAddress!!) {
-            latLng = longitude?.let { latitude?.let { it1 -> LatLng(it1, it) } }
             if (isMoveMapCameraFirstTime == true){
-                moveMapCamera(latLng)
+                moveMapCamera(latitude, longitude)
             }
-
         } else {
             binding?.imgMapMarker?.visibility = View.GONE
             binding?.confirmAddress?.isEnabled = false
-            mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE), 4.8f))
+            dynamicMapView?.moveCamera(
+                latitude = DEFAULT_LATITUDE,
+                longitude = DEFAULT_LONGITUDE,
+                zoom = 4.8f
+            )
 
         }
-
     }
 
-    private fun moveMapCamera(latLng: LatLng?) {
+    override fun onMarkerClicked(marker: DynamicMapMarker) { }
+
+    private fun moveMapCamera(latitude: Double?, longitude: Double?) {
         binding?.imgMapMarker?.visibility = View.VISIBLE
         binding?.confirmAddress?.isEnabled = true
         isAddAddress = false
-        mMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18f))
-        mMap?.setOnCameraMoveListener {
-            mMap?.setOnCameraIdleListener {
-                val latLng = mMap?.cameraPosition?.target
-                val latitude = latLng?.latitude
-                val longitude = latLng?.longitude
+        dynamicMapView?.animateCamera(
+            latitude, longitude,
+            zoom = 18f
+        )
+        dynamicMapView?.setOnCameraMoveListener {
+            dynamicMapView?.setOnCameraIdleListener {
+                val latitude = dynamicMapView?.getCameraPositionTargetLatitude()
+                val longitude = dynamicMapView?.getCameraPositionTargetLongitude()
                 latitude?.let { lat ->
                     longitude?.let { longitude ->
                         getAddressFromLatLng(lat, longitude)
@@ -480,13 +479,29 @@ class ConfirmAddressMapFragment :
 
     override fun onResume() {
         super.onResume()
-        mLatitude?.let {
-            val latLng =
-                LatLng(it.toDouble(), mLongitude?.toDouble()!!)
-            isMoveMapCameraFirstTime = false
-            moveMapCamera(latLng)
-        }
+        dynamicMapView?.onResume()
+        isMoveMapCameraFirstTime = false
+        moveMapCamera(mLatitude?.toDoubleOrNull(), mLongitude?.toDoubleOrNull())
+    }
 
+    override fun onDestroyView() {
+        dynamicMapView?.onDestroy()
+        super.onDestroyView()
+    }
+
+    override fun onPause() {
+        dynamicMapView?.onPause()
+        super.onPause()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        dynamicMapView?.onLowMemory()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        dynamicMapView?.onSaveInstanceState(outState)
     }
 }
 

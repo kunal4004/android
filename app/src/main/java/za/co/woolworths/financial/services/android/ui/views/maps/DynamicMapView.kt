@@ -143,6 +143,14 @@ class DynamicMapView @JvmOverloads constructor(
         }
     }
 
+    fun setAllGesturesEnabled(isEnabled: Boolean) {
+        if (isGooglePlayServicesAvailable) {
+            googleMap?.uiSettings?.setAllGesturesEnabled(isEnabled)
+        } else {
+            huaweiMap?.uiSettings?.setAllGesturesEnabled(isEnabled)
+        }
+    }
+
     @SuppressLint("MissingPermission")
     fun setMyLocationEnabled(isEnabled: Boolean) {
         if (isGooglePlayServicesAvailable) {
@@ -160,6 +168,14 @@ class DynamicMapView @JvmOverloads constructor(
         }
     }
 
+    fun getCameraPositionTargetLongitude(): Double? {
+        return if (isGooglePlayServicesAvailable) {
+            googleMap?.cameraPosition?.target?.longitude
+        } else {
+            huaweiMap?.cameraPosition?.target?.longitude
+        }
+    }
+
     fun getVisibleRegionNortheastLatitude(): Double? {
         return if (isGooglePlayServicesAvailable) {
             googleMap?.projection?.visibleRegion?.latLngBounds?.northeast?.latitude
@@ -168,7 +184,8 @@ class DynamicMapView @JvmOverloads constructor(
         }
     }
 
-    fun addMarker(latitude: Double, longitude: Double, @DrawableRes icon: Int?): DynamicMapMarker? {
+    fun addMarker(latitude: Double?, longitude: Double?, @DrawableRes icon: Int?): DynamicMapMarker? {
+        if (latitude == null || longitude == null) return null
         return if (isGooglePlayServicesAvailable) {
             val markerOptions = GoogleMarkerOptions()
             markerOptions.position(GoogleLatLng(latitude, longitude))
@@ -230,40 +247,99 @@ class DynamicMapView @JvmOverloads constructor(
     fun animateCamera(
         latitude: Double?,
         longitude: Double?,
-        zoom: Float,
-        bearing: Float,
-        tilt: Float,
+        zoom: Float? = null,
+        bearing: Float? = null,
+        tilt: Float? = null,
         duration: Int = CAMERA_ANIMATION_DURATION_FAST
     ) {
         if (latitude == null || longitude == null) return
         if (isGooglePlayServicesAvailable) {
+            var cameraPositionBuilder =
+                GoogleCameraPosition.builder().target(GoogleLatLng(latitude, longitude))
+            if (zoom != null) {
+                cameraPositionBuilder.zoom(zoom)
+            }
+            if (bearing != null) {
+                cameraPositionBuilder.bearing(bearing)
+            }
+            if (tilt != null) {
+                cameraPositionBuilder.tilt(tilt)
+            }
+
             googleMap
                 ?.animateCamera(
                     GoogleCameraUpdateFactory.newCameraPosition(
-                        GoogleCameraPosition.builder()
-                            .target(GoogleLatLng(latitude, longitude))
-                            .zoom(zoom)
-                            .bearing(bearing)
-                            .tilt(tilt)
-                            .build()
+                        cameraPositionBuilder.build()
                     ),
                     duration,
                     null
                 )
         } else {
+            var cameraPositionBuilder =
+                HuaweiCameraPosition.builder().target(HuaweiLatLng(latitude, longitude))
+            if (zoom != null) {
+                cameraPositionBuilder.zoom(zoom)
+            }
+            if (bearing != null) {
+                cameraPositionBuilder.bearing(bearing)
+            }
+            if (tilt != null) {
+                cameraPositionBuilder.tilt(tilt)
+            }
+
             huaweiMap
                 ?.animateCamera(
                     HuaweiCameraUpdateFactory.newCameraPosition(
-                        HuaweiCameraPosition.builder()
-                            .target(HuaweiLatLng(latitude, longitude))
-                            .zoom(zoom)
-                            .bearing(bearing)
-                            .tilt(tilt)
-                            .build()
+                        cameraPositionBuilder.build()
                     ),
                     duration,
                     null
                 )
+        }
+    }
+
+    fun moveCamera(
+        latitude: Double?,
+        longitude: Double?,
+        zoom: Float
+    ) {
+        if (latitude == null || longitude == null) return
+        if (isGooglePlayServicesAvailable) {
+            googleMap
+                ?.moveCamera(
+                    GoogleCameraUpdateFactory.newLatLngZoom(
+                        GoogleLatLng(latitude, longitude),
+                        zoom
+                    )
+                )
+        } else {
+            huaweiMap
+                ?.moveCamera(
+                    HuaweiCameraUpdateFactory.newLatLngZoom(
+                        HuaweiLatLng(latitude, longitude),
+                        zoom
+                    )
+                )
+        }
+    }
+
+    fun setOnCameraMoveListener(listener: () -> Unit) {
+        if (isGooglePlayServicesAvailable) {
+            googleMap
+                ?.setOnCameraMoveListener(listener)
+        } else {
+            huaweiMap
+                ?.setOnCameraMoveListener(listener)
+        }
+    }
+
+    fun setOnCameraIdleListener(listener: () -> Unit) {
+        if (isGooglePlayServicesAvailable) {
+            googleMap
+                ?.setOnCameraIdleListener(listener)
+        } else {
+            huaweiMap
+                ?.setOnCameraIdleListener(listener)
         }
     }
 
