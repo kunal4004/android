@@ -229,7 +229,7 @@ class ConfirmAddressMapFragment :
         mapFragment?.getMapAsync(this)
         checkNetwork(mapFragment)
         activity?.applicationContext?.let { context ->
-            Places.initialize(context, getString(R.string.maps_api_key))
+            Places.initialize(context, getString(R.string.maps_google_api_key))
             val placesClient = Places.createClient(context)
             val placesAdapter =
                 GooglePlacesAdapter(requireActivity(), placesClient)
@@ -364,7 +364,7 @@ class ConfirmAddressMapFragment :
 
     private fun getPlaceId(latitude: Double?, longitude: Double?) {
         val context = GeoApiContext.Builder()
-            .apiKey(getString(R.string.maps_api_key))
+            .apiKey(getString(R.string.maps_google_api_key))
             .build()
         val results = GeocodingApi.newRequest(context)
             .latlng(latitude?.let {
@@ -383,7 +383,7 @@ class ConfirmAddressMapFragment :
     }
 
     private fun getStreetNumberAndRoute(placeId: String?) {
-        Places.initialize(requireActivity(), getString(R.string.maps_api_key))
+        Places.initialize(requireActivity(), getString(R.string.maps_google_api_key))
         val placesClient = Places.createClient(requireActivity())
         val placeFields: MutableList<Place.Field> = mutableListOf(
             Place.Field.ID,
