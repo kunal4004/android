@@ -27,26 +27,27 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.*
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.perfectcorp.perfectlib.CameraView
 import com.perfectcorp.perfectlib.MakeupCam
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.chanel_logo_view.view.*
+import kotlinx.android.synthetic.main.geo_location_delivery_address.*
+import kotlinx.android.synthetic.main.layout_product_details_chanel.view.*
 import kotlinx.android.synthetic.main.low_stock_product_details.*
 import kotlinx.android.synthetic.main.low_stock_product_details.view.*
-import kotlinx.android.synthetic.main.chanel_logo_view.view.*
-import kotlinx.android.synthetic.main.layout_product_details_chanel.view.*
 import kotlinx.android.synthetic.main.product_details_add_to_cart_and_find_in_store_button_layout.*
 import kotlinx.android.synthetic.main.product_details_delivery_location_layout.*
 import kotlinx.android.synthetic.main.product_details_fragment.*
+import kotlinx.android.synthetic.main.product_details_fragment.progressBar
 import kotlinx.android.synthetic.main.product_details_gift_with_purchase.*
 import kotlinx.android.synthetic.main.product_details_options_and_information_layout.*
 import kotlinx.android.synthetic.main.product_details_price_layout.*
@@ -54,10 +55,15 @@ import kotlinx.android.synthetic.main.product_details_size_and_color_layout.*
 import kotlinx.android.synthetic.main.promotional_image.view.*
 import kotlinx.android.synthetic.main.vto_layout.*
 import kotlinx.coroutines.*
+import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
+import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.BrandNavigationDetails
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -88,11 +94,16 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.utils.Ba
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT
+import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
 import za.co.woolworths.financial.services.android.ui.vto.di.qualifier.OpenSelectOption
 import za.co.woolworths.financial.services.android.ui.vto.di.qualifier.OpenTermAndLighting
-import za.co.woolworths.financial.services.android.ui.vto.presentation.*
+import za.co.woolworths.financial.services.android.ui.vto.presentation.DataPrefViewModel
+import za.co.woolworths.financial.services.android.ui.vto.presentation.LiveCameraViewModel
+import za.co.woolworths.financial.services.android.ui.vto.presentation.PermissionViewModel
+import za.co.woolworths.financial.services.android.ui.vto.presentation.VtoApplyEffectOnImageViewModel
 import za.co.woolworths.financial.services.android.ui.vto.ui.PermissionAction
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoBottomSheetDialog
@@ -108,6 +119,7 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1500_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_500_MS
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.SDK_INIT_FAIL
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_LIVE_CAMERA
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_NOT_MATCH
@@ -115,12 +127,24 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FAIL_IMAGE_LOAD
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageFileContract
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageGalleryContract
-import java.io.File
-import android.graphics.Bitmap
-import com.google.firebase.analytics.FirebaseAnalytics
-import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import java.io.File
 import javax.inject.Inject
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.List
+import kotlin.collections.Map
+import kotlin.collections.MutableList
+import kotlin.collections.any
+import kotlin.collections.arrayListOf
+import kotlin.collections.forEach
+import kotlin.collections.forEachIndexed
+import kotlin.collections.get
+import kotlin.collections.hashMapOf
+import kotlin.collections.isEmpty
+import kotlin.collections.isNotEmpty
+import kotlin.collections.isNullOrEmpty
+import kotlin.collections.joinToString
 import kotlin.collections.set
 
 @AndroidEntryPoint
@@ -181,6 +205,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private val vtoApplyEffectOnImageViewModel: VtoApplyEffectOnImageViewModel? by activityViewModels()
     private val liveCameraViewModel: LiveCameraViewModel? by activityViewModels()
     private val dataPrefViewModel: DataPrefViewModel? by activityViewModels()
+    private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     private var makeupCamera: MakeupCam? = null
     private var isObserveImageData: Boolean = false
     private var isRefreshImageEffectLiveCamera: Boolean = false
@@ -198,6 +223,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var isVtoSdkInitFail: Boolean = false
     private var bannerLabel: String? = null
     private var bannerImage: String? = null
+    private var isUnSellableItemsRemoved: Boolean? = false
 
     @OpenTermAndLighting
     @Inject
@@ -255,8 +281,17 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         super.onViewCreated(view, savedInstanceState)
         mFuseLocationAPISingleton = FuseLocationAPISingleton
         initViews()
+        setUpConfirmAddressViewModel()
+        addFragmentListner()
         setUniqueIds()
         productDetails?.let { addViewItemEvent(it) }
+    }
+
+    private fun addFragmentListner() {
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, bundle ->
+            // As User selects to change the delivery location. So we will call confirm place API and will change the users location.
+            callConfirmPlace()
+        }
     }
 
     //firebase event view_item
@@ -285,6 +320,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun onAttach(context: Context) {
         super.onAttach(context)
         setUpToolBar()
+    }
+
+    private fun setUpConfirmAddressViewModel() {
+        confirmAddressViewModel = ViewModelProvider(
+            this,
+            GeoLocationViewModelFactory(GeoLocationApiHelper())
+        ).get(ConfirmAddressViewModel::class.java)
     }
 
     private fun initViews() {
@@ -701,8 +743,134 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             CustomBottomSheetDialogFragment::class.java.simpleName)
     }
 
-    fun addItemToCart() {
+    private fun callConfirmPlace() {
+        if (KotlinUtils.getUnsellableList()
+                ?.isNullOrEmpty() == false && isUnSellableItemsRemoved == false
+        ) {
+            // show unsellable items
+            KotlinUtils.getUnsellableList()?.let {
+                navigateToUnsellableItemsFragment(it as java.util.ArrayList<UnSellableCommerceItem>,
+                    KotlinUtils.browsingDeliveryType)
+            }
+        } else {
+            // Confirm the location
+            lifecycleScope.launch {
+                progressBar?.visibility = View.VISIBLE
+                try {
+                    val confirmLocationRequest = KotlinUtils.getConfirmLocationRequest()
+                    val confirmLocationResponse =
+                        confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
+                    progressBar?.visibility = View.GONE
+                    if (confirmLocationResponse != null) {
+                        when (confirmLocationResponse.httpCode) {
+                            HTTP_OK -> {
+                                if (SessionUtilities.getInstance().isUserAuthenticated) {
+                                    val savedPlaceId =
+                                        Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
+                                    KotlinUtils.apply {
+                                        this.placeId = confirmLocationRequest.address.placeId
+                                        isLocationSame =
+                                            confirmLocationRequest.address.placeId?.equals(
+                                                savedPlaceId)
+                                        isDeliveryLocationTabClicked =
+                                            confirmLocationRequest.address.placeId?.equals(
+                                                savedPlaceId)
+                                        isCncTabClicked =
+                                            confirmLocationRequest.address.placeId?.equals(
+                                                savedPlaceId)
+                                        isDashTabClicked =
+                                            confirmLocationRequest.address.placeId?.equals(
+                                                savedPlaceId)
+                                    }
+                                    Utils.savePreferredDeliveryLocation(
+                                        ShoppingDeliveryLocation(
+                                            confirmLocationResponse.orderSummary?.fulfillmentDetails
+                                        )
+                                    )
+                                    if (KotlinUtils.getAnonymousUserLocationDetails() != null)
+                                        KotlinUtils.clearAnonymousUserLocationDetails()
+                                } else {
+                                    val anonymousUserPlaceId =
+                                        KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId
+                                    KotlinUtils.apply {
+                                        this.placeId = confirmLocationRequest.address.placeId
+                                        isLocationSame =
+                                            confirmLocationRequest.address.placeId?.equals(
+                                                anonymousUserPlaceId)
+                                        isDeliveryLocationTabClicked =
+                                            confirmLocationRequest.address.placeId?.equals(
+                                                anonymousUserPlaceId)
+                                        isCncTabClicked =
+                                            confirmLocationRequest.address.placeId?.equals(
+                                                anonymousUserPlaceId)
+                                        isDashTabClicked =
+                                            confirmLocationRequest.address.placeId?.equals(
+                                                anonymousUserPlaceId)
+                                        saveAnonymousUserLocationDetails(ShoppingDeliveryLocation(
+                                            confirmLocationResponse.orderSummary?.fulfillmentDetails))
+                                    }
+                                }
 
+                                var browsingPlaceDetails =
+                                    WoolworthsApplication.getValidatePlaceDetails()
+                                when (KotlinUtils.browsingDeliveryType) {
+                                    Delivery.STANDARD.name -> {
+                                        browsingPlaceDetails =
+                                            WoolworthsApplication.getValidatePlaceDetails()
+                                    }
+                                    Delivery.CNC.name -> {
+                                        browsingPlaceDetails =
+                                            WoolworthsApplication.getCncBrowsingValidatePlaceDetails()
+                                        // clear browsing data
+                                        WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
+                                            null)
+                                    }
+                                    Delivery.DASH.name -> {
+                                        browsingPlaceDetails =
+                                            WoolworthsApplication.getDashBrowsingValidatePlaceDetails()
+                                        // clear browsing data
+                                        WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
+                                            null)
+                                    }
+                                }
+                                WoolworthsApplication.setValidatedSuburbProducts(
+                                    browsingPlaceDetails)
+                                updateStockAvailabilityLocation() // update pdp location.
+                                addItemToCart()
+                            }
+                        }
+                    }
+                } catch (e: HttpException) {
+                    e.printStackTrace()
+                    progressBar?.visibility = View.GONE
+                }
+            }
+        }
+    }
+
+    private fun isUnSellableItemsRemoved() {
+        UnSellableItemsLiveData.observe(viewLifecycleOwner) {
+            isUnSellableItemsRemoved = it
+            if (isUnSellableItemsRemoved == true) {
+                callConfirmPlace()
+                UnSellableItemsLiveData.value = false
+            }
+        }
+    }
+
+    private fun navigateToUnsellableItemsFragment(
+        unSellableCommerceItems: ArrayList<UnSellableCommerceItem>, deliveryType: String?,
+    ) {
+        deliveryType?.let {
+            val unsellableItemsBottomSheetDialog =
+                UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, it)
+            unsellableItemsBottomSheetDialog.show(requireFragmentManager(),
+                UnsellableItemsBottomSheetDialog::class.java.simpleName)
+        }
+    }
+
+    fun addItemToCart() {
+        isUnSellableItemsRemoved()
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
             ScreenManager.presentSSOSignin(activity, SSO_REQUEST_ADD_TO_CART)
             return
@@ -720,12 +888,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             return
         }
 
+        // DB has "onDemand" as deliveryType and browsingDeliveryType has "DASH" delivery type.So we added extra check.
+        var browsingDeliveryType =
+            if (KotlinUtils.browsingDeliveryType.equals(Delivery.DASH.name)) Delivery.DASH.type
+            else KotlinUtils.browsingDeliveryType
         // Now first check for if delivery location and browsing location is same.
         // if same no issues. If not then show changing delivery location popup.
-        if (!KotlinUtils.getDeliveryType()?.deliveryType.equals(KotlinUtils.browsingDeliveryType)) {
-            // Todo This code will be uncommented in next PR APP1-356
-            //showChangeDeliveryTypeDialog()
-            //return
+        if (!KotlinUtils.getDeliveryType()?.deliveryType.equals(browsingDeliveryType)) {
+            showChangeDeliveryTypeDialog()
+            return
         }
 
         if (getSelectedSku() == null) {
@@ -806,7 +977,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onSessionTokenExpired() {
         SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
-        activity?.let { activity -> activity.runOnUiThread { ScreenManager.presentSSOSignin(activity) } }
+        activity?.let { activity ->
+            activity.runOnUiThread {
+                ScreenManager.presentSSOSignin(activity)
+            }
+        }
         updateStockAvailabilityLocation()
     }
 
@@ -814,7 +989,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         if (!isAdded || productDetails == null) return
 
         this.productDetails = productDetails
-        otherSKUsByGroupKey = this.productDetails?.otherSkus?.let { groupOtherSKUsByColor(it) }!!
+        otherSKUsByGroupKey = this.productDetails?.otherSkus.let { groupOtherSKUsByColor(it) }
         this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
 
         if (productDetails?.isLiquor && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()) {
@@ -990,7 +1165,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             if (it > spanCount) {
                 val moreColorCount = otherSKUsByGroupKey.size - spanCount
                 moreColor?.text =
-                    requireContext().getString(R.string.product_details_color_count, moreColorCount)
+                    requireContext().getString(R.string.product_details_color_count,
+                        moreColorCount)
                 moreColor?.visibility = View.VISIBLE
             }
         }
@@ -1021,7 +1197,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         sizeSelectorLayout?.visibility = View.VISIBLE
     }
 
-    private fun groupOtherSKUsByColor(otherSKUsList: ArrayList<OtherSkus>): HashMap<String, ArrayList<OtherSkus>> {
+    private fun groupOtherSKUsByColor(otherSKUsList: ArrayList<OtherSkus>?): HashMap<String, ArrayList<OtherSkus>> {
 
         val variant = ColourSizeVariants.find(productDetails?.colourSizeVariants ?: "")
         when (variant) {
@@ -1043,27 +1219,31 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
         }
 
-        for (otherSkuObj in otherSKUsList) {
-            var groupKey =
-                if (TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(otherSkuObj.size)) {
-                    otherSkuObj.size?.trim()
-                } else if (!TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(otherSkuObj.size)) {
-                    otherSkuObj.colour?.trim()
-                } else {
-                    otherSkuObj.colour?.trim()
+        if (otherSKUsList != null) {
+            for (otherSkuObj in otherSKUsList) {
+                var groupKey =
+                    if (TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(otherSkuObj.size)) {
+                        otherSkuObj.size?.trim()
+                    } else if (!TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(
+                            otherSkuObj.size)
+                    ) {
+                        otherSkuObj.colour?.trim()
+                    } else {
+                        otherSkuObj.colour?.trim()
+                    }
+
+                if (variant == ColourSizeVariants.NO_COLOUR_SIZE_VARIANT) {
+                    otherSkuObj.apply { size = colour }
+                    groupKey = "N/A"
                 }
 
-            if (variant == ColourSizeVariants.NO_COLOUR_SIZE_VARIANT) {
-                otherSkuObj.apply { size = colour }
-                groupKey = "N/A"
+                if (!otherSKUsByGroupKey.containsKey(groupKey) && !groupKey.isNullOrEmpty()) {
+                    this.otherSKUsByGroupKey[groupKey] = ArrayList()
+                }
+                if (!otherSKUsByGroupKey[groupKey]!!.any { it.sku == otherSkuObj.sku }) this.otherSKUsByGroupKey[groupKey]!!.add(
+                    otherSkuObj
+                )
             }
-
-            if (!otherSKUsByGroupKey.containsKey(groupKey) && !groupKey.isNullOrEmpty()) {
-                this.otherSKUsByGroupKey[groupKey] = ArrayList()
-            }
-            if (!otherSKUsByGroupKey[groupKey]!!.any { it.sku == otherSkuObj.sku }) this.otherSKUsByGroupKey[groupKey]!!.add(
-                otherSkuObj
-            )
         }
         return otherSKUsByGroupKey
     }
@@ -1113,15 +1293,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     when (i) {
                         0 -> {
                             onlinePromotionalTextView1?.visibility = View.VISIBLE
-                            onlinePromotionalTextView1?.text = Html.fromHtml(editedPromotionalText)
+                            onlinePromotionalTextView1?.text =
+                                Html.fromHtml(editedPromotionalText)
                         }
                         1 -> {
                             onlinePromotionalTextView2?.visibility = View.VISIBLE
-                            onlinePromotionalTextView2?.text = Html.fromHtml(editedPromotionalText)
+                            onlinePromotionalTextView2?.text =
+                                Html.fromHtml(editedPromotionalText)
                         }
                         2 -> {
                             onlinePromotionalTextView3?.visibility = View.VISIBLE
-                            onlinePromotionalTextView3?.text = Html.fromHtml(editedPromotionalText)
+                            onlinePromotionalTextView3?.text =
+                                Html.fromHtml(editedPromotionalText)
                         }
                     }
                     val arguments = HashMap<String, String>()
@@ -1577,19 +1760,23 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         val addToCartParams = Bundle()
         addToCartParams.putString(FirebaseAnalytics.Param.CURRENCY,
             FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
-        addToCartParams.putString(FirebaseAnalytics.Param.VALUE, productDetails?.price.toString())
+        addToCartParams.putString(FirebaseAnalytics.Param.VALUE,
+            productDetails?.price.toString())
         for (products in 0..(productDetails?.otherSkus?.size ?: 0)) {
             val addToCartItem = Bundle()
             addToCartItem.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
-            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_NAME, productDetails?.productName)
+            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_NAME,
+                productDetails?.productName)
             addToCartItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY,
                 productDetails?.categoryName)
-            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
+            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_BRAND,
+                productDetails?.brandText)
             addToCartItem.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
                 productDetails?.categoryName)
             addToCartItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT,
                 productDetails?.colourSizeVariants)
-            addToCartItem.putString(FirebaseAnalytics.Param.PRICE, productDetails?.price.toString())
+            addToCartItem.putString(FirebaseAnalytics.Param.PRICE,
+                productDetails?.price.toString())
             addToCartItem.putString(FirebaseAnalytics.Param.AFFILIATION,
                 FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
             addToCartItem.putString(FirebaseAnalytics.Param.INDEX,
@@ -1649,12 +1836,14 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         val addToWishlistParams = Bundle()
         addToWishlistParams.putString(FirebaseAnalytics.Param.CURRENCY,
             FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
-        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
+        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_ID,
+            productDetails?.productId)
         addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_NAME,
             productDetails?.productName)
         addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_CATEGORY,
             productDetails?.categoryName)
-        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
+        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_BRAND,
+            productDetails?.brandText)
         addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_VARIANT,
             productDetails?.colourSizeVariants)
         addToWishlistParams.putString(FirebaseAnalytics.Param.PRICE,
@@ -2147,7 +2336,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     KotlinUtils.getPreferredDeliveryType(),
                     Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                 )
-                false -> ScreenManager.presentSSOSignin(this, SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK)
+                false -> ScreenManager.presentSSOSignin(this,
+                    SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK)
             }
 
         }
@@ -2310,7 +2500,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
         }
         activity?.apply {
-            Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL)
+            Utils.setScreenName(this,
+                FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL)
         }
     }
 
@@ -2371,7 +2562,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             openCart?.contentDescription = getString(R.string.pdp_layout)
             productName?.contentDescription = getString(R.string.pdp_textViewProductName)
             priceLayout?.contentDescription = getString(R.string.pdp_textViewPrice)
-            colorPlaceholder?.contentDescription = getString(R.string.pdp_textViewColourPlaceHolder)
+            colorPlaceholder?.contentDescription =
+                getString(R.string.pdp_textViewColourPlaceHolder)
             selectedColor?.contentDescription = getString(R.string.pdp_textSelectedColour)
             colorSelectorRecycleView?.contentDescription =
                 getString(R.string.pdp_colorSelectorRecycleView)
@@ -2402,7 +2594,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             checkInStoreAvailability?.contentDescription =
                 getString(R.string.pdp_checkInStoreAvailabilityLayout)
             buttonView?.contentDescription = getString(R.string.pdp_buttonView)
-            addToShoppingList?.contentDescription = getString(R.string.pdp_addToShoppingListLayout)
+            addToShoppingList?.contentDescription =
+                getString(R.string.pdp_addToShoppingListLayout)
             headerProductInformation?.contentDescription =
                 getString(R.string.pdp_headerProductInformationLayout)
             productDetailsInformation?.contentDescription =
@@ -2569,11 +2762,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    private val pickPhotoLauncher = registerForActivityResult(PickImageGalleryContract()) { uri ->
-        uri?.let {
-            checkUriType(uri)
+    private val pickPhotoLauncher =
+        registerForActivityResult(PickImageGalleryContract()) { uri ->
+            uri?.let {
+                checkUriType(uri)
+            }
         }
-    }
     private val pickPhotoFromFile = registerForActivityResult(PickImageFileContract()) { uri ->
         uri?.let {
             getPickedImageFile.launch(uri)
