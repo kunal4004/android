@@ -73,24 +73,29 @@ class CustomDriverTipBottomSheetDialog : WBottomSheetDialogFragment() {
         driverTipAmtEditText?.setText(mTipValue)
         if (driverTipAmtEditText?.text.isNullOrEmpty())
             Utils.fadeInFadeOutAnimation(buttonConfirm, true)
-        driverTipAmtEditText.addTextChangedListener {
-            if (it.isNullOrEmpty()) {
-                Utils.fadeInFadeOutAnimation(buttonConfirm, true)
-            } else if (it.toString() == null || it.toString().toDouble() <= MIN_TIP_VALUE) {
-                // Driver tip should always be greater than R5
-                Utils.fadeInFadeOutAnimation(buttonConfirm, true)
-                driverTipErrorText?.visibility = View.VISIBLE
-                driverTipErrorText?.text =
-                    bindString(R.string.driver_minimum_tip_amt_error, MIN_TIP_VALUE.toString())
-            } else if (it.toString().toDouble() > MAX_TIP_VALUE) {
-                // Driver tip should always be less than R1000
-                Utils.fadeInFadeOutAnimation(buttonConfirm, true)
-                driverTipErrorText?.visibility = View.VISIBLE
-                driverTipErrorText?.text =
-                    bindString(R.string.driver_maximum_tip_amt_error, MAX_TIP_VALUE.toString())
-            } else {
-                driverTipErrorText?.visibility = View.GONE
-                Utils.fadeInFadeOutAnimation(buttonConfirm, false)
+        driverTipAmtEditText.addTextChangedListener { amount ->
+            when {
+                amount.isNullOrEmpty() -> {
+                    Utils.fadeInFadeOutAnimation(buttonConfirm, true)
+                }
+                amount.toString().toDouble() < MIN_TIP_VALUE -> {
+                    // Driver tip should always be greater than or equal R5
+                    Utils.fadeInFadeOutAnimation(buttonConfirm, true)
+                    driverTipErrorText?.visibility = View.VISIBLE
+                    driverTipErrorText?.text =
+                        requireContext().getString(R.string.driver_minimum_tip_amt_error, MIN_TIP_VALUE)
+                }
+                amount.toString().toDouble() > MAX_TIP_VALUE -> {
+                    // Driver tip should always be less than R1000
+                    Utils.fadeInFadeOutAnimation(buttonConfirm, true)
+                    driverTipErrorText?.visibility = View.VISIBLE
+                    driverTipErrorText?.text =
+                        requireContext().getString(R.string.driver_maximum_tip_amt_error, MAX_TIP_VALUE)
+                }
+                else -> {
+                    driverTipErrorText?.visibility = View.GONE
+                    Utils.fadeInFadeOutAnimation(buttonConfirm, false)
+                }
             }
         }
         buttonConfirm?.setOnClickListener {
