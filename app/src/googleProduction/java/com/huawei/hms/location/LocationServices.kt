@@ -5,7 +5,7 @@ import android.content.Context
 
 /*
  * Dummy class to prevent build errors for "google" product flavor
- * since Huawei dependencies are restricted for that specific flavor only
+ * since Huawei dependencies are restricted for "huawei"" flavor only
  */
 object LocationServices {
     fun getFusedLocationProviderClient(var0: Activity?): FusedLocationProviderClient {

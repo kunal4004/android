@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -93,7 +92,6 @@ class DynamicMapView @JvmOverloads constructor(
     // region Google Maps Delegate
 
     override fun onMapReady(map: GoogleMap) {
-        Log.i("huawei", "onMapReady Google")
         googleMap = map
         //If permission is not granted, request permission.
         googleMap?.setInfoWindowAdapter(
@@ -116,7 +114,6 @@ class DynamicMapView @JvmOverloads constructor(
     // region Huawei Maps Delegate
 
     override fun onMapReady(map: HuaweiMap?) {
-        Log.i("huawei", "onMapReady Huawei")
         huaweiMap = map
         huaweiMap?.setInfoWindowAdapter(
             HuaweiMapWindowAdapter(

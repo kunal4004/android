@@ -1,9 +1,11 @@
-package com.huawei.hms.location
+package com.huawei.hms.maps
 
 /*
  * Dummy class to prevent build errors for "google" product flavor
  * since Huawei dependencies are restricted for "huawei"" flavor only
  */
-class LocationAvailability {
-    val isLocationAvailable = false
+class MapsInitializer {
+    companion object {
+        fun setApiKey(var0: String) {}
+    }
 }
