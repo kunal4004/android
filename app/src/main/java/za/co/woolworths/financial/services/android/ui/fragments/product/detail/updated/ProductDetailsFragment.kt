@@ -732,7 +732,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     when (validateLocationResponse?.httpCode) {
                         HTTP_OK -> {
                             val unsellableList =
-                                KotlinUtils.getUnsellableList(validateLocationResponse.validatePlace)
+                                KotlinUtils.getUnsellableList(validateLocationResponse.validatePlace,
+                                    KotlinUtils.browsingDeliveryType)
                             if (unsellableList?.isNullOrEmpty() == false && isUnSellableItemsRemoved == false) {
                                 // show unsellable items
                                 unsellableList?.let {
@@ -756,7 +757,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         lifecycleScope.launch {
             progressBar?.visibility = View.VISIBLE
             try {
-                val confirmLocationRequest = KotlinUtils.getConfirmLocationRequest()
+                val confirmLocationRequest = KotlinUtils.getConfirmLocationRequest(KotlinUtils.browsingDeliveryType)
                 val confirmLocationResponse =
                     confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
                 progressBar?.visibility = View.GONE
@@ -876,7 +877,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         // Now first check for if delivery location and browsing location is same.
         // if same no issues. If not then show changing delivery location popup.
         if (!KotlinUtils.getDeliveryType()?.deliveryType.equals(KotlinUtils.browsingDeliveryType?.type)) {
-            KotlinUtils.showChangeDeliveryTypeDialog(requireContext(), requireFragmentManager())
+            KotlinUtils.showChangeDeliveryTypeDialog(requireContext(), requireFragmentManager(),
+                KotlinUtils.browsingDeliveryType)
             return
         }
 

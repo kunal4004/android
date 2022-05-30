@@ -476,12 +476,12 @@ class KotlinUtils {
             }
         }
 
-        fun showChangeDeliveryTypeDialog(context: Context, requireFragmentManager: FragmentManager) {
+        fun showChangeDeliveryTypeDialog(context: Context, requireFragmentManager: FragmentManager, deliveryType: Delivery?) {
             var dialogTitle = ""
             var dialogSubTitle: CharSequence = ""
             var dialogBtnText = ""
             var dialogTitleImg: Int = R.drawable.img_delivery_truck
-            when (browsingDeliveryType) {
+            when (deliveryType) {
                 Delivery.STANDARD -> {
                     context.apply {
                         dialogTitle = getString(R.string.change_your_delivery_method_title)
@@ -518,13 +518,14 @@ class KotlinUtils {
                 CustomBottomSheetDialogFragment::class.java.simpleName)
         }
 
-        fun getUnsellableList(validatePlace: ValidatePlace?): MutableList<UnSellableCommerceItem>? {
-            return when (browsingDeliveryType) {
+        fun getUnsellableList(validatePlace: ValidatePlace?, deliveryType: Delivery?): MutableList<UnSellableCommerceItem>? {
+            val mStoreId = "124" // todo get this storeId from browsing storeId.
+            return when (deliveryType) {
                 Delivery.STANDARD -> {
                     validatePlace?.unSellableCommerceItems
                 }
                 Delivery.CNC -> {
-                    checkStoreHasUnsellable(validatePlace)
+                    checkStoreHasUnsellable(validatePlace, mStoreId)
                 }
                 Delivery.DASH -> {
                     validatePlace?.onDemand?.unSellableCommerceItems
@@ -533,9 +534,8 @@ class KotlinUtils {
             }
         }
 
-        private fun checkStoreHasUnsellable(validatePlace: ValidatePlace?): MutableList<UnSellableCommerceItem>? {
+        private fun checkStoreHasUnsellable(validatePlace: ValidatePlace?, mStoreId: String): MutableList<UnSellableCommerceItem>? {
             validatePlace?.stores?.forEach {
-                val mStoreId = "124" // todo get this storeId from browsing storeId.
                 if (it.storeId.equals(mStoreId)) {
                     return it.unSellableCommerceItems
                 }
@@ -543,9 +543,9 @@ class KotlinUtils {
             return null
         }
 
-        fun getConfirmLocationRequest(): ConfirmLocationRequest {
+        fun getConfirmLocationRequest(deliveryType: Delivery?): ConfirmLocationRequest {
             val mStoreId = "124" // todo get this storeId from browsing storeId.
-            return when (browsingDeliveryType) {
+            return when (deliveryType) {
                 Delivery.STANDARD -> {
                     ConfirmLocationRequest(BundleKeysConstants.STANDARD,
                         ConfirmLocationAddress(WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId),
