@@ -71,6 +71,7 @@ import za.co.woolworths.financial.services.android.ui.extension.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiFailureHandler
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
+import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DEFAULT_ADDRESS
@@ -100,7 +101,6 @@ class KotlinUtils {
         var isCncTabClicked: Boolean? = false
         var isDashTabClicked: Boolean? = false
         var browsingDeliveryType: Delivery? = getPreferredDeliveryType()
-        const val DELAY: Long = 900
         const val collectionsIdUrl = "woolworths.wfs.co.za/CustomerCollections/IdVerification"
         const val COLLECTIONS_EXIT_URL = "collectionsExitUrl"
         const val TREATMENT_PLAN = "treamentPlan"
@@ -474,6 +474,48 @@ class KotlinUtils {
                     }
                 }
             }
+        }
+
+        fun showChangeDeliveryTypeDialog(context: Context, requireFragmentManager: FragmentManager) {
+            var dialogTitle = ""
+            var dialogSubTitle: CharSequence = ""
+            var dialogBtnText = ""
+            var dialogTitleImg: Int = R.drawable.img_delivery_truck
+            when (browsingDeliveryType) {
+                Delivery.STANDARD -> {
+                    context.apply {
+                        dialogTitle = getString(R.string.change_your_delivery_method_title)
+                        dialogSubTitle = getText(R.string.change_your_delivery_method_standard)
+                        dialogBtnText = getString(R.string.continue_with_standard_delivery)
+                        dialogTitleImg = R.drawable.img_delivery_truck
+                    }
+                }
+                Delivery.CNC -> {
+                    context.apply {
+                        dialogTitle = getString(R.string.change_your_delivery_method_title)
+                        dialogSubTitle = getText(R.string.change_your_delivery_method_cnc)
+                        dialogBtnText = getString(R.string.continue_with_cnc_delivery)
+                        dialogTitleImg = R.drawable.img_collection_bag
+                    }
+                }
+                Delivery.DASH -> {
+                    context.apply {
+                        dialogTitle = getString(R.string.change_your_delivery_method_title)
+                        dialogSubTitle = getText(R.string.change_your_delivery_method_dash)
+                        dialogBtnText = getString(R.string.continue_with_dash_delivery)
+                        dialogTitleImg = R.drawable.img_dash_delivery
+                    }
+                }
+            }
+            val customBottomSheetDialogFragment =
+                CustomBottomSheetDialogFragment.newInstance(
+                    dialogTitle,
+                    dialogSubTitle,
+                    dialogBtnText,
+                    dialogTitleImg,
+                    null)
+            customBottomSheetDialogFragment.show(requireFragmentManager,
+                CustomBottomSheetDialogFragment::class.java.simpleName)
         }
 
         fun getUnsellableList(validatePlace: ValidatePlace?): MutableList<UnSellableCommerceItem>? {
@@ -1039,7 +1081,7 @@ class KotlinUtils {
 
         fun getPreferredDeliveryType(): Delivery? {
             return Delivery.getType(
-                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType ?: ""
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType ?: Delivery.STANDARD.type
             )
         }
 

@@ -287,7 +287,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun addFragmentListner() {
-        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, bundle ->
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, _ ->
             // As User selects to change the delivery location. So we will call confirm place API and will change the users location.
             getUpdatedValidateResponse()
         }
@@ -706,42 +706,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    private fun showChangeDeliveryTypeDialog() {
-        var dialogTitle = ""
-        var dialogSubTitle: CharSequence = ""
-        var dialogBtnText = ""
-        var dialogTitleImg: Int = R.drawable.img_delivery_truck
-        when (KotlinUtils.browsingDeliveryType) {
-            Delivery.STANDARD -> {
-                dialogTitle = getString(R.string.change_your_delivery_method_title)
-                dialogSubTitle = getText(R.string.change_your_delivery_method_standard)
-                dialogBtnText = getString(R.string.continue_with_standard_delivery)
-                dialogTitleImg = R.drawable.img_delivery_truck
-            }
-            Delivery.CNC -> {
-                dialogTitle = getString(R.string.change_your_delivery_method_title)
-                dialogSubTitle = getText(R.string.change_your_delivery_method_cnc)
-                dialogBtnText = getString(R.string.continue_with_cnc_delivery)
-                dialogTitleImg = R.drawable.img_collection_bag
-            }
-            Delivery.DASH -> {
-                dialogTitle = getString(R.string.change_your_delivery_method_title)
-                dialogSubTitle = getText(R.string.change_your_delivery_method_dash)
-                dialogBtnText = getString(R.string.continue_with_dash_delivery)
-                dialogTitleImg = R.drawable.img_dash_delivery
-            }
-        }
-        val customBottomSheetDialogFragment =
-            CustomBottomSheetDialogFragment.newInstance(
-                dialogTitle,
-                dialogSubTitle,
-                dialogBtnText,
-                dialogTitleImg,
-                null)
-        customBottomSheetDialogFragment.show(requireFragmentManager(),
-            CustomBottomSheetDialogFragment::class.java.simpleName)
-    }
-
     private fun getUpdatedValidateResponse() {
         val placeId = when (KotlinUtils.browsingDeliveryType) {
             Delivery.STANDARD ->
@@ -846,30 +810,17 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                                 }
                             }
 
-                            var browsingPlaceDetails =
-                                WoolworthsApplication.getValidatePlaceDetails()
-                            when (KotlinUtils.browsingDeliveryType) {
-                                Delivery.STANDARD -> {
-                                    browsingPlaceDetails =
-                                        WoolworthsApplication.getValidatePlaceDetails()
-                                }
-                                Delivery.CNC -> {
-                                    browsingPlaceDetails =
-                                        WoolworthsApplication.getCncBrowsingValidatePlaceDetails()
-                                    // clear browsing data
-                                    WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
-                                        null)
-                                }
-                                Delivery.DASH -> {
-                                    browsingPlaceDetails =
-                                        WoolworthsApplication.getDashBrowsingValidatePlaceDetails()
-                                    // clear browsing data
-                                    WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
-                                        null)
-                                }
+                            val browsingPlaceDetails = when (KotlinUtils.browsingDeliveryType) {
+                                Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails()
+                                Delivery.CNC -> WoolworthsApplication.getCncBrowsingValidatePlaceDetails()
+                                Delivery.DASH -> WoolworthsApplication.getDashBrowsingValidatePlaceDetails()
+                                else -> WoolworthsApplication.getValidatePlaceDetails()
                             }
                             WoolworthsApplication.setValidatedSuburbProducts(
                                 browsingPlaceDetails)
+                            // set latest response to browsing data.
+                            WoolworthsApplication.setCncBrowsingValidatePlaceDetails(browsingPlaceDetails)
+                            WoolworthsApplication.setDashBrowsingValidatePlaceDetails(browsingPlaceDetails)
                             updateStockAvailabilityLocation() // update pdp location.
                             addItemToCart()
                         }
@@ -925,7 +876,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         // Now first check for if delivery location and browsing location is same.
         // if same no issues. If not then show changing delivery location popup.
         if (!KotlinUtils.getDeliveryType()?.deliveryType.equals(KotlinUtils.browsingDeliveryType?.type)) {
-            showChangeDeliveryTypeDialog()
+            KotlinUtils.showChangeDeliveryTypeDialog(requireContext(), requireFragmentManager())
             return
         }
 
