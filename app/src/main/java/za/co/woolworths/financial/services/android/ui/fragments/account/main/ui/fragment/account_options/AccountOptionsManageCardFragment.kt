@@ -1,12 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options
 
-import android.graphics.Paint
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.View.*
 import android.widget.RelativeLayout
 import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
@@ -32,6 +32,12 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.Temporar
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.TemporaryUnFreezeCardFragment.Companion.UN_FREEZE_TEMPORARY_CARD_CANCEL_RESULT
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.TemporaryUnFreezeCardFragment.Companion.UN_FREEZE_TEMPORARY_CARD_CONFIRM_RESULT
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.location.Event
+import za.co.woolworths.financial.services.android.util.location.EventType
+import za.co.woolworths.financial.services.android.util.location.Locator
+import android.graphics.Paint
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -49,16 +55,31 @@ class AccountOptionsManageCardFragment :
 
     private val viewModel: MyAccountsRemoteApiViewModel by activityViewModels()
     private val pager by lazy { CardViewPager() }
+    private lateinit var locator: Locator
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         initCardViewPager()
         binding.setupTemporaryFreezeCardSwipe()
-        subscribeObservers()
         setResultListeners()
+        startLocationDiscoveryProcess()
     }
-
+    private fun startLocationDiscoveryProcess() {
+        locator = Locator(activity as AppCompatActivity)
+        locator.getCurrentLocation { locationEvent ->
+            when (locationEvent) {
+                is Event.Location -> Utils.saveLastLocation(locationEvent.locationData, activity)
+                is Event.Permission -> {
+                    if (locationEvent.event == EventType.LOCATION_PERMISSION_NOT_GRANTED) {
+                        Utils.saveLastLocation(null, activity)
+                    }
+                }
+            }
+        }.apply {
+            subscribeObservers()
+        }
+    }
     private fun setResultListeners() {
         setFragmentResultListener(MANAGE_CARD_ACCOUNT_OPTIONS) { _ , bundle ->
                 when(bundle.getString(MANAGE_CARD_ACCOUNT_OPTIONS, "")){
@@ -115,8 +136,10 @@ class AccountOptionsManageCardFragment :
     private fun subscribeObservers() {
         lifecycleScope.launchWhenStarted {
             with(viewModel) {
+                delay(1000)
                 queryServiceGetStoreCardCards().collect { response ->
                     with(response) {
+                        locator.stopService()
                         renderSuccess {
                             SaveResponseDao.setValue(
                                 SessionDao.KEY.STORE_CARD_RESPONSE_PAYLOAD,

@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard
 
+import android.location.Location
 import kotlinx.coroutines.flow.Flow
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
@@ -13,6 +14,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dom
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.IAccountProductLandingDao
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.IManageCardFunctionalRequirement
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.ManageCardFunctionalRequirementImpl
+import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 interface IStoreCardDataSource {
@@ -61,12 +63,12 @@ class StoreCardDataSource @Inject constructor(
             visionAccountNumber = visionAccountNumber,
             productOfferingId = productOfferingId
         )
-
+        val location = Utils.getLastSavedLocation()
         //TODO :: Retrieve Locations...
         queryServiceStoreCards(
             deviceIdentityToken,
-            -33.8899,
-            18.5066,
+            location.latitude,
+            location.longitude,
             storeCardRequest
         )
 
