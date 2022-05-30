@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.checkout.view
 
 import android.animation.ObjectAnimator
 import android.content.Intent
-import android.location.Geocoder
 import android.os.Bundle
 import android.view.*
 import android.widget.*
@@ -83,6 +82,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
+import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
 import java.net.HttpURLConnection.HTTP_OK
 import java.util.*
 import java.util.regex.Pattern
@@ -543,31 +543,36 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             placesId = place.id
         }
 
+        val setTextAndCheckIfSelectedProvinceExist = {
+            autoCompleteTextView.apply {
+                setText(
+                    if (place.name.isNullOrEmpty()) selectedAddress.savedAddress.address1 else place.name
+                )
+                if (selectedAddress.savedAddress.address1.isNullOrEmpty())
+                    showErrorDialog()
+                setSelection(autoCompleteTextView.length())
+                autoCompleteTextView.dismissDropDown()
+            }
+            checkIfSelectedProvinceExist(AppConfigSingleton.nativeCheckout?.regions as MutableList<Province>)
+        }
+
         if (!selectedAddress.savedAddress.suburb.isNullOrEmpty())
             selectedAddress.savedAddress.suburbId = ""
         if (selectedAddress.savedAddress.postalCode.isNullOrEmpty()) {
             //If Google places failed to give postal code.
-            val geocoder = Geocoder(context, Locale.getDefault())
-            val addresses =
-                geocoder.getFromLocation(
-                    selectedAddress.savedAddress.latitude!!,
-                    selectedAddress.savedAddress.longitude!!,
-                    1
-                )
-            if (!addresses[0]?.postalCode.isNullOrEmpty())
-                selectedAddress.savedAddress.postalCode = addresses[0]?.postalCode.toString()
+            DynamicGeocoder.getAddressFromLocation(
+                context,
+                selectedAddress.savedAddress.latitude,
+                selectedAddress.savedAddress.longitude
+            ) { address ->
+                address?.postcode?.let {
+                    selectedAddress.savedAddress.postalCode = it
+                }
+                setTextAndCheckIfSelectedProvinceExist.invoke()
+            }
+        } else {
+            setTextAndCheckIfSelectedProvinceExist.invoke()
         }
-
-        autoCompleteTextView.apply {
-            setText(
-                if (place.name.isNullOrEmpty()) selectedAddress.savedAddress.address1 else place.name
-            )
-            if (selectedAddress.savedAddress.address1.isNullOrEmpty())
-                showErrorDialog()
-            setSelection(autoCompleteTextView.length())
-            autoCompleteTextView.dismissDropDown()
-        }
-        checkIfSelectedProvinceExist(AppConfigSingleton.nativeCheckout?.regions as MutableList<Province>)
     }
 
     fun checkIfSelectedProvinceExist(provinceList: MutableList<Province>) {

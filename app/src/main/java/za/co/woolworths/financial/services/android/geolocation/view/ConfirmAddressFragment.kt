@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.geolocation.view
 
 import android.annotation.TargetApi
 import android.content.Intent
-import android.location.Geocoder
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
@@ -47,11 +46,11 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_STORE_LOCATOR
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
+import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
 import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-import java.io.IOException
 import java.util.*
 
 class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected,
@@ -190,17 +189,10 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         Utils.saveLastLocation(locationEvent?.locationData, context)
         mLastLocation = locationEvent?.locationData
         mLastLocation?.let {
-            try {
-                val addresses = Geocoder(
-                    activity,
-                    Locale.getDefault()
-                ).getFromLocation(it.latitude, it.longitude, 1)
-                addresses[0]?.getAddressLine(0)?.let{ addressLine ->
-                    tvCurrentLocation?.text = addressLine
+            DynamicGeocoder.getAddressFromLocation(activity, it.latitude, it.longitude) { address ->
+                address?.let {
+                    tvCurrentLocation?.text = it.addressLine
                 }
-
-            } catch (io: IOException) {
-                FirebaseManager.logException(io)
             }
         } ?: kotlin.run {
             hideCurrentLocation()

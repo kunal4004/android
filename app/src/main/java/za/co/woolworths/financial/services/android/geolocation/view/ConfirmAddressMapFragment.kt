@@ -1,7 +1,5 @@
 package za.co.woolworths.financial.services.android.geolocation.view
 
-import android.location.Address
-import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -47,6 +45,7 @@ import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
 import java.util.*
 import javax.inject.Inject
 
@@ -334,31 +333,25 @@ class ConfirmAddressMapFragment :
         mAddress?.split(",")?.getOrNull(0)
 
     private fun getAddressFromLatLng(latitude: Double, longitude: Double) {
-        try {
-            val geocoder = Geocoder(requireActivity(), Locale.getDefault())
-            val address: MutableList<Address> = geocoder.getFromLocation(latitude, longitude, 1)
-            address.let {
-                mAddress = it.getOrNull(0)?.getAddressLine(0)
+        DynamicGeocoder.getAddressFromLocation(requireActivity(), latitude, longitude) { address ->
+            address?.let {
+                mAddress = it.addressLine
                 address1 = getAddressOne(mAddress)
-                city = it.getOrNull(0)?.locality
-                state = it.getOrNull(0)?.adminArea
-                country = it.getOrNull(0)?.countryCode
-                postalCode = it.getOrNull(0)?.postalCode
-                suburb = it.getOrNull(0)?.subLocality
+                city = it.city
+                state = it.state
+                country = it.countryCode
+                postalCode = it.postcode
+                suburb = it.suburb
 
             }
-
-        } catch (e: Exception) {
-            FirebaseManager.logException(e)
-        }
-        mAddress?.let {
-            if (!isAddressFromSearch) {
-                binding?.autoCompleteTextView?.setText(getString(R.string.geo_map_address,address1,city,state))
+            mAddress?.let {
+                if (!isAddressFromSearch) {
+                    binding?.autoCompleteTextView?.setText(getString(R.string.geo_map_address,address1,city,state))
+                }
+                isAddressFromSearch = false
+                binding?.autoCompleteTextView?.dismissDropDown()
             }
-            isAddressFromSearch = false
-            binding?.autoCompleteTextView?.dismissDropDown()
         }
-
     }
 
     private fun getPlaceId(latitude: Double?, longitude: Double?) {
