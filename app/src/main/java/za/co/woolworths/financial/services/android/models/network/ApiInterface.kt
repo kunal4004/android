@@ -857,9 +857,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/order")
     fun getOrders(
-
             @Header("sessionToken") sessionToken: String,
-            @Header("environment") environment: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String): Call<OrdersResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -867,7 +865,6 @@ interface ApiInterface {
     fun getOrderDetails(
 
             @Header("sessionToken") sessionToken: String,
-            @Header("environment") environment: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("id") id: String): Call<OrderDetailsResponse>
 

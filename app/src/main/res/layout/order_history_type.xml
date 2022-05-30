@@ -303,8 +303,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:constraint_referenced_ids="orderTypeTitle,orderType,numberItemTitle,numberItem,
+            app:constraint_referenced_ids="numberItemTitle,numberItem,
             deliveryAddressTitle,deliveryAddress,spaceForHistoryDetails,dividerSpaceForDetailsScreen" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/orderTypeView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="orderType,orderTypeTitle" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -80,6 +80,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
             itemView?.apply {
                 orderTotalView?.visibility = View.GONE
                 orderHistoryDetailsView?.visibility = View.VISIBLE
+                orderTypeView?.visibility = View.VISIBLE
                 val item = dataList[position].item as OrderDetailsResponse
                 item.orderSummary?.let {
                     it.state?.let {
@@ -106,6 +107,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                     val delivery: String? = it.fulfillmentDetails?.deliveryType
                     var deliveryType: Delivery?
                     if (delivery.isNullOrEmpty()) {
+                        orderTypeView?.visibility = View.GONE
                         val storePickup = it.store != null
                         deliveryType = if (storePickup) Delivery.CNC else Delivery.STANDARD
                         if (it.suburb?.name != null && !storePickup)
