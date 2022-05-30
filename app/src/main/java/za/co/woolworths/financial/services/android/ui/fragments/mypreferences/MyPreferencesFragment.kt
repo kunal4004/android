@@ -30,6 +30,7 @@ import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesIn
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment.Companion.ACCESS_MY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAddressView
@@ -358,8 +359,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
             }
             SECURITY_INFO_REQUEST_DIALOG -> startBiometricAuthentication(
                 LOCK_REQUEST_CODE_TO_DISABLE)
-            else -> {
-            }
+            ACCESS_MY_LOCATION_REQUEST_CODE -> startLocationDiscoveryProcess()
         }
     }
 

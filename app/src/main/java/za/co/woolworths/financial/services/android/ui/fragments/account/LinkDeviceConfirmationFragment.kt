@@ -227,6 +227,13 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
         StatementFragment.SEND_STATEMENT_DETAIL = false
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE) {
+            startLocationDiscoveryProcess()
+        }
+    }
+
     override fun onDestroy() {
         activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN) }
         super.onDestroy()
