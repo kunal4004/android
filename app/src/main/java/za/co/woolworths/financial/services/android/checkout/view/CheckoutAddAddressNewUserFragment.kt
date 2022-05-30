@@ -268,13 +268,16 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         addressNicknameEditText.setText(selectedAddress.savedAddress.nickname)
         unitComplexFloorEditText.setText(selectedAddress.savedAddress.address2)
         suburbEditText.setText(selectedAddress.savedAddress.suburb)
+        suburbEditText.isEnabled = false
         provinceAutocompleteEditText.setText(selectedAddress.provinceName)
+        provinceAutocompleteEditText.isEnabled = false
         cellphoneNumberEditText.setText(selectedAddress.savedAddress.primaryContactNo)
         recipientNameEditText.setText(selectedAddress.savedAddress.recipientName)
         if (selectedAddress.savedAddress.postalCode.isNullOrEmpty()) {
             postalCode.text.clear()
         } else
             postalCode.setText(selectedAddress.savedAddress.postalCode)
+            postalCode.isEnabled = false
         selectedDeliveryAddressType = selectedAddress.savedAddress.addressType
     }
 
