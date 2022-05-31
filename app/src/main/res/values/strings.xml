@@ -2352,7 +2352,7 @@
     <string name="product_item">item found</string>
     <string name="goldCreditCard_title">Gold Credit Card</string>
     <string name="silverCreditCard_title">Silver Credit Card</string>
-     <!--vto-->
+    <!--vto-->
     <string name="capture">Capture Image</string>
     <string name="use_live_camera">Use Live Camera</string>
     <string name="take_a_photo">Take a Photo</string>
@@ -2410,8 +2410,8 @@
     <string name="bpi_checkbox_text">I agree with the <u>Comprehensive Balance Protection Terms &amp; Conditions</u></string>
     <string name="bpi_opt_in_text">opt in</string>
     <string name="bpi_opt_in_for_balance_protection_insurance">Opt in for Balance Protection Insurance</string>
-    <string name="bpi_confirm_opt_in_desc1">You may cancel this policy at any time. If you<br/> cancel within the first 31 days after which you have<br/> received the policy terms and conditions,<br/> we will reverse any premiums paid,<br/> provided have not claimed.</string>
-    <string name="bpi_confirm_opt_in_desc2">Should you require more information, need to<br/> submit a claim, log a complaint, wish to cancel or<br/> have not received your policy wording within 30<br/> days, please contact Woolworth Financial Services<br/> on 0861502020</string>
+    <string name="bpi_confirm_opt_in_desc1">You may cancel this policy at any time. If you<br /> cancel within the first 31 days after which you have<br /> received the policy terms and conditions,<br /> we will reverse any premiums paid,<br /> provided have not claimed.</string>
+    <string name="bpi_confirm_opt_in_desc2">Should you require more information, need to<br /> submit a claim, log a complaint, wish to cancel or<br /> have not received your policy wording within 30<br /> days, please contact Woolworth Financial Services<br /> on 0861502020</string>
     <string name="bpi_confirm_opt_in_desc_call_services">0861502020</string>
     <string name="bpi_email_me_a_copy">Email me a copy</string>
     <string name="bpi_terms_conditions_title">Terms &amp; Conditions</string>
@@ -2508,8 +2508,8 @@
     <string name="driver_tip_note">* Your tip will reflect in the order total value before payment.</string>
     <string name="amt_tip_added">R%1$s Tip Added</string>
     <string name="rand_text">R</string>
-    <string name="driver_minimum_tip_amt_error">A minimum amount of R%1$s is required.</string>
-    <string name="driver_maximum_tip_amt_error">A maximum amount of R%1$s is allowed.</string>
+    <string name="driver_minimum_tip_amt_error">A minimum amount of R%,.2f is required.</string>
+    <string name="driver_maximum_tip_amt_error">A maximum amount of R%,.2f is allowed.</string>
     <string name="address_type">Address Type:</string>
     <string name="add_street_address">Street Address:</string>
     <string name="dash_free_collection">"Free Collection"</string>
@@ -2534,6 +2534,8 @@
     <string name="product_listing_price_from">From</string>
     <string name="product_details_color_count">+ %d More</string>
     <string name="geo_loc_error_msg">We can’t seem to find you. Please enter number and name of your street ,or drag the pin to your exact location.</string>
+    <string name="geo_loc_error_msg_on_edit_address">We can’t seem to find you. Please enter number and name of your street , to get
+        your exact location.</string>
     <string name="fashion_beauty_geo">Fashion,Beauty,Home</string>
     <string name="no_location_collection">There Are No Collection Stores \n Available Near You.</string>
     <string name="geo_map_address">%s %s %s</string>
@@ -2564,12 +2566,32 @@
     <string name="timeslot">Timeslot:</string>
     <string name="order_id">Order #%s</string>
     <string name="time_slot_value">%s:</string>
+    <string name="collection_store">Collection Store:</string>
+    <string name="order_total_history">Order Total</string>
+    <string name="track_your_order">Track Your Order</string>
+    <string name="chat_to_your_shopper"> <![CDATA[Chat to Your Shopper, <font color=\'#000000\'><b>%s</b></font>]]></string>
     <!-- My Cart   -->
     <string name="cart_default_location">Default Location</string>
-
     <!-- Common Errors -->
     <string name="error_unknown">An unknown error occurred</string>
     <string name="error_internet_connection">Couldn\'t reach the server. Check your internet connection.</string>
 
+
+
+    <!--ContactUs Financial Services -->
+    <string name="send_enquiry">Send Us An Enquiry</string>
+    <string name="enquiry_type">SELECT AN ENQUIRY TYPE</string>
+    <string name="send">SEND</string>
+    <string name="email_us_name">Name: *</string>
+    <string name="email_us_email">Email Address: *</string>
+    <string name="email_us_email_validation">Please ensure that the email address is correct</string>
+    <string name="email_us_enquiry">Enquiry Type: *</string>
+    <string name="email_us_message">Message: *</string>
+    <string name="sending_enquiry">Sending Enquiry</string>
+    <string name="enquiry_successfully_sent">Enquiry Successfully Sent</string>
+    <string name="thanks_for_message">Thank you for your message. Our support \n team will be in touch with you soon.</string>
+    <string name="enquiry_failed_retry">Something went wrong. Please try again.</string>
+    <string name="enquiry_failed">Failed To Send Enquiry.</string>
+    <string name="enter_valid_email">Please enter valid email.</string>
 
 </resources>
