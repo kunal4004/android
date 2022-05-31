@@ -150,8 +150,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
         //wake up FirebaseManager that will instantiate
         //FirebaseApp
         FirebaseManager.Companion.getInstance();
-        FacebookSdk.sdkInitialize(this);
-        AppEventsLogger.activateApp(this);
         mWGlobalState = new WGlobalState();
         updateBankDetail = new UpdateBankDetail();
         // set app context
