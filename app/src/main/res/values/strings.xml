@@ -2492,4 +2492,13 @@
     <string name="account_in_recovery_pl_payment_due_unavailable_desc">Your Personal Loan is currently in a payment plan. Please remember to make your next payment.</string>
     <string name="account_in_recovery_cc_payment_due_unavailable_desc">Your Credit Card is currently in a payment plan. Please remember to make your next payment.</string>
     <string name="delivery_address">Delivery Address:</string>
+    <string name="title_text_has_your_card_not_arrived_in_the_post">title_text_has_your_card_not_arrived_in_the_post</string>
+    <string name="copy_text_has_your_card_not_arrived_in_the_post">"copy_text_has_your_card_not_arrived_in_the_post "</string>
+    <string name="button_my_card_hasnt_arrived">"button_my_card_hasnt_arrived "</string>
+    <string name="title_text_thanks_for_letting_us_know">title_text_thanks_for_letting_us_know</string>
+    <string name="copy_text_thanks_for_letting_us_know">copy_text_thanks_for_letting_us_know</string>
+    <string name="button_thanks_for_letting_us_know">button_thanks_for_letting_us_know</string>
+    <string name="vtsc_oops_err_title">vtsc_oops_err_title</string>
+    <string name="vtsc_oops_error_message">vtsc_oops_error_message</string>
+    <string name="vtsc_try_again">vtsc_try_again</string>
 </resources>

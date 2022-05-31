@@ -92,7 +92,8 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
     private fun setupCardReceived() {
         mStoreCard?.apply {
-            if (cardNotReceived) {
+            val shouldNotifyUserByEmail = Utils.getSessionDaoValue(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN).isNullOrEmpty()
+            if (cardNotReceived && shouldNotifyUserByEmail) {
                 val dialog = StoreCardNotReceivedDialogFragment.newInstance()
                 dialog.show(
                     childFragmentManager,

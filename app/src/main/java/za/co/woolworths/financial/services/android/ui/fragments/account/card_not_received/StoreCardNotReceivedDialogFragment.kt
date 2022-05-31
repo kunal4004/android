@@ -12,6 +12,7 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.StoreCardVtscCardNotReceivedPopupDialogBinding
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Response
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingBottomSheetFragment
@@ -43,13 +44,25 @@ class StoreCardNotReceivedDialogFragment : ViewBindingBottomSheetFragment<StoreC
 
     private fun setupViews() {
         with(binding) {
+            initialLabel()
             AnimationUtilExtension.animateViewPushDown(actionButtonTextView)
             actionButtonTextView.setOnClickListener(this@StoreCardNotReceivedDialogFragment)
         }
     }
 
+    private fun StoreCardVtscCardNotReceivedPopupDialogBinding.initialLabel() {
+        headerTextView.contentDescription =
+            getString(R.string.title_text_has_your_card_not_arrived_in_the_post)
+        descriptionTextView.contentDescription =
+            getString(R.string.copy_text_has_your_card_not_arrived_in_the_post)
+        actionButtonTextView.contentDescription = getString(R.string.button_my_card_hasnt_arrived)
+    }
+
     private fun showProgress(isVisible: Boolean) {
         with(binding) {
+            if (isVisible){
+                initialLabel()
+            }
             notifyCardNotReceivedProgressbar.visibility = if (isVisible) VISIBLE else GONE
             actionButtonTextView.apply {
                 setTextColor(
@@ -88,15 +101,24 @@ class StoreCardNotReceivedDialogFragment : ViewBindingBottomSheetFragment<StoreC
             headerTextView.text = getString(R.string.oops_err_title)
             descriptionTextView.text = getString(R.string.oops_error_message)
             actionButtonTextView.text = getString(R.string.try_again)
+
+            headerTextView.contentDescription = getString(R.string.vtsc_oops_err_title)
+            descriptionTextView.contentDescription = getString(R.string.vtsc_oops_error_message)
+            actionButtonTextView.contentDescription = getString(R.string.vtsc_try_again)
         }
     }
 
     private fun successNotificationView() {
         showProgress(false)
+        Utils.sessionDaoSave(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN, "1")
         with(binding) {
             headerTextView.text = getString(R.string.vtsc_card_not_arrived_notified_title)
             descriptionTextView.text = getString(R.string.vtsc_card_not_arrived_notified_desc)
             actionButtonTextView.text = getString(R.string.got_it)
+
+            headerTextView.contentDescription = getString(R.string.title_text_thanks_for_letting_us_know)
+            descriptionTextView.contentDescription = getString(R.string.copy_text_thanks_for_letting_us_know)
+            actionButtonTextView.contentDescription = getString(R.string.button_thanks_for_letting_us_know)
         }
     }
 
@@ -108,7 +130,8 @@ class StoreCardNotReceivedDialogFragment : ViewBindingBottomSheetFragment<StoreC
                 when (binding.actionButtonTextView.text.toString().lowercase()) {
                     getString(R.string.try_again).lowercase(),
                     getString(R.string.vtsc_card_not_arrived_button_caption).lowercase() -> queryAPIServiceGetCardNotReceived()
-                    getString(R.string.got_it).lowercase() -> { dismiss() }
+                    getString(R.string.got_it).lowercase() -> {
+                        dismiss() }
                 }
             }
         }
