@@ -215,7 +215,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
 
     override fun onMapReady(googleMap: GoogleMap?) {
         googleMap?.uiSettings?.setAllGesturesEnabled(false)
-        val addressStorList = validatePlace?.stores
+        val addressStorList = WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
         GeoUtils.showFirstFourLocationInMap(addressStorList, googleMap, requireContext())
     }
 
