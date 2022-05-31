@@ -2042,20 +2042,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         return false
     }
 
-    override fun PermissionGranted(request_code: Int) {
+    override fun permissionGranted(request_code: Int) {
         findItemInStore()
-    }
-
-    override fun PartialPermissionGranted(
-        request_code: Int,
-        granted_permissions: ArrayList<String>?,
-    ) {
-    }
-
-    override fun PermissionDenied(request_code: Int) {
-    }
-
-    override fun NeverAskAgain(request_code: Int) {
     }
 
     override fun onLocationChange(location: Location?) {

@@ -159,7 +159,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
 
     private fun executeValidateSuburb() {
-       val placeId = getDeliveryType()?.address?.placeId ?: return
+        val placeId = getDeliveryType()?.address?.placeId ?: return
 
         placeId.let {
             lifecycleScope.launch {
@@ -375,21 +375,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
     }
 
-    override fun PermissionGranted(request_code: Int) {
+    override fun permissionGranted(request_code: Int) {
         navigateToBarcode()
 
-    }
-
-    override fun PartialPermissionGranted(
-        request_code: Int,
-        granted_permissions: ArrayList<String>?,
-    ) {
-    }
-
-    override fun PermissionDenied(request_code: Int) {
-    }
-
-    override fun NeverAskAgain(request_code: Int) {
     }
 
     override fun onRequestPermissionsResult(
@@ -479,7 +467,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
 
         if ((requestCode == REQUEST_CODE && resultCode == RESULT_OK)
-            || requestCode == DEPARTMENT_LOGIN_REQUEST && viewpager_main.currentItem == 0) {
+            || requestCode == DEPARTMENT_LOGIN_REQUEST && viewpager_main.currentItem == 0
+        ) {
             updateCurrentTab(getDeliveryType()?.deliveryType)
             val fragment = viewpager_main?.adapter?.instantiateItem(
                 viewpager_main,
