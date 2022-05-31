@@ -136,7 +136,7 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
     }
 
     private fun initializeRootCategoryList() {
-        if (parentFragment?.getCategoryResponseData() != null) bindDepartment() else executeDepartmentRequest(mDepartmentAdapter, parentFragment)
+        if (parentFragment?.getCategoryResponseData() != null) bindDepartment() else executeDepartmentRequest(mDepartmentAdapter, parentFragment, location)
     }
 
     private fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -148,7 +148,7 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
         if (context != null && !Utils.isLocationEnabled(context)) {
             onProviderDisabled()
             if (isFirstCallToLocationModal) {
-                executeDepartmentRequest(mDepartmentAdapter, parentFragment)
+                executeDepartmentRequest(mDepartmentAdapter, parentFragment, location)
             }
         } else {
             startLocationUpdates()
@@ -159,7 +159,7 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
     private fun setListener() {
         btnRetry.setOnClickListener {
             if (networkConnectionStatus()) {
-                executeDepartmentRequest(mDepartmentAdapter, parentFragment)
+                executeDepartmentRequest(mDepartmentAdapter, parentFragment, location)
             }
         }
     }
@@ -376,7 +376,7 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
                 }
                 RESULT_CANCELED -> {
                     //When user clicks deny location
-                    executeDepartmentRequest(mDepartmentAdapter, parentFragment)
+                    executeDepartmentRequest(mDepartmentAdapter, parentFragment, location)
                 }
             }
         } else if (resultCode == RESULT_OK || resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
@@ -483,7 +483,7 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
                 if (isVisible) {
                     shopViewModel.setLocation(location)
                 }
-                executeDepartmentRequest(mDepartmentAdapter, parentFragment)
+                executeDepartmentRequest(mDepartmentAdapter, parentFragment, location)
                 stopLocationUpdates()
                 break
             }
@@ -491,6 +491,6 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
     }
 
     fun reloadRequest() {
-        executeDepartmentRequest(mDepartmentAdapter, parentFragment)
+        executeDepartmentRequest(mDepartmentAdapter, parentFragment, location)
     }
 }

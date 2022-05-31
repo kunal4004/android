@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop.list
 
 import android.content.Context
+import android.location.Location
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -82,18 +83,13 @@ open class DepartmentExtensionFragment : Fragment() {
         incConnectionLayout?.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
 
-    fun executeDepartmentRequest(mDepartmentAdapter: DepartmentAdapter?, parentFragment: ShopFragment?) {
+    fun executeDepartmentRequest(mDepartmentAdapter: DepartmentAdapter?, parentFragment: ShopFragment?, location: Location?=null) {
         if (networkConnectionStatus()) {
             noConnectionLayout(false)
             val isLocationEnabled = if (context != null) Utils.isLocationEnabled(context) else false
-            /* *//*todo this is hardocded location object for testing purpose
-            *  need to remove*//*
-            val location = Location("")
-            location.latitude = -34.0345283
-            location.longitude = 18.51632*/
             rootCategoryCall = OneAppService.getRootCategory(
                 isLocationEnabled,
-                null,
+                location,
                 KotlinUtils.getDeliveryType()?.deliveryType
             )
             rootCategoryCall?.enqueue(CompletionHandler(object : IResponseListener<RootCategories> {

@@ -412,7 +412,7 @@ class ConfirmAddressMapFragment :
                     when (confirmLocationResponse.httpCode) {
                         HTTP_OK -> {
 
-                            /*clear browsing data for cnc and dash both once fullfillment location is comfirmed*/
+                            /*reset browsing data for cnc and dash both once fullfillment location is comfirmed*/
                             WoolworthsApplication.setCncBrowsingValidatePlaceDetails(validateLocationResponse?.validatePlace)
                             WoolworthsApplication.setDashBrowsingValidatePlaceDetails(validateLocationResponse?.validatePlace)
 
