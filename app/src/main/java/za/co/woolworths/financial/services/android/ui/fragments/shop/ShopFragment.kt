@@ -8,6 +8,7 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
+import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -45,7 +46,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ShopPagerAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment.Companion.DEPARTMENT_LOGIN_REQUEST
+import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDeliveryFragment.Companion.DEPARTMENT_LOGIN_REQUEST
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.DISPLAY_TOAST_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
@@ -55,6 +56,7 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_3000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_4000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_ORDER_DETAILS_PAGE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.CNC_SET_ADDRESS_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DASH_SET_ADDRESS_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
@@ -107,6 +109,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         tvSearchProduct?.setOnClickListener { navigateToProductSearch() }
         imBarcodeScanner?.setOnClickListener { checkCameraPermission() }
         shopToolbar?.setOnClickListener { onEditDeliveryLocation() }
+        showSerachAndBarcodeUi()
 
         shopPagerAdapter = ShopPagerAdapter(childFragmentManager, mTabTitle, this)
         viewpager_main?.offscreenPageLimit = 2
@@ -135,17 +138,18 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                                 this
                             )
                             showBlackToolTip(Delivery.STANDARD)
-                            KotlinUtils.browsingDeliveryType = Delivery.STANDARD.name
+                            KotlinUtils.browsingDeliveryType = Delivery.STANDARD
                         }
                         1 -> {
                             //Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS, this)
+                           // hideSerachAndBarcodeUi()
                             showBlackToolTip(Delivery.CNC)
-                            KotlinUtils.browsingDeliveryType = Delivery.CNC.name
+                            KotlinUtils.browsingDeliveryType = Delivery.CNC
                         }
                         2 -> {
                             // Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYORDERS, this)
                             showBlackToolTip(Delivery.DASH)
-                            KotlinUtils.browsingDeliveryType = Delivery.DASH.name
+                            KotlinUtils.browsingDeliveryType = Delivery.DASH
                         }
                     }
                     setupToolbar(position)
@@ -157,10 +161,18 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         showShopFeatureWalkThrough()
     }
 
+    fun showSerachAndBarcodeUi(){
+        tvSearchProduct?.visibility = View.VISIBLE
+        imBarcodeScanner?.visibility = View.VISIBLE
+    }
+
+    fun hideSerachAndBarcodeUi(){
+        tvSearchProduct?.visibility = View.INVISIBLE
+        imBarcodeScanner?.visibility = View.INVISIBLE
+    }
 
     private fun executeValidateSuburb() {
        val placeId = getDeliveryType()?.address?.placeId ?: return
-
         placeId.let {
             lifecycleScope.launch {
                 progressBar?.visibility = View.VISIBLE
@@ -172,6 +184,11 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     if (validateLocationResponse != null) {
                         when (validateLocationResponse?.httpCode) {
                             AppConstant.HTTP_OK -> {
+                                if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() == null) {
+                                    WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
+                                        validateLocationResponse?.validatePlace
+                                    )
+                                }
                                 WoolworthsApplication.setValidatedSuburbProducts(
                                     validateLocationResponse?.validatePlace
                                 )
@@ -217,6 +234,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     override fun onResume() {
         super.onResume()
+
         if ((KotlinUtils.isLocationSame == false && KotlinUtils.placeId != null) || WoolworthsApplication.getValidatePlaceDetails() == null) {
             executeValidateSuburb()
         }
@@ -301,6 +319,11 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun updateTabIconUI(selectedTab: Int) {
+        if (selectedTab == 0 || selectedTab == 2) {
+            showSerachAndBarcodeUi()
+        } else if (selectedTab == 1 && KotlinUtils.browsingCncStore == null)  {
+            hideSerachAndBarcodeUi()
+        }
         tabs_main?.let { tab ->
             tab.getTabAt(selectedTab)?.customView?.isSelected = true
             for (i in mTabTitle?.indices!!) {
@@ -335,7 +358,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
     }
 
-    private fun setDeliveryView() {
+     fun setDeliveryView() {
         activity?.let {
             getDeliveryType()?.let { fulfillmentDetails ->
                 KotlinUtils.setDeliveryAddressView(
@@ -369,7 +392,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 val departmentFragment = viewpager_main?.adapter?.instantiateItem(
                     viewpager_main,
                     viewpager_main.currentItem
-                ) as? DepartmentsFragment
+                ) as? StandardDeliveryFragment
                 departmentFragment?.onHiddenChanged(hidden)
             }
         }
@@ -398,13 +421,13 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         grantResults: IntArray,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == DepartmentsFragment.REQUEST_CODE_FINE_GPS && viewpager_main.currentItem == 0) {
+        if (requestCode == StandardDeliveryFragment.REQUEST_CODE_FINE_GPS && viewpager_main.currentItem == 0) {
             val fragment = viewpager_main?.adapter?.instantiateItem(
                 viewpager_main,
                 viewpager_main.currentItem
-            ) as? DepartmentsFragment
+            ) as? StandardDeliveryFragment
             callOnActivityResult(grantResults, fragment, requestCode)
-        } else if (requestCode == DepartmentsFragment.REQUEST_CODE_FINE_GPS && viewpager_main.currentItem == 1) {
+        } else if (requestCode == StandardDeliveryFragment.REQUEST_CODE_FINE_GPS && viewpager_main.currentItem == 1) {
             val fragment = viewpager_main?.adapter?.instantiateItem(
                 viewpager_main,
                 viewpager_main.currentItem
@@ -484,7 +507,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             val fragment = viewpager_main?.adapter?.instantiateItem(
                 viewpager_main,
                 viewpager_main.currentItem
-            ) as? DepartmentsFragment
+            ) as? StandardDeliveryFragment
             fragment?.onActivityResult(requestCode, resultCode, data)
         }
         if (requestCode == DASH_SET_ADDRESS_REQUEST_CODE) {
@@ -504,7 +527,23 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 showDashToolTip(validateLocationResponse) // externally showing dash tooltip as delivery type is not same.
             }
         }
+        if (requestCode == CNC_SET_ADDRESS_REQUEST_CODE) {
+            // Set Address done on CNC Tab. update the response and Refresh the Tab now.
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                // delay added because onResume() sets current item back to deliveryType tab.
+                // But we want forcefully user to come on CNC tab even though the location is not dash.
+                delay(AppConstant.DELAY_500_MS)
+                updateCurrentTab(BundleKeysConstants.CNC)
+                val changeFullfilmentCollectionStoreFragment =
+                    viewpager_main?.adapter?.instantiateItem(
+                        viewpager_main,
+                        viewpager_main.currentItem
+                    ) as? ChangeFullfilmentCollectionStoreFragment
+                changeFullfilmentCollectionStoreFragment?.init()
+            }
+        }
     }
+
 
     fun refreshViewPagerFragment() {
         when (viewpager_main.currentItem) {
@@ -513,7 +552,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     viewpager_main?.adapter?.instantiateItem(
                         viewpager_main,
                         viewpager_main.currentItem
-                    ) as? DepartmentsFragment
+                    ) as? StandardDeliveryFragment
                 departmentsFragment?.initView()
             }
             1 -> {
@@ -553,7 +592,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 val detailsFragment = viewpager_main?.adapter?.instantiateItem(
                     viewpager_main,
                     viewpager_main.currentItem
-                ) as? DepartmentsFragment
+                ) as? StandardDeliveryFragment
                 detailsFragment?.scrollToTop()
             }
             1 -> {
@@ -627,7 +666,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 val detailsFragment = viewpager_main?.adapter?.instantiateItem(
                     viewpager_main,
                     viewpager_main.currentItem
-                ) as? DepartmentsFragment
+                ) as? StandardDeliveryFragment
                 detailsFragment?.reloadRequest()
             }
         }

@@ -15,7 +15,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.RootCatego
 import za.co.woolworths.financial.services.android.util.*
 
 
-internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootCategory>?, private val clickListener: (RootCategory) -> Unit, private val onDashBannerClick: () -> Unit, var validatePlace: ValidatePlace? = null)
+class DepartmentAdapter(var mlRootCategories: MutableList<RootCategory>?, private val clickListener: (RootCategory) -> Unit, private val onDashBannerClick: () -> Unit, var validatePlace: ValidatePlace? = null)
     : RecyclerView.Adapter<DepartmentsBaseViewHolder>() {
     private var mDashBanner: Dash? = null
 

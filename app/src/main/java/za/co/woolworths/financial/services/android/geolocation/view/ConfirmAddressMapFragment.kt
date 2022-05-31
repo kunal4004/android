@@ -273,6 +273,14 @@ class ConfirmAddressMapFragment :
                                         showChangeLocationDialog()
                                     }
                                     return@let
+                                } else if (KotlinUtils.isComingFromCncTab == true) {
+                                    /*user is coming from CNC i.e. set Location flow */
+                                    // navigate to CNC home tab.
+                                    KotlinUtils.isComingFromCncTab = false
+
+                                    /* set cnc browsing data */
+                                    WoolworthsApplication.setCncBrowsingValidatePlaceDetails(validateLocationResponse?.validatePlace)
+                                    activity?.finish()
                                 }
 
                                 when (deliveryType) {
@@ -404,8 +412,17 @@ class ConfirmAddressMapFragment :
                     when (confirmLocationResponse.httpCode) {
                         HTTP_OK -> {
 
+                            /*clear browsing data for cnc and dash both once fullfillment location is comfirmed*/
+                            WoolworthsApplication.setCncBrowsingValidatePlaceDetails(validateLocationResponse?.validatePlace)
+                            WoolworthsApplication.setDashBrowsingValidatePlaceDetails(validateLocationResponse?.validatePlace)
+
+                            KotlinUtils.placeId = placeId
+                            KotlinUtils.isLocationSame =
+                                placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
+
                             WoolworthsApplication.setValidatedSuburbProducts(
                                 validateLocationResponse.validatePlace)
+
                             // save details in cache
                             if (SessionUtilities.getInstance().isUserAuthenticated) {
                                 Utils.savePreferredDeliveryLocation(

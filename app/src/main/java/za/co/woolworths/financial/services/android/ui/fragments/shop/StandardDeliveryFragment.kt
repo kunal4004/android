@@ -13,10 +13,7 @@ import android.os.Looper
 import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -37,8 +34,6 @@ import za.co.woolworths.financial.services.android.models.dto.CartSummaryRespons
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
-import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.DashDetailsActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -53,7 +48,7 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 
 @AndroidEntryPoint
-class DepartmentsFragment : DepartmentExtensionFragment() {
+class StandardDeliveryFragment : DepartmentExtensionFragment() {
 
     private var isFirstCallToLocationModal: Boolean = false
     private var isLocationModalShown: Boolean = false
@@ -62,7 +57,6 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
     private var rootCategoryCall: Call<RootCategories>? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
     private var parentFragment: ShopFragment? = null
-    private var version: String? = ""
     private var isDashEnabled = false
     private var fusedLocationClient: FusedLocationProviderClient? = null
     private var locationRequest: LocationRequest? = createLocationRequest()
@@ -125,7 +119,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
         if (isDashEnabled) {
             if (isPermissionGranted && Utils.isLocationEnabled(context)) {
                 fusedLocationClient?.lastLocation?.addOnSuccessListener {
-                    this@DepartmentsFragment.location = it
+                    this@StandardDeliveryFragment.location = it
                     initializeRootCategoryList()
                 }
             } else {
@@ -142,7 +136,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
     }
 
     private fun initializeRootCategoryList() {
-        if (parentFragment?.getCategoryResponseData() != null) bindDepartment() else executeDepartmentRequest()
+        if (parentFragment?.getCategoryResponseData() != null) bindDepartment() else executeDepartmentRequest(mDepartmentAdapter, parentFragment)
     }
 
     private fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -154,7 +148,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
         if (context != null && !Utils.isLocationEnabled(context)) {
             onProviderDisabled()
             if (isFirstCallToLocationModal) {
-                executeDepartmentRequest()
+                executeDepartmentRequest(mDepartmentAdapter, parentFragment)
             }
         } else {
             startLocationUpdates()
@@ -165,48 +159,12 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
     private fun setListener() {
         btnRetry.setOnClickListener {
             if (networkConnectionStatus()) {
-                executeDepartmentRequest()
+                executeDepartmentRequest(mDepartmentAdapter, parentFragment)
             }
         }
     }
 
-    private fun executeDepartmentRequest() {
-        if (networkConnectionStatus()) {
-            noConnectionLayout(false)
-            if (isRootCallInProgress) {
-                return
-            }
 
-            isRootCallInProgress = true
-            val isLocationEnabled = if (context != null) Utils.isLocationEnabled(context) else false
-            rootCategoryCall = OneAppService.getRootCategory(isLocationEnabled, location, getDeliveryType())
-            rootCategoryCall?.enqueue(CompletionHandler(object : IResponseListener<RootCategories> {
-                override fun onSuccess(response: RootCategories?) {
-                    isRootCallInProgress = false
-                    when (response?.httpCode) {
-                        200 -> {
-                            version = response.response?.version
-                            parentFragment?.setCategoryResponseData(response)
-                            bindDepartment()
-                        }
-                        else -> response?.response?.desc?.let { showErrorDialog(it) }
-                    }
-                }
-
-                override fun onFailure(error: Throwable?) {
-                    isRootCallInProgress = false
-                    if (isAdded) {
-                        activity?.runOnUiThread {
-                            if (networkConnectionStatus())
-                                noConnectionLayout(true)
-                        }
-                    }
-                }
-            }, RootCategories::class.java))
-        } else {
-            noConnectionLayout(true)
-        }
-    }
 
     private fun getDeliveryType(): String {
         if (SessionUtilities.getInstance().isUserAuthenticated) {
@@ -363,14 +321,6 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
         }
     }
 
-    fun noConnectionLayout(isVisible: Boolean) {
-        incConnectionLayout?.visibility = if (isVisible) VISIBLE else GONE
-    }
-
-    fun networkConnectionStatus(): Boolean =
-        activity?.let { NetworkManager.getInstance().isConnectedToNetwork(it) }
-            ?: false
-
     override fun onDestroy() {
         super.onDestroy()
         rootCategoryCall?.apply {
@@ -426,7 +376,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
                 }
                 RESULT_CANCELED -> {
                     //When user clicks deny location
-                    executeDepartmentRequest()
+                    executeDepartmentRequest(mDepartmentAdapter, parentFragment)
                 }
             }
         } else if (resultCode == RESULT_OK || resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
@@ -529,11 +479,11 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
         override fun onLocationResult(locationResult: LocationResult?) {
             locationResult ?: return
             for (location in locationResult.locations) {
-                this@DepartmentsFragment.location = location
+                this@StandardDeliveryFragment.location = location
                 if (isVisible) {
                     shopViewModel.setLocation(location)
                 }
-                executeDepartmentRequest()
+                executeDepartmentRequest(mDepartmentAdapter, parentFragment)
                 stopLocationUpdates()
                 break
             }
@@ -541,6 +491,6 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
     }
 
     fun reloadRequest() {
-        executeDepartmentRequest()
+        executeDepartmentRequest(mDepartmentAdapter, parentFragment)
     }
 }
