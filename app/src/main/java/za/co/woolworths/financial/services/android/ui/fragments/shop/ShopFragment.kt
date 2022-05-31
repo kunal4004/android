@@ -531,7 +531,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             // Set Address done on CNC Tab. update the response and Refresh the Tab now.
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 // delay added because onResume() sets current item back to deliveryType tab.
-                // But we want forcefully user to come on CNC tab even though the location is not dash.
+                // But we want forcefully user to come on CNC tab even though the location is not CNC.
                 delay(AppConstant.DELAY_500_MS)
                 updateCurrentTab(BundleKeysConstants.CNC)
                 val changeFullfilmentCollectionStoreFragment =
