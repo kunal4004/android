@@ -38,21 +38,11 @@
         app:layout_constraintTop_toBottomOf="@+id/removeDeviceTitle" />
 
 
-    <View
-        android:id="@+id/viewAllDevicesTitleSeparator2"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/one_dp"
-        android:layout_marginStart="@dimen/thirty_two_dp"
-        android:layout_marginEnd="@dimen/thirty_two_dp"
-        android:background="@color/color_separator_light_grey"
-        app:layout_constraintBottom_toTopOf="@id/selectPrimaryDeviceRecyclerView"
-        app:layout_constraintStart_toStartOf="@+id/selectPrimaryDeviceRecyclerView"
-        app:layout_constraintEnd_toEndOf="@+id/selectPrimaryDeviceRecyclerView" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/selectPrimaryDeviceRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:paddingTop="@dimen/fifteen_dp"
         android:paddingBottom="@dimen/fifteen_dp"
         android:layout_marginStart="@dimen/thirty_two_dp"
         android:layout_marginTop="@dimen/twenty_six_dp"

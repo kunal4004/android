@@ -99,6 +99,7 @@ class ViewAllLinkedDevicesAdapter(val context: Context, val onClickListener: Vie
                         }
                         if (deviceList?.last() == it){
                             listItem.viewAllDevicesTitleSeparator2?.visibility = GONE
+                            viewAllDevicesTitleSeparator2?.visibility = GONE
                         }
                         listItem.viewAllDeviceNameTextView?.text = URLDecoder.decode(it.deviceName, "UTF8")
                         listItem.viewAllDeviceSubtitleTextView?.text = context.getString(R.string.view_all_device_linked_on, it.linkedDate)

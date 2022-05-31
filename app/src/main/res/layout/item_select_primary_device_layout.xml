@@ -7,7 +7,14 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/fifteen_dp"
     android:background="@color/white">
-
+    <View
+        android:id="@+id/viewAllDevicesTitleSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/one_dp"
+        android:background="@color/color_separator_light_grey"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/deviceRadioButton"
+        app:layout_constraintEnd_toEndOf="parent"/>
     <RadioButton
         android:id="@+id/deviceRadioButton"
         android:layout_width="wrap_content"
