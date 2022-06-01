@@ -119,13 +119,13 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
             }
         } else {
             if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() == null && getDeliveryType() == null) {
-                parentFragment?.hideSerachAndBarcodeUi()
+                // when user comes first time i.e. no location , no fullfillment type
+                // navigate to geo location flow
                 showSetLocationdUi()
             } else if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() != null && KotlinUtils.browsingCncStore == null) {
-                parentFragment?.hideSerachAndBarcodeUi()
+                /*when user comes with location but no store is selected yet*/
                 setStoreCollectionData(WoolworthsApplication.getCncBrowsingValidatePlaceDetails())
             } else if (KotlinUtils.browsingCncStore == null) {
-                parentFragment?.hideSerachAndBarcodeUi()
                 setStoreCollectionData(WoolworthsApplication.getCncBrowsingValidatePlaceDetails())
             } else {
                 showCategoryList()
@@ -151,7 +151,6 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
 
     private fun setStoreList(stores: List<Store>?) {
         layoutEdgeCaseScreen?.visibility = View.GONE
-        AppConstant.DELAY_100_MS
         layoutClickAndCollectStore?.visibility = View.VISIBLE
         layoutClickAndCollectStore?.ivCross?.visibility = View.GONE
         rvStoreList.layoutManager =
