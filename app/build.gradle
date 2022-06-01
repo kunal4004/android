@@ -11,11 +11,11 @@ apply plugin: 'dagger.hilt.android.plugin'
 android {
 
     def major = "9"
-    def minor = "0"
+    def minor = "1"
     def fix = "0"
     def jobNumberProduction = 184
-    def jobNumberQa = 589
-    def jobNumberFeature = 15046
+    def jobNumberQa = 590
+    def jobNumberFeature = 15716
 
     dataBinding {
         enabled = true
@@ -246,7 +246,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.facebook.fresco:fresco:2.0.0'
     implementation 'com.facebook.fresco:animated-gif:2.0.0'
-    implementation 'com.facebook.android:facebook-android-sdk:5.1.1'
+    implementation 'com.facebook.android:facebook-android-sdk:13.2.0'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.19'
 

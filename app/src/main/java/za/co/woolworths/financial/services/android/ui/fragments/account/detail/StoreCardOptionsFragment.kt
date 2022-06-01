@@ -419,7 +419,7 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
 
                         }
                         bindString(R.string.activate_vtc_title) -> {
-                            KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
+                            KotlinUtils.linkDeviceIfNecessary(activity = activity, ApplyNowState.STORE_CARD, {
                                 ACTIVATE_VIRTUAL_CARD_DETAIL = true
                             }, {
                                 navigateToTemporaryStoreCard()
