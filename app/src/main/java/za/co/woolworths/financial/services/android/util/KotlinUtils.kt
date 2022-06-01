@@ -49,6 +49,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
+import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
@@ -100,7 +101,10 @@ class KotlinUtils {
         var isDeliveryLocationTabClicked: Boolean? = false
         var isCncTabClicked: Boolean? = false
         var isDashTabClicked: Boolean? = false
+        var isComingFromCncTab: Boolean? = false
         var browsingDeliveryType: Delivery? = getPreferredDeliveryType()
+        @JvmStatic
+        var browsingCncStore: Store? = null
         const val collectionsIdUrl = "woolworths.wfs.co.za/CustomerCollections/IdVerification"
         const val COLLECTIONS_EXIT_URL = "collectionsExitUrl"
         const val TREATMENT_PLAN = "treamentPlan"
@@ -519,13 +523,12 @@ class KotlinUtils {
         }
 
         fun getUnsellableList(validatePlace: ValidatePlace?, deliveryType: Delivery?): MutableList<UnSellableCommerceItem>? {
-            val mStoreId = "124" // todo get this storeId from browsing storeId.
             return when (deliveryType) {
                 Delivery.STANDARD -> {
                     validatePlace?.unSellableCommerceItems
                 }
                 Delivery.CNC -> {
-                    checkStoreHasUnsellable(validatePlace, mStoreId)
+                    browsingCncStore?.storeId?.let { checkStoreHasUnsellable(validatePlace, it) }
                 }
                 Delivery.DASH -> {
                     validatePlace?.onDemand?.unSellableCommerceItems
@@ -544,7 +547,6 @@ class KotlinUtils {
         }
 
         fun getConfirmLocationRequest(deliveryType: Delivery?): ConfirmLocationRequest {
-            val mStoreId = "124" // todo get this storeId from browsing storeId.
             return when (deliveryType) {
                 Delivery.STANDARD -> {
                     ConfirmLocationRequest(BundleKeysConstants.STANDARD,
@@ -556,7 +558,7 @@ class KotlinUtils {
                         ConfirmLocationAddress(if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() != null)
                             WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.placeDetails?.placeId
                         else WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId),
-                        mStoreId)
+                        browsingCncStore?.storeId)
                 }
                 Delivery.DASH -> {
                     ConfirmLocationRequest(BundleKeysConstants.DASH,

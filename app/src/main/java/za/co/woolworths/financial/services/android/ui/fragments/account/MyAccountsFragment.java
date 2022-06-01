@@ -917,6 +917,10 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             Activity activity = getActivity();
             if (activity == null || mUpdateMyAccount.accountUpdateActive()) return;
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSIGNIN, activity);
+            /* clear all cnc and dash browsing data when user login*/
+            WoolworthsApplication.setCncBrowsingValidatePlaceDetails(null);
+            WoolworthsApplication.setDashBrowsingValidatePlaceDetails(null);
+            KotlinUtils.setBrowsingCncStore(null);
             ScreenManager.presentSSOSignin(getActivity());
         }
     };
