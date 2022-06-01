@@ -10,6 +10,7 @@ class BundleKeysConstants {
         const val ACCOUNTBI_NNUMBER = "accountBinNumber"
         const val STATUS_RESPONSE = "StatusResponse"
         const val PRODUCT_OFFERINGID = "productOfferingId"
+
         //geo location
         const val KEY_PLACE_ID = "placeId"
         const val KEY_LATITUDE = "latitude"
@@ -26,6 +27,7 @@ class BundleKeysConstants {
         var IS_FROM_STORE_LOCATOR = false
         const val REQUEST_CODE = 1515
         const val DASH_SET_ADDRESS_REQUEST_CODE = 1516
+        const val CNC_SET_ADDRESS_REQUEST_CODE = 1517
         const val DELIVERY_TYPE = "DELIVERY_TYPE"
         const val IS_COMING_FROM_CHECKOUT = "isComingFromCheckout"
         const val IS_COMING_FROM_SLOT_SELECTION = "isComingFromSlotSelection"
@@ -34,6 +36,7 @@ class BundleKeysConstants {
         const val DEFAULT_ADDRESS = "defaultAddress"
         const val PLACE_ID = "placeId"
         const val IS_LIQUOR = "IS_LIQUOR"
+        const val NICK_NAME = "nickname"
     }
 
 }

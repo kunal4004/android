@@ -32,7 +32,7 @@ import za.co.woolworths.financial.services.android.models.repository.AppStateRep
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDeliveryFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS
@@ -457,7 +457,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                 )
             }
         } else {
-            ScreenManager.presentSSOSignin(activity, DepartmentsFragment.DEPARTMENT_LOGIN_REQUEST)
+            ScreenManager.presentSSOSignin(activity, StandardDeliveryFragment.DEPARTMENT_LOGIN_REQUEST)
         }
 
     }

@@ -36,6 +36,7 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
@@ -464,6 +465,19 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                             confirmLocationResponse.orderSummary?.fulfillmentDetails
                                         )
                                     )
+                                }
+
+
+                                /*reset browsing data for cnc and dash both once fullfillment location is confirmed*/
+                                WoolworthsApplication.setCncBrowsingValidatePlaceDetails(validateLocationResponse?.validatePlace)
+                                WoolworthsApplication.setDashBrowsingValidatePlaceDetails(validateLocationResponse?.validatePlace)
+
+                                if (KotlinUtils.isLocationSame == false && deliveryType != Delivery.CNC.name) {
+                                    KotlinUtils.browsingCncStore = null
+                                }
+
+                                if (deliveryType == Delivery.CNC.name) {
+                                    KotlinUtils.browsingCncStore = GeoUtils.getStoreDetails(mStoreId, validateLocationResponse?.validatePlace?.stores)
                                 }
 
                                 WoolworthsApplication.setValidatedSuburbProducts(

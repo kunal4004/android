@@ -273,6 +273,14 @@ class ConfirmAddressMapFragment :
                                         showChangeLocationDialog()
                                     }
                                     return@let
+                                } else if (KotlinUtils.isComingFromCncTab == true) {
+                                    /*user is coming from CNC i.e. set Location flow */
+                                    // navigate to CNC home tab.
+                                    KotlinUtils.isComingFromCncTab = false
+
+                                    /* set cnc browsing data */
+                                    WoolworthsApplication.setCncBrowsingValidatePlaceDetails(validateLocationResponse?.validatePlace)
+                                    activity?.finish()
                                 }
 
                                 when (deliveryType) {
@@ -404,8 +412,17 @@ class ConfirmAddressMapFragment :
                     when (confirmLocationResponse.httpCode) {
                         HTTP_OK -> {
 
+                            /*reset browsing data for cnc and dash both once fullfillment location is comfirmed*/
+                            WoolworthsApplication.setCncBrowsingValidatePlaceDetails(validateLocationResponse?.validatePlace)
+                            WoolworthsApplication.setDashBrowsingValidatePlaceDetails(validateLocationResponse?.validatePlace)
+
+                            KotlinUtils.placeId = placeId
+                            KotlinUtils.isLocationSame =
+                                placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
+
                             WoolworthsApplication.setValidatedSuburbProducts(
                                 validateLocationResponse.validatePlace)
+
                             // save details in cache
                             if (SessionUtilities.getInstance().isUserAuthenticated) {
                                 Utils.savePreferredDeliveryLocation(
@@ -518,7 +535,7 @@ class ConfirmAddressMapFragment :
             binding?.imgMapMarker?.visibility = View.GONE
             binding?.confirmAddress?.isEnabled = false
             mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(DEFAULT_LATITUDE,
-                DEFAULT_LONGITUDE), 10f))
+                DEFAULT_LONGITUDE), 4.8f))
 
         }
 
@@ -559,7 +576,7 @@ class ConfirmAddressMapFragment :
                 address1 = getAddressOne(mAddress)
                 city = it.getOrNull(0)?.locality
                 state = it.getOrNull(0)?.adminArea
-                country = it.getOrNull(0)?.countryName
+                country = it.getOrNull(0)?.countryCode
                 postalCode = it.getOrNull(0)?.postalCode
                 suburb = it.getOrNull(0)?.subLocality
 
@@ -627,6 +644,12 @@ class ConfirmAddressMapFragment :
                             ROUTE.value -> routeName = address.name
                         }
                     }
+                    if(streetNumber.isNullOrEmpty()){
+                        streetNumber=""
+                    }
+                    if(routeName.isNullOrEmpty()){
+                        routeName=""
+                    }
                     placeName?.let {
                         if (!it.equals("$streetNumber $routeName",
                                 true) && isMainPlaceName == true
@@ -655,8 +678,8 @@ class ConfirmAddressMapFragment :
     }
 
     companion object {
-        private const val DEFAULT_LATITUDE = -33.918861
-        private const val DEFAULT_LONGITUDE = 18.423300
+        private const val DEFAULT_LATITUDE = -30.81020
+        private const val DEFAULT_LONGITUDE = 23.72364
     }
 
     override fun tryAgain() {
