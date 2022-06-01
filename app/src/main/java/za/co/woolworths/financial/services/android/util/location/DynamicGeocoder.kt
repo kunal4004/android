@@ -63,6 +63,7 @@ object DynamicGeocoder {
                                 }
                             }
                             .addOnFailureListener {
+                                FirebaseManager.logException(it)
                                 callback.invoke(null)
                             }
                     }

@@ -192,6 +192,8 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             DynamicGeocoder.getAddressFromLocation(activity, it.latitude, it.longitude) { address ->
                 address?.let {
                     tvCurrentLocation?.text = it.addressLine
+                } ?: kotlin.run {
+                    hideCurrentLocation()
                 }
             }
         } ?: kotlin.run {
