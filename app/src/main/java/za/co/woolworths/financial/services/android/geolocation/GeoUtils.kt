@@ -50,7 +50,7 @@ class GeoUtils {
 
         fun getStoreDetails(storeId: String?, stores: List<Store>?): Store? {
             stores?.forEach {
-               it.storeId == storeId
+              if (it.storeId == storeId)
                return it
             }
             return null

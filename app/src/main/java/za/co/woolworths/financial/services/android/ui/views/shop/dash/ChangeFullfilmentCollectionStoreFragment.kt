@@ -331,7 +331,8 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
             else -> ProductListingFragment.newInstance(
                 ProductsRequestParams.SearchType.NAVIGATE,
                 rootCategory.categoryName,
-                rootCategory.dimValId
+                rootCategory.dimValId,
+                true
             )
         }
     }

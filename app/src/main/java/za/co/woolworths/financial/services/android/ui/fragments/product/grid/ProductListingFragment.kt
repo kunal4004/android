@@ -124,6 +124,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var mSelectedProductList: ProductList? = null
     private var mBannerLabel: String? = null
     private var mBannerImage: String? = null
+    private var isUserBrowsing: Boolean = false
     private var mIsComingFromBLP: Boolean = false
     private var liquorDialog: Dialog? = null
     private var deliveryType: Delivery = Delivery.STANDARD
@@ -141,6 +142,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         activity?.apply {
             arguments?.apply {
                 mSubCategoryName = getString(SUB_CATEGORY_NAME, "")
+                isUserBrowsing = getBoolean(IS_BROWSING, false)
                 mSearchType =
                     ProductsRequestParams.SearchType.valueOf(getString(SEARCH_TYPE, "SEARCH"))
                 mSearchTerm = getString(SEARCH_TERM, "")
@@ -454,7 +456,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     BrandNavigationDetails(
                         brandText = (arguments?.getSerializable(BRAND_NAVIGATION_DETAILS) as? BrandNavigationDetails)?.brandText,
                         navigationState = mNavigationState
-                    )
+                    ),
+                    isUserBrowsing
                 )
             )
         }
@@ -1304,7 +1307,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
         // Now first check for if delivery location and browsing location is same.
         // if same no issues. If not then show changing delivery location popup.
-        if (!KotlinUtils.getDeliveryType()?.deliveryType.equals(KotlinUtils.browsingDeliveryType?.type)) {
+        if (!KotlinUtils.getDeliveryType()?.deliveryType.equals(KotlinUtils.browsingDeliveryType?.type) && isUserBrowsing) {
             KotlinUtils.showChangeDeliveryTypeDialog(requireContext(), requireFragmentManager(),
                 KotlinUtils.browsingDeliveryType)
             return
@@ -1637,7 +1640,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 BrandNavigationDetails(
                     brandText = (arguments?.getSerializable(BRAND_NAVIGATION_DETAILS) as? BrandNavigationDetails)?.brandText,
                     navigationState = navigationState
-                )
+                ),
+                isUserBrowsing
             )
         )
     }
@@ -1673,6 +1677,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
         private const val SEARCH_TYPE = "SEARCH_TYPE"
         private const val SEARCH_TERM = "SEARCH_TERM"
+        private const val IS_BROWSING = "is_browsing"
         private const val SORT_OPTION = "SORT_OPTION"
         private const val BRAND_NAVIGATION_DETAILS = "BRAND_NAVIGATION_DETAILS"
 
@@ -1680,10 +1685,12 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             searchType: ProductsRequestParams.SearchType?,
             sub_category_name: String?,
             searchTerm: String?,
+            isBrowsing: Boolean
         ) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
             putString(SUB_CATEGORY_NAME, sub_category_name)
             putString(SEARCH_TERM, searchTerm)
+            putBoolean(IS_BROWSING, isBrowsing)
         }
 
         fun newInstance(
@@ -1691,11 +1698,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             searchTerm: String?,
             sub_category_name: String?,
             brandNavigationDetails: BrandNavigationDetails?,
+            isBrowsing: Boolean
         ) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
             putString(SEARCH_TERM, searchTerm)
             putString(SUB_CATEGORY_NAME, sub_category_name)
             putSerializable(BRAND_NAVIGATION_DETAILS, brandNavigationDetails)
+            putBoolean(IS_BROWSING, isBrowsing)
         }
 
         fun newInstance(
@@ -1704,12 +1713,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             sub_category_name: String?,
             sortOption: String,
             brandNavigationDetails: BrandNavigationDetails?,
+            isBrowsing: Boolean
         ) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
             putString(SUB_CATEGORY_NAME, sub_category_name)
             putString(SEARCH_TERM, searchTerm)
             putString(SORT_OPTION, sortOption)
             putSerializable(BRAND_NAVIGATION_DETAILS, brandNavigationDetails)
+            putBoolean(IS_BROWSING, isBrowsing)
         }
     }
 
@@ -1800,7 +1811,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     ProductsRequestParams.SearchType.NAVIGATE,
                     searchTerm = brandNavigationDetails.brandText,
                     "",
-                    brandNavigationDetails
+                    brandNavigationDetails,
+                    isUserBrowsing
                 )
             )
         }
@@ -1847,7 +1859,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     ProductsRequestParams.SearchType.NAVIGATE,
                     searchTerm = navigation?.displayName,
                     "",
-                    brandNavigationDetails
+                    brandNavigationDetails,
+                    isUserBrowsing
                 )
             )
         }

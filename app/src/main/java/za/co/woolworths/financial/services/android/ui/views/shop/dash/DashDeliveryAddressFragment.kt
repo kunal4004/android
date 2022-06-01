@@ -83,7 +83,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             if (anonymousUserLocation != null) {
                 // AnonymousUser who has location
                 val validatePlace = WoolworthsApplication.getValidatePlaceDetails()
-                if (validatePlace?.onDemand != null && validatePlace?.onDemand?.deliverable == true) {
+                if (validatePlace?.onDemand != null && validatePlace.onDemand?.deliverable == true) {
                     // Show categories.
                     setupRecyclerView()
                     initData()
@@ -118,7 +118,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     subscribeToObservers()
                     callValidatePlace(savedLocation?.fulfillmentDetails?.address?.placeId)
                 }
-                if (validatePlace?.onDemand != null && validatePlace?.onDemand?.deliverable == true) {
+                if (validatePlace?.onDemand != null && validatePlace.onDemand?.deliverable == true) {
                     // Show categories.
                     setupRecyclerView()
                     initData()
@@ -152,10 +152,6 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         txt_dash_sub_title?.text = getString(R.string.no_location_desc)
         btn_dash_set_address?.text = getString(R.string.change_location)
         btn_dash_set_address?.setOnClickListener(this)
-    }
-
-    private fun hideSetAddressScreen() {
-        layoutDashSetAddress?.visibility = View.GONE
     }
 
     private fun initData() {
@@ -580,7 +576,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                             if (addToCartList != null && addToCartList.size > 0 && addToCartList[0].formexceptions != null) {
                                 val formException = addToCartList[0].formexceptions[0]
                                 if (formException != null) {
-                                    if (formException.message.toLowerCase(Locale.getDefault())
+                                    if (formException.message.lowercase(Locale.getDefault())
                                             .contains("unfortunately this product is now out of stock, please try again tomorrow")
                                     ) {
                                         addItemToCart?.catalogRefId?.let { catalogRefId ->
@@ -692,7 +688,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 ProductListingFragment.newInstance(
                     searchType = ProductsRequestParams.SearchType.NAVIGATE,
                     sub_category_name = categoryItem.categoryName,
-                    searchTerm = categoryItem.dimValId
+                    searchTerm = categoryItem.dimValId,
+                    true
                 )
             )
         }
@@ -704,7 +701,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 ProductListingFragment.newInstance(
                     searchType = ProductsRequestParams.SearchType.NAVIGATE,
                     sub_category_name = item.displayName,
-                    searchTerm = item.navigationState
+                    searchTerm = item.navigationState,
+                    true
                 )
             )
         }
