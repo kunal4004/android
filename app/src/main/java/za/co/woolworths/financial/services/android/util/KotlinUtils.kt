@@ -46,6 +46,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Addr
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_COLLECTING_DETAILS
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
@@ -96,7 +97,10 @@ class KotlinUtils {
         var isDeliveryLocationTabClicked: Boolean? = false
         var isCncTabClicked: Boolean? = false
         var isDashTabClicked: Boolean? = false
-        var browsingDeliveryType: String? = getPreferredDeliveryType()?.name
+        var isComingFromCncTab: Boolean? = false
+        var browsingDeliveryType: Delivery? = getPreferredDeliveryType()
+        @JvmStatic
+        var browsingCncStore: Store? = null
         const val DELAY: Long = 900
         const val collectionsIdUrl = "woolworths.wfs.co.za/CustomerCollections/IdVerification"
         const val COLLECTIONS_EXIT_URL = "collectionsExitUrl"

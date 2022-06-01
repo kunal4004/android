@@ -671,19 +671,19 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         var dialogBtnText = ""
         var dialogTitleImg: Int = R.drawable.img_delivery_truck
         when (KotlinUtils.browsingDeliveryType) {
-            Delivery.STANDARD.name -> {
+            Delivery.STANDARD -> {
                 dialogTitle = getString(R.string.change_your_delivery_method_title)
                 dialogSubTitle = getText(R.string.change_your_delivery_method_standard)
                 dialogBtnText = getString(R.string.continue_with_standard_delivery)
                 dialogTitleImg = R.drawable.img_delivery_truck
             }
-            Delivery.CNC.name -> {
+            Delivery.CNC -> {
                 dialogTitle = getString(R.string.change_your_delivery_method_title)
                 dialogSubTitle = getText(R.string.change_your_delivery_method_cnc)
                 dialogBtnText = getString(R.string.continue_with_cnc_delivery)
                 dialogTitleImg = R.drawable.img_collection_bag
             }
-            Delivery.DASH.name -> {
+            Delivery.DASH -> {
                 dialogTitle = getString(R.string.change_your_delivery_method_title)
                 dialogSubTitle = getText(R.string.change_your_delivery_method_dash)
                 dialogBtnText = getString(R.string.continue_with_dash_delivery)
@@ -722,7 +722,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         // Now first check for if delivery location and browsing location is same.
         // if same no issues. If not then show changing delivery location popup.
-        if (!KotlinUtils.getDeliveryType()?.deliveryType.equals(KotlinUtils.browsingDeliveryType)) {
+        if (KotlinUtils.getDeliveryType()?.deliveryType?.equals(KotlinUtils.browsingDeliveryType) == false) {
             // Todo This code will be uncommented in next PR APP1-356
             //showChangeDeliveryTypeDialog()
             //return

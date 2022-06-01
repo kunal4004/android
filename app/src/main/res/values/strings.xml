@@ -2518,6 +2518,9 @@
     <string name="dash_delivery_date">Delivery Date</string>
     <string name="dash_delivery_timeslot">Delivery Timeslot</string>
     <string name="dashing_to">Dashing to</string>
+    <string name="set_location_title">Set Your Location</string>
+    <string name="set_location_msg">To view and shop using Click &amp; Collect, we need your location.</string>
+    <string name="set_location">SET LOCATION</string>
 
     <string name="change_your_delivery_method_title">You’re About To Change Your Delivery Method</string>
     <string name="change_your_delivery_method_standard">By adding this item to your cart, you will checkout using <b><font color='#000000'>Standard Delivery</font></b> instead.</string>

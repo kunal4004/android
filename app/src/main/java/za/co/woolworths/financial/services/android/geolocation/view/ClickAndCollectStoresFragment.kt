@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.geolocation.view
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,29 +14,21 @@ import za.co.woolworths.financial.services.android.geolocation.network.model.Val
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.StoreListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.BitmapDescriptor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.geo_location_delivery_address.*
 import kotlinx.android.synthetic.main.no_connection.view.*
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
@@ -63,7 +54,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     private var dataStore: Store? = null
     private var bundle: Bundle? = null
-    private  var validateLocationResponse: ValidateLocationResponse? = null
+    private var validateLocationResponse: ValidateLocationResponse? = null
     private var placeId: String? = null
     private var isComingFromConfirmAddress: Boolean? = false
     @Inject
@@ -134,52 +125,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
     override fun onMapReady(googleMap: GoogleMap?) {
         googleMap?.uiSettings?.setAllGesturesEnabled(false)
         val addressStorList = mValidateLocationResponse?.validatePlace?.stores
-        showFirstFourLocationInMap(addressStorList, googleMap)
-    }
-
-    private fun showFirstFourLocationInMap(addressStorList: List<Store>?, googleMap: GoogleMap?) {
-
-        addressStorList?.let {
-            for (i in 0..3) {
-                googleMap?.addMarker(
-                    MarkerOptions().position(
-                        LatLng(
-                            addressStorList?.get(i)?.latitude!!,
-                            addressStorList?.get(i)?.longitude!!
-                        )
-                    ).icon(BitmapFromVector(requireContext(), R.drawable.pin))
-                )
-                googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(
-                    addressStorList.get(i)?.latitude!!,
-                    addressStorList.get(i)?.longitude!!
-                 ), 11f))
-            }
-        }
-    }
-
-    private fun BitmapFromVector(context: Context, vectorResId: Int): BitmapDescriptor? {
-        val vectorDrawable: Drawable? = ContextCompat.getDrawable(context, vectorResId)
-        vectorDrawable?.apply {
-            setBounds(
-                0,
-                0,
-                vectorDrawable.intrinsicWidth,
-                vectorDrawable.intrinsicHeight
-            )
-        }
-
-        val bitmap: Bitmap? = vectorDrawable?.intrinsicWidth?.let {
-            Bitmap.createBitmap(
-                it,
-                vectorDrawable.intrinsicHeight,
-                Bitmap.Config.ARGB_8888
-            )
-        }
-        val canvas = bitmap?.let { Canvas(it) }
-        if (canvas != null) {
-            vectorDrawable?.draw(canvas)
-        }
-        return BitmapDescriptorFactory.fromBitmap(bitmap)
+        GeoUtils.showFirstFourLocationInMap(addressStorList, googleMap, requireContext())
     }
 
     private fun setAddressUI(

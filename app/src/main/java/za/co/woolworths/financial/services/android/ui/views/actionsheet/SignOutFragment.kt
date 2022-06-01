@@ -41,6 +41,8 @@ class SignOutFragment : WBottomSheetDialogFragment(), View.OnClickListener {
                 convertButtonBackgroundToBlack(okaySignOutButton)
                 val cancelHandler: Handler? = Handler()
                 WoolworthsApplication.setValidatedSuburbProducts(null)
+                WoolworthsApplication.setCncBrowsingValidatePlaceDetails(null)
+                WoolworthsApplication.setDashBrowsingValidatePlaceDetails(null)
                 cancelHandler?.postDelayed({
                     ServiceTools.stop(activity, LiveChatService::class.java)
                     dismiss()
