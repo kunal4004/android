@@ -1042,6 +1042,12 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
     private fun getShipmentDetailsBody(): ShippingDetailsBody {
         val body = ShippingDetailsBody()
+        KotlinUtils.getUniqueDeviceID {
+            body.apply {
+                fireBaseToken = Utils.getToken()
+                appInstanceId = it
+            }
+        }
         when {
             // Food Items Basket
             foodType == ONLY_FOOD -> {

@@ -946,6 +946,10 @@ class CheckoutDashFragment : Fragment(),
         deliveryType = Delivery.DASH.type
         address = ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
         driverTip = removeRandFromAmount(selectedDriverTipValue ?: "0.0").toDouble()
+        KotlinUtils.getUniqueDeviceID {
+            fireBaseToken = Utils.getToken()
+            appInstanceId = it
+        }
     }
 
     private fun isGiftMessage(): Boolean {
