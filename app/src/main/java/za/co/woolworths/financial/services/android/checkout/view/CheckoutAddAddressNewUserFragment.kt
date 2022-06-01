@@ -279,6 +279,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             postalCode.setText(selectedAddress.savedAddress.postalCode)
             postalCode.isEnabled = false
         selectedDeliveryAddressType = selectedAddress.savedAddress.addressType
+        isValidAddress=true
     }
 
     private fun initView() {

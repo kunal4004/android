@@ -301,7 +301,7 @@ class ConfirmAddressMapFragment :
         } else {
             binding?.imgMapMarker?.visibility = View.GONE
             binding?.confirmAddress?.isEnabled = false
-            mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE), 4.8f))
+            mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE), 5f))
 
         }
 
@@ -441,8 +441,8 @@ class ConfirmAddressMapFragment :
     }
 
     companion object {
-        private const val DEFAULT_LATITUDE = -30.81020
-        private const val DEFAULT_LONGITUDE = 23.72364
+        private const val DEFAULT_LATITUDE = -28.741943
+        private const val DEFAULT_LONGITUDE = 24.771944
     }
 
     override fun tryAgain() {
