@@ -178,8 +178,8 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
     }
 
     private fun showNoCollectionStoresUi() {
-        layoutEdgeCaseScreen?.visibility = View.VISIBLE
         layoutClickAndCollectStore?.visibility = View.GONE
+        layoutEdgeCaseScreen?.visibility = View.VISIBLE
         img_view?.setImageResource(R.drawable.location_disabled)
         txt_dash_title?.text = bindString(R.string.collection_store_title)
         txt_dash_sub_title?.text = bindString(R.string.suburb_not_deliverable_description)

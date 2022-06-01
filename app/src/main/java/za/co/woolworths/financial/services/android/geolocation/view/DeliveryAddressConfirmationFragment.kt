@@ -476,6 +476,10 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                     KotlinUtils.browsingCncStore = null
                                 }
 
+                                if (deliveryType == Delivery.CNC.name) {
+                                    KotlinUtils.browsingCncStore = GeoUtils.getStoreDetails(mStoreId, validateLocationResponse?.validatePlace?.stores)
+                                }
+
                                 WoolworthsApplication.setValidatedSuburbProducts(
                                     validateLocationResponse?.validatePlace)
 

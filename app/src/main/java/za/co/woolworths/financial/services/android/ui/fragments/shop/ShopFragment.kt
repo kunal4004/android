@@ -387,11 +387,11 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         setDeliveryView()
         when (viewpager_main?.currentItem) {
             0 -> {
-                val departmentFragment = viewpager_main?.adapter?.instantiateItem(
+                val standardDeliveryFragment = viewpager_main?.adapter?.instantiateItem(
                     viewpager_main,
                     viewpager_main.currentItem
                 ) as? StandardDeliveryFragment
-                departmentFragment?.onHiddenChanged(hidden)
+                standardDeliveryFragment?.onHiddenChanged(hidden)
             }
         }
     }
