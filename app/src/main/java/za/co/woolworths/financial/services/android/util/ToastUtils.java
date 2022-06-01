@@ -166,7 +166,7 @@ public class ToastUtils {
 				}
 			}, POPUP_DELAY_MILLIS);
 
-			if (getActivity() != null) {
+			if (getActivity() != null && view != null) {
 				pw.showAtLocation(view, gravity, 0, getPixel());
 			}
 			return pw;
