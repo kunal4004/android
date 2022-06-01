@@ -8,12 +8,14 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Settings
 import android.view.*
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
@@ -21,6 +23,7 @@ import com.google.android.gms.tasks.Task
 import kotlinx.android.synthetic.main.fragment_my_preferences.*
 import kotlinx.android.synthetic.main.link_card_fragment.*
 import retrofit2.Call
+import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBottomSheetDialog
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -152,11 +155,17 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         linkDeviceSwitch.setOnClickListener(this)
         retryLinkDeviceLinearLayout?.setOnClickListener(this)
         viewAllLinkedDevicesRelativeLayout?.setOnClickListener(this)
+        deleteAccountLayout?.setOnClickListener(this)
 
         activity?.apply {
             if (this is MyPreferencesInterface) {
                 setToolbarTitle(getString(R.string.acc_my_preferences))
                 setToolbarTitleGravity(Gravity.START)
+            }
+        }
+        setFragmentResultListener(DeleteAccountBottomSheetDialog.DELETE_ACCOUNT_CONFIRMATION){_,bundle->
+            if(bundle.getString(DeleteAccountBottomSheetDialog.DELETE_ACCOUNT)==DeleteAccountBottomSheetDialog.DELETE_ACCOUNT){
+                Toast.makeText(context,"taped delete "+bundle.getString(DeleteAccountBottomSheetDialog.DELETE_ACCOUNT),Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -295,6 +304,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                 }
             } else openDeviceSecuritySettings()
             R.id.locationSelectedLayout -> locationSelectionClicked()
+            R.id.deleteAccountLayout -> deleteAccountShowPopup()
             R.id.linkDeviceSwitch -> {
                 askLocationPermission()
             }
@@ -324,6 +334,12 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                 }
             }
         }
+    }
+
+    private fun deleteAccountShowPopup() {
+        view?.findNavController()?.navigate(
+            R.id.action_myPreferencesFragment_to_deleteAccountBottomSheetDialog
+        )
     }
 
     private fun askLocationPermission() {
