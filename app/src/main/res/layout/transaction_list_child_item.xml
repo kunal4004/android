@@ -29,7 +29,7 @@
         android:textAllCaps="true"
         android:textColor="@color/black"
         android:textSize="@dimen/fifteen_sp"
-        app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
+        app:layout_constraintEnd_toStartOf="@+id/transactionAmount"
         app:layout_constraintStart_toStartOf="@+id/beginGuideline"
         app:layout_constraintTop_toTopOf="parent" />
 
