@@ -175,7 +175,7 @@ object OneAppService : RetrofitConfig() {
             getDeviceIdentityToken())
     }
 
-    fun getRootCategory(locationEnabled: Boolean, location: Location?, deliveryType: String): Call<RootCategories> {
+    fun getRootCategory(locationEnabled: Boolean, location: Location?, deliveryType: String?): Call<RootCategories> {
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
         // Pass storeId value of 01 fulfillment type
         var locationCord = location
@@ -540,7 +540,6 @@ object OneAppService : RetrofitConfig() {
     suspend fun getValidateLocation(placeId: String): retrofit2.Response<ValidateLocationResponse> {
         return withContext(Dispatchers.IO) {
             mApiInterface.validatePlace("",
-                getSit4Environment(),
                 "",
                 getSessionToken(),
                 getDeviceIdentityToken(),
@@ -725,7 +724,6 @@ object OneAppService : RetrofitConfig() {
     fun getConfirmDeliveryAddressDetails(body: ConfirmLocationRequest): Call<ConfirmDeliveryAddressResponse>{
         return mApiInterface.confirmLocation("",
             "",
-            getSit4Environment(),
             getSessionToken(),
             getDeviceIdentityToken(),
             body
