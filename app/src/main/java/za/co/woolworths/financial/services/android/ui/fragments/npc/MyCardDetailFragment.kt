@@ -372,7 +372,9 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         }
 
         uniqueIdsForCardDetails()
-        initTemporaryFreezeCard()
+        if(temporaryCardFreezeRelativeLayout?.visibility == VISIBLE) {
+            initTemporaryFreezeCard()
+        }
     }
 
     override fun onClick(v: View?) {

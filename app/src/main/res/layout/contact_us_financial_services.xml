@@ -17,7 +17,32 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/white"
             android:gravity="center_vertical"
+            android:letterSpacing="0.2"
+            android:minHeight="68dp"
+            android:paddingStart="16dp"
+            android:paddingTop="20dp"
+            android:text="@string/email_us"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:fontFamily="@font/futura_semi_bold_ttf" />
+
+        <LinearLayout
+            android:id="@+id/contactFinancialServicesEmailLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/_1sdp"
+            android:layout_marginBottom="@dimen/_10sdp"/>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:background="@color/white"
             android:letterSpacing="0.2"
             android:minHeight="68dp"
             android:paddingStart="16dp"
@@ -36,12 +61,13 @@
             android:id="@+id/callUsLinearLayoutContainer"
             android:layout_width="match_parent"
             android:orientation="vertical"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_10sdp"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/border_top_and_bottom"
+            android:background="@color/white"
             android:gravity="center_vertical"
             android:letterSpacing="0.2"
             android:minHeight="68dp"
@@ -58,6 +84,8 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:minHeight="50dp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_1sdp"
             android:orientation="horizontal"
             android:paddingTop="14dp"
             android:paddingStart="16dp"
@@ -89,6 +117,7 @@
             android:id="@+id/chatWithUsLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/white"
             android:orientation="vertical">
 
             <TextView
@@ -144,28 +173,6 @@
             </RelativeLayout>
 
         </LinearLayout>
-
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/border_top_and_bottom"
-            android:gravity="center_vertical"
-            android:letterSpacing="0.2"
-            android:minHeight="68dp"
-            android:paddingStart="16dp"
-            android:paddingTop="20dp"
-            android:text="@string/email_us"
-            android:textAllCaps="true"
-            android:textColor="@color/black"
-            android:textSize="12sp"
-            android:fontFamily="@font/futura_semi_bold_ttf" />
-
-        <LinearLayout
-            android:id="@+id/contactFinancialServicesEmailLinearLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
 
     </LinearLayout>
 </ScrollView>
