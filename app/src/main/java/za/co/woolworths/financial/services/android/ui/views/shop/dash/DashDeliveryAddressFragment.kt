@@ -384,7 +384,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                 val quantityAdded =
                                     viewModel.addItemToCart.value?.quantity?.toString()
                                 val quantityDesc =
-                                    "$quantityAdded ITEM${if (viewModel.addItemToCart.value?.quantity == 0) "" else "s"}"
+                                    "$quantityAdded ITEM${if (viewModel.addItemToCart.value?.quantity ?: 0 >= 1) "" else "s"}"
                                 tvAddedItem.text = quantityDesc
 
                                 buttonView.setOnClickListener {
