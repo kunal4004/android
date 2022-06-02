@@ -60,36 +60,7 @@ public class ProductListingExtensionFragment extends Fragment {
         this.productsRequestParams.setRefinement(navigationState);
         this.productsRequestParams.setSortOption(sortOption);
         this.productsRequestParams.setFilterContent(filterContent);
-        this.productsRequestParams.setDeliveryDetails(getDeliveryDetails());
-    }
-
-    private String getDeliveryDetails() {
-        //TODO: Update condition to when browsing delivery is true
-        if(true) {
-            switch (KotlinUtils.Companion.getBrowsingDeliveryType()) {
-                case CNC:
-                    return KotlinUtils.Companion.getBrowsingCncStore().getDeliveryDetails();
-
-                case DASH:
-                    return WoolworthsApplication.getDashBrowsingValidatePlaceDetails().getOnDemand().getDeliveryDetails();
-
-                case STANDARD:
-                default:
-                    return WoolworthsApplication.getValidatePlaceDetails().getDeliveryDetails();
-            }
-        } else {
-            switch (KotlinUtils.Companion.getPreferredDeliveryType()) {
-                case CNC:
-                    return KotlinUtils.Companion.getPreferredCnCStore().getDeliveryDetails();
-
-                case DASH:
-                    return WoolworthsApplication.getValidatePlaceDetails().getOnDemand().getDeliveryDetails();
-
-                case STANDARD:
-                default:
-                    return WoolworthsApplication.getValidatePlaceDetails().getDeliveryDetails();
-            }
-        }
+        this.productsRequestParams.setDeliveryDetails(KotlinUtils.Companion.getDeliveryDetails());
     }
 
     public ProductsRequestParams getProductRequestBody() {
@@ -191,6 +162,7 @@ public class ProductListingExtensionFragment extends Fragment {
         this.productIsLoading = false;
         getProductRequestBody().setPageOffset(pageOffset);
         getProductRequestBody().setRefinement(navigationState);
+        getProductRequestBody().setDeliveryDetails(KotlinUtils.Companion.getDeliveryDetails());
 
     }
 
@@ -202,6 +174,7 @@ public class ProductListingExtensionFragment extends Fragment {
         this.productIsLoading = false;
         getProductRequestBody().setPageOffset(pageOffset);
         getProductRequestBody().setSortOption(sortOption);
+        getProductRequestBody().setDeliveryDetails(KotlinUtils.Companion.getDeliveryDetails());
 
     }
 }

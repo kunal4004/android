@@ -78,6 +78,10 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_DASH_TAB
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.browsingCncStore
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.browsingDeliveryType
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredCnCStore
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import java.io.*
@@ -992,6 +996,51 @@ class KotlinUtils {
                 Utils.getPreferredDeliveryLocation()?.fulfillmentDetails
             } else{
                 getAnonymousUserLocationDetails()?.fulfillmentDetails
+            }
+        }
+
+         fun getDeliveryDetails(): String? {
+            //TODO: Update condition to when browsing delivery is true
+            return if (true) {
+                if (browsingDeliveryType == null) {
+                    return ""
+                }
+                when (browsingDeliveryType) {
+                    Delivery.CNC -> {
+                        if (browsingCncStore == null) {
+                            ""
+                        } else browsingCncStore!!.deliveryDetails
+                    }
+                    Delivery.DASH -> {
+                        if (WoolworthsApplication.getDashBrowsingValidatePlaceDetails() == null ||
+                            WoolworthsApplication.getDashBrowsingValidatePlaceDetails().onDemand == null
+                        ) {
+                            ""
+                        } else WoolworthsApplication.getDashBrowsingValidatePlaceDetails().onDemand!!.deliveryDetails
+                    }
+                    Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails().deliveryDetails
+                    else -> WoolworthsApplication.getValidatePlaceDetails().deliveryDetails
+                }
+            } else {
+                if (getPreferredDeliveryType() == null) {
+                    return ""
+                }
+                when (getPreferredDeliveryType()) {
+                    Delivery.CNC -> {
+                        if (getPreferredCnCStore() == null) {
+                            ""
+                        } else getPreferredCnCStore()!!.deliveryDetails
+                    }
+                    Delivery.DASH -> {
+                        if (WoolworthsApplication.getValidatePlaceDetails() == null ||
+                            WoolworthsApplication.getValidatePlaceDetails().onDemand == null
+                        ) {
+                            ""
+                        } else WoolworthsApplication.getValidatePlaceDetails().onDemand!!.deliveryDetails
+                    }
+                    Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails().deliveryDetails
+                    else -> WoolworthsApplication.getValidatePlaceDetails().deliveryDetails
+                }
             }
         }
 

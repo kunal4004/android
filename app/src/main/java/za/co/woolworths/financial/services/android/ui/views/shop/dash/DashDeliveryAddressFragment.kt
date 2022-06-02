@@ -430,12 +430,6 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 }
             }
         }
-    }
-
-    private fun openCartActivity() {
-        (activity as? BottomNavigationActivity)?.apply {
-            navigateToTabIndex(INDEX_CART, null)
-        }
 
         // Validate Place API
         viewModel.validatePlaceDetails.observe(viewLifecycleOwner) {
@@ -456,6 +450,12 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     }
                 }
             }
+        }
+    }
+
+    private fun openCartActivity() {
+        (activity as? BottomNavigationActivity)?.apply {
+            navigateToTabIndex(INDEX_CART, null)
         }
     }
 
