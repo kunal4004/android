@@ -19,6 +19,8 @@ sealed class ViewState<out T> where T : Any? {
      */
     data class RenderSuccess<T>(val output: T) : ViewState<T>()
 
+    data class RenderErrorFromResponse(val error: ErrorResponse?) : ViewState<ErrorResponse>()
+
     /**
      * Represents the UI state where the operation requested by the UI has failed to complete
      * either due to a IO issue or a service exception and the same is conveyed back to the UI
@@ -26,8 +28,6 @@ sealed class ViewState<out T> where T : Any? {
      * @param throwable [Throwable] instance containing the root cause of the failure in a [String]
      */
     data class RenderFailure(val throwable: Throwable) : ViewState<Nothing>()
-
-    data class RenderFailureScenario<T>(val output: T) : ViewState<T>()
 
     object RenderEmpty : ViewState<Nothing>()
 
@@ -44,6 +44,20 @@ infix fun <T> ViewState<T>.renderSuccess(onSuccess: ViewState.RenderSuccess<T>.(
         }
     }
 }
+
+
+infix fun<T> ViewState<T>.renderHttpFailureFromServer(onFailure: ViewState.RenderErrorFromResponse.() -> Unit): ViewState<T> {
+    return when (this) {
+        is ViewState.RenderErrorFromResponse -> {
+            onFailure(this)
+            this
+        }
+        else -> {
+            this
+        }
+    }
+}
+
 
 infix fun <T> ViewState<T>.renderFailure(onError: ViewState.RenderFailure.() -> Unit): ViewState<T> {
     return when (this) {

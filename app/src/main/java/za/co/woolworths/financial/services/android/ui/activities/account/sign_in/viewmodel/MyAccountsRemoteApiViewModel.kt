@@ -3,9 +3,12 @@ package za.co.woolworths.financial.services.android.ui.activities.account.sign_i
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlanResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.IStoreCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.StoreCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.ApiResult
 import javax.inject.Inject
@@ -14,7 +17,10 @@ import javax.inject.Inject
 class MyAccountsRemoteApiViewModel @Inject constructor(
     private val collection: TreatmentPlanDataSource,
     val storeCardDataSource: StoreCardDataSource
-) : ViewModel() {
+) : ViewModel(), IStoreCardDataSource by storeCardDataSource {
+
+    private val _viewState = MutableStateFlow(CoreDataSource.IOTaskResult.Empty)
+    val viewState = _viewState.asStateFlow()
 
     fun fetchCheckEligibilityTreatmentPlan(
         productGroupCode: String,
@@ -34,8 +40,5 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
         }
     }
 
-    suspend fun queryServiceGetStoreCardCards() = getViewStateFlowForNetworkCall { storeCardDataSource.queryServiceGetStoreCards() }
-
-    suspend fun queryServiceBlockUnblockStoreCard(position : Int) = getViewStateFlowForNetworkCall { storeCardDataSource.queryServiceBlockUnBlockStoreCard(position = position) }
-
+    suspend fun queryServiceGetStoreCardCards() = getViewStateFlowForNetworkCall { queryServiceGetStoreCards() }
 }

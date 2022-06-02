@@ -130,7 +130,8 @@ class AccountProductsMainFragment : ViewBindingFragment<AccountProductLandingMai
             viewModel.eligibilityPlanResponse().collect { response ->
                 when (response) {
                     is ViewState.RenderSuccess -> {
-                        response.output.eligibilityPlan.let {
+                        val eligibilityPlanResponse = response.output as? EligibilityPlanResponse
+                        eligibilityPlanResponse?.eligibilityPlan.let {
                             displayPopUp(viewModel.getPopUpData(it), it)
                         }
                     }
