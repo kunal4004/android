@@ -4,9 +4,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 
-import dagger.hilt.components.SingletonComponent
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.ITreatmentPlanDataSource
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.TreatmentPlanDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.ContactUsDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.IContactUsDataSource
 import dagger.hilt.android.components.ViewModelComponent
@@ -17,9 +14,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dom
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_credit_limit_increase.CreditLimitIncreaseDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_credit_limit_increase.ICreditLimitIncrease
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.ManageCardFunctionalRequirementImpl
-import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.ContactUsDataSource
-import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.IContactUsDataSource
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 
 @InstallIn(ViewModelComponent::class)
 @Module
