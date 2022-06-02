@@ -47,7 +47,7 @@ class OrdersAdapter(val context: Context, val iPresentOrderDetailInterface: IPre
     inner class UpcomingOrderViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
         override fun bind(position: Int) {
             val item = dataList[position].item as Order
-            itemView.orderNumber?.text =  context.getString(R.string.order_id,item.orderId)
+            itemView.orderNumber?.text =  context.getString(R.string.order_id,item.orderId.replaceFirstChar { it.uppercase() })
             itemView.orderState?.text = item.state?.drop(6)
             itemView.purchaseDate?.text = WFormatter.formatOrdersHistoryDate(item.submittedDate)
             itemView.orderAmount?.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item.total)
@@ -64,9 +64,11 @@ class OrdersAdapter(val context: Context, val iPresentOrderDetailInterface: IPre
                 when (deliveryDates.keys.size) {
                     0 -> {
                          itemView.timeslotTitle?.visibility = View.GONE
+                         itemView.timeslot?.visibility = View.GONE
                     }
                     1 -> {
                         itemView.timeslot?.text = deliveryDates.getValue(deliveryDates.keys.toList()[0])
+                        itemView.timeslotTitle?.visibility = View.VISIBLE
                         itemView.timeslot?.visibility = View.VISIBLE
                     }
                     else -> {
