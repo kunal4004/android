@@ -72,7 +72,7 @@ public class ProductListingExtensionFragment extends Fragment {
             public void onSuccess(ProductView productView) {
                 if (productView.httpCode == 200) {
                     List<ProductList> productLists = productView.products;
-                    if (productLists != null || productView.isBanners) {
+                    if (productLists != null || (productView != null && productView.isBanners)) {
                         numItemsInTotal(productView);
                         calculatePageOffset();
                         getNavigator().onLoadProductSuccess(productView, getLoadMoreData());
