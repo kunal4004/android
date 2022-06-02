@@ -688,7 +688,9 @@ interface ApiInterface {
             @Path("productId") productId: String,
             @Query("sku") sku: String,
             @Query("suburbId") suburbId: String?,
-            @Query("storeId") storeId: String?
+            @Query("storeId") storeId: String?,
+            @Query("deliveryType") deliveryType: String?,
+            @Query("deliveryDetails") deliveryDetails: String?
     ): Call<ProductDetailResponse>
 
 
@@ -704,7 +706,9 @@ interface ApiInterface {
             @Path("productId") productId: String,
             @Query("sku") sku: String,
             @Query("suburbId") suburbId: String?,
-            @Query("storeId") storeId: String?
+            @Query("storeId") storeId: String?,
+            @Query("deliveryType") deliveryType: String?,
+            @Query("deliveryDetails") deliveryDetails: String?
     ): Call<ProductDetailResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
