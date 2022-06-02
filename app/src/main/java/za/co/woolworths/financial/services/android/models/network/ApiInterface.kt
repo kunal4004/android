@@ -503,7 +503,6 @@ interface ApiInterface {
     fun getSavedAddresses(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
-        @Header("environment") environment: String,
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String
     ): Call<SavedAddressResponse>
@@ -513,7 +512,6 @@ interface ApiInterface {
     fun addAddress(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
-        @Header("environment") environment: String,
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body addAddressRequestBody: AddAddressRequestBody): Call<AddAddressResponse>
@@ -527,7 +525,6 @@ interface ApiInterface {
     fun editAddress(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
-        @Header("environment") environment: String,
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Path("addressId") addressId: String,
@@ -542,7 +539,6 @@ interface ApiInterface {
     @DELETE("wfs/app/v4/cart/checkout/address/{addressId}")
     fun deleteAddress(
         @Header("sessionToken") sessionToken: String,
-        @Header("environment") environment: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Path("addressId") addressId: String
     ): Call<DeleteAddressResponse>
@@ -553,7 +549,6 @@ interface ApiInterface {
         @Path("nickName", encoded = true) nickName: String,
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
-        @Header("environment") environment: String,
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String
     ): Call<ChangeAddressResponse>
@@ -563,7 +558,6 @@ interface ApiInterface {
     fun getConfirmDeliveryAddressDetails(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
-        @Header("environment") environment: String,
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body confirmDeliveryAddressBody: ConfirmDeliveryAddressBody
@@ -574,7 +568,6 @@ interface ApiInterface {
     fun getShippingDetails(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
-        @Header("environment") environment: String,
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body shippingDetailsBody: ShippingDetailsBody
@@ -623,7 +616,6 @@ interface ApiInterface {
     fun getShoppingCart(
 
             @Header("sessionToken") sessionToken: String,
-            @Header("environment") environment: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
     ): Call<ShoppingCartResponse>
 
@@ -633,7 +625,6 @@ interface ApiInterface {
 
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
-            @Header("environment") environment: String,
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("deliveryType") deliveryType: String,
@@ -648,7 +639,6 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("deliveryType") deliveryType: String,
-            @Header("environment") environment: String,
             @Body addItemToCart: MutableList<AddItemToCart>): retrofit2.Response<AddItemToCartResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -657,7 +647,6 @@ interface ApiInterface {
 
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
-            @Header("environment") environment: String,
             @Query("commerceId") commerceId: String): Call<ShoppingCartResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -665,7 +654,6 @@ interface ApiInterface {
     fun getCartSummary(
 
             @Header("userAgent") userAgent: String,
-            @Header("environment") environment: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String): Call<CartSummaryResponse>
@@ -675,7 +663,6 @@ interface ApiInterface {
     fun removeAllCartItems(
 
             @Header("sessionToken") sessionToken: String,
-            @Header("environment") environment: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String): Call<ShoppingCartResponse>
 
 
@@ -685,7 +672,6 @@ interface ApiInterface {
 
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
-            @Header("environment") environment: String,
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("commerceId") commerceId: String,
@@ -697,7 +683,6 @@ interface ApiInterface {
     fun productDetail(
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
-            @Header("environment") environment: String,
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("productId") productId: String,
@@ -712,7 +697,6 @@ interface ApiInterface {
     fun productDetail(
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
-            @Header("environment") environment: String,
             @Header("longitude") longitude: Double,
             @Header("latitude") latitude: Double,
             @Header("sessionToken") sessionToken: String,
@@ -780,7 +764,6 @@ interface ApiInterface {
 
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
-            @Header("environment") environment: String,
             @Path("multipleSku") multipleSku: String): Call<SkuInventoryResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -789,7 +772,6 @@ interface ApiInterface {
 
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
-            @Header("environment") environment: String,
             @Path("store_id") store_id: String,
             @Path("multipleSku") multipleSku: String): Call<SkusInventoryForStoreResponse>
 
@@ -798,7 +780,6 @@ interface ApiInterface {
    suspend fun fetchDashInventorySKUForStore(
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
-            @Header("environment") environment: String,
             @Path("store_id") store_id: String,
             @Path("multipleSku") multipleSku: String): retrofit2.Response<SkusInventoryForStoreResponse>
 
@@ -808,7 +789,6 @@ interface ApiInterface {
 
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
-            @Header("environment") environment: String,
             @Header("longitude") longitude: String,
             @Header("latitude") latitude: String,
             @Header("sessionToken") sessionToken: String,
@@ -833,7 +813,6 @@ interface ApiInterface {
 
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
-            @Header("environment") environment: String,
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("searchTerm") searchTerm: String,
@@ -857,7 +836,6 @@ interface ApiInterface {
     fun postCheckoutSuccess(
 
             @Header("sessionToken") sessionToken: String,
-            @Header("environment") environment: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body checkoutSuccess: CheckoutSuccess): Call<Void>
 
@@ -1069,7 +1047,6 @@ interface ApiInterface {
     @GET("wfs/app/v4/locationItems/validateLocation")
     fun validateLocation(
             @Header("userAgent") userAgent: String,
-            @Header("environment") environment: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
@@ -1079,7 +1056,6 @@ interface ApiInterface {
     @GET("wfs/app/v4/locationItems/validateLocation")
     fun geoValidateLocation(
         @Header("userAgent") userAgent: String,
-
         @Header("userAgentVersion") userAgentVersion: String,
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
@@ -1303,7 +1279,6 @@ interface ApiInterface {
     fun getSubmittedOrder(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
-        @Header("environment") environment: String,
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String
     ): Call<SubmittedOrderResponse>
