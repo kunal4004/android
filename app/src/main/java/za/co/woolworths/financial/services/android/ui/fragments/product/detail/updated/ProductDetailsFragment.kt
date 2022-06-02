@@ -223,6 +223,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var bannerLabel: String? = null
     private var bannerImage: String? = null
     private var isUnSellableItemsRemoved: Boolean? = false
+    private var isUserBrowsing: Boolean = false
 
     @OpenTermAndLighting
     @Inject
@@ -251,6 +252,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         const val STR_PRODUCT_CATEGORY = "strProductCategory"
         const val STR_PRODUCT_LIST = "strProductList"
         const val STR_BRAND_HEADER = "strBandHeaderDesc"
+        const val IS_BROWSING = "isBrowsing"
         const val BRAND_NAVIGATION_DETAILS = "BRAND_NAVIGATION_DETAILS"
     }
 
@@ -272,6 +274,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             brandHeaderText = getString(STR_BRAND_HEADER, AppConstant.EMPTY_STRING)
             defaultProductResponse = getString("productResponse")
             mFetchFromJson = getBoolean("fetchFromJson")
+            isUserBrowsing = getBoolean(IS_BROWSING, false)
         }
         productDetailsPresenter = ProductDetailsPresenterImpl(this, ProductDetailsInteractorImpl())
     }
@@ -370,6 +373,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         if (!hidden) {
             updateAddToCartButtonForSelectedSKU()
             setUpToolBar()
+            isUnSellableItemsRemoved()
         }
     }
 
@@ -876,7 +880,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         // Now first check for if delivery location and browsing location is same.
         // if same no issues. If not then show changing delivery location popup.
-        if (!KotlinUtils.getDeliveryType()?.deliveryType.equals(KotlinUtils.browsingDeliveryType?.type)) {
+        if (!KotlinUtils.getDeliveryType()?.deliveryType.equals(KotlinUtils.browsingDeliveryType?.type) && isUserBrowsing) {
             KotlinUtils.showChangeDeliveryTypeDialog(requireContext(), requireFragmentManager(),
                 KotlinUtils.browsingDeliveryType)
             return

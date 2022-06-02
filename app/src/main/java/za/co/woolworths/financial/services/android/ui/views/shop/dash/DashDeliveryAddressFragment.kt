@@ -488,7 +488,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         productDetailsFragment.arguments = bundleOf(
             ProductDetailsFragment.STR_PRODUCT_LIST to Gson().toJson(productList),
             ProductDetailsFragment.STR_PRODUCT_CATEGORY to productList.productName,
-            ProductDetailsFragment.STR_BRAND_HEADER to productList.brandHeaderDescription
+            ProductDetailsFragment.STR_BRAND_HEADER to productList.brandHeaderDescription,
+            ProductDetailsFragment.IS_BROWSING to true
         )
         (activity as? BottomNavigationActivity)?.apply {
             Utils.updateStatusBarBackground(this)

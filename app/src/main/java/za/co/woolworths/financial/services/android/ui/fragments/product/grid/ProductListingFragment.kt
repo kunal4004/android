@@ -1260,7 +1260,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             title,
             productList,
             mBannerLabel,
-            mBannerImage
+            mBannerImage,
+            isUserBrowsing
         )
     }
 
@@ -1274,7 +1275,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             title,
             productList,
             bannerLabel,
-            bannerImage
+            bannerImage,
+            isUserBrowsing
         )
     }
 
