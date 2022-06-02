@@ -24,8 +24,7 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
     var account: Account? = null
 
     private val _notifyCardNotReceived = MutableLiveData<ApiResult<Response>>()
-    val notifyCardNotReceived: LiveData<ApiResult<Response>>
-        get() = _notifyCardNotReceived
+    val notifyCardNotReceived: LiveData<ApiResult<Response>> = _notifyCardNotReceived
 
     fun getState() = AccountsProductGroupCode.getEnum(account?.productGroupCode)
 
@@ -47,9 +46,9 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
         }
     }
 
-    fun queryAPIServiceGetCardNotReceived() {
+    fun queryServiceCardNotYetReceived() {
         viewModelScope.launch {
-            val query = queryServiceGetCardNotReceived()
+            val query = queryServiceNotifyCardNotYetReceived()
             _notifyCardNotReceived.value = query
         }
     }

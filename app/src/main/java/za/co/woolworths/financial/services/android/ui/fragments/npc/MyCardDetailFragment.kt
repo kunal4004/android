@@ -92,14 +92,14 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
     private fun setupCardReceived() {
         mStoreCard?.apply {
-            val cardNotReceivedWasShown = Utils.getSessionDaoValue(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN)
-            //if (isCardNotReceived && cardNotReceivedWasShown == null) {
+            val shouldNotifyUserByEmail = Utils.getSessionDaoValue(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN).isNullOrEmpty()
+            if (cardNotReceived && shouldNotifyUserByEmail) {
                 val dialog = StoreCardNotReceivedDialogFragment.newInstance()
                 dialog.show(
                     childFragmentManager,
                     StoreCardNotReceivedDialogFragment::class.java.simpleName
                 )
-           // }
+            }
         }
     }
 
@@ -176,19 +176,21 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
     override fun onResume() {
         super.onResume()
-        if(SHOW_TEMPORARY_FREEZE_DIALOG){
-            SHOW_TEMPORARY_FREEZE_DIALOG = false
-            temporaryCardFreezeSwitch?.isChecked = true
-            temporaryFreezeCard?.showFreezeStoreCardDialog(childFragmentManager)
-        }
-        else if(SHOW_BLOCK_CARD_SCREEN){
-            SHOW_BLOCK_CARD_SCREEN = false
-            activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail) }
-        }
-        else if(SHOW_PAY_WITH_CARD_SCREEN){
-            SHOW_PAY_WITH_CARD_SCREEN = false
-            activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_PAY, this) }
-            initPayWithCard()
+        when {
+            SHOW_TEMPORARY_FREEZE_DIALOG -> {
+                SHOW_TEMPORARY_FREEZE_DIALOG = false
+                temporaryCardFreezeSwitch?.isChecked = true
+                temporaryFreezeCard?.showFreezeStoreCardDialog(childFragmentManager)
+            }
+            SHOW_BLOCK_CARD_SCREEN -> {
+                SHOW_BLOCK_CARD_SCREEN = false
+                activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail) }
+            }
+            SHOW_PAY_WITH_CARD_SCREEN -> {
+                SHOW_PAY_WITH_CARD_SCREEN = false
+                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_PAY, this) }
+                initPayWithCard()
+            }
         }
     }
 
@@ -216,7 +218,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                 when (response?.httpCode) {
                     200 -> {
                         activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SC_FREEZE_CARD, this) }
-                        OneAppSnackbar.make(cardNestedScrollView, bindString(R.string.card_temporarily_frozen_label).toUpperCase(Locale.getDefault())).show()
+                        OneAppSnackbar.make(cardNestedScrollView, bindString(R.string.card_temporarily_frozen_label).uppercase()).show()
                         temporaryFreezeCard?.setBlockType(TEMPORARY)
                         temporaryFreezeCard?.showActiveTemporaryFreezeCard(
                             temporaryCardFreezeSwitch,
