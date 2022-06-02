@@ -9,13 +9,16 @@ import java.util.List;
 
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.PagingResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
+import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.wenum.Delivery;
 
 public class ProductListingExtensionFragment extends Fragment {
 
@@ -57,6 +60,36 @@ public class ProductListingExtensionFragment extends Fragment {
         this.productsRequestParams.setRefinement(navigationState);
         this.productsRequestParams.setSortOption(sortOption);
         this.productsRequestParams.setFilterContent(filterContent);
+        this.productsRequestParams.setDeliveryDetails(getDeliveryDetails());
+    }
+
+    private String getDeliveryDetails() {
+        //TODO: Update condition to when browsing delivery is true
+        if(true) {
+            switch (KotlinUtils.Companion.getBrowsingDeliveryType()) {
+                case CNC:
+                    return KotlinUtils.Companion.getBrowsingCncStore().getDeliveryDetails();
+
+                case DASH:
+                    return WoolworthsApplication.getDashBrowsingValidatePlaceDetails().getOnDemand().getDeliveryDetails();
+
+                case STANDARD:
+                default:
+                    return WoolworthsApplication.getValidatePlaceDetails().getDeliveryDetails();
+            }
+        } else {
+            switch (KotlinUtils.Companion.getPreferredDeliveryType()) {
+                case CNC:
+                    return KotlinUtils.Companion.getPreferredCnCStore().getDeliveryDetails();
+
+                case DASH:
+                    return WoolworthsApplication.getValidatePlaceDetails().getOnDemand().getDeliveryDetails();
+
+                case STANDARD:
+                default:
+                    return WoolworthsApplication.getValidatePlaceDetails().getDeliveryDetails();
+            }
+        }
     }
 
     public ProductsRequestParams getProductRequestBody() {

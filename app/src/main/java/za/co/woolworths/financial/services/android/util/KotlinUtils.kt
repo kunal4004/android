@@ -87,6 +87,7 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 import kotlin.coroutines.CoroutineContext
 
 class KotlinUtils {
@@ -993,6 +994,20 @@ class KotlinUtils {
                 getAnonymousUserLocationDetails()?.fulfillmentDetails
             }
         }
+
+        fun getPreferredCnCStore(): Store? {
+            val deliveryType = getDeliveryType()
+            for (store in WoolworthsApplication.getValidatePlaceDetails()?.stores ?: ArrayList()) {
+                deliveryType?.let {
+                    if (it.storeId == store.storeId) {
+                        return store
+                    }
+                }
+            }
+            return null
+        }
+
+
 
         fun getPreferredPlaceId(): String {
             return Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId ?: ""
