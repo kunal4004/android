@@ -165,8 +165,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     fun hideSerachAndBarcodeUi(){
-        tvSearchProduct?.visibility = View.INVISIBLE
-        imBarcodeScanner?.visibility = View.INVISIBLE
+        tvSearchProduct?.visibility = View.GONE
+        imBarcodeScanner?.visibility = View.GONE
     }
 
     private fun executeValidateSuburb() {
@@ -368,6 +368,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 )
             }
         }
+
+
+
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -384,7 +387,13 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 }, AppConstant.DELAY_1000_MS)
             }
         }
-        setDeliveryView()
+
+        if (getDeliveryType() == null) {
+            setupToolbar(0)
+            viewpager_main.currentItem = 0
+        } else {
+            setDeliveryView()
+        }
         when (viewpager_main?.currentItem) {
             0 -> {
                 val standardDeliveryFragment = viewpager_main?.adapter?.instantiateItem(

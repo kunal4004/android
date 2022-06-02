@@ -42,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.net.URLEncoder
 
@@ -218,7 +219,7 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun getSavedAddresses(): Call<SavedAddressResponse> {
-        return mApiInterface.getSavedAddresses( "", "", getSessionToken(),
+        return mApiInterface.getSavedAddresses( "", "",  getSessionToken(),
             getDeviceIdentityToken())
     }
 
@@ -286,7 +287,7 @@ object OneAppService : RetrofitConfig() {
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
 
         return if (Utils.isLocationEnabled(appContext())) {
-            mApiInterface.getProducts("", "", "",
+            mApiInterface.getProducts("", "",  "",
                 "", getSessionToken(), getDeviceIdentityToken(), requestParams.searchTerm, requestParams.searchType.value,
                 requestParams.responseType.value, requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption,
                 requestParams.refinement, suburbId = suburbId, storeId = storeId, filterContent = requestParams.filterContent
@@ -401,8 +402,10 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun getInventorySkuForStore(store_id: String, multipleSku: String): Call<SkusInventoryForStoreResponse> {
-        return mApiInterface.getInventorySKUForStore( getSessionToken(), getDeviceIdentityToken(), store_id, multipleSku)
-
+        return if (KotlinUtils.browsingDeliveryType?.type == Delivery.DASH.type) {
+            mApiInterface.getDashInventorySKUForStore(getSessionToken(), getDeviceIdentityToken(), store_id, multipleSku)
+        } else
+            mApiInterface.getInventorySKUForStore(getSessionToken(), getDeviceIdentityToken(), store_id, multipleSku)
     }
 
     suspend fun fetchInventorySkuForStore(store_id: String, multipleSku: String): retrofit2.Response<SkusInventoryForStoreResponse> {
