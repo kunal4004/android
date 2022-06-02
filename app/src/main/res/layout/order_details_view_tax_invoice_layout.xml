@@ -5,16 +5,15 @@
     android:layout_height="@dimen/_45sdp"
     android:background="@color/white"
     android:layout_gravity="center_horizontal"
-    android:paddingStart="@dimen/_16sdp"
-    android:paddingEnd="@dimen/_16sdp">
+    android:paddingStart="@dimen/twenty_four_dp"
+    android:paddingEnd="@dimen/twenty_four_dp">
 
     <androidx.appcompat.widget.AppCompatTextView
         style="@style/my_orders_textview_style_2"
         android:drawableLeft="@drawable/ic_tax_invoice"
-        android:drawablePadding="@dimen/sixteen_dp"
+        android:drawablePadding="@dimen/_17sdp"
         android:gravity="center_vertical"
         android:textColor="@color/black"
-        android:textSize="@dimen/_11ssp"
         android:text="@string/view_tax_invoice"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
