@@ -3,6 +3,11 @@ package za.co.woolworths.financial.services.android.ui.activities.account
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.ITreatmentPlanDataSource
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.TreatmentPlanDataSource
+import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.ContactUsDataSource
+import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.IContactUsDataSource
 import dagger.hilt.android.components.ViewModelComponent
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.AccountRemoteService
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.IStoreCardDataSource
@@ -37,4 +42,8 @@ class NetworkDiModule {
         return CreditLimitIncreaseDataSource(accountRemoteService, landingDao)
     }
 
+    @Provides
+    fun provideContactUsDataSource(): IContactUsDataSource {
+        return ContactUsDataSource()
+    }
 }

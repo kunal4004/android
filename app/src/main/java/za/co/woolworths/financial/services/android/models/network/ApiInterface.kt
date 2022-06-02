@@ -41,6 +41,7 @@ import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetailsR
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyOptOutBody
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
+import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.EmailUsRequest
 
 interface ApiInterface {
 
@@ -1276,5 +1277,15 @@ interface ApiInterface {
         @Body saveAddressLocationRequest: SaveAddressLocationRequest
     ): Call<GenericResponse>
 
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/v4/user/email/{emailId}")
+    suspend fun makeEnquiry(
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Path("emailId") emailId: String = "contactUs",
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body emailUsRequest: EmailUsRequest
+    ): GenericResponse
 }
 

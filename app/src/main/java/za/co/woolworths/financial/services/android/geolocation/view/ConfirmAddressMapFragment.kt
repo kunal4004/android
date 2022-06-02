@@ -302,7 +302,7 @@ class ConfirmAddressMapFragment :
         } else {
             binding?.imgMapMarker?.visibility = View.GONE
             binding?.confirmAddress?.isEnabled = false
-            mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE), 10f))
+            mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE), 4.8f))
 
         }
 
@@ -343,7 +343,7 @@ class ConfirmAddressMapFragment :
                 address1 = getAddressOne(mAddress)
                 city = it.getOrNull(0)?.locality
                 state = it.getOrNull(0)?.adminArea
-                country = it.getOrNull(0)?.countryName
+                country = it.getOrNull(0)?.countryCode
                 postalCode = it.getOrNull(0)?.postalCode
                 suburb = it.getOrNull(0)?.subLocality
 
@@ -375,8 +375,8 @@ class ConfirmAddressMapFragment :
                 }
             }).await()
 
-        placeId = results.getOrNull(0)?.placeId.toString()
-      if (isStreetNumberAndRouteFromSearch == false) {
+        if (isStreetNumberAndRouteFromSearch == false) {
+            placeId = results.getOrNull(0)?.placeId.toString()
             getStreetNumberAndRoute(placeId)
         }
         isStreetNumberAndRouteFromSearch = false
@@ -408,6 +408,12 @@ class ConfirmAddressMapFragment :
                             ROUTE.value -> routeName = address.name
                         }
                     }
+                    if(streetNumber.isNullOrEmpty()){
+                        streetNumber=""
+                    }
+                    if(routeName.isNullOrEmpty()){
+                        routeName=""
+                    }
                     placeName?.let {
                         if (!it.equals("$streetNumber $routeName",
                                 true) && isMainPlaceName == true
@@ -436,8 +442,8 @@ class ConfirmAddressMapFragment :
     }
 
     companion object {
-        private const val DEFAULT_LATITUDE = -33.918861
-        private const val DEFAULT_LONGITUDE = 18.423300
+        private const val DEFAULT_LATITUDE = -30.81020
+        private const val DEFAULT_LONGITUDE = 23.72364
     }
 
     override fun tryAgain() {
@@ -462,8 +468,8 @@ class ConfirmAddressMapFragment :
             postalCode,
             state,
             suburb)
-        viewLifecycleOwner.lifecycleScope.launch {
-            confirmAddressViewModel.postSaveAddress(saveAddressLocationRequest)
+        viewLifecycleOwner?.lifecycleScope?.launch {
+            confirmAddressViewModel?.postSaveAddress(saveAddressLocationRequest)
         }
     }
 
