@@ -726,4 +726,14 @@ object OneAppService : RetrofitConfig() {
             body
         )
     }
+
+    suspend fun confirmLocation(confirmLocationRequest: ConfirmLocationRequest): retrofit2.Response<ConfirmDeliveryAddressResponse> {
+        return withContext(Dispatchers.IO) {
+            mApiInterface.confirmPlaceLocation("",
+                "",
+                getSessionToken(),
+                getDeviceIdentityToken(),
+                confirmLocationRequest)
+        }
+    }
 }

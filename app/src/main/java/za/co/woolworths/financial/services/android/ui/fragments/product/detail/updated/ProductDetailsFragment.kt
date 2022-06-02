@@ -124,6 +124,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_NOT_MATCH
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FACE_NOT_DETECT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FAIL_IMAGE_LOAD
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageFileContract
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageGalleryContract
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -761,7 +762,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         lifecycleScope.launch {
             progressBar?.visibility = View.VISIBLE
             try {
-                val confirmLocationRequest = KotlinUtils.getConfirmLocationRequest(KotlinUtils.browsingDeliveryType)
+                val confirmLocationRequest =
+                    KotlinUtils.getConfirmLocationRequest(KotlinUtils.browsingDeliveryType)
                 val confirmLocationResponse =
                     confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
                 progressBar?.visibility = View.GONE
@@ -769,50 +771,29 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     when (confirmLocationResponse.httpCode) {
                         HTTP_OK -> {
                             if (SessionUtilities.getInstance().isUserAuthenticated) {
-                                val savedPlaceId =
-                                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
-                                KotlinUtils.apply {
-                                    this.placeId = confirmLocationRequest.address.placeId
-                                    isLocationSame =
-                                        confirmLocationRequest.address.placeId?.equals(
-                                            savedPlaceId)
-                                    isDeliveryLocationTabClicked =
-                                        confirmLocationRequest.address.placeId?.equals(
-                                            savedPlaceId)
-                                    isCncTabClicked =
-                                        confirmLocationRequest.address.placeId?.equals(
-                                            savedPlaceId)
-                                    isDashTabClicked =
-                                        confirmLocationRequest.address.placeId?.equals(
-                                            savedPlaceId)
-                                }
-                                Utils.savePreferredDeliveryLocation(
-                                    ShoppingDeliveryLocation(
-                                        confirmLocationResponse.orderSummary?.fulfillmentDetails
-                                    )
-                                )
+                                Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(
+                                    confirmLocationResponse.orderSummary?.fulfillmentDetails))
                                 if (KotlinUtils.getAnonymousUserLocationDetails() != null)
                                     KotlinUtils.clearAnonymousUserLocationDetails()
                             } else {
-                                val anonymousUserPlaceId =
-                                    KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId
-                                KotlinUtils.apply {
-                                    this.placeId = confirmLocationRequest.address.placeId
-                                    isLocationSame =
-                                        confirmLocationRequest.address.placeId?.equals(
-                                            anonymousUserPlaceId)
-                                    isDeliveryLocationTabClicked =
-                                        confirmLocationRequest.address.placeId?.equals(
-                                            anonymousUserPlaceId)
-                                    isCncTabClicked =
-                                        confirmLocationRequest.address.placeId?.equals(
-                                            anonymousUserPlaceId)
-                                    isDashTabClicked =
-                                        confirmLocationRequest.address.placeId?.equals(
-                                            anonymousUserPlaceId)
-                                    saveAnonymousUserLocationDetails(ShoppingDeliveryLocation(
-                                        confirmLocationResponse.orderSummary?.fulfillmentDetails))
-                                }
+                                saveAnonymousUserLocationDetails(ShoppingDeliveryLocation(
+                                    confirmLocationResponse.orderSummary?.fulfillmentDetails))
+                            }
+                            val savedPlaceId = KotlinUtils.getDeliveryType()?.address?.placeId
+                            KotlinUtils.apply {
+                                this.placeId = confirmLocationRequest.address.placeId
+                                isLocationSame =
+                                    confirmLocationRequest.address.placeId?.equals(
+                                        savedPlaceId)
+                                isDeliveryLocationTabClicked =
+                                    confirmLocationRequest.address.placeId?.equals(
+                                        savedPlaceId)
+                                isCncTabClicked =
+                                    confirmLocationRequest.address.placeId?.equals(
+                                        savedPlaceId)
+                                isDashTabClicked =
+                                    confirmLocationRequest.address.placeId?.equals(
+                                        savedPlaceId)
                             }
 
                             val browsingPlaceDetails = when (KotlinUtils.browsingDeliveryType) {
@@ -824,8 +805,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             WoolworthsApplication.setValidatedSuburbProducts(
                                 browsingPlaceDetails)
                             // set latest response to browsing data.
-                            WoolworthsApplication.setCncBrowsingValidatePlaceDetails(browsingPlaceDetails)
-                            WoolworthsApplication.setDashBrowsingValidatePlaceDetails(browsingPlaceDetails)
+                            WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
+                                browsingPlaceDetails)
+                            WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
+                                browsingPlaceDetails)
                             updateStockAvailabilityLocation() // update pdp location.
                             addItemToCart()
                         }

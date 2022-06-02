@@ -86,6 +86,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.net.ConnectException
 import java.net.UnknownHostException
@@ -339,50 +340,26 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     when (confirmLocationResponse.httpCode) {
                         HTTP_OK -> {
                             if (SessionUtilities.getInstance().isUserAuthenticated) {
-                                val savedPlaceId =
-                                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
-                                KotlinUtils.apply {
-                                    this.placeId = confirmLocationRequest.address.placeId
-                                    isLocationSame =
-                                        confirmLocationRequest.address.placeId?.equals(
-                                            savedPlaceId)
-                                    isDeliveryLocationTabClicked =
-                                        confirmLocationRequest.address.placeId?.equals(
-                                            savedPlaceId)
-                                    isCncTabClicked =
-                                        confirmLocationRequest.address.placeId?.equals(
-                                            savedPlaceId)
-                                    isDashTabClicked =
-                                        confirmLocationRequest.address.placeId?.equals(
-                                            savedPlaceId)
-                                }
-                                Utils.savePreferredDeliveryLocation(
-                                    ShoppingDeliveryLocation(
-                                        confirmLocationResponse.orderSummary?.fulfillmentDetails
-                                    )
-                                )
+                                Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(
+                                    confirmLocationResponse.orderSummary?.fulfillmentDetails))
                                 if (KotlinUtils.getAnonymousUserLocationDetails() != null)
                                     KotlinUtils.clearAnonymousUserLocationDetails()
                             } else {
-                                val anonymousUserPlaceId =
-                                    KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId
-                                KotlinUtils.apply {
-                                    this.placeId = confirmLocationRequest.address.placeId
-                                    isLocationSame =
-                                        confirmLocationRequest.address.placeId?.equals(
-                                            anonymousUserPlaceId)
-                                    isDeliveryLocationTabClicked =
-                                        confirmLocationRequest.address.placeId?.equals(
-                                            anonymousUserPlaceId)
-                                    isCncTabClicked =
-                                        confirmLocationRequest.address.placeId?.equals(
-                                            anonymousUserPlaceId)
-                                    isDashTabClicked =
-                                        confirmLocationRequest.address.placeId?.equals(
-                                            anonymousUserPlaceId)
-                                    saveAnonymousUserLocationDetails(ShoppingDeliveryLocation(
-                                        confirmLocationResponse.orderSummary?.fulfillmentDetails))
-                                }
+                                saveAnonymousUserLocationDetails(ShoppingDeliveryLocation(
+                                    confirmLocationResponse.orderSummary?.fulfillmentDetails))
+                            }
+
+                            val savedPlaceId = KotlinUtils.getDeliveryType()?.address?.placeId
+                            KotlinUtils.apply {
+                                this.placeId = confirmLocationRequest.address.placeId
+                                isLocationSame =
+                                    confirmLocationRequest.address.placeId?.equals(savedPlaceId)
+                                isDeliveryLocationTabClicked =
+                                    confirmLocationRequest.address.placeId?.equals(savedPlaceId)
+                                isCncTabClicked =
+                                    confirmLocationRequest.address.placeId?.equals(savedPlaceId)
+                                isDashTabClicked =
+                                    confirmLocationRequest.address.placeId?.equals(savedPlaceId)
                             }
 
                             val browsingPlaceDetails = when (KotlinUtils.browsingDeliveryType) {
@@ -1687,7 +1664,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             searchType: ProductsRequestParams.SearchType?,
             sub_category_name: String?,
             searchTerm: String?,
-            isBrowsing: Boolean
+            isBrowsing: Boolean,
         ) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
             putString(SUB_CATEGORY_NAME, sub_category_name)
@@ -1700,7 +1677,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             searchTerm: String?,
             sub_category_name: String?,
             brandNavigationDetails: BrandNavigationDetails?,
-            isBrowsing: Boolean
+            isBrowsing: Boolean,
         ) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
             putString(SEARCH_TERM, searchTerm)
@@ -1715,7 +1692,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             sub_category_name: String?,
             sortOption: String,
             brandNavigationDetails: BrandNavigationDetails?,
-            isBrowsing: Boolean
+            isBrowsing: Boolean,
         ) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
             putString(SUB_CATEGORY_NAME, sub_category_name)
