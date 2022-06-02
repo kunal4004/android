@@ -975,7 +975,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     }
 
     @Override
-    public void PermissionGranted(int request_code) {
+    public void permissionGranted(int request_code) {
         //TODO:: Parse result_code and use only onActivityResult line
         onActivityResult(request_code, 200, null);
         switch (request_code) {
@@ -986,21 +986,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             default:
                 break;
         }
-    }
-
-    @Override
-    public void PartialPermissionGranted(int request_code, ArrayList<String> granted_permissions) {
-
-    }
-
-    @Override
-    public void PermissionDenied(int request_code) {
-
-    }
-
-    @Override
-    public void NeverAskAgain(int request_code) {
-
     }
 
 
