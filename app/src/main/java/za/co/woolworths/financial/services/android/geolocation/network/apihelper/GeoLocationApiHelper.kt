@@ -10,11 +10,10 @@ import za.co.woolworths.financial.services.android.util.NetworkManager
 class GeoLocationApiHelper : RetrofitConfig() {
 
     suspend fun getSavedAddress() =
-        mApiInterface.getSavedAddresses("", "", getSit4Environment(), getSessionToken(), getDeviceIdentityToken()).await()
+        mApiInterface.getSavedAddresses("", "", getSessionToken(), getDeviceIdentityToken()).await()
 
     suspend fun getValidateLocation(placeId: String) =
         mApiInterface.geoValidateLocation("",
-            getSit4Environment(),
             "",
             getSessionToken(),
             getDeviceIdentityToken(),
@@ -23,7 +22,6 @@ class GeoLocationApiHelper : RetrofitConfig() {
     suspend fun postConfirmLocation(confirmLocationRequest: ConfirmLocationRequest) =
         mApiInterface.confirmLocation("",
             "",
-            getSit4Environment(),
             getSessionToken(),
             getDeviceIdentityToken(),
             confirmLocationRequest
@@ -40,7 +38,6 @@ class GeoLocationApiHelper : RetrofitConfig() {
     fun initConfirmLocation(confirmLocationRequest: ConfirmLocationRequest) =
         mApiInterface.confirmLocation("",
             "",
-            getSit4Environment(),
             getSessionToken(),
             getDeviceIdentityToken(),
             confirmLocationRequest
@@ -48,7 +45,6 @@ class GeoLocationApiHelper : RetrofitConfig() {
 
     fun validateLocation(placeId: String) =
         mApiInterface.validateLocation("",
-            getSit4Environment(),
             "",
             getSessionToken(),
             getDeviceIdentityToken(),

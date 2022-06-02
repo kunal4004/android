@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
@@ -44,6 +45,8 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddr
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FoodSubstitution
 import za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog.Companion.ARGS_KEY_COLLECTION_DATES
 import za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog.Companion.ARGS_KEY_SELECTED_POSITION
+import za.co.woolworths.financial.services.android.checkout.view.CustomDriverTipBottomSheetDialog.Companion.MAX_TIP_VALUE
+import za.co.woolworths.financial.services.android.checkout.view.CustomDriverTipBottomSheetDialog.Companion.MIN_TIP_VALUE
 import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBottomSheetDialog.Companion.ERROR_TYPE_CONFIRM_COLLECTION_ADDRESS
 import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBottomSheetDialog.Companion.ERROR_TYPE_SHIPPING_DETAILS_COLLECTION
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CollectionTimeSlotsAdapter
@@ -143,7 +146,7 @@ class CheckoutDashFragment : Fragment(),
         hideInstructionLayout()
         callConfirmLocationAPI()
         setFragmentResults()
-        txtContinueToPaymentCollection?.setOnClickListener(this)
+        txtContinueToPayment?.setOnClickListener(this)
         checkoutCollectingFromLayout?.setOnClickListener(this)
     }
 
@@ -179,10 +182,21 @@ class CheckoutDashFragment : Fragment(),
             ),
             Pair<ShimmerFrameLayout, View>(forwardImgViewShimmerFrameLayout, imageViewCaretForward),
             Pair<ShimmerFrameLayout, View>(
-                collectionTimeDetailsShimmerLayout,
-                collectionTimeDetailsConstraintLayout
+                foodSubstitutionTitleShimmerFrameLayout,
+                txtFoodSubstitutionTitle
             ),
-
+            Pair<ShimmerFrameLayout, View>(
+                foodSubstitutionDescShimmerFrameLayout,
+                txtFoodSubstitutionDesc
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                foodSubstitutionDescShimmerFrameLayout,
+                txtFoodSubstitutionDesc
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                radioGroupFoodSubstitutionShimmerFrameLayout,
+                radioGroupFoodSubstitution
+            ),
             Pair<ShimmerFrameLayout, View>(
                 instructionTxtShimmerFrameLayout,
                 txtSpecialDeliveryInstruction
@@ -214,16 +228,20 @@ class CheckoutDashFragment : Fragment(),
             ),
             Pair<ShimmerFrameLayout, View>(summaryNoteShimmerFrameLayout, txtOrderSummaryNote),
             Pair<ShimmerFrameLayout, View>(
-                txtOrderTotalCollectionShimmerFrameLayout,
-                txtOrderTotalTitleCollection
+                txtOrderTotalShimmerFrameLayout,
+                txtOrderTotalTitle
             ),
             Pair<ShimmerFrameLayout, View>(
-                orderTotalValueCollectionShimmerFrameLayout,
-                txtOrderTotalValueCollection
+                orderTotalValueShimmerFrameLayout,
+                txtOrderTotalValue
             ),
             Pair<ShimmerFrameLayout, View>(
-                continuePaymentTxtCollectionShimmerFrameLayout,
-                txtContinueToPaymentCollection
+                continuePaymentTxtShimmerFrameLayout,
+                txtContinueToPayment
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                collectionTimeDetailsShimmerLayout,
+                collectionTimeDetailsConstraintLayout
             ),
             Pair<ShimmerFrameLayout, View>(
                 newShoppingBagsTitleShimmerFrameLayout,
@@ -458,6 +476,7 @@ class CheckoutDashFragment : Fragment(),
         driverTipOptionsList!!.add("R20")
         driverTipOptionsList!!.add("R30")
         driverTipOptionsList!!.add("Own Amount")
+        selectedDriverTipValue = null
         showDriverTipView()
     }
 
@@ -487,22 +506,26 @@ class CheckoutDashFragment : Fragment(),
                 titleTextView?.setOnClickListener {
                     var isSameSelection =
                         true // Because we want to change this view after the value entered from user.
+                    selectedDriverTipValue = (it as TextView).text as? String
+
                     if (it.tag == driverTipOptionsList!!.lastIndex) {
                         val tipValue = if (titleTextView.text.toString()
                                 .equals(driverTipOptionsList!!.lastOrNull())
                         ) getString(R.string.empty) else removeRandFromAmount(titleTextView.text.toString()
                             .trim())
                         val customDriverTipDialog = CustomDriverTipBottomSheetDialog.newInstance(
-                            getString(R.string.tip_your_dash_driver),
-                            getString(R.string.enter_your_own_amount), tipValue, this)
+                            requireContext().getString(R.string.tip_your_dash_driver),
+                            requireContext().getString(R.string.enter_your_own_amount, MIN_TIP_VALUE.toInt(), MAX_TIP_VALUE.toInt()), tipValue, this)
                         customDriverTipDialog.show(requireFragmentManager(),
                             CustomDriverTipBottomSheetDialog::class.java.simpleName)
                     } else {
                         isSameSelection = resetAllDriverTip(it.tag as Int)
-                        if (isSameSelection)
+                        if (isSameSelection) {
+                            selectedDriverTipValue = null
                             tipNoteTextView?.visibility = View.GONE
+                        }
                     }
-                    selectedDriverTipValue = (it as TextView).text as? String
+
                     if (!isSameSelection) {
                         // Change background of selected Tip as it's not unselection.
                         it.background =
@@ -774,7 +797,7 @@ class CheckoutDashFragment : Fragment(),
             R.id.chooseDateLayout -> {
                 onChooseDateClicked()
             }
-            R.id.txtContinueToPaymentCollection -> {
+            R.id.txtContinueToPayment -> {
                 onCheckoutPaymentClick()
             }
         }
@@ -925,6 +948,7 @@ class CheckoutDashFragment : Fragment(),
         }
         deliveryType = Delivery.DASH.type
         address = ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
+        driverTip = removeRandFromAmount(selectedDriverTipValue ?: "0.0").toDouble()
     }
 
     private fun isGiftMessage(): Boolean {
@@ -985,9 +1009,10 @@ class CheckoutDashFragment : Fragment(),
             driverTipTextView?.findViewWithTag(driverTipOptionsList?.lastIndex)
         driverTipOptionsList?.lastIndex?.let { resetAllDriverTip(it) }
         titleTextView?.text = "R$tipValue "
-        val image = context?.resources?.getDrawable(R.drawable.edit_icon_white)
-        image?.setBounds(0, 0, image.intrinsicWidth, image.intrinsicHeight)
-        titleTextView?.setCompoundDrawables(null, null, image, null)
+        val image = AppCompatResources.getDrawable(requireContext(), R.drawable.edit_icon_white)
+        titleTextView?.setCompoundDrawablesWithIntrinsicBounds(null, null, image, null)
+        titleTextView?.compoundDrawablePadding = resources.getDimension(R.dimen.five_dp).toInt()
+
         titleTextView?.background =
             bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
         titleTextView?.setTextColor(
@@ -997,5 +1022,6 @@ class CheckoutDashFragment : Fragment(),
             )
         )
         tipNoteTextView?.visibility = View.VISIBLE
+        selectedDriverTipValue = tipValue
     }
 }

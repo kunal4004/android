@@ -27,6 +27,11 @@ public class OrderSummary implements Parcelable {
 	public DiscountDetails discountDetails;
 	public Store store;
 	public FulfillmentDetails fulfillmentDetails;
+	public String orderId;
+	public boolean isChatEnabled;
+	public boolean isDriverTrackingEnabled;
+	public String shopperName;
+	public String orderStatus;
 
 	protected OrderSummary(Parcel in) {
 		totalItemsCount = in.readInt();
@@ -38,6 +43,11 @@ public class OrderSummary implements Parcelable {
 		totalStaffDiscount = in.readDouble();
 		state = in.readString();
 		submittedDate = in.readString();
+		orderId = in.readString();
+		isChatEnabled = in.readByte() != 0;
+		isDriverTrackingEnabled= in.readByte() != 0;
+		shopperName = in.readString();
+		orderStatus = in.readString();
 	}
 
 	@Override
@@ -51,6 +61,11 @@ public class OrderSummary implements Parcelable {
 		dest.writeDouble(totalStaffDiscount);
 		dest.writeString(state);
 		dest.writeString(submittedDate);
+		dest.writeString(orderId);
+		dest.writeByte((byte) (isChatEnabled ? 1 : 0));
+		dest.writeByte((byte) (isDriverTrackingEnabled ? 1 : 0));
+		dest.writeString(shopperName);
+		dest.writeString(orderStatus);
 	}
 
 	@Override
