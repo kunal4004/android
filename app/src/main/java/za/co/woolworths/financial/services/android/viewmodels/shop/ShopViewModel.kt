@@ -88,6 +88,12 @@ class ShopViewModel @Inject constructor(
     }
 
     fun callToAddItemsToCart(mAddItemsToCart: MutableList<AddItemToCart>) {
+
+        // set updated value for _addItemToCart
+        mAddItemsToCart?.get(0)?.let {
+            _addItemToCart.value = it
+        }
+
         _addItemToCartResp.value = Event(Resource.loading(null))
         viewModelScope.launch {
             val response = shopRepository.addItemsToCart(mAddItemsToCart)
