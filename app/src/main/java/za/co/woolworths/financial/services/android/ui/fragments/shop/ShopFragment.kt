@@ -368,9 +368,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 )
             }
         }
-
-
-
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
