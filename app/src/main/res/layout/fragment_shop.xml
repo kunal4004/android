@@ -112,6 +112,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tabs_main" />
 
+        <View
+            android:id="@+id/view_divider"
+            app:layout_goneMarginTop="@dimen/twenty_four_dp"
+            android:layout_marginStart="@dimen/sixteen_dp"
+            android:layout_marginTop="@dimen/sixteen_dp"
+            android:layout_marginEnd="@dimen/eight_dp"
+            android:layout_marginBottom="@dimen/sixteen_dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/blackToolTipLayout"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
+
         <TextView
             android:id="@+id/tvSearchProduct"
             android:layout_width="@dimen/zero_dp"

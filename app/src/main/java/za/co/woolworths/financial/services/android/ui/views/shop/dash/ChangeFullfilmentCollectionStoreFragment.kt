@@ -134,8 +134,11 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
     }
 
     private fun setStoreCollectionData(validatePlace: ValidatePlace?) {
-        if (validatePlace == null || validatePlace?.stores?.isNullOrEmpty() == true
-        ) {
+        if (validatePlace == null ) {
+            showSetLocationdUi()
+            return
+        }
+        if (validatePlace?.stores?.isNullOrEmpty() == true) {
             showNoCollectionStoresUi()
             return
         }
