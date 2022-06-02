@@ -1002,44 +1002,26 @@ class KotlinUtils {
          fun getDeliveryDetails(): String? {
             //TODO: Update condition to when browsing delivery is true
             return if (true) {
-                if (browsingDeliveryType == null) {
-                    return ""
-                }
                 when (browsingDeliveryType) {
                     Delivery.CNC -> {
-                        if (browsingCncStore == null) {
-                            ""
-                        } else browsingCncStore!!.deliveryDetails
+                        browsingCncStore?.deliveryDetails ?: ""
                     }
                     Delivery.DASH -> {
-                        if (WoolworthsApplication.getDashBrowsingValidatePlaceDetails() == null ||
-                            WoolworthsApplication.getDashBrowsingValidatePlaceDetails().onDemand == null
-                        ) {
-                            ""
-                        } else WoolworthsApplication.getDashBrowsingValidatePlaceDetails().onDemand!!.deliveryDetails
+                         WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.onDemand?.deliveryDetails ?: ""
                     }
-                    Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails().deliveryDetails
-                    else -> WoolworthsApplication.getValidatePlaceDetails().deliveryDetails
+                    Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails()?.deliveryDetails ?: ""
+                    else -> WoolworthsApplication.getValidatePlaceDetails()?.deliveryDetails ?: ""
                 }
             } else {
-                if (getPreferredDeliveryType() == null) {
-                    return ""
-                }
                 when (getPreferredDeliveryType()) {
                     Delivery.CNC -> {
-                        if (getPreferredCnCStore() == null) {
-                            ""
-                        } else getPreferredCnCStore()!!.deliveryDetails
+                         getPreferredCnCStore()?.deliveryDetails ?: ""
                     }
                     Delivery.DASH -> {
-                        if (WoolworthsApplication.getValidatePlaceDetails() == null ||
-                            WoolworthsApplication.getValidatePlaceDetails().onDemand == null
-                        ) {
-                            ""
-                        } else WoolworthsApplication.getValidatePlaceDetails().onDemand!!.deliveryDetails
+                        WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.deliveryDetails ?: ""
                     }
-                    Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails().deliveryDetails
-                    else -> WoolworthsApplication.getValidatePlaceDetails().deliveryDetails
+                    Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails()?.deliveryDetails ?: ""
+                    else -> WoolworthsApplication.getValidatePlaceDetails()?.deliveryDetails ?: ""
                 }
             }
         }
@@ -1055,9 +1037,7 @@ class KotlinUtils {
             }
             return null
         }
-
-
-
+        
         fun getPreferredPlaceId(): String {
             return Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId ?: ""
         }
