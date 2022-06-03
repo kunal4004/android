@@ -164,7 +164,18 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         viewModel.callConfirmPlace(KotlinUtils.getConfirmLocationRequest(Delivery.DASH))
     }
 
+    private fun showSearchBar() {
+        if (this.parentFragment is ShopFragment && KotlinUtils.browsingDeliveryType == Delivery.DASH)
+            (this.parentFragment as ShopFragment).showSerachAndBarcodeUi() // show search bar.
+    }
+
+    private fun hideSearchBar() {
+        if (this.parentFragment is ShopFragment && KotlinUtils.browsingDeliveryType == Delivery.DASH)
+            (this.parentFragment as ShopFragment).hideSerachAndBarcodeUi() // hide search bar.
+    }
+
     private fun showSetAddressScreen() {
+        hideSearchBar()
         layoutDashSetAddress?.visibility = View.VISIBLE
         img_view?.setImageResource(R.drawable.img_dash_delivery)
         txt_dash_title?.text = getString(R.string.dash_delivery_msg)
@@ -174,6 +185,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     }
 
     private fun showChangeLocationScreen() {
+        hideSearchBar()
         layoutDashSetAddress?.visibility = View.VISIBLE
         img_view?.setImageResource(R.drawable.location_disabled)
         txt_dash_title?.text = getString(R.string.no_location_title)
@@ -183,6 +195,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     }
 
     private fun initData() {
+        showSearchBar()
         when {
             // Both API data available
             viewModel.isDashCategoriesAvailable.value == true &&
