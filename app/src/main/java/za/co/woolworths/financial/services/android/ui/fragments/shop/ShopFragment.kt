@@ -111,7 +111,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         tvSearchProduct?.setOnClickListener { navigateToProductSearch() }
         imBarcodeScanner?.setOnClickListener { checkCameraPermission() }
         shopToolbar?.setOnClickListener { onEditDeliveryLocation() }
-        showSerachAndBarcodeUi()
 
         shopPagerAdapter = ShopPagerAdapter(childFragmentManager, mTabTitle, this)
         viewpager_main?.offscreenPageLimit = 2
@@ -130,8 +129,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
 
             override fun onPageSelected(position: Int) {
-                shopPagerAdapter?.notifyDataSetChanged()
-                updateTabIconUI(position)
                 activity?.apply {
                     when (position) {
                         0 -> {
@@ -155,6 +152,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     }
                     setupToolbar(position)
                 }
+                shopPagerAdapter?.notifyDataSetChanged()
+                updateTabIconUI(position)
             }
         })
         tabs_main?.setupWithViewPager(viewpager_main)
@@ -162,18 +161,18 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         showShopFeatureWalkThrough()
     }
 
-    fun showSerachAndBarcodeUi(){
+    fun showSerachAndBarcodeUi() {
         tvSearchProduct?.visibility = View.VISIBLE
         imBarcodeScanner?.visibility = View.VISIBLE
     }
 
-    fun hideSerachAndBarcodeUi(){
-        tvSearchProduct?.visibility = View.INVISIBLE
-        imBarcodeScanner?.visibility = View.INVISIBLE
+    fun hideSerachAndBarcodeUi() {
+        tvSearchProduct?.visibility = View.GONE
+        imBarcodeScanner?.visibility = View.GONE
     }
 
     private fun executeValidateSuburb() {
-       val placeId = getDeliveryType()?.address?.placeId ?: return
+        val placeId = getDeliveryType()?.address?.placeId ?: return
         placeId.let {
             lifecycleScope.launch {
                 progressBar?.visibility = View.VISIBLE
@@ -320,9 +319,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun updateTabIconUI(selectedTab: Int) {
-        if (selectedTab == 0 || selectedTab == 2) {
+        if (selectedTab == 0) {
             showSerachAndBarcodeUi()
-        } else if (selectedTab == 1 && KotlinUtils.browsingCncStore == null)  {
+        } else if (selectedTab == 1 && KotlinUtils.browsingCncStore == null) {
             hideSerachAndBarcodeUi()
         }
         tabs_main?.let { tab ->
@@ -359,7 +358,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
     }
 
-     fun setDeliveryView() {
+    fun setDeliveryView() {
         activity?.let {
             getDeliveryType()?.let { fulfillmentDetails ->
                 KotlinUtils.setDeliveryAddressView(
@@ -387,7 +386,13 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 }, AppConstant.DELAY_1000_MS)
             }
         }
-        setDeliveryView()
+
+        if (getDeliveryType() == null) {
+            setupToolbar(0)
+            viewpager_main.currentItem = 0
+        } else {
+            setDeliveryView()
+        }
         when (viewpager_main?.currentItem) {
             0 -> {
                 val standardDeliveryFragment = viewpager_main?.adapter?.instantiateItem(

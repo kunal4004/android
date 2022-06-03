@@ -767,6 +767,14 @@ interface ApiInterface {
             @Path("multipleSku") multipleSku: String): Call<SkuInventoryResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/isninventory/multi/{store_id}/{multipleSku}")
+    fun getDashInventorySKUForStore(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("store_id") store_id: String,
+        @Path("multipleSku") multipleSku: String): Call<SkusInventoryForStoreResponse>
+    
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/inventory/store/{store_id}/multiSku/{multipleSku}")
     fun getInventorySKUForStore(
 
@@ -1330,6 +1338,15 @@ interface ApiInterface {
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body confirmLocationRequest: ConfirmLocationRequest
     ): Call<ConfirmDeliveryAddressResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/v4/cartV2/confirmLocation")
+    suspend fun confirmPlaceLocation(
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body confirmLocationRequest: ConfirmLocationRequest) : retrofit2.Response<ConfirmDeliveryAddressResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/locationItems/saveLocation")

@@ -206,18 +206,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         btnCheckOut?.setOnClickListener(this)
         orderTotalLayout.setOnClickListener(this)
         deliveryLocationConstLayout.setOnClickListener(this)
-
-        //Empty cart UI
-        empty_state_template?.visibility = View.VISIBLE
-        txt_dash_sub_title?.visibility = View.GONE
-        img_view.setImageResource(R.drawable.empty_cart_icon)
-        if (SessionUtilities.getInstance().isUserAuthenticated) {
-            val firstName = SessionUtilities.getInstance().jwt.name[0]
-            txt_dash_title.text =
-                getString(R.string.hi) + firstName + "," + System.getProperty("line.separator") + getString(
-                    R.string.empty_cart_text
-                )
-        }
+        
         btn_dash_set_address.text = getString(R.string.start_shopping)
         btn_dash_set_address.setOnClickListener(this)
     }
