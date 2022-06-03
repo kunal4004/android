@@ -12,7 +12,6 @@ data class ProductsRequestParams(
     var refinement: String = ""
     var sortOption: String = ""
     var filterContent: Boolean = false
-    var deliveryDetails = ""
 
 
     enum class ResponseType(val value: String) {

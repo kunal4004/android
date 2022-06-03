@@ -48,7 +48,7 @@ abstract class BarcodeScanExtension : Fragment() {
                                         asyncTaskIsRunning(false)
                                     }
                                     else -> {
-                                        val productRequest: ProductRequest? = response.products?.get(0)?.let { ProductRequest(it.productId, it.sku) }
+                                        val productRequest: ProductRequest? = response.products?.get(0)?.let { ProductRequest(it.productId, it.sku, false) }
                                         mProductDetailRequest = productRequest?.let { retrieveProductDetail(it) }
                                         asyncTaskIsRunning(true)
                                     }

@@ -63,7 +63,6 @@ public class ProductListingExtensionFragment extends Fragment {
         this.productsRequestParams.setFilterContent(filterContent);
         this.isUserBrowsing = getArguments() != null && getArguments().getBoolean(IS_BROWSING, false);
         this.productsRequestParams.isUserBrowsing = isUserBrowsing;
-        this.productsRequestParams.setDeliveryDetails(KotlinUtils.Companion.getDeliveryDetails(isUserBrowsing));
     }
 
     public ProductsRequestParams getProductRequestBody() {
@@ -165,7 +164,7 @@ public class ProductListingExtensionFragment extends Fragment {
         this.productIsLoading = false;
         getProductRequestBody().setPageOffset(pageOffset);
         getProductRequestBody().setRefinement(navigationState);
-        getProductRequestBody().setDeliveryDetails(KotlinUtils.Companion.getDeliveryDetails(isUserBrowsing));
+        getProductRequestBody().isUserBrowsing = isUserBrowsing;
 
     }
 
@@ -177,7 +176,7 @@ public class ProductListingExtensionFragment extends Fragment {
         this.productIsLoading = false;
         getProductRequestBody().setPageOffset(pageOffset);
         getProductRequestBody().setSortOption(sortOption);
-        getProductRequestBody().setDeliveryDetails(KotlinUtils.Companion.getDeliveryDetails(isUserBrowsing));
+        getProductRequestBody().isUserBrowsing = isUserBrowsing;
 
     }
 }

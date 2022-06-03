@@ -1301,7 +1301,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         showProgressBar()
         OneAppService.getInventorySkuForStore(
             mStoreId, addItemToCart?.catalogRefId
-                ?: ""
+                ?: "", isUserBrowsing
         ).enqueue(CompletionHandler(object : IResponseListener<SkusInventoryForStoreResponse> {
             override fun onSuccess(skusInventoryForStoreResponse: SkusInventoryForStoreResponse?) {
                 if (!isAdded) return

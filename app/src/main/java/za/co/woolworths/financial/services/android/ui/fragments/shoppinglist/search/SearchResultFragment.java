@@ -487,7 +487,8 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
         setSelectedProduct(selectedProduct);
         mProductList = productLists;
         if (viewIsLoading) {
-            ProductRequest productRequest = new ProductRequest(selectedProduct.productId, selectedProduct.sku);
+            //TODO: Verify isUserBrowsing flag not fixed value
+            ProductRequest productRequest = new ProductRequest(selectedProduct.productId, selectedProduct.sku, false);
             productDetailRequest(productRequest);
         } else {
             if (getProductAdapter() != null) {
@@ -975,7 +976,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
     }
 
     public Call<ProductDetailResponse> getProductDetail(ProductRequest productRequest) {
-        Call<ProductDetailResponse> productDetailRequest = OneAppService.INSTANCE.productDetail(productRequest.getProductId(), productRequest.getSkuId());
+        Call<ProductDetailResponse> productDetailRequest = OneAppService.INSTANCE.productDetail(productRequest.getProductId(), productRequest.getSkuId(), false);
         productDetailRequest.enqueue(new CompletionHandler<>(new IResponseListener<ProductDetailResponse>() {
             @Override
             public void onSuccess(ProductDetailResponse productDetailResponse) {
