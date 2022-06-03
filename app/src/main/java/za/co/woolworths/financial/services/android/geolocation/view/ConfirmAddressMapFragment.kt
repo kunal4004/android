@@ -243,7 +243,6 @@ class ConfirmAddressMapFragment :
                     binding?.autoCompleteTextView?.setText(placeName)
                     isAddressFromSearch = true
                     isMainPlaceName = true
-                    getStreetNumberAndRoute(placeId)
                     isStreetNumberAndRouteFromSearch = true
                     val placeFields: MutableList<Place.Field> = mutableListOf(
                         Place.Field.ID,
@@ -376,6 +375,8 @@ class ConfirmAddressMapFragment :
 
         if (isStreetNumberAndRouteFromSearch == false) {
             placeId = results.getOrNull(0)?.placeId.toString()
+            getStreetNumberAndRoute(placeId)
+        } else {
             getStreetNumberAndRoute(placeId)
         }
         isStreetNumberAndRouteFromSearch = false
