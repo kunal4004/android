@@ -487,7 +487,6 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
         setSelectedProduct(selectedProduct);
         mProductList = productLists;
         if (viewIsLoading) {
-            //TODO: Verify isUserBrowsing flag not fixed value
             ProductRequest productRequest = new ProductRequest(selectedProduct.productId, selectedProduct.sku, false);
             productDetailRequest(productRequest);
         } else {

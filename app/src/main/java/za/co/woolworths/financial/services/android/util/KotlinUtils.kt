@@ -1105,10 +1105,11 @@ class KotlinUtils {
             return if (isUserBrowsing) {
                 when (browsingDeliveryType) {
                     Delivery.CNC -> {
-                        browsingCncStore?.deliveryDetails ?: ""
+                        browsingCncStore?.deliveryDetails ?: getPreferredCnCStore()?.deliveryDetails ?: ""
                     }
                     Delivery.DASH -> {
-                         WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.onDemand?.deliveryDetails ?: ""
+                         WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.onDemand?.deliveryDetails
+                             ?: WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.deliveryDetails ?: ""
                     }
                     Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails()?.deliveryDetails ?: ""
                     else -> WoolworthsApplication.getValidatePlaceDetails()?.deliveryDetails ?: ""
