@@ -136,7 +136,7 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
     }
 
     private fun initializeRootCategoryList() {
-        if (parentFragment?.getCategoryResponseData() != null) bindDepartment() else executeDepartmentRequest(mDepartmentAdapter, parentFragment, location)
+        if (parentFragment?.getCategoryResponseData()?.rootCategories != null) bindDepartment() else executeDepartmentRequest(mDepartmentAdapter, parentFragment, location)
     }
 
     private fun onWindowFocusChanged(hasFocus: Boolean) {
