@@ -82,6 +82,10 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private var validateLocationResponse: ValidateLocationResponse? = null
     private var tabWidth: Float? = 0f
 
+    companion object {
+        private const val LOGIN_MY_LIST_REQUEST_CODE = 9876
+    }
+
     private val confirmAddressViewModel: ConfirmAddressViewModel by lazy {
         ViewModelProvider(
             this,
@@ -528,6 +532,14 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 changeFullfilmentCollectionStoreFragment?.init()
             }
         }
+
+        if (requestCode == LOGIN_MY_LIST_REQUEST_CODE) {
+            (activity as? BottomNavigationActivity)?.let {
+                it.bottomNavigationById.setCurrentItem(INDEX_ACCOUNT)
+                val fragment = MyListsFragment()
+                it.pushFragment(fragment)
+            }
+        }
     }
 
 
@@ -937,7 +949,15 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 showDashFeatureWalkThrough()
             }
             WMaterialShowcaseView.Feature.MY_LIST ->{
-                /*todo Navigate to My List */
+                if (SessionUtilities.getInstance().isUserAuthenticated) {
+                    (activity as? BottomNavigationActivity)?.let {
+                        it.bottomNavigationById.setCurrentItem(INDEX_ACCOUNT)
+                        val fragment = MyListsFragment()
+                        it.pushFragment(fragment)
+                    }
+                } else {
+                    ScreenManager.presentSSOSignin(activity, LOGIN_MY_LIST_REQUEST_CODE)
+                }
             }
         }
     }
