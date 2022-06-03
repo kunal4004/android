@@ -1156,7 +1156,8 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         VTO_TRY_IT(10),
         SHOPPING(11),
         DASH(12),
-        DELIVERY_DETAILS(13);
+        DELIVERY_DETAILS(13),
+        MY_LIST(14);
 
         private int value;
 
