@@ -377,6 +377,7 @@ class ConfirmAddressMapFragment :
             placeId = results.getOrNull(0)?.placeId.toString()
             getStreetNumberAndRoute(placeId)
         } else {
+            // here place id is d/f coming search address
             getStreetNumberAndRoute(placeId)
         }
         isStreetNumberAndRouteFromSearch = false
