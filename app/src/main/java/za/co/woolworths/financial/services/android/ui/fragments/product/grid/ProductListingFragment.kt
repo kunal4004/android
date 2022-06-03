@@ -739,7 +739,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             mSearchTerm,
             mNavigationState,
             mSortOption,
-            filterContent
+            filterContent,
+            true
         )
     }
 

@@ -999,9 +999,9 @@ class KotlinUtils {
             }
         }
 
-         fun getDeliveryDetails(): String? {
+         fun getDeliveryDetails(isUserBrowsing : Boolean): String? {
             //TODO: Update condition to when browsing delivery is true
-            return if (true) {
+            return if (isUserBrowsing) {
                 when (browsingDeliveryType) {
                     Delivery.CNC -> {
                         browsingCncStore?.deliveryDetails ?: ""

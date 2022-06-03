@@ -370,11 +370,11 @@ object OneAppService : RetrofitConfig() {
         return if (Utils.isLocationEnabled(appContext())) {
             mApiInterface.productDetail("", "",
                      loc.longitude, loc.latitude, getSessionToken(), getDeviceIdentityToken(),
-                    productId, skuId, suburbId, storeId, KotlinUtils.browsingDeliveryType?.type ?: Delivery.STANDARD.type, KotlinUtils.getDeliveryDetails())
+                    productId, skuId, suburbId, storeId, KotlinUtils.browsingDeliveryType?.type ?: Delivery.STANDARD.type, KotlinUtils.getDeliveryDetails(false))
         } else {
             mApiInterface.productDetail( "", "",
                 getSessionToken(), getDeviceIdentityToken(),
-                    productId, skuId, suburbId, storeId, KotlinUtils.browsingDeliveryType?.type ?: Delivery.STANDARD.type, KotlinUtils.getDeliveryDetails())
+                    productId, skuId, suburbId, storeId, KotlinUtils.browsingDeliveryType?.type ?: Delivery.STANDARD.type, KotlinUtils.getDeliveryDetails(false))
         }
     }
 

@@ -33,6 +33,7 @@ public class ProductListingExtensionFragment extends Fragment {
     private Call<ProductView> retrieveProduct;
 
     private GridNavigator mNavigator;
+    private Boolean isUserBrowsing;
 
     public void setNavigator(GridNavigator navigator) {
         this.mNavigator = navigator;
@@ -55,12 +56,13 @@ public class ProductListingExtensionFragment extends Fragment {
         return mIsLoading;
     }
 
-    public void setProductRequestBody(ProductsRequestParams.SearchType searchType, String searchTerm, String navigationState, String sortOption, Boolean filterContent) {
+    public void setProductRequestBody(ProductsRequestParams.SearchType searchType, String searchTerm, String navigationState, String sortOption, Boolean filterContent, Boolean isUserBrowsing) {
         this.productsRequestParams = new ProductsRequestParams(searchTerm, searchType, ProductsRequestParams.ResponseType.DETAIL, pageOffset);
         this.productsRequestParams.setRefinement(navigationState);
         this.productsRequestParams.setSortOption(sortOption);
         this.productsRequestParams.setFilterContent(filterContent);
-        this.productsRequestParams.setDeliveryDetails(KotlinUtils.Companion.getDeliveryDetails());
+        this.isUserBrowsing = isUserBrowsing;
+        this.productsRequestParams.setDeliveryDetails(KotlinUtils.Companion.getDeliveryDetails(isUserBrowsing));
     }
 
     public ProductsRequestParams getProductRequestBody() {
