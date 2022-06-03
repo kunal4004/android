@@ -46,6 +46,9 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Addr
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_COLLECTING_DETAILS
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
+import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -69,6 +72,7 @@ import za.co.woolworths.financial.services.android.ui.extension.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiFailureHandler
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
+import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DEFAULT_ADDRESS
@@ -106,7 +110,6 @@ class KotlinUtils {
         var browsingDeliveryType: Delivery? = getPreferredDeliveryType()
         @JvmStatic
         var browsingCncStore: Store? = null
-        const val DELAY: Long = 900
         const val collectionsIdUrl = "woolworths.wfs.co.za/CustomerCollections/IdVerification"
         const val COLLECTIONS_EXIT_URL = "collectionsExitUrl"
         const val TREATMENT_PLAN = "treamentPlan"
@@ -478,6 +481,104 @@ class KotlinUtils {
                         tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_delivery_circle)
                     }
+                }
+            }
+        }
+
+        fun showChangeDeliveryTypeDialog(context: Context, requireFragmentManager: FragmentManager, deliveryType: Delivery?) {
+            var dialogTitle = ""
+            var dialogSubTitle: CharSequence = ""
+            var dialogBtnText = ""
+            var dialogTitleImg: Int = R.drawable.img_delivery_truck
+            when (deliveryType) {
+                Delivery.STANDARD -> {
+                    context.apply {
+                        dialogTitle = getString(R.string.change_your_delivery_method_title)
+                        dialogSubTitle = getText(R.string.change_your_delivery_method_standard)
+                        dialogBtnText = getString(R.string.continue_with_standard_delivery)
+                        dialogTitleImg = R.drawable.img_delivery_truck
+                    }
+                }
+                Delivery.CNC -> {
+                    context.apply {
+                        dialogTitle = getString(R.string.change_your_delivery_method_title)
+                        dialogSubTitle = getText(R.string.change_your_delivery_method_cnc)
+                        dialogBtnText = getString(R.string.continue_with_cnc_delivery)
+                        dialogTitleImg = R.drawable.img_collection_bag
+                    }
+                }
+                Delivery.DASH -> {
+                    context.apply {
+                        dialogTitle = getString(R.string.change_your_delivery_method_title)
+                        dialogSubTitle = getText(R.string.change_your_delivery_method_dash)
+                        dialogBtnText = getString(R.string.continue_with_dash_delivery)
+                        dialogTitleImg = R.drawable.img_dash_delivery
+                    }
+                }
+            }
+            val customBottomSheetDialogFragment =
+                CustomBottomSheetDialogFragment.newInstance(
+                    dialogTitle,
+                    dialogSubTitle,
+                    dialogBtnText,
+                    dialogTitleImg,
+                    null)
+            customBottomSheetDialogFragment.show(requireFragmentManager,
+                CustomBottomSheetDialogFragment::class.java.simpleName)
+        }
+
+        fun getUnsellableList(validatePlace: ValidatePlace?, deliveryType: Delivery?): MutableList<UnSellableCommerceItem>? {
+            return when (deliveryType) {
+                Delivery.STANDARD -> {
+                    validatePlace?.unSellableCommerceItems
+                }
+                Delivery.CNC -> {
+                    browsingCncStore?.storeId?.let { checkStoreHasUnsellable(validatePlace, it) }
+                }
+                Delivery.DASH -> {
+                    validatePlace?.onDemand?.unSellableCommerceItems
+                }
+                else -> validatePlace?.unSellableCommerceItems
+            }
+        }
+
+        private fun checkStoreHasUnsellable(validatePlace: ValidatePlace?, mStoreId: String): MutableList<UnSellableCommerceItem>? {
+            validatePlace?.stores?.forEach {
+                if (it.storeId.equals(mStoreId)) {
+                    return it.unSellableCommerceItems
+                }
+            }
+            return null
+        }
+
+        fun getConfirmLocationRequest(deliveryType: Delivery?): ConfirmLocationRequest {
+            return when (deliveryType) {
+                Delivery.STANDARD -> {
+                    ConfirmLocationRequest(BundleKeysConstants.STANDARD,
+                        ConfirmLocationAddress(WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId),
+                        "")
+                }
+                Delivery.CNC -> {
+                    ConfirmLocationRequest(BundleKeysConstants.CNC,
+                        ConfirmLocationAddress(if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() != null)
+                            WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.placeDetails?.placeId
+                        else WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId),
+                        browsingCncStore?.storeId)
+                }
+                Delivery.DASH -> {
+                    ConfirmLocationRequest(BundleKeysConstants.DASH,
+                        ConfirmLocationAddress(if (WoolworthsApplication.getDashBrowsingValidatePlaceDetails() != null)
+                            WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.placeDetails?.placeId
+                        else WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId),
+                        if (WoolworthsApplication.getDashBrowsingValidatePlaceDetails() != null)
+                            WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.onDemand?.storeId
+                        else WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.storeId
+                    )
+                }
+                else -> {
+                    ConfirmLocationRequest(BundleKeysConstants.STANDARD,
+                        ConfirmLocationAddress(WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId),
+                        "")
                 }
             }
         }
@@ -987,14 +1088,14 @@ class KotlinUtils {
 
         fun getPreferredDeliveryType(): Delivery? {
             return Delivery.getType(
-                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType ?: ""
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType ?: Delivery.STANDARD.type
             )
         }
 
         fun getDeliveryType(): FulfillmentDetails? {
             return if (SessionUtilities.getInstance().isUserAuthenticated) {
                 Utils.getPreferredDeliveryLocation()?.fulfillmentDetails
-            } else{
+            } else {
                 getAnonymousUserLocationDetails()?.fulfillmentDetails
             }
         }

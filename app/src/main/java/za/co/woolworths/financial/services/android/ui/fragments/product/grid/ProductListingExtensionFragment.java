@@ -164,7 +164,7 @@ public class ProductListingExtensionFragment extends Fragment {
         this.productIsLoading = false;
         getProductRequestBody().setPageOffset(pageOffset);
         getProductRequestBody().setRefinement(navigationState);
-        getProductRequestBody().setDeliveryDetails(KotlinUtils.Companion.getDeliveryDetails());
+        getProductRequestBody().setDeliveryDetails(KotlinUtils.Companion.getDeliveryDetails(isUserBrowsing));
 
     }
 
@@ -176,7 +176,7 @@ public class ProductListingExtensionFragment extends Fragment {
         this.productIsLoading = false;
         getProductRequestBody().setPageOffset(pageOffset);
         getProductRequestBody().setSortOption(sortOption);
-        getProductRequestBody().setDeliveryDetails(KotlinUtils.Companion.getDeliveryDetails());
+        getProductRequestBody().setDeliveryDetails(KotlinUtils.Companion.getDeliveryDetails(isUserBrowsing));
 
     }
 }

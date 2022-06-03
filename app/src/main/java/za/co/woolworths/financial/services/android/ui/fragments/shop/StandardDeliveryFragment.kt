@@ -316,7 +316,8 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
             else -> ProductListingFragment.newInstance(
                 ProductsRequestParams.SearchType.NAVIGATE,
                 rootCategory.categoryName,
-                rootCategory.dimValId
+                rootCategory.dimValId,
+                true
             )
         }
     }
