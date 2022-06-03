@@ -900,8 +900,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             mSearchTerm,
             mNavigationState,
             mSortOption,
-            filterContent,
-            isUserBrowsing
+            filterContent
         )
     }
 
@@ -1657,7 +1656,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
         private const val SEARCH_TYPE = "SEARCH_TYPE"
         private const val SEARCH_TERM = "SEARCH_TERM"
-        private const val IS_BROWSING = "is_browsing"
+        const val IS_BROWSING = "is_browsing"
         private const val SORT_OPTION = "SORT_OPTION"
         private const val BRAND_NAVIGATION_DETAILS = "BRAND_NAVIGATION_DETAILS"
 

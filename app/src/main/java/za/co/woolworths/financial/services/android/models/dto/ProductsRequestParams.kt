@@ -7,6 +7,8 @@ data class ProductsRequestParams(
     var pageOffset: Int
 ) {
 
+    @kotlin.jvm.JvmField
+    var isUserBrowsing: Boolean = false
     var refinement: String = ""
     var sortOption: String = ""
     var filterContent: Boolean = false

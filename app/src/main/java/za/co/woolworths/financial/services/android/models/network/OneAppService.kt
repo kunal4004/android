@@ -291,14 +291,22 @@ object OneAppService : RetrofitConfig() {
                 "", getSessionToken(), getDeviceIdentityToken(), requestParams.searchTerm, requestParams.searchType.value,
                 requestParams.responseType.value, requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption,
                 requestParams.refinement, suburbId = suburbId, storeId = storeId, filterContent = requestParams.filterContent,
-                KotlinUtils.browsingDeliveryType?.type ?: Delivery.STANDARD.type, deliveryDetails = requestParams.deliveryDetails
+                deliveryType =
+                    if(requestParams.isUserBrowsing) KotlinUtils.browsingDeliveryType?.type ?: Delivery.STANDARD.type
+                    else KotlinUtils.getDeliveryType()?.deliveryType ?: Delivery.STANDARD.type,
+                deliveryDetails =
+                    KotlinUtils.getDeliveryDetails(requestParams.isUserBrowsing)
             )
         } else {
             mApiInterface.getProductsWithoutLocation("", "", getSessionToken(),
                 getDeviceIdentityToken(), requestParams.searchTerm, requestParams.searchType.value, requestParams.responseType.value,
                 requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption, requestParams.refinement, suburbId = suburbId,
                 storeId = storeId, filterContent =  requestParams.filterContent,
-                deliveryType = KotlinUtils.browsingDeliveryType?.type ?: Delivery.STANDARD.type, deliveryDetails = requestParams.deliveryDetails
+                deliveryType =
+                if(requestParams.isUserBrowsing) KotlinUtils.browsingDeliveryType?.type ?: Delivery.STANDARD.type
+                else KotlinUtils.getDeliveryType()?.deliveryType ?: Delivery.STANDARD.type,
+                deliveryDetails =
+                KotlinUtils.getDeliveryDetails(requestParams.isUserBrowsing)
             )
         }
     }

@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.grid;
 
+import static za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.IS_BROWSING;
+
 import android.app.Activity;
 import android.util.Log;
 
@@ -9,7 +11,6 @@ import java.util.List;
 
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.PagingResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
@@ -18,7 +19,6 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.wenum.Delivery;
 
 public class ProductListingExtensionFragment extends Fragment {
 
@@ -56,12 +56,13 @@ public class ProductListingExtensionFragment extends Fragment {
         return mIsLoading;
     }
 
-    public void setProductRequestBody(ProductsRequestParams.SearchType searchType, String searchTerm, String navigationState, String sortOption, Boolean filterContent, Boolean isUserBrowsing) {
+    public void setProductRequestBody(ProductsRequestParams.SearchType searchType, String searchTerm, String navigationState, String sortOption, Boolean filterContent) {
         this.productsRequestParams = new ProductsRequestParams(searchTerm, searchType, ProductsRequestParams.ResponseType.DETAIL, pageOffset);
         this.productsRequestParams.setRefinement(navigationState);
         this.productsRequestParams.setSortOption(sortOption);
         this.productsRequestParams.setFilterContent(filterContent);
-        this.isUserBrowsing = isUserBrowsing;
+        this.isUserBrowsing = getArguments() != null && getArguments().getBoolean(IS_BROWSING, false);
+        this.productsRequestParams.isUserBrowsing = isUserBrowsing;
         this.productsRequestParams.setDeliveryDetails(KotlinUtils.Companion.getDeliveryDetails(isUserBrowsing));
     }
 
