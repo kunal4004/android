@@ -42,12 +42,11 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LATITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LONGITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
-import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
-import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LATITUDE
+import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LONGITUDE
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
-import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.*
-import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.*
 import java.util.*
 import javax.inject.Inject
 
@@ -441,12 +440,6 @@ class ConfirmAddressMapFragment :
         }
 
     }
-
-    companion object {
-        private const val DEFAULT_LATITUDE = -28.741943
-        private const val DEFAULT_LONGITUDE = 24.771944
-    }
-
     override fun tryAgain() {
         initView()
     }
