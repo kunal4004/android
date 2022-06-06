@@ -669,6 +669,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 if (it.storeName.equals("null") || it.storeName.isNullOrEmpty()) {
                     whereToCollect()
                 } else {
+                    mStoreName=it.storeName
+                    mStoreId=it.storeId
                     geoDeliveryText?.text = HtmlCompat.fromHtml(
                         getString(R.string.collecting_from_geo, it.storeName),
                         HtmlCompat.FROM_HTML_MODE_LEGACY
