@@ -598,11 +598,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             ),
 
             Pair<ShimmerFrameLayout, View>(
-                ageConfirmationTitleShimmerFrameLayout,
-                txtAgeConfirmationTitle
-            ),
-
-            Pair<ShimmerFrameLayout, View>(
                 ageConfirmationDescShimmerFrameLayout,
                 txtAgeConfirmationDesc),
 
@@ -613,11 +608,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             Pair<ShimmerFrameLayout, View>(
             radioGroupAgeConfirmationShimmerFrameLayout,
                     radioBtnAgeConfirmation),
-
-            Pair<ShimmerFrameLayout, View>(
-                ageConfirmationTitleShimmerFrameLayout,
-                txtAgeConfirmationTitle
-            ),
 
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationTitleShimmerFrameLayout,
