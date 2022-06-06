@@ -719,7 +719,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         this.orderSummary = cartResponse.orderSummary;
         this.voucherDetails = cartResponse.voucherDetails;
         this.productCountMap = cartResponse.productCountMap;
-        this.liquorCompliance = new LiquorCompliance(cartResponse.liquorOrder, cartResponse.noLiquorImageUrl);
+        this.liquorCompliance = new LiquorCompliance(cartResponse.liquorOrder, cartResponse.noLiquorImageUrl != null ? cartResponse.noLiquorImageUrl : "");
         setItemLimitsBanner();
         if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null) {
             ArrayList<CartItemGroup> emptyCartItemGroups = new ArrayList<>(0);
