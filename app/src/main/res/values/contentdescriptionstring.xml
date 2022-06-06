@@ -143,7 +143,6 @@
     <string name="nextArrowImageView">nextArrowImageView</string>
     <string name="cliItemContainer">cliItemContainer</string>
     <string name="labelCreditLimitIncreaseStatusDescription">labelCreditLimitIncreaseStatusDescription</string>
-
-
+    <string name="applicationBeingProcessedImage">applicationBeingProcessedImage</string>
 
 </resources>
