@@ -17,7 +17,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="16dp"
             android:background="@drawable/message_24" />
 
         <LinearLayout
@@ -32,6 +31,7 @@
             <TextView
                 android:id="@+id/contactUsEmailTextView"
                 style="@style/contact_us_item_header_textview"
+                android:fontFamily="@font/myriad_pro_semi_bold"
                 android:text="@string/txt_black_credit_card_query" />
 
             <TextView
@@ -53,5 +53,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:layout_marginEnd="@dimen/_15sdp"
         android:background="#0a000000" />
 </LinearLayout>
