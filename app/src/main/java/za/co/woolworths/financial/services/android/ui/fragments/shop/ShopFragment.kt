@@ -40,8 +40,7 @@ import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingLi
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.*
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ShopPagerAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -82,6 +81,10 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private var user: String = ""
     private var validateLocationResponse: ValidateLocationResponse? = null
     private var tabWidth: Float? = 0f
+
+    companion object {
+        private const val LOGIN_MY_LIST_REQUEST_CODE = 9876
+    }
 
     private val confirmAddressViewModel: ConfirmAddressViewModel by lazy {
         ViewModelProvider(
@@ -534,6 +537,14 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 changeFullfilmentCollectionStoreFragment?.init()
             }
         }
+
+        if (requestCode == LOGIN_MY_LIST_REQUEST_CODE) {
+            (activity as? BottomNavigationActivity)?.let {
+                it.bottomNavigationById.setCurrentItem(INDEX_ACCOUNT)
+                val fragment = MyListsFragment()
+                it.pushFragment(fragment)
+            }
+        }
     }
 
 
@@ -904,6 +915,31 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
     }
 
+    private fun showMyListsFeatureWalkThrough() {
+        (activity as? BottomNavigationActivity)?.let {
+            // Prevent dialog to display in other section when fragment is not visible
+            if (it.currentFragment !is ShopFragment || !isAdded || AppInstanceObject.get().featureWalkThrough.my_lists || !Utils.isFeatureWalkThroughTutorialsEnabled())
+                return
+            FirebaseManager.setCrashlyticsString(
+                bindString(R.string.crashlytics_materialshowcase_key),
+                this.javaClass.canonicalName
+            )
+            it.walkThroughPromtView =
+                WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.MY_LIST)
+                    .setTarget(it.bottomNavigationById?.getIconAt(INDEX_ACCOUNT))
+                    .setTitle(R.string.new_location_list)
+                    .setDescription(R.string.early_access_shopping)
+                    .setActionText(R.string.view_shopping_list_action)
+                    .setImage(R.drawable.add)
+                    .setShapePadding(48)
+                    .setAction(this@ShopFragment)
+                    .setArrowPosition(WMaterialShowcaseView.Arrow.BOTTOM_RIGHT)
+                    .setMaskColour(ContextCompat.getColor(it, R.color.semi_transparent_black))
+                    .build()
+            it.walkThroughPromtView.show(it)
+        }
+    }
+
     override fun onWalkthroughActionButtonClick(feature: WMaterialShowcaseView.Feature?) {
         when (feature) {
             WMaterialShowcaseView.Feature.DASH -> {
@@ -916,6 +952,17 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
             WMaterialShowcaseView.Feature.SHOPPING -> {
                 showDashFeatureWalkThrough()
+            }
+            WMaterialShowcaseView.Feature.MY_LIST ->{
+                if (SessionUtilities.getInstance().isUserAuthenticated) {
+                    (activity as? BottomNavigationActivity)?.let {
+                        it.bottomNavigationById.setCurrentItem(INDEX_ACCOUNT)
+                        val fragment = MyListsFragment()
+                        it.pushFragment(fragment)
+                    }
+                } else {
+                    ScreenManager.presentSSOSignin(activity, LOGIN_MY_LIST_REQUEST_CODE)
+                }
             }
         }
     }
@@ -930,6 +977,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
             WMaterialShowcaseView.Feature.DELIVERY_DETAILS -> {
                 executeValidateSuburb()
+                showMyListsFeatureWalkThrough()
             }
         }
     }
