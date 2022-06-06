@@ -719,6 +719,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         this.orderSummary = cartResponse.orderSummary;
         this.voucherDetails = cartResponse.voucherDetails;
         this.productCountMap = cartResponse.productCountMap;
+        this.liquorCompliance = new LiquorCompliance(cartResponse.liquorOrder, cartResponse.noLiquorImageUrl);
         setItemLimitsBanner();
         if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null) {
             ArrayList<CartItemGroup> emptyCartItemGroups = new ArrayList<>(0);
@@ -764,7 +765,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 cartItems.remove(cartItemGroup);
             }
 
-            cartProductAdapter.notifyAdapter(cartItems, orderSummary, voucherDetails);
+            cartProductAdapter.notifyAdapter(cartItems, orderSummary, voucherDetails, liquorCompliance);
         } else {
             cartProductAdapter.clear();
             resetToolBarIcons();
@@ -854,7 +855,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 orderSummary = cartResponse.orderSummary;
                 voucherDetails = cartResponse.voucherDetails;
                 productCountMap = cartResponse.productCountMap;
-                cartProductAdapter.notifyAdapter(cartItems, orderSummary, voucherDetails);
+                liquorCompliance = new LiquorCompliance(cartResponse.liquorOrder, cartResponse.noLiquorImageUrl);
+
+                cartProductAdapter.notifyAdapter(cartItems, orderSummary, voucherDetails, liquorCompliance);
             } else {
                 ArrayList<CartItemGroup> currentCartItemGroup = cartProductAdapter.getCartItems();
                 for (CartItemGroup cartItemGroup : currentCartItemGroup) {
@@ -883,7 +886,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     orderSummary = cartResponse.orderSummary;
                     voucherDetails = cartResponse.voucherDetails;
                     productCountMap = cartResponse.productCountMap;
-                    cartProductAdapter.notifyAdapter(currentCartItemGroup, orderSummary, voucherDetails);
+                    liquorCompliance = new LiquorCompliance(cartResponse.liquorOrder, cartResponse.noLiquorImageUrl);
+                    cartProductAdapter.notifyAdapter(currentCartItemGroup, orderSummary, voucherDetails, liquorCompliance);
                     fadeCheckoutButton(false);
                 }
             }
