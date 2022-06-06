@@ -691,7 +691,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             orderSummary = cartResponse.orderSummary;
             voucherDetails = cartResponse.voucherDetails;
             productCountMap = cartResponse.productCountMap;
-            liquorCompliance=new LiquorCompliance(cartResponse.liquorOrder,cartResponse.noLiquorImageUrl);
+            liquorCompliance=new LiquorCompliance(cartResponse.liquorOrder,cartResponse.noLiquorImageUrl != null ? cartResponse.noLiquorImageUrl : "");
             cartProductAdapter = new CartProductAdapter(cartItems, this, orderSummary, getActivity(), voucherDetails,liquorCompliance);
             queryServiceInventoryCall(cartResponse.cartItems);
             LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
@@ -855,7 +855,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 orderSummary = cartResponse.orderSummary;
                 voucherDetails = cartResponse.voucherDetails;
                 productCountMap = cartResponse.productCountMap;
-                liquorCompliance = new LiquorCompliance(cartResponse.liquorOrder, cartResponse.noLiquorImageUrl);
+                liquorCompliance = new LiquorCompliance(cartResponse.liquorOrder, cartResponse.noLiquorImageUrl != null ? cartResponse.noLiquorImageUrl : "");
 
                 cartProductAdapter.notifyAdapter(cartItems, orderSummary, voucherDetails, liquorCompliance);
             } else {
@@ -886,7 +886,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     orderSummary = cartResponse.orderSummary;
                     voucherDetails = cartResponse.voucherDetails;
                     productCountMap = cartResponse.productCountMap;
-                    liquorCompliance = new LiquorCompliance(cartResponse.liquorOrder, cartResponse.noLiquorImageUrl);
+                    liquorCompliance = new LiquorCompliance(cartResponse.liquorOrder, cartResponse.noLiquorImageUrl != null ? cartResponse.noLiquorImageUrl : "");
                     cartProductAdapter.notifyAdapter(currentCartItemGroup, orderSummary, voucherDetails, liquorCompliance);
                     fadeCheckoutButton(false);
                 }
