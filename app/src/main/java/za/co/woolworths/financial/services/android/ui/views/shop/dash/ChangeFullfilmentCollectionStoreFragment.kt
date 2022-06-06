@@ -93,8 +93,6 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
         tvConfirmStore?.setOnClickListener(this)
         btChange?.setOnClickListener(this)
 
-        tvAddress?.visibility = View.GONE
-
         var isPermissionGranted = false
         activity?.apply {
             isPermissionGranted = ContextCompat.checkSelfPermission(
