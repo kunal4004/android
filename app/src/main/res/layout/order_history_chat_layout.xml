@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/_45sdp"
     android:background="@color/white"
-    android:paddingStart="@dimen/_16sdp"
-    android:paddingEnd="@dimen/_16sdp">
+    android:paddingStart="@dimen/twenty_four_dp"
+    android:paddingEnd="@dimen/twenty_four_dp">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/chatShopperName"
@@ -14,7 +14,6 @@
         android:drawablePadding="@dimen/sixteen_dp"
         android:gravity="center_vertical"
         android:textColor="@color/black"
-        android:textSize="@dimen/_11ssp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

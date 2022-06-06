@@ -363,7 +363,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
     }
 
     private fun initializeRootCategoryList() {
-        if (parentFragment?.getCategoryResponseData() != null) bindDepartment(
+        if (parentFragment?.getCategoryResponseData()?.rootCategories != null) bindDepartment(
             mDepartmentAdapter,
             parentFragment
         ) else executeDepartmentRequest(mDepartmentAdapter, parentFragment)

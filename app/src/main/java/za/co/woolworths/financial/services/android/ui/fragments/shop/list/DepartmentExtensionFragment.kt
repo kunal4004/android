@@ -90,7 +90,7 @@ open class DepartmentExtensionFragment : Fragment() {
             rootCategoryCall = OneAppService.getRootCategory(
                 isLocationEnabled,
                 location,
-                KotlinUtils.getDeliveryType()?.deliveryType
+                KotlinUtils.browsingDeliveryType?.type
             )
             rootCategoryCall?.enqueue(CompletionHandler(object : IResponseListener<RootCategories> {
                 override fun onSuccess(response: RootCategories?) {
