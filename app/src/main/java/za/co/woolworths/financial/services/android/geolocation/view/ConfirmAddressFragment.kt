@@ -56,6 +56,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LATITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LONGITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.io.IOException
 import java.util.*
@@ -437,10 +438,9 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                                     if (place.onDemand != null && place.onDemand!!.deliverable == true) {
                                         // directly go back to Dash landing screen. Don't call confirm location API as user only wants to browse Dash.
                                         KotlinUtils.isDashTabClicked =
-                                            address.placesId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId) // changing black tooltip flag as user changes his browsing location.
+                                            address.placesId?.equals(getDeliveryType()?.address?.placeId) // changing black tooltip flag as user changes his browsing location.
                                         val intent = Intent()
-                                        intent.putExtra(BundleKeysConstants.VALIDATE_RESPONSE,
-                                            validateLocationResponse)
+                                        intent.putExtra(BundleKeysConstants.VALIDATE_RESPONSE, validateLocationResponse)
                                         activity?.setResult(Activity.RESULT_OK, intent)
                                         activity?.finish()
                                     } else {

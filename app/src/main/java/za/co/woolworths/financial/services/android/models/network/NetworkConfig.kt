@@ -21,7 +21,7 @@ open class NetworkConfig {
     fun getSha1Password(): String = BuildConfig.SHA1
 
     fun getOS(): String = "Android"
-    
+
     fun getApiId(): String = WoolworthsApplication.getApiId()
 
     fun getNetworkCarrier(): String {
