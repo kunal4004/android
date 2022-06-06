@@ -699,10 +699,12 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 
 
     public void notifyAdapter(ArrayList<CartItemGroup> cartItems,
-                              OrderSummary orderSummary, VoucherDetails voucherDetails) {
+                              OrderSummary orderSummary, VoucherDetails voucherDetails,
+                              LiquorCompliance liquorCompliance) {
         this.cartItems = cartItems;
         this.orderSummary = orderSummary;
         this.voucherDetails = voucherDetails;
+        this.liquorComplianceInfo = liquorCompliance;
         resetQuantityState(false);
         notifyDataSetChanged();
         onItemClick.updateOrderTotal();
