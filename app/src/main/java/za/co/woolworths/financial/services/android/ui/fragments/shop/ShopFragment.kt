@@ -157,18 +157,9 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         }
     }
 
-    override fun PermissionGranted(request_code: Int) {
+    override fun permissionGranted(request_code: Int) {
         navigateToBarcode()
 
-    }
-
-    override fun PartialPermissionGranted(request_code: Int, granted_permissions: ArrayList<String>?) {
-    }
-
-    override fun PermissionDenied(request_code: Int) {
-    }
-
-    override fun NeverAskAgain(request_code: Int) {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
