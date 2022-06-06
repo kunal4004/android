@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/myriad_pro_regular"
         android:textColor="@color/color_666666"
-        android:textSize="@dimen/_12sdp"
+        android:textSize="@dimen/_11ssp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/guidelineTop" />
 
@@ -28,7 +28,7 @@
         android:gravity="end"
         android:maxLines="1"
         android:textColor="@color/black"
-        android:textSize="@dimen/_12ssp"
+        android:textSize="@dimen/_11ssp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/deliveryItemsType"
         app:layout_constraintTop_toTopOf="@id/guidelineTop" />
