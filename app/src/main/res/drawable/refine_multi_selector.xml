@@ -2,6 +2,6 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:drawable="@drawable/ic_multi_select_on" android:state_checked="true" />
-    <item android:drawable="@drawable/ic_multi_select_off" android:state_checked="false" />
+    <item android:drawable="@drawable/ic_multi_select_off_dark" android:state_checked="false" />
 
 </selector>

@@ -18,12 +18,12 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.*
 import android.text.style.*
-import android.util.Pair
 import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
+import android.widget.EditText
 import android.widget.ImageView
 import androidx.annotation.RawRes
 import androidx.appcompat.app.AlertDialog
@@ -34,20 +34,28 @@ import androidx.navigation.NavController
 import com.awfs.coordination.R
 import com.google.common.reflect.TypeToken
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.installations.FirebaseInstallations
 import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import org.json.JSONObject
+import retrofit2.HttpException
+import za.co.woolworths.financial.services.android.checkout.service.network.Address
+import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_COLLECTING_DETAILS
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY
-import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.Transaction
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionHeader
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionItem
-import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
+import za.co.woolworths.financial.services.android.models.dto.app_config.chat.ConfigTradingHours
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity
@@ -56,16 +64,27 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiFailureHandler
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DEFAULT_ADDRESS
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CHECKOUT
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.PLACE_ID
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import java.io.*
+import java.net.SocketException
 import java.text.NumberFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.coroutines.CoroutineContext
 
 class KotlinUtils {
     companion object {
@@ -74,12 +93,15 @@ class KotlinUtils {
         const val collectionsIdUrl = "woolworths.wfs.co.za/CustomerCollections/IdVerification"
         const val COLLECTIONS_EXIT_URL = "collectionsExitUrl"
         const val TREATMENT_PLAN = "treamentPlan"
+        const val RESULT_CODE_CLOSE_VIEW = 2203
+        var GEO_REQUEST_CODE = -1
+
 
         fun highlightTextInDesc(
-                context: Context?,
-                spannableTitle: SpannableString,
-                searchTerm: String,
-                textIsClickable: Boolean = true
+            context: Context?,
+            spannableTitle: SpannableString,
+            searchTerm: String,
+            textIsClickable: Boolean = true,
         ): SpannableString {
             var start = spannableTitle.indexOf(searchTerm)
             if (start == -1) {
@@ -99,34 +121,34 @@ class KotlinUtils {
             }
 
             val typeface: Typeface? =
-                    context?.let { ResourcesCompat.getFont(it, R.font.myriad_pro_semi_bold_otf) }
+                context?.let { ResourcesCompat.getFont(it, R.font.myriad_pro_semi_bold_otf) }
             if (textIsClickable) spannableTitle.setSpan(
-                    clickableSpan,
-                    start,
-                    end,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                clickableSpan,
+                start,
+                end,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
             )
             val dimenPix =
-                    context?.resources?.getDimension(R.dimen.store_card_spannable_text_17_sp_bold)
+                context?.resources?.getDimension(R.dimen.store_card_spannable_text_17_sp_bold)
             typeface?.style?.let { style ->
                 spannableTitle.setSpan(
-                        StyleSpan(style),
-                        start,
-                        end,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    StyleSpan(style),
+                    start,
+                    end,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
             }
             spannableTitle.setSpan(
-                    AbsoluteSizeSpan(
-                            dimenPix?.toInt()
-                                    ?: 0
-                    ), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                AbsoluteSizeSpan(
+                    dimenPix?.toInt()
+                        ?: 0
+                ), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
             spannableTitle.setSpan(
-                    AbsoluteSizeSpan(
-                            dimenPix?.toInt()
-                                    ?: 0
-                    ), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                AbsoluteSizeSpan(
+                    dimenPix?.toInt()
+                        ?: 0
+                ), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
             return spannableTitle
         }
@@ -135,12 +157,12 @@ class KotlinUtils {
 
             if (Build.VERSION.SDK_INT >= 19) {
                 appCompatActivity?.window?.decorView?.systemUiVisibility =
-                        View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
             }
             if (Build.VERSION.SDK_INT >= 21) {
                 appCompatActivity?.setWindowFlag(
-                        WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
-                        false
+                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
+                    false
                 )
                 appCompatActivity?.window?.statusBarColor = Color.TRANSPARENT
             }
@@ -161,7 +183,7 @@ class KotlinUtils {
         fun getStatusBarHeight(actionBarHeight: Int): Int {
             val resources = WoolworthsApplication.getAppContext().resources
             val resId: Int = resources?.getIdentifier("status_bar_height", "dimen", "android")
-                    ?: -1
+                ?: -1
             var statusBarHeight = 0
             if (resId > 0) {
                 statusBarHeight = resources?.getDimensionPixelSize(resId) ?: 0
@@ -201,22 +223,22 @@ class KotlinUtils {
                     startB + (fraction * (endB - startB)).toInt()
         }
 
-        fun roundCornerDrawable(view: View, color: String?) {
-            if (TextUtils.isEmpty(color)) return
+        fun roundCornerDrawable(view: View?, color: String?) {
+            if (view == null || TextUtils.isEmpty(color)) return
             val paddingDp: Float = (12 * view.context.resources.displayMetrics.density)
             val shape = GradientDrawable()
             shape.shape = GradientDrawable.RECTANGLE
             shape.cornerRadii =
-                    floatArrayOf(
-                            paddingDp,
-                            paddingDp,
-                            paddingDp,
-                            paddingDp,
-                            paddingDp,
-                            paddingDp,
-                            paddingDp,
-                            paddingDp
-                    )
+                floatArrayOf(
+                    paddingDp,
+                    paddingDp,
+                    paddingDp,
+                    paddingDp,
+                    paddingDp,
+                    paddingDp,
+                    paddingDp,
+                    paddingDp
+                )
             shape.setColor(Color.parseColor(color))
             view.background = shape
         }
@@ -276,8 +298,8 @@ class KotlinUtils {
             val appCompat = WoolworthsApplication.getAppContext()
             if (appCompat?.theme?.resolveAttribute(android.R.attr.actionBarSize, tv, true)!!) {
                 actionBarHeight = TypedValue.complexToDimensionPixelSize(
-                        tv.data,
-                        appCompat.resources?.displayMetrics
+                    tv.data,
+                    appCompat.resources?.displayMetrics
                 )
             }
             return actionBarHeight
@@ -290,8 +312,8 @@ class KotlinUtils {
         }
 
         fun setAccountNavigationGraph(
-                navigationController: NavController,
-                screenType: OnBoardingScreenType
+            navigationController: NavController,
+            screenType: OnBoardingScreenType,
         ) {
             val bundle = Bundle()
             bundle.putSerializable(ON_BOARDING_SCREEN_TYPE, screenType)
@@ -329,7 +351,7 @@ class KotlinUtils {
                 transactionList.add(TransactionHeader(transactionMap.key))
                 transactionMap.value.forEach { transactionItem ->
                     transactionList.add(
-                            transactionItem
+                        transactionItem
                     )
                 }
             }
@@ -347,52 +369,62 @@ class KotlinUtils {
             return SimpleDateFormat("dd-MM-yyy").format(date)
         }
 
-        fun presentEditDeliveryLocationActivity(
-                activity: Activity?,
-                requestCode: Int,
-                deliveryType: DeliveryType? = null
+        fun presentEditDeliveryGeoLocationActivity(
+            activity: Activity?,
+            requestCode: Int,
+            delivery: Delivery? = Delivery.STANDARD,
+            placeId: String? = null,
+            isComingFromCheckout: Boolean = false,
+            isComingFromSlotSelection: Boolean = false,
+            savedAddressResposne: SavedAddressResponse? = null,
+            defaultAddress: Address? = null,
+            whoISCollecting: String? = null,
         ) {
-            var type = deliveryType
-            if (type == null) {
-                if (Utils.getPreferredDeliveryLocation() != null) {
-                    type =
-                            if (Utils.getPreferredDeliveryLocation().storePickup) DeliveryType.STORE_PICKUP else DeliveryType.DELIVERY
-                }
-            }
+
             activity?.apply {
                 val mIntent = Intent(this, EditDeliveryLocationActivity::class.java)
                 val mBundle = Bundle()
-                mBundle.putString(EditDeliveryLocationActivity.DELIVERY_TYPE, type?.name)
-                mIntent.putExtra("bundle", mBundle)
+                mBundle.putString(DELIVERY_TYPE, delivery.toString())
+                mBundle.putString(PLACE_ID, placeId)
+                mBundle.putBoolean(IS_COMING_FROM_CHECKOUT, isComingFromCheckout)
+                mBundle.putBoolean(IS_COMING_FROM_SLOT_SELECTION, isComingFromSlotSelection)
+                mBundle.putSerializable(SAVED_ADDRESS_RESPONSE, savedAddressResposne)
+                mBundle.putSerializable(DEFAULT_ADDRESS, defaultAddress)
+                mBundle.putString(KEY_COLLECTING_DETAILS, whoISCollecting)
+                mIntent.putExtra(BUNDLE, mBundle)
+                GEO_REQUEST_CODE = requestCode
                 startActivityForResult(mIntent, requestCode)
                 overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
             }
         }
 
         fun setDeliveryAddressView(
-                context: Activity?,
-                shoppingDeliveryLocation: ShoppingDeliveryLocation,
-                tvDeliveringTo: WTextView,
-                tvDeliveryLocation: WTextView,
-                deliverLocationIcon: ImageView?
+            context: Activity?,
+            shoppingDeliveryLocation: ShoppingDeliveryLocation,
+            tvDeliveringTo: WTextView,
+            tvDeliveryLocation: WTextView,
+            deliverLocationIcon: ImageView?,
         ) {
-            with(shoppingDeliveryLocation) {
-                when (storePickup) {
-                    true -> {
-                        tvDeliveringTo.text =
-                                context?.resources?.getString(R.string.collecting_from)
-                        tvDeliveryLocation.text =
-                                context?.resources?.getString(R.string.store) + store?.name
-                        tvDeliveryLocation.visibility = View.VISIBLE
+            with(shoppingDeliveryLocation?.fulfillmentDetails) {
+                when (Delivery?.getType(deliveryType)) {
+                    Delivery.CNC -> {
+                        tvDeliveringTo?.text =
+                            context?.resources?.getString(R.string.collecting_from)
+                        tvDeliveryLocation?.text =
+                            context?.resources?.getString(R.string.store) + storeName ?: ""
+
+                        tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setBackgroundResource(R.drawable.icon_basket)
                     }
-                    false -> {
+                    Delivery.STANDARD -> {
                         tvDeliveringTo.text = context?.resources?.getString(R.string.delivering_to)
                         tvDeliveryLocation.text =
-                                suburb.name + if (province?.name.isNullOrEmpty()) "" else ", " + province.name
+                            address?.address1 ?: ""
+
                         tvDeliveryLocation.visibility = View.VISIBLE
                         deliverLocationIcon?.setBackgroundResource(R.drawable.icon_delivery)
                     }
+                    else -> {}
                 }
             }
         }
@@ -400,17 +432,19 @@ class KotlinUtils {
         fun updateCheckOutLink(jSessionId: String?) {
             val appVersionParam = "appVersion"
             val jSessionIdParam = "JSESSIONID"
-            val checkoutLink = WoolworthsApplication.getCartCheckoutLink()
+            val checkoutLink = AppConfigSingleton.cartCheckoutLink
             val context = WoolworthsApplication.getAppContext()
             val packageManager = context.packageManager
 
-            val packageInfo: PackageInfo = packageManager.getPackageInfo(context.packageName, PackageManager.GET_META_DATA)
+            val packageInfo: PackageInfo =
+                packageManager.getPackageInfo(context.packageName, PackageManager.GET_META_DATA)
 
             val versionName = packageInfo.versionName
-            val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode.toInt() else packageInfo.versionCode
+            val versionCode =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode.toInt() else packageInfo.versionCode
             val appVersion = "$versionName.$versionCode"
 
-            if(checkoutLink!=null) {
+            if (checkoutLink != null) {
                 val symbolType = if (checkoutLink.contains("?")) "&" else "?"
                 WoolworthsApplication.setCartCheckoutLinkWithParams("$checkoutLink$symbolType$appVersionParam=$appVersion&$jSessionIdParam=$jSessionId")
             }
@@ -419,52 +453,52 @@ class KotlinUtils {
         fun sendEmail(activity: Activity?, emailId: String, subject: String?) {
             val emailIntent = Intent(Intent.ACTION_SENDTO)
             emailIntent.data = Uri.parse(
-                    "mailto:" + emailId +
-                            "?subject=" + Uri.encode(subject) +
-                            "&body=" + Uri.encode("")
+                "mailto:" + emailId +
+                        "?subject=" + Uri.encode(subject) +
+                        "&body=" + Uri.encode("")
             )
             val listOfEmail =
-                    activity?.packageManager?.queryIntentActivities(emailIntent, 0) ?: arrayListOf()
+                activity?.packageManager?.queryIntentActivities(emailIntent, 0) ?: arrayListOf()
             if (listOfEmail.size > 0) {
                 activity?.startActivity(emailIntent)
             } else {
                 Utils.displayValidationMessage(
-                        activity,
-                        CustomPopUpWindow.MODAL_LAYOUT.INFO,
-                        bindString(R.string.contact_us_no_email_error).replace("email_address", emailId)
-                                .replace(
-                                        "subject_line", subject
-                                        ?: ""
-                                )
+                    activity,
+                    CustomPopUpWindow.MODAL_LAYOUT.INFO,
+                    bindString(R.string.contact_us_no_email_error).replace("email_address", emailId)
+                        .replace(
+                            "subject_line", subject
+                                ?: ""
+                        )
                 )
             }
         }
 
         fun sendEmail(
-                activity: Activity?,
-                emailAddress: String,
-                subjectLine: String?,
-                emailMessage: String
+            activity: Activity?,
+            emailAddress: String,
+            subjectLine: String?,
+            emailMessage: String,
         ) {
             val emailIntent = Intent(Intent.ACTION_SENDTO)
             emailIntent.data = Uri.parse(
-                    "mailto:" + emailAddress +
-                            "?subject=" + Uri.encode(subjectLine) +
-                            "&body=" + Uri.encode(emailMessage)
+                "mailto:" + emailAddress +
+                        "?subject=" + Uri.encode(subjectLine) +
+                        "&body=" + Uri.encode(emailMessage)
             )
             val listOfEmail =
-                    activity?.packageManager?.queryIntentActivities(emailIntent, 0) ?: arrayListOf()
+                activity?.packageManager?.queryIntentActivities(emailIntent, 0) ?: arrayListOf()
             if (listOfEmail.size > 0) {
                 activity?.startActivity(emailIntent)
             } else {
                 Utils.displayValidationMessage(
-                        activity,
-                        CustomPopUpWindow.MODAL_LAYOUT.INFO,
-                        activity?.resources?.getString(R.string.contact_us_no_email_error)
-                                ?.replace("email_address", emailAddress)?.replace(
-                                        "subject_line", subjectLine
-                                        ?: ""
-                                )
+                    activity,
+                    CustomPopUpWindow.MODAL_LAYOUT.INFO,
+                    activity?.resources?.getString(R.string.contact_us_no_email_error)
+                        ?.replace("email_address", emailAddress)?.replace(
+                            "subject_line", subjectLine
+                                ?: ""
+                        )
                 )
             }
         }
@@ -474,17 +508,17 @@ class KotlinUtils {
         }
 
         fun parseMoneyValue(
-                value: String,
-                groupingSeparator: String,
-                currencySymbol: String
+            value: String,
+            groupingSeparator: String,
+            currencySymbol: String,
         ): String =
-                value.replace(groupingSeparator, "").replace(currencySymbol, "")
+            value.replace(groupingSeparator, "").replace(currencySymbol, "")
 
         fun parseMoneyValueWithLocale(
-                locale: Locale,
-                value: String,
-                groupingSeparator: String,
-                currencySymbol: String
+            locale: Locale,
+            value: String,
+            groupingSeparator: String,
+            currencySymbol: String,
         ): Number {
             val valueWithoutSeparator = parseMoneyValue(value, groupingSeparator, currencySymbol)
             return try {
@@ -509,16 +543,16 @@ class KotlinUtils {
                 val end = start.plus(key.length)
                 val myriadProFont: TypefaceSpan = CustomTypefaceSpan("", getMyriadProSemiBoldFont())
                 noteStringBuilder.setSpan(
-                        myriadProFont,
-                        start,
-                        end,
-                        Spannable.SPAN_INCLUSIVE_INCLUSIVE
+                    myriadProFont,
+                    start,
+                    end,
+                    Spannable.SPAN_INCLUSIVE_INCLUSIVE
                 )
                 noteStringBuilder.setSpan(
-                        ForegroundColorSpan(bindColor(R.color.description_color)),
-                        start,
-                        end,
-                        Spannable.SPAN_INCLUSIVE_INCLUSIVE
+                    ForegroundColorSpan(bindColor(R.color.description_color)),
+                    start,
+                    end,
+                    Spannable.SPAN_INCLUSIVE_INCLUSIVE
                 )
             }
 
@@ -533,8 +567,8 @@ class KotlinUtils {
                 val reader: Reader = BufferedReader(InputStreamReader(config, "UTF-8"))
                 var n: Int
                 while (reader.read(buffer).also {
-                            n = it
-                        } != -1) {
+                        n = it
+                    } != -1) {
                     writer.run { write(buffer, 0, n) }
                 }
             }
@@ -544,13 +578,13 @@ class KotlinUtils {
 
         fun firstLetterCapitalization(name: String?): String? {
             val capitaliseFirstLetterInName =
-                    name?.substring(0, 1)?.toUpperCase(Locale.getDefault())
+                name?.substring(0, 1)?.toUpperCase(Locale.getDefault())
             val lowercaseOtherLetterInName =
-                    name?.substring(1, name.length)?.toLowerCase(Locale.getDefault())
+                name?.substring(1, name.length)?.toLowerCase(Locale.getDefault())
             return capitaliseFirstLetterInName?.plus(lowercaseOtherLetterInName)
         }
 
-        fun isOperatingHoursForInAppChat(tradingHours: MutableList<TradingHours>): Boolean? {
+        fun isOperatingHoursForInAppChat(tradingHours: MutableList<ConfigTradingHours>): Boolean? {
             val (_, opens, closes) = getInAppTradingHoursForToday(tradingHours)
 
             val now = Calendar.getInstance()
@@ -563,8 +597,8 @@ class KotlinUtils {
             return currentTime.after(openingTime) && currentTime.before(closingTime)
         }
 
-        fun getInAppTradingHoursForToday(tradingHours: MutableList<TradingHours>?): TradingHours {
-            var tradingHoursForToday: TradingHours? = null
+        fun getInAppTradingHoursForToday(tradingHours: MutableList<ConfigTradingHours>?): ConfigTradingHours {
+            var tradingHoursForToday: ConfigTradingHours? = null
             tradingHours?.let {
                 it.forEach { tradingHours ->
                     if (tradingHours.day.equals(Utils.getCurrentDay(), true)) {
@@ -573,7 +607,7 @@ class KotlinUtils {
                     }
                 }
             }
-            return tradingHoursForToday ?: TradingHours("sunday", "00:00", "00:00")
+            return tradingHoursForToday ?: ConfigTradingHours("sunday", "00:00", "00:00")
         }
 
         fun avoidDoubleClicks(view: View?) {
@@ -593,7 +627,7 @@ class KotlinUtils {
         fun convertActivityToTranslucent(activity: Activity) {
             try {
                 val getActivityOptions =
-                        Activity::class.java.getDeclaredMethod("getActivityOptions")
+                    Activity::class.java.getDeclaredMethod("getActivityOptions")
                 getActivityOptions.isAccessible = true
                 val options = getActivityOptions.invoke(activity)
                 val classes = Activity::class.java.declaredClasses
@@ -604,8 +638,8 @@ class KotlinUtils {
                     }
                 }
                 val convertToTranslucent = Activity::class.java.getDeclaredMethod(
-                        "convertToTranslucent",
-                        translucentConversionListenerClazz, ActivityOptions::class.java
+                    "convertToTranslucent",
+                    translucentConversionListenerClazz, ActivityOptions::class.java
                 )
                 convertToTranslucent.isAccessible = true
                 convertToTranslucent.invoke(activity, null, options)
@@ -615,18 +649,18 @@ class KotlinUtils {
         }
 
         fun showGeneralInfoDialog(
-                fragmentManager: FragmentManager,
-                description: String,
-                title: String = "",
-                actionText: String = "",
-                infoIcon: Int = 0
+            fragmentManager: FragmentManager,
+            description: String,
+            title: String = "",
+            actionText: String = "",
+            infoIcon: Int = 0,
         ) {
             val dialog =
-                    GeneralInfoDialogFragment.newInstance(description, title, actionText, infoIcon)
+                GeneralInfoDialogFragment.newInstance(description, title, actionText, infoIcon)
             fragmentManager.let { fragmentTransaction ->
                 dialog.show(
-                        fragmentTransaction,
-                        GeneralInfoDialogFragment::class.java.simpleName
+                    fragmentTransaction,
+                    GeneralInfoDialogFragment::class.java.simpleName
                 )
             }
         }
@@ -638,8 +672,7 @@ class KotlinUtils {
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     activity?.startActivity(intent)
                 }
-            }
-            catch (exception: ActivityNotFoundException){
+            } catch (exception: ActivityNotFoundException) {
                 FirebaseManager.logException("no browser found - $exception")
                 activity?.apply {
                     val builder: AlertDialog.Builder = AlertDialog.Builder(this)
@@ -669,8 +702,8 @@ class KotlinUtils {
 
         fun getAccount(accountExtras: String?): Pair<ApplyNowState, Account>? {
             return Gson().fromJson<Pair<ApplyNowState, Account>>(
-                    accountExtras,
-                    object : TypeToken<Pair<ApplyNowState?, Account?>?>() {}.type
+                accountExtras,
+                object : TypeToken<Pair<ApplyNowState?, Account?>?>() {}.type
             )
         }
 
@@ -682,54 +715,54 @@ class KotlinUtils {
         }
 
         fun isDeliveryOptionClickAndCollect(): Boolean {
-            return Utils.getPreferredDeliveryLocation()?.storePickup == true
+            return getPreferredDeliveryType() == Delivery.CNC
         }
 
         @SuppressLint("MissingPermission")
         @JvmStatic
         fun setUserPropertiesToNull() {
             val firebaseInstance =
-                    FirebaseAnalytics.getInstance(WoolworthsApplication.getAppContext())
+                FirebaseAnalytics.getInstance(WoolworthsApplication.getAppContext())
             firebaseInstance?.apply {
                 setUserProperty(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_OFFERING,
-                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
+                    FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_OFFERING,
+                    FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
                 )
                 setUserProperty(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.STORE_CARD_PRODUCT_OFFERING,
-                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
+                    FirebaseManagerAnalyticsProperties.PropertyNames.STORE_CARD_PRODUCT_OFFERING,
+                    FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
                 )
                 setUserProperty(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.SILVER_CREDIT_CARD_PRODUCT_OFFERING,
-                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
+                    FirebaseManagerAnalyticsProperties.PropertyNames.SILVER_CREDIT_CARD_PRODUCT_OFFERING,
+                    FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
                 )
                 setUserProperty(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.GOLD_CREDIT_CARD_PRODUCT_OFFERING,
-                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
+                    FirebaseManagerAnalyticsProperties.PropertyNames.GOLD_CREDIT_CARD_PRODUCT_OFFERING,
+                    FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
                 )
                 setUserProperty(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.BLACK_CREDIT_CARD_PRODUCT_OFFERING,
-                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
+                    FirebaseManagerAnalyticsProperties.PropertyNames.BLACK_CREDIT_CARD_PRODUCT_OFFERING,
+                    FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
                 )
                 setUserProperty(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_STATE,
-                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
+                    FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_STATE,
+                    FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
                 )
                 setUserProperty(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.CREDIT_CARD_PRODUCT_STATE,
-                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
+                    FirebaseManagerAnalyticsProperties.PropertyNames.CREDIT_CARD_PRODUCT_STATE,
+                    FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
                 )
                 setUserProperty(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.STORE_CARD_PRODUCT_STATE,
-                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
+                    FirebaseManagerAnalyticsProperties.PropertyNames.STORE_CARD_PRODUCT_STATE,
+                    FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
                 )
                 setUserProperty(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.ATGId,
-                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
+                    FirebaseManagerAnalyticsProperties.PropertyNames.ATGId,
+                    FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
                 )
                 setUserProperty(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.C2ID,
-                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
+                    FirebaseManagerAnalyticsProperties.PropertyNames.C2ID,
+                    FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
                 )
                 setUserId(FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE)
             }
@@ -750,8 +783,8 @@ class KotlinUtils {
 
         fun rotateViewAnimation(): RotateAnimation {
             val animation = RotateAnimation(
-                    0f, 360f,
-                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f
+                0f, 360f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f
             )
             with(animation) {
                 duration = AppConstant.DURATION_1000_MS
@@ -764,9 +797,9 @@ class KotlinUtils {
         fun getTimeStamp(): String? {
             return try {
                 java.lang.String.valueOf(
-                        TimeUnit.MILLISECONDS.toSeconds(
-                                System.currentTimeMillis()
-                        )
+                    TimeUnit.MILLISECONDS.toSeconds(
+                        System.currentTimeMillis()
+                    )
                 )
             } catch (ex: java.lang.Exception) {
                 null
@@ -784,10 +817,7 @@ class KotlinUtils {
          * @see [za.co.woolworths.financial.services.android.models.dao.AppInstanceObject.User.preferredShoppingDeliveryLocation]
          */
         fun isCurrentSuburbDeliversLiquor(): Boolean {
-            Utils.getPreferredDeliveryLocation()?.apply {
-                return (!storePickup && suburb != null && WoolworthsApplication.getLiquor()?.suburbs?.contains(suburb.id) == true)
-            }
-            return false
+            return Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.liquorDeliverable == true
         }
 
         /**
@@ -814,38 +844,200 @@ class KotlinUtils {
             }
         }
 
-        fun openLinkInInternalWebView(activity: Activity?,
-                                      url: String?,
-                                      treatmentPlan: Boolean,
-                                      collectionsExitUrl: String?) {
+        fun openLinkInInternalWebView(
+            activity: Activity?,
+            url: String?,
+            treatmentPlan: Boolean,
+            collectionsExitUrl: String?,
+        ) {
             activity?.apply {
                 val openInternalWebView = Intent(this, WInternalWebPageActivity::class.java)
-                openInternalWebView.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 openInternalWebView.putExtra("externalLink", url)
-                if(treatmentPlan){
+                if (treatmentPlan) {
                     openInternalWebView.putExtra(TREATMENT_PLAN, treatmentPlan)
                     openInternalWebView.putExtra(COLLECTIONS_EXIT_URL, collectionsExitUrl)
+                    startActivityForResult(openInternalWebView, RESULT_CODE_CLOSE_VIEW)
+                } else {
+                    openInternalWebView.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    startActivity(openInternalWebView)
                 }
-                startActivity(openInternalWebView)
             }
         }
+        fun openTreatmentPlanUrl(activity: Activity?, eligibilityPlan: EligibilityPlan?){
+            var collectionUrlFromConfig: Pair<String?, String?>? = null
+            var exitUrl: String? = ""
+            val accountOptions = AppConfigSingleton.accountOptions
 
-        fun linkDeviceIfNecessary(activity: Activity?, state: ApplyNowState, doJob: () -> Unit, elseJob: () -> Unit){
-            if (MyAccountsFragment.verifyAppInstanceId() &&
-                Utils.isGooglePlayServicesAvailable() &&
-                state == ApplyNowState.STORE_CARD) {
-                    doJob()
-                    activity?.let {
-                        val intent = Intent(it, LinkDeviceConfirmationActivity::class.java)
-                        intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, state)
-                        it.startActivity(intent)
-                        it.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
-                    }
+            when (eligibilityPlan?.productGroupCode) {
+                ProductGroupCode.SC -> {
+                    collectionUrlFromConfig =accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.storeCard?.collectionsDynamicUrl
+                    exitUrl = accountOptions?.showTreatmentPlanJourney?.storeCard?.exitUrl
+                }
+
+                ProductGroupCode.PL -> {
+                    collectionUrlFromConfig = accountOptions?.collectionsStartNewPlanJourney?.personalLoan?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.personalLoan?.collectionsDynamicUrl
+                    exitUrl = accountOptions?.showTreatmentPlanJourney?.personalLoan?.exitUrl
+                }
+
+                ProductGroupCode.CC -> {
+                    collectionUrlFromConfig = accountOptions?.collectionsStartNewPlanJourney?.creditCard?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.creditCard?.collectionsDynamicUrl
+                    exitUrl = accountOptions?.collectionsStartNewPlanJourney?.creditCard?.exitUrl
+                }
             }
-            else{
+
+            /**
+             *  Use dynamic collection url when ("collectionsViewExistingPlan")
+             *  else use collection url
+             */
+            val finalCollectionUrlFromConfig =
+                when (eligibilityPlan?.actionText == ActionText.VIEW_TREATMENT_PLAN.value
+                        || eligibilityPlan?.actionText == ActionText.VIEW_ELITE_PLAN.value) {
+                    true -> collectionUrlFromConfig?.second
+                    false -> collectionUrlFromConfig?.first
+                }
+
+            val url =  finalCollectionUrlFromConfig + eligibilityPlan?.appGuid
+
+            openLinkInInternalWebView(
+                activity,
+                url,
+                true,
+                exitUrl
+            )
+        }
+
+        fun linkDeviceIfNecessary(
+            activity: Activity?,
+            state: ApplyNowState,
+            doJob: () -> Unit,
+            elseJob: () -> Unit,
+        ) {
+            if (MyAccountsFragment.verifyAppInstanceId() &&
+                (Utils.isGooglePlayServicesAvailable() ||
+                        Utils.isHuaweiMobileServicesAvailable())
+            ) {
+                doJob()
+                activity?.let {
+                    val intent = Intent(it, LinkDeviceConfirmationActivity::class.java)
+                    intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, state)
+                    it.startActivity(intent)
+                    it.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
+                }
+            } else {
                 elseJob()
             }
         }
-    }
 
+        fun getPreferredDeliveryType(): Delivery? {
+            return Delivery.getType(
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType ?: ""
+            )
+        }
+
+        fun getPreferredPlaceId(): String {
+            return Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId ?: ""
+        }
+
+        fun getPreferredStoreName(): String {
+            return Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName ?: ""
+        }
+
+        fun getPreferredDeliveryAddress(): String {
+            return Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.address1 ?: ""
+        }
+
+        fun getPreferredDeliveryAddressOrStoreName(): String {
+            return when (getPreferredDeliveryType()) {
+                Delivery.CNC ->
+                    getPreferredStoreName()
+                Delivery.STANDARD ->
+                    getPreferredStoreName()
+                else -> ""
+            }
+        }
+
+        fun retrieveFulfillmentStoreId(fulFillmentTypeId: String): String {
+            var fulFillmentStoreId: String = ""
+            var typeId = fulFillmentTypeId
+            if (typeId.length == 1)
+                typeId = "0$typeId"
+            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.fulfillmentStores?.let {
+                val details = Gson().fromJson<Map<String, String>>(
+                    it,
+                    object : com.google.gson.reflect.TypeToken<Map<String, String>>() {}.type
+                )
+                fulFillmentStoreId = details?.get(typeId) ?: ""
+            }
+            return fulFillmentStoreId
+        }
+
+        fun getUniqueDeviceID(result: (String?) -> Unit) {
+            val deviceID = Utils.getSessionDaoValue(KEY.DEVICE_ID)
+            when (deviceID.isNullOrEmpty()) {
+                true -> {
+                    FirebaseInstallations.getInstance().id.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val resultId = task.result
+                            Utils.sessionDaoSave(KEY.DEVICE_ID, resultId)
+                            result(resultId)
+                        }
+
+                    }
+                }
+                false -> result(deviceID)
+            }
+        }
+
+
+        fun lowercaseEditText(editText: EditText) {
+            editText.filters = arrayOf<InputFilter>(
+                object : InputFilter.AllCaps() {
+                    override fun filter(
+                        source: CharSequence,
+                        start: Int,
+                        end: Int,
+                        dest: Spanned?,
+                        dstart: Int,
+                        dend: Int,
+                    ): CharSequence {
+                        return source.toString().lowercase()
+                    }
+                }
+            )
+        }
+
+        fun saveAnonymousUserLocationDetails(shoppingDeliveryLocation: ShoppingDeliveryLocation) {
+            Utils.sessionDaoSave(KEY.ANONYMOUS_USER_LOCATION_DETAILS,
+                Utils.objectToJson(shoppingDeliveryLocation))
+        }
+
+        fun getAnonymousUserLocationDetails(): ShoppingDeliveryLocation? {
+            var location: ShoppingDeliveryLocation? = null
+            try {
+                SessionDao.getByKey(KEY.ANONYMOUS_USER_LOCATION_DETAILS).value?.let {
+                    location = Utils.strToJson(it,
+                        ShoppingDeliveryLocation::class.java) as ShoppingDeliveryLocation?
+                }
+            } catch (e: Exception) {
+                FirebaseManager.logException(e)
+            }
+            return location
+        }
+
+        fun clearAnonymousUserLocationDetails() {
+            Utils.removeFromDb(KEY.ANONYMOUS_USER_LOCATION_DETAILS)
+        }
+        fun coroutineContextWithExceptionHandler(errorHandler: (AbsaApiFailureHandler) -> Unit): CoroutineContext {
+            return (Dispatchers.IO + CoroutineExceptionHandler { _, throwable ->
+                when (throwable) {
+                    is SocketException -> errorHandler(AbsaApiFailureHandler.NoInternetApiFailure)
+                    is HttpException -> errorHandler(AbsaApiFailureHandler.HttpException(throwable.message(),
+                        throwable.code()))
+                    is Exception -> errorHandler(AbsaApiFailureHandler.Exception(throwable.message,
+                        throwable.hashCode()))
+                    else -> errorHandler(AbsaApiFailureHandler.NoInternetApiFailure)
+                }
+            })
+        }
+    }
 }

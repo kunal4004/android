@@ -65,6 +65,9 @@ public class ProductList {
     @SerializedName("virtualTryOn")
     @Expose
     public String virtualTryOn;
+    @SerializedName("brandHeaderDescription")
+    @Expose
+    public String brandHeaderDescription;
 
     public ProductListingViewType rowType = ProductListingViewType.PRODUCT;
     public Integer numberOfItems;

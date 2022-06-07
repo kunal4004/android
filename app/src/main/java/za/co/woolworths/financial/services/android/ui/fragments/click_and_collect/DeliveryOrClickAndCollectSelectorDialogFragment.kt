@@ -7,16 +7,18 @@ import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.delivery_or_click_and_collect_selector_dialog.*
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 class DeliveryOrClickAndCollectSelectorDialogFragment(var listener: IDeliveryOptionSelection?) : WBottomSheetDialogFragment(), View.OnClickListener {
 
 
     interface IDeliveryOptionSelection {
-        fun onDeliveryOptionSelected(deliveryType: DeliveryType)
+        fun onDeliveryOptionSelected(deliveryType: Delivery)
     }
 
     companion object {
@@ -34,22 +36,22 @@ class DeliveryOrClickAndCollectSelectorDialogFragment(var listener: IDeliveryOpt
         justBrowsing?.setOnClickListener(this)
         delivery?.setOnClickListener(this)
         clickAndCollect?.setOnClickListener(this)
-        WoolworthsApplication.getClickAndCollect()?.maxItemsAllowedText?.let { itemsLimit?.text = it }
+        AppConfigSingleton.clickAndCollect?.maxItemsAllowedText?.let { itemsLimit?.text = it }
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.justBrowsing -> dismissAllowingStateLoss()
             R.id.delivery -> {
-                dismissDialogWithDeliveryOption(DeliveryType.DELIVERY)
+                dismissDialogWithDeliveryOption(Delivery.STANDARD)
             }
             R.id.clickAndCollect -> {
-                dismissDialogWithDeliveryOption(DeliveryType.STORE_PICKUP)
+                dismissDialogWithDeliveryOption(Delivery.CNC)
             }
         }
     }
 
-    fun dismissDialogWithDeliveryOption(deliveryType: DeliveryType) {
+    fun dismissDialogWithDeliveryOption(deliveryType:Delivery) {
         listener?.onDeliveryOptionSelected(deliveryType)
         dismissAllowingStateLoss()
     }

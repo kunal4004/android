@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
 import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
@@ -246,6 +247,10 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                 });
 
                 productHolder.swipeLayout.setOnClickListener(view -> onItemClick.onOpenProductDetail(commerceItem));
+                if (commerceItem.lowStockThreshold > commerceItem.quantityInStock
+                        && commerceItem.quantityInStock > 0 && AppConfigSingleton.INSTANCE.getLowStock().isEnabled()) {
+                    showLowStockIndicator(productHolder);
+                }
                 mItemManger.bindView(productHolder.itemView, position);
                 break;
 
@@ -316,24 +321,28 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                             Utils.triggerFireBaseEvents(getAppliedVouchersCount() > 0 ? FirebaseManagerAnalyticsProperties.Cart_ovr_edit : FirebaseManagerAnalyticsProperties.Cart_ovr_view, mContext);
                         }
                 );
-                int activeVouchersCount = voucherDetails.getActiveVouchersCount();
-                if (activeVouchersCount > 0) {
-                    if (getAppliedVouchersCount() > 0) {
-                        String availableVouchersLabel = getAppliedVouchersCount() + mContext.getString(getAppliedVouchersCount() == 1 ? R.string.available_voucher_toast_message : R.string.available_vouchers_toast_message) + mContext.getString(R.string.applied);
-                        priceHolder.availableVouchersCount.setText(availableVouchersLabel);
-                        priceHolder.viewVouchers.setText(mContext.getString(R.string.edit));
-                        priceHolder.viewVouchers.setEnabled(true);
-                    } else {
-                        String availableVouchersLabel = activeVouchersCount + mContext.getString(voucherDetails.getActiveVouchersCount() == 1 ? R.string.available_voucher_toast_message : R.string.available_vouchers_toast_message) + mContext.getString(R.string.available);
-                        priceHolder.availableVouchersCount.setText(availableVouchersLabel);
-                        priceHolder.viewVouchers.setText(mContext.getString(R.string.view));
-                        priceHolder.viewVouchers.setEnabled(true);
-                    }
-                } else {
-                    priceHolder.availableVouchersCount.setText(mContext.getString(R.string.no_vouchers_available));
-                    priceHolder.viewVouchers.setText(mContext.getString(R.string.view));
-                    priceHolder.viewVouchers.setEnabled(false);
+                if (voucherDetails == null ) {
+                    return ;
                 }
+                    int activeVouchersCount = voucherDetails.getActiveVouchersCount();
+                    if (activeVouchersCount > 0) {
+                        if (getAppliedVouchersCount() > 0) {
+                            String availableVouchersLabel = getAppliedVouchersCount() + mContext.getString(getAppliedVouchersCount() == 1 ? R.string.available_voucher_toast_message : R.string.available_vouchers_toast_message) + mContext.getString(R.string.applied);
+                            priceHolder.availableVouchersCount.setText(availableVouchersLabel);
+                            priceHolder.viewVouchers.setText(mContext.getString(R.string.edit));
+                            priceHolder.viewVouchers.setEnabled(true);
+                        } else {
+                            String availableVouchersLabel = activeVouchersCount + mContext.getString(voucherDetails.getActiveVouchersCount() == 1 ? R.string.available_voucher_toast_message : R.string.available_vouchers_toast_message) + mContext.getString(R.string.available);
+                            priceHolder.availableVouchersCount.setText(availableVouchersLabel);
+                            priceHolder.viewVouchers.setText(mContext.getString(R.string.view));
+                            priceHolder.viewVouchers.setEnabled(true);
+                        }
+                    } else {
+                        priceHolder.availableVouchersCount.setText(mContext.getString(R.string.no_vouchers_available));
+                        priceHolder.viewVouchers.setText(mContext.getString(R.string.view));
+                        priceHolder.viewVouchers.setEnabled(false);
+                    }
+
                 priceHolder.promoCodeAction.setText(mContext.getString((voucherDetails.getPromoCodes() != null && voucherDetails.getPromoCodes().size() > 0) ? R.string.remove : R.string.enter));
 
                 if (voucherDetails.getPromoCodes() != null && voucherDetails.getPromoCodes().size() > 0) {
@@ -361,6 +370,17 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
             default:
                 break;
         }
+    }
+
+    /**
+     * This method used to show low stock indicator
+     * When lowStockThreshold > quantity
+     * @param productHolder
+     */
+    private void showLowStockIndicator(ProductHolder productHolder) {
+        productHolder.cartLowStock.setVisibility(View.VISIBLE);
+        productHolder.txtCartLowStock.setText(AppConfigSingleton.INSTANCE.getLowStock().getLowStockCopy());
+
     }
 
     private String getSizeColor(CommerceItemInfo commerceItemInfo) {
@@ -570,6 +590,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
         private ImageView btnDelete;
         private ProgressBar pbDelete;
         private RelativeLayout rlDelete;
+        private View cartLowStock;
+        private TextView txtCartLowStock;
 
         public ProductHolder(View view) {
             super(view);
@@ -593,6 +615,9 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
             btnDelete = view.findViewById(R.id.btnDelete);
             rlDelete = view.findViewById(R.id.rlDelete);
             pbDelete = view.findViewById(R.id.pbDelete);
+            cartLowStock = view.findViewById(R.id.cartLowStock);
+            txtCartLowStock = view.findViewById(R.id.txtCartLowStock);
+
         }
     }
 

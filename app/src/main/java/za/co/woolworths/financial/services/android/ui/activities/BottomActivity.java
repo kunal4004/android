@@ -1,33 +1,31 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
+import static za.co.woolworths.financial.services.android.util.Utils.sendBus;
+
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.core.widget.NestedScrollView;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+
 import com.awfs.coordination.R;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
-import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
-import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
-
-import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
-import static za.co.woolworths.financial.services.android.util.Utils.sendBus;
 
 public abstract class BottomActivity extends AppCompatActivity implements PermissionResultCallback {
 
@@ -138,15 +136,6 @@ public abstract class BottomActivity extends AppCompatActivity implements Permis
 		});
 	}
 
-	public void openProductDetailFragment(String productName, ProductDetails productList) {
-		Gson gson = new Gson();
-		String strProductList = gson.toJson(productList);
-		Bundle bundle = new Bundle();
-		bundle.putString("strProductList", strProductList);
-		bundle.putString("strProductCategory", productName);
-		ScreenManager.presentProductDetails(BottomActivity.this,bundle);
-	}
-
 	public void scrollableViewHelper(NestedScrollView nsv) {
 		getSlidingLayout().setScrollableViewHelper(new NestedScrollableViewHelper(nsv));
 	}
@@ -183,7 +172,7 @@ public abstract class BottomActivity extends AppCompatActivity implements Permis
 		closeSlideUpPanel();
 	}
 
-	public void PermissionGranted(int request_code) {
+	public void permissionGranted(int request_code) {
 		//TODO:: Parse result_code and use only onActivityResult line
 		onActivityResult(request_code, 200, null);
 		switch (request_code) {
@@ -195,18 +184,6 @@ public abstract class BottomActivity extends AppCompatActivity implements Permis
 				sendBus(new ProductDetailsFragment());
 				break;
 		}
-	}
-
-	public void PartialPermissionGranted(int request_code, ArrayList<String> granted_permissions) {
-
-	}
-
-	public void PermissionDenied(int request_code) {
-
-	}
-
-	public void NeverAskAgain(int request_code) {
-
 	}
 
 	public void setCurrentSection(int currentSection) {
@@ -250,6 +227,7 @@ public abstract class BottomActivity extends AppCompatActivity implements Permis
 	@Override
 	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 		// redirects to utils
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 		permissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
 	}
 

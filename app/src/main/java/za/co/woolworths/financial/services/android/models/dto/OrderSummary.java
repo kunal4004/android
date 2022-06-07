@@ -4,9 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.JsonElement;
-
-import java.io.Serializable;
-
+import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails;
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.DiscountDetails;
 
 /**
@@ -28,6 +26,7 @@ public class OrderSummary implements Parcelable {
 	public JsonElement deliveryDates;
 	public DiscountDetails discountDetails;
 	public Store store;
+	public FulfillmentDetails fulfillmentDetails;
 
 	protected OrderSummary(Parcel in) {
 		totalItemsCount = in.readInt();

@@ -10,7 +10,7 @@ import retrofit2.Call
 import za.co.absa.openbankingapi.woolworths.integration.dto.PMARedirection
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.BeginPayMyAccountJourneyActionImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.PMATrackFirebaseEvent
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.PayMyAccountPresenter
+import za.co.woolworths.financial.services.android.util.eliteplan.ElitePlanModel
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.wenum.PMAVendorCardEnum
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
@@ -36,13 +37,14 @@ class PayMyAccountViewModel : ViewModel() {
     private var mQueryServiceDeletePaymentMethod: Call<DeleteResponse>? = null
     private var mQueryServiceGetPaymentMethods: Call<PaymentMethodsResponse>? = null
     private var paymentMethodsResponse: MutableLiveData<PaymentMethodsResponse?> = MutableLiveData()
-    private var onDialogDismiss: MutableLiveData<OnBackNavigation> = MutableLiveData()
+    private var onDialogDismiss: MutableLiveData<OnNavigateBack> = MutableLiveData()
     private val pmaFirebaseEvent: PMATrackFirebaseEvent = PMATrackFirebaseEvent()
     private var addCardResponse: MutableLiveData<AddCardResponse> = MutableLiveData()
     private var isQueryServiceGetRedirectionCompleted: Boolean = false
     var isAddNewCardFormLoaded = false
     var mSelectExpiredPaymentMethod : GetPaymentMethod? = null
     var isQueryPayUPaymentMethodComplete :Boolean = false
+    var elitePlanModel : ElitePlanModel? = null
 
     var pmaCardPopupModel: MutableLiveData<PMACardPopupModel?> = MutableLiveData()
     var queryPaymentMethod: MutableLiveData<Boolean> = MutableLiveData()
@@ -54,8 +56,15 @@ class PayMyAccountViewModel : ViewModel() {
     var pma3dSecureRedirection: PMARedirection? = null
 
     enum class PAYUMethodType { CREATE_USER, CARD_UPDATE, ERROR }
-    enum class OnBackNavigation { RETRY, REMOVE, ADD, NONE, MAX_CARD_LIMIT } // TODO: Navigation graph: Communicate result from dialog to fragment destination
 
+    sealed class OnNavigateBack {
+        object Retry : OnNavigateBack()
+        data class Remove (var position : Int, var isCardExpired : Boolean = false) : OnNavigateBack()
+        object Add : OnNavigateBack()
+        object None : OnNavigateBack()
+        object MaxCardLimit : OnNavigateBack()
+
+    }
     companion object {
         const val DEFAULT_RAND_CURRENCY = "R 0.00"
         const val MAX_AMOUNT_LIMIT = 50000
@@ -73,7 +82,7 @@ class PayMyAccountViewModel : ViewModel() {
                 ?: "", paymentMethod?.type ?: "")
         return AddCardResponse(paymentMethod?.token ?: "", pmaCard, false)
     }
-
+    fun getSelectedPosition() = getCardDetail()?.selectedCardPosition ?: 0
     fun getPaymentMethodList(): MutableList<GetPaymentMethod>? {
         val cardDetail = getCardDetail()
         val paymentList = cardDetail?.paymentMethodList
@@ -81,8 +90,9 @@ class PayMyAccountViewModel : ViewModel() {
         paymentList?.forEach {
             it.isCardChecked = false
         }
-        if (paymentList?.size ?:0 >= selectedPosition) {
-            paymentList?.get(selectedPosition)?.isCardChecked = true
+        if (paymentList?.isNotEmpty() == true &&
+            paymentList.size > selectedPosition) {
+            paymentList[selectedPosition].isCardChecked = true
         }
         return paymentList
     }
@@ -143,14 +153,12 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun getCardDetailInStringFormat(): String? = Gson().toJson(getCardDetail())
 
-    fun setNavigationResult(onDismiss: OnBackNavigation) {
+    fun setNavigationResult(onDismiss: OnNavigateBack) {
         onDialogDismiss.value = onDismiss
-        onDialogDismiss.value = OnBackNavigation.NONE
     }
 
-    fun getNavigationResult(): MutableLiveData<OnBackNavigation> {
-        return onDialogDismiss
-    }
+    fun getNavigationResult(): MutableLiveData<OnNavigateBack> = onDialogDismiss
+
 
     fun queryServicePayUPaymentMethod(onSuccessResult: (MutableList<GetPaymentMethod>?) -> Unit, onSessionExpired: (String?) -> Unit, onGeneralError: (String) -> Unit, onFailureHandler: (Throwable?) -> Unit) {
         var payUMethodType: PAYUMethodType
@@ -239,6 +247,13 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun getCurrentBalance(): String? {
         return getAccount()?.currentBalance?.let { formatAndRemoveNegativeSymbol(it) }?.replace("R  ","R ")
+    }
+
+    fun getSavedAmount(): String? {
+        return  "R " + elitePlanModel?.discountAmount
+    }
+    fun getDiscountAmount(): String? {
+        return  "R " + elitePlanModel?.settlementAmount
     }
 
     private fun formatAndRemoveNegativeSymbol(amount: Int): String? {
@@ -335,7 +350,7 @@ class PayMyAccountViewModel : ViewModel() {
 
     @Nullable
     fun getAddNewCardUrl(): String? {
-        return WoolworthsApplication.getPayMyAccountOption()?.addCardUrl(getProductGroupCode())
+        return AppConfigSingleton.mPayMyAccount?.addCardUrl(getProductGroupCode())
     }
 
     fun setAddCardResponse(addCardResponse: AddCardResponse) {
@@ -411,13 +426,6 @@ class PayMyAccountViewModel : ViewModel() {
         return if (number.isNullOrEmpty()) 0 else number.toInt()
     }
 
-    fun getAmountEnteredAfterTextChanged(item: String?): String? {
-        val account = getAccount()
-        val inputAmount = convertRandFormatToInt(item)
-        val enteredAmount = account?.amountOverdue?.minus(inputAmount) ?: 0
-        return Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(if (enteredAmount < 0) 0 else enteredAmount))
-    }
-
     fun validateAmountEntered(amount: Double, minAmount: () -> Unit, maxAmount: () -> Unit, validAmount: () -> Unit) {
         when {
             amount < 1.toDouble() -> minAmount()
@@ -436,7 +444,11 @@ class PayMyAccountViewModel : ViewModel() {
     fun resetAmountEnteredToDefault() {
         val card = getCardDetail()
         if (isAccountChargedOff()) {
-            card?.amountEntered = getCurrentBalance()
+            if (elitePlanModel !=null ){
+                card?.amountEntered = elitePlanModel!!.settlementAmount
+            }else{
+                card?.amountEntered = getCurrentBalance()
+            }
         } else {
             card?.amountEntered = getOverdueAmount()
         }

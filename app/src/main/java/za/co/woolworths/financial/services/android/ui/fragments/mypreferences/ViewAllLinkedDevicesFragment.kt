@@ -24,6 +24,7 @@ import kotlinx.android.synthetic.main.layout_unlink_device_result.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAllLinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
@@ -31,6 +32,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
 import za.co.woolworths.financial.services.android.ui.adapters.ViewAllLinkedDevicesAdapter
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -99,6 +101,8 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
                                 showDeviceUnlinked()
 
                                 Handler().postDelayed({
+                                    if (!isAdded) return@postDelayed
+
                                     setupToolbar()
                                     context?.let { it ->
                                         viewAllDeviceConstraintLayout?.background = AppCompatResources.getDrawable(it, R.color.default_background)
@@ -110,7 +114,7 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
                                         IS_UPDATE to true
                                     ))
                                     if (deviceList.isNullOrEmpty()) {
-                                        SessionUtilities.getInstance().deviceIdentityToken = ""
+                                        SessionUtilities.getInstance().removeCurrentDeviceIdentityToken()
                                         view?.findNavController()?.navigateUp()
                                         return@postDelayed
                                     }
@@ -130,16 +134,16 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
     }
 
     private fun callRetrieveDevices() {
-        progressLoadDevices.visibility = View.VISIBLE
+        progressLoadDevices?.visibility = View.VISIBLE
         val mViewAllLinkedDevices: Call<ViewAllLinkedDeviceResponse> = OneAppService.getAllLinkedDevices(true)
         mViewAllLinkedDevices.enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
             override fun onFailure(error: Throwable?) {
                 //Do Nothing
-                progressLoadDevices.visibility = View.GONE
+                progressLoadDevices?.visibility = View.GONE
             }
-
+            
             override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
-                progressLoadDevices.visibility = View.GONE
+                progressLoadDevices?.visibility = View.GONE
                 deviceList = ArrayList(0)
                 deviceList = response?.userDevices
                 if (deviceList.isNullOrEmpty()) {
@@ -240,16 +244,20 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
 
         when (v.id) {
             R.id.viewAllDeviceDeleteImageView -> {
-                navController?.navigate(R.id.action_viewAllLinkedDevicesFragment_to_deletePrimaryDeviceFragment, bundleOf(
-                    DEVICE_LIST to deviceList
-                ))
+                try{
+                    navController?.navigate(R.id.action_viewAllLinkedDevicesFragment_to_deletePrimaryDeviceFragment, bundleOf(
+                        DEVICE_LIST to deviceList
+                    ))
+                } catch (e: Exception) {
+                    FirebaseManager.logException(e)
+                }
             }
             R.id.viewAllDeviceEditImageView -> {
                 val bundle = Bundle()
                 bundle.putSerializable(NEW_DEVICE, userDevice)
-                bundle.putSerializable(OLD_DEVICE,
-                    deviceList?.filter { device -> device.primarydDevice == true }?.get(0)
-                )
+                deviceList?.firstOrNull { device -> device.primarydDevice == true }?.let {
+                    bundle.putSerializable(OLD_DEVICE, it)
+                }
                 navController?.navigate(R.id.action_viewAllLinkedDevicesFragment_to_secondaryDeviceBottomSheetFragment, bundle)
             }
         }

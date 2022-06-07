@@ -7,14 +7,13 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
-
+import kotlin.Pair;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,6 +98,8 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     private ApplyNowState applyNowState;
     public static boolean SHOW_VIEW_STATEMENT_SCREEN = false;
     public static boolean VIEW_STATEMENT_DETAIL = false;
+    public static boolean SEND_STATEMENT_SCREEN = false;
+    public static boolean SEND_STATEMENT_DETAIL = false;
 
     public StatementFragment() {
     }
@@ -213,11 +214,11 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         mGetStatementFile = new GetStatement(statement.docId, String.valueOf(WoolworthsApplication.getProductOfferingId()), statement.docDesc);
         if (activity instanceof StatementActivity) {
             StatementActivity statementActivity = (StatementActivity) activity;
-            statementActivity.checkPermission();
+            getPdfFile(statementActivity.getApplyNowStateForStatement());
         }
     }
 
-    private void viewPdfStatement(){
+    private void viewPdfStatement() {
         showViewProgress();
         final FragmentActivity activity = getActivity();
         if (activity == null || !isAdded()) return;
@@ -225,10 +226,8 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         mGetPdfFile.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    if (getActivity() != null) {
-                        loadSuccess();
-                        hideViewProgress();
+                if (getActivity() != null) {
+                    if (response.isSuccessful()) {
                         if (response.code() == 200) {
                             try {
                                 if (response.body() != null) {
@@ -243,9 +242,19 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                                 FirebaseManager.Companion.logException(ex);
                             }
                         }
+
+                    } else {
+                        if(response.errorBody() != null){
+                            FirebaseManager.Companion.setCrashlyticsString ("viewPdfStatement - 500 ResponseCode with errorBody ",response.errorBody().source().toString());
+                            FirebaseManager.Companion.logException(response.errorBody());
+                        }
+                        Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, activity.getString(R.string.account_statement_error));
                     }
                 }
+                loadSuccess();
+                hideViewProgress();
             }
+
 
             @Override
             public void onFailure(@NotNull Call<ResponseBody> call, @NotNull Throwable t) {
@@ -267,8 +276,11 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         if (activity == null) return;
         switch (v.getId()) {
             case R.id.btnEmailStatement:
-                Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.STATEMENT_SENT_TO, createUserStatementRequest());
-                break;
+                if (applyNowState == null && activity instanceof StatementActivity){
+                        applyNowState = ((StatementActivity) activity).getAccountWithApplyNowState().getFirst();
+                }
+                displayValidationMessage();
+            break;
 
             case R.id.btnRetry:
                 if (NetworkManager.getInstance().isConnectedToNetwork(activity))
@@ -280,6 +292,20 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         }
     }
 
+    public void displayValidationMessage() {
+            KotlinUtils.Companion.linkDeviceIfNecessary(
+                    getActivity(),
+                    applyNowState,
+                    () -> { SEND_STATEMENT_DETAIL = true;
+                        return null;
+                    },
+                    () -> {
+                        Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.STATEMENT_SENT_TO, createUserStatementRequest());
+                        return null;
+                    }
+            );
+
+    }
     private void disableButton() {
         mBtnEmailStatement.setAlpha(1.0f);
         relNextButton.setAlpha(0.35f);
@@ -379,11 +405,16 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
             KotlinUtils.Companion.linkDeviceIfNecessary(
                     getActivity(),
                     applyNowState,
-                    () -> { VIEW_STATEMENT_DETAIL = true; return null; },
-                    () -> { viewPdfStatement(); return null; }
+                    () -> {
+                        VIEW_STATEMENT_DETAIL = true;
+                        return null;
+                    },
+                    () -> {
+                        viewPdfStatement();
+                        return null;
+                    }
             );
-        }
-        else {
+        } else {
             viewPdfStatement();
         }
     }
@@ -431,9 +462,12 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                 ((StatementActivity) activity).setTitle(getString(R.string.statement));
             }
         }
-        if(SHOW_VIEW_STATEMENT_SCREEN) {
+        if (SHOW_VIEW_STATEMENT_SCREEN) {
             SHOW_VIEW_STATEMENT_SCREEN = false;
             viewPdfStatement();
+        } else if (SEND_STATEMENT_SCREEN) {
+            SEND_STATEMENT_SCREEN = false;
+            Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.STATEMENT_SENT_TO, createUserStatementRequest());
         }
     }
 
@@ -482,18 +516,18 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         if (activity == null) return;
         Pair<ApplyNowState, Account> account = ((StatementActivity) activity).getAccountWithApplyNowState();
         ArrayList<Account> accountList = new ArrayList<>();
-        accountList.add(account.second);
+        accountList.add(account.getSecond());
 
         VocTriggerEvent vocTriggerEvent;
-        if (account.second.productGroupCode.equalsIgnoreCase(AccountsProductGroupCode.STORE_CARD.getGroupCode())) {
+        if (account.getSecond().productGroupCode.equalsIgnoreCase(AccountsProductGroupCode.STORE_CARD.getGroupCode())) {
             vocTriggerEvent = VocTriggerEvent.CHAT_SC_STATEMENT;
-        } else if (account.second.productGroupCode.equalsIgnoreCase(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode())) {
+        } else if (account.getSecond().productGroupCode.equalsIgnoreCase(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode())) {
             vocTriggerEvent = VocTriggerEvent.CHAT_PL_STATEMENT;
         } else {
             vocTriggerEvent = VocTriggerEvent.CHAT_CC_STATEMENT;
         }
 
-        ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView((StatementActivity) activity, new ChatBubbleVisibility(accountList, activity), chatWithAgentFloatingButton, account.first, rclEStatement, notificationBadge,onlineIndicatorImageView, vocTriggerEvent);
+        ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView((StatementActivity) activity, new ChatBubbleVisibility(accountList, activity), chatWithAgentFloatingButton, account.getFirst(), rclEStatement, notificationBadge, onlineIndicatorImageView, vocTriggerEvent);
         inAppChatTipAcknowledgement.build();
     }
 }

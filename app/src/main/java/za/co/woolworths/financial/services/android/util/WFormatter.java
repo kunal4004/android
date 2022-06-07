@@ -16,6 +16,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 public class WFormatter {
 
+    public static final String DATE_FORMAT_EEEE_COMMA_dd_MMMM  = "EEEE, dd MMMM";
+
     public static String addSpaceToDate(String value) {
         return value.replaceAll("/", " / ");
     }
@@ -201,6 +203,20 @@ public class WFormatter {
         return new SimpleDateFormat("EE, dd MMMM").format((new SimpleDateFormat("yyyy-MM-dd")).parse(date));
     }
 
+    /**
+     *
+     * @param inputDate Input string date in format of yyyy-MM-dd
+     * @param returnDateFormat Format of date value in which you want to returned by this function. Converted string schema
+     *               eg. EEEE, dd MMMM
+     * @return formatted string as per parameter format
+     * @throws ParseException
+     */
+    public static String convertDateToFormat(String inputDate, String returnDateFormat) throws ParseException {
+        if (TextUtils.isEmpty(inputDate))
+            return "";
+        return new SimpleDateFormat(returnDateFormat).format((new SimpleDateFormat("yyyy-MM-dd")).parse(inputDate));
+    }
+
     public static String getDayOfMonthSuffix(final int day) {
         checkArgument(day >= 1 && day <= 31, "illegal day of month: " + day);
         if (day >= 11 && day <= 13) {
@@ -224,6 +240,13 @@ public class WFormatter {
         return new SimpleDateFormat("dd MMMM yyyy")
                 .format((new SimpleDateFormat("yyyy-MM-dd"))
                         .parse(date));
+    }
+
+    public static String getFullMonthWithDate(String date) throws ParseException {
+        if (date == null)
+            return "";
+        return new SimpleDateFormat("dd MMMM")
+                .format(new SimpleDateFormat("EE, dd MMMM").parse(date));
     }
 
     public static String convertToFormatedDate(String date) throws ParseException {

@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.integration.uti
 
 import com.awfs.coordination.R
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import org.json.JSONException
 import org.json.JSONObject
 import za.co.absa.openbankingapi.woolworths.integration.dto.Header
@@ -21,6 +22,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.integration.serv
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.validate_card_and_pin.ValidateCardAndPinResponseProperty
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.validate_sure_checks.ValidateSureCheckResponseProperty
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.logException
+import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.setCrashlyticsString
 import kotlin.reflect.KClass
 
 class AbsaApiResponse<W: Any>(isResponseBodyEncrypted: Boolean = false, resultFromNetwork: NetworkState<Any>, private val typeParameterClass:KClass<W>, private val outputResult: (Any?) -> Unit) : IAbsaApiResponseWrapper {
@@ -100,9 +104,20 @@ class AbsaApiResponse<W: Any>(isResponseBodyEncrypted: Boolean = false, resultFr
     }
 
     override fun handleAbsaStatusCode(payload: String?): AbsaResultWrapper? {
-        val response = Gson().fromJson(payload,typeParameterClass.java)
-       with(response) {
-            return when(this) {
+        val response: W?
+        try {
+            response = Gson().fromJson(payload, typeParameterClass.java)
+        } catch (e: JsonSyntaxException) {
+            setCrashlyticsString("handleAbsaStatusCode - JsonSyntaxException with payload",payload)
+            logException(e)
+            return null
+        } catch (e: JSONException) {
+            setCrashlyticsString("handleAbsaStatusCode - JSONException with payload",payload)
+            logException(e)
+            return null
+        }
+        with(response) {
+            return when (this) {
                 is CekdResponseProperty -> AbsaResultWrapper.Section.Cekd.StatusCodeValid(this)
 
                 is ValidateCardAndPinResponseProperty -> {

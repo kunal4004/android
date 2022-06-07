@@ -5,7 +5,8 @@ import za.co.woolworths.financial.services.android.checkout.service.network.AddA
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
 import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmSelectionRequestBody
 import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsBody
-import za.co.woolworths.financial.services.android.models.network.ConfirmDeliveryAddressBody
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
+import za.co.woolworths.financial.services.android.models.network.StorePickupInfoBody
 
 /**
  * Created by Kunal Uttarwar on 04/06/21.
@@ -30,12 +31,16 @@ class CheckoutAddAddressNewUserInteractor(
 
     fun changeAddress(nickName: String) = checkoutAddAddressNewUserApiHelper.changeAddress(nickName)
 
-    fun getConfirmDeliveryAddressDetails(body: ConfirmDeliveryAddressBody) =
-        checkoutAddAddressNewUserApiHelper.getConfirmDeliveryAddressDetails(body = body)
-
     fun getShippingDetails(body: ShippingDetailsBody) =
         checkoutAddAddressNewUserApiHelper.getShippingDetails(body = body)
 
+    fun getStorePickupInfo(body: StorePickupInfoBody) =
+        checkoutAddAddressNewUserApiHelper.getStorePickupInfo(body = body)
+
     fun setConfirmSelection(confirmSelectionRequestBody: ConfirmSelectionRequestBody) =
         checkoutAddAddressNewUserApiHelper.setConfirmSelection(confirmSelectionRequestBody)
+
+    fun getConfirmLocationDetails(body: ConfirmLocationRequest) =
+        checkoutAddAddressNewUserApiHelper.getConfirmLocationDetails(body = body)
+
 }

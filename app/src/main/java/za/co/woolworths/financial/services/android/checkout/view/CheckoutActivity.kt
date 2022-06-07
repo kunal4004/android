@@ -9,22 +9,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.activity_cart_checkout.*
 import kotlinx.android.synthetic.main.activity_checkout.*
-import kotlinx.android.synthetic.main.activity_checkout.btnClose
-import kotlinx.android.synthetic.main.activity_checkout.toolbarText
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.GEO_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.IS_DELIVERY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.baseFragBundle
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
-import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.ProvinceSelectorFragment
-import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.SuburbSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.OrderConfirmationFragment
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CNC_SELETION
 import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -35,8 +31,11 @@ import za.co.woolworths.financial.services.android.util.Utils
  */
 class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
 
+    private var geoSlotSelection: Boolean? = false
     private var navHostFrag = NavHostFragment()
-    var savedAddressResponse: SavedAddressResponse? = null
+    private var savedAddressResponse: SavedAddressResponse? = null
+    private var whoIsCollectingString: String? = null
+    private var isComingFromCnc: Boolean? = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,10 +43,17 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         setActionBar()
         intent?.extras?.apply {
             savedAddressResponse = getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
+            geoSlotSelection = getBoolean(GEO_SLOT_SELECTION , false)
+            whoIsCollectingString = getString(CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS, "")
+            isComingFromCnc = getBoolean(IS_COMING_FROM_CNC_SELETION , false)
             baseFragBundle = Bundle()
             baseFragBundle?.putString(
                 SAVED_ADDRESS_KEY,
                 Utils.toJson(savedAddressResponse)
+            )
+            baseFragBundle?.putString(
+                CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS,
+                whoIsCollectingString
             )
             baseFragBundle?.putBoolean(IS_DELIVERY, if (containsKey(IS_DELIVERY)) getBoolean(IS_DELIVERY) else true)
         }
@@ -69,7 +75,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     fun showBackArrowWithoutTitle() {
         toolbar?.visibility = View.VISIBLE
         setSupportActionBar(toolbar)
-        toolbarText.text = ""
+        toolbarText?.text = ""
         supportActionBar?.apply {
             title = ""
             setDisplayShowTitleEnabled(false)
@@ -81,7 +87,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     fun showBackArrowWithTitle(titleText: String) {
         toolbar?.visibility = View.VISIBLE
         setSupportActionBar(toolbar)
-        toolbarText.text = titleText
+        toolbarText?.text = titleText
         supportActionBar?.apply {
             title = ""
             setDisplayShowTitleEnabled(false)
@@ -94,7 +100,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         btnClose?.visibility = View.VISIBLE
         btnClose?.setOnClickListener(this)
         toolbar?.visibility = View.VISIBLE
-        toolbarText.text = titleText
+        toolbarText?.text = titleText
         setSupportActionBar(toolbar)
         supportActionBar?.apply {
             title = ""
@@ -122,6 +128,20 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
             navHostFrag.navController.navInflater.inflate(R.navigation.nav_graph_checkout)
 
         graph.startDestination = when {
+
+
+            whoIsCollectingString.isNullOrEmpty() == false || isComingFromCnc==true -> {
+                R.id.checkoutReturningUserCollectionFragment
+            }
+
+            geoSlotSelection == true -> {
+                R.id.CheckoutAddAddressReturningUserFragment
+            }
+
+            baseFragBundle?.containsKey(IS_DELIVERY) == true && baseFragBundle?.getBoolean(IS_DELIVERY) == false -> {
+                R.id.checkoutWhoIsCollectingFragment
+            }
+
             savedAddressResponse?.addresses.isNullOrEmpty() -> {
                 R.id.CheckoutAddAddressNewUserFragment
             }
@@ -162,12 +182,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         when (fragmentList[0]) {
-            is ProvinceSelectorFragment -> {
-                (fragmentList[0] as ProvinceSelectorFragment).onBackPressed()
-            }
-            is SuburbSelectorFragment -> {
-                (fragmentList[0] as SuburbSelectorFragment).onBackPressed()
-            }
+
             is UnsellableItemsFragment -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_CANCEL_REMOVE_UNSELLABLE_ITEMS, hashMapOf(
                     FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
@@ -175,7 +190,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                 ), this)
                 setReloadResultAndFinish()
             }
-            is CheckoutAddAddressReturningUserFragment -> {
+            is CheckoutAddAddressReturningUserFragment, is CheckoutReturningUserCollectionFragment -> {
                 setReloadResultAndFinish()
             }
             is OrderConfirmationFragment -> {

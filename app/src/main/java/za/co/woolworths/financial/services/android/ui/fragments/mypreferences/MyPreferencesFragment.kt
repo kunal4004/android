@@ -29,15 +29,15 @@ import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDev
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAllLinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.models.repository.AppStateRepository
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
-import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
-import za.co.woolworths.financial.services.android.util.AuthenticateUtils
+import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment
+import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS
-import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAddressView
-import za.co.woolworths.financial.services.android.util.Utils
 
 
 class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchListener {
@@ -113,15 +113,17 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         arguments?.apply {
             isNonWFSUser = getBoolean(IS_NON_WFS_USER)
             val list = getSerializable(DEVICE_LIST)
-            if (list is ArrayList<*> && list.isNotEmpty()) {
-                deviceList = list as ArrayList<UserDevice>
+            if (list is Array<*> && list.isNotEmpty()) {
+                list.forEach {
+                    deviceList?.add(it as UserDevice)
+                }
             }
         }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE) }
         activity?.runOnUiThread { activity?.window?.addFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN) }
@@ -161,17 +163,21 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
 
     fun bindDataWithUI() {
         if (AuthenticateUtils.getInstance(activity).isAppSupportsAuthentication) {
-            if (AuthenticateUtils.getInstance(activity).isDeviceSecure) auSwitch.isChecked = AuthenticateUtils.getInstance(activity).isAuthenticationEnabled else setUserAuthentication(false)
+            if (AuthenticateUtils.getInstance(activity).isDeviceSecure) auSwitch.isChecked =
+                AuthenticateUtils.getInstance(activity).isAuthenticationEnabled else setUserAuthentication(
+                false)
         } else {
             biometricsLayout.setVerticalGravity(View.GONE)
         }
         val lastDeliveryLocation = Utils.getPreferredDeliveryLocation()
         lastDeliveryLocation?.let { setDeliveryLocation(it) }
 
-        if (Utils.isGooglePlayServicesAvailable()) {
+        if (Utils.isGooglePlayServicesAvailable() || Utils.isHuaweiMobileServicesAvailable()) {
             val isDeviceIdentityIdPresent = verifyDeviceIdentityId(deviceList)
             updateLinkedDeviceView(isDeviceIdentityIdPresent)
         }
+        tvMyPrefManageDevicesTitle.text =
+            bindString(R.string.my_preferences_linked_devices, (deviceList?.size ?: 0).toString())
     }
 
     private fun callLinkedDevicesAPI() {
@@ -181,7 +187,8 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         retryLinkDeviceTextView?.visibility = View.GONE
 
         mViewAllLinkedDevices = OneAppService.getAllLinkedDevices(isUpdateAccountCache)
-        mViewAllLinkedDevices?.enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
+        mViewAllLinkedDevices?.enqueue(CompletionHandler(object :
+            IResponseListener<ViewAllLinkedDeviceResponse> {
 
             override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
                 when (response?.httpCode) {
@@ -191,10 +198,14 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                         }
                         spinningAnimation.cancel()
                         retryLinkDeviceLinearLayout?.visibility = View.GONE
-                        val isDeviceIdentityIdPresent = verifyDeviceIdentityId(response?.userDevices)
+                        val isDeviceIdentityIdPresent =
+                            verifyDeviceIdentityId(response?.userDevices)
                         deviceList = response?.userDevices
-                        MyAccountsFragment.deviceList = deviceList
+                        AppStateRepository().saveLinkedDevices(deviceList)
                         updateLinkedDeviceView(isDeviceIdentityIdPresent)
+                        tvMyPrefManageDevicesTitle.text =
+                            bindString(R.string.my_preferences_linked_devices,
+                                (deviceList?.size ?: 0).toString())
                     }
                     else -> {
                         spinningAnimation.cancel()
@@ -235,13 +246,15 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                     linkDeviceSwitch.visibility = View.GONE
                     linkDeviceSwitch.isEnabled = false
                     context?.apply {
-                        linkThisDeviceTextView?.text = getString(R.string.link_device_this_is_linked)
+                        linkThisDeviceTextView?.text =
+                            getString(R.string.link_device_this_is_linked)
                     }
                 } else {
                     linkDeviceSwitch.visibility = View.VISIBLE
                     linkDeviceSwitch.isEnabled = true
                     context?.apply {
-                        linkThisDeviceTextView?.text = getString(R.string.my_preferences_link_this_device)
+                        linkThisDeviceTextView?.text =
+                            getString(R.string.my_preferences_link_this_device)
                     }
                 }
             }
@@ -292,13 +305,13 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                 if (deviceList != null && deviceList!!.isNotEmpty()) {
                     activity?.apply {
                         Utils.triggerFireBaseEvents(
-                                FirebaseManagerAnalyticsProperties.DEVICESECURITY_VIEW_LIST,
-                                hashMapOf(
-                                        Pair(
-                                                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
-                                                FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceViewList
-                                        )
-                                ), this
+                            FirebaseManagerAnalyticsProperties.DEVICESECURITY_VIEW_LIST,
+                            hashMapOf(
+                                Pair(
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceViewList
+                                )
+                            ), this
                         )
                     }
 
@@ -345,18 +358,22 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
     private fun navigateToLinkDeviceFragment() {
         activity?.apply {
             Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_START,
-                    hashMapOf(
-                            Pair(
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceInitiated
-                            )
-                    ), this
+                FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_START,
+                hashMapOf(
+                    Pair(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
+                        FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceInitiated
+                    )
+                ), this
             )
         }
         view?.let {
-            Navigation.findNavController(it)
-                .navigate(R.id.action_myPreferencesFragment_to_navigation)
+            try {
+                Navigation.findNavController(it)
+                    .navigate(R.id.action_myPreferencesFragment_to_navigation)
+            } catch (e: Exception) {
+                FirebaseManager.logException(e)
+            }
         }
     }
 
@@ -390,7 +407,8 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
             } else {
                 setUserAuthentication(false)
             }
-            SECURITY_INFO_REQUEST_DIALOG -> startBiometricAuthentication(LOCK_REQUEST_CODE_TO_DISABLE)
+            SECURITY_INFO_REQUEST_DIALOG -> startBiometricAuthentication(
+                LOCK_REQUEST_CODE_TO_DISABLE)
             else -> {
             }
         }
@@ -405,12 +423,16 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
     }
 
     fun setUserAuthentication(isAuthenticated: Boolean) {
-        AuthenticateUtils.getInstance(activity).setUserAuthenticate(if (isAuthenticated) SessionDao.BIOMETRIC_AUTHENTICATION_STATE.ON else SessionDao.BIOMETRIC_AUTHENTICATION_STATE.OFF)
-        auSwitch.isChecked = isAuthenticated
+        AuthenticateUtils.getInstance(activity)
+            .setUserAuthenticate(if (isAuthenticated) SessionDao.BIOMETRIC_AUTHENTICATION_STATE.ON else SessionDao.BIOMETRIC_AUTHENTICATION_STATE.OFF)
+        auSwitch?.isChecked = isAuthenticated
     }
 
     fun openDeviceSecuritySettings() {
-        Utils.displayValidationMessageForResult(activity, CustomPopUpWindow.MODAL_LAYOUT.SET_UP_BIOMETRICS_ON_DEVICE, "", SECURITY_SETTING_REQUEST_DIALOG)
+        Utils.displayValidationMessageForResult(activity,
+            CustomPopUpWindow.MODAL_LAYOUT.SET_UP_BIOMETRICS_ON_DEVICE,
+            "",
+            SECURITY_SETTING_REQUEST_DIALOG)
     }
 
     override fun onResume() {
@@ -420,7 +442,25 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
     }
 
     private fun locationSelectionClicked() {
-        presentEditDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE, null)
+        activity?.apply {
+            if (this is MyPreferencesInterface) {
+                hideToolbar()
+            }
+        }
+
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            activity?.apply {
+                KotlinUtils.presentEditDeliveryGeoLocationActivity(
+                    this,
+                    REQUEST_CODE,
+                    KotlinUtils.getPreferredDeliveryType(),
+                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
+                )
+            }
+        } else {
+            ScreenManager.presentSSOSignin(activity, DepartmentsFragment.DEPARTMENT_LOGIN_REQUEST)
+        }
+
     }
 
     override fun onTouch(view: View, motionEvent: MotionEvent): Boolean {
@@ -437,7 +477,11 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         editLocation.visibility = View.VISIBLE
         deliverLocationIcon.setBackgroundResource(R.drawable.tick_cli_active)
         shoppingDeliveryLocation?.let {
-            setDeliveryAddressView(activity, shoppingDeliveryLocation, tvDeliveringTo, tvDeliveryLocation, null)
+            setDeliveryAddressView(activity,
+                shoppingDeliveryLocation,
+                tvDeliveringTo,
+                tvDeliveryLocation,
+                null)
         }
     }
 

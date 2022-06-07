@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.item_view_all_linked_device_layout.view.*
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice
+import java.net.URLDecoder
 
 class ViewAllLinkedDevicesAdapter(val context: Context, val onClickListener: View.OnClickListener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -58,8 +59,9 @@ class ViewAllLinkedDevicesAdapter(val context: Context, val onClickListener: Vie
         fun bind() {
             itemView.apply {
                 val primaryDevice = getPrimaryDevice()
-                viewAllDevicesTitleTextView?.text = context?.getString(R.string.view_all_primary_device_title)
-                viewAllDeviceNameTextView?.text = primaryDevice?.deviceName
+                viewAllDevicesDescTextView?.visibility =  View.VISIBLE
+                viewAllDevicesTitleTextView?.text = context?.getString(R.string.view_all_preferred_device_title)
+                viewAllDeviceNameTextView?.text = URLDecoder.decode(primaryDevice?.deviceName, "UTF8")
                 viewAllDeviceLocationTextView?.text = if (TextUtils.isEmpty(primaryDevice?.locationLinked)) context.getString(R.string.view_all_device_location_n_a) else primaryDevice?.locationLinked
                 viewAllDeviceSubtitleTextView?.text = context.getString(R.string.view_all_device_linked_on, primaryDevice?.linkedDate)
                 viewAllDeviceDeleteImageView?.visibility =  View.VISIBLE
@@ -94,7 +96,7 @@ class ViewAllLinkedDevicesAdapter(val context: Context, val onClickListener: Vie
                             listItem.viewAllDevicesTitleGroup?.visibility = View.VISIBLE
                             listItem.viewAllDevicesTitleTextView?.text = context?.getString(R.string.view_all_other_device_title)
                         }
-                        listItem.viewAllDeviceNameTextView?.text = it.deviceName
+                        listItem.viewAllDeviceNameTextView?.text = URLDecoder.decode(it.deviceName, "UTF8")
                         listItem.viewAllDeviceSubtitleTextView?.text = context.getString(R.string.view_all_device_linked_on, it.linkedDate)
                         listItem.viewAllDeviceLocationTextView?.text = if(TextUtils.isEmpty(it.locationLinked)) context.getString(R.string.view_all_device_location_n_a) else it.locationLinked
                         listItem.viewAllDeviceDeleteImageView?.visibility =  View.GONE

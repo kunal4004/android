@@ -6,13 +6,20 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.ui.adapters.holder.*
 import za.co.woolworths.financial.services.android.util.Utils
 
-class ProductListingAdapter(private val navigator: IProductListing?, private val mProductListItems: List<ProductList>?, val activity: FragmentActivity?) : RecyclerView.Adapter<RecyclerViewViewHolder>() {
+class ProductListingAdapter(
+    private val navigator: IProductListing?,
+    private val mProductListItems: List<ProductList>?,
+    val activity: FragmentActivity?,
+    val mBannerLabel: String?,
+    val mBannerImage: String?,
+    val mIsComingFromBLP: Boolean
+) : RecyclerView.Adapter<RecyclerViewViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewViewHolder {
         return when (ProductListingViewType.values()[viewType]) {
@@ -27,9 +34,14 @@ class ProductListingAdapter(private val navigator: IProductListing?, private val
             holder.itemView.invalidate()
             holder.itemView.requestLayout()
             when (productList.rowType) {
-                ProductListingViewType.HEADER -> (holder as? RecyclerViewViewHolderHeader)?.setNumberOfItems(
-                    activity, productList
-                )
+                ProductListingViewType.HEADER -> {
+                    (holder as? RecyclerViewViewHolderHeader)?.setNumberOfItems(
+                        activity, productList
+                    )
+                    (holder as? RecyclerViewViewHolderHeader)?.setChanelBanner(
+                        mBannerLabel, mBannerImage, mIsComingFromBLP, navigator
+                    )
+                }
                 ProductListingViewType.FOOTER -> (holder as? RecyclerViewViewHolderFooter)?.loadMoreProductProgressBarVisibility()
                 else -> (holder as? RecyclerViewViewHolderItems)?.let { view ->
                     navigator?.let {
@@ -43,7 +55,7 @@ class ProductListingAdapter(private val navigator: IProductListing?, private val
                     view.itemView.imQuickShopAddToCartIcon?.setOnClickListener {
                         if (!productList.quickShopButtonWasTapped) {
                             activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART, this) }
-                            val fulfilmentTypeId = WoolworthsApplication.getQuickShopDefaultValues()?.foodFulfilmentTypeId
+                            val fulfilmentTypeId = AppConfigSingleton.quickShopDefaultValues?.foodFulfilmentTypeId
                             val storeId = fulfilmentTypeId?.let { it1 -> RecyclerViewViewHolderItems.getFulFillmentStoreId(it1) }
                             fulfilmentTypeId?.let { id ->
                                 navigator?.queryInventoryForStore(

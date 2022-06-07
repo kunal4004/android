@@ -1,8 +1,9 @@
 package za.co.woolworths.financial.services.android.checkout.service.network
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
-class Slot {
+class Slot : Serializable {
 
     @SerializedName("slotCost")
     var slotCost: Int? = null
@@ -30,4 +31,10 @@ class Slot {
 
     @SerializedName("hourFrom")
     var hourFrom: String? = null
+
+    @SerializedName("hourSlot")
+    var hourSlot: String? = null
+
+    @SerializedName("intHourFrom")
+    var intHourFrom: Int? = null
 }

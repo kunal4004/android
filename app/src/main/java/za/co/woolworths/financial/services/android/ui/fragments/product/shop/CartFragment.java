@@ -2,24 +2,25 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.shop;
 
 import static android.app.Activity.RESULT_OK;
 import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY;
-import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.IS_DELIVERY;
+import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
-import static za.co.woolworths.financial.services.android.ui.activities.CartActivity.CHECKOUT_SUCCESS;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART;
 import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,6 +36,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
@@ -42,6 +44,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.awfs.coordination.R;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -67,6 +70,8 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Save
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils;
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -79,14 +84,11 @@ import za.co.woolworths.financial.services.android.models.dto.Data;
 import za.co.woolworths.financial.services.android.models.dto.GlobalMessages;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
-import za.co.woolworths.financial.services.android.models.dto.Province;
-import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
-import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap;
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode;
@@ -95,12 +97,13 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
-import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
 import za.co.woolworths.financial.services.android.ui.activities.online_voucher_redemption.AvailableVouchersToRedeemInCart;
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.cart.GiftWithPurchaseDialogDetailFragment;
@@ -119,83 +122,67 @@ import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.ProductType;
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.wenum.Delivery;
 
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface, WMaterialShowcaseView.IWalkthroughActionListener, RemoveProductsFromCartDialogFragment.IRemoveProductsFromCartDialog {
 
-    public static final int REQUEST_PAYMENT_STATUS = 4775;
-    private String mSuburbName, mProvinceName;
-    private int mQuantity;
-
-    private RelativeLayout rlLocationSelectedLayout;
-    private boolean onRemoveItemFailed = false;
-    private boolean mRemoveAllItemFailed = false;
-    private static final int REQUEST_SUBURB_CHANGE = 143;
-    private String mStoreId;
-    private Map<String, String> mMapStoreId;
-    private String TAG = this.getClass().getSimpleName();
-    private ToastUtils mToastUtils;
-    public static final int MOVE_TO_LIST_ON_TOAST_VIEW_CLICKED = 1020;
-    private int mNumberOfListSelected;
-    private List<ChangeQuantity> mChangeQuantityList;
-    private boolean mRemoveAllItemFromCartTapped = false;
-    private HashMap<String, List<SkuInventory>> mSkuInventories;
-    private static boolean isMaterialPopUpClosed = true;
-
-    public interface ToggleRemoveItem {
-        void onRemoveItem(boolean visibility);
-
-        void onRemoveSuccess();
-    }
-
-    private ToggleRemoveItem mToggleItemRemoved;
+    private final String TAG = this.getClass().getSimpleName();
     private final String GIFT_ITEM = "GIFT";
     private final String GENERAL_ITEM = "GENERAL";
-    private RecyclerView rvCartList;
-    private WButton btnCheckOut;
-    private CartProductAdapter cartProductAdapter;
-    private WoolworthsApplication mWoolWorthsApplication;
-    private RelativeLayout parentLayout;
-    private ProgressBar pBar;
-    private RelativeLayout relEmptyStateHandler;
-    private ArrayList<CartItemGroup> cartItems;
-    private OrderSummary orderSummary;
-    private WTextView tvDeliveryLocation;
-    private WTextView tvDeliveringToText;
-    private CompositeDisposable mDisposables = new CompositeDisposable();
-    private LinearLayout rlCheckOut;
-    private ChangeQuantity mChangeQuantity;
-    private BroadcastReceiver mConnectionBroadcast;
-    private ErrorHandlerView mErrorHandlerView;
-    private CommerceItem mCommerceItem;
-    private boolean changeQuantityWasClicked = false;
-    private boolean errorMessageWasPopUp = false;
-    private boolean isAllInventoryAPICallSucceed;
-    private ImageView imgDeliveryLocation;
-    private TextView upSellMessageTextView;
-    private Map<String, Collection<CommerceItem>> mapStoreIdWithCommerceItems;
-    private ImageView deliverLocationIcon;
-    private ImageView deliverLocationRightArrow;
-    private WTextView editLocation;
     private final String TAG_AVAILABLE_VOUCHERS_TOAST = "AVAILABLE_VOUCHERS";
     private final String TAG_ADDED_TO_LIST_TOAST = "ADDED_TO_LIST";
-    private VoucherDetails voucherDetails;
-    public static final int REDEEM_VOUCHERS_REQUEST_CODE = 1979;
-    private TextView orderTotal;
-    private RelativeLayout orderTotalLayout;
-    private NestedScrollView nestedScrollView;
-    public static final int APPLY_PROMO_CODE_REQUEST_CODE = 1989;
+
     private static final int CART_BACK_PRESSED_CODE = 9;
     private static final int PDP_LOCATION_CHANGED_BACK_PRESSED_CODE = 18;
-    public ProductCountMap productCountMap;
+    public static final int REQUEST_PAYMENT_STATUS = 4775;
+    private static final int REQUEST_SUBURB_CHANGE = 143;
+    public static final int REDEEM_VOUCHERS_REQUEST_CODE = 1979;
+    public static final int APPLY_PROMO_CODE_REQUEST_CODE = 1989;
+    public static final int MOVE_TO_LIST_ON_TOAST_VIEW_CLICKED = 1020;
+
+    private int mNumberOfListSelected;
+    private int localCartCount = 0;
+
+    private static boolean isMaterialPopUpClosed = true;
+    private boolean changeQuantityWasClicked = false;
+    private boolean errorMessageWasPopUp = false;
+    private boolean toastButtonWasClicked = false;
+    private boolean onRemoveItemFailed = false;
+    private boolean mRemoveAllItemFailed = false;
+    private boolean mRemoveAllItemFromCartTapped = false;
+    private boolean isAllInventoryAPICallSucceed;
+
+    private List<ChangeQuantity> mChangeQuantityList;
+    private HashMap<String, List<SkuInventory>> mSkuInventories;
+    private Map<String, Collection<CommerceItem>> mapStoreIdWithCommerceItems;
+    private ArrayList<CartItemGroup> cartItems;
+
     public ConstraintLayout itemLimitsBanner;
-    public TextView itemLimitsMessage;
-    public TextView itemLimitsCounter;
-    private static String localSuburbId = null;
-    private static String localStoreId = null;
+    private RelativeLayout orderTotalLayout, rlLocationSelectedLayout, parentLayout, relEmptyStateHandler;
+    public TextView itemLimitsMessage, itemLimitsCounter, upSellMessageTextView, orderTotal;
+    private ImageView deliverLocationIcon, deliverLocationRightArrow;
+    private NestedScrollView nestedScrollView;
+    private RecyclerView rvCartList;
+    private WButton btnCheckOut;
+    private ProgressBar pBar, pbRemoveAllItem;
+    private WTextView tvDeliveryLocation, tvDeliveringToText, editLocation, btnEditCart, btnClearCart;
+    private LinearLayout rlCheckOut;
+    private ErrorHandlerView mErrorHandlerView;
+
+    private CartProductAdapter cartProductAdapter;
+    private OrderSummary orderSummary;
+    private BroadcastReceiver mConnectionBroadcast;
+    private ToastUtils mToastUtils;
+    private CompositeDisposable mDisposables = new CompositeDisposable();
+    private ChangeQuantity mChangeQuantity;
+    private CommerceItem mCommerceItem;
+    private VoucherDetails voucherDetails;
+    public ProductCountMap productCountMap;
 
     public CartFragment() {
         // Required empty public constructor
@@ -207,62 +194,16 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setupToolbar();
+        initViews();
+        hideEditCart();
+        localCartCount = QueryBadgeCounter.getInstance().getCartItemCount();
 
-
-        mMapStoreId = new HashMap<>();
-        mChangeQuantityList = new ArrayList<>();
+        mChangeQuantityList = new ArrayList<>(0);
         mChangeQuantity = new ChangeQuantity();
-        rvCartList = view.findViewById(R.id.cartList);
-        btnCheckOut = view.findViewById(R.id.btnCheckOut);
-        rlCheckOut = view.findViewById(R.id.rlCheckOut);
-        RelativeLayout rlNoConnectionLayout = view.findViewById(R.id.no_connection_layout);
-        parentLayout = view.findViewById(R.id.parentLayout);
-        pBar = view.findViewById(R.id.loadingBar);
-        relEmptyStateHandler = view.findViewById(R.id.relEmptyStateHandler);
-        WButton mBtnRetry = view.findViewById(R.id.btnRetry);
-        mWoolWorthsApplication = ((WoolworthsApplication) getActivity().getApplication());
-        mErrorHandlerView = new ErrorHandlerView(getActivity(), rlNoConnectionLayout);
-        mErrorHandlerView.setMargin(rlNoConnectionLayout, 0, 0, 0, 0);
         mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
-        rlLocationSelectedLayout = view.findViewById(R.id.locationSelectedLayout);
-        imgDeliveryLocation = view.findViewById(R.id.truckIcon);
-        upSellMessageTextView = view.findViewById(R.id.upSellMessageTextView);
-        rlLocationSelectedLayout.setOnClickListener(this);
-        mBtnRetry.setOnClickListener(this);
-        btnCheckOut.setOnClickListener(this);
-        tvDeliveryLocation = view.findViewById(R.id.tvDeliveryLocation);
-        tvDeliveringToText = view.findViewById(R.id.tvDeliveringTo);
-        deliverLocationIcon = view.findViewById(R.id.deliverLocationIcon);
-        editLocation = view.findViewById(R.id.editLocation);
-        deliverLocationRightArrow = view.findViewById(R.id.iconCaretRight);
-        orderTotal = view.findViewById(R.id.orderTotal);
-        orderTotalLayout = view.findViewById(R.id.orderTotalLayout);
-        orderTotalLayout.setOnClickListener(this);
-        nestedScrollView = view.findViewById(R.id.nestedScrollView);
-        itemLimitsBanner = view.findViewById(R.id.itemLimitsBanner);
-        itemLimitsMessage = view.findViewById(R.id.itemLimitsMessage);
-        itemLimitsCounter = view.findViewById(R.id.itemLimitsCounter);
-
-        ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
-        if (lastDeliveryLocation != null) {
-            setDeliveryLocation(lastDeliveryLocation);
-        }
-        emptyCartUI(view);
-        final Activity activity = getActivity();
-        if (activity != null) {
-            CartActivity cartActivity = (CartActivity) activity;
-            cartActivity.hideEditCart();
-        }
-        ShoppingDeliveryLocation location = Utils.getPreferredDeliveryLocation();
-        if (location != null) {
-            if (location.suburb != null)
-                localSuburbId = location.suburb.id;
-            if (location.store != null)
-                localStoreId = location.store.getId();
-        }
-        loadShoppingCart(false);
         mToastUtils = new ToastUtils(this);
         mDisposables.add(WoolworthsApplication.getInstance()
                 .bus()
@@ -289,17 +230,19 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                                             cartProductAdapter.onPopUpCancel(CANCEL_DIALOG_TAPPED);
                                         break;
                                     case CLOSE_PDP_FROM_ADD_TO_LIST:
-                                        mToastUtils.setActivity(activity);
-                                        mToastUtils.setCurrentState(TAG_ADDED_TO_LIST_TOAST);
-                                        String shoppingList = getString(R.string.shopping_list);
-                                        mNumberOfListSelected = productState.getCount();
-                                        // shopping list vs shopping lists
-                                        mToastUtils.setCartText((mNumberOfListSelected > 1) ? shoppingList + "s" : shoppingList);
-                                        mToastUtils.setPixel(btnCheckOut.getHeight() * 2);
-                                        mToastUtils.setView(btnCheckOut);
-                                        mToastUtils.setMessage(R.string.added_to);
-                                        mToastUtils.setViewState(true);
-                                        mToastUtils.build();
+                                        if (getActivity() != null) {
+                                            mToastUtils.setActivity(getActivity());
+                                            mToastUtils.setCurrentState(TAG_ADDED_TO_LIST_TOAST);
+                                            String shoppingList = getString(R.string.shopping_list);
+                                            mNumberOfListSelected = productState.getCount();
+                                            // shopping list vs shopping lists
+                                            mToastUtils.setCartText((mNumberOfListSelected > 1) ? shoppingList + "s" : shoppingList);
+                                            mToastUtils.setPixel(btnCheckOut.getHeight() * 2);
+                                            mToastUtils.setView(btnCheckOut);
+                                            mToastUtils.setMessage(R.string.added_to);
+                                            mToastUtils.setViewState(true);
+                                            mToastUtils.build();
+                                        }
                                         break;
                                     default:
                                         break;
@@ -308,14 +251,101 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                         }
                     }
                 }));
+
+        initializeLoggedInUserCartUI();
     }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        Activity activity = (Activity) context;
-        if (activity != null) {
-            mToggleItemRemoved = (ToggleRemoveItem) activity;
+    private void initializeLoggedInUserCartUI() {
+        if (!SessionUtilities.getInstance().isUserAuthenticated()) {
+            return;
+        }
+
+        //Things to do after login is successful
+        setEmptyCartUIUserName();
+        //One time biometricsWalkthrough
+        if (isVisible()) {
+            ScreenManager.presentBiometricWalkthrough(getActivity());
+        }
+        loadShoppingCart(false);
+    }
+
+    private void initViews() {
+        if (getView() == null) {
+            return;
+        }
+        View view = getView();
+
+        WButton mBtnRetry = view.findViewById(R.id.btnRetry);
+        mBtnRetry.setOnClickListener(this);
+        rvCartList = view.findViewById(R.id.cartList);
+        btnCheckOut = view.findViewById(R.id.btnCheckOut);
+        rlCheckOut = view.findViewById(R.id.rlCheckOut);
+        parentLayout = view.findViewById(R.id.parentLayout);
+        pBar = view.findViewById(R.id.loadingBar);
+        relEmptyStateHandler = view.findViewById(R.id.relEmptyStateHandler);
+        rlLocationSelectedLayout = view.findViewById(R.id.locationSelectedLayout);
+        upSellMessageTextView = view.findViewById(R.id.upSellMessageTextView);
+        tvDeliveryLocation = view.findViewById(R.id.tvDeliveryLocation);
+        tvDeliveringToText = view.findViewById(R.id.tvDeliveringTo);
+        deliverLocationIcon = view.findViewById(R.id.deliverLocationIcon);
+        editLocation = view.findViewById(R.id.editLocation);
+        deliverLocationRightArrow = view.findViewById(R.id.iconCaretRight);
+        orderTotal = view.findViewById(R.id.orderTotal);
+        orderTotalLayout = view.findViewById(R.id.orderTotalLayout);
+        nestedScrollView = view.findViewById(R.id.nestedScrollView);
+        itemLimitsBanner = view.findViewById(R.id.itemLimitsBanner);
+        itemLimitsMessage = view.findViewById(R.id.itemLimitsMessage);
+        itemLimitsCounter = view.findViewById(R.id.itemLimitsCounter);
+
+        RelativeLayout rlNoConnectionLayout = view.findViewById(R.id.no_connection_layout);
+        mErrorHandlerView = new ErrorHandlerView(getActivity(), rlNoConnectionLayout);
+        mErrorHandlerView.setMargin(rlNoConnectionLayout, 0, 0, 0, 0);
+
+        btnCheckOut.setOnClickListener(this);
+        orderTotalLayout.setOnClickListener(this);
+        rlLocationSelectedLayout.setOnClickListener(this);
+
+        //Empty cart UI
+        WTextView txtEmptyStateTitle = view.findViewById(R.id.txtEmptyStateTitle);
+        WTextView txtEmptyStateDesc = view.findViewById(R.id.txtEmptyStateDesc);
+        WButton btnGoToProduct = view.findViewById(R.id.btnGoToProduct);
+        if (SessionUtilities.getInstance().isUserAuthenticated()) {
+            String firstName = SessionUtilities.getInstance().getJwt().name.get(0);
+            txtEmptyStateTitle.setText("HI " + firstName + ",");
+        }
+        txtEmptyStateDesc.setText(getString(R.string.empty_cart_desc));
+        btnGoToProduct.setVisibility(View.VISIBLE);
+        btnGoToProduct.setText(getString(R.string.start_shopping));
+        btnGoToProduct.setOnClickListener(this);
+    }
+
+    private void initializeBottomTab() {
+        if (getActivity() instanceof BottomNavigationActivity) {
+            ((BottomNavigationActivity) getActivity()).showBottomNavigationMenu();
+            ((BottomNavigationActivity) getActivity()).hideToolbar();
+            ((BottomNavigationActivity) getActivity()).setToolbarTitle("");
+        }
+    }
+
+    private void setupToolbar() {
+        Utils.updateStatusBarBackground(getActivity());
+        if (getView() == null) {
+            return;
+        }
+        View view = getView();
+        Toolbar toolbar = view.findViewById(R.id.cartToolbar);
+        btnEditCart = toolbar.findViewById(R.id.btnEditCart);
+        btnEditCart.setText(R.string.edit);
+        pbRemoveAllItem = toolbar.findViewById(R.id.pbRemoveAllItem);
+        btnClearCart = toolbar.findViewById(R.id.btnClearCart);
+
+        btnClearCart.setVisibility(View.GONE);
+        pbRemoveAllItem.setVisibility(View.GONE);
+        btnEditCart.setOnClickListener(this);
+        btnClearCart.setOnClickListener(this);
+
+        if (getActivity() instanceof BottomNavigationActivity) {
+            ((BottomNavigationActivity) getActivity()).hideToolbar();
         }
     }
 
@@ -328,38 +358,69 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
      */
 
     private void queryServiceChangeQuantity() {
-
         mChangeQuantityList.add(mChangeQuantity);
         changeQuantityAPI(mChangeQuantityList.get(0));
         mChangeQuantityList.remove(0);
     }
 
-    private void emptyCartUI(View view) {
+    private void setEmptyCartUIUserName() {
+        if (!SessionUtilities.getInstance().isUserAuthenticated() || getView() == null) {
+            return;
+        }
+        View view = getView();
         String firstName = SessionUtilities.getInstance().getJwt().name.get(0);
-        ImageView imEmptyCart = view.findViewById(R.id.imgEmpyStateIcon);
-        imEmptyCart.setImageResource(R.drawable.ic_empty_cart);
         WTextView txtEmptyStateTitle = view.findViewById(R.id.txtEmptyStateTitle);
-        WTextView txtEmptyStateDesc = view.findViewById(R.id.txtEmptyStateDesc);
-        WButton btnGoToProduct = view.findViewById(R.id.btnGoToProduct);
         txtEmptyStateTitle.setText("HI " + firstName + ",");
-        txtEmptyStateDesc.setText(getString(R.string.empty_cart_desc));
-        btnGoToProduct.setVisibility(View.VISIBLE);
-        btnGoToProduct.setText(getString(R.string.start_shopping));
-        btnGoToProduct.setOnClickListener(this);
+    }
+
+    public void onRemoveItem(boolean visibility) {
+        pbRemoveAllItem.setVisibility(visibility ? View.VISIBLE : View.GONE);
+        btnClearCart.setVisibility(visibility ? View.GONE : View.VISIBLE);
+        btnEditCart.setEnabled(visibility ? false : true);
+    }
+
+    public void onRemoveSuccess() {
+        pbRemoveAllItem.setVisibility(View.GONE);
+        btnClearCart.setVisibility(View.GONE);
+    }
+
+    public void resetToolBarIcons() {
+        hideEditCart();
+        btnClearCart.setVisibility(View.GONE);
+    }
+
+    public void showEditCart() {
+        btnEditCart.setAlpha(1.0f);
+        btnEditCart.setVisibility(View.VISIBLE);
+        btnEditCart.setEnabled(true);
+    }
+
+    public void hideEditCart() {
+        btnEditCart.setAlpha(0.0f);
+        btnEditCart.setVisibility(View.GONE);
+        btnEditCart.setEnabled(false);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.btnEditCart:
+                toggleCartMode();
+                // prevent remove all item progressbar visible
+                dismissProgress();
+                break;
+            case R.id.btnClearCart:
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTREMOVEALL, getActivity());
+                removeAllCartItem(null);
+                break;
             case R.id.locationSelectedLayout:
                 locationSelectionClicked();
                 break;
             case R.id.btnGoToProduct:
                 Activity activity = getActivity();
-                if (activity != null) {
-                    activity.setResult(Activity.RESULT_OK);
-                    activity.finish();
-                    activity.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+                if (activity instanceof BottomNavigator) {
+                    BottomNavigator navigator = (BottomNavigator) activity;
+                    navigator.navigateToTabIndex(INDEX_PRODUCT, null);
                 }
                 break;
             case R.id.btnRetry:
@@ -372,14 +433,15 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             case R.id.btnCheckOut:
                 Activity checkOutActivity = getActivity();
                 if ((checkOutActivity != null) && btnCheckOut.isEnabled() && orderSummary != null) {
-                    if (Utils.getPreferredDeliveryLocation().storePickup && productCountMap != null && productCountMap.getQuantityLimit() != null && !productCountMap.getQuantityLimit().getAllowsCheckout()) {
+                    Delivery deliveryType = Delivery.Companion.getType(Utils.getPreferredDeliveryLocation().fulfillmentDetails.getDeliveryType());
+                    if (deliveryType == Delivery.CNC && productCountMap != null && productCountMap.getQuantityLimit() != null && !productCountMap.getQuantityLimit().getAllowsCheckout()) {
                         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_CLCK_CLLCT_CNFRM_LMT, checkOutActivity);
                         showMaxItemView();
                         return;
                     }
                     // Go to Web checkout journey if...
-                    if (WoolworthsApplication.getNativeCheckout() != null
-                            && !WoolworthsApplication.getNativeCheckout().isNativeCheckoutEnabled()) {
+                    if (AppConfigSingleton.INSTANCE.getNativeCheckout() != null
+                            && !AppConfigSingleton.INSTANCE.getNativeCheckout().isNativeCheckoutEnabled()) {
                         Intent openCheckOutActivity = new Intent(getContext(), CartCheckoutActivity.class);
                         getActivity().startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
                         checkOutActivity.overridePendingTransition(0, 0);
@@ -400,6 +462,17 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             default:
                 break;
         }
+    }
+
+    public void toggleCartMode() {
+        boolean isEditMode = toggleEditMode();
+        btnEditCart.setText(isEditMode ? R.string.done : R.string.edit);
+        btnClearCart.setVisibility(isEditMode ? View.VISIBLE : View.GONE);
+        deliveryLocationEnabled(!isEditMode);
+    }
+
+    private void dismissProgress() {
+        pbRemoveAllItem.setVisibility(View.GONE);
     }
 
     private void callSavedAddress() {
@@ -442,13 +515,46 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
     private void navigateToCheckout(SavedAddressResponse response) {
         Activity activity = getActivity();
-        if (activity != null) {
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT, getActivity());
+        if (KotlinUtils.Companion
+                .getPreferredDeliveryType().equals(Delivery.STANDARD)
+                &&  !TextUtils.isEmpty(response.getDefaultAddressNickname())
+        )  {
+           //   - CNAV : Checkout  activity
+
+            //firebase event begin_checkout
+            FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
+            Bundle beginCheckoutParams = new Bundle();
+            beginCheckoutParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE);
+            beginCheckoutParams.putString(FirebaseAnalytics.Param.VALUE, String.valueOf(orderSummary.total));
+            mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT, beginCheckoutParams);
+
             Intent checkoutActivityIntent = new Intent(getActivity(), CheckoutActivity.class);
             checkoutActivityIntent.putExtra(SAVED_ADDRESS_KEY, response);
-            checkoutActivityIntent.putExtra(IS_DELIVERY, !Utils.getPreferredDeliveryLocation().storePickup);
-            activity.startActivityForResult(checkoutActivityIntent, REQUEST_PAYMENT_STATUS);
-            activity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_to_left);
+            checkoutActivityIntent.putExtra(GEO_SLOT_SELECTION, true);
+            activity.startActivityForResult(checkoutActivityIntent,
+                    REQUEST_PAYMENT_STATUS);
+            activity.overridePendingTransition(R.anim.slide_from_right,
+                    R.anim.slide_out_to_left);
+        } else {
+//            - GNAV
+//            CNC or No Address or no default address*/
+            String placeId = "";
+            if (GeoUtils.Companion.getDelivertyType() == Delivery.CNC) {
+                placeId = GeoUtils.Companion.getPlaceId();
+            } else {
+                placeId = GeoUtils.Companion.getSelectedPlaceId(response);
+            }
+
+            KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
+                    requireActivity(),
+                    CartFragment.REQUEST_PAYMENT_STATUS,
+                    GeoUtils.Companion.getDelivertyType(),
+                    placeId,
+                    true,
+                    false,
+                    response,
+                    null,
+                    "");
         }
     }
 
@@ -468,8 +574,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     public void onChangeQuantity(CommerceItem commerceId) {
         mCommerceItem = commerceId;
         mChangeQuantity.commerceId = commerceId.commerceItemInfo.getCommerceId();
-        if (mWoolWorthsApplication != null) {
-            WGlobalState wGlobalState = mWoolWorthsApplication.getWGlobalState();
+        if (WoolworthsApplication.getInstance() != null) {
+            WGlobalState wGlobalState = WoolworthsApplication.getInstance().getWGlobalState();
             if (wGlobalState != null) {
                 wGlobalState.navigateFromQuantity(1);
             }
@@ -491,15 +597,24 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
     @Override
     public void onOpenProductDetail(CommerceItem commerceItem) {
-        CartActivity cartActivity = (CartActivity) getActivity();
-        ProductDetails productList = new ProductDetails();
+        if (!(getActivity() instanceof BottomNavigationActivity)) {
+            return;
+        }
+
+        ProductDetails productDetails = new ProductDetails();
         CommerceItemInfo commerceItemInfo = commerceItem.commerceItemInfo;
-        productList.externalImageRefV2 = commerceItemInfo.externalImageRefV2;
-        productList.productName = commerceItemInfo.productDisplayName;
-        productList.fromPrice = (float) commerceItem.priceInfo.getAmount();
-        productList.productId = commerceItemInfo.productId;
-        productList.sku = commerceItemInfo.catalogRefId;
-        cartActivity.openProductDetailFragment("", productList);
+        productDetails.externalImageRefV2 = commerceItemInfo.externalImageRefV2;
+        productDetails.productName = commerceItemInfo.productDisplayName;
+        productDetails.fromPrice = (float) commerceItem.priceInfo.getAmount();
+        productDetails.productId = commerceItemInfo.productId;
+        productDetails.sku = commerceItemInfo.catalogRefId;
+        Gson gson = new Gson();
+        String strProductList = gson.toJson(productDetails);
+        if (getActivity() instanceof BottomNavigationActivity) {
+            // Move to shop tab first.
+            ((BottomNavigationActivity) getActivity()).getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
+            ScreenManager.openProductDetailFragment(getActivity(), "", strProductList);
+        }
     }
 
     @Override
@@ -534,8 +649,24 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
     private void locationSelectionClicked() {
         Activity activity = getActivity();
+
         if (activity != null) {
-            KotlinUtils.Companion.presentEditDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE, null);
+            String placeId = "";
+            if (Utils.getPreferredDeliveryLocation() != null) {
+                if (Utils.getPreferredDeliveryLocation().fulfillmentDetails.getAddress() != null) {
+                    placeId = Utils.getPreferredDeliveryLocation().fulfillmentDetails.getAddress().getPlaceId();
+                }
+            }
+            KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
+                    activity, REQUEST_SUBURB_CHANGE,
+                    KotlinUtils.Companion.getPreferredDeliveryType(),
+                    placeId,
+                    false,
+                    false,
+                    null,
+                    null,
+                    ""
+            );
         }
     }
 
@@ -543,12 +674,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         parentLayout.setVisibility(View.VISIBLE);
         mSkuInventories = new HashMap<>();
         if (cartResponse.cartItems.size() > 0) {
+            relEmptyStateHandler.setVisibility(View.GONE);
+            rvCartList.setVisibility(View.VISIBLE);
             rlCheckOut.setVisibility(View.VISIBLE);
-            Activity activity = getActivity();
-            if (activity != null) {
-                CartActivity cartActivity = (CartActivity) activity;
-                cartActivity.showEditCart();
-            }
+            showEditCart();
 
             cartItems = cartResponse.cartItems;
 
@@ -568,14 +697,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             updateCartSummary(0);
             rvCartList.setVisibility(View.GONE);
             rlCheckOut.setVisibility(View.GONE);
-            mToggleItemRemoved.onRemoveSuccess();
+            onRemoveSuccess();
             relEmptyStateHandler.setVisibility(View.VISIBLE);
             Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
-            Activity activity = getActivity();
-            if (activity != null) {
-                CartActivity cartActivity = (CartActivity) activity;
-                cartActivity.resetToolBarIcons();
-            }
+            resetToolBarIcons();
             isMaterialPopUpClosed = true;
             showEditDeliveryLocationFeatureWalkthrough();
         }
@@ -588,7 +713,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         this.productCountMap = cartResponse.productCountMap;
         setItemLimitsBanner();
         if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null) {
-            ArrayList<CartItemGroup> emptyCartItemGroups = new ArrayList<>();
+            ArrayList<CartItemGroup> emptyCartItemGroups = new ArrayList<>(0);
             for (CartItemGroup cartItemGroup : cartItems) {
 
                 if (commerceItemToRemove != null) {
@@ -633,18 +758,23 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
             cartProductAdapter.notifyAdapter(cartItems, orderSummary, voucherDetails);
         } else {
-
             cartProductAdapter.clear();
-            Activity activity = getActivity();
-            if (activity != null) {
-                CartActivity cartActivity = (CartActivity) activity;
-                cartActivity.resetToolBarIcons();
-            }
+            resetToolBarIcons();
             rlCheckOut.setVisibility(View.GONE);
             rvCartList.setVisibility(View.GONE);
             relEmptyStateHandler.setVisibility(View.VISIBLE);
             Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
         }
+
+        if (productCountMap != null) {
+            updateCartSummary(productCountMap.getTotalProductCount() > 0 ? productCountMap.getTotalProductCount() : 0);
+        }
+    }
+
+    private BottomNavigationActivity getBottomNavigationActivity() {
+        Activity activity = getActivity();
+        if (!(activity instanceof BottomNavigationActivity)) return null;
+        return (BottomNavigationActivity) activity;
     }
 
     @Override
@@ -654,8 +784,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 && !mDisposables.isDisposed()) {
             mDisposables.dispose();
         }
-        if (CartActivity.walkThroughPromtView != null) {
-            CartActivity.walkThroughPromtView.removeFromWindow();
+
+        if (getBottomNavigationActivity() != null && getBottomNavigationActivity().walkThroughPromtView != null) {
+            getBottomNavigationActivity().walkThroughPromtView.removeFromWindow();
         }
     }
 
@@ -674,7 +805,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 if (!isGroup)
                     cartItems.add(cartItemGroupUpdated);
             }
-
 
             if (updatedCommerceItem != null) {
                 ArrayList<CartItemGroup> emptyCartItemGroups = new ArrayList<>();
@@ -749,13 +879,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     fadeCheckoutButton(false);
                 }
             }
+            if (productCountMap != null && productCountMap.getTotalProductCount() > 0) {
+                QueryBadgeCounter.getInstance().setCartCount(productCountMap.getTotalProductCount());
+            }
         } else {
             cartProductAdapter.clear();
-            Activity activity = getActivity();
-            if (activity != null) {
-                CartActivity cartActivity = (CartActivity) activity;
-                cartActivity.resetToolBarIcons();
-            }
+            resetToolBarIcons();
             rlCheckOut.setVisibility(View.GONE);
             rvCartList.setVisibility(View.GONE);
             relEmptyStateHandler.setVisibility(View.VISIBLE);
@@ -807,12 +936,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         if (cartProductAdapter != null) {
             cartProductAdapter.clear();
         }
-        Activity activity = getActivity();
-        if (activity != null) {
-            CartActivity cartActivity = (CartActivity) activity;
-            cartActivity.hideEditCart();
-        }
 
+        hideEditCart();
         Call<ShoppingCartResponse> shoppingCartResponseCall = OneAppService.INSTANCE.getShoppingCart();
         shoppingCartResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<ShoppingCartResponse>() {
             @Override
@@ -831,13 +956,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                                 cartProductAdapter.setEditMode(true);
                             }
                             Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
-                            Suburb suburb = new Suburb();
-                            if (shoppingCartResponse.data[0].suburbId.contains("st"))
-                                suburb.id = shoppingCartResponse.data[0].suburbId.replace("st", "");
-                            else
-                                suburb.id = shoppingCartResponse.data[0].suburbId;
-                            suburb.name = shoppingCartResponse.data[0].suburbName;
-                            Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(Utils.getPreferredDeliveryLocation().province, suburb, Utils.getPreferredDeliveryLocation().store));
+                            if (shoppingCartResponse.data[0].orderSummary.fulfillmentDetails != null) {
+                                Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(shoppingCartResponse.data[0].orderSummary.fulfillmentDetails));
+                            }
                             setItemLimitsBanner();
                             break;
                         case 440:
@@ -945,10 +1066,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                         CartResponse cartResponse = convertResponseToCartResponseObject(shoppingCartResponse);
                         updateCart(cartResponse, commerceItem);
                         if (cartResponse.cartItems != null) {
-                            if (cartResponse.cartItems.size() == 0)
-                                mToggleItemRemoved.onRemoveSuccess();
+                            if (cartResponse.cartItems.isEmpty())
+                                onRemoveSuccess();
                         } else {
-                            mToggleItemRemoved.onRemoveSuccess();
+                            onRemoveSuccess();
                         }
                     } else {
                         if (cartProductAdapter != null)
@@ -958,22 +1079,37 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 } catch (Exception ex) {
                     FirebaseManager.Companion.logException(ex);
                 }
+                removeItemFromCart();
+            }
+
+            void removeItemFromCart(){
+                FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
+
+                Bundle removeFromCartParams = new Bundle();
+                removeFromCartParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE);
+                removeFromCartParams.putString(FirebaseAnalytics.Param.VALUE,  String.valueOf(commerceItem.getPriceInfo().amount));
+                Bundle removeFromCartItem = new Bundle();
+                removeFromCartItem.putString(FirebaseAnalytics.Param.ITEM_ID,mCommerceItem.commerceItemInfo.productId);
+                removeFromCartItem.putString(FirebaseAnalytics.Param.ITEM_NAME, mCommerceItem.commerceItemInfo.productDisplayName);
+                removeFromCartItem.putString(FirebaseAnalytics.Param.PRICE, String.valueOf(commerceItem.getPriceInfo().amount));
+                removeFromCartItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, mCommerceItem.commerceItemInfo.productDisplayName);
+                removeFromCartItem.putString(FirebaseAnalytics.Param.QUANTITY, String.valueOf(mCommerceItem.commerceItemInfo.quantity));
+                removeFromCartParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS,  new Parcelable[]{ removeFromCartItem });
+
+                mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.REMOVE_FROM_CART, removeFromCartParams);
             }
 
             @Override
             public void onFailure(Throwable error) {
                 Activity activity = getActivity();
                 if (activity != null) {
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (cartProductAdapter != null) {
-                                onRemoveItemLoadFail(commerceItem, true);
-                                onRemoveItemFailed = true;
-                                enableItemDelete(false);
-                            }
-                            mErrorHandlerView.showToast();
+                    activity.runOnUiThread(() -> {
+                        if (cartProductAdapter != null) {
+                            onRemoveItemLoadFail(commerceItem, true);
+                            onRemoveItemFailed = true;
+                            enableItemDelete(false);
                         }
+                        mErrorHandlerView.showToast();
                     });
                 }
             }
@@ -983,8 +1119,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
     public Call<ShoppingCartResponse> removeAllCartItem(final CommerceItem commerceItem) {
         mRemoveAllItemFromCartTapped = true;
-        mToggleItemRemoved.onRemoveItem(true);
-        updateCartSummary(0);
+        onRemoveItem(true);
         Call<ShoppingCartResponse> shoppingCartResponseCall = OneAppService.INSTANCE.removeAllCartItems();
         shoppingCartResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<ShoppingCartResponse>() {
             @Override
@@ -994,9 +1129,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                         CartResponse cartResponse = convertResponseToCartResponseObject(shoppingCartResponse);
                         mRemoveAllItemFromCartTapped = false;
                         updateCart(cartResponse, commerceItem);
-                        mToggleItemRemoved.onRemoveSuccess();
+                        updateCartSummary(0);
+                        onRemoveSuccess();
                     } else {
-                        mToggleItemRemoved.onRemoveItem(false);
+                        onRemoveItem(false);
                     }
                     Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
                 } catch (Exception ex) {
@@ -1011,7 +1147,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 if (activity != null) {
                     activity.runOnUiThread(() -> {
                         mRemoveAllItemFailed = true;
-                        mToggleItemRemoved.onRemoveItem(false);
+                        onRemoveItem(false);
                         mErrorHandlerView.hideErrorHandler();
                         mErrorHandlerView.showToast();
                     });
@@ -1024,7 +1160,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
     private void removeItemProgressBar(CommerceItem commerceItem, boolean visibility) {
         if (commerceItem == null) {
-            mToggleItemRemoved.onRemoveItem(visibility);
+            onRemoveItem(visibility);
         }
     }
 
@@ -1049,18 +1185,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             cartResponse.orderSummary = data.orderSummary;
             cartResponse.voucherDetails = data.voucherDetails;
             cartResponse.productCountMap = data.productCountMap;// set delivery location
-            if (!TextUtils.isEmpty(data.suburbName) && !TextUtils.isEmpty(data.provinceName)) {
-                Province province = new Province();
-                province.name = data.provinceName;
-                province.id = data.provinceId;
-                if (cartResponse.orderSummary.store != null) {
-                    Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, null, cartResponse.orderSummary.store));
-                } else if (cartResponse.orderSummary.suburb != null) {
-                    Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, cartResponse.orderSummary.suburb, null));
-                }
-                if (cartResponse.orderSummary.store != null || cartResponse.orderSummary.suburb != null)
-                    setDeliveryLocation(Utils.getPreferredDeliveryLocation());
+            if (cartResponse.orderSummary.fulfillmentDetails != null) {
+                Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(cartResponse.orderSummary.fulfillmentDetails));
             }
+            setDeliveryLocation(Utils.getPreferredDeliveryLocation());
             JSONObject itemsObject = new JSONObject(new Gson().toJson(data.items));
             Iterator<String> keys = itemsObject.keys();
             ArrayList<CartItemGroup> cartItemGroups = new ArrayList<>();
@@ -1140,17 +1268,26 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         super.onResume();
         Activity activity = getActivity();
         Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.CART_LIST);
-        checkLocationChangeAndReload();
         if (activity != null) {
             activity.registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
         }
+        ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
+        if (lastDeliveryLocation != null) {
+            setDeliveryLocation(lastDeliveryLocation);
+        }
+
+        FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
+        Bundle removeFromCartParams = new Bundle();
+        removeFromCartParams.putString(FirebaseAnalytics.Param.CURRENCY,FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE);
+        removeFromCartParams.putString(FirebaseAnalytics.Param.VALUE, " ");
+        mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.VIEW_CART, removeFromCartParams);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         Activity activity = getActivity();
-        if (activity != null) {
+        if (activity != null && mConnectionBroadcast != null) {
             activity.unregisterReceiver(mConnectionBroadcast);
         }
     }
@@ -1179,12 +1316,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                         if (cartProductAdapter != null) {
                             cartProductAdapter.clear();
                         }
-                        Activity activity = getActivity();
-                        if (activity != null) {
-                            CartActivity cartActivity = (CartActivity) activity;
-                            cartActivity.hideEditCart();
-                        }
-                        Call<SetDeliveryLocationSuburbResponse> setDeliveryLocationSuburb = OneAppService.INSTANCE.setSuburb(lastDeliveryLocation.storePickup ? lastDeliveryLocation.store.getId() : lastDeliveryLocation.suburb.id);
+                        hideEditCart();
+                        //TODO: need to refactor
+                       /* Call<SetDeliveryLocationSuburbResponse> setDeliveryLocationSuburb = OneAppService.INSTANCE.setSuburb(lastDeliveryLocation.storePickup ? lastDeliveryLocation.store.getId() : lastDeliveryLocation.suburb.id);
                         setDeliveryLocationSuburb.enqueue(new CompletionHandler<>(new IResponseListener<SetDeliveryLocationSuburbResponse>() {
                             @Override
                             public void onSuccess(SetDeliveryLocationSuburbResponse setDeliveryLocationSuburbResponse) {
@@ -1209,7 +1343,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                                 );
 
                             }
-                        }, SetDeliveryLocationSuburbResponse.class));
+                        }, SetDeliveryLocationSuburbResponse.class));*/
                     } else {
                         // Fallback if there is no cached location
                         loadShoppingCart(false);
@@ -1248,7 +1382,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     break;
                 case REQUEST_SUBURB_CHANGE:
                     loadShoppingCartAndSetDeliveryLocation();
-                    reloadFragment();
                     break;
                 case REDEEM_VOUCHERS_REQUEST_CODE:
                 case APPLY_PROMO_CODE_REQUEST_CODE:
@@ -1267,7 +1400,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             switch (resultCode) {
                 case REQUEST_CHECKOUT_ON_DESTROY:
                     reloadFragment();
-                    finishActivityOnCheckoutSuccess();
                     break;
                 case RESULT_RELOAD_CART:
                     checkLocationChangeAndReload();
@@ -1278,23 +1410,28 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             }
         }
 
+        if (requestCode == REQUEST_SUBURB_CHANGE) {
+            loadShoppingCartAndSetDeliveryLocation();
+        }
+
+        if (requestCode == CART_LAUNCH_VALUE && resultCode == SSOActivity.SSOActivityResult.STATE_MISMATCH.rawValue()) {
+            // login screen opens on cart and user closes it without login then move tab to last opened tab.
+            Activity activity = getActivity();
+            if (activity != null && activity instanceof BottomNavigationActivity) {
+                int previousTabIndex = ((BottomNavigationActivity) activity).getPreviousTabIndex();
+                ((BottomNavigationActivity) activity).getBottomNavigationById().setCurrentItem(previousTabIndex);
+            }
+        }
+
         // Retry callback when saved address api fails
         if (resultCode == ErrorHandlerActivity.RESULT_RETRY) {
             callSavedAddress();
         }
     }
 
-    private void finishActivityOnCheckoutSuccess() {
-        Activity activity = getActivity();
-        if (activity != null) {
-            activity.setResult(CHECKOUT_SUCCESS);
-            activity.finish();
-            activity.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
-        }
-    }
-
     private void checkLocationChangeAndReload() {
-        ShoppingDeliveryLocation deliveryLocation = Utils.getPreferredDeliveryLocation();
+        //TODO: need to refactor
+       /* ShoppingDeliveryLocation deliveryLocation = Utils.getPreferredDeliveryLocation();
         String currentSuburbId = null;
         String currentStoreId = null;
         int currentCartCount = QueryBadgeCounter.getInstance().getCartCount();
@@ -1306,31 +1443,35 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         }
         if (currentStoreId == null && currentSuburbId == null) {
             //Fresh install with no location selection.
-        } else if (currentSuburbId == null && !(currentStoreId == localStoreId)) {
+        } else if (currentSuburbId == null && !(currentStoreId.equals(localStoreId))) {
             localStoreId = currentStoreId;
             localSuburbId = null;
             reloadFragment();
             return;
 
-        } else if (currentStoreId == null && !(localSuburbId == currentSuburbId)) {
+        } else if (currentStoreId == null && !(localSuburbId.equals(currentSuburbId))) {
             localSuburbId = currentSuburbId;
             localStoreId = null;
             reloadFragment();
             return;
         } else if (productCountMap != null && productCountMap.getTotalProductCount() != currentCartCount) {
             reloadFragment();
-        }
+        }*/
     }
 
     private void loadShoppingCartAndSetDeliveryLocation() {
         ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
         if (lastDeliveryLocation != null) {
             setDeliveryLocation(lastDeliveryLocation);
+            loadShoppingCart(false);
         }
     }
 
-    private void reloadFragment() {
+    public void reloadFragment() {
         //Reload screen
+        setupToolbar();
+        initializeBottomTab();
+        initializeLoggedInUserCartUI();
         loadShoppingCart(false);
     }
 
@@ -1443,7 +1584,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
     private void disableQuantitySelector(Throwable error, Activity activity) {
         if (activity == null || !isAdded()) return;
-        CartActivity cartActivity = (CartActivity) activity;
         activity.runOnUiThread(() -> {
             if (error instanceof SocketTimeoutException) {
                 if (cartProductAdapter != null && btnCheckOut != null) {
@@ -1471,7 +1611,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     cartProductAdapter.updateStockAvailability(cartItems);
                 }
             }
-            cartActivity.enableEditCart();
+            enableEditCart();
             btnCheckOut.setEnabled(false);
             rlCheckOut.setEnabled(false);
         });
@@ -1609,18 +1749,23 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     }
 
     private void enableEditCart(boolean enable) {
-        Activity activity = getActivity();
-        if (activity == null) return;
-        CartActivity cartActivity = (CartActivity) activity;
-        cartActivity.enableEditCart(enable);
+        Utils.fadeInFadeOutAnimation(btnEditCart, enable);
+        btnEditCart.setEnabled(!enable);
     }
 
-    public void showEditDeliveryLocationFeatureWalkthrough() {
-        if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.deliveryLocation)
+    public void enableEditCart() {
+        Utils.fadeInFadeOutAnimation(btnEditCart, false);
+        btnEditCart.setEnabled(true);
+    }
+
+    private void showEditDeliveryLocationFeatureWalkthrough() {
+        if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.deliveryLocation
+                || getBottomNavigationActivity() == null || deliverLocationIcon == null || !isAdded() || !isVisible())
             return;
+        BottomNavigationActivity activity = getBottomNavigationActivity();
         FirebaseManager.Companion.setCrashlyticsString(getString(R.string.crashlytics_materialshowcase_key), this.getClass().getSimpleName());
-        CartActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.DELIVERY_LOCATION)
-                .setTarget(imgDeliveryLocation)
+        activity.walkThroughPromtView = new WMaterialShowcaseView.Builder(activity, WMaterialShowcaseView.Feature.DELIVERY_LOCATION)
+                .setTarget(deliverLocationIcon)
                 .setTitle(R.string.your_delivery_location)
                 .setDescription(R.string.walkthrough_delivery_location_desc)
                 .setActionText(R.string.tips_edit_delivery_location)
@@ -1629,7 +1774,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 .setShapePadding(24)
                 .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
                 .setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
-        CartActivity.walkThroughPromtView.show(getActivity());
+        activity.walkThroughPromtView.show(activity);
     }
 
     @Override
@@ -1648,7 +1793,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     public ArrayList<CartItemGroup> getCartItems() {
         return cartItems;
     }
-
 
     private void displayUpSellMessage(Data data) {
         if (data == null || data.globalMessages == null || mRemoveAllItemFromCartTapped) return;
@@ -1673,12 +1817,16 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     }
 
     public void showRedeemVoucherFeatureWalkthrough() {
+        BottomNavigationActivity activity = getBottomNavigationActivity();
+        if (activity == null || !isAdded() || !isVisible()) {
+            return;
+        }
         if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.cartRedeemVoucher) {
             isMaterialPopUpClosed = true;
             return;
         }
-        CartActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.CART_REDEEM_VOUCHERS)
-                .setTarget(new View(getActivity()))
+        activity.walkThroughPromtView = new WMaterialShowcaseView.Builder(activity, WMaterialShowcaseView.Feature.CART_REDEEM_VOUCHERS)
+                .setTarget(new View(activity))
                 .setTitle(R.string.redeem_voucher_walkthrough_title)
                 .setDescription(R.string.redeem_voucher_walkthrough_desc)
                 .setActionText(R.string.got_it)
@@ -1687,7 +1835,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 .setShouldRender(false)
                 .setArrowPosition(WMaterialShowcaseView.Arrow.NONE)
                 .setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
-        CartActivity.walkThroughPromtView.show(getActivity());
+        activity.walkThroughPromtView.show(activity);
     }
 
     public void showAvailableVouchersToast(int availableVouchersCount) {
@@ -1814,7 +1962,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     private void setItemLimitsBanner() {
         Activity activity = getActivity();
         if (activity != null && isAdded()) {
-            CartUtils.Companion.updateItemLimitsBanner(productCountMap, itemLimitsBanner, itemLimitsMessage, itemLimitsCounter, Utils.getPreferredDeliveryLocation().storePickup);
+            CartUtils.Companion.updateItemLimitsBanner(productCountMap, itemLimitsBanner, itemLimitsMessage, itemLimitsCounter, KotlinUtils.Companion.getPreferredDeliveryType() == Delivery.CNC);
         }
     }
 

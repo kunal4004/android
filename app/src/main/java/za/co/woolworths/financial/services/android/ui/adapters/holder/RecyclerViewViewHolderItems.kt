@@ -1,26 +1,22 @@
 package za.co.woolworths.financial.services.android.ui.adapters.holder
 
-import android.graphics.Color
 import android.text.Html
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.product_details_fragment.*
 import kotlinx.android.synthetic.main.product_listing_page_row.view.*
 import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
 import kotlinx.android.synthetic.main.product_listing_promotional_images.view.*
 import za.co.woolworths.financial.services.android.contracts.IProductListing
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.util.ImageManager
-import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -32,6 +28,7 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
             setPromotionalImage(promotionImages,virtualTryOn)
             setProductName(this)
             setBrandText(this, nextProduct, previousProduct)
+            setBrandHeaderDescriptionText(this)
             setPromotionalText(this)
             val priceItem = PriceItem()
             priceItem.setPrice(productList, itemView)
@@ -116,6 +113,15 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
         }
     }
 
+    private fun setBrandHeaderDescriptionText(productList: ProductList?) = with(itemView) {
+        if(TextUtils.isEmpty(productList?.brandHeaderDescription)){
+            tvRangeName?.visibility = GONE
+        } else {
+            tvRangeName?.visibility = VISIBLE
+            tvRangeName?.text = productList?.brandHeaderDescription
+        }
+    }
+
     private fun setPromotionalImage(imPromo: PromotionImages?,virtualTryOn : String?) {
         with(itemView) {
             measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
@@ -150,20 +156,8 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
     companion object {
         // Extracting the fulfilmentStoreId from user location or default MC config
         fun getFulFillmentStoreId(fulfilmentTypeId: String): String {
-            val quickShopDefaultValues = WoolworthsApplication.getQuickShopDefaultValues()
-            val userSelectedDeliveryLocation = Utils.getPreferredDeliveryLocation()
             var defaultStoreId = ""
-            if (userSelectedDeliveryLocation == null || (userSelectedDeliveryLocation.suburb?.fulfillmentStores == null && userSelectedDeliveryLocation.store?.fulfillmentStores == null) || !SessionUtilities.getInstance().isUserAuthenticated) {
-                quickShopDefaultValues?.suburb?.fulfilmentTypes?.forEach { fulfillmentType ->
-                    if (fulfillmentType.fulfilmentTypeId.equals(fulfilmentTypeId, ignoreCase = true)) {
-                        defaultStoreId = fulfillmentType.fulfilmentStoreId.toString()
-                        return@forEach
-                    }
-                }
-            } else {
-                Utils.retrieveStoreId(fulfilmentTypeId)?.let { defaultStoreId = it }
-            }
-
+            Utils.retrieveStoreId(fulfilmentTypeId)?.let { defaultStoreId = it }
             return defaultStoreId
         }
     }

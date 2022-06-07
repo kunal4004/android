@@ -36,8 +36,12 @@ public class OtherSkus {
 	@SerializedName("wasPrice")
 	@Expose
 	public String wasPrice;
-	public int quantity;
+	public int quantity = -1;
 	@SerializedName("kilogramPrice")
 	@Expose
 	public String kilogramPrice;
+
+	@SerializedName("styleIdOnSale")
+	@Expose
+	public Boolean styleIdOnSale;
 }

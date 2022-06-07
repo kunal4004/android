@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.credit_card_delivery_validate_address_fail
 import kotlinx.android.synthetic.main.credit_card_delivery_validate_address_request_layout.*
 import kotlinx.android.synthetic.main.npc_processing_request_layout.*
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.*
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -26,6 +27,7 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTag
 import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProgressStateFragment
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -48,11 +50,12 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
         bundle?.apply {
-            statusResponse = Utils.jsonStringToObject(getString("StatusResponse"), StatusResponse::class.java) as StatusResponse?
+            statusResponse = getParcelable(BundleKeysConstants.STATUS_RESPONSE)
         }
         confirmAddress?.setOnClickListener(this)
         editAddress?.setOnClickListener(this)
         contactCourier?.setOnClickListener(this)
+        callCourierPartner?.setOnClickListener(this)
         retryOnInvalidAddress?.setOnClickListener(this)
         retryOnValidateAddressFailure?.setOnClickListener(this)
         retryGetTimeSlots?.setOnClickListener(this)
@@ -79,7 +82,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
                 activity?.onBackPressed()
             }
             R.id.contactCourier, R.id.callCourierPartner -> {
-                activity?.apply { Utils.makeCall(WoolworthsApplication.getCreditCardDelivery().callCenterNumber) }
+                activity?.apply { Utils.makeCall(AppConfigSingleton.creditCardDelivery?.callCenterNumber) }
             }
             R.id.retryOnValidateAddressFailure, R.id.retryOnInvalidAddress -> {
                 activity?.apply {
@@ -113,7 +116,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
                         scheduleDeliveryRequest.addressDetails?.x = it.x
                         scheduleDeliveryRequest.addressDetails?.y = it.y
                         bundle?.putString("ScheduleDeliveryRequest", Utils.toJson(scheduleDeliveryRequest))
-                        bundle?.putString("StatusResponse", Utils.toJson(statusResponse))
+                        bundle?.putParcelable(BundleKeysConstants.STATUS_RESPONSE, statusResponse)
                     }
                 }
             }

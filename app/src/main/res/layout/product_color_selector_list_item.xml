@@ -6,19 +6,29 @@
     android:background="@color/white"
     android:orientation="vertical"
     android:paddingTop="@dimen/four_dp"
-    android:paddingBottom="@dimen/four_dp">
+    android:paddingBottom="@dimen/four_dp"
+    android:paddingStart="@dimen/four_dp">
 
     <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
         android:id="@+id/color"
         android:layout_width="@dimen/fourty_dp"
         android:layout_height="@dimen/fourty_dp"
         fresco:roundedCornerRadius="11.5dp"
-        />
+        android:layout_marginTop="@dimen/five_dp" />
 
     <FrameLayout
         android:id="@+id/border"
         android:layout_width="@dimen/fourty_dp"
         android:layout_height="@dimen/fourty_dp"
-        />
+        android:layout_marginTop="@dimen/five_dp">
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/saveLabelImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/fifteen_dp"
+        android:src="@drawable/ic_save_label"
+        android:visibility="invisible" />
 
 </FrameLayout>

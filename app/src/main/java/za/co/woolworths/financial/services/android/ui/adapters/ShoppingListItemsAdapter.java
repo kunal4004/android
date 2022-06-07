@@ -108,7 +108,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				final ShoppingListItem shoppingListItem = getItem(position);
 				if (shoppingListItem == null) return;
 				if (shoppingListItem.displayName == null) return;
-				holder.cartProductImage.setImageURI(shoppingListItem.externalImageRefV2 + "?w=" + 85 + "&q=" + 85);
+				holder.cartProductImage.setImageURI(shoppingListItem.externalImageRefV2);
 				holder.productName.setText(shoppingListItem.displayName);
 				holder.tvQuantity.setText(String.valueOf(shoppingListItem.userQuantity));
 				holder.price.setText(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(shoppingListItem.price));
@@ -413,9 +413,7 @@ holder.price.setAlpha(1f);
 	}
 
 	public boolean userShouldSetSuburb() {
-		ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation();
-		if (shoppingDeliveryLocation == null) return true;
-		return (shoppingDeliveryLocation.suburb == null && shoppingDeliveryLocation.store == null);
+		return Utils.getPreferredDeliveryLocation() == null;
 	}
 
 	public void resetSelection() {

@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice;
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class MyPreferencesActivity extends AppCompatActivity implements MyPreferencesInterface {
@@ -90,17 +92,19 @@ public class MyPreferencesActivity extends AppCompatActivity implements MyPrefer
 
     @Override
     public void onBackPressed() {
-        if (navigationHost.getCurrentDestination() == null) {
-            return;
-        }
+        try{
+            if (navigationHost.getCurrentDestination() == null) {
+                return;
+            }
 
-        switch (navigationHost.getCurrentDestination().getId()) {
-            case R.id.myPreferencesFragment:
+            if (navigationHost.getCurrentDestination().getId() == R.id.myPreferencesFragment) {
                 finishActivity();
-                break;
-            default:
+            } else {
                 navigationHost.popBackStack();
-                break;
+            }
+        }
+        catch(Exception e) {
+            FirebaseManager.logException(e);
         }
     }
 
@@ -138,6 +142,14 @@ public class MyPreferencesActivity extends AppCompatActivity implements MyPrefer
         }
         TextView title = mPrefsToolbar.findViewById(R.id.toolbarText);
         title.setGravity(gravity);
+    }
+
+    @Override
+    public void hideToolbar() {
+        if (mPrefsToolbar == null) {
+            return;
+        }
+        mPrefsToolbar.setVisibility(View.GONE);
     }
 
     public void setDefaultPrimaryDevice(UserDevice defaultPrimaryDevice) {

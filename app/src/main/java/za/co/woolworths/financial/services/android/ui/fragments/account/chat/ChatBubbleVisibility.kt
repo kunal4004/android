@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 
 import android.app.Activity
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.Account
@@ -29,7 +30,7 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
 
     // config.inAppChat.minimumSupportedAppBuildNumber >= currentAppBuildNumber
     private val isInAppChatFeatureEnabled: Boolean
-        get() = WoolworthsApplication.getInAppChat()?.isEnabled ?: false
+        get() = AppConfigSingleton.inAppChat?.isEnabled ?: false
 
     /**
      * In Accounts Landing: Loop through all the Products returned with the Accounts Response.
@@ -65,13 +66,13 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
 
         var productGroupCodeAccount: Account? = null
         accountList?.forEach { account ->
-            if (account.productGroupCode?.toLowerCase(Locale.getDefault()) == productGroupCode) {
+            if (account.productGroupCode?.lowercase() == productGroupCode) {
                 productGroupCodeAccount = account
                 return@forEach
             }
         }
 
-        return productGroupCodeAccount?.productOfferingGoodStanding != true && (productGroupCodeAccount?.productOfferingStatus == Utils.ACCOUNT_ACTIVE) || when (activity){
+        return productGroupCodeAccount?.productOfferingGoodStanding != true && (productGroupCodeAccount?.productOfferingStatus?.equals(Utils.ACCOUNT_ACTIVE, ignoreCase = true) == true) || when (activity) {
             is PayMyAccountActivity, is WTransactionsActivity, is StatementActivity, is AbsaStatementsActivity -> true
             else -> false
         }
@@ -232,7 +233,7 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
     }
 
     private fun isLiveChatEnabled(applyNowState: ApplyNowState): Boolean {
-        val chatConfig = WoolworthsApplication.getInAppChat()?.liveChatEnabled
+        val chatConfig = AppConfigSingleton.inAppChat?.liveChatEnabled
         val isLiveChatEnabled = when (activity) {
 
             is MyAccountActivity, is BottomNavigationActivity -> chatConfig?.accountsLanding
@@ -309,6 +310,6 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
 
     private fun isAccountNotChargeOff(productGroupCode: AccountsProductGroupCode): Boolean {
         val account = accountList?.singleOrNull { it.productGroupCode == productGroupCode.groupCode }
-        return account?.productOfferingStatus != Utils.ACCOUNT_CHARGED_OFF
+        return account?.productOfferingStatus == Utils.ACCOUNT_ACTIVE
     }
 }

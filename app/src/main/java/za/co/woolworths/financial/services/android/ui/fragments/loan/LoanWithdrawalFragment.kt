@@ -24,11 +24,12 @@ import za.co.woolworths.financial.services.android.models.dto.IssueLoan
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.util.DialogManager
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.LoanWithdrawalPopupDialog
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
@@ -55,12 +56,17 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.loan_withdrawal, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as? LoanWithdrawalActivity)?.setContentDescriptionForActionBarHomeIcon("closeIcon")
         mErrorHandlerView = ErrorHandlerView(activity)
         configureEditText()
         menuItemVisible(false)
@@ -68,7 +74,6 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
     }
 
     private fun populatePersonalLoanView() {
-        val activity = activity ?: return
         tvAvailableFunds?.text = currencyFormatter(getAvailableFund())
         tvCreditLimit?.text = currencyFormatter(getCreditLimit())
         nexImageView?.setOnClickListener(this)
@@ -116,7 +121,8 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
         }
     }
 
-    inner class NumberTextWatcherForThousand(private var edtLoanWithdrawal: EditText) : TextWatcher {
+    inner class NumberTextWatcherForThousand(private var edtLoanWithdrawal: EditText) :
+        TextWatcher {
         private var previousLength: Int = 0
         private var backSpace: Boolean = false
 
@@ -142,8 +148,8 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
                 edtLoanWithdrawal.removeTextChangedListener(this)
                 if (s.isNotEmpty()) {
                     var loanAmount = s.toString()
-                            .replace(".0", "")
-                            .replace(" ", "")
+                        .replace(".0", "")
+                        .replace(" ", "")
                     loanAmount = loanAmount.substring(0, loanAmount.length - 1)
                     if (TextUtils.isEmpty(loanAmount)) {
                         edtLoanWithdrawal.setText("")
@@ -241,19 +247,29 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
         when {
             //Available fund less than minimum draw amount
             getAvailableFundWithoutCent() < getMinDrawnAmountWithoutCent() -> {
-                activity?.let { Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.NOT_AVAILABLE_LOAN_AMOUNT, drawnDownAmount.toString()) }
+                showLoanWithdrawalPopup(
+                    popupType = LoanWithdrawalPopupDialog.LoanWithdrawalPopupType.LoanAmountUnavailable(
+                        drawnDownAmount = drawnDownAmount.toString()
+                    )
+                )
             }
             drawnDownAmount < getMinDrawnAmountWithoutCent() -> {
-                activity?.let { Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.LOW_LOAN_AMOUNT, drawnDownAmount.toString()) }
+                showLoanWithdrawalPopup(popupType = LoanWithdrawalPopupDialog.LoanWithdrawalPopupType.TooLow)
             }
             drawnDownAmount >= getMinDrawnAmountWithoutCent() && drawnDownAmount <= getAvailableFundWithoutCent() -> {
                 val productOfferingId = getProductOfferingId()
                 val drawnDownAmountInCent = getDrawnDownAmount() * 100
                 val creditLimit = getCreditLimit()
-                val issueLoanRequest = IssueLoan(productOfferingId, drawnDownAmountInCent, repaymentPeriod(), creditLimit)
+                val issueLoanRequest = IssueLoan(
+                    productOfferingId,
+                    drawnDownAmountInCent,
+                    repaymentPeriod(),
+                    creditLimit
+                )
                 showProgressDialog(true)
                 mPostLoanIssue = OneAppService.issueLoan(issueLoanRequest)
-                mPostLoanIssue?.enqueue(CompletionHandler(object : IResponseListener<IssueLoanResponse> {
+                mPostLoanIssue?.enqueue(CompletionHandler(object :
+                    IResponseListener<IssueLoanResponse> {
                     override fun onSuccess(issueLoanResponse: IssueLoanResponse?) {
                         activity?.let { activity ->
                             issueLoanResponse?.apply {
@@ -261,24 +277,35 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
                                 showProgressDialog(false)
                                 hideKeyboard()
                                 when (httpCode) {
-                                    200 -> {
+                                    HTTP_OK -> {
                                         replaceFragment(
-                                                fragment = LoanWithdrawalDetailFragment.newInstance(Utils.toJson(issueLoanRequest), installmentAmount),
-                                                tag = LoanWithdrawalDetailFragment::class.java.simpleName,
-                                                containerViewId = R.id.flLoanContent,
-                                                allowStateLoss = true,
-                                                enterAnimation = R.anim.slide_in_from_right,
-                                                exitAnimation = R.anim.slide_to_left,
-                                                popEnterAnimation = R.anim.slide_from_left,
-                                                popExitAnimation = R.anim.slide_to_right
+                                            fragment = LoanWithdrawalDetailFragment.newInstance(
+                                                Utils.toJson(issueLoanRequest),
+                                                installmentAmount
+                                            ),
+                                            tag = LoanWithdrawalDetailFragment::class.java.simpleName,
+                                            containerViewId = R.id.flLoanContent,
+                                            allowStateLoss = true,
+                                            enterAnimation = R.anim.slide_in_from_right,
+                                            exitAnimation = R.anim.slide_to_left,
+                                            popEnterAnimation = R.anim.slide_from_left,
+                                            popExitAnimation = R.anim.slide_to_right
                                         )
                                     }
-                                    440 -> {
-                                        SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams, activity)
+                                    HTTP_SESSION_TIMEOUT_440 -> {
+                                        SessionUtilities.getInstance().setSessionState(
+                                            SessionDao.SESSION_STATE.INACTIVE,
+                                            response.stsParams,
+                                            activity
+                                        )
                                     }
 
                                     else -> {
-                                        response?.desc?.let { DialogManager(activity).showBasicDialog(it) }
+                                        showLoanWithdrawalPopup(
+                                            LoanWithdrawalPopupDialog.LoanWithdrawalPopupType.GenericPopup(
+                                                response?.desc
+                                            )
+                                        )
                                     }
                                 }
                             }
@@ -294,9 +321,24 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
 
                 }, IssueLoanResponse::class.java))
             }
-            else -> {
-                activity?.let { Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.HIGH_LOAN_AMOUNT, getAvailableFundWithoutCent().toString()) }
-            }
+            else -> showLoanWithdrawalPopup(
+                popupType = LoanWithdrawalPopupDialog.LoanWithdrawalPopupType.TooHigh(
+                    drawnDownAmount = getAvailableFundWithoutCent().toString()
+                )
+            )
+        }
+    }
+
+    private fun showLoanWithdrawalPopup(
+        popupType: LoanWithdrawalPopupDialog.LoanWithdrawalPopupType
+    ) {
+        requireActivity().apply {
+            val rootedDeviceInfoFragment =
+                LoanWithdrawalPopupDialog.newInstance(popupType)
+            rootedDeviceInfoFragment.show(
+                supportFragmentManager,
+                LoanWithdrawalPopupDialog::class.java.simpleName
+            )
         }
     }
 
@@ -342,7 +384,10 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
     private fun hideKeyboard() {
         activity?.let {
             it.currentFocus?.windowToken?.apply {
-                (it.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.hideSoftInputFromWindow(this, 0)
+                (it.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.hideSoftInputFromWindow(
+                    this,
+                    0
+                )
             }
         }
     }

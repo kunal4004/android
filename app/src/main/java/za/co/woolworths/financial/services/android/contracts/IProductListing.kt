@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.contracts
 import android.location.Location
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
-import za.co.woolworths.financial.services.android.models.dto.Configs
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 
 interface IProductListing {
@@ -23,4 +22,5 @@ interface IProductListing {
      *  @see ApiInterface.getProducts
      */
     fun showLiquorDialog()
+    fun openBrandLandingPage()
 }

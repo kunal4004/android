@@ -13,14 +13,18 @@ import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.pay_my_account_activity.*
 import za.co.woolworths.financial.services.android.contracts.IPaymentOptionContract
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl.Companion.ELITE_PLAN_MODEL
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.GET_CARD_RESPONSE
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.IS_DONE_BUTTON_ENABLED
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.SCREEN_TYPE
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment.Companion.REQUEST_ELITEPLAN
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment.Companion.REQUEST_ELITEPLAN_SUCCESS
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.CreditAndDebitCardPaymentsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_UPDATE_CARD_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMAManageCardFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
+import za.co.woolworths.financial.services.android.util.eliteplan.ElitePlanModel
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartDestinationType
 
@@ -50,6 +54,7 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
 
     private fun setNavHostStartDestination() {
         intent?.extras?.apply {
+            payMyAccountViewModel.elitePlanModel = getParcelable<ElitePlanModel>(ELITE_PLAN_MODEL)
             val bundle = Bundle()
             bundle.putString(GET_CARD_RESPONSE, getString(GET_CARD_RESPONSE,""))
             bundle.putBoolean(IS_DONE_BUTTON_ENABLED, getBoolean(IS_DONE_BUTTON_ENABLED, false))
@@ -152,12 +157,15 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
 
         val extras = data?.extras
         when (requestCode) {
-            PAY_MY_ACCOUNT_REQUEST_CODE -> {
+            PAY_MY_ACCOUNT_REQUEST_CODE, REQUEST_ELITEPLAN -> {
                 when (resultCode) {
                     RESULT_OK, PMA_UPDATE_CARD_RESULT_CODE -> {
                         extras?.getString(PAYMENT_DETAIL_CARD_UPDATE,"")?.apply {
                             payMyAccountViewModel.setPMACardInfo(this)
                         }
+                    }
+                    REQUEST_ELITEPLAN_SUCCESS->{
+                        finish()
                     }
 
                     PMA3DSecureProcessRequestFragment.PMA_TRANSACTION_COMPLETED_RESULT_CODE -> {
@@ -179,6 +187,7 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
                     }
                 }
             }
+
         }
     }
 }

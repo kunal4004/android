@@ -23,6 +23,7 @@ class AppConstant {
         const val DELAY_1500_MS: Long = 1500
         const val DELAY_3000_MS: Long = 3000
         const val DELAY_500_MS: Long = 500
+
         // Durations
         const val DURATION_1000_MS: Long = 1000
 
@@ -43,25 +44,38 @@ class AppConstant {
         const val DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT = "Accounts Product Statement"
         const val DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT = "Pay My Account"
 
-        const val PLAY_STORE_URL ="https://play.google.com/store/apps/details?id="
+        const val PLAY_STORE_URL = "https://play.google.com/store/apps/details?id="
         const val VTO_FACE_NOT_DETECT = "face_not_detect"
         const val VTO_INVALID_IMAGE_PATH = "invalid_image_path"
         const val VTO_FAIL_IMAGE_LOAD = "image_load_fail"
         const val VTO_COLOR_NOT_MATCH = "color_not_match"
         const val VTO_COLOR_LIVE_CAMERA = "color_match"
-        const val VTO =  "Virtual Try On"
+        const val VTO = "Virtual Try On"
+        const val SDK_INIT_FAIL = "sdk_init_fail"
 
         //Absa cookie content
         const val ABSA_COOKIE_WFPT = "wfpt"
         const val ABSA_COOKIE_XFPT = "xfpt"
 
         const val EMPTY_STRING = ""
+
         const val FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL:Long = 7200
         const val FIREBASE_REMOTE_CONFIG_TIMEOUT_INTERVAL:Long = 15
 
-
-       const val BALANCE_PROTECTION_INSURANCE_REQUEST_CODE: Int = 291621
+        const val BALANCE_PROTECTION_INSURANCE_REQUEST_CODE: Int = 291621
         const val BALANCE_PROTECTION_INSURANCE_OPT_IN_SUCCESS_RESULT_CODE: Int = 20
+
+        const val ALPHA_1F: Float = 1.0F
+        const val ALPHA_POINT_3F: Float = 0.3F
+
+
+        //order details
+        const val TAG_ORDER_DETAILS_FRAGMENT: String = "OrderDetailsFragment"
+        const val TAG_ORDER_TO_CART_FRAGMENT: String = "OrderToCartFragment"
+        const val TAG_TAX_INVOICE_FRAGMENT: String = "TaxInvoiceFragment"
+        const val ORDER_ID: String = "ORDER_ID"
+        const val REQUEST_CODE_ORDER_DETAILS_PAGE = 1989
+        const val NAVIGATED_FROM_MY_ACCOUNTS = "NAVIGATED_FROM_MY_ACCOUNTS"
     }
 
     enum class DashDetailsViewType(val value: Int) { HEADER_TITLE(0), APP_FEATURE_LIST(1), TERMS_AND_CONDITION(2) }

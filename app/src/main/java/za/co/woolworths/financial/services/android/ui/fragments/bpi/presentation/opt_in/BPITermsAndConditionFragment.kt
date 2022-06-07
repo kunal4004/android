@@ -3,17 +3,18 @@ package za.co.woolworths.financial.services.android.ui.fragments.bpi.presentatio
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.webkit.WebResourceRequest
+import android.webkit.WebSettings
 import android.webkit.WebView
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.google.gson.JsonParser
-import com.huawei.hms.support.log.common.Base64
 import kotlinx.android.synthetic.main.balance_protection_insurance_activity.*
 import kotlinx.android.synthetic.main.bpi_email_sent_failure_layout.*
 import kotlinx.android.synthetic.main.bpi_email_sent_success_layout.*
@@ -174,6 +175,10 @@ class BPITermsAndConditionFragment : Fragment()  {
         bpiTermsConditionsWebView?.apply {
             with(settings) {
                 javaScriptEnabled = true
+                allowContentAccess = true
+                domStorageEnabled = true
+                cacheMode = WebSettings.LOAD_NO_CACHE
+                mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
             }
 
             webViewClient = object : android.webkit.WebViewClient() {
@@ -220,7 +225,7 @@ class BPITermsAndConditionFragment : Fragment()  {
         var email = ""
         val splitToken = OneAppService.getSessionToken().split(".")
         if(splitToken.size > 1){
-            val decodedBytes = Base64.decode(splitToken[1])
+            val decodedBytes = Base64.decode(splitToken[1], Base64.DEFAULT)
             email = JsonParser.parseString(String(decodedBytes)).asJsonObject["email"].asString
         }
         mainDescriptionSuccessTextview?.text = bindString(R.string.bpi_sent_email_success, email)

@@ -13,6 +13,7 @@ import android.view.View
 import android.view.WindowManager
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProviders
 import com.awfs.coordination.R
@@ -27,6 +28,7 @@ import za.co.wigroup.androidutils.Util
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.firebase.FirebaseConfigUtils
 import za.co.woolworths.financial.services.android.firebase.model.ConfigData
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
@@ -144,6 +146,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     private fun setDataOnUI(configData: ConfigData?, isComingFromSuccess: Boolean) {
+        Utils.setScreenName(FirebaseManagerAnalyticsProperties.ScreenNames.SPLASH_WITH_CTA)
         progress_bar?.visibility = View.GONE
         first_btn?.visibility = View.VISIBLE
         second_btn?.visibility = View.VISIBLE
@@ -280,6 +283,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     fun showNonVideoViewWithErrorLayout() {
+        Utils.setScreenName(FirebaseManagerAnalyticsProperties.ScreenNames.STARTUP_API_ERROR)
         runOnUiThread {
             progressBar?.visibility = View.GONE
             splashNoVideoView?.visibility = View.GONE
@@ -347,7 +351,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     fun getConfig() {
-        startupViewModel.queryServiceGetConfig().observe(this, {
+        startupViewModel.queryServiceGetConfig().observe(this) {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     ConfigResource.persistGlobalConfig(it.data, startupViewModel)
@@ -358,7 +362,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                     }
 
                     if (!startupViewModel.isVideoPlaying) {
-                        if(startupViewModel.isConnectedToInternet(this)) {
+                        if (startupViewModel.isConnectedToInternet(this)) {
                             fetchFirebaseConfigData(true)
                         } else {
                             showNonVideoViewWithErrorLayout()
@@ -372,7 +376,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                     fetchFirebaseConfigData(false)
                 }
             }
-        })
+        }
     }
 
     //video player on completion
@@ -389,6 +393,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     fun presentNextScreenOrServerMessage() {
+        Utils.setScreenName(FirebaseManagerAnalyticsProperties.ScreenNames.SPLASH_WITHOUT_CTA)
         showNonVideoViewWithoutErrorLayout()
         presentNextScreen()
     }
@@ -404,7 +409,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         val isFirstTime = startupViewModel.getSessionDao(SessionDao.KEY.ON_BOARDING_SCREEN)
         var appLinkData: Any? = deeplinkIntent.data
 
-        WoolworthsApplication.setIsBadgesRequired(deeplinkIntent.extras?.containsKey("google.message_id") != true)
+        AppConfigSingleton.isBadgesRequired = deeplinkIntent.extras?.containsKey("google.message_id") != true
 
         if (appLinkData == null && deeplinkIntent.extras != null) {
             appLinkData = deeplinkIntent.extras
@@ -421,6 +426,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                 ScreenManager.presentMain(activity)
             }
         }
+        // forgot password deeplink
+        forgotPasswordDeeplink()
     }
 
     fun handleAppLink(appLinkData: Any?) {
@@ -442,11 +449,10 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     override fun onStart() {
         super.onStart()
         if (Utils.checkForBinarySu() && CommonUtils.isRooted(this) && !Util.isDebug(
-                WoolworthsApplication.getAppContext()
+                this.applicationContext
             )
         ) {
             Utils.setScreenName(
-                this,
                 FirebaseManagerAnalyticsProperties.ScreenNames.DEVICE_ROOTED_AT_STARTUP
             )
             val rootedDeviceInfoFragment = newInstance(getString(R.string.rooted_phone_desc))
@@ -485,9 +491,24 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     override fun onResume() {
         super.onResume()
-        Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.STARTUP)
         NotificationUtils.clearNotifications(this@StartupActivity)
     }
+
+    private fun forgotPasswordDeeplink() {
+        var uri = intent.data
+        if (null != uri) {
+            var params = uri.pathSegments
+            var forgotPassword = params[params.size - 1]
+            if (null != forgotPassword && forgotPassword.contentEquals("forgot-password")) {
+                getForgotPasswordLink(uri.toString())
+            }
+        }
+    }
+
+    private fun getForgotPasswordLink(forgotPasswordUri: String) {
+        ScreenManager.forgotPassword(this@StartupActivity,forgotPasswordUri)
+    }
+
 
     @VisibleForTesting
     fun testsetupLoadingScreen() {

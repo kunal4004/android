@@ -9,12 +9,12 @@
         android:id="@+id/viewStatementImageView"
         style="@style/accountPaymentOptionIconImageViewStyle"
         android:contentDescription="@string/view_statements"
+        android:src="@drawable/calendar_white"
         app:layout_constraintBottom_toTopOf="@+id/viewStatementTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/calendar_white" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/viewStatementTextView"

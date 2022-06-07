@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account
 
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
@@ -25,6 +26,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.request
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment.Companion.REQUEST_ELITEPLAN_SUCCESS
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import java.net.ConnectException
@@ -152,6 +154,7 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
                     when (httpCode) {
                         200 -> {
                             if (paymentSuccessful) {
+                                activity?.let { payMyAccountViewModel.triggerFirebaseEventForPaymentComplete(it) }
                                 stopSpinning(true)
                                 paymentValueTextView?.text = Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(amount))
                                 updateUIOnSuccess()
@@ -217,8 +220,11 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
 
     private fun finishActivity() {
         activity?.apply {
-            payMyAccountViewModel.triggerFirebaseEventForPaymentComplete(this)
-            setResult(PMA_TRANSACTION_COMPLETED_RESULT_CODE, Intent().putExtra(PayMyAccountActivity.PAYMENT_DETAIL_CARD_UPDATE, payMyAccountViewModel.getCardDetailInStringFormat()))
+            if (payMyAccountViewModel.elitePlanModel !=null){
+                setResult(REQUEST_ELITEPLAN_SUCCESS)
+            }else{
+                setResult(PMA_TRANSACTION_COMPLETED_RESULT_CODE, Intent().putExtra(PayMyAccountActivity.PAYMENT_DETAIL_CARD_UPDATE, payMyAccountViewModel.getCardDetailInStringFormat()))
+            }
             finish()
             overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
         }

@@ -105,7 +105,7 @@ class PriceItem {
 
                     tvPrice?.apply {
                         text = priceText
-                        setTextColor(ContextCompat.getColor(WoolworthsApplication.getAppContext(), R.color.was_price_color))
+                        setTextColor(ContextCompat.getColor(WoolworthsApplication.getAppContext(), R.color.promo_text_color))
                     }
                 }
             }

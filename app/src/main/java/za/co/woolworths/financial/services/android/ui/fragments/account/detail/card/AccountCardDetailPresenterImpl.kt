@@ -14,6 +14,7 @@ import retrofit2.Call
 import za.co.woolworths.financial.services.android.analytic.FirebaseCreditLimitIncreaseEvent
 import za.co.woolworths.financial.services.android.contracts.IAccountCardDetailsContract
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
@@ -28,6 +29,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.C
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils.PRIMARY_CARD_POSITION
+import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.util.*
 
 class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsContract.AccountCardDetailView?, private var model: IAccountCardDetailsContract.AccountCardDetailModel?) : IAccountCardDetailsContract.AccountCardDetailPresenter, IGenericAPILoaderView<Any> {
@@ -309,7 +311,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
     override fun isVirtualCardEnabled(): Boolean {
         val response = getStoreCardResponse()
-        return response?.storeCardsData?.generateVirtualCard == true && WoolworthsApplication.getVirtualTempCard()?.isEnabled ?: false
+        return response?.storeCardsData?.generateVirtualCard == true && AppConfigSingleton.virtualTempCard?.isEnabled ?: false
     }
 
     override fun isVirtualCardObjectNotNull(): Boolean {
@@ -349,7 +351,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         }
         val primaryCard = storeCardsData.primaryCards.get(PRIMARY_CARD_POSITION)
         val blockType = primaryCard.blockType?.toLowerCase(Locale.getDefault())
-        return !storeCardsData?.generateVirtualCard && WoolworthsApplication.getInstantCardReplacement()?.isEnabled == true
+        return !storeCardsData?.generateVirtualCard && AppConfigSingleton.instantCardReplacement?.isEnabled == true
                 && TemporaryFreezeStoreCard.PERMANENT.equals(blockType, ignoreCase = true)
     }
 
@@ -360,7 +362,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         //Conditions to Activate VTC
         //generateVirtualCard = true && vtc enabled from config.
         return (storeCardsData.generateVirtualCard
-                && WoolworthsApplication.getVirtualTempCard()?.isEnabled == true)
+                && AppConfigSingleton.virtualTempCard?.isEnabled == true)
     }
 
     override fun isTemporaryCardEnabled(): Boolean {
@@ -383,7 +385,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         if (response?.storeCardsData?.generateVirtualCard == false
                 && !TextUtils.isEmpty(primaryCard?.blockType)
                 && TemporaryFreezeStoreCard.PERMANENT.equals(primaryCard?.blockType, ignoreCase = true)
-                && WoolworthsApplication.getInstantCardReplacement()?.isEnabled == true) {
+                && AppConfigSingleton.instantCardReplacement?.isEnabled == true) {
             return true
         }
         return false

@@ -9,14 +9,16 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import za.co.wigroup.androidutils.Util
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.network.ApiInterface
 import za.co.woolworths.financial.services.android.models.network.CommonHeaderInterceptor
 import za.co.woolworths.financial.services.android.models.network.RetrofitConfig.Companion.READ_CONNECT_TIMEOUT_UNIT
 import za.co.woolworths.financial.services.android.models.network.RetrofitConfig.Companion.READ_CONNECT_TIMEOUT_UNIT_QA
 import za.co.woolworths.financial.services.android.ui.fragments.integration.remote.interceptor.CommonAbsaHeadersInterceptor
 import za.co.woolworths.financial.services.android.ui.fragments.integration.remote.interceptor.ReceivedCookiesInterceptor
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-class AbsaNetworkCall : IAbsaNetworkCall {
+class AbsaNetworkCall @Inject constructor() : IAbsaNetworkCall {
 
     override fun <T> build(clazz: Class<T>, baseUrl: String): T {
         val httpBuilder = okHttpClientBuilder()
@@ -72,6 +74,12 @@ class AbsaNetworkCall : IAbsaNetworkCall {
 object AbsaRemoteApi {
     val service: AbsaApi by lazy {
         AbsaNetworkCall().build(AbsaApi::class.java, "${BuildConfig.HOST}/creditcard-service/app/v4/" )
+    }
+}
+
+object RemoteDataSource {
+    val service: ApiInterface by lazy {
+        AbsaNetworkCall().build(ApiInterface::class.java, BuildConfig.HOST + "/" )
     }
 }
 

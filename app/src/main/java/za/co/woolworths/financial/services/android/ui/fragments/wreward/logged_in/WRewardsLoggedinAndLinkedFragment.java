@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in;
 
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.app.Activity;
@@ -394,17 +396,20 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.vouchers)
 			return;
 		FirebaseManager.Companion.setCrashlyticsString(getString(R.string.crashlytics_materialshowcase_key),this.getClass().getCanonicalName());
-		getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.VOUCHERS)
-				.setTarget(counterView)
-				.setTitle(R.string.tips_tricks_your_vouchers)
-				.setDescription(R.string.walkthrough_vouchers_desc)
-				.setActionText(R.string.tips_tricks_view_these_now)
-				.setImage(R.drawable.tips_tricks_ic_coupon)
-				.setAction(this)
-				.setShapePadding(24)
-				.setArrowPosition(WMaterialShowcaseView.Arrow.TOP_CENTER)
-				.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
-		getBottomNavigationActivity().walkThroughPromtView.show(getActivity());
+		FragmentActivity fragmentActivity = getActivity();
+		if(fragmentActivity != null){
+			getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(fragmentActivity, WMaterialShowcaseView.Feature.VOUCHERS)
+					.setTarget(counterView)
+					.setTitle(R.string.tips_tricks_your_vouchers)
+					.setDescription(R.string.walkthrough_vouchers_desc)
+					.setActionText(R.string.tips_tricks_view_these_now)
+					.setImage(R.drawable.tips_tricks_ic_coupon)
+					.setAction(this)
+					.setShapePadding(24)
+					.setArrowPosition(WMaterialShowcaseView.Arrow.TOP_CENTER)
+					.setMaskColour(ContextCompat.getColor(fragmentActivity, R.color.semi_transparent_black)).build();
+			getBottomNavigationActivity().walkThroughPromtView.show(fragmentActivity);
+		}
 	}
 
 	public enum TabState {
