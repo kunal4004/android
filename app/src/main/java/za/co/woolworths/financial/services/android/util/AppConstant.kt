@@ -46,6 +46,7 @@ class AppConstant {
         /*****************************************************************************************
          * Request Codes
          *****************************************************************************************/
+        const val REQUEST_CODE = "REQUEST_CODE"
         //Dash
         const val REQUEST_CODE_QUERY_INVENTORY_FOR_STORE = 3343
         //order details
