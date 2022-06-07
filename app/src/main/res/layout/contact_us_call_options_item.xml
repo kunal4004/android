@@ -10,8 +10,7 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:minHeight="70dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="8dp">
+        android:padding="16dp">
 
         <ImageView
             android:id="@+id/localCallerImg"
@@ -57,7 +56,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/_10sdp"
             android:background="@drawable/ic_caret_black" />
 
 
@@ -67,8 +65,8 @@
         android:id="@+id/localCallerPhoneNumberDivider"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_1sdp"
-        android:layout_marginEnd="@dimen/_10sdp"
         android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
         android:background="#0a000000" />
 
 </LinearLayout>

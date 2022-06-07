@@ -21,7 +21,8 @@
             android:background="@color/white"
             android:minHeight="68dp"
             android:orientation="vertical"
-            android:paddingStart="16dp"
+            android:paddingStart="@dimen/_10sdp"
+            android:paddingEnd="@dimen/_10sdp"
             android:paddingTop="20dp">
 
             <TextView
@@ -65,26 +66,13 @@
                 android:background="@color/recent_search_bg" />
         </LinearLayout>
 
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#0a000000" />
-
-
         <LinearLayout
             android:id="@+id/callUsLinearLayoutContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/white"
             android:orientation="vertical" />
 
-        <View
-            android:id="@+id/contactUsFaxNumberHorizontalView"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginEnd="@dimen/_10sdp"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:background="@color/recent_search_bg" />
 
         <RelativeLayout
             android:id="@+id/contactUsFaxNumberRelativeLayout"
@@ -93,8 +81,13 @@
             android:background="@color/white"
             android:minHeight="70dp"
             android:paddingStart="16dp"
-            android:visibility="gone"
-            android:paddingEnd="8dp">
+            android:paddingEnd="16dp"
+            android:visibility="gone">
+            <View
+                android:id="@+id/contactUsFaxNumberHorizontalView"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/recent_search_bg" />
 
             <ImageView
                 android:id="@+id/faxImg"
@@ -139,10 +132,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="@dimen/_10sdp"
                 android:background="@drawable/ic_caret_black" />
-
-
         </RelativeLayout>
 
         <LinearLayout
