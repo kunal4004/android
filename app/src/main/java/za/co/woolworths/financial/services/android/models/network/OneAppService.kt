@@ -286,27 +286,23 @@ object OneAppService : RetrofitConfig() {
     fun getProducts(requestParams: ProductsRequestParams): Call<ProductView> {
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
 
+        val deliveryType = if (requestParams.isUserBrowsing) KotlinUtils.browsingDeliveryType?.type
+            ?: Delivery.STANDARD.type
+        else KotlinUtils.getDeliveryType()?.deliveryType ?: Delivery.STANDARD.type
+
         return if (Utils.isLocationEnabled(appContext())) {
             mApiInterface.getProducts("", "",  "",
                 "", getSessionToken(), getDeviceIdentityToken(), requestParams.searchTerm, requestParams.searchType.value,
                 requestParams.responseType.value, requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption,
                 requestParams.refinement, suburbId = suburbId, storeId = storeId, filterContent = requestParams.filterContent,
-                deliveryType =
-                    if(requestParams.isUserBrowsing) KotlinUtils.browsingDeliveryType?.type ?: Delivery.STANDARD.type
-                    else KotlinUtils.getDeliveryType()?.deliveryType ?: Delivery.STANDARD.type,
-                deliveryDetails =
-                    KotlinUtils.getDeliveryDetails(requestParams.isUserBrowsing)
+                deliveryType = deliveryType, deliveryDetails = KotlinUtils.getDeliveryDetails(requestParams.isUserBrowsing)
             )
         } else {
             mApiInterface.getProductsWithoutLocation("", "", getSessionToken(),
                 getDeviceIdentityToken(), requestParams.searchTerm, requestParams.searchType.value, requestParams.responseType.value,
                 requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption, requestParams.refinement, suburbId = suburbId,
                 storeId = storeId, filterContent =  requestParams.filterContent,
-                deliveryType =
-                if(requestParams.isUserBrowsing) KotlinUtils.browsingDeliveryType?.type ?: Delivery.STANDARD.type
-                else KotlinUtils.getDeliveryType()?.deliveryType ?: Delivery.STANDARD.type,
-                deliveryDetails =
-                KotlinUtils.getDeliveryDetails(requestParams.isUserBrowsing)
+                deliveryType = deliveryType, deliveryDetails = KotlinUtils.getDeliveryDetails(requestParams.isUserBrowsing)
             )
         }
     }
@@ -375,24 +371,19 @@ object OneAppService : RetrofitConfig() {
     fun productDetail(productId: String, skuId: String, isUserBrowsing: Boolean = false): Call<ProductDetailResponse> {
         val loc = getMyLocation()
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
+        val deliveryType =
+            if (isUserBrowsing) KotlinUtils.browsingDeliveryType?.type ?: Delivery.STANDARD.type
+            else KotlinUtils.getDeliveryType()?.deliveryType ?: Delivery.STANDARD.type
         return if (Utils.isLocationEnabled(appContext())) {
             mApiInterface.productDetail("", "",
                      loc.longitude, loc.latitude, getSessionToken(), getDeviceIdentityToken(),
                     productId, skuId, suburbId, storeId,
-                deliveryType =
-                    if(isUserBrowsing) KotlinUtils.browsingDeliveryType?.type ?: Delivery.STANDARD.type
-                    else KotlinUtils.getDeliveryType()?.deliveryType ?: Delivery.STANDARD.type,
-                deliveryDetails =
-                    KotlinUtils.getDeliveryDetails(isUserBrowsing))
+                deliveryType = deliveryType, deliveryDetails = KotlinUtils.getDeliveryDetails(isUserBrowsing))
         } else {
             mApiInterface.productDetail( "", "",
                 getSessionToken(), getDeviceIdentityToken(),
-                    productId, skuId, suburbId, storeId,
-                deliveryType =
-                    if(isUserBrowsing) KotlinUtils.browsingDeliveryType?.type ?: Delivery.STANDARD.type
-                    else KotlinUtils.getDeliveryType()?.deliveryType ?: Delivery.STANDARD.type,
-                deliveryDetails =
-                KotlinUtils.getDeliveryDetails(isUserBrowsing))
+                    productId, skuId, suburbId, storeId, deliveryType = deliveryType,
+                deliveryDetails = KotlinUtils.getDeliveryDetails(isUserBrowsing))
         }
     }
 
