@@ -10,7 +10,6 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
-import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -88,8 +87,6 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery.Companion
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
-import java.util.*
-import kotlin.collections.ArrayList
 
 class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItemClick,
     View.OnClickListener, NetworkChangeListener, ToastInterface, IWalkthroughActionListener,
@@ -188,8 +185,6 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             return
         }
 
-        //Things to do after login is successful
-        setEmptyCartUIUserName()
         //One time biometricsWalkthrough
         if (isVisible) {
             ScreenManager.presentBiometricWalkthrough(activity)
@@ -206,7 +201,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         btnCheckOut?.setOnClickListener(this)
         orderTotalLayout.setOnClickListener(this)
         deliveryLocationConstLayout.setOnClickListener(this)
-        
+
         btn_dash_set_address.text = getString(R.string.start_shopping)
         btn_dash_set_address.setOnClickListener(this)
     }
@@ -410,7 +405,8 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
     private fun navigateToCheckout(response: SavedAddressResponse?) {
         val activity: Activity = requireActivity()
         if (((getPreferredDeliveryType() == Delivery.STANDARD)
-                    && !TextUtils.isEmpty(response?.defaultAddressNickname))) {
+                    && !TextUtils.isEmpty(response?.defaultAddressNickname))
+        ) {
             //   - CNAV : Checkout  activity
             Utils.triggerFireBaseEvents(
                 FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT,
@@ -433,8 +429,9 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                 R.anim.slide_from_right,
                 R.anim.slide_out_to_left
             )
-        }  else if (getPreferredDeliveryType() == Delivery.DASH &&
-             !TextUtils.isEmpty(response?.defaultAddressNickname)) {
+        } else if (getPreferredDeliveryType() == Delivery.DASH &&
+            !TextUtils.isEmpty(response?.defaultAddressNickname)
+        ) {
             val checkoutActivityIntent = Intent(activity, CheckoutActivity::class.java)
             checkoutActivityIntent.putExtra(
                 CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
@@ -604,7 +601,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                 rvCartList?.visibility = View.GONE
                 rlCheckOut?.visibility = View.GONE
                 onRemoveSuccess()
-                empty_state_template?.visibility = View.VISIBLE
+                setEmptyCartUIUserName()
                 setDeliveryLocationEnabled(true)
                 resetToolBarIcons()
                 isMaterialPopUpClosed = true
@@ -819,7 +816,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
 
     private fun getUpdatedCommerceItem(
         cartItems: ArrayList<CartItemGroup>,
-        commerceId: String
+        commerceId: String,
     ): CommerceItem? {
         for (cartItemGroup: CartItemGroup in cartItems) {
             for (commerceItem: CommerceItem in cartItemGroup.commerceItems) {
@@ -835,6 +832,9 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
 
     private fun updateCartSummary(cartCount: Int) {
         instance.setCartCount(cartCount)
+        if (cartCount == 0) {
+            setEmptyCartUIUserName()
+        }
     }
 
     private fun onChangeQuantityComplete() {
@@ -1427,7 +1427,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
 
     private fun initInventoryRequest(
         storeId: String?,
-        multiSku: String?
+        multiSku: String?,
     ): Call<SkusInventoryForStoreResponse> {
         val skuInventoryForStoreResponseCall = getInventorySkuForStore(
             (storeId)!!, (multiSku)!!
@@ -1722,7 +1722,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         activity.walkThroughPromtView.show(activity)
     }
 
-    fun showAvailableVouchersToast(availableVouchersCount: Int) {
+    private fun showAvailableVouchersToast(availableVouchersCount: Int) {
         if (availableVouchersCount < 1 || !isMaterialPopUpClosed) return
         mToastUtils?.apply {
             activity = requireActivity()
@@ -1839,7 +1839,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         )
     }
 
-    fun navigateToApplyPromoCodePage() {
+    private fun navigateToApplyPromoCodePage() {
         val intent = Intent(context, AvailableVouchersToRedeemInCart::class.java)
         startActivityForResult(
             intent, APPLY_PROMO_CODE_REQUEST_CODE
