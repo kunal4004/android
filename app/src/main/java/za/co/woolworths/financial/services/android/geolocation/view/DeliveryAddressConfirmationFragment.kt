@@ -467,15 +467,19 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
 
                                 /*reset browsing data for cnc and dash both once fullfillment location is confirmed*/
-                                WoolworthsApplication.setCncBrowsingValidatePlaceDetails(validateLocationResponse?.validatePlace)
-                                WoolworthsApplication.setDashBrowsingValidatePlaceDetails(validateLocationResponse?.validatePlace)
+                                WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
+                                    validateLocationResponse?.validatePlace)
+                                WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
+                                    validateLocationResponse?.validatePlace)
 
                                 if (KotlinUtils.isLocationSame == false && deliveryType != Delivery.CNC.name) {
                                     KotlinUtils.browsingCncStore = null
                                 }
 
                                 if (deliveryType == Delivery.CNC.name) {
-                                    KotlinUtils.browsingCncStore = GeoUtils.getStoreDetails(mStoreId, validateLocationResponse?.validatePlace?.stores)
+                                    KotlinUtils.browsingCncStore =
+                                        GeoUtils.getStoreDetails(mStoreId,
+                                            validateLocationResponse?.validatePlace?.stores)
                                 }
 
                                 WoolworthsApplication.setValidatedSuburbProducts(
