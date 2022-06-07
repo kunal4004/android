@@ -26,6 +26,11 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import kotlinx.android.synthetic.main.checkout_add_address_new_user.*
 import kotlinx.android.synthetic.main.checkout_new_user_address_details.*
 import kotlinx.android.synthetic.main.checkout_new_user_recipient_details.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.ProvinceSuburbType.*
@@ -82,13 +87,14 @@ import java.net.HttpURLConnection.HTTP_OK
 import java.util.*
 import java.util.regex.Pattern
 import kotlin.collections.ArrayList
+import kotlin.coroutines.CoroutineContext
 
 
 /**
  * Created by Kunal Uttarwar on 29/05/21.
  */
 class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(),
-    View.OnClickListener {
+    View.OnClickListener, CoroutineScope {
 
     private var deliveringOptionsList: List<String>? = null
     private var navController: NavController? = null
@@ -105,7 +111,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     private var selectedAddressPosition: Int = -1
     private var isComingFromCheckout: Boolean = false
     private var isComingFromSlotSelection: Boolean = false
-
+    private var isValidAddress: Boolean = false;
 
     companion object {
         const val PROVINCE_SELECTION_BACK_PRESSED = "5645"
@@ -134,6 +140,11 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         super.onCreate(savedInstanceState)
         handleBundleResponse()
     }
+
+
+    private val job = Job()
+    override val coroutineContext: CoroutineContext
+        get() = job + Main
 
     fun handleBundleResponse() {
         bundle = arguments?.getBundle(BUNDLE)
@@ -257,14 +268,18 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         addressNicknameEditText.setText(selectedAddress.savedAddress.nickname)
         unitComplexFloorEditText.setText(selectedAddress.savedAddress.address2)
         suburbEditText.setText(selectedAddress.savedAddress.suburb)
+        suburbEditText.isEnabled = false
         provinceAutocompleteEditText.setText(selectedAddress.provinceName)
+        provinceAutocompleteEditText.isEnabled = false
         cellphoneNumberEditText.setText(selectedAddress.savedAddress.primaryContactNo)
         recipientNameEditText.setText(selectedAddress.savedAddress.recipientName)
         if (selectedAddress.savedAddress.postalCode.isNullOrEmpty()) {
             postalCode.text.clear()
         } else
             postalCode.setText(selectedAddress.savedAddress.postalCode)
+            postalCode.isEnabled = false
         selectedDeliveryAddressType = selectedAddress.savedAddress.addressType
+        isValidAddress=true
     }
 
     private fun initView() {
@@ -505,6 +520,18 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     if (addressText2.isNullOrEmpty()) addressText2 = address.name
                 }
             }
+        }
+
+        if (addressText1.isNullOrEmpty() && addressText2.isNullOrEmpty()) {
+            isValidAddress = false
+            launch(Dispatchers.Main) {
+                autocompletePlaceErrorMsg?.text =
+                    getString(R.string.geo_loc_error_msg_on_edit_address)
+                showAnimationErrorMessage(autocompletePlaceErrorMsg, View.VISIBLE, 0)
+            }
+        } else {
+            isValidAddress = true
+
         }
         if (!selectedAddress.provinceName.isNullOrEmpty() && !selectedAddress.savedAddress.suburb.isNullOrEmpty())
             selectedAddress.savedAddress.region = ""
@@ -799,6 +826,11 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             showErrorDialog()
             return
         }
+        if (!isValidAddress) {
+            autocompletePlaceErrorMsg.text = getString(R.string.geo_loc_error_msg_on_edit_address)
+            showAnimationErrorMessage(autocompletePlaceErrorMsg, View.VISIBLE, 0)
+            return
+        }
         Utils.triggerFireBaseEvents(
             FirebaseManagerAnalyticsProperties.CHECKOUT_SAVE_ADDRESS, hashMapOf(
                 FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
@@ -1042,15 +1074,15 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                                     navController?.navigateUp()
                                 }
                             }
-                            AppConstant.HTTP_SESSION_TIMEOUT_400, AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
+                            AppConstant.HTTP_SESSION_TIMEOUT_400 -> {
                                 addAddressErrorResponse(response, R.string.update_address_error)
                             }
+                            AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
+
+                                validateNickNameWithServerError(response)
+                            }
                             else -> {
-                                presentErrorDialog(
-                                    getString(R.string.common_error_unfortunately_something_went_wrong),
-                                    getString(R.string.no_internet_subtitle),
-                                    ERROR_TYPE_ADD_ADDRESS
-                                )
+                                validateNickNameWithServerError(response)
                             }
                         }
                     }
@@ -1214,6 +1246,18 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
 
+    private fun showNickNameServerError(errorMsg: String?) {
+        addressNicknameEditText?.setBackgroundResource(R.drawable.input_error_background)
+        addressNicknameErrorMsg?.visibility = View.VISIBLE
+        addressNicknameErrorMsg?.text = errorMsg
+        showAnimationErrorMessage(
+            addressNicknameErrorMsg,
+            View.VISIBLE,
+            recipientAddressLayout.y.toInt()
+        )
+    }
+
+
     private fun showErrorInputField(editText: EditText?, visible: Int) {
         editText?.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_error_background else R.drawable.recipient_details_input_edittext_bg)
         if (editText != null) {
@@ -1283,5 +1327,27 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     @VisibleForTesting
     fun testGetSavedAddress(): SavedAddressResponse? {
         return savedAddressResponse
+    }
+
+    private fun validateNickNameWithServerError(response: AddAddressResponse) {
+        var nickNameErrorMessage: String? = ""
+        response?.validationErrors?.let {
+            nickNameErrorMessage = it.stream().filter { error ->
+                error?.getField().equals(BundleKeysConstants.NICK_NAME)
+                    .and(!error?.getField().isNullOrEmpty())
+                    .and(!error?.getMessage().isNullOrEmpty())
+            }.findFirst().orElse(null)?.getMessage()
+        }
+
+        if (!nickNameErrorMessage.isNullOrEmpty()) {
+            showNickNameServerError(nickNameErrorMessage)
+        } else {
+            presentErrorDialog(
+                getString(R.string.common_error_unfortunately_something_went_wrong),
+                getString(R.string.no_internet_subtitle),
+                ERROR_TYPE_ADD_ADDRESS
+            )
+
+        }
     }
 }

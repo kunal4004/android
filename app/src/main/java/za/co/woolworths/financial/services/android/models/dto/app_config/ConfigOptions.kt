@@ -7,5 +7,6 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class ConfigOptions(
         @SerializedName("key") val key: String,
+        @SerializedName("displayName") val displayName: String,
         @SerializedName("value") val value: String
 ) : Parcelable

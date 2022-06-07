@@ -1,10 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 
-import android.Manifest;
 import android.os.Bundle;
 import android.os.StrictMode;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -16,7 +14,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.awfs.coordination.R;
-import java.util.ArrayList;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -32,18 +29,14 @@ import za.co.woolworths.financial.services.android.ui.fragments.statement.Statem
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
-import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
-import za.co.woolworths.financial.services.android.util.PermissionUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment.ACCOUNTS;
 
-public class StatementActivity extends AppCompatActivity implements PermissionResultCallback {
+public class StatementActivity extends AppCompatActivity {
 
     private final CompositeDisposable disposables = new CompositeDisposable();
     private WTextView mToolbarText;
-    private PermissionUtils permissionUtils;
-    ArrayList<String> permissions;
     private Menu mMenu;
     private ActionBar actionBar;
     public static final String SEND_USER_STATEMENT = "SEND_USER_STATEMENT";
@@ -60,9 +53,6 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
         initUI();
         StatementFragment statementFragment = new StatementFragment();
         openNextFragment(statementFragment);
-        permissionUtils = new PermissionUtils(this, this);
-        permissions = new ArrayList<>();
-        permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
         if (getIntent().getExtras() != null) {
             Bundle bundle = getIntent().getExtras();
@@ -186,45 +176,6 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
     }
 
     @Override
-    public void PermissionGranted(int request_code) {
-        runOnUiThread(() -> {
-            FragmentManager fm = getSupportFragmentManager();
-            Fragment fragmentId = fm.findFragmentById(R.id.flEStatement);
-            if (fragmentId instanceof StatementFragment) {
-                ((StatementFragment) fragmentId).getPdfFile(mAccountWithApplyNowState.getFirst());
-            }
-        });
-    }
-
-    @Override
-    public void PartialPermissionGranted(int request_code, ArrayList<
-            String> granted_permissions) {
-
-    }
-
-    @Override
-    public void PermissionDenied(int request_code) {
-
-    }
-
-    @Override
-    public void NeverAskAgain(int request_code) {
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        // redirects to utils
-        permissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    public void checkPermission() {
-        permissionUtils.check_permission(permissions, "Explain here why the app needs permissions", 1);
-    }
-
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.statement_menu_item, menu);
@@ -244,5 +195,9 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
 
     public Pair<ApplyNowState, Account> getAccountWithApplyNowState() {
         return mAccountWithApplyNowState;
+    }
+
+    public ApplyNowState getApplyNowStateForStatement() {
+        return mAccountWithApplyNowState.getFirst();
     }
 }
