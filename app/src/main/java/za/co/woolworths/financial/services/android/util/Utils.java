@@ -1165,6 +1165,9 @@ public class Utils {
             case DELIVERY_DETAILS:
                 appInstanceObject.featureWalkThrough.delivery_details = true;
                 break;
+            case MY_LIST:
+                appInstanceObject.featureWalkThrough.my_lists = true;
+                break;
             default:
                 break;
         }
