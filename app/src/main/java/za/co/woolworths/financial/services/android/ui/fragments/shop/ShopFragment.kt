@@ -466,7 +466,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     if(requestCode == BARCODE_ACTIVITY_REQUEST_CODE) {
                         val searchType = SearchType.valueOf(extras.getString("searchType", ""))
                         val searchTerm: String = extras.getString("searchTerm", "")
-                        (this as? BottomNavigationActivity)?.pushFragment(newInstance(searchType, "", searchTerm, true))
+                        (this as? BottomNavigationActivity)?.pushFragment(newInstance(searchType, "", searchTerm, false))
                     }
                 }
             }
