@@ -72,8 +72,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductLis
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.views.*
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
@@ -96,8 +94,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 open class ProductListingFragment : ProductListingExtensionFragment(), GridNavigator,
     IProductListing, View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected,
-    WMaterialShowcaseView.IWalkthroughActionListener,
-    IOnConfirmDeliveryLocationActionListener, ChanelNavigationClickListener {
+    WMaterialShowcaseView.IWalkthroughActionListener, ChanelNavigationClickListener {
 
     private var LOGIN_REQUEST_SUBURB_CHANGE = 1419
     private var lastVisibleItem: Int = 0
@@ -376,7 +373,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                             WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
                                 browsingPlaceDetails)
                             setTitle() // update plp location.
-                            onConfirmLocation() // This will again call addToCart
+                            onConfirmedLocation() // This will again call addToCart
                         }
                     }
                 }
@@ -1078,18 +1075,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         when (requestCode) {
             QUERY_INVENTORY_FOR_STORE_REQUEST_CODE, SET_DELIVERY_LOCATION_REQUEST_CODE -> {
                 if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue() || resultCode == RESULT_OK) {
-                    if (Utils.getPreferredDeliveryLocation() != null)
-                        mSelectedProductList?.let { productList ->
-                            mFulfilmentTypeId?.let {
-                                queryInventoryForStore(
-                                    it,
-                                    mAddItemToCart,
-                                    productList
-                                )
-                            }
-                        }
-                    else
-                        requestCartSummary()
+                    requestCartSummary()
                 }
             }
             QUERY_LOCATION_ITEM_REQUEST_CODE -> {
@@ -1719,7 +1705,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
                 when (response?.httpCode) {
                     HTTP_OK -> {
-                        confirmDeliveryLocation()
+                        if (Utils.getPreferredDeliveryLocation() != null)
+                            callConfirmPlace()
+                        else
+                            setNewLocation()
                     }
                 }
             }
@@ -1727,20 +1716,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             override fun onFailure(error: Throwable?) {
                 dismissProgressBar()
             }
-
         })
     }
 
-    fun confirmDeliveryLocation() {
-        this.childFragmentManager.apply {
-            ConfirmDeliveryLocationFragment.newInstance().let {
-                it.isCancelable = false
-                it.show(this, ConfirmDeliveryLocationFragment::class.java.simpleName)
-            }
-        }
-    }
-
-    override fun onConfirmLocation() {
+    private fun onConfirmedLocation() {
         mSelectedProductList?.let { productList ->
             mFulfilmentTypeId?.let {
                 queryInventoryForStore(
@@ -1752,7 +1731,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
     }
 
-    override fun onSetNewLocation() {
+    private fun setNewLocation() {
         activity?.apply {
             KotlinUtils.presentEditDeliveryGeoLocationActivity(
                 this,
