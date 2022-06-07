@@ -40,8 +40,7 @@ import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingLi
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.*
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ShopPagerAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -83,6 +82,10 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private var validateLocationResponse: ValidateLocationResponse? = null
     private var tabWidth: Float? = 0f
 
+    companion object {
+        private const val LOGIN_MY_LIST_REQUEST_CODE = 9876
+    }
+
     private val confirmAddressViewModel: ConfirmAddressViewModel by lazy {
         ViewModelProvider(
             this,
@@ -108,7 +111,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         tvSearchProduct?.setOnClickListener { navigateToProductSearch() }
         imBarcodeScanner?.setOnClickListener { checkCameraPermission() }
         shopToolbar?.setOnClickListener { onEditDeliveryLocation() }
-        showSerachAndBarcodeUi()
 
         shopPagerAdapter = ShopPagerAdapter(childFragmentManager, mTabTitle, this)
         viewpager_main?.offscreenPageLimit = 2
@@ -127,8 +129,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
 
             override fun onPageSelected(position: Int) {
-                shopPagerAdapter?.notifyDataSetChanged()
-                updateTabIconUI(position)
                 activity?.apply {
                     when (position) {
                         0 -> {
@@ -152,6 +152,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     }
                     setupToolbar(position)
                 }
+                shopPagerAdapter?.notifyDataSetChanged()
+                updateTabIconUI(position)
             }
         })
         tabs_main?.setupWithViewPager(viewpager_main)
@@ -159,18 +161,18 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         showShopFeatureWalkThrough()
     }
 
-    fun showSerachAndBarcodeUi(){
+    fun showSerachAndBarcodeUi() {
         tvSearchProduct?.visibility = View.VISIBLE
         imBarcodeScanner?.visibility = View.VISIBLE
     }
 
-    fun hideSerachAndBarcodeUi(){
+    fun hideSerachAndBarcodeUi() {
         tvSearchProduct?.visibility = View.GONE
         imBarcodeScanner?.visibility = View.GONE
     }
 
     private fun executeValidateSuburb() {
-       val placeId = getDeliveryType()?.address?.placeId ?: return
+        val placeId = getDeliveryType()?.address?.placeId ?: return
         placeId.let {
             lifecycleScope.launch {
                 progressBar?.visibility = View.VISIBLE
@@ -317,9 +319,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun updateTabIconUI(selectedTab: Int) {
-        if (selectedTab == 0 || selectedTab == 2) {
+        if (selectedTab == 0) {
             showSerachAndBarcodeUi()
-        } else if (selectedTab == 1 && KotlinUtils.browsingCncStore == null)  {
+        } else if (selectedTab == 1 && KotlinUtils.browsingCncStore == null) {
             hideSerachAndBarcodeUi()
         }
         tabs_main?.let { tab ->
@@ -356,7 +358,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
     }
 
-     fun setDeliveryView() {
+    fun setDeliveryView() {
         activity?.let {
             getDeliveryType()?.let { fulfillmentDetails ->
                 KotlinUtils.setDeliveryAddressView(
@@ -368,9 +370,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 )
             }
         }
-
-
-
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -536,6 +535,14 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                         viewpager_main.currentItem
                     ) as? ChangeFullfilmentCollectionStoreFragment
                 changeFullfilmentCollectionStoreFragment?.init()
+            }
+        }
+
+        if (requestCode == LOGIN_MY_LIST_REQUEST_CODE) {
+            (activity as? BottomNavigationActivity)?.let {
+                it.bottomNavigationById.setCurrentItem(INDEX_ACCOUNT)
+                val fragment = MyListsFragment()
+                it.pushFragment(fragment)
             }
         }
     }
@@ -908,6 +915,31 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
     }
 
+    private fun showMyListsFeatureWalkThrough() {
+        (activity as? BottomNavigationActivity)?.let {
+            // Prevent dialog to display in other section when fragment is not visible
+            if (it.currentFragment !is ShopFragment || !isAdded || AppInstanceObject.get().featureWalkThrough.my_lists || !Utils.isFeatureWalkThroughTutorialsEnabled())
+                return
+            FirebaseManager.setCrashlyticsString(
+                bindString(R.string.crashlytics_materialshowcase_key),
+                this.javaClass.canonicalName
+            )
+            it.walkThroughPromtView =
+                WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.MY_LIST)
+                    .setTarget(it.bottomNavigationById?.getIconAt(INDEX_ACCOUNT))
+                    .setTitle(R.string.new_location_list)
+                    .setDescription(R.string.early_access_shopping)
+                    .setActionText(R.string.view_shopping_list_action)
+                    .setImage(R.drawable.add)
+                    .setShapePadding(48)
+                    .setAction(this@ShopFragment)
+                    .setArrowPosition(WMaterialShowcaseView.Arrow.BOTTOM_RIGHT)
+                    .setMaskColour(ContextCompat.getColor(it, R.color.semi_transparent_black))
+                    .build()
+            it.walkThroughPromtView.show(it)
+        }
+    }
+
     override fun onWalkthroughActionButtonClick(feature: WMaterialShowcaseView.Feature?) {
         when (feature) {
             WMaterialShowcaseView.Feature.DASH -> {
@@ -920,6 +952,17 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
             WMaterialShowcaseView.Feature.SHOPPING -> {
                 showDashFeatureWalkThrough()
+            }
+            WMaterialShowcaseView.Feature.MY_LIST ->{
+                if (SessionUtilities.getInstance().isUserAuthenticated) {
+                    (activity as? BottomNavigationActivity)?.let {
+                        it.bottomNavigationById.setCurrentItem(INDEX_ACCOUNT)
+                        val fragment = MyListsFragment()
+                        it.pushFragment(fragment)
+                    }
+                } else {
+                    ScreenManager.presentSSOSignin(activity, LOGIN_MY_LIST_REQUEST_CODE)
+                }
             }
         }
     }
@@ -934,6 +977,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
             WMaterialShowcaseView.Feature.DELIVERY_DETAILS -> {
                 executeValidateSuburb()
+                showMyListsFeatureWalkThrough()
             }
         }
     }

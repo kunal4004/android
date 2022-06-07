@@ -12,8 +12,8 @@
         android:layout_height="1dp"
         android:background="@color/bg_light_overlay"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="@dimen/_16sdp"
-        android:layout_marginEnd="@dimen/_16sdp"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -23,7 +23,7 @@
         android:layout_height="48dp"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        android:layout_marginStart="@dimen/_16sdp"
+        android:layout_marginStart="@dimen/twenty_four_dp"
         android:contentDescription="@string/placeholder"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -36,7 +36,7 @@
         style="@style/gift_item_textView_style"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/_16sdp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
         android:layout_marginBottom="0dp"
         android:text="@string/free_gift"
         android:contentDescription="@string/gwp_img_gift"

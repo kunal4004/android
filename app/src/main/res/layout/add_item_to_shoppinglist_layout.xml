@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/_45sdp"
     android:background="@color/white"
-    android:paddingStart="@dimen/_16sdp"
-    android:paddingEnd="@dimen/_16sdp">
+    android:paddingStart="@dimen/twenty_four_dp"
+    android:paddingEnd="@dimen/twenty_four_dp">
 
     <androidx.appcompat.widget.AppCompatTextView
         style="@style/my_orders_textview_style_2"
@@ -13,7 +13,6 @@
         android:drawablePadding="@dimen/sixteen_dp"
         android:gravity="center_vertical"
         android:textColor="@color/black"
-        android:textSize="@dimen/_11ssp"
         android:text="@string/add_items_to_shopping_list"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -18,28 +18,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_end="@dimen/_16sdp" />
+            app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineStart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_begin="@dimen/_16sdp" />
+            app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineBottom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_end="@dimen/_16sdp" />
+            app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineTop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_begin="@dimen/_16sdp" />
+            app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
 
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -91,7 +91,7 @@
             android:text="@string/order_type"
             android:visibility="gone"
             android:textColor="@color/color_666666"
-            android:textSize="@dimen/_12sdp"
+            android:textSize="@dimen/_11ssp"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
             app:layout_constraintTop_toBottomOf="@+id/orderNumberDivider" />
 
@@ -104,7 +104,7 @@
             android:maxLines="1"
             android:visibility="gone"
             android:textColor="@color/black"
-            android:textSize="@dimen/_12ssp"
+            android:textSize="@dimen/_11ssp"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintStart_toEndOf="@+id/orderTypeTitle"
             app:layout_constraintTop_toBottomOf="@+id/orderNumberDivider" />
@@ -118,7 +118,7 @@
             android:text="@string/number_of_items"
             android:visibility="gone"
             android:textColor="@color/color_666666"
-            android:textSize="@dimen/_12sdp"
+            android:textSize="@dimen/_11ssp"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
             app:layout_constraintTop_toBottomOf="@+id/orderTypeTitle" />
 
@@ -132,7 +132,7 @@
             android:maxLines="1"
             android:visibility="gone"
             android:textColor="@color/black"
-            android:textSize="@dimen/_12ssp"
+            android:textSize="@dimen/_11ssp"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintStart_toEndOf="@+id/numberItemTitle"
             app:layout_constraintTop_toBottomOf="@+id/orderTypeTitle" />
@@ -145,7 +145,7 @@
             android:fontFamily="@font/myriad_pro_regular"
             android:text="@string/purchase_date"
             android:textColor="@color/color_666666"
-            android:textSize="@dimen/_12sdp"
+            android:textSize="@dimen/_11ssp"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
             app:layout_constraintTop_toBottomOf="@+id/numberItemTitle" />
 
@@ -159,7 +159,7 @@
             android:maxLines="1"
             android:text=""
             android:textColor="@color/black"
-            android:textSize="@dimen/_12ssp"
+            android:textSize="@dimen/_11ssp"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintStart_toEndOf="@+id/purchaseDateTitle"
             app:layout_constraintTop_toBottomOf="@+id/numberItem" />
@@ -174,7 +174,7 @@
             android:text="@string/delivery_address"
             android:visibility="gone"
             android:textColor="@color/color_666666"
-            android:textSize="@dimen/_12sdp"
+            android:textSize="@dimen/_11ssp"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
             app:layout_constraintTop_toBottomOf="@+id/purchaseDateTitle" />
 
@@ -188,7 +188,7 @@
             android:maxLines="1"
             android:visibility="gone"
             android:textColor="@color/black"
-            android:textSize="@dimen/_12ssp"
+            android:textSize="@dimen/_11ssp"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintStart_toEndOf="@+id/purchaseDateTitle"
             app:layout_constraintTop_toBottomOf="@+id/purchaseDateTitle" />
@@ -202,7 +202,7 @@
             android:fontFamily="@font/myriad_pro_regular"
             android:text="@string/timeslot"
             android:textColor="@color/color_666666"
-            android:textSize="@dimen/_12sdp"
+            android:textSize="@dimen/_11ssp"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
             app:layout_constraintTop_toBottomOf="@+id/deliveryAddressTitle" />
 
@@ -215,7 +215,7 @@
             android:gravity="end"
             android:maxLines="1"
             android:textColor="@color/black"
-            android:textSize="@dimen/_12ssp"
+            android:textSize="@dimen/_11ssp"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintStart_toEndOf="@+id/timeslotTitle"
             app:layout_constraintTop_toBottomOf="@+id/deliveryAddressTitle" />
@@ -250,7 +250,7 @@
             android:text="@string/order_total_semicolon"
             android:textAllCaps="true"
             android:textColor="@color/black"
-            android:textSize="@dimen/_12sdp"
+            android:textSize="@dimen/_11ssp"
             app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
             app:layout_constraintTop_toBottomOf="@id/orderTotalDivider" />
@@ -274,7 +274,7 @@
             android:letterSpacing="@integer/point_eleven"
             android:textAllCaps="true"
             android:textColor="@color/black"
-            android:textSize="@dimen/_12sdp"
+            android:textSize="@dimen/_11sdp"
             app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
             app:layout_constraintEnd_toStartOf="@id/imgOrderHistory" />
 

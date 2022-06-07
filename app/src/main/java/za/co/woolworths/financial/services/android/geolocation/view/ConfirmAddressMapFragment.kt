@@ -60,6 +60,8 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LONGITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
+import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LATITUDE
+import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LONGITUDE
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.*
 import javax.inject.Inject
@@ -279,7 +281,8 @@ class ConfirmAddressMapFragment :
                                     KotlinUtils.isComingFromCncTab = false
 
                                     /* set cnc browsing data */
-                                    WoolworthsApplication.setCncBrowsingValidatePlaceDetails(validateLocationResponse?.validatePlace)
+                                    WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
+                                        validateLocationResponse?.validatePlace)
                                     activity?.finish()
                                 }
 
@@ -413,8 +416,10 @@ class ConfirmAddressMapFragment :
                         HTTP_OK -> {
 
                             /*reset browsing data for cnc and dash both once fullfillment location is comfirmed*/
-                            WoolworthsApplication.setCncBrowsingValidatePlaceDetails(validateLocationResponse?.validatePlace)
-                            WoolworthsApplication.setDashBrowsingValidatePlaceDetails(validateLocationResponse?.validatePlace)
+                            WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
+                                validateLocationResponse?.validatePlace)
+                            WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
+                                validateLocationResponse?.validatePlace)
 
                             KotlinUtils.placeId = placeId
                             KotlinUtils.isLocationSame =
@@ -476,7 +481,6 @@ class ConfirmAddressMapFragment :
                     binding?.autoCompleteTextView?.setText(placeName)
                     isAddressFromSearch = true
                     isMainPlaceName = true
-                    getStreetNumberAndRoute(placeId)
                     isStreetNumberAndRouteFromSearch = true
                     val placeFields: MutableList<Place.Field> = mutableListOf(
                         Place.Field.ID,
@@ -535,7 +539,7 @@ class ConfirmAddressMapFragment :
             binding?.imgMapMarker?.visibility = View.GONE
             binding?.confirmAddress?.isEnabled = false
             mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(DEFAULT_LATITUDE,
-                DEFAULT_LONGITUDE), 4.8f))
+                DEFAULT_LONGITUDE), 5f))
 
         }
 
@@ -611,8 +615,12 @@ class ConfirmAddressMapFragment :
                 }
             }).await()
 
-        if (isStreetNumberAndRouteFromSearch == false) {placeId = results.getOrNull(0)?.placeId.toString()
+        if (isStreetNumberAndRouteFromSearch == false) {
+            placeId = results.getOrNull(0)?.placeId.toString()
 
+            getStreetNumberAndRoute(placeId)
+        } else {
+            // here place id is d/f coming search address
             getStreetNumberAndRoute(placeId)
         }
         isStreetNumberAndRouteFromSearch = false
@@ -644,11 +652,11 @@ class ConfirmAddressMapFragment :
                             ROUTE.value -> routeName = address.name
                         }
                     }
-                    if(streetNumber.isNullOrEmpty()){
-                        streetNumber=""
+                    if (streetNumber.isNullOrEmpty()) {
+                        streetNumber = ""
                     }
-                    if(routeName.isNullOrEmpty()){
-                        routeName=""
+                    if (routeName.isNullOrEmpty()) {
+                        routeName = ""
                     }
                     placeName?.let {
                         if (!it.equals("$streetNumber $routeName",
@@ -677,11 +685,6 @@ class ConfirmAddressMapFragment :
 
     }
 
-    companion object {
-        private const val DEFAULT_LATITUDE = -30.81020
-        private const val DEFAULT_LONGITUDE = 23.72364
-    }
-
     override fun tryAgain() {
         initView()
     }
@@ -704,8 +707,14 @@ class ConfirmAddressMapFragment :
             postalCode,
             state,
             suburb)
-        viewLifecycleOwner?.lifecycleScope?.launch {
-            confirmAddressViewModel?.postSaveAddress(saveAddressLocationRequest)
+        try {
+            view?.let {
+                lifecycleScope.launch {
+                    confirmAddressViewModel.postSaveAddress(saveAddressLocationRequest)
+                }
+            }
+        } catch (e: Exception) {
+            FirebaseManager.logException(e)
         }
     }
 
