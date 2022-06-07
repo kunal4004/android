@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
-import android.app.Activity
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.Intent
@@ -36,7 +35,6 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLoca
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
-import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams.SearchType
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
@@ -49,7 +47,6 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ShopPagerAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDeliveryFragment.Companion.DEPARTMENT_LOGIN_REQUEST
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.DISPLAY_TOAST_RESULT_CODE
@@ -88,6 +85,19 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private var user: String = ""
     private var validateLocationResponse: ValidateLocationResponse? = null
     private var tabWidth: Float? = 0f
+    private val fragmentResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if(it.resultCode != RESULT_OK) {
+            return@registerForActivityResult
+        }
+        it.data?.extras?.let { extras ->
+            val requestCode = extras.getInt(AppConstant.REQUEST_CODE)
+            if(requestCode == BARCODE_ACTIVITY_REQUEST_CODE) {
+                val searchType = SearchType.valueOf(extras.getString("searchType", ""))
+                val searchTerm: String = extras.getString("searchTerm", "")
+                (requireActivity() as? BottomNavigationActivity)?.pushFragment(newInstance(searchType, "", searchTerm, false))
+            }
+        }
+    }
 
     companion object {
         private const val LOGIN_MY_LIST_REQUEST_CODE = 9876
@@ -457,20 +467,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     private fun navigateToBarcode() {
         requireActivity().apply {
-            val res = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                if(it.resultCode != RESULT_OK) {
-                    return@registerForActivityResult
-                }
-                it.data?.extras?.let { extras ->
-                    val requestCode = extras.getInt(AppConstant.REQUEST_CODE)
-                    if(requestCode == BARCODE_ACTIVITY_REQUEST_CODE) {
-                        val searchType = SearchType.valueOf(extras.getString("searchType", ""))
-                        val searchTerm: String = extras.getString("searchTerm", "")
-                        (this as? BottomNavigationActivity)?.pushFragment(newInstance(searchType, "", searchTerm, false))
-                    }
-                }
-            }
-            res.launch(Intent(this, BarcodeScanActivity::class.java))
+            fragmentResultLauncher.launch(Intent(this, BarcodeScanActivity::class.java))
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }
     }
@@ -959,7 +956,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private fun showBarcodeScannerFeatureWalkThrough() {
         (activity as? BottomNavigationActivity)?.let {
             // Prevent dialog to display in other section when fragment is not visible
-            if (it.currentFragment !is ShopFragment || !isAdded || AppInstanceObject.get().featureWalkThrough.my_lists || !Utils.isFeatureWalkThroughTutorialsEnabled())
+            if (it.currentFragment !is ShopFragment || !isAdded || AppInstanceObject.get().featureWalkThrough.barcodeScan || !Utils.isFeatureWalkThroughTutorialsEnabled())
                 return
             FirebaseManager.setCrashlyticsString(
                 bindString(R.string.crashlytics_materialshowcase_key),
@@ -967,14 +964,14 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             )
             it.walkThroughPromtView =
                 WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.BARCODE_SCAN)
-                    .setTarget(it.bottomNavigationById?.getIconAt(INDEX_ACCOUNT))
+                    .setTarget(tabs_main?.getTabAt(2)?.customView?.tvTitle)
                     .setTitle(R.string.feature_barcode_scanning_title)
                     .setDescription(R.string.feature_barcode_scanning_desc)
                     .setActionText(R.string.feature_barcode_scanning_action_text)
                     .setImage(R.drawable.tips_tricks_ic_scan)
                     .setShapePadding(48)
                     .setAction(this@ShopFragment)
-                    .setArrowPosition(WMaterialShowcaseView.Arrow.BOTTOM_RIGHT)
+                    .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_RIGHT)
                     .setMaskColour(ContextCompat.getColor(it, R.color.semi_transparent_black))
                     .build()
             it.walkThroughPromtView.show(it)
@@ -1022,6 +1019,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             WMaterialShowcaseView.Feature.DELIVERY_DETAILS -> {
                 executeValidateSuburb()
                 showMyListsFeatureWalkThrough()
+            }
+            WMaterialShowcaseView.Feature.MY_LIST -> {
+                showBarcodeScannerFeatureWalkThrough()
             }
         }
     }
