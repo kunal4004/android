@@ -956,7 +956,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private fun showBarcodeScannerFeatureWalkThrough() {
         (activity as? BottomNavigationActivity)?.let {
             // Prevent dialog to display in other section when fragment is not visible
-            if (it.currentFragment !is ShopFragment || !isAdded || AppInstanceObject.get().featureWalkThrough.barcodeScan || !Utils.isFeatureWalkThroughTutorialsEnabled())
+            if (it.currentFragment !is ShopFragment || imBarcodeScanner == null || !isAdded || AppInstanceObject.get().featureWalkThrough.barcodeScan || !Utils.isFeatureWalkThroughTutorialsEnabled())
                 return
             FirebaseManager.setCrashlyticsString(
                 bindString(R.string.crashlytics_materialshowcase_key),
@@ -964,12 +964,12 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             )
             it.walkThroughPromtView =
                 WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.BARCODE_SCAN)
-                    .setTarget(tabs_main?.getTabAt(2)?.customView?.tvTitle)
+                    .setTarget(imBarcodeScanner)
                     .setTitle(R.string.feature_barcode_scanning_title)
                     .setDescription(R.string.feature_barcode_scanning_desc)
                     .setActionText(R.string.feature_barcode_scanning_action_text)
                     .setImage(R.drawable.tips_tricks_ic_scan)
-                    .setShapePadding(48)
+                    .setShapePadding(20)
                     .setAction(this@ShopFragment)
                     .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_RIGHT)
                     .setMaskColour(ContextCompat.getColor(it, R.color.semi_transparent_black))
