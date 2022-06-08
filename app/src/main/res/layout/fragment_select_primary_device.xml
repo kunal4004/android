@@ -13,7 +13,7 @@
         android:layout_marginStart="@dimen/thirty_two_dp"
         android:layout_marginTop="@dimen/thirty_two_dp"
         android:layout_marginEnd="@dimen/thirty_two_dp"
-        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:fontFamily="@font/futura_semi_bold"
         android:text="@string/remove_device_title"
         android:textColor="@color/black"
         android:textSize="@dimen/twenty_sp"
@@ -38,11 +38,11 @@
         app:layout_constraintTop_toBottomOf="@+id/removeDeviceTitle" />
 
 
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/selectPrimaryDeviceRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:paddingTop="@dimen/fifteen_dp"
         android:paddingBottom="@dimen/fifteen_dp"
         android:layout_marginStart="@dimen/thirty_two_dp"
         android:layout_marginTop="@dimen/twenty_six_dp"
