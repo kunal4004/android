@@ -19,8 +19,12 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.ProductOfferingStatus
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.extension.deviceHeight
+import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.eliteplan.EligibilityImpl
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.eliteplan.PMApiStatusImpl
+
 
 class AccountSignedInPresenterImpl(
     private var mainView: IAccountSignedInContract.MyAccountView?,
@@ -31,13 +35,18 @@ class AccountSignedInPresenterImpl(
     private var mAccountResponse: AccountsResponse? = null
     private var mProductGroupCode: String? = null
     private var mDeepLinkingData: String? = null
+    private var eligibilityPlan: EligibilityPlan? = null
     var isAccountInArrearsState: Boolean = false
+    var eligibilityImpl: EligibilityImpl? = null
+    var pmaStatusImpl: PMApiStatusImpl? = null
 
     companion object {
         const val MY_ACCOUNT_RESPONSE = "MY_ACCOUNT_RESPONSE"
         const val APPLY_NOW_STATE = "APPLY_NOW_STATE"
         const val DEEP_LINKING_PARAMS = "DEEP_LINKING_PARAMS"
-
+        const val ELITE_PLAN = "Elite Plan"
+        const val VIP_PLAN = "VIP Plan"
+        const val ELITE_PLAN_MODEL: String = "ELITE_PLAN_MODEL"
         fun getProductCode(applyNowState: ApplyNowState): String {
             return when (applyNowState) {
                 ApplyNowState.STORE_CARD -> AccountsProductGroupCode.STORE_CARD.groupCode
@@ -50,7 +59,8 @@ class AccountSignedInPresenterImpl(
     }
 
     override fun getAccountBundle(bundle: Bundle?): Pair<ApplyNowState?, AccountsResponse?> {
-        mApplyNowState = bundle?.getSerializable(APPLY_NOW_STATE) as? ApplyNowState ?: ApplyNowState.STORE_CARD
+        mApplyNowState =
+            bundle?.getSerializable(APPLY_NOW_STATE) as? ApplyNowState ?: ApplyNowState.STORE_CARD
         val accountResponseString = bundle?.getString(MY_ACCOUNT_RESPONSE, "")
         mDeepLinkingData = bundle?.getString(DEEP_LINKING_PARAMS, "")
         mAccountResponse = Gson().fromJson(accountResponseString, AccountsResponse::class.java)
@@ -67,17 +77,21 @@ class AccountSignedInPresenterImpl(
         val accountInfo = getMyAccountCardInfo()
         bundle.putString(MY_ACCOUNT_RESPONSE, Gson().toJson(accountInfo))
         val graph = navDetailController?.graph
-        graph?.startDestination = when (accountInfo?.first) {
-            ApplyNowState.STORE_CARD -> R.id.storeCardFragment
-            ApplyNowState.SILVER_CREDIT_CARD -> R.id.silverCreditCardFragment
-            ApplyNowState.PERSONAL_LOAN -> R.id.personalLoanFragment
-            ApplyNowState.BLACK_CREDIT_CARD -> R.id.blackCreditCardFragment
-            ApplyNowState.GOLD_CREDIT_CARD -> R.id.goldCreditCardFragment
-            else -> throw (java.lang.RuntimeException(" setAvailableFundBundleInfo() :: Invalid account State found $accountInfo"))
-        }
+        if(accountInfo?.first != null){
+            graph?.startDestination = when (accountInfo.first) {
+                ApplyNowState.STORE_CARD -> R.id.storeCardFragment
+                ApplyNowState.SILVER_CREDIT_CARD -> R.id.silverCreditCardFragment
+                ApplyNowState.PERSONAL_LOAN -> R.id.personalLoanFragment
+                ApplyNowState.BLACK_CREDIT_CARD -> R.id.blackCreditCardFragment
+                ApplyNowState.GOLD_CREDIT_CARD -> R.id.goldCreditCardFragment
+            }
 
-        navDetailController?.setGraph(navDetailController.graph, bundle)
-        showProductOfferOutstanding(accountInfo.first, myAccountsViewModel, true)
+            navDetailController?.setGraph(navDetailController.graph, bundle)
+            showProductOfferOutstanding(accountInfo.first, myAccountsViewModel, true)
+        }
+        else{
+            FirebaseManager.logException("setAvailableFundBundleInfo() :: accountInfo?.first found ${accountInfo?.first}")
+        }
     }
 
     private fun getAccount(accountsResponse: AccountsResponse): Account? {
@@ -130,7 +144,11 @@ class AccountSignedInPresenterImpl(
         }
     }
 
-    private fun checkEligibility(response: EligibilityPlanResponse, state: ApplyNowState, showPopupIfNeeded: Boolean) {
+    private fun checkEligibility(
+        response: EligibilityPlanResponse,
+        state: ApplyNowState,
+        showPopupIfNeeded: Boolean
+    ) {
 
         val account = getAccount()
         val productOffering = ProductOfferingStatus(account)
@@ -139,54 +157,69 @@ class AccountSignedInPresenterImpl(
             ApplyNowState.PERSONAL_LOAN -> ProductGroupCode.PL
             else -> ProductGroupCode.CC
         }
+        if (productOffering.isTakeUpTreatmentPlanJourneyEnabled() || productOffering.isViewTreatmentPlanSupported()) {
+            eligibilityImpl?.eligibilityResponse(response.eligibilityPlan)
+        }
+        eligibilityPlan = response.eligibilityPlan
 
-        if (response.eligibilityPlan?.productGroupCode == eligibleState) {
-            when (response.eligibilityPlan.actionText) {
+        if (eligibilityPlan?.productGroupCode == eligibleState) {
+            when (eligibilityPlan?.actionText) {
+                ActionText.START_NEW_ELITE_PLAN.value -> {
+                    if (productOffering.isTakeUpTreatmentPlanJourneyEnabled()) {
+                        if (eligibilityPlan?.planType.equals(ELITE_PLAN) && showPopupIfNeeded) {
+                            mainView?.removeBlocksOnCollectionCustomer()
+                        }
+                    } else {
+                        if (eligibilityPlan == null) mainView?.showAccountInArrears(
+                            account = getAccount()) else mainView?.showAboveSixMonthsAccountInDelinquencyPopup(eligibilityPlan)
+                    }
+                }
                 ActionText.TAKE_UP_TREATMENT_PLAN.value -> {
                     if (productOffering.isTakeUpTreatmentPlanJourneyEnabled()) {
                         mainView?.showPlanButton(state, response.eligibilityPlan)
+
                         if (showPopupIfNeeded) {
                             mainView?.showViewTreatmentPlan(state, response.eligibilityPlan)!!
                         }
                     } else {
-                        getAccount()?.let { mainView?.showAccountInArrears(account = it) }
+                        getAccount()?.let { mainView?.showAccountInArrears(
+                            account = it) }
                     }
                 }
-                ActionText.VIEW_TREATMENT_PLAN.value -> {
-                    if (productOffering.isViewTreatmentPlanSupported()) {
+
+                ActionText.VIEW_TREATMENT_PLAN.value, ActionText.VIEW_ELITE_PLAN.value -> {
+                    if (eligibilityPlan?.planType.equals(ELITE_PLAN)) {
+                        when (state) {
+                            ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD -> {
+                                mainView?.removeBlocksOnCollectionCustomer()
+                                return
+                            }
+                            else -> Unit
+                        }
+                    }
+                    if (productOffering.isViewTreatmentPlanSupported() || productOffering.isTakeUpTreatmentPlanJourneyEnabled()) {
                         mainView?.showPlanButton(state, response.eligibilityPlan)
                         if (showPopupIfNeeded) {
-                            when (state) {
-                                ApplyNowState.PERSONAL_LOAN,
-                                ApplyNowState.STORE_CARD ->
-                                    mainView?.showViewTreatmentPlan(
-                                        state,
-                                        response.eligibilityPlan
-                                    )!!
-
-                                ApplyNowState.GOLD_CREDIT_CARD,
-                                ApplyNowState.BLACK_CREDIT_CARD,
-                                ApplyNowState.SILVER_CREDIT_CARD -> {
-                                    //display treatment plan popup with view payment options for CC
-                                    mainView?.showViewTreatmentPlan(
-                                        state,
-                                        response.eligibilityPlan
-                                    )
-                                }
-                            }
+                            mainView?.showViewTreatmentPlan(
+                                state,
+                                response.eligibilityPlan
+                            )
                         }
-                    }else {
-                        getAccount()?.let { mainView?.showAccountInArrears(account = it) }
-                    }
+                    } else {
+                      mainView?.showAccountInArrears(account = getAccount()) }
                 }
             }
-        }else {
+        } else {
+            eligibilityImpl?.eligibilityFailed()
             showAccountInArrears(account)
         }
     }
 
     private fun showAccountInArrears(account: Account?) {
         account ?: return
+        if (ProductOfferingStatus(account).isChargedOffCC()) {
+            return
+        }
         mainView?.showAccountInArrears(account)
         mainView?.showAccountHelp(getCardProductInformation(true))
     }
@@ -209,31 +242,46 @@ class AccountSignedInPresenterImpl(
                             showAccountHelp(getCardProductInformation(false))
                         }
 
-                        AccountOfferingState.AccountIsInArrears -> showAccountInArrears(account)
+                        AccountOfferingState.AccountIsInArrears -> showAccountInArrears(
+                            account)
 
                         AccountOfferingState.AccountIsChargedOff -> {
                             // account is in arrears for more than 6 months
-                            removeBlocksOnCollectionCustomer()
-                        }
-
-                        AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff -> {
-                            removeBlocksWhenChargedOff(true)
-                            when (productGroupCode()){
+                            // with showTreatmentPlanJourney and collectionsStartNewPlanJourney disabled
+                            removeBlocksWhenChargedOff()
+                            when (productGroupCode()) {
                                 ProductOfferingStatus.productGroupCodeSc, ProductOfferingStatus.productGroupCodePl -> {
-                                    showViewTreatmentPlan(true)
+                                    getAccount()?.let { mainView?.showAccountInArrears(
+                                        account = it) }
                                 }
                             }
                         }
 
-                        AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig -> {
+                        AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff -> {
+                            removeBlocksWhenChargedOff(true)
                             showViewTreatmentPlan(true)
+
                         }
 
+                        AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig,
                         AccountOfferingState.MakeGetEligibilityCall -> {
+                            if (isChargedOff()) {
+                                removeBlocksWhenChargedOff()
+                            }
                             val productGroupCode = productGroupCode() ?: return@state
                             myAccountsViewModel.fetchCheckEligibilityTreatmentPlan(productGroupCode,
-                                { eligibilityPlanResponse -> checkEligibility(eligibilityPlanResponse, state, showPopupIfNeeded) },
-                                { if (showPopupIfNeeded) showAccountInArrears(account) })
+                                { eligibilityPlanResponse ->
+                                    checkEligibility(
+                                        eligibilityPlanResponse,
+                                        state,
+                                        showPopupIfNeeded
+                                    )
+                                },
+                                {
+                                    eligibilityImpl?.eligibilityFailed()
+                                    if (showPopupIfNeeded && !isChargedOffCC()) showAccountInArrears(
+                                        account)
+                                })
                         }
                     }
                 }
@@ -286,6 +334,10 @@ class AccountSignedInPresenterImpl(
 
     override fun getDeepLinkData(): JsonObject? {
         return Gson().fromJson(mDeepLinkingData, JsonObject::class.java)
+    }
+
+    override fun getEligibilityPlan(): EligibilityPlan? {
+        return eligibilityPlan
     }
 
     override fun deleteDeepLinkData() {

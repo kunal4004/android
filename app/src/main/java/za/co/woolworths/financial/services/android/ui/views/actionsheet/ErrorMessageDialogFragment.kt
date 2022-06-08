@@ -53,7 +53,7 @@ class ErrorMessageDialogFragment : WBottomSheetDialogFragment(), View.OnClickLis
 
     private fun openSetYourDeliveryActivity() {
         activity?.apply {
-            KotlinUtils.presentEditDeliveryLocationActivity(this, SET_DELIVERY_LOCATION_REQUEST_CODE)
+            KotlinUtils.presentEditDeliveryGeoLocationActivity(this, SET_DELIVERY_LOCATION_REQUEST_CODE)
         }
     }
 }

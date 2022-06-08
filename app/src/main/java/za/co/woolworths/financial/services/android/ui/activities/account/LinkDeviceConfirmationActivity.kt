@@ -66,7 +66,7 @@ class LinkDeviceConfirmationActivity : AppCompatActivity(), LinkDeviceConfirmati
 
     private fun setNavHostStartDestination() {
         val graph = linkDeviceNavHost?.graph
-        graph?.startDestination = R.id.linkDeviceConfirmationFragment
+        graph?.setStartDestination(R.id.linkDeviceConfirmationFragment)
 
         graph?.let { linkDeviceNavHost?.setGraph(it, intent.extras) }
     }

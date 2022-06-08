@@ -4,6 +4,7 @@ import android.content.Context
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
@@ -32,7 +33,6 @@ class ViewAllLinkedDevicesAdapter(val context: Context, val onClickListener: Vie
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-
         when (holder) {
             is PrimaryDeviceViewHolder -> {
                 holder.bind()
@@ -59,14 +59,16 @@ class ViewAllLinkedDevicesAdapter(val context: Context, val onClickListener: Vie
         fun bind() {
             itemView.apply {
                 val primaryDevice = getPrimaryDevice()
-                viewAllDevicesTitleTextView?.text = context?.getString(R.string.view_all_primary_device_title)
+                viewAllDevicesDescTextView?.visibility =  View.VISIBLE
+                viewAllDevicesTitleTextView?.text = context?.getString(R.string.view_all_preferred_device_title)
                 viewAllDeviceNameTextView?.text = URLDecoder.decode(primaryDevice?.deviceName, "UTF8")
                 viewAllDeviceLocationTextView?.text = if (TextUtils.isEmpty(primaryDevice?.locationLinked)) context.getString(R.string.view_all_device_location_n_a) else primaryDevice?.locationLinked
                 viewAllDeviceSubtitleTextView?.text = context.getString(R.string.view_all_device_linked_on, primaryDevice?.linkedDate)
                 viewAllDeviceDeleteImageView?.visibility =  View.VISIBLE
-                viewAllDeviceEditImageView?.visibility =  View.GONE
+                viewAllDeviceEditImageView?.visibility =  GONE
                 viewAllDeviceDeleteImageView?.setTag(R.id.viewAllDeviceDeleteImageView, primaryDevice)
                 viewAllDeviceDeleteImageView?.setOnClickListener(onClickListener)
+                viewAllDevicesTitleSeparator2?.visibility = GONE
             }
         }
     }
@@ -95,6 +97,10 @@ class ViewAllLinkedDevicesAdapter(val context: Context, val onClickListener: Vie
                             listItem.viewAllDevicesTitleGroup?.visibility = View.VISIBLE
                             listItem.viewAllDevicesTitleTextView?.text = context?.getString(R.string.view_all_other_device_title)
                         }
+                        if (deviceList?.last() == it){
+                            listItem.viewAllDevicesTitleSeparator2?.visibility = GONE
+                            viewAllDevicesTitleSeparator2?.visibility = GONE
+                        }
                         listItem.viewAllDeviceNameTextView?.text = URLDecoder.decode(it.deviceName, "UTF8")
                         listItem.viewAllDeviceSubtitleTextView?.text = context.getString(R.string.view_all_device_linked_on, it.linkedDate)
                         listItem.viewAllDeviceLocationTextView?.text = if(TextUtils.isEmpty(it.locationLinked)) context.getString(R.string.view_all_device_location_n_a) else it.locationLinked
@@ -103,6 +109,7 @@ class ViewAllLinkedDevicesAdapter(val context: Context, val onClickListener: Vie
                         listItem.viewAllDeviceEditImageView?.setTag(R.id.viewAllDeviceEditImageView, it)
                         listItem.viewAllDeviceEditImageView?.setOnClickListener(onClickListener)
                         itemView.viewAllOtherDevicesContainer.addView(listItem)
+
                     }
                 }
             }

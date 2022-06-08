@@ -7,14 +7,13 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
-
+import kotlin.Pair;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -215,7 +214,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         mGetStatementFile = new GetStatement(statement.docId, String.valueOf(WoolworthsApplication.getProductOfferingId()), statement.docDesc);
         if (activity instanceof StatementActivity) {
             StatementActivity statementActivity = (StatementActivity) activity;
-            statementActivity.checkPermission();
+            getPdfFile(statementActivity.getApplyNowStateForStatement());
         }
     }
 
@@ -278,7 +277,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         switch (v.getId()) {
             case R.id.btnEmailStatement:
                 if (applyNowState == null && activity instanceof StatementActivity){
-                        applyNowState = ((StatementActivity) activity).getAccountWithApplyNowState().first;
+                        applyNowState = ((StatementActivity) activity).getAccountWithApplyNowState().getFirst();
                 }
                 displayValidationMessage();
             break;
@@ -517,18 +516,18 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         if (activity == null) return;
         Pair<ApplyNowState, Account> account = ((StatementActivity) activity).getAccountWithApplyNowState();
         ArrayList<Account> accountList = new ArrayList<>();
-        accountList.add(account.second);
+        accountList.add(account.getSecond());
 
         VocTriggerEvent vocTriggerEvent;
-        if (account.second.productGroupCode.equalsIgnoreCase(AccountsProductGroupCode.STORE_CARD.getGroupCode())) {
+        if (account.getSecond().productGroupCode.equalsIgnoreCase(AccountsProductGroupCode.STORE_CARD.getGroupCode())) {
             vocTriggerEvent = VocTriggerEvent.CHAT_SC_STATEMENT;
-        } else if (account.second.productGroupCode.equalsIgnoreCase(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode())) {
+        } else if (account.getSecond().productGroupCode.equalsIgnoreCase(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode())) {
             vocTriggerEvent = VocTriggerEvent.CHAT_PL_STATEMENT;
         } else {
             vocTriggerEvent = VocTriggerEvent.CHAT_CC_STATEMENT;
         }
 
-        ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView((StatementActivity) activity, new ChatBubbleVisibility(accountList, activity), chatWithAgentFloatingButton, account.first, rclEStatement, notificationBadge, onlineIndicatorImageView, vocTriggerEvent);
+        ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView((StatementActivity) activity, new ChatBubbleVisibility(accountList, activity), chatWithAgentFloatingButton, account.getFirst(), rclEStatement, notificationBadge, onlineIndicatorImageView, vocTriggerEvent);
         inAppChatTipAcknowledgement.build();
     }
 }

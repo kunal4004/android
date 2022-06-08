@@ -1,25 +1,21 @@
 package za.co.woolworths.financial.services.android.ui.fragments.mypreferences
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.graphics.Paint
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
 import android.text.TextUtils
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.core.app.ActivityCompat
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -27,14 +23,10 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
-import com.google.android.gms.location.*
 import com.google.firebase.installations.FirebaseInstallations
-import kotlinx.android.synthetic.main.enter_otp_fragment.*
 import kotlinx.android.synthetic.main.fragment_enter_otp.buttonNext
 import kotlinx.android.synthetic.main.fragment_enter_otp.didNotReceiveOTPTextView
 import kotlinx.android.synthetic.main.fragment_link_device_otp.*
-import kotlinx.android.synthetic.main.fragment_link_device_otp.sendinOTPLayout
-import kotlinx.android.synthetic.main.fragment_unlink_device_otp.*
 import kotlinx.android.synthetic.main.layout_link_device_result.*
 import kotlinx.android.synthetic.main.layout_link_device_validate_otp.*
 import kotlinx.android.synthetic.main.layout_sending_otp_request.*
@@ -43,14 +35,15 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.otp.RetrieveOTPResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.activities.*
+import za.co.woolworths.financial.services.android.ui.activities.AbsaStatementsActivity
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationInterface
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
@@ -62,12 +55,23 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.c
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextWatcher
 import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.location.Event
+import za.co.woolworths.financial.services.android.util.location.EventType
+import za.co.woolworths.financial.services.android.util.location.Locator
 import java.util.*
-
 
 class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeListener {
 
+    companion object {
+        private const val OTP_CALL_CENTER = "CALL CENTER"
+        const val RETRY_GET_OTP: String = "GET_OTP"
+        const val RETRY_VALIDATE: String = "VALIDATE_OTP"
+        const val RETRY_LINK_DEVICE: String = "LINK_DEVICE"
+    }
+
+    private lateinit var locator: Locator
     private var mConnectionBroadCast: BroadcastReceiver? = null
     private var mApplyNowState: ApplyNowState? = null
     private var otpNumber: String? = null
@@ -75,20 +79,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     private var retryApiCall: String? = null
     private var otpMethod: String? = OTPMethodType.SMS.name
     private var currentLocation: Location? = null
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private var cardWithPLCState: Card? = null
-    private val locationRequest = createLocationRequest()
-    private val locationCallback = object : LocationCallback() {
-        override fun onLocationResult(locationResult: LocationResult?) {
-            locationResult ?: return
-            for (location in locationResult.locations) {
-                this@LinkDeviceOTPFragment.currentLocation = location
-                stopLocationUpdates()
-                callLinkingDeviceAPI()
-                break
-            }
-        }
-    }
+    private var mLinkDeviceOTPReq: Call<RetrieveOTPResponse>? = null
     private val mKeyListener = View.OnKeyListener { v, keyCode, event ->
         if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
             when {
@@ -132,8 +123,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
             clearErrorMessage()
         }
     }
-
-    private var mLinkDeviceOTPReq: Call<RetrieveOTPResponse>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -191,7 +180,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         setToolbar()
 
         activity?.apply {
-            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+            locator = Locator(activity as AppCompatActivity)
         }
 
         connectionDetector()
@@ -247,13 +236,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         context?.let { buttonNext?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.next_button_inactive)) }
     }
 
-    companion object {
-        private const val OTP_CALL_CENTER = "CALL CENTER"
-        const val RETRY_GET_OTP: String = "GET_OTP"
-        const val RETRY_VALIDATE: String = "VALIDATE_OTP"
-        const val RETRY_LINK_DEVICE: String = "LINK_DEVICE"
-    }
-
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.didNotReceiveOTPTextView -> {
@@ -297,38 +279,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
 
 
     private fun isRetrieveOTPCallInProgress(): Boolean = sendinOTPLayout?.visibility == View.VISIBLE
-
-    fun createLocationRequest(): LocationRequest? {
-        return LocationRequest.create().apply {
-            interval = 100
-            fastestInterval = 1000
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        }
-    }
-
-    private fun startLocationUpdates() {
-        context?.apply {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return
-            }
-            fusedLocationClient.requestLocationUpdates(locationRequest,
-                    locationCallback,
-                    Looper.getMainLooper())
-        }
-    }
-
-    @SuppressLint("NewApi")
-    private fun checkLocationPermission(): Boolean {
-        activity?.apply {
-            return ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-        }
-        return false
-    }
-
-    private fun stopLocationUpdates() {
-        fusedLocationClient.removeLocationUpdates(locationCallback)
-    }
 
     private fun getNumberFromEditText(numberEditText: EditText?) = numberEditText?.text?.toString()
             ?: ""
@@ -458,8 +408,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         linkDeviceOTPEdtTxt5?.text?.clear()
     }
 
-    private fun callLinkingDeviceAPI() {
-
+    private fun callLinkingDeviceAPI(checkForLocationPermission: Boolean = true) {
         NetworkManager.getInstance()?.let {
             if (!it.isConnectedToNetwork(activity)) {
                 sendinOTPLayout?.visibility = View.GONE
@@ -471,13 +420,36 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         }
 
         showLinkingDeviceProcessing()
-        //Location permission granted but no current location found.
-        if (checkLocationPermission() && Utils.isLocationEnabled(context) && currentLocation == null) {
-            startLocationUpdates()
+
+        if (currentLocation == null && checkForLocationPermission) {
+            startLocationDiscoveryProcess()
             return
         }
 
+        locator.stopService()
         retrieveTokenAndCallLinkDevice()
+    }
+
+    private fun startLocationDiscoveryProcess() {
+        locator.getCurrentLocation { locationEvent ->
+            when (locationEvent) {
+                is Event.Location -> handleLocationEvent(locationEvent)
+                is Event.Permission -> handlePermissionEvent(locationEvent)
+            }
+        }
+    }
+
+    private fun handleLocationEvent(locationEvent: Event.Location) {
+        Utils.saveLastLocation(locationEvent.locationData, context)
+        currentLocation = locationEvent.locationData
+        callLinkingDeviceAPI(checkForLocationPermission = false)
+    }
+
+    private fun handlePermissionEvent(permissionEvent: Event.Permission) {
+        if (permissionEvent.event == EventType.LOCATION_PERMISSION_NOT_GRANTED) {
+            Utils.saveLastLocation(null, activity)
+        }
+        callLinkingDeviceAPI(checkForLocationPermission = false)
     }
 
     private fun retrieveTokenAndCallLinkDevice() {
@@ -665,8 +637,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         activity?.finish()
     }
     private fun showActivateVirtualTempCardScreen(){
-        StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL = true
-        StoreCardOptionsFragment.SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = false
+        StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL = false
+        StoreCardOptionsFragment.SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = true
         activity?.finish()
     }
 
@@ -791,6 +763,9 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         super.onActivityResult(requestCode, resultCode, data)
 
         when (requestCode) {
+            EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE -> {
+                startLocationDiscoveryProcess()
+            }
             ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE -> {
                 when (resultCode) {
                     ErrorHandlerActivity.RESULT_RETRY -> {

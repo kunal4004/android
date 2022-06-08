@@ -14,6 +14,8 @@ import static za.co.woolworths.financial.services.android.ui.activities.TipsAndT
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_OPEN_CART_FROM_TIPS_AND_TRICKS;
 import static za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity.RESULT_CODE_MY_ACCOUNT_FRAGMENT;
 import static za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity.PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.BRAND_NAVIGATION_DETAILS;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_BRAND_HEADER;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_CATEGORY;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
@@ -83,6 +85,7 @@ import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
+import za.co.woolworths.financial.services.android.models.BrandNavigationDetails;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
@@ -507,6 +510,25 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         Bundle bundle = new Bundle();
         bundle.putString(STR_PRODUCT_LIST, strProductList);
         bundle.putString(STR_PRODUCT_CATEGORY, productName);
+        bundle.putString(STR_BRAND_HEADER, productList.brandHeaderDescription);
+        ProductDetailsFragment productDetailsFragmentNew = ProductDetailsFragment.Companion.newInstance();
+        productDetailsFragmentNew.setArguments(bundle);
+        Utils.updateStatusBarBackground(this);
+        pushFragment(productDetailsFragmentNew);
+    }
+
+    public void openProductDetailFragment(String productName, ProductList productList, String bannerLabel, String bannerImage) {
+        Gson gson = new Gson();
+        String strProductList = gson.toJson(productList);
+        Bundle bundle = new Bundle();
+        bundle.putString(STR_PRODUCT_LIST, strProductList);
+        bundle.putString(STR_PRODUCT_CATEGORY, productName);
+        bundle.putString(STR_BRAND_HEADER, productList.brandHeaderDescription);
+        bundle.putSerializable(BRAND_NAVIGATION_DETAILS, new BrandNavigationDetails(
+                productList.brandText,
+                bannerLabel,
+                bannerImage
+        ));
         ProductDetailsFragment productDetailsFragmentNew = ProductDetailsFragment.Companion.newInstance();
         productDetailsFragmentNew.setArguments(bundle);
         Utils.updateStatusBarBackground(this);
@@ -953,7 +975,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     }
 
     @Override
-    public void PermissionGranted(int request_code) {
+    public void permissionGranted(int request_code) {
         //TODO:: Parse result_code and use only onActivityResult line
         onActivityResult(request_code, 200, null);
         switch (request_code) {
@@ -964,21 +986,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             default:
                 break;
         }
-    }
-
-    @Override
-    public void PartialPermissionGranted(int request_code, ArrayList<String> granted_permissions) {
-
-    }
-
-    @Override
-    public void PermissionDenied(int request_code) {
-
-    }
-
-    @Override
-    public void NeverAskAgain(int request_code) {
-
     }
 
 
