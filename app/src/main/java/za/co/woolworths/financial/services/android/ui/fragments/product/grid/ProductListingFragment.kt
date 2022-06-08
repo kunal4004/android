@@ -260,6 +260,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         val placeId = when (KotlinUtils.browsingDeliveryType) {
             Delivery.STANDARD ->
                 WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId
+                    ?: KotlinUtils.getPreferredPlaceId()
             Delivery.CNC ->
                 if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() != null)
                     WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.placeDetails?.placeId
@@ -1631,11 +1632,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         private var localPlaceId: String? = null
         private var isBackPressed: Boolean = false
 
-        /*const val REFINEMENT_DATA = "REFINEMENT_DATA"*/
-        const val PRODUCTS_REQUEST_PARAMS = "PRODUCTS_REQUEST_PARAMS"
         private const val SUB_CATEGORY_NAME = "SUB_CATEGORY_NAME"
-
-        const val REFINE_REQUEST_CODE = 77
         private const val QUERY_INVENTORY_FOR_STORE_REQUEST_CODE = 3343
         private const val QUERY_LOCATION_ITEM_REQUEST_CODE = 3344
         const val SET_DELIVERY_LOCATION_REQUEST_CODE = 180
@@ -1706,7 +1703,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 when (response?.httpCode) {
                     HTTP_OK -> {
                         if (Utils.getPreferredDeliveryLocation() != null)
-                            callConfirmPlace()
+                            getUpdatedValidateResponse()
                         else
                             setNewLocation()
                     }
