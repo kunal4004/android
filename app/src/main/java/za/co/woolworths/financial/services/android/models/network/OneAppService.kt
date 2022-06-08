@@ -102,6 +102,40 @@ object OneAppService : RetrofitConfig() {
         }
     }
 
+    suspend fun getStoreLocationsItem(sku: String, startRadius: String, endRadius: String): retrofit2.Response<LocationResponse> {
+        val loc = getMyLocation()
+        return withContext(Dispatchers.IO) {
+            if (startRadius != null && startRadius == "") {
+                //This should never happen for now
+                mApiInterface.getStoreLocationItem(
+                    "",
+                    "",
+                    loc.latitude.toString(),
+                    loc.longitude.toString(),
+                    getSessionToken(),
+                    getDeviceIdentityToken(),
+                    sku,
+                    startRadius,
+                    endRadius,
+                    true
+                )
+            } else {
+                mApiInterface.getStoreLocationItem(
+                    "",
+                    "",
+                    loc.latitude.toString(),
+                    loc.longitude.toString(),
+                    getSessionToken(),
+                    getDeviceIdentityToken(),
+                    sku,
+                    startRadius,
+                    endRadius,
+                    true
+                )
+            }
+        }
+    }
+
     fun getMessagesResponse(pageSize: Int, pageNumber: Int): Call<MessageResponse> {
         return mApiInterface.getMessages("", "", getSessionToken(),
             getDeviceIdentityToken(), pageSize, pageNumber)

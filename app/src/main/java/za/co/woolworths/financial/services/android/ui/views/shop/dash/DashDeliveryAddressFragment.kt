@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.views.shop.dash
 
+import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
@@ -28,8 +29,12 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.shop.Banner
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
+import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
@@ -394,7 +399,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                         WoolworthsApplication.setValidatedSuburbProducts(browsingPlaceDetails)
                         // set latest response to browsing data.
                         WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
-                            browsingPlaceDetails)
+                            browsingPlaceDetails
+                        )
                         if (this.parentFragment is ShopFragment) {
                             (this.parentFragment as ShopFragment).setDeliveryView() // update main location UI.
                         }
@@ -527,7 +533,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     Status.SUCCESS -> {
                         resource.data?.validatePlace?.let { validatePlaceResponse ->
                             WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
-                                validatePlaceResponse)
+                                validatePlaceResponse
+                            )
                             if (isQuickShopClicked) {
                                 // This is for for add to cart clicked for quick shop functionality.
                                 isQuickShopClicked = false
@@ -566,10 +573,14 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         unSellableCommerceItems: ArrayList<UnSellableCommerceItem>,
     ) {
         val unsellableItemsBottomSheetDialog =
-            UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems,
-                Delivery.DASH.name)
-        unsellableItemsBottomSheetDialog.show(requireFragmentManager(),
-            UnsellableItemsBottomSheetDialog::class.java.simpleName)
+            UnsellableItemsBottomSheetDialog.newInstance(
+                unSellableCommerceItems,
+                Delivery.DASH.name
+            )
+        unsellableItemsBottomSheetDialog.show(
+            requireFragmentManager(),
+            UnsellableItemsBottomSheetDialog::class.java.simpleName
+        )
     }
 
     private fun setupRecyclerView() {
@@ -630,6 +641,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             return
         }
 
+        viewModel.setProductList(productList)
+
         if (productList.isLiquor == true && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()) {
             KotlinUtils.setLiquorModalShown()
             showLiquorDialog()
@@ -641,8 +654,10 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         // Now first check for if delivery location and browsing location is same.
         // if same no issues. If not then show changing delivery location popup.
         if (!KotlinUtils.getDeliveryType()?.deliveryType.equals(Delivery.DASH.type)) {
-            KotlinUtils.showChangeDeliveryTypeDialog(requireContext(), requireFragmentManager(),
-                KotlinUtils.browsingDeliveryType)
+            KotlinUtils.showChangeDeliveryTypeDialog(
+                requireContext(), requireFragmentManager(),
+                KotlinUtils.browsingDeliveryType
+            )
             return
         }
         addToCart(addItemToCart)
@@ -799,7 +814,72 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     }
 
     override fun queryStoreFinderProductByFusedLocation(location: Location?) {
-        TODO("Not yet implemented")
+//        showProgressBar()
+        val globalState = WoolworthsApplication.getInstance().wGlobalState
+        with(globalState) {
+            OneAppService.getLocationsItem(
+                viewModel.productList.value?.sku
+                    ?: "", startRadius.toString(), endRadius.toString()
+            ).enqueue(CompletionHandler(object : IResponseListener<LocationResponse> {
+                override fun onSuccess(locationResponse: LocationResponse?) {
+                    if (!isAdded) return
+//                    dismissProgressBar()
+                    locationResponse?.apply {
+                        when (httpCode) {
+                            AppConstant.HTTP_OK -> {
+                                if (Locations != null && Locations.size > 0) {
+                                    WoolworthsApplication.getInstance()?.wGlobalState?.storeDetailsArrayList =
+                                        Locations
+                                    val openStoreFinder = Intent(
+                                        WoolworthsApplication.getAppContext(),
+                                        WStockFinderActivity::class.java
+                                    ).putExtra(
+                                        "PRODUCT_NAME",
+                                        viewModel.productList.value?.productName
+                                    )
+                                    openStoreFinder.putExtra("CONTACT_INFO", "")
+                                    requireActivity().apply {
+                                        startActivity(openStoreFinder)
+                                        overridePendingTransition(
+                                            R.anim.slide_up_anim,
+                                            R.anim.stay
+                                        )
+                                    }
+                                } else {
+                                    Utils.displayValidationMessage(
+                                        requireActivity(),
+                                        CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK,
+                                        ""
+                                    )
+                                }
+                            }
+                            AppConstant.HTTP_SESSION_TIMEOUT_440 -> {
+                                SessionUtilities.getInstance()
+                                    .setSessionState(SessionDao.SESSION_STATE.INACTIVE)
+                                activity.let {
+                                    ScreenManager.presentSSOSignin(
+                                        it,
+                                        QUERY_LOCATION_ITEM_REQUEST_CODE
+                                    )
+                                }
+                            }
+                            else -> response?.desc?.let { desc ->
+                                Utils.displayValidationMessage(
+                                    WoolworthsApplication.getAppContext(),
+                                    CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+                                    desc
+                                )
+                            }
+                        }
+                    }
+                }
+
+                override fun onFailure(error: Throwable?) {
+//                        dismissProgressBar()
+                    error?.let { onFailureHandler(it) }
+                }
+            }, LocationResponse::class.java))
+        }
     }
 
     override fun showLiquorDialog() {
@@ -842,6 +922,21 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 navigateToConfirmAddressScreen()
             }
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            QUERY_LOCATION_ITEM_REQUEST_CODE -> {
+                if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+                    queryStoreFinderProductByFusedLocation(null)
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    companion object {
+        private const val QUERY_LOCATION_ITEM_REQUEST_CODE = 3344
     }
 
 }

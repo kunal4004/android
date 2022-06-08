@@ -10,10 +10,7 @@ import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmDeliveryAddressResponse
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
-import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
-import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse
-import za.co.woolworths.financial.services.android.models.dto.RootCategories
-import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.shop.DashCategories
 import za.co.woolworths.financial.services.android.models.network.Event
 import za.co.woolworths.financial.services.android.models.network.Resource
@@ -39,6 +36,10 @@ class ShopViewModel @Inject constructor(
     private val _location = MutableLiveData<Location?>()
     val location: LiveData<Location?>
     get() = _location
+
+    private val _productList = MutableLiveData<ProductList?>()
+    val productList: LiveData<ProductList?>
+    get() = _productList
 
     private val _addItemToCart = MutableLiveData<AddItemToCart?>()
     val addItemToCart: LiveData<AddItemToCart?>
@@ -122,5 +123,9 @@ class ShopViewModel @Inject constructor(
 
     fun setAddItemToCart(addItemToCart: AddItemToCart?) {
         _addItemToCart.value = addItemToCart
+    }
+
+    fun setProductList(productList: ProductList) {
+        _productList.value = productList
     }
 }
