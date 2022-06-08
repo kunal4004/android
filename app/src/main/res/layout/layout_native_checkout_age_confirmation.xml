@@ -45,7 +45,7 @@
             android:background="@color/white"
             android:fontFamily="@font/myriad_pro_regular"
             android:text="@string/native_checkout_delivery_age_confirmation_desc"
-            android:textColor="@color/color_444444" />
+            android:textColor="@color/black" />
 
     </com.facebook.shimmer.ShimmerFrameLayout>
 
@@ -68,7 +68,7 @@
             android:background="@color/white"
             android:fontFamily="@font/myriad_pro_regular"
             android:text="@string/native_checkout_delivery_age_confirmation_desc_note"
-            android:textColor="@color/color_444444" />
+            android:textColor="@color/black" />
 
     </com.facebook.shimmer.ShimmerFrameLayout>
 
@@ -92,10 +92,10 @@
                 android:checked="false"
                 android:background="@color/white"
                 app:layout_constrainedWidth="true"
-                android:fontFamily="@font/myriad_pro_regular"
+                android:fontFamily="@font/myriad_pro_semi_bold"
                 android:paddingHorizontal="@dimen/ten_dp"
                 android:text="@string/native_checkout_delivery_age_confirm"
-                android:textColor="@color/color_444444"
+                android:textColor="@color/black"
                 android:textSize="@dimen/fifteen_sp" />
 
     </com.facebook.shimmer.ShimmerFrameLayout>
