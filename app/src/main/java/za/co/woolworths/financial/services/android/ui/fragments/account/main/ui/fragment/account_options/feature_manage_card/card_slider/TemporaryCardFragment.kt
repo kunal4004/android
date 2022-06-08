@@ -12,7 +12,7 @@ class TemporaryCardFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //binding.cardImageView.alpha = 0.3f
+        binding.cardImageView.alpha = 0.3f
     }
 
 }

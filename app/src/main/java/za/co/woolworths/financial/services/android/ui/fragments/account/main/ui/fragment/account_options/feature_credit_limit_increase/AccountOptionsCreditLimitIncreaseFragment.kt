@@ -59,8 +59,9 @@ class AccountOptionsCreditLimitIncreaseFragment : Fragment(R.layout.account_opti
             viewModel.queryRemoteServiceCLIOfferActive().collect { result ->
                 with(result) {
                     renderSuccess {
-                        viewModel.mOfferActive = output
-                        when (val data = viewModel.getStatus(output)) {
+                        val response =  output as? OfferActive
+                        viewModel.mOfferActive = response
+                        when (val data = viewModel.getStatus(response)) {
                             is CLILandingUIState.Consent -> binding.setCommonStateUI(
                                 offerActive = data.offerActive,
                                 isIncreaseMyLimitLayoutVisible = true

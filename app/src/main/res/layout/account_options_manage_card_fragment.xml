@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <TextView
         android:id="@+id/cardText"
         android:layout_width="0dp"
@@ -29,7 +28,7 @@
         android:text="@string/manage_my_card_title"
         android:textAllCaps="true"
         android:textColor="@color/black"
-        android:textSize="@dimen/_12sdp"
+        android:textSize="@dimen/_11sdp"
         app:layout_constraintBottom_toTopOf="@+id/manageAndCardTextGuideline"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -88,42 +87,15 @@
             app:tabSelectedTextColor="@android:color/transparent"
             app:tabTextColor="@android:color/transparent" />
 
-        <View
-            android:id="@+id/temporaryFreezeCardDivider"
-            style="@style/menuLandingDividerStyle"
-            android:layout_marginStart="0dp"
-            android:layout_marginEnd="0dp" />
 
-        <RelativeLayout
-            android:id="@+id/temporaryFreezeCardRelativeLayout"
-            style="@style/accountOptionItemsStyle">
-
-            <ImageView
-                android:id="@+id/storeCardItem3ImageView"
-                style="@style/accountOptionsImageviewStyle"
-                android:src="@drawable/icon_freeze_grey" />
-
-            <TextView
-                android:id="@+id/storeCardItem3TextView"
-                style="@style/accountOptionsLabelStyle"
-                android:layout_width="wrap_content"
-                android:layout_alignTop="@+id/switchTemporaryFreezeCard"
-                android:layout_alignBottom="@+id/switchTemporaryFreezeCard"
-                android:layout_marginStart="21dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="-5dp"
-                android:layout_toEndOf="@+id/storeCardItem3ImageView"
-                android:text="@string/temporary_card_freeze_title" />
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/switchTemporaryFreezeCard"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:theme="@style/SwitchTheme" />
-
-        </RelativeLayout>
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/temporaryFreezeCardFragmentContainerView"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:tag="freezeUnFreezeTag"
+            app:navGraph="@navigation/freeze_unfreeze_card_item_nav" />
 
         <View
             android:id="@+id/manageCardDivider"
@@ -308,6 +280,40 @@
                 android:src="@drawable/ic_caret_black" />
         </RelativeLayout>
 
+        <View
+            android:id="@+id/blockCardDivider"
+            style="@style/menuLandingDividerStyle"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp" />
+
+        <RelativeLayout
+            android:id="@+id/blockCardRelativeLayout"
+            style="@style/accountOptionItemsStyle">
+
+            <ImageView
+                android:id="@+id/blockCardImageView"
+                style="@style/accountOptionsImageviewStyle"
+                android:alpha="0.3"
+                android:src="@drawable/icon_card" />
+
+            <TextView
+                android:id="@+id/blockCardTextView"
+                style="@style/accountOptionsLabelStyle"
+                android:layout_width="match_parent"
+                android:layout_alignTop="@+id/blockCardArrowImageView"
+                android:layout_alignBottom="@+id/blockCardArrowImageView"
+                android:layout_marginTop="0dp"
+                android:layout_toStartOf="@+id/blockCardArrowImageView"
+                android:layout_toEndOf="@+id/blockCardImageView"
+                android:text="@string/block_card_title" />
+
+            <ImageView
+                android:id="@+id/blockCardArrowImageView"
+                style="@style/accountOptionsNextImageViewStyle"
+                android:src="@drawable/ic_caret_black" />
+        </RelativeLayout>
+
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <RelativeLayout
@@ -325,6 +331,7 @@
             android:id="@+id/cardShimmer"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <include layout="@layout/account_card_skeleton" />
         </com.facebook.shimmer.ShimmerFrameLayout>
     </RelativeLayout>

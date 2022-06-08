@@ -1,9 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options
-import com.awfs.coordination.databinding.StoreCardAccountOptionsFragmentBinding
+import androidx.fragment.app.Fragment
+import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
-import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 
 @AndroidEntryPoint
-class StoreCardAccountOptionsMainFragment :
-    ViewBindingFragment<StoreCardAccountOptionsFragmentBinding>(
-        StoreCardAccountOptionsFragmentBinding::inflate)
+class StoreCardAccountOptionsMainFragment : Fragment (R.layout.store_card_account_options_fragment)
