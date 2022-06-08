@@ -283,7 +283,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                     if (applyNowState != null) {
                         if (!MyAccountsFragment.verifyAppInstanceId()) {
                             activity?.apply { onStartCreditLimitIncreaseFirebaseEvent(this) }
-                            creditLimitIncrease()?.nextStep(getOfferActive(), getProductOfferingId()?.toString(),  applyNowState)
+                            creditLimitIncrease()?.nextStep(requireActivity(),getOfferActive(), getProductOfferingId()?.toString(),  applyNowState)
                         }
                     }
                 }
