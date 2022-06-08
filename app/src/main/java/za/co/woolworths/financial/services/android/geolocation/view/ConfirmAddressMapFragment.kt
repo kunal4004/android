@@ -18,14 +18,13 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.maps.GeoApiContext
 import com.google.maps.GeocodingApi
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_stores_nearby1.*
 import kotlinx.android.synthetic.main.geolocation_confirm_address.*
-import kotlinx.android.synthetic.main.geolocation_confirm_address.dynamicMapView
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
-import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.*
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.ROUTE
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.STREET_NUMBER
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
@@ -44,9 +43,10 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
+import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LATITUDE
+import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LONGITUDE
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
-import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -238,7 +238,6 @@ class ConfirmAddressMapFragment :
                     binding?.autoCompleteTextView?.setText(placeName)
                     isAddressFromSearch = true
                     isMainPlaceName = true
-                    getStreetNumberAndRoute(placeId)
                     isStreetNumberAndRouteFromSearch = true
                     val placeFields: MutableList<Place.Field> = mutableListOf(
                         Place.Field.ID,
@@ -296,7 +295,7 @@ class ConfirmAddressMapFragment :
             dynamicMapView?.moveCamera(
                 latitude = DEFAULT_LATITUDE,
                 longitude = DEFAULT_LONGITUDE,
-                zoom = 4.8f
+                zoom = 5f
             )
 
         }
@@ -370,6 +369,9 @@ class ConfirmAddressMapFragment :
         if (isStreetNumberAndRouteFromSearch == false) {
             placeId = results.getOrNull(0)?.placeId.toString()
             getStreetNumberAndRoute(placeId)
+        } else {
+            // here place id is d/f coming search address
+            getStreetNumberAndRoute(placeId)
         }
         isStreetNumberAndRouteFromSearch = false
     }
@@ -432,12 +434,6 @@ class ConfirmAddressMapFragment :
         }
 
     }
-
-    companion object {
-        private const val DEFAULT_LATITUDE = -30.81020
-        private const val DEFAULT_LONGITUDE = 23.72364
-    }
-
     override fun tryAgain() {
         initView()
     }
@@ -460,8 +456,14 @@ class ConfirmAddressMapFragment :
             postalCode,
             state,
             suburb)
-        viewLifecycleOwner?.lifecycleScope?.launch {
-            confirmAddressViewModel?.postSaveAddress(saveAddressLocationRequest)
+        try {
+            view?.let{
+                lifecycleScope.launch {
+                    confirmAddressViewModel.postSaveAddress(saveAddressLocationRequest)
+                }
+            }
+        } catch (e: Exception) {
+            FirebaseManager.logException(e)
         }
     }
 
