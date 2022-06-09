@@ -92,8 +92,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         it.data?.extras?.let { extras ->
             val requestCode = extras.getInt(AppConstant.REQUEST_CODE)
             if(requestCode == REQUEST_CODE_BARCODE_ACTIVITY) {
-                val searchType = SearchType.valueOf(extras.getString("searchType", ""))
-                val searchTerm: String = extras.getString("searchTerm", "")
+                val searchType = SearchType.valueOf(extras.getString(AppConstant.Keys.EXTRA_SEARCH_TYPE, ""))
+                val searchTerm: String = extras.getString(AppConstant.Keys.EXTRA_SEARCH_TERM, "")
                 (requireActivity() as? BottomNavigationActivity)?.pushFragment(newInstance(searchType, "", searchTerm, false))
             }
         }
