@@ -63,6 +63,9 @@ class ShopViewModel @Inject constructor(
     private val _confirmPlaceDetails = MutableLiveData<Event<Resource<ConfirmDeliveryAddressResponse>>>()
     val confirmPlaceDetails: LiveData<Event<Resource<ConfirmDeliveryAddressResponse>>> = _confirmPlaceDetails
 
+    private val _productStoreFinder = MutableLiveData<Event<Resource<LocationResponse>>>()
+    val productStoreFinder: LiveData<Event<Resource<LocationResponse>>> = _productStoreFinder
+
     fun getDashLandingDetails() {
         _dashLandingDetails.value = Event(Resource.loading(null))
         viewModelScope.launch {
@@ -117,6 +120,14 @@ class ShopViewModel @Inject constructor(
         }
     }
 
+    fun callStoreFinder(sku: String, startRadius: String?, endRadius: String?) {
+        _productStoreFinder.value = Event(Resource.loading(null))
+        viewModelScope.launch {
+            val response = shopRepository.callStoreFinder(sku, startRadius, endRadius)
+            _productStoreFinder.value = Event(response)
+        }
+    }
+
     fun setLocation(location: Location?) {
         _location.value = location
     }
@@ -128,4 +139,6 @@ class ShopViewModel @Inject constructor(
     fun setProductList(productList: ProductList) {
         _productList.value = productList
     }
+
+
 }
