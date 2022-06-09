@@ -26,6 +26,7 @@ import static za.co.woolworths.financial.services.android.ui.fragments.shoppingl
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.MY_LIST_SEARCH_TERM;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.PRODUCT_DETAILS_FROM_MY_LIST_SEARCH;
 import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
+import static za.co.woolworths.financial.services.android.util.AppConstant.REQUEST_CODE_BARCODE_ACTIVITY;
 import static za.co.woolworths.financial.services.android.util.AppConstant.REQUEST_CODE_ORDER_DETAILS_PAGE;
 import static za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
@@ -1080,7 +1081,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             ProductList productList = (ProductList) Utils.jsonStringToObject(productLIstStr, ProductList.class);
             openProductDetailFragment(data.getStringExtra(KEY_PRODUCT_NAME), productList);
         }
-        if ((requestCode == BarcodeScanActivity.BARCODE_ACTIVITY_REQUEST_CODE || requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE) && resultCode == RESULT_OK) {
+        if ((requestCode == REQUEST_CODE_BARCODE_ACTIVITY || requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE) && resultCode == RESULT_OK) {
             ProductsRequestParams.SearchType searchType = ProductsRequestParams.SearchType.valueOf(data.getStringExtra("searchType"));
             String searchTerm = data.getStringExtra("searchTerm");
             pushFragment(ProductListingFragment.Companion.newInstance(searchType, "", searchTerm, true));

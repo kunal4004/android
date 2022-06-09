@@ -13,7 +13,10 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_BARCODE_ACTIVITY
 import za.co.woolworths.financial.services.android.util.ConnectionBroadcastReceiver
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
@@ -162,8 +165,9 @@ abstract class BarcodeScanExtension : Fragment() {
     fun sendResultBack(searchType: String, searchTerm: String) {
         activity?.apply {
             Intent().apply {
-                putExtra("searchType", searchType)
-                putExtra("searchTerm", searchTerm)
+                putExtra(AppConstant.REQUEST_CODE, REQUEST_CODE_BARCODE_ACTIVITY)
+                putExtra(AppConstant.Keys.EXTRA_SEARCH_TYPE, searchType)
+                putExtra(AppConstant.Keys.EXTRA_SEARCH_TERM, searchTerm)
                 setResult(Activity.RESULT_OK, this)
                 finish()
                 overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
