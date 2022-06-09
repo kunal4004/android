@@ -46,10 +46,13 @@ class AppConstant {
         /*****************************************************************************************
          * Request Codes
          *****************************************************************************************/
+        const val REQUEST_CODE = "REQUEST_CODE"
         //Dash
         const val REQUEST_CODE_QUERY_INVENTORY_FOR_STORE = 3343
         //order details
         const val REQUEST_CODE_ORDER_DETAILS_PAGE = 1989
+        //Barcode scanning
+        const val REQUEST_CODE_BARCODE_ACTIVITY = 1947
 
         /*****************************************************************************************
          * Miscellaneous
@@ -94,6 +97,16 @@ class AppConstant {
         const val ORDER_ID: String = "ORDER_ID"
         const val NAVIGATED_FROM_MY_ACCOUNTS = "NAVIGATED_FROM_MY_ACCOUNTS"
 
+    }
+
+    class Keys {
+        companion object {
+            /*****************************************************************************************
+             * Extra keys
+             *****************************************************************************************/
+            const val EXTRA_SEARCH_TYPE = "searchType"
+            const val EXTRA_SEARCH_TERM = "searchTerm"
+        }
     }
 
     enum class DashDetailsViewType(val value: Int) { HEADER_TITLE(0), APP_FEATURE_LIST(1), TERMS_AND_CONDITION(2) }
