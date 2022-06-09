@@ -397,7 +397,7 @@
     <string name="uploading_name_address">Name and address must be visible</string>
     <string name="uploading_statement_period">Statement period must be visible</string>
     <string name="uploading_older_month">Can’t be older than 3 months</string>
-
+    <string name="oops_error_message">Sorry, an error occurred. Please try again later.</string>
     <!-- Cli carousel: Find Out More -->
     <string name="credit_bureau">Credit bureau</string>
     <string name="credit_bureau_desc">We will try our best to ensure that you can afford the increased instalments of your new credit limit. As such we obtain your credit information from various credit bureaus, who maintains the personal details related to your credit history (repayment behaviour, amount of credit you have available, outstanding debt collections and other).</string>
@@ -2532,6 +2532,14 @@
 
 
     <string name="product_listing_price_from">From</string>
+
+    <string name="vtsc_card_not_arrived_title">Has Your Card Not\nArrived in the Post?</string>
+    <string name="vtsc_card_not_arrived_desc">We do our best to deliver all new cards within 30 days, but sometimes things go wrong. Please let us know if your card has not yet been delivered to you and a customer service agent will be in touch to arrange VIP delivery.</string>
+    <string name="vtsc_card_not_arrived_button_caption">MY CARD HASN’T ARRIVED</string>
+
+    <string name="vtsc_card_not_arrived_notified_title">Thanks for Letting Us Know!</string>
+    <string name="vtsc_card_not_arrived_notified_desc">A customer service agent will be in touch to arrange VIP delivery.</string>
+
     <string name="product_details_color_count">+ %d More</string>
     <string name="geo_loc_error_msg">We can’t seem to find you. Please enter number and name of your street ,or drag the pin to your exact location.</string>
     <string name="geo_loc_error_msg_on_edit_address">We can’t seem to find you. Please enter number and name of your street, to get
@@ -2577,6 +2585,15 @@
     <string name="error_internet_connection">Couldn\'t reach the server. Check your internet connection.</string>
 
 
+    <string name="title_text_has_your_card_not_arrived_in_the_post">title_text_has_your_card_not_arrived_in_the_post</string>
+    <string name="copy_text_has_your_card_not_arrived_in_the_post">"copy_text_has_your_card_not_arrived_in_the_post "</string>
+    <string name="button_my_card_hasnt_arrived">"button_my_card_hasnt_arrived "</string>
+    <string name="title_text_thanks_for_letting_us_know">title_text_thanks_for_letting_us_know</string>
+    <string name="copy_text_thanks_for_letting_us_know">copy_text_thanks_for_letting_us_know</string>
+    <string name="button_thanks_for_letting_us_know">button_thanks_for_letting_us_know</string>
+    <string name="vtsc_oops_err_title">vtsc_oops_err_title</string>
+    <string name="vtsc_oops_error_message">vtsc_oops_error_message</string>
+    <string name="vtsc_try_again">vtsc_try_again</string>
 
     <!--ContactUs Financial Services -->
     <string name="send_enquiry">Send Us An Enquiry</string>
