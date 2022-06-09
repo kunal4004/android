@@ -50,11 +50,14 @@ class AppConstant {
         /*****************************************************************************************
          * Request/Result Codes
          *****************************************************************************************/
+        const val REQUEST_CODE = "REQUEST_CODE"
         //Dash
         const val REQUEST_CODE_QUERY_INVENTORY_FOR_STORE = 3343
         const val REQUEST_CODE_QUERY_STORE_FINDER = 3344
         //order details
         const val REQUEST_CODE_ORDER_DETAILS_PAGE = 1989
+        //Barcode scanning
+        const val REQUEST_CODE_BARCODE_ACTIVITY = 1947
 
         const val BALANCE_PROTECTION_INSURANCE_REQUEST_CODE: Int = 291621
         const val BALANCE_PROTECTION_INSURANCE_OPT_IN_SUCCESS_RESULT_CODE: Int = 20
@@ -118,6 +121,16 @@ class AppConstant {
              * Parameters Keys
              * const val PARAM_EXAMPLE_NAME = "PARAM_NAME"
              *****************************************************************************************/
+        }
+    }
+
+    class Keys {
+        companion object {
+            /*****************************************************************************************
+             * Extra keys
+             *****************************************************************************************/
+            const val EXTRA_SEARCH_TYPE = "searchType"
+            const val EXTRA_SEARCH_TERM = "searchTerm"
         }
     }
 
