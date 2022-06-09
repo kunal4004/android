@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -34,17 +35,18 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLoca
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams.SearchType
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.*
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ShopPagerAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDeliveryFragment.Companion.DEPARTMENT_LOGIN_REQUEST
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.DISPLAY_TOAST_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
@@ -54,6 +56,7 @@ import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashDelive
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_3000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_4000_MS
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_BARCODE_ACTIVITY
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_ORDER_DETAILS_PAGE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.CNC_SET_ADDRESS_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DASH_SET_ADDRESS_REQUEST_CODE
@@ -82,6 +85,23 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private var user: String = ""
     private var validateLocationResponse: ValidateLocationResponse? = null
     private var tabWidth: Float? = 0f
+    private val fragmentResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if(it.resultCode != RESULT_OK) {
+            return@registerForActivityResult
+        }
+        it.data?.extras?.let { extras ->
+            val requestCode = extras.getInt(AppConstant.REQUEST_CODE)
+            if(requestCode == REQUEST_CODE_BARCODE_ACTIVITY) {
+                val searchType = SearchType.valueOf(extras.getString(AppConstant.Keys.EXTRA_SEARCH_TYPE, ""))
+                val searchTerm: String = extras.getString(AppConstant.Keys.EXTRA_SEARCH_TERM, "")
+                (requireActivity() as? BottomNavigationActivity)?.pushFragment(newInstance(searchType, "", searchTerm, false))
+            }
+        }
+    }
+
+    companion object {
+        private const val LOGIN_MY_LIST_REQUEST_CODE = 9876
+    }
 
     private val confirmAddressViewModel: ConfirmAddressViewModel by lazy {
         ViewModelProvider(
@@ -108,7 +128,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         tvSearchProduct?.setOnClickListener { navigateToProductSearch() }
         imBarcodeScanner?.setOnClickListener { checkCameraPermission() }
         shopToolbar?.setOnClickListener { onEditDeliveryLocation() }
-        showSerachAndBarcodeUi()
 
         shopPagerAdapter = ShopPagerAdapter(childFragmentManager, mTabTitle, this)
         viewpager_main?.offscreenPageLimit = 2
@@ -127,8 +146,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
 
             override fun onPageSelected(position: Int) {
-                shopPagerAdapter?.notifyDataSetChanged()
-                updateTabIconUI(position)
                 activity?.apply {
                     when (position) {
                         0 -> {
@@ -152,6 +169,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     }
                     setupToolbar(position)
                 }
+                shopPagerAdapter?.notifyDataSetChanged()
+                updateTabIconUI(position)
             }
         })
         tabs_main?.setupWithViewPager(viewpager_main)
@@ -159,18 +178,18 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         showShopFeatureWalkThrough()
     }
 
-    fun showSerachAndBarcodeUi(){
+    fun showSerachAndBarcodeUi() {
         tvSearchProduct?.visibility = View.VISIBLE
         imBarcodeScanner?.visibility = View.VISIBLE
     }
 
-    fun hideSerachAndBarcodeUi(){
-        tvSearchProduct?.visibility = View.INVISIBLE
-        imBarcodeScanner?.visibility = View.INVISIBLE
+    fun hideSerachAndBarcodeUi() {
+        tvSearchProduct?.visibility = View.GONE
+        imBarcodeScanner?.visibility = View.GONE
     }
 
     private fun executeValidateSuburb() {
-       val placeId = getDeliveryType()?.address?.placeId ?: return
+        val placeId = getDeliveryType()?.address?.placeId ?: return
         placeId.let {
             lifecycleScope.launch {
                 progressBar?.visibility = View.VISIBLE
@@ -317,9 +336,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun updateTabIconUI(selectedTab: Int) {
-        if (selectedTab == 0 || selectedTab == 2) {
+        if (selectedTab == 0) {
             showSerachAndBarcodeUi()
-        } else if (selectedTab == 1 && KotlinUtils.browsingCncStore == null)  {
+        } else if (selectedTab == 1 && KotlinUtils.browsingCncStore == null) {
             hideSerachAndBarcodeUi()
         }
         tabs_main?.let { tab ->
@@ -356,7 +375,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
     }
 
-     fun setDeliveryView() {
+    fun setDeliveryView() {
         activity?.let {
             getDeliveryType()?.let { fulfillmentDetails ->
                 KotlinUtils.setDeliveryAddressView(
@@ -384,7 +403,13 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 }, AppConstant.DELAY_1000_MS)
             }
         }
-        setDeliveryView()
+
+        if (getDeliveryType() == null) {
+            setupToolbar(0)
+            viewpager_main.currentItem = 0
+        } else {
+            setDeliveryView()
+        }
         when (viewpager_main?.currentItem) {
             0 -> {
                 val standardDeliveryFragment = viewpager_main?.adapter?.instantiateItem(
@@ -441,12 +466,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun navigateToBarcode() {
-        activity?.apply {
-            val openBarcodeActivity = Intent(this, BarcodeScanActivity::class.java)
-            startActivityForResult(
-                openBarcodeActivity,
-                BarcodeScanActivity.BARCODE_ACTIVITY_REQUEST_CODE
-            )
+        requireActivity().apply {
+            fragmentResultLauncher.launch(Intent(this, BarcodeScanActivity::class.java))
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }
     }
@@ -527,6 +548,14 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                         viewpager_main.currentItem
                     ) as? ChangeFullfilmentCollectionStoreFragment
                 changeFullfilmentCollectionStoreFragment?.init()
+            }
+        }
+
+        if (requestCode == LOGIN_MY_LIST_REQUEST_CODE) {
+            (activity as? BottomNavigationActivity)?.let {
+                it.bottomNavigationById.setCurrentItem(INDEX_ACCOUNT)
+                val fragment = MyListsFragment()
+                it.pushFragment(fragment)
             }
         }
     }
@@ -899,6 +928,56 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
     }
 
+    private fun showMyListsFeatureWalkThrough() {
+        (activity as? BottomNavigationActivity)?.let {
+            // Prevent dialog to display in other section when fragment is not visible
+            if (it.currentFragment !is ShopFragment || !isAdded || AppInstanceObject.get().featureWalkThrough.my_lists || !Utils.isFeatureWalkThroughTutorialsEnabled())
+                return
+            FirebaseManager.setCrashlyticsString(
+                bindString(R.string.crashlytics_materialshowcase_key),
+                this.javaClass.canonicalName
+            )
+            it.walkThroughPromtView =
+                WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.MY_LIST)
+                    .setTarget(it.bottomNavigationById?.getIconAt(INDEX_ACCOUNT))
+                    .setTitle(R.string.new_location_list)
+                    .setDescription(R.string.early_access_shopping)
+                    .setActionText(R.string.view_shopping_list_action)
+                    .setImage(R.drawable.add)
+                    .setShapePadding(48)
+                    .setAction(this@ShopFragment)
+                    .setArrowPosition(WMaterialShowcaseView.Arrow.BOTTOM_RIGHT)
+                    .setMaskColour(ContextCompat.getColor(it, R.color.semi_transparent_black))
+                    .build()
+            it.walkThroughPromtView.show(it)
+        }
+    }
+
+    private fun showBarcodeScannerFeatureWalkThrough() {
+        (activity as? BottomNavigationActivity)?.let {
+            // Prevent dialog to display in other section when fragment is not visible
+            if (it.currentFragment !is ShopFragment || imBarcodeScanner == null || !isAdded || AppInstanceObject.get().featureWalkThrough.barcodeScan || !Utils.isFeatureWalkThroughTutorialsEnabled())
+                return
+            FirebaseManager.setCrashlyticsString(
+                bindString(R.string.crashlytics_materialshowcase_key),
+                this.javaClass.canonicalName
+            )
+            it.walkThroughPromtView =
+                WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.BARCODE_SCAN)
+                    .setTarget(imBarcodeScanner)
+                    .setTitle(R.string.feature_barcode_scanning_title)
+                    .setDescription(R.string.feature_barcode_scanning_desc)
+                    .setActionText(R.string.feature_barcode_scanning_action_text)
+                    .setImage(R.drawable.tips_tricks_ic_scan)
+                    .setShapePadding(20)
+                    .setAction(this@ShopFragment)
+                    .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_RIGHT)
+                    .setMaskColour(ContextCompat.getColor(it, R.color.semi_transparent_black))
+                    .build()
+            it.walkThroughPromtView.show(it)
+        }
+    }
+
     override fun onWalkthroughActionButtonClick(feature: WMaterialShowcaseView.Feature?) {
         when (feature) {
             WMaterialShowcaseView.Feature.DASH -> {
@@ -911,6 +990,20 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
             WMaterialShowcaseView.Feature.SHOPPING -> {
                 showDashFeatureWalkThrough()
+            }
+            WMaterialShowcaseView.Feature.BARCODE_SCAN -> {
+                checkCameraPermission()
+            }
+            WMaterialShowcaseView.Feature.MY_LIST -> {
+                if (SessionUtilities.getInstance().isUserAuthenticated) {
+                    (activity as? BottomNavigationActivity)?.let {
+                        it.bottomNavigationById.setCurrentItem(INDEX_ACCOUNT)
+                        val fragment = MyListsFragment()
+                        it.pushFragment(fragment)
+                    }
+                } else {
+                    ScreenManager.presentSSOSignin(activity, LOGIN_MY_LIST_REQUEST_CODE)
+                }
             }
         }
     }
@@ -925,6 +1018,10 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
             WMaterialShowcaseView.Feature.DELIVERY_DETAILS -> {
                 executeValidateSuburb()
+                showMyListsFeatureWalkThrough()
+            }
+            WMaterialShowcaseView.Feature.MY_LIST -> {
+                showBarcodeScannerFeatureWalkThrough()
             }
         }
     }

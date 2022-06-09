@@ -10,14 +10,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="@dimen/_16sdp" />
+        app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineStart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="@dimen/_16sdp" />
+        app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineBottom"
@@ -48,8 +48,8 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/futura_medium"
         android:textColor="@color/color_9D9D9D"
-        android:textSize="@dimen/_10sdp"
-        android:letterSpacing="@integer/point_eighteen"
+        android:textSize="@dimen/_10ssp"
+        android:letterSpacing="@integer/point_eleven"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintTop_toTopOf="@id/guidelineTop" />
 
@@ -60,9 +60,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_4sdp"
         android:fontFamily="@font/futura_semi_bold"
-        android:letterSpacing="@integer/point_eighteen"
+        android:letterSpacing="@integer/point_eleven"
         android:textColor="@color/black"
-        android:textSize="@dimen/_12sdp"
+        android:textSize="@dimen/_11ssp"
         app:WTextView_font="myriadpro_semibold"
         app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"

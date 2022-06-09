@@ -42,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.net.URLEncoder
 
@@ -401,8 +402,10 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun getInventorySkuForStore(store_id: String, multipleSku: String): Call<SkusInventoryForStoreResponse> {
-        return mApiInterface.getInventorySKUForStore( getSessionToken(), getDeviceIdentityToken(), store_id, multipleSku)
-
+        return if (KotlinUtils.browsingDeliveryType?.type == Delivery.DASH.type) {
+            mApiInterface.getDashInventorySKUForStore(getSessionToken(), getDeviceIdentityToken(), store_id, multipleSku)
+        } else
+            mApiInterface.getInventorySKUForStore(getSessionToken(), getDeviceIdentityToken(), store_id, multipleSku)
     }
 
     suspend fun fetchInventorySkuForStore(store_id: String, multipleSku: String): retrofit2.Response<SkusInventoryForStoreResponse> {
@@ -725,5 +728,15 @@ object OneAppService : RetrofitConfig() {
             getDeviceIdentityToken(),
             body
         )
+    }
+
+    suspend fun confirmLocation(confirmLocationRequest: ConfirmLocationRequest): retrofit2.Response<ConfirmDeliveryAddressResponse> {
+        return withContext(Dispatchers.IO) {
+            mApiInterface.confirmPlaceLocation("",
+                "",
+                getSessionToken(),
+                getDeviceIdentityToken(),
+                confirmLocationRequest)
+        }
     }
 }

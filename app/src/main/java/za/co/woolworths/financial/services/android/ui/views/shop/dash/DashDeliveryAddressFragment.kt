@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +22,7 @@ import kotlinx.android.synthetic.main.grid_layout.*
 import kotlinx.android.synthetic.main.layout_dash_set_address_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -35,13 +37,17 @@ import za.co.woolworths.financial.services.android.ui.adapters.shop.dash.DashDel
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment
 import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
+import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
+import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_QUERY_INVENTORY_FOR_STORE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getAnonymousUserLocationDetails
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 import java.net.ConnectException
@@ -57,14 +63,18 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     )
 
     private lateinit var dashDeliveryAdapter: DashDeliveryAdapter
+    private var isQuickShopClicked = false
+    private var isUnSellableItemsRemoved: Boolean? = false
+    private var mStoreId = ""
+    private var savedAddItemToCart: AddItemToCart? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dashDeliveryAdapter =
             DashDeliveryAdapter(
-            requireContext(), onDemandNavigationListener = this,
+                requireContext(), onDemandNavigationListener = this,
                 dashLandingNavigationListener = this, this
-        )
+            )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -77,13 +87,15 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     }
 
     fun initViews() {
+        addFragmentListner()
+        isUnSellableItemsRemoved()
         val savedLocation = Utils.getPreferredDeliveryLocation()
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
             val anonymousUserLocation = getAnonymousUserLocationDetails()?.fulfillmentDetails
             if (anonymousUserLocation != null) {
                 // AnonymousUser who has location
                 val validatePlace = WoolworthsApplication.getValidatePlaceDetails()
-                if (validatePlace?.onDemand != null && validatePlace?.onDemand?.deliverable == true) {
+                if (validatePlace?.onDemand != null && validatePlace.onDemand?.deliverable == true) {
                     // Show categories.
                     setupRecyclerView()
                     initData()
@@ -118,7 +130,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     subscribeToObservers()
                     callValidatePlace(savedLocation?.fulfillmentDetails?.address?.placeId)
                 }
-                if (validatePlace?.onDemand != null && validatePlace?.onDemand?.deliverable == true) {
+                if (validatePlace?.onDemand != null && validatePlace.onDemand?.deliverable == true) {
                     // Show categories.
                     setupRecyclerView()
                     initData()
@@ -130,13 +142,40 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         }
     }
 
+    private fun addFragmentListner() {
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, _ ->
+            // As User selects to change the delivery location. So we will call confirm place API and will change the users location.
+            isQuickShopClicked = true
+            val placeId = if (WoolworthsApplication.getDashBrowsingValidatePlaceDetails() != null)
+                WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.placeDetails?.placeId
+            else WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId
+            callValidatePlace(placeId)
+        }
+    }
+
     private fun callValidatePlace(placeId: String?) {
         if (placeId.isNullOrEmpty())
             return
+        callValidatePlaceApi()
         viewModel.getValidateLocationResponse(placeId)
     }
 
+    private fun callConfirmPlace() {
+        viewModel.callConfirmPlace(KotlinUtils.getConfirmLocationRequest(Delivery.DASH))
+    }
+
+    private fun showSearchBar() {
+        if (this.parentFragment is ShopFragment && KotlinUtils.browsingDeliveryType == Delivery.DASH)
+            (this.parentFragment as ShopFragment).showSerachAndBarcodeUi() // show search bar.
+    }
+
+    private fun hideSearchBar() {
+        if (this.parentFragment is ShopFragment && KotlinUtils.browsingDeliveryType == Delivery.DASH)
+            (this.parentFragment as ShopFragment).hideSerachAndBarcodeUi() // hide search bar.
+    }
+
     private fun showSetAddressScreen() {
+        hideSearchBar()
         layoutDashSetAddress?.visibility = View.VISIBLE
         img_view?.setImageResource(R.drawable.img_dash_delivery)
         txt_dash_title?.text = getString(R.string.dash_delivery_msg)
@@ -146,6 +185,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     }
 
     private fun showChangeLocationScreen() {
+        hideSearchBar()
         layoutDashSetAddress?.visibility = View.VISIBLE
         img_view?.setImageResource(R.drawable.location_disabled)
         txt_dash_title?.text = getString(R.string.no_location_title)
@@ -154,11 +194,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         btn_dash_set_address?.setOnClickListener(this)
     }
 
-    private fun hideSetAddressScreen() {
-        layoutDashSetAddress?.visibility = View.GONE
-    }
-
     private fun initData() {
+        showSearchBar()
         when {
             // Both API data available
             viewModel.isDashCategoriesAvailable.value == true &&
@@ -327,6 +364,46 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             }
         }
 
+        // confirm place API.
+        viewModel.confirmPlaceDetails.observe(viewLifecycleOwner) {
+            it.getContentIfNotHandled()?.let { resource ->
+                val response = resource.data
+                when (response?.httpCode) {
+                    AppConstant.HTTP_OK -> {
+                        if (SessionUtilities.getInstance().isUserAuthenticated) {
+                            Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(response.orderSummary?.fulfillmentDetails))
+                            if (getAnonymousUserLocationDetails() != null)
+                                KotlinUtils.clearAnonymousUserLocationDetails()
+                        } else {
+                            saveAnonymousUserLocationDetails(ShoppingDeliveryLocation(response.orderSummary?.fulfillmentDetails))
+                        }
+                        val savedPlaceId =
+                            KotlinUtils.getDeliveryType()?.address?.placeId
+                        KotlinUtils.apply {
+                            response.orderSummary?.fulfillmentDetails?.address?.placeId.let { responsePlaceId ->
+                                this.placeId = responsePlaceId
+                                isLocationSame = responsePlaceId.equals(savedPlaceId)
+                                isDeliveryLocationTabClicked = responsePlaceId.equals(savedPlaceId)
+                                isCncTabClicked = responsePlaceId.equals(savedPlaceId)
+                                isDashTabClicked = responsePlaceId.equals(savedPlaceId)
+                            }
+                        }
+
+                        val browsingPlaceDetails =
+                            WoolworthsApplication.getDashBrowsingValidatePlaceDetails()
+                        WoolworthsApplication.setValidatedSuburbProducts(browsingPlaceDetails)
+                        // set latest response to browsing data.
+                        WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
+                            browsingPlaceDetails)
+                        if (this.parentFragment is ShopFragment) {
+                            (this.parentFragment as ShopFragment).setDeliveryView() // update main location UI.
+                        }
+                        addToCart(savedAddItemToCart) // This will again call addToCart
+                    }
+                }
+            }
+        }
+
         // Add item to cart API when quantity dialog clicked.
         viewModel.addItemToCartResp.observe(viewLifecycleOwner) {
             it.getContentIfNotHandled()?.let { resource ->
@@ -436,7 +513,10 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         (activity as? BottomNavigationActivity)?.apply {
             navigateToTabIndex(INDEX_CART, null)
         }
+        callValidatePlaceApi()
+    }
 
+    private fun callValidatePlaceApi() {
         // Validate Place API
         viewModel.validatePlaceDetails.observe(viewLifecycleOwner) {
             it.getContentIfNotHandled()?.let { resource ->
@@ -446,8 +526,21 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     }
                     Status.SUCCESS -> {
                         resource.data?.validatePlace?.let { validatePlaceResponse ->
-                            WoolworthsApplication.setDashBrowsingValidatePlaceDetails(validatePlaceResponse)
-                            initViews()
+                            WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
+                                validatePlaceResponse)
+                            if (isQuickShopClicked) {
+                                // This is for for add to cart clicked for quick shop functionality.
+                                isQuickShopClicked = false
+                                val unsellableList =
+                                    validatePlaceResponse.onDemand?.unSellableCommerceItems
+                                if (unsellableList?.isNullOrEmpty() == false && isUnSellableItemsRemoved == false) {
+                                    // show unsellable items
+                                    navigateToUnsellableItemsFragment(unsellableList as ArrayList<UnSellableCommerceItem>)
+                                } else
+                                    callConfirmPlace()
+                            } else {
+                                initViews()
+                            }
                         }
                         progressBar.visibility = View.GONE
                     }
@@ -457,6 +550,26 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 }
             }
         }
+    }
+
+    private fun isUnSellableItemsRemoved() {
+        UnSellableItemsLiveData.observe(viewLifecycleOwner) {
+            isUnSellableItemsRemoved = it
+            if (isUnSellableItemsRemoved == true) {
+                callConfirmPlace()
+                UnSellableItemsLiveData.value = false
+            }
+        }
+    }
+
+    private fun navigateToUnsellableItemsFragment(
+        unSellableCommerceItems: ArrayList<UnSellableCommerceItem>,
+    ) {
+        val unsellableItemsBottomSheetDialog =
+            UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems,
+                Delivery.DASH.name)
+        unsellableItemsBottomSheetDialog.show(requireFragmentManager(),
+            UnsellableItemsBottomSheetDialog::class.java.simpleName)
     }
 
     private fun setupRecyclerView() {
@@ -492,7 +605,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         productDetailsFragment.arguments = bundleOf(
             ProductDetailsFragment.STR_PRODUCT_LIST to Gson().toJson(productList),
             ProductDetailsFragment.STR_PRODUCT_CATEGORY to productList.productName,
-            ProductDetailsFragment.STR_BRAND_HEADER to productList.brandHeaderDescription
+            ProductDetailsFragment.STR_BRAND_HEADER to productList.brandHeaderDescription,
+            ProductDetailsFragment.IS_BROWSING to true
         )
         (activity as? BottomNavigationActivity)?.apply {
             Utils.updateStatusBarBackground(this)
@@ -505,8 +619,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         addItemToCart: AddItemToCart?,
         productList: ProductList,
     ) {
-
-        val mStoreId =
+        mStoreId =
             fulfilmentTypeId.let { it1 -> RecyclerViewViewHolderItems.getFulFillmentStoreId(it1) }
 
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
@@ -524,11 +637,22 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             return
         }
 
+        savedAddItemToCart = addItemToCart
+        // Now first check for if delivery location and browsing location is same.
+        // if same no issues. If not then show changing delivery location popup.
+        if (!KotlinUtils.getDeliveryType()?.deliveryType.equals(Delivery.DASH.type)) {
+            KotlinUtils.showChangeDeliveryTypeDialog(requireContext(), requireFragmentManager(),
+                KotlinUtils.browsingDeliveryType)
+            return
+        }
+        addToCart(addItemToCart)
+    }
+
+    private fun addToCart(addItemToCart: AddItemToCart?) {
         if (mStoreId.isEmpty()) {
             addItemToCart?.catalogRefId?.let { skuId -> productOutOfStockErrorMessage(skuId) }
             return
         }
-
         viewModel.setAddItemToCart(addItemToCart)
         viewModel.fetchInventorySkuForStore(
             mStoreId, addItemToCart?.catalogRefId
@@ -589,7 +713,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 ProductListingFragment.newInstance(
                     searchType = ProductsRequestParams.SearchType.NAVIGATE,
                     sub_category_name = categoryItem.categoryName,
-                    searchTerm = categoryItem.dimValId
+                    searchTerm = categoryItem.dimValId,
+                    true
                 )
             )
         }
@@ -601,7 +726,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 ProductListingFragment.newInstance(
                     searchType = ProductsRequestParams.SearchType.NAVIGATE,
                     sub_category_name = item.displayName,
-                    searchTerm = item.navigationState
+                    searchTerm = item.navigationState,
+                    true
                 )
             )
         }

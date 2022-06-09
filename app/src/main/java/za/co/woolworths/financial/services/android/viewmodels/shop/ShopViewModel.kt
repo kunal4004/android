@@ -7,8 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmDeliveryAddressResponse
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
-import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
@@ -20,7 +21,6 @@ import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.repository.shop.ShopRepository
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
-import java.lang.ref.PhantomReference
 import javax.inject.Inject
 
 @HiltViewModel
@@ -59,7 +59,8 @@ class ShopViewModel @Inject constructor(
     private val _validatePlaceDetails = MutableLiveData<Event<Resource<ValidateLocationResponse>>>()
     val validatePlaceDetails: LiveData<Event<Resource<ValidateLocationResponse>>> = _validatePlaceDetails
 
-    private var validatePlaceResponse: ValidatePlace? = null
+    private val _confirmPlaceDetails = MutableLiveData<Event<Resource<ConfirmDeliveryAddressResponse>>>()
+    val confirmPlaceDetails: LiveData<Event<Resource<ConfirmDeliveryAddressResponse>>> = _confirmPlaceDetails
 
     fun getDashLandingDetails() {
         _dashLandingDetails.value = Event(Resource.loading(null))
@@ -110,6 +111,14 @@ class ShopViewModel @Inject constructor(
         viewModelScope.launch {
             val response = shopRepository.validateLocation(placeId)
             _validatePlaceDetails.value = Event(response)
+        }
+    }
+
+    fun callConfirmPlace(confirmLocationRequest: ConfirmLocationRequest) {
+        _confirmPlaceDetails.value = Event(Resource.loading(null))
+        viewModelScope.launch {
+            val response = shopRepository.confirmPlace(confirmLocationRequest)
+            _confirmPlaceDetails.value = Event(response)
         }
     }
 

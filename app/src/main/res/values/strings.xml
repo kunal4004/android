@@ -2534,7 +2534,7 @@
     <string name="product_listing_price_from">From</string>
     <string name="product_details_color_count">+ %d More</string>
     <string name="geo_loc_error_msg">We can’t seem to find you. Please enter number and name of your street ,or drag the pin to your exact location.</string>
-    <string name="geo_loc_error_msg_on_edit_address">We can’t seem to find you. Please enter number and name of your street , to get
+    <string name="geo_loc_error_msg_on_edit_address">We can’t seem to find you. Please enter number and name of your street, to get
         your exact location.</string>
     <string name="fashion_beauty_geo">Fashion,Beauty,Home</string>
     <string name="no_location_collection">There Are No Collection Stores \n Available Near You.</string>
@@ -2593,5 +2593,15 @@
     <string name="enquiry_failed_retry">Something went wrong. Please try again.</string>
     <string name="enquiry_failed">Failed To Send Enquiry.</string>
     <string name="enter_valid_email">Please enter valid email.</string>
+
+    <!-- Feature Walkthrough : Barcode Scanning  -->
+    <string name="feature_barcode_scanning_title">BARCODE SCANNING</string>
+    <string name="feature_barcode_scanning_desc">Scan a product\'s barcode to view it\'s information or add it straight to your shopping list.</string>
+    <string name="feature_barcode_scanning_action_text">SCAN A PRODUCT</string>
+
+    <!-- Feature Walkthrough : MY List  -->
+    <string name="new_location_list">NEW LOCATION FOR LISTS</string>
+    <string name="early_access_shopping">Easily access your shopping lists in My Accounts.</string>
+    <string name="view_shopping_list_action">VIEW SHOPPING LISTS</string>
 
 </resources>

@@ -15,6 +15,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.TipsAndT
 import static za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity.RESULT_CODE_MY_ACCOUNT_FRAGMENT;
 import static za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity.PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.BRAND_NAVIGATION_DETAILS;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.IS_BROWSING;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_BRAND_HEADER;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_CATEGORY;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_LIST;
@@ -25,6 +26,7 @@ import static za.co.woolworths.financial.services.android.ui.fragments.shoppingl
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.MY_LIST_SEARCH_TERM;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.PRODUCT_DETAILS_FROM_MY_LIST_SEARCH;
 import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
+import static za.co.woolworths.financial.services.android.util.AppConstant.REQUEST_CODE_BARCODE_ACTIVITY;
 import static za.co.woolworths.financial.services.android.util.AppConstant.REQUEST_CODE_ORDER_DETAILS_PAGE;
 import static za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
@@ -253,7 +255,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             if (object instanceof LoadState) {
                 String searchProduct = ((LoadState) object).getSearchProduct();
                 if (!TextUtils.isEmpty((searchProduct))) {
-                    pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.SEARCH, "", searchProduct));
+                    pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.SEARCH, "", searchProduct, true));
                 }
             } else if (object instanceof CartSummaryResponse) {
                 // product item successfully added to cart
@@ -383,7 +385,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                         arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.ENTRY_POINT, FirebaseManagerAnalyticsProperties.EntryPoint.DEEP_LINK.getValue());
                         arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.DEEP_LINK_URL, linkData.toString());
                         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTDELIVERY, arguments, this);
-                        pushFragment(ProductListingFragment.Companion.newInstance(productSearchTypeAndSearchTerm.getSearchType(), "", productSearchTypeAndSearchTerm.getSearchTerm()));
+                        pushFragment(ProductListingFragment.Companion.newInstance(productSearchTypeAndSearchTerm.getSearchType(), "", productSearchTypeAndSearchTerm.getSearchTerm(), true));
                     }
                     break;
 
@@ -519,13 +521,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         pushFragment(productDetailsFragmentNew);
     }
 
-    public void openProductDetailFragment(String productName, ProductList productList, String bannerLabel, String bannerImage) {
+    public void openProductDetailFragment(String productName, ProductList productList, String bannerLabel, String bannerImage, Boolean isUserBrowsing) {
         Gson gson = new Gson();
         String strProductList = gson.toJson(productList);
         Bundle bundle = new Bundle();
         bundle.putString(STR_PRODUCT_LIST, strProductList);
         bundle.putString(STR_PRODUCT_CATEGORY, productName);
         bundle.putString(STR_BRAND_HEADER, productList.brandHeaderDescription);
+        bundle.putBoolean(IS_BROWSING, isUserBrowsing);
         bundle.putSerializable(BRAND_NAVIGATION_DETAILS, new BrandNavigationDetails(
                 productList.brandText,
                 bannerLabel,
@@ -1078,10 +1081,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             ProductList productList = (ProductList) Utils.jsonStringToObject(productLIstStr, ProductList.class);
             openProductDetailFragment(data.getStringExtra(KEY_PRODUCT_NAME), productList);
         }
-        if ((requestCode == BarcodeScanActivity.BARCODE_ACTIVITY_REQUEST_CODE || requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE) && resultCode == RESULT_OK) {
+        if ((requestCode == REQUEST_CODE_BARCODE_ACTIVITY || requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE) && resultCode == RESULT_OK) {
             ProductsRequestParams.SearchType searchType = ProductsRequestParams.SearchType.valueOf(data.getStringExtra("searchType"));
             String searchTerm = data.getStringExtra("searchTerm");
-            pushFragment(ProductListingFragment.Companion.newInstance(searchType, "", searchTerm));
+            pushFragment(ProductListingFragment.Companion.newInstance(searchType, "", searchTerm, true));
             return;
         }
 
