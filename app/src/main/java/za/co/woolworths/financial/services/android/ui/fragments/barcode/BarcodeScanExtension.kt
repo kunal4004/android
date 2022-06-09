@@ -165,8 +165,8 @@ abstract class BarcodeScanExtension : Fragment() {
         activity?.apply {
             Intent().apply {
                 putExtra(AppConstant.REQUEST_CODE, BarcodeScanActivity.BARCODE_ACTIVITY_REQUEST_CODE)
-                putExtra("searchType", searchType)
-                putExtra("searchTerm", searchTerm)
+                putExtra(AppConstant.Keys.EXTRA_SEARCH_TYPE, searchType)
+                putExtra(AppConstant.Keys.EXTRA_SEARCH_TERM, searchTerm)
                 setResult(Activity.RESULT_OK, this)
                 finish()
                 overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)

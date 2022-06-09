@@ -97,5 +97,15 @@ class AppConstant {
 
     }
 
+    class Keys {
+        companion object {
+            /*****************************************************************************************
+             * Extra keys
+             *****************************************************************************************/
+            const val EXTRA_SEARCH_TYPE = "searchType"
+            const val EXTRA_SEARCH_TERM = "searchTerm"
+        }
+    }
+
     enum class DashDetailsViewType(val value: Int) { HEADER_TITLE(0), APP_FEATURE_LIST(1), TERMS_AND_CONDITION(2) }
 }
