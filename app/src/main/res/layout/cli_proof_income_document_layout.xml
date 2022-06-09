@@ -10,12 +10,12 @@
         android:id="@+id/tvProofIncomeDocument"
         style="@style/cli_permission_title_text"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/fourteen_dp"
         android:layout_marginTop="@dimen/sixteen_dp"
+        android:contentDescription="@string/proofOfIncomeDocumentTitle"
         android:text="@string/proof_of_income_document"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:id="@+id/vBottomLine"
@@ -27,10 +27,11 @@
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/tvDescription"
         style="@style/take_photo_document_desc_style"
+        android:contentDescription="@string/proofOfIncomeDocumentDescription"
         android:text="@string/proof_of_income_statement_description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vBottomLine"/>
+        app:layout_constraintTop_toBottomOf="@+id/vBottomLine" />
 
 
     <View
@@ -46,23 +47,24 @@
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/tvClearDocumentPhoto"
         style="@style/take_photo_document_desc_style"
+        android:contentDescription="@string/proofOfIncomeDocumentDescriptionParagraph1"
         android:text="@string/take_clear_photo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vBottomLineDescription"/>
+        app:layout_constraintTop_toBottomOf="@+id/vBottomLineDescription" />
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/tvProofIncomeRequirement"
         style="@style/cli_permission_title_text"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/fifteen_dp"
         android:layout_marginTop="@dimen/eighteen_dp"
+        android:contentDescription="@string/proofOfIncomeRequirementTextTitle"
         android:text="@string/proof_of_income_requirement"
         android:textAllCaps="false"
         android:textSize="@dimen/fifteen_sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvClearDocumentPhoto"/>
+        app:layout_constraintTop_toBottomOf="@+id/tvClearDocumentPhoto" />
 
     <LinearLayout
         android:id="@+id/llClearPhotoScanDocument"
@@ -78,7 +80,8 @@
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             style="@style/proof_of_income_requirement_style"
-            android:text="@string/uploading_clear_scan_photo"/>
+            android:contentDescription="@string/clearPhotoScanOfDocumentText"
+            android:text="@string/uploading_clear_scan_photo" />
     </LinearLayout>
 
     <LinearLayout
@@ -92,7 +95,8 @@
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             style="@style/proof_of_income_requirement_style"
-            android:text="@string/uploading_name_address"/>
+            android:contentDescription="@string/nameAndAddressMustBeVisibleText"
+            android:text="@string/uploading_name_address" />
     </LinearLayout>
 
     <LinearLayout
@@ -110,7 +114,8 @@
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             style="@style/proof_of_income_requirement_style"
-            android:text="@string/uploading_statement_period"/>
+            android:contentDescription="@string/statementPeriodMustBeVisibleText"
+            android:text="@string/uploading_statement_period" />
     </LinearLayout>
 
     <LinearLayout
@@ -128,7 +133,8 @@
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             style="@style/proof_of_income_requirement_style"
-            android:text="@string/uploading_older_month"/>
+            android:contentDescription="@string/cantBeOlderThan3MonthsText"
+            android:text="@string/uploading_older_month" />
     </LinearLayout>
 
     <View
@@ -139,10 +145,11 @@
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/tvProceedDescription"
         style="@style/take_photo_document_desc_style"
+        android:contentDescription="@string/noRequiredDocumentDescText"
         android:text="@string/cli_proceed_description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vIncomeProofSeparator"/>
+        app:layout_constraintTop_toBottomOf="@+id/vIncomeProofSeparator" />
 
     <View
         android:id="@+id/vSpace"
