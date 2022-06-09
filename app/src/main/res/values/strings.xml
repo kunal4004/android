@@ -978,7 +978,7 @@
 
     <!--MY List Feature Walkthrough-->
     <string name="new_location_list">NEW LOCATION FOR LISTS</string>
-    <string name="early_access_shopping">Easily access your shopping lists in My Accounts.</string>
+    <string name="early_access_shopping">Easily access your shopping \n lists in My Accounts.</string>
     <string name="view_shopping_list_action">VIEW SHOPPING LISTS</string>
 
     <string name="toolbar_layout">Toolbar</string>

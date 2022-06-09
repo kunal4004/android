@@ -40,6 +40,7 @@ import za.co.woolworths.financial.services.android.geolocation.network.model.Con
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.SavedAddressAdapter
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDeliveryFragment.Companion.DEPARTMENT_LOGIN_REQUEST
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
@@ -455,6 +456,15 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                                         customBottomSheetDialogFragment.show(requireFragmentManager(),
                                             CustomBottomSheetDialogFragment::class.java.simpleName)
                                     }
+                                }else if (KotlinUtils.isComingFromCncTab == true) {
+                                    /*user is coming from CNC i.e. set Location flow or change button flow  */
+                                    // navigate to CNC home tab.
+                                    KotlinUtils.isComingFromCncTab = false
+
+                                    /* set cnc browsing data */
+                                    WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
+                                        validateLocationResponse?.validatePlace)
+                                    activity?.finish()
                                 } else {
 
                                     when (deliveryType) {
