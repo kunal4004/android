@@ -101,7 +101,7 @@
                     android:id="@+id/deliveryLocationConstLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/ten_dp"
+                    android:layout_marginVertical="@dimen/eight_dp"
                     android:layout_marginStart="@dimen/seven_dp">
 
                     <ImageView

@@ -71,7 +71,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbarPLP"
-        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_marginTop="@dimen/one_dp"
         android:background="@color/default_background"
         android:orientation="vertical">
 
@@ -85,7 +85,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/sortAndRefineLayout"
-            android:layout_marginTop="@dimen/one_dp"
             android:visibility="gone" />
 
 
