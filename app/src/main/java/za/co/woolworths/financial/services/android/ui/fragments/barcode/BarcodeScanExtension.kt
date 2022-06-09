@@ -16,6 +16,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_BARCODE_ACTIVITY
 import za.co.woolworths.financial.services.android.util.ConnectionBroadcastReceiver
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
@@ -164,7 +165,7 @@ abstract class BarcodeScanExtension : Fragment() {
     fun sendResultBack(searchType: String, searchTerm: String) {
         activity?.apply {
             Intent().apply {
-                putExtra(AppConstant.REQUEST_CODE, BarcodeScanActivity.BARCODE_ACTIVITY_REQUEST_CODE)
+                putExtra(AppConstant.REQUEST_CODE, REQUEST_CODE_BARCODE_ACTIVITY)
                 putExtra(AppConstant.Keys.EXTRA_SEARCH_TYPE, searchType)
                 putExtra(AppConstant.Keys.EXTRA_SEARCH_TERM, searchTerm)
                 setResult(Activity.RESULT_OK, this)

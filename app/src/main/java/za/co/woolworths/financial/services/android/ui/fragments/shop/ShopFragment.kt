@@ -40,7 +40,6 @@ import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
-import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity.Companion.BARCODE_ACTIVITY_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.*
@@ -57,6 +56,7 @@ import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashDelive
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_3000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_4000_MS
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_BARCODE_ACTIVITY
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_ORDER_DETAILS_PAGE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.CNC_SET_ADDRESS_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DASH_SET_ADDRESS_REQUEST_CODE
@@ -91,7 +91,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
         it.data?.extras?.let { extras ->
             val requestCode = extras.getInt(AppConstant.REQUEST_CODE)
-            if(requestCode == BARCODE_ACTIVITY_REQUEST_CODE) {
+            if(requestCode == REQUEST_CODE_BARCODE_ACTIVITY) {
                 val searchType = SearchType.valueOf(extras.getString("searchType", ""))
                 val searchTerm: String = extras.getString("searchTerm", "")
                 (requireActivity() as? BottomNavigationActivity)?.pushFragment(newInstance(searchType, "", searchTerm, false))

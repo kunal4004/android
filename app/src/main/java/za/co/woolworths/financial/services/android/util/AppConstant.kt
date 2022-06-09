@@ -51,6 +51,8 @@ class AppConstant {
         const val REQUEST_CODE_QUERY_INVENTORY_FOR_STORE = 3343
         //order details
         const val REQUEST_CODE_ORDER_DETAILS_PAGE = 1989
+        //Barcode scanning
+        const val REQUEST_CODE_BARCODE_ACTIVITY = 1947
 
         /*****************************************************************************************
          * Miscellaneous
