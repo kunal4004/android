@@ -72,6 +72,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductLis
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.views.*
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
@@ -94,7 +95,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 open class ProductListingFragment : ProductListingExtensionFragment(), GridNavigator,
     IProductListing, View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected,
-    WMaterialShowcaseView.IWalkthroughActionListener, ChanelNavigationClickListener {
+    WMaterialShowcaseView.IWalkthroughActionListener,
+    IOnConfirmDeliveryLocationActionListener, ChanelNavigationClickListener {
 
     private var LOGIN_REQUEST_SUBURB_CHANGE = 1419
     private var lastVisibleItem: Int = 0
@@ -374,7 +376,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                             WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
                                 browsingPlaceDetails)
                             setTitle() // update plp location.
-                            onConfirmedLocation() // This will again call addToCart
+                            onConfirmLocation() // This will again call addToCart
                         }
                     }
                 }
@@ -1076,7 +1078,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         when (requestCode) {
             QUERY_INVENTORY_FOR_STORE_REQUEST_CODE, SET_DELIVERY_LOCATION_REQUEST_CODE -> {
                 if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue() || resultCode == RESULT_OK) {
-                    requestCartSummary()
+                    // check if anonymous user has any location.
+                    if (KotlinUtils.getAnonymousUserLocationDetails() != null) {
+                        // confirm the location and continue with addToCart Flow.
+                        callConfirmPlace()
+                    } else {
+                        // request cart summary to get the user's location.
+                        requestCartSummary()
+                    }
                 }
             }
             QUERY_LOCATION_ITEM_REQUEST_CODE -> {
@@ -1702,10 +1711,12 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
                 when (response?.httpCode) {
                     HTTP_OK -> {
-                        if (Utils.getPreferredDeliveryLocation() != null)
-                            getUpdatedValidateResponse()
-                        else
-                            setNewLocation()
+                        // If user have location then call Confirm Place API else go to geoLocation Flow.
+                        if (Utils.getPreferredDeliveryLocation() != null) {
+                            setTitle() // update plp location.
+                            onConfirmLocation() // This will again call addToCart
+                        } else
+                            onSetNewLocation()
                     }
                 }
             }
@@ -1716,7 +1727,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         })
     }
 
-    private fun onConfirmedLocation() {
+    override fun onConfirmLocation() {
         mSelectedProductList?.let { productList ->
             mFulfilmentTypeId?.let {
                 queryInventoryForStore(
@@ -1728,7 +1739,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
     }
 
-    private fun setNewLocation() {
+    override fun onSetNewLocation() {
         activity?.apply {
             KotlinUtils.presentEditDeliveryGeoLocationActivity(
                 this,
