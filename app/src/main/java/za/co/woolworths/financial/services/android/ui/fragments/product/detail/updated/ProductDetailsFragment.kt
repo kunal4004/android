@@ -123,6 +123,7 @@ import za.co.woolworths.financial.services.android.util.pickimagecontract.PickIm
 import java.io.File
 import android.graphics.Bitmap
 import com.google.firebase.analytics.FirebaseAnalytics
+import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
 import kotlin.collections.set
@@ -2088,13 +2089,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 when (Delivery.getType(it.deliveryType)) {
                     Delivery.CNC -> {
                         currentDeliveryLocation.text =
-                            resources?.getString(R.string.store) + it.storeName ?: ""
+                            resources?.getString(R.string.store) + it.storeName?.let { convertToTitleCase(it) } ?: ""
                         defaultLocationPlaceholder.text =
                             getString(R.string.collecting_from) + " "
                     }
                     Delivery.STANDARD -> {
                         currentDeliveryLocation.text =
-                            it.address?.address1 ?: ""
+                            it.address?.address1?.let { convertToTitleCase(it) } ?: ""
                         defaultLocationPlaceholder.text =
                             getString(R.string.delivering_to_pdp)
                     }
