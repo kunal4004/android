@@ -45,6 +45,7 @@ import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_COLLECTING_DETAILS
+import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
@@ -62,6 +63,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.Transactio
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionItem
 import za.co.woolworths.financial.services.android.models.dto.app_config.chat.ConfigTradingHours
 import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherErrorMessage
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity
@@ -74,6 +76,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.integration.util
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.CLIErrorMessageButtonDialog
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ErrorMessageDialog
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.LoanWithdrawalPopupDialog
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DEFAULT_ADDRESS
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
@@ -1165,16 +1170,20 @@ class KotlinUtils {
         }
 
         fun saveAnonymousUserLocationDetails(shoppingDeliveryLocation: ShoppingDeliveryLocation) {
-            Utils.sessionDaoSave(KEY.ANONYMOUS_USER_LOCATION_DETAILS,
-                Utils.objectToJson(shoppingDeliveryLocation))
+            Utils.sessionDaoSave(
+                KEY.ANONYMOUS_USER_LOCATION_DETAILS,
+                Utils.objectToJson(shoppingDeliveryLocation)
+            )
         }
 
         fun getAnonymousUserLocationDetails(): ShoppingDeliveryLocation? {
             var location: ShoppingDeliveryLocation? = null
             try {
                 SessionDao.getByKey(KEY.ANONYMOUS_USER_LOCATION_DETAILS).value?.let {
-                    location = Utils.strToJson(it,
-                        ShoppingDeliveryLocation::class.java) as ShoppingDeliveryLocation?
+                    location = Utils.strToJson(
+                        it,
+                        ShoppingDeliveryLocation::class.java
+                    ) as ShoppingDeliveryLocation?
                 }
             } catch (e: Exception) {
                 FirebaseManager.logException(e)
@@ -1190,13 +1199,32 @@ class KotlinUtils {
             return (Dispatchers.IO + CoroutineExceptionHandler { _, throwable ->
                 when (throwable) {
                     is SocketException -> errorHandler(AbsaApiFailureHandler.NoInternetApiFailure)
-                    is HttpException -> errorHandler(AbsaApiFailureHandler.HttpException(throwable.message(),
-                        throwable.code()))
-                    is Exception -> errorHandler(AbsaApiFailureHandler.Exception(throwable.message,
-                        throwable.hashCode()))
+                    is HttpException -> errorHandler(
+                        AbsaApiFailureHandler.HttpException(
+                            throwable.message(),
+                            throwable.code()
+                        )
+                    )
+                    is Exception -> errorHandler(
+                        AbsaApiFailureHandler.Exception(
+                            throwable.message,
+                            throwable.hashCode()
+                        )
+                    )
                     else -> errorHandler(AbsaApiFailureHandler.NoInternetApiFailure)
                 }
             })
+        }
+
+
+        fun cliErrorMessageDialog(appCompatActivity: AppCompatActivity?, data: ErrorMessageDialog) {
+            appCompatActivity?.apply {
+                val fragmentInstance = CLIErrorMessageButtonDialog.newInstance(data)
+                fragmentInstance.show(
+                    supportFragmentManager,
+                    CLIErrorMessageButtonDialog::class.java.simpleName
+                )
+            }
         }
     }
 }

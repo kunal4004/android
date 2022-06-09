@@ -23,6 +23,7 @@
             android:letterSpacing="0.2"
             android:text="@string/cli_credit_limit_increase"
             android:textAllCaps="true"
+            android:contentDescription="findOutMoreTitle"
             android:textColor="@color/black"
             android:textSize="12sp"
             app:WTextView_font="medium_bold"/>
@@ -45,6 +46,7 @@
             style="@style/blackButtonStyle"
             android:background="@drawable/button_disable_color"
             android:gravity="center"
+            android:contentDescription="buttonIncreaseMyLimit"
             android:text="@string/cli_activity_title"
             android:textColor="@color/text_color_selector"
             app:WButton_font="medium_bold"/>
@@ -92,7 +94,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            />
+            android:contentDescription="labelCreditLimitIncrease" />
 
         <LinearLayout
             android:id="@+id/viewPagerCountDots"
@@ -100,6 +102,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/increaseLimitButton"
             android:layout_centerHorizontal="true"
+            android:contentDescription="viewPagerDotsCount"
             android:layout_gravity="bottom|center"
             android:layout_marginBottom="@dimen/twenty_seven_dp"
             android:gravity="center"

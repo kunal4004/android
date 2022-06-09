@@ -637,8 +637,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         activity?.finish()
     }
     private fun showActivateVirtualTempCardScreen(){
-        StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL = true
-        StoreCardOptionsFragment.SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = false
+        StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL = false
+        StoreCardOptionsFragment.SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = true
         activity?.finish()
     }
 
