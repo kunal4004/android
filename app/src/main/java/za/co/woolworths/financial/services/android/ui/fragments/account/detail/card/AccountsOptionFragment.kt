@@ -15,6 +15,7 @@ import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
 import com.facebook.shimmer.Shimmer
 import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -47,30 +48,25 @@ import za.co.woolworths.financial.services.android.models.service.event.BusStati
 import za.co.woolworths.financial.services.android.ui.activities.CreditCardActivationActivity
 import za.co.woolworths.financial.services.android.ui.activities.GetAPaymentPlanActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
-
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.OutSystemBuilder
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
-import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.personal_loan.PersonalLoanFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.MyAccountsScreenNavigator
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
-
 import za.co.woolworths.financial.services.android.ui.fragments.credit_card_activation.CreditCardActivationAvailabilityDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
-import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 
+@AndroidEntryPoint
 open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDetailsContract.AccountCardDetailView {
-
 
     private var userOfferActiveCallWasCompleted = false
     var mCardPresenterImpl: AccountCardDetailPresenterImpl? = null
@@ -287,7 +283,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                     if (applyNowState != null) {
                         if (!MyAccountsFragment.verifyAppInstanceId()) {
                             activity?.apply { onStartCreditLimitIncreaseFirebaseEvent(this) }
-                            creditLimitIncrease()?.nextStep(getOfferActive(), getProductOfferingId()?.toString(),  applyNowState)
+                            creditLimitIncrease()?.nextStep(requireActivity(),getOfferActive(), getProductOfferingId()?.toString(),  applyNowState)
                         }
                     }
                 }

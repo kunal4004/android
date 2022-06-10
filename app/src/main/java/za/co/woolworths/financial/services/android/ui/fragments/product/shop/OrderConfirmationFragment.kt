@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.fragment_order_confirmation.*
 import kotlinx.android.synthetic.main.order_details_bottom_sheet.*
 import kotlinx.android.synthetic.main.other_order_details.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
+import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
@@ -119,7 +120,7 @@ class OrderConfirmationFragment : Fragment() {
                     optionTitle?.text = it.getText(R.string.collecting_from)
                     deliveryTextView?.text = it.getText(R.string.collection_semicolon)
                     optionLocation?.text =
-                        response?.orderSummary?.fulfillmentDetails?.storeName ?: ""
+                        response?.orderSummary?.fulfillmentDetails?.storeName?.let { convertToTitleCase(it) } ?: ""
                 }
                 Delivery.STANDARD -> {
                     optionImage?.background =
@@ -127,7 +128,7 @@ class OrderConfirmationFragment : Fragment() {
                     optionTitle?.text = it.getText(R.string.delivering_to)
                     deliveryTextView?.text = it.getText(R.string.delivery_semicolon)
                     optionLocation?.text =
-                        response?.orderSummary?.fulfillmentDetails?.address?.address1 ?: ""
+                        response?.orderSummary?.fulfillmentDetails?.address?.address1?.let { convertToTitleCase(it) } ?: ""
                 }
                 else -> {
                 }
@@ -235,7 +236,7 @@ class OrderConfirmationFragment : Fragment() {
 
         bottomSheetScrollView?.visibility = VISIBLE
         orderStatusTextView?.text = response?.orderSummary?.state
-        deliveryLocationTextView?.text = optionLocation.text
+        deliveryLocationTextView?.text = optionLocation.text?.let { convertToTitleCase(it as String) }
 
         if (response?.deliveryDetails?.deliveryInfos?.size == 2) {
             oneDeliveryBottomSheetLinearLayout?.visibility = GONE
