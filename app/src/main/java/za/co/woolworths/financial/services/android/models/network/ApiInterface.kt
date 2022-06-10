@@ -1347,6 +1347,7 @@ interface ApiInterface {
         @Body body: Any
     ): Response
 
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/cartV2/confirmLocation")
     fun confirmLocation(
         @Header("userAgent") userAgent: String,
