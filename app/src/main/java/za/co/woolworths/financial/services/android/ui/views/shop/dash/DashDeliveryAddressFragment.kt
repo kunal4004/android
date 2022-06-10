@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.views.shop.dash
 
+import android.app.Activity
+import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
@@ -22,6 +24,7 @@ import kotlinx.android.synthetic.main.grid_layout.*
 import kotlinx.android.synthetic.main.layout_dash_set_address_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -30,6 +33,7 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.shop.Banner
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
@@ -46,6 +50,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductL
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_QUERY_INVENTORY_FOR_STORE
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -614,6 +619,34 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        subscribeToObservers()
+        when (requestCode) {
+            REQUEST_CODE_QUERY_INVENTORY_FOR_STORE, SET_DELIVERY_LOCATION_REQUEST_CODE -> {
+                if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue() || resultCode == Activity.RESULT_OK) {
+                    // check if anonymous user has any location.
+                    if (getAnonymousUserLocationDetails() != null) {
+                        // No Need to confirm the same Dash location Again. So directly call addToCart instead of confirmApi.
+                        val browsingPlaceDetails =
+                            WoolworthsApplication.getDashBrowsingValidatePlaceDetails()
+                        WoolworthsApplication.setValidatedSuburbProducts(browsingPlaceDetails)
+                        // set latest response to browsing data.
+                        WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
+                            browsingPlaceDetails)
+                        if (this.parentFragment is ShopFragment) {
+                            (this.parentFragment as ShopFragment).setDeliveryView() // update main location UI.
+                        }
+                        addToCart(savedAddItemToCart) // This will again call addToCart
+                    } else {
+                        // request cart summary to get the user's location.
+                        requestCartSummary()
+                    }
+                }
+            }
+        }
+    }
+
     override fun queryInventoryForStore(
         fulfilmentTypeId: String,
         addItemToCart: AddItemToCart?,
@@ -646,6 +679,42 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             return
         }
         addToCart(addItemToCart)
+    }
+
+    private fun requestCartSummary() {
+        progressBar.visibility = View.VISIBLE
+        GetCartSummary().getCartSummary(object : IResponseListener<CartSummaryResponse> {
+            override fun onSuccess(response: CartSummaryResponse?) {
+                progressBar.visibility = View.GONE
+                when (response?.httpCode) {
+                    AppConstant.HTTP_OK -> {
+                        // If user have location then call Confirm Place API else go to geoLocation Flow.
+                        if (Utils.getPreferredDeliveryLocation() != null) {
+                            if (parentFragment is ShopFragment) {
+                                (parentFragment as ShopFragment).setDeliveryView() // update main location UI.
+                            }
+                            addToCart(savedAddItemToCart) // This will again call addToCart
+                        } else
+                            onSetNewLocation()
+                    }
+                }
+            }
+
+            override fun onFailure(error: Throwable?) {
+                progressBar.visibility = View.GONE
+            }
+        })
+    }
+
+    private fun onSetNewLocation() {
+        activity?.apply {
+            KotlinUtils.presentEditDeliveryGeoLocationActivity(
+                this,
+                ProductListingFragment.SET_DELIVERY_LOCATION_REQUEST_CODE,
+                KotlinUtils.getPreferredDeliveryType(),
+                GeoUtils.getPlaceId()
+            )
+        }
     }
 
     private fun addToCart(addItemToCart: AddItemToCart?) {

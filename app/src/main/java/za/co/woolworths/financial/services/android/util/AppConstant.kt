@@ -49,6 +49,7 @@ class AppConstant {
         const val REQUEST_CODE = "REQUEST_CODE"
         //Dash
         const val REQUEST_CODE_QUERY_INVENTORY_FOR_STORE = 3343
+        const val SET_DELIVERY_LOCATION_REQUEST_CODE = 3346
         //order details
         const val REQUEST_CODE_ORDER_DETAILS_PAGE = 1989
         //Barcode scanning
