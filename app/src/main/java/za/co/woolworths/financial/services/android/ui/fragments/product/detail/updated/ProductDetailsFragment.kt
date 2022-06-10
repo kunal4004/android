@@ -33,7 +33,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.perfectcorp.perfectlib.CameraView
@@ -130,7 +129,6 @@ import android.graphics.Bitmap
 import com.google.firebase.analytics.FirebaseAnalytics
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-import java.io.File
 import javax.inject.Inject
 import kotlin.collections.get
 import kotlin.collections.set
