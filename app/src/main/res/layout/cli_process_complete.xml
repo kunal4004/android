@@ -10,27 +10,28 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"
-        android:contentDescription="@string/process_complete_title"
-        app:srcCompat="@drawable/process_application_complete_logo"
+        android:contentDescription="@string/applicationBeingProcessedImage"
         app:layout_constraintBottom_toTopOf="@+id/tvProcessCompleteTitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/process_application_complete_logo" />
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/tvProcessCompleteTitle"
         style="@style/process_complete_cli_title_style"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="13dp"
-        android:layout_marginEnd="@dimen/thirty_two_dp"
         android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:layout_marginBottom="13dp"
+        android:contentDescription="@string/ProcessCompleteTitle"
         android:gravity="center"
         android:text="@string/process_complete_title"
         app:WTextView_font="medium_bold"
         app:layout_constraintBottom_toTopOf="@+id/tvProcessCompleteDesc"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -41,10 +42,11 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/cli_fifty_dp"
+        android:contentDescription="@string/ProcessCompleteDesc"
         android:text="@string/process_complete_desc"
         app:layout_constraintBottom_toTopOf="@+id/relProcessCompleteButtonContainer"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <RelativeLayout
         android:id="@+id/relProcessCompleteButtonContainer"
@@ -63,11 +65,12 @@
             android:layout_height="@dimen/cli_button_height_popup"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
+            android:contentDescription="@string/button_back_to_myaccount"
             android:gravity="center"
             android:text="@string/back_to_my_account"
             android:textColor="@color/black"
             android:textSize="@dimen/cli_twelve_sp"
-            app:WButton_font="medium_bold"/>
+            app:WButton_font="medium_bold" />
 
     </RelativeLayout>
 
