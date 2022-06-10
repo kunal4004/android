@@ -303,17 +303,24 @@ object OneAppService : RetrofitConfig() {
     fun getProducts(requestParams: ProductsRequestParams): Call<ProductView> {
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
 
+        val deliveryType = if (requestParams.isUserBrowsing) KotlinUtils.browsingDeliveryType?.type
+            ?: Delivery.STANDARD.type
+        else KotlinUtils.getDeliveryType()?.deliveryType ?: Delivery.STANDARD.type
+
         return if (Utils.isLocationEnabled(appContext())) {
             mApiInterface.getProducts("", "",  "",
                 "", getSessionToken(), getDeviceIdentityToken(), requestParams.searchTerm, requestParams.searchType.value,
                 requestParams.responseType.value, requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption,
-                requestParams.refinement, suburbId = suburbId, storeId = storeId, filterContent = requestParams.filterContent
+                requestParams.refinement, suburbId = suburbId, storeId = storeId, filterContent = requestParams.filterContent,
+                deliveryType = deliveryType, deliveryDetails = KotlinUtils.getDeliveryDetails(requestParams.isUserBrowsing)
             )
         } else {
             mApiInterface.getProductsWithoutLocation("", "", getSessionToken(),
                 getDeviceIdentityToken(), requestParams.searchTerm, requestParams.searchType.value, requestParams.responseType.value,
                 requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption, requestParams.refinement, suburbId = suburbId,
-                storeId = storeId, filterContent =  requestParams.filterContent)
+                storeId = storeId, filterContent =  requestParams.filterContent,
+                deliveryType = deliveryType, deliveryDetails = KotlinUtils.getDeliveryDetails(requestParams.isUserBrowsing)
+            )
         }
     }
 
@@ -378,17 +385,22 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.removeAllCartItems( getSessionToken(), getDeviceIdentityToken())
     }
 
-    fun productDetail(productId: String, skuId: String): Call<ProductDetailResponse> {
+    fun productDetail(productId: String, skuId: String, isUserBrowsing: Boolean = false): Call<ProductDetailResponse> {
         val loc = getMyLocation()
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
+        val deliveryType =
+            if (isUserBrowsing) KotlinUtils.browsingDeliveryType?.type ?: Delivery.STANDARD.type
+            else KotlinUtils.getDeliveryType()?.deliveryType ?: Delivery.STANDARD.type
         return if (Utils.isLocationEnabled(appContext())) {
             mApiInterface.productDetail("", "",
                      loc.longitude, loc.latitude, getSessionToken(), getDeviceIdentityToken(),
-                    productId, skuId, suburbId, storeId)
+                    productId, skuId, suburbId, storeId,
+                deliveryType = deliveryType, deliveryDetails = KotlinUtils.getDeliveryDetails(isUserBrowsing))
         } else {
             mApiInterface.productDetail( "", "",
                 getSessionToken(), getDeviceIdentityToken(),
-                    productId, skuId, suburbId, storeId)
+                    productId, skuId, suburbId, storeId, deliveryType = deliveryType,
+                deliveryDetails = KotlinUtils.getDeliveryDetails(isUserBrowsing))
         }
     }
 
@@ -418,8 +430,9 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.getInventorySKU( getSessionToken(), getDeviceIdentityToken(), multipleSku)
     }
 
-    fun getInventorySkuForStore(store_id: String, multipleSku: String): Call<SkusInventoryForStoreResponse> {
-        return if (KotlinUtils.browsingDeliveryType?.type == Delivery.DASH.type) {
+    fun getInventorySkuForStore(store_id: String, multipleSku: String, isUserBrowsing: Boolean): Call<SkusInventoryForStoreResponse> {
+        return if ((isUserBrowsing && Delivery.DASH.type == KotlinUtils.browsingDeliveryType?.type) ||
+            (!isUserBrowsing && Delivery.DASH.type == KotlinUtils.getDeliveryType()?.deliveryType)) {
             mApiInterface.getDashInventorySKUForStore(getSessionToken(), getDeviceIdentityToken(), store_id, multipleSku)
         } else
             mApiInterface.getInventorySKUForStore(getSessionToken(), getDeviceIdentityToken(), store_id, multipleSku)

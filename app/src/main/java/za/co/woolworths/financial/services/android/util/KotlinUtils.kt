@@ -87,6 +87,10 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_DASH_TAB
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.browsingCncStore
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.browsingDeliveryType
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredCnCStore
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import java.io.*
@@ -96,6 +100,7 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 import kotlin.coroutines.CoroutineContext
 
 class KotlinUtils {
@@ -1100,6 +1105,46 @@ class KotlinUtils {
             }
         }
 
+         fun getDeliveryDetails(isUserBrowsing : Boolean): String? {
+            //TODO: Update condition to when browsing delivery is true
+            return if (isUserBrowsing) {
+                when (browsingDeliveryType) {
+                    Delivery.CNC -> {
+                        browsingCncStore?.deliveryDetails ?: getPreferredCnCStore()?.deliveryDetails ?: ""
+                    }
+                    Delivery.DASH -> {
+                         WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.onDemand?.deliveryDetails
+                             ?: WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.deliveryDetails ?: ""
+                    }
+                    Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails()?.deliveryDetails ?: ""
+                    else -> WoolworthsApplication.getValidatePlaceDetails()?.deliveryDetails ?: ""
+                }
+            } else {
+                when (getPreferredDeliveryType()) {
+                    Delivery.CNC -> {
+                         getPreferredCnCStore()?.deliveryDetails ?: ""
+                    }
+                    Delivery.DASH -> {
+                        WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.deliveryDetails ?: ""
+                    }
+                    Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails()?.deliveryDetails ?: ""
+                    else -> WoolworthsApplication.getValidatePlaceDetails()?.deliveryDetails ?: ""
+                }
+            }
+        }
+
+        fun getPreferredCnCStore(): Store? {
+            val deliveryType = getDeliveryType()
+            for (store in WoolworthsApplication.getValidatePlaceDetails()?.stores ?: ArrayList()) {
+                deliveryType?.let {
+                    if (it.storeId == store.storeId) {
+                        return store
+                    }
+                }
+            }
+            return null
+        }
+        
         fun getPreferredPlaceId(): String {
             return Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId ?: ""
         }

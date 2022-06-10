@@ -2,14 +2,12 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 
 import android.app.Activity.RESULT_OK
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -297,7 +295,11 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
     }
 
     private fun getInventoryStockForStore(storeId: String, multiSku: String): Call<SkusInventoryForStoreResponse> {
-      val skusInventoryForStoreRequest =    OneAppService.getInventorySkuForStore(storeId, multiSku)
+      val skusInventoryForStoreRequest =    OneAppService.getInventorySkuForStore(
+          storeId,
+          multiSku,
+          false
+      )
         skusInventoryForStoreRequest.enqueue(CompletionHandler(object: IResponseListener<SkusInventoryForStoreResponse> {
             override fun onSuccess(skusInventoryForStoreResponse: SkusInventoryForStoreResponse?) {
                 when (skusInventoryForStoreResponse?.httpCode) {

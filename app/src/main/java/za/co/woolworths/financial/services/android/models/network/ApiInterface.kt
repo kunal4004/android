@@ -703,7 +703,9 @@ interface ApiInterface {
             @Path("productId") productId: String,
             @Query("sku") sku: String,
             @Query("suburbId") suburbId: String?,
-            @Query("storeId") storeId: String?
+            @Query("storeId") storeId: String?,
+            @Query("deliveryType") deliveryType: String?,
+            @Query("deliveryDetails") deliveryDetails: String?
     ): Call<ProductDetailResponse>
 
 
@@ -719,7 +721,9 @@ interface ApiInterface {
             @Path("productId") productId: String,
             @Query("sku") sku: String,
             @Query("suburbId") suburbId: String?,
-            @Query("storeId") storeId: String?
+            @Query("storeId") storeId: String?,
+            @Query("deliveryType") deliveryType: String?,
+            @Query("deliveryDetails") deliveryDetails: String?
     ): Call<ProductDetailResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -825,7 +829,10 @@ interface ApiInterface {
             @Query("refinement") refinement: String,
             @Query("suburbId") suburbId: String?,
             @Query("storeId") storeId: String?,
-            @Query("filterContent") filterContent: Boolean?): Call<ProductView>
+            @Query("filterContent") filterContent: Boolean?,
+            @Query("deliveryType") deliveryType: String,
+            @Query("deliveryDetails") deliveryDetails: String?
+    ): Call<ProductView>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
     @GET("wfs/app/v4/searchSortAndFilterV2")
@@ -846,7 +853,10 @@ interface ApiInterface {
             @Header("latitude") latitude: String = "",
             @Query("suburbId") suburbId: String?,
             @Query("storeId") storeId: String?,
-            @Query("filterContent") filterContent: Boolean?): Call<ProductView>
+            @Query("filterContent") filterContent: Boolean?,
+            @Query("deliveryType") deliveryType: String,
+            @Query("deliveryDetails") deliveryDetails: String?
+    ): Call<ProductView>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/cart/checkoutComplete")
