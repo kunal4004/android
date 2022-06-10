@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBot
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.DeleteAccountResponse
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAllLinkedDeviceResponse
@@ -49,6 +50,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
     private var mViewAllLinkedDevices: Call<ViewAllLinkedDeviceResponse>? = null
     private var deviceList: ArrayList<UserDevice>? = ArrayList(0)
     private var isUpdateAccountCache: Boolean = false
+    private var deleteAccountApi: Call<DeleteAccountResponse>? = null
 
     // Register the permissions callback, which handles the user's response to the
     // system permissions dialog. Save the return value, an instance of
@@ -165,9 +167,37 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         }
         setFragmentResultListener(DeleteAccountBottomSheetDialog.DELETE_ACCOUNT_CONFIRMATION){_,bundle->
             if(bundle.getString(DeleteAccountBottomSheetDialog.DELETE_ACCOUNT)==DeleteAccountBottomSheetDialog.DELETE_ACCOUNT){
-                Toast.makeText(context,"taped delete "+bundle.getString(DeleteAccountBottomSheetDialog.DELETE_ACCOUNT),Toast.LENGTH_SHORT).show()
+                callDeleteAccountApi()
             }
         }
+    }
+
+    private fun callDeleteAccountApi() {
+        val spinningAnimation = KotlinUtils.rotateViewAnimation()
+        /*retryLinkDeviceImageView?.startAnimation(spinningAnimation)
+        retryLinkDeviceLinearLayout?.visibility = View.VISIBLE
+        retryLinkDeviceTextView?.visibility = View.GONE*/
+
+        deleteAccountApi = OneAppService.deleteAccount()
+        deleteAccountApi?.enqueue(CompletionHandler(object :
+            IResponseListener<DeleteAccountResponse> {
+
+            override fun onSuccess(response: DeleteAccountResponse?) {
+                if (response?.message=="Profile Deleted Successfully") {
+
+                    spinningAnimation.cancel()
+                    }
+                    else  {
+                        spinningAnimation.cancel()
+                    }
+
+            }
+
+            override fun onFailure(error: Throwable?) {
+                spinningAnimation.cancel()
+            }
+
+        }, DeleteAccountResponse::class.java))
     }
 
     fun bindDataWithUI() {
