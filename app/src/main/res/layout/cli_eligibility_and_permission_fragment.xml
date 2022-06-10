@@ -24,6 +24,7 @@
             <TextView
                 android:id="@+id/eligibilityQuestion"
                 style="@style/cli_permission_title_text"
+                android:contentDescription="eligibilityQuestion1Title"
                 android:fontFamily="@font/futura_semi_bold_ttf"
                 tools:text="@string/cli_eligibility_check_title" />
 
@@ -32,11 +33,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
                 android:background="@color/white"
+                android:contentDescription="eligibilityQuestion1Container"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/eligibilityQuestionDesc"
                     style="@style/cli_permission_description_text"
+                    android:contentDescription="eligibilityQuestion1Description"
                     android:fontFamily="@font/myriad_pro_regular_otf"
                     tools:text="@string/cli_eligibility_check_description" />
 
@@ -52,6 +55,7 @@
                     <TextView
                         android:id="@+id/eligibilityYes"
                         style="@style/cli_yes_no_button"
+                        android:contentDescription="eligibilityQuestion1YesButton"
                         android:fontFamily="@font/futura_semi_bold_ttf"
                         android:text="@string/cli_yes" />
 
@@ -63,6 +67,7 @@
                     <TextView
                         android:id="@+id/eligibilityNo"
                         style="@style/cli_yes_no_button"
+                        android:contentDescription="@string/eligibilityQuestion1NoButton"
                         android:fontFamily="@font/futura_semi_bold_ttf"
                         android:text="@string/cli_no" />
                 </LinearLayout>
@@ -90,11 +95,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
                 android:background="@color/white"
+                android:contentDescription="@string/permissionToProceedContentLayout"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/permissionsDesc"
                     style="@style/cli_permission_description_text"
+                    android:contentDescription="@string/permissionToProceedDesc"
                     android:fontFamily="@font/myriad_pro_regular_otf"
                     tools:text="@string/cli_permission_check_description" />
 
@@ -110,6 +117,7 @@
                     <TextView
                         android:id="@+id/permissionYes"
                         style="@style/cli_yes_no_button"
+                        android:contentDescription="@string/permissionToProceedYesButton"
                         android:fontFamily="@font/futura_semi_bold_ttf"
                         android:text="@string/cli_yes" />
 
@@ -121,6 +129,7 @@
                     <TextView
                         android:id="@+id/permissionNo"
                         style="@style/cli_yes_no_button"
+                        android:contentDescription="@string/permissionToProceedNoButton"
                         android:fontFamily="@font/futura_semi_bold_ttf"
                         android:text="@string/cli_no" />
                 </LinearLayout>
