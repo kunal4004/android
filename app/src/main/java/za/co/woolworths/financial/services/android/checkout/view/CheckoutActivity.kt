@@ -130,7 +130,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         val graph =
             navHostFrag.navController.navInflater.inflate(R.navigation.nav_graph_checkout)
 
-        graph.startDestination = when {
+        graph.setStartDestination(when {
 
 
             whoIsCollectingString.isNullOrEmpty() == false || isComingFromCnc==true -> {
@@ -156,7 +156,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                 R.id.checkoutAddressConfirmationFragment
             }
             else -> R.id.CheckoutAddAddressReturningUserFragment
-        }
+        })
         findNavController(R.id.navHostFragment).setGraph(graph, baseFragBundle)
     }
 
