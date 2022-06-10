@@ -35,4 +35,7 @@ class OnDemand : Serializable {
 
     @SerializedName("deliveryStatus")
     var deliveryStatus: DeliveryStatus? = null
+
+    @SerializedName("deliveryDetails")
+    var deliveryDetails: String? = null
 }

@@ -1430,7 +1430,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         multiSku: String?,
     ): Call<SkusInventoryForStoreResponse> {
         val skuInventoryForStoreResponseCall = getInventorySkuForStore(
-            (storeId)!!, (multiSku)!!
+            (storeId)!!, (multiSku)!!, false
         )
         skuInventoryForStoreResponseCall.enqueue(
             CompletionHandler(

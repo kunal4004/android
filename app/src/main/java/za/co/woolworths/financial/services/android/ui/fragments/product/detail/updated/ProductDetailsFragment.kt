@@ -642,7 +642,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             productDetailsPresenter?.loadProductDetails(
                 ProductRequest(
                     productDetails?.productId,
-                    productDetails?.sku
+                    productDetails?.sku,
+                    isUserBrowsing
                 )
             )
         }
@@ -997,7 +998,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     productDetailsPresenter?.loadStockAvailability(
                         storeIdForInventory!!,
                         multiSKUs,
-                        true
+                        true,
+                        isUserBrowsing
                     )
                 }
             }
@@ -1671,7 +1673,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         productDetailsPresenter?.loadStockAvailability(
                             storeIdForInventory!!,
                             multiSKUs,
-                            isDefaultRequest
+                            isDefaultRequest,
+                            isUserBrowsing
                         )
                     }
                 }
