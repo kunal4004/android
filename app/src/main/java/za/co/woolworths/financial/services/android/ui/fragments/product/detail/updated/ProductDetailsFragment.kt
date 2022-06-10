@@ -33,7 +33,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.perfectcorp.perfectlib.CameraView
@@ -127,8 +126,11 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VT
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageFileContract
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageGalleryContract
-import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.io.File
+import android.graphics.Bitmap
+import com.google.firebase.analytics.FirebaseAnalytics
+import za.co.woolworths.financial.services.android.common.convertToTitleCase
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -2314,13 +2316,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 when (Delivery.getType(it.deliveryType)) {
                     Delivery.CNC -> {
                         currentDeliveryLocation.text =
-                            resources?.getString(R.string.store) + it.storeName ?: ""
+                            resources?.getString(R.string.store) + it.storeName?.let {
+                                convertToTitleCase(it)
+                            } ?: ""
                         defaultLocationPlaceholder.text =
                             getString(R.string.collecting_from) + " "
                     }
                     Delivery.STANDARD -> {
                         currentDeliveryLocation.text =
-                            it.address?.address1 ?: ""
+                            it.address?.address1?.let { convertToTitleCase(it) } ?: ""
                         defaultLocationPlaceholder.text =
                             getString(R.string.delivering_to_pdp)
                     }
