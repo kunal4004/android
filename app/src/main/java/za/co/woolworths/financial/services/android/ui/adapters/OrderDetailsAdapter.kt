@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.order_details_gift_commerce_item.view.*
 import kotlinx.android.synthetic.main.order_history_chat_layout.view.*
 import kotlinx.android.synthetic.main.order_history_details_total_amount_layout.view.*
 import kotlinx.android.synthetic.main.order_history_type.view.*
+import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
@@ -129,7 +130,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                                 deliveryAddressTitle?.text =
                                     context?.resources?.getString(R.string.collection_store)
                                 it.fulfillmentDetails.storeName?.let {
-                                    deliveryAddress?.text = it
+                                    deliveryAddress?.text = convertToTitleCase(it)
                                 }
                                 deliveryAddressTitle?.contentDescription =
                                     context?.resources?.getString(R.string.collection_location_title)
@@ -153,7 +154,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                                 deliveryAddressTitle?.text =
                                     context?.resources?.getString(R.string.delivery_address)
                                 deliveryAddress?.text =
-                                    item.orderSummary?.fulfillmentDetails?.address?.address1
+                                    item.orderSummary?.fulfillmentDetails?.address?.address1?.let { convertToTitleCase(it) }
                                 orderType?.text = context.getString(R.string.dash_delivery)
                                 if (item.orderSummary.orderStatus.isNullOrEmpty())
                                     orderState?.text = item.orderSummary.state.drop(6)

@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail
 
+import android.app.Activity
 import android.content.Intent
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -12,6 +13,7 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity
+import za.co.woolworths.financial.services.android.ui.activities.cli.FindOutMoreActivity
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.roundCornerDrawable
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
@@ -147,10 +149,10 @@ class CreditLimitIncreaseStatus {
         tvIncreaseLimitDescription?.visibility = GONE
     }
 
-    private fun moveToCLIPhase(offerActive: OfferActive, productOfferingId: String, applyNowState: ApplyNowState?) {
-        val woolworthApplication = WoolworthsApplication.getInstance()
-        woolworthApplication?.currentActivity?.apply {
-            woolworthApplication.setProductOfferingId(Integer.valueOf(productOfferingId))
+    private fun moveToCLIPhase(activity: Activity?,offerActive: OfferActive, productOfferingId: String, applyNowState: ApplyNowState?) {
+        activity?.apply {
+            //TODO:: REMOVE global productOfferingId
+            WoolworthsApplication.getInstance().setProductOfferingId(Integer.valueOf(productOfferingId))
             val openCLIIncrease = Intent(this, CLIPhase2Activity::class.java)
             openCLIIncrease.putExtra("OFFER_ACTIVE_PAYLOAD", Utils.objectToJson(offerActive))
             openCLIIncrease.putExtra("OFFER_IS_ACTIVE", activeOffer)
@@ -160,7 +162,7 @@ class CreditLimitIncreaseStatus {
         }
     }
 
-    fun nextStep(offerActive: OfferActive?, productOfferingId: String?, applyNowState: ApplyNowState?) {
+    fun nextStep(activity: Activity?, offerActive: OfferActive?, productOfferingId: String?, applyNowState: ApplyNowState?) {
         val cliStatus = offerActive?.cliStatus ?: ""
         if (nextStep.isEmpty() ||
                 nextStep == CreditLimitIncreaseStates.IN_PROGRESS.type ||
@@ -169,8 +171,14 @@ class CreditLimitIncreaseStatus {
                 nextStep == CreditLimitIncreaseStates.UNAVAILABLE.type ||
                 (nextStep == CreditLimitIncreaseStates.COMPLETE.type && cliStatus != CreditLimitIncreaseStates.CLI_CONCLUDED.type)) {
             return
+        }else if (nextStep.equals(CreditLimitIncreaseStates.CONSENTS.type, ignoreCase = true)){
+           val intentFindOutMoreActivity = Intent(activity, FindOutMoreActivity::class.java)
+            intentFindOutMoreActivity.putExtra("OFFER_ACTIVE_PAYLOAD", Utils.objectToJson(offerActive))
+            intentFindOutMoreActivity.putExtra("OFFER_IS_ACTIVE", activeOffer)
+            activity?.startActivity(intentFindOutMoreActivity)
+            activity?.overridePendingTransition(0,0)
         } else {
-            productOfferingId?.let { pid -> offerActive?.let { offer -> moveToCLIPhase(offer, pid, applyNowState) } }
+            productOfferingId?.let { pid -> offerActive?.let { offer -> moveToCLIPhase(activity, offer, pid, applyNowState) } }
         }
     }
 }
