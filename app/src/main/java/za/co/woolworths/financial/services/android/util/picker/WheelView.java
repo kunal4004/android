@@ -450,7 +450,6 @@ public class WheelView<T> extends View implements Runnable {
                 drawItem(canvas, i, scrolledOffset);
             }
         }
-
     }
 
 
@@ -502,7 +501,6 @@ public class WheelView<T> extends View implements Runnable {
         } else if (item2CenterOffsetY > 0 && item2CenterOffsetY < mItemHeight) {
             mPaint.setColor(mSelectedItemTextColor);
             clipAndDraw2DText(canvas, text, mSelectedItemTopLimit, mSelectedItemBottomLimit, item2CenterOffsetY, centerToBaselineY);
-
             mPaint.setColor(mTextColor);
             float textSize = mPaint.getTextSize();
             mPaint.setTextSize(textSize * mRefractRatio);
@@ -528,6 +526,7 @@ public class WheelView<T> extends View implements Runnable {
             changeTypefaceIfBoldForSelectedItem();
             clipAndDraw2DText(canvas, text, mClipTop, mClipBottom, item2CenterOffsetY, centerToBaselineY);
             mPaint.setTextSize(textSize);
+
             resetTypefaceIfBoldForSelectedItem();
         }
 
@@ -535,6 +534,8 @@ public class WheelView<T> extends View implements Runnable {
             mPaint.setTextSize(mTextSize);
             mStartX = startX;
         }
+
+        setContentDescription(text.replace(" ", ""));
     }
 
 
@@ -692,6 +693,7 @@ public class WheelView<T> extends View implements Runnable {
             mPaint.setTextSize(mTextSize);
             mStartX = startX;
         }
+        setContentDescription(text.replace(" ", ""));
     }
 
 
