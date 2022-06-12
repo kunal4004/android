@@ -20,7 +20,7 @@
         <TextView
             android:id="@+id/contactUsLandingTextView"
             style="@style/contact_us_item_header_textview"
-            android:fontFamily="@font/myriad_pro_semi_bold_otf"
+            android:fontFamily="@font/myriad_pro_semi_bold"
             android:text="@string/contact_us_financial_services" />
 
         <TextView
