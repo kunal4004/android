@@ -17,6 +17,46 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible" />
 
+    <include
+        android:id="@+id/ageConfirmationLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ten_dp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/newShoppingBagsLayout"
+        layout="@layout/layout_native_checkout_age_confirmation"/>
+
+    <View
+        android:id="@+id/liquorComplianceBannerSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/one_dp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:background="@color/color_12000000"
+        app:layout_constraintTop_toBottomOf="@id/ageConfirmationLayout" />
+
+    <include
+        android:id="@+id/liquorComplianceBannerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/liquorComplianceBannerSeparator"
+        layout="@layout/liquor_compliance_banner"/>
+
+    <View
+        android:id="@+id/liquorComplianceBannerSeparator2"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ten_dp"
+        tools:visibility="visible"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:background="@color/color_12000000"
+        app:layout_constraintTop_toBottomOf="@id/liquorComplianceBannerLayout"/>
+
     <TextView
         android:id="@+id/txtNeedBags"
         android:layout_width="wrap_content"
@@ -28,7 +68,7 @@
         android:textColor="@color/black"
         android:textSize="@dimen/fifteen_sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newShoppingBagsLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/liquorComplianceBannerSeparator2" />
 
     <Switch
         android:id="@+id/switchNeedBags"
