@@ -7,7 +7,8 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StyleSpan
 import android.view.*
-import android.view.View.*
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,7 +36,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.shop.com
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 
@@ -73,6 +76,11 @@ class OrderConfirmationFragment : Fragment() {
                                     setupDeliveryOrCollectionDetails(response)
                                     setupOrderTotalDetails(response)
                                     setupOrderDetailsBottomSheet(response)
+                                    VoiceOfCustomerManager.showVocSurveyIfNeeded(
+                                        activity,
+                                        KotlinUtils.vocShoppingHandling(response.orderSummary?.fulfillmentDetails?.deliveryType)
+                                    )
+
                                 }
                                 else -> {
                                     showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
@@ -120,7 +128,11 @@ class OrderConfirmationFragment : Fragment() {
                     optionTitle?.text = it.getText(R.string.collecting_from)
                     deliveryTextView?.text = it.getText(R.string.collection_semicolon)
                     optionLocation?.text =
-                        response?.orderSummary?.fulfillmentDetails?.storeName?.let { convertToTitleCase(it) } ?: ""
+                        response?.orderSummary?.fulfillmentDetails?.storeName?.let {
+                            convertToTitleCase(
+                                it
+                            )
+                        } ?: ""
                 }
                 Delivery.STANDARD -> {
                     optionImage?.background =
@@ -128,7 +140,11 @@ class OrderConfirmationFragment : Fragment() {
                     optionTitle?.text = it.getText(R.string.delivering_to)
                     deliveryTextView?.text = it.getText(R.string.delivery_semicolon)
                     optionLocation?.text =
-                        response?.orderSummary?.fulfillmentDetails?.address?.address1?.let { convertToTitleCase(it) } ?: ""
+                        response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
+                            convertToTitleCase(
+                                it
+                            )
+                        } ?: ""
                 }
                 else -> {
                 }
@@ -236,7 +252,8 @@ class OrderConfirmationFragment : Fragment() {
 
         bottomSheetScrollView?.visibility = VISIBLE
         orderStatusTextView?.text = response?.orderSummary?.state
-        deliveryLocationTextView?.text = optionLocation.text?.let { convertToTitleCase(it as String) }
+        deliveryLocationTextView?.text =
+            optionLocation.text?.let { convertToTitleCase(it as String) }
 
         if (response?.deliveryDetails?.deliveryInfos?.size == 2) {
             oneDeliveryBottomSheetLinearLayout?.visibility = GONE
@@ -326,12 +343,14 @@ class OrderConfirmationFragment : Fragment() {
             .formatAmountToRandAndCentWithSpace(amount)
 
         wrewardsIconImageView?.setOnClickListener {
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_MISSED_WREWARD_SAVINGS,
+            Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.CHECKOUT_MISSED_WREWARD_SAVINGS,
                 hashMapOf(
                     FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
                             FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_WREWARDS_SAVING
                 ),
-                activity)
+                activity
+            )
             val bottomSheetFragment = WrewardsBottomSheetFragment(activity)
 
             val bundle = Bundle()
