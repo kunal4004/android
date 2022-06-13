@@ -711,11 +711,11 @@
     <string name="kmsi_session_expired_desc">Would you like to stay signed in?</string>
     <string name="kmsi_session_expired_title">keep me signed in</string>
     <string name="cancel_no_thanks">NO THANKS</string>
-    <string name="please_wait">Please wait...</string>
+    <string name="please_wait">Please wait…</string>
     <string name="update_title">Update Available</string>
     <string name="update_desc">Please update to the latest version of the App.</string>
     <string name="my_card_title">My Card</string>
-    <string name="my_card">MY CARD</string>
+    <string name="my_card">MY CARD%1$s</string>
     <string name="card_number_title">Card Number:</string>
     <string name="card_holder_title">Cardholder:</string>
     <string name="manage">Manage</string>
@@ -1758,7 +1758,7 @@
     <string name="first_available_food_delivery_date_store">The earliest collection slot we have available for %1$s is &lt;b>%2$s&lt;/b></string>
     <string name="confirm_store">Confirm Store</string>
     <string name="confirm_suburb">Confirm Suburb</string>
-    <string name="manage_my_card_title">Manage My Card</string>
+    <string name="manage_my_card_title">Manage My Card%1$s</string>
     <string name="activate_vtc_title">Activate Virtual Temp Card</string>
     <string name="temporary_card_freeze_title">Temporary Card Freeze</string>
     <string name="freeze_temporary_card_title">Temporary Card Freeze</string>
@@ -2433,6 +2433,7 @@
     <string name="treatment_plan_desc_2">Make payments on the Woolies app.</string>
     <string name="treatment_plan_desc_3">Track your payment plan history and schedule.</string>
     <string name="treatment_plan_desc_4">Simple and easy to manage from the palm of your hand.</string>
+    <string name="view_treatment_plan_caption">View Treatment Plan</string>
     <string name="geoloc_delivery">Standard Delivery</string>
     <string name="products_available_title">Products available:</string>
     <string name="item_limit">Item limit:</string>
@@ -2487,6 +2488,7 @@
     <string name="view_your_payment_plan">VIEW PAYMENT PLAN</string>
     <string name="total_amount_you_saving">This is the total amount you are saving as agreed \n upon in your settlement plan</string>
     <string name="pay_now">PAY NOW</string>
+
     <string name="account_in_recovery_label">Account in Recovery</string>
     <string name="account_in_recovery_desc">Your account is in arrears. Have you already agreed to a repayment plan? View your plan or make a payment now.</string>
 

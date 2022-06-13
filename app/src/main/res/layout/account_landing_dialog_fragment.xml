@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <ImageView
+        android:id="@+id/paymentOverdueImageView"
+        android:layout_width="@dimen/_75sdp"
+        android:layout_height="@dimen/_63sdp"
+        android:contentDescription="@string/app_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/closeIconImageButton"
+        app:srcCompat="@drawable/payment_overdue_icon" />
+
+    <ImageButton
+        android:id="@+id/closeIconImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_14sdp"
+        android:layout_marginEnd="@dimen/_14sdp"
+        android:background="@color/transparent"
+        android:contentDescription="@string/app_name"
+        android:padding="@dimen/_10sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/close_24" />
+
+
+    <TextView
+        android:id="@+id/accountInArrearsTitleTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:layout_marginTop="@dimen/_22sdp"
+        android:layout_marginEnd="@dimen/_8sdp"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:gravity="center"
+        android:text="@string/payment_overdue_label"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_20ssp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/paymentOverdueImageView" />
+
+    <TextView
+        android:id="@+id/accountInArrearsDescriptionTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_24sdp"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:layout_marginEnd="@dimen/_24sdp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:gravity="center"
+        android:lineSpacingExtra="@dimen/_8ssp"
+        android:text="@string/payment_overdue_error_desc"
+        android:textColor="@color/permanent_card_block_desc_color"
+        android:textSize="@dimen/_15ssp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/accountInArrearsTitleTextView" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/payNowButton"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginStart="@dimen/_24sdp"
+        android:layout_marginTop="@dimen/_36sdp"
+        android:layout_marginEnd="@dimen/_24sdp"
+        android:gravity="center"
+        android:background="@color/black"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:letterSpacing="0.02"
+        android:stateListAnimator="@null"
+        android:text="@string/pay_now_button_label"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_12ssp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/accountInArrearsDescriptionTextView"
+        tools:ignore="UnusedAttribute" />
+
+    <View
+        android:id="@+id/payNowDivider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_2sdp"
+        android:layout_marginTop="@dimen/_25sdp"
+        android:background="@color/grey_90_bg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/payNowButton" />
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/chatToUsButton"
+        style="@style/whiteButtonBackgroundStyle"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginStart="@dimen/_24sdp"
+        android:layout_marginEnd="@dimen/_24sdp"
+        android:background="@color/white"
+        android:fontFamily="@font/futura_medium_ttf"
+        android:letterSpacing="0.1"
+        android:text="@string/chat_to_us_label"
+        android:textAllCaps="true"
+        android:textColor="@color/permanent_card_block_desc_color"
+        android:textSize="@dimen/_12ssp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/payNowDivider"
+        tools:ignore="UnusedAttribute" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

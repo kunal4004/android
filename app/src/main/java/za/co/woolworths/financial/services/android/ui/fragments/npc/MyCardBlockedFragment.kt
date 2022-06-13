@@ -54,7 +54,7 @@ class MyCardBlockedFragment : MyCardExtension() {
         btnGetReplacementCard?.setOnClickListener { navigateToReplacementCard() }
         btnLinkACard?.setOnClickListener { (activity as? AppCompatActivity)?.apply { navigateToLinkNewCardActivity(this, mStoreCardDetail) } }
         btnLinkACard?.paintFlags = btnLinkACard.paintFlags or Paint.UNDERLINE_TEXT_FLAG
-3
+
         // Hide Replacement card if MC config is true
         when (AppConfigSingleton.instantCardReplacement?.isEnabled == true) {
             true -> {

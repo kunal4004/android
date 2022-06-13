@@ -7,7 +7,6 @@
     android:background="@drawable/personal_loan_background"
     android:paddingTop="?attr/actionBarSize">
 
-
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/availableFundsValueEndGuideLine"
         android:layout_width="wrap_content"
@@ -255,22 +254,21 @@
         android:id="@+id/incRecentTransactionButton"
         layout="@layout/view_recent_transaction_button"
         android:layout_width="0dp"
-        android:layout_height="@dimen/available_fund_transaction_button_height"
+        android:layout_height="0dp"
         android:layout_marginEnd="@dimen/eight_dp"
-        app:layout_constraintBottom_toBottomOf="@+id/incViewStatementButton"
+        app:layout_constraintBottom_toTopOf="@+id/bottomSliderGuideline"
         app:layout_constraintEnd_toStartOf="@+id/incViewStatementButton"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/startGuide"
-        app:layout_constraintBottom_toTopOf="@+id/bottomGuide"
         app:layout_constraintTop_toTopOf="@+id/bottomStartGuide" />
 
     <include
         android:id="@+id/incViewStatementButton"
         layout="@layout/view_statement_button"
         android:layout_width="0dp"
-        android:layout_height="@dimen/available_fund_transaction_button_height"
+        android:layout_height="0dp"
         android:layout_marginEnd="@dimen/eight_dp"
-        app:layout_constraintBottom_toTopOf="@+id/bottomGuide"
+        app:layout_constraintBottom_toTopOf="@+id/bottomSliderGuideline"
         app:layout_constraintEnd_toStartOf="@+id/incPayMyAccountButton"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/incRecentTransactionButton"
@@ -280,12 +278,13 @@
         android:id="@+id/incPayMyAccountButton"
         layout="@layout/view_pay_my_account_button"
         android:layout_width="0dp"
-        android:layout_height="@dimen/available_fund_transaction_button_height"
-        app:layout_constraintBottom_toTopOf="@+id/bottomGuide"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomSliderGuideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/incViewStatementButton"
-        app:layout_constraintTop_toTopOf="@+id/bottomStartGuide" />
+        app:layout_constraintTop_toTopOf="@+id/bottomStartGuide"
+        app:layout_constraintVertical_bias="0.25" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

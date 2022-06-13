@@ -28,6 +28,7 @@ import android.widget.ImageView
 import androidx.annotation.RawRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.Group
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
@@ -1074,4 +1075,7 @@ class KotlinUtils {
             }
         }
     }
+}
+fun Group.setAlphaForGroupdViews(alpha: Float) = referencedIds.forEach {
+    rootView.findViewById<View>(it).alpha = alpha
 }
