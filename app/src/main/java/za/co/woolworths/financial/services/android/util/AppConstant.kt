@@ -106,7 +106,8 @@ class AppConstant {
              * Extra Keys
              *****************************************************************************************/
             const val EXTRA_PRODUCT_NAME = "PRODUCT_NAME"
-
+            const val EXTRA_SEARCH_TYPE = "searchType"
+            const val EXTRA_SEARCH_TERM = "searchTerm"
             /*****************************************************************************************
              * Bundle Keys
              * const val BUNDLE_EXAMPLE_NAME = "BUNDLE_KEY_NAME"
@@ -121,16 +122,6 @@ class AppConstant {
              * Parameters Keys
              * const val PARAM_EXAMPLE_NAME = "PARAM_NAME"
              *****************************************************************************************/
-        }
-    }
-
-    class Keys {
-        companion object {
-            /*****************************************************************************************
-             * Extra keys
-             *****************************************************************************************/
-            const val EXTRA_SEARCH_TYPE = "searchType"
-            const val EXTRA_SEARCH_TERM = "searchTerm"
         }
     }
 
