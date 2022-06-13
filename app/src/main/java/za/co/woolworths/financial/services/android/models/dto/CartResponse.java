@@ -18,4 +18,6 @@ public class CartResponse {
 	public OrderSummary orderSummary;
 	public VoucherDetails voucherDetails;
 	public ProductCountMap productCountMap;
+	public boolean liquorOrder;
+	public String noLiquorImageUrl;
 }
