@@ -418,7 +418,7 @@ class ConfirmAddressMapFragment :
                         if (!it.equals("$streetNumber $routeName",
                                 true) && isMainPlaceName == true
                         ) {
-                            sendAddressData(it)
+                            sendAddressData(it,"$streetNumber $routeName")
                             isMainPlaceName = false
                         } else {
                             sendAddressData("$streetNumber $routeName")
@@ -451,7 +451,7 @@ class ConfirmAddressMapFragment :
         ).get(ConfirmAddressViewModel::class.java)
     }
 
-    private fun sendAddressData(placeName: String?) {
+    private fun sendAddressData(placeName: String?,apiAddress1:String?="") {
         val saveAddressLocationRequest = SaveAddressLocationRequest("$placeName",
             city,
             country,
@@ -461,7 +461,8 @@ class ConfirmAddressMapFragment :
             placeId,
             postalCode,
             state,
-            suburb)
+            suburb,
+            apiAddress1)
         try {
             view?.let{
                 lifecycleScope.launch {
