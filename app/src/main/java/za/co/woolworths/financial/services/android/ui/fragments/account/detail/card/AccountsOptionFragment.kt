@@ -70,6 +70,7 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 
 @AndroidEntryPoint
 open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDetailsContract.AccountCardDetailView {
+
     private var userOfferActiveCallWasCompleted = false
     var mCardPresenterImpl: AccountCardDetailPresenterImpl? = null
     private val disposable: CompositeDisposable? = CompositeDisposable()

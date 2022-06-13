@@ -45,8 +45,6 @@ class FreezeUnFreezeStoreCardFragment : Fragment(R.layout.freeze_unfreeze_card_f
                     }
                 )
             )
-        }else {
-
         }
     }
 }
