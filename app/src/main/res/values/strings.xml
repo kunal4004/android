@@ -2519,5 +2519,6 @@
     <string name="enquiry_failed_retry">Something went wrong. Please try again.</string>
     <string name="enquiry_failed">Failed To Send Enquiry.</string>
     <string name="enter_valid_email">Please enter valid email.</string>
+    <string name="create_list_and_add">create list and add</string>
 
 </resources>
