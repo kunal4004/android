@@ -49,6 +49,7 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
                 is ApiResult.Error -> {
                     failureHandler(checkEligibilityResponse.exception.toString())
                 }
+                else -> Unit
             }
         }
     }

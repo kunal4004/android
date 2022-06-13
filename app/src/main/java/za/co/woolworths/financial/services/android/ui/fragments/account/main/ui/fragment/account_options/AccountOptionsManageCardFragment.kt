@@ -304,13 +304,10 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
         when (view?.id) {
             R.id.manageCardRelativeLayout -> router.routeToManageMyCard(requireActivity())
             R.id.linkNewCardRelativeLayout -> router.routeToLinkNewCard(requireActivity())
-            R.id.activateVirtualTempCardRelativeLayout -> router.routeToActivateVirtualTempCard(
-                requireActivity()
-            )
+            R.id.activateVirtualTempCardRelativeLayout -> router.routeToActivateVirtualTempCard(requireActivity())
             R.id.replacementCardRelativeLayout -> router.routeToGetReplacementCard(requireActivity())
             R.id.blockCardRelativeLayout -> router.routeToBlockCard(requireActivity())
         }
     }
-
 }
 
