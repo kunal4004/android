@@ -682,10 +682,10 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     }
 
     private fun requestCartSummary() {
-        progressBar.visibility = View.VISIBLE
+        progressBar?.visibility = View.VISIBLE
         GetCartSummary().getCartSummary(object : IResponseListener<CartSummaryResponse> {
             override fun onSuccess(response: CartSummaryResponse?) {
-                progressBar.visibility = View.GONE
+                progressBar?.visibility = View.GONE
                 when (response?.httpCode) {
                     AppConstant.HTTP_OK -> {
                         // If user have location then call Confirm Place API else go to geoLocation Flow.
@@ -701,7 +701,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             }
 
             override fun onFailure(error: Throwable?) {
-                progressBar.visibility = View.GONE
+                progressBar?.visibility = View.GONE
             }
         })
     }

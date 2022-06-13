@@ -1014,6 +1014,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             WMaterialShowcaseView.Feature.BARCODE_SCAN -> {
                 checkCameraPermission()
             }
+            WMaterialShowcaseView.Feature.DELIVERY_DETAILS -> {
+                onEditDeliveryLocation()
+            }
             WMaterialShowcaseView.Feature.MY_LIST -> {
                 if (SessionUtilities.getInstance().isUserAuthenticated) {
                     (activity as? BottomNavigationActivity)?.let {
