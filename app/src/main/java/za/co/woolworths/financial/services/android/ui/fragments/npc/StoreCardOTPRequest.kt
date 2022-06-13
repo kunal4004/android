@@ -8,6 +8,7 @@ import za.co.woolworths.financial.services.android.contracts.IOTPLinkStoreCard
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.model.Response
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkStoreCard
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
@@ -69,7 +70,7 @@ class StoreCardOTPRequest(private val activity: AppCompatActivity?, private val 
                 }, LinkNewCardOTP::class.java))
     }
 
-    private fun sessionExpired(response: Response?) {
+    private fun sessionExpired(response: ServerErrorResponse?) {
         activity?.let { activity ->
             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response?.stsParams
                     ?: "", activity)

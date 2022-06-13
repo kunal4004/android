@@ -85,7 +85,8 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
                                 SessionDao.KEY.STORE_CARD_RESPONSE_PAYLOAD,
                                 this.output
                             )
-                            val listOfStoreCardFeatures =storeCardDataSource.getStoreCardListByFeatureType()
+                            val listOfStoreCardFeatures =
+                                storeCardDataSource.getStoreCardListByFeatureType()
                             adapter.setItem(listOfStoreCardFeatures)
                         }
 

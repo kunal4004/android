@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.npc
 import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
+import android.graphics.SweepGradient
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
@@ -38,6 +39,7 @@ import za.co.woolworths.financial.services.android.ui.activities.temporary_store
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
 import kotlinx.android.synthetic.main.npc_virtual_temp_card_staff_layout.*
+import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
 
 class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListener {
 
@@ -189,7 +191,7 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                     }
 
                     // OTP Failure View
-                    override fun onFailureHandler(response: Response?) {
+                    override fun onFailureHandler(response: ServerErrorResponse?) {
                         super.onFailureHandler(response)
                         when (response?.code) {
                             "1037" -> {
