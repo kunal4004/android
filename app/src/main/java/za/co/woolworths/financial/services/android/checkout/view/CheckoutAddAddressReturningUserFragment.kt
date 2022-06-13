@@ -215,6 +215,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
               liquorImageUrl=getString(NO_LIQUOR_IMAGE_URL)
               ageConfirmationLayout?.visibility=View.VISIBLE
               liquorComplianceBannerLayout?.visibility=View.VISIBLE;
+              liquorComplianceBannerSeparator2.visibility = VISIBLE
               setPicture(imgLiquorBanner, liquorImageUrl)
 
               ageConfirmationLayout.visibility = VISIBLE
@@ -234,7 +235,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
        }else{
            ageConfirmationLayout?.visibility=View.GONE
            liquorComplianceBannerLayout?.visibility=View.GONE;
-
+           liquorComplianceBannerSeparator2.visibility = GONE
        }
         }
     }
