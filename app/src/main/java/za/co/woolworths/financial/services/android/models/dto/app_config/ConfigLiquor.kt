@@ -8,5 +8,6 @@ import za.co.woolworths.financial.services.android.models.dto.Province
 data class ConfigLiquor(
     var regions: ArrayList<Province>,
     var suburbs: ArrayList<String>,
-    var message: String
+    var message: String,
+    var noLiquorImgUrl: String
 ) : Parcelable

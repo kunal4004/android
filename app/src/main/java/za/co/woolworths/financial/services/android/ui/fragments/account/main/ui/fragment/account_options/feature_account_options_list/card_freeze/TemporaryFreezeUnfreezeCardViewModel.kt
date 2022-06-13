@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.feature_temporary_freeze_unfreeze_card
+package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

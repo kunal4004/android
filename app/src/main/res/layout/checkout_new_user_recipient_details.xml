@@ -15,7 +15,7 @@
             style="@style/futura_semi_bold_black"
             android:layout_width="wrap_content"
             android:contentDescription="@string/cd_ccd_lablerecipientdetailstitle"
-            android:letterSpacing="0.1"
+            android:lineSpacingExtra="@dimen/two_sp"
             android:paddingTop="@dimen/two_dp"
             android:paddingBottom="@dimen/two_dp"
             android:text="@string/recipient_details"

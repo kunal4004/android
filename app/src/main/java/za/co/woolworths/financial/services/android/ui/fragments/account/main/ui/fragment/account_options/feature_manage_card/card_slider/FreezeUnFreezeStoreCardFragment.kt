@@ -2,16 +2,14 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 
 import androidx.fragment.app.Fragment
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FreezeUnfreezeCardFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.feature_temporary_freeze_unfreeze_card.TemporaryFreezeUnfreezeCardViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeUnfreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 
 @AndroidEntryPoint
@@ -47,8 +45,6 @@ class FreezeUnFreezeStoreCardFragment : Fragment(R.layout.freeze_unfreeze_card_f
                     }
                 )
             )
-        }else {
-
         }
     }
 }

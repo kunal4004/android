@@ -17,5 +17,6 @@ data class StoreCard(
     val number: String,
     val dateOpened: String,
     val dateLastMaintained: String,
-    var blockType: String? = ""
+    var blockType: String? = "",
+    var cardNotReceived: Boolean = false
 ):Parcelable

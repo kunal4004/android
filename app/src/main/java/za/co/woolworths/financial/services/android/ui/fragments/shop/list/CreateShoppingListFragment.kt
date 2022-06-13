@@ -184,7 +184,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                     btnCancel.isEnabled = true;
                     if (isEditTextNotEmpty) {
                         clBottomView.background = bindDrawable(R.drawable.black_button_drawable_state)
-                        btnCancel?.text = getString(R.string.create_list)
+                        btnCancel?.text = getString(R.string.create_list_and_add)
                         btnCancel.setTextColor(Color.WHITE)
                     } else {
                         clBottomView.setBackgroundColor(Color.TRANSPARENT)
