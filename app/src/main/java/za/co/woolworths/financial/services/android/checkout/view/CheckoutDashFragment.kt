@@ -307,9 +307,12 @@ class CheckoutDashFragment : Fragment(),
 
     private fun callConfirmLocationAPI() {
         initShimmerView()
-        val  confirmLocationAddress = ConfirmLocationAddress(defaultAddress?.placesId, defaultAddress?.nickname)
-        var body = ConfirmLocationRequest(Delivery.DASH.type, confirmLocationAddress,
-            defaultAddress?.nickname, "checkout")
+        val confirmLocationAddress =
+            ConfirmLocationAddress(defaultAddress?.placesId, defaultAddress?.nickname)
+        var body = ConfirmLocationRequest(
+            Delivery.DASH.type, confirmLocationAddress,
+            defaultAddress?.nickname, "checkout"
+        )
 
         checkoutAddAddressNewUserViewModel?.getConfirmLocationDetails(body)
             .observe(viewLifecycleOwner) { response ->
@@ -338,8 +341,11 @@ class CheckoutDashFragment : Fragment(),
                                 }
                                 response.orderSummary?.fulfillmentDetails?.let {
                                     if (!it.deliveryType.isNullOrEmpty()) {
-                                        Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(
-                                            it))
+                                        Utils.savePreferredDeliveryLocation(
+                                            ShoppingDeliveryLocation(
+                                                it
+                                            )
+                                        )
                                     }
                                 }
                                 initializeOrderSummary(response.orderSummary)
@@ -446,9 +452,12 @@ class CheckoutDashFragment : Fragment(),
 
     private fun initializeDashTimeSlots() {
 
-        checkoutCollectingTimeDetailsLayout?.tvCollectionTimeDetailsTitle?.text = getString(R.string.select_delivery_timeslot)
-        checkoutCollectingTimeDetailsLayout?.tvCollectionTimeDetailsDate?.text = getString(R.string.dash_delivery_date)
-        checkoutCollectingTimeDetailsLayout?.tvCollectionTimeDetailsTimeSlot?.text = getString(R.string.dash_delivery_timeslot)
+        checkoutCollectingTimeDetailsLayout?.tvCollectionTimeDetailsTitle?.text =
+            getString(R.string.select_delivery_timeslot)
+        checkoutCollectingTimeDetailsLayout?.tvCollectionTimeDetailsDate?.text =
+            getString(R.string.dash_delivery_date)
+        checkoutCollectingTimeDetailsLayout?.tvCollectionTimeDetailsTimeSlot?.text =
+            getString(R.string.dash_delivery_timeslot)
         recyclerViewCollectionTimeSlots?.apply {
             layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
             adapter = dashTimeSlotsAdapter
@@ -508,16 +517,27 @@ class CheckoutDashFragment : Fragment(),
                         true // Because we want to change this view after the value entered from user.
                     selectedDriverTipValue = (it as TextView).text as? String
 
-                    if (it.tag == driverTipOptionsList!!.lastIndex) {
-                        val tipValue = if (titleTextView.text.toString()
-                                .equals(driverTipOptionsList!!.lastOrNull())
-                        ) getString(R.string.empty) else removeRandFromAmount(titleTextView.text.toString()
-                            .trim())
+                    if (it.tag == driverTipOptionsList?.lastIndex) {
+                        val tipValue =
+                            if (titleTextView.text.toString() == driverTipOptionsList?.lastOrNull())
+                                getString(R.string.empty)
+                            else removeRandFromAmount(
+                                titleTextView.text.toString().trim()
+                            )
                         val customDriverTipDialog = CustomDriverTipBottomSheetDialog.newInstance(
                             requireContext().getString(R.string.tip_your_dash_driver),
-                            requireContext().getString(R.string.enter_your_own_amount, MIN_TIP_VALUE.toInt(), MAX_TIP_VALUE.toInt()), tipValue, this)
-                        customDriverTipDialog.show(requireFragmentManager(),
-                            CustomDriverTipBottomSheetDialog::class.java.simpleName)
+                            requireContext().getString(
+                                R.string.enter_your_own_amount,
+                                AppConfigSingleton.dashConfig?.driverTip?.minAmount?.toInt()
+                                    ?: MIN_TIP_VALUE.toInt(),
+                                AppConfigSingleton.dashConfig?.driverTip?.maxAmount?.toInt()
+                                    ?: MAX_TIP_VALUE.toInt()
+                            ), tipValue, this
+                        )
+                        customDriverTipDialog.show(
+                            requireActivity().supportFragmentManager,
+                            CustomDriverTipBottomSheetDialog::class.java.simpleName
+                        )
                     } else {
                         isSameSelection = resetAllDriverTip(it.tag as Int)
                         if (isSameSelection) {
@@ -549,10 +569,14 @@ class CheckoutDashFragment : Fragment(),
         var sameSelection = false
         for ((index) in driverTipOptionsList!!.withIndex()) {
             val titleTextView: TextView? = view?.findViewWithTag(index)
-            if (titleTextView?.textColors?.defaultColor?.equals(ContextCompat.getColor(
-                    requireContext(),
-                    R.color.white)) == true && titleTextView.tag.equals(
-                    selectedTag)
+            if (titleTextView?.textColors?.defaultColor?.equals(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.white
+                    )
+                ) == true && titleTextView.tag.equals(
+                    selectedTag
+                )
             ) {
                 sameSelection = true
             }
@@ -947,7 +971,8 @@ class CheckoutDashFragment : Fragment(),
             it.fulfillmentDetails.storeId
         }
         deliveryType = Delivery.DASH.type
-        address = ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
+        address =
+            ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
         driverTip = removeRandFromAmount(selectedDriverTipValue ?: "0.0").toDouble()
     }
 
