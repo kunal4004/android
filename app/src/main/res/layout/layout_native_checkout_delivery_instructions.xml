@@ -52,7 +52,6 @@
         android:id="@+id/liquorComplianceBannerSeparator2"
         android:layout_width="match_parent"
         android:layout_height="@dimen/ten_dp"
-        android:visibility="visible"
         tools:visibility="visible"
         android:layout_marginTop="@dimen/twenty_four_dp"
         android:background="@color/color_12000000"
