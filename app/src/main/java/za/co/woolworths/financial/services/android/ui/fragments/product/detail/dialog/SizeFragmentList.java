@@ -144,7 +144,7 @@ public class SizeFragmentList extends Fragment implements StockFinderSizeColorAd
 	}
 
 	private Call<SkusInventoryForStoreResponse> getInventoryStockForStore(String storeId, String multiSku) {
-		Call<SkusInventoryForStoreResponse> skusInventoryForStoreRequestCall = OneAppService.INSTANCE.getInventorySkuForStore(storeId, multiSku);
+		Call<SkusInventoryForStoreResponse> skusInventoryForStoreRequestCall = OneAppService.INSTANCE.getInventorySkuForStore(storeId, multiSku, false);
 		skusInventoryForStoreRequestCall.enqueue(new CompletionHandler<>(new IResponseListener<SkusInventoryForStoreResponse>() {
 			@Override
 			public void onSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse) {
