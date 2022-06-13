@@ -182,6 +182,21 @@ interface ApiInterface {
             @Query("getStatus") getStatus: Boolean): Call<LocationResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/locationItems/{sku}")
+    suspend fun productStoreFinder(
+
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("latitude") latitude: String,
+        @Header("longitude") longitude: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path(value = "sku", encoded = false) sku: String,
+        @Query("startRadius") startRadius: String?,
+        @Query("endRadius") endRadius: String?,
+        @Query("getStatus") getStatus: Boolean): retrofit2.Response<LocationResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/user/messages")
     fun getMessages(
 

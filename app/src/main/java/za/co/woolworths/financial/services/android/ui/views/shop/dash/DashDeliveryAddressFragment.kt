@@ -34,6 +34,7 @@ import za.co.woolworths.financial.services.android.models.dto.shop.Banner
 import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
+import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
@@ -50,6 +51,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductL
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_QUERY_INVENTORY_FOR_STORE
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_QUERY_STORE_FINDER
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
@@ -71,7 +73,6 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     private var isQuickShopClicked = false
     private var isUnSellableItemsRemoved: Boolean? = false
     private var mStoreId = ""
-    private var savedAddItemToCart: AddItemToCart? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -399,11 +400,12 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                         WoolworthsApplication.setValidatedSuburbProducts(browsingPlaceDetails)
                         // set latest response to browsing data.
                         WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
-                            browsingPlaceDetails)
+                            browsingPlaceDetails
+                        )
                         if (this.parentFragment is ShopFragment) {
                             (this.parentFragment as ShopFragment).setDeliveryView() // update main location UI.
                         }
-                        addToCart(savedAddItemToCart) // This will again call addToCart
+                        addToCart(viewModel.addItemToCart.value) // This will again call addToCart
                     }
                 }
             }
@@ -458,7 +460,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                             else -> {
                                 val addToCartBalloon by balloon(AddedToCartBalloonFactory::class)
                                 val bottomView =
-                                    (activity as? BottomNavigationActivity)?.bottomNavigationById
+                                    (requireActivity() as? BottomNavigationActivity)?.bottomNavigationById
                                 val buttonView: Button =
                                     addToCartBalloon.getContentView().findViewById(R.id.btnView)
                                 val tvAddedItem: TextView = addToCartBalloon.getContentView()
@@ -466,7 +468,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                 val quantityAdded =
                                     viewModel.addItemToCart.value?.quantity?.toString()
                                 val quantityDesc =
-                                    "$quantityAdded ITEM${if (viewModel.addItemToCart.value?.quantity == 0) "" else "s"}"
+                                    "$quantityAdded ITEM${if (viewModel.addItemToCart.value?.quantity ?: 0 >= 1) "" else "s"}"
                                 tvAddedItem.text = quantityDesc
 
                                 buttonView.setOnClickListener {
@@ -512,6 +514,57 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 }
             }
         }
+
+        // Find in store API.
+        viewModel.productStoreFinder.observe(viewLifecycleOwner) {
+            it.getContentIfNotHandled()?.let { resource ->
+                val response = resource.data
+                when (response?.httpCode) {
+                    AppConstant.HTTP_OK -> {
+                        if (response.Locations?.size ?: 0 > 0) {
+                            WoolworthsApplication.getInstance()?.wGlobalState?.storeDetailsArrayList =
+                                response.Locations
+                            val openStoreFinder = Intent(
+                                WoolworthsApplication.getAppContext(),
+                                WStockFinderActivity::class.java
+                            ).putExtra(
+                                AppConstant.Keys.EXTRA_PRODUCT_NAME,
+                                viewModel.productList.value?.productName
+                            )
+                            requireActivity().apply {
+                                startActivity(openStoreFinder)
+                                overridePendingTransition(
+                                    R.anim.slide_up_anim,
+                                    R.anim.stay
+                                )
+                            }
+                        } else {
+                            Utils.displayValidationMessage(
+                                requireActivity(),
+                                CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK,
+                                ""
+                            )
+                        }
+                    }
+                    AppConstant.HTTP_SESSION_TIMEOUT_440 -> {
+                        SessionUtilities.getInstance()
+                            .setSessionState(SessionDao.SESSION_STATE.INACTIVE)
+                        ScreenManager.presentSSOSignin(
+                            requireActivity(),
+                            REQUEST_CODE_QUERY_STORE_FINDER
+                        )
+                    }
+                    else -> response?.response?.desc?.let { desc ->
+                        Utils.displayValidationMessage(
+                            WoolworthsApplication.getAppContext(),
+                            CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+                            desc
+                        )
+                    }
+                }
+            }
+        }
+
     }
 
     private fun openCartActivity() {
@@ -532,7 +585,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     Status.SUCCESS -> {
                         resource.data?.validatePlace?.let { validatePlaceResponse ->
                             WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
-                                validatePlaceResponse)
+                                validatePlaceResponse
+                            )
                             if (isQuickShopClicked) {
                                 // This is for for add to cart clicked for quick shop functionality.
                                 isQuickShopClicked = false
@@ -571,10 +625,14 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         unSellableCommerceItems: ArrayList<UnSellableCommerceItem>,
     ) {
         val unsellableItemsBottomSheetDialog =
-            UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems,
-                Delivery.DASH.name)
-        unsellableItemsBottomSheetDialog.show(requireFragmentManager(),
-            UnsellableItemsBottomSheetDialog::class.java.simpleName)
+            UnsellableItemsBottomSheetDialog.newInstance(
+                unSellableCommerceItems,
+                Delivery.DASH.name
+            )
+        unsellableItemsBottomSheetDialog.show(
+            requireFragmentManager(),
+            UnsellableItemsBottomSheetDialog::class.java.simpleName
+        )
     }
 
     private fun setupRecyclerView() {
@@ -637,11 +695,17 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                         if (this.parentFragment is ShopFragment) {
                             (this.parentFragment as ShopFragment).setDeliveryView() // update main location UI.
                         }
-                        addToCart(savedAddItemToCart) // This will again call addToCart
+                        addToCart(viewModel.addItemToCart.value) // This will again call addToCart
                     } else {
                         // request cart summary to get the user's location.
                         requestCartSummary()
                     }
+                }
+            }
+
+            REQUEST_CODE_QUERY_STORE_FINDER -> {
+                if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+                    queryStoreFinderProductByFusedLocation(null)
                 }
             }
         }
@@ -663,6 +727,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             return
         }
 
+        viewModel.setProductList(productList)
+
         if (productList.isLiquor == true && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()) {
             KotlinUtils.setLiquorModalShown()
             showLiquorDialog()
@@ -670,12 +736,14 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             return
         }
 
-        savedAddItemToCart = addItemToCart
+        viewModel.setAddItemToCart(addItemToCart)
         // Now first check for if delivery location and browsing location is same.
         // if same no issues. If not then show changing delivery location popup.
         if (!KotlinUtils.getDeliveryType()?.deliveryType.equals(Delivery.DASH.type)) {
-            KotlinUtils.showChangeDeliveryTypeDialog(requireContext(), requireFragmentManager(),
-                KotlinUtils.browsingDeliveryType)
+            KotlinUtils.showChangeDeliveryTypeDialog(
+                requireContext(), requireFragmentManager(),
+                KotlinUtils.browsingDeliveryType
+            )
             return
         }
         addToCart(addItemToCart)
@@ -693,7 +761,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                             if (parentFragment is ShopFragment) {
                                 (parentFragment as ShopFragment).setDeliveryView() // update main location UI.
                             }
-                            addToCart(savedAddItemToCart) // This will again call addToCart
+                            addToCart(viewModel.addItemToCart.value) // This will again call addToCart
                         } else
                             onSetNewLocation()
                     }
@@ -762,113 +830,17 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         val mAddItemsToCart = mutableListOf<AddItemToCart>()
         addItemToCart?.let { cartItem -> mAddItemsToCart.add(cartItem) }
         viewModel.callToAddItemsToCart(mAddItemsToCart)
-        PostItemToCart().make(mAddItemsToCart, object : IResponseListener<AddItemToCartResponse> {
-            override fun onSuccess(response: AddItemToCartResponse?) {
-                activity?.apply {
-                    when (response?.httpCode) {
-                        AppConstant.HTTP_OK -> {
-                            // Preferred Delivery Location has been reset on server
-                            // As such, we give the user the ability to set their location again
-                            val addToCartList = response.data
-                            if (addToCartList != null && addToCartList.size > 0 && addToCartList[0].formexceptions != null) {
-                                val formException = addToCartList[0].formexceptions[0]
-                                if (formException != null) {
-                                    if (formException.message.lowercase(Locale.getDefault())
-                                            .contains("unfortunately this product is now out of stock, please try again tomorrow")
-                                    ) {
-                                        addItemToCart?.catalogRefId?.let { catalogRefId ->
-                                            productOutOfStockErrorMessage(
-                                                catalogRefId
-                                            )
-                                        }
-                                    } else {
-                                        response.response.desc = formException.message
-                                        Utils.displayValidationMessage(
-                                            this,
-                                            CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-                                            response.response.desc
-                                        )
-                                    }
-                                    return
-                                }
-                            }
-                            if (KotlinUtils.isDeliveryOptionClickAndCollect() && response.data[0]?.productCountMap?.quantityLimit?.foodLayoutColour != null) {
-                                response.data[0]?.productCountMap?.let {
-                                    addItemToCart?.quantity?.let { it1 ->
-                                        ToastFactory.showItemsLimitToastOnAddToCart(
-                                            productsRecyclerView,
-                                            it,
-                                            this,
-                                            it1
-                                        )
-                                    }
-                                }
-                            } else {
-                                val addToCartBalloon by balloon(AddedToCartBalloonFactory::class)
-                                val bottomView =
-                                    (activity as? BottomNavigationActivity)?.bottomNavigationById
-                                val buttonView: Button =
-                                    addToCartBalloon.getContentView().findViewById(R.id.btnView)
-                                val tvAddedItem: TextView = addToCartBalloon.getContentView()
-                                    .findViewById(R.id.tvAddedItem)
-                                val quantityAdded = addItemToCart?.quantity?.toString()
-                                val quantityDesc =
-                                    "$quantityAdded ITEM${if (addItemToCart?.quantity == 0) "" else "s"}"
-                                tvAddedItem.text = quantityDesc
-
-                                buttonView.setOnClickListener {
-                                    openCartActivity()
-                                    addToCartBalloon.dismiss()
-                                }
-
-                                bottomView?.let { bottomNavigationView ->
-                                    addToCartBalloon.showAlignBottom(
-                                        bottomNavigationView,
-                                        0,
-                                        16
-                                    )
-                                }
-                                Handler().postDelayed({
-                                    addToCartBalloon.dismiss()
-                                }, 3000)
-                            }
-                        }
-
-                        AppConstant.HTTP_EXPECTATION_FAILED_417 -> resources?.let {
-                            activity?.apply {
-                                KotlinUtils.presentEditDeliveryGeoLocationActivity(
-                                    this,
-                                    ProductListingFragment.SET_DELIVERY_LOCATION_REQUEST_CODE,
-                                    KotlinUtils.getPreferredDeliveryType(),
-                                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
-                                )
-                            }
-                        }
-                        AppConstant.HTTP_SESSION_TIMEOUT_440 -> {
-                            SessionUtilities.getInstance()
-                                .setSessionState(SessionDao.SESSION_STATE.INACTIVE)
-                            ScreenManager.presentSSOSignin(this)
-                        }
-
-                        else -> response?.response?.desc?.let { desc ->
-                            Utils.displayValidationMessage(
-                                this,
-                                CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-                                desc
-                            )
-                        }
-                    }
-                }
-            }
-
-            override fun onFailure(error: Throwable?) {
-                //DO nothing meaning item not added to cart and toast is not shown.
-            }
-        })
     }
 
     override fun queryStoreFinderProductByFusedLocation(location: Location?) {
-        TODO("Not yet implemented")
+        val globalState = WoolworthsApplication.getInstance().wGlobalState
+        with(globalState) {
+            viewModel.callStoreFinder(
+                sku = viewModel.productList.value?.sku ?: "",
+                startRadius = startRadius.toString(),
+                endRadius = endRadius.toString()
+            )
+        }
     }
 
     override fun showLiquorDialog() {
@@ -912,5 +884,4 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             }
         }
     }
-
 }

@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
 import android.os.Bundle
+import android.text.InputFilter
+import android.text.InputFilter.LengthFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,11 +10,11 @@ import android.view.WindowManager
 import androidx.core.widget.addTextChangedListener
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.driver_tip_custom_dialog.*
-import kotlinx.android.synthetic.main.feature_walkthrough_popup.*
-import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.Utils
+
 
 /**
  * Created by Kunal Uttarwar on 25/03/22.
@@ -82,6 +84,12 @@ class CustomDriverTipBottomSheetDialog : WBottomSheetDialogFragment() {
         titleTextView?.text = mTitle
         subTitleTextView?.text = mSubTitle
         driverTipAmtEditText?.setText(mTipValue)
+        driverTipAmtEditText?.filters =
+            getMaxLengthFilter(
+                AppConfigSingleton.dashConfig?.driverTip?.maxAmount?.toString()?.length
+                ?: MAX_TIP_VALUE.toString().length,
+                2
+            )
         if (driverTipAmtEditText?.text.isNullOrEmpty())
             Utils.fadeInFadeOutAnimation(buttonConfirm, true)
         driverTipAmtEditText.addTextChangedListener { amount ->
@@ -89,7 +97,7 @@ class CustomDriverTipBottomSheetDialog : WBottomSheetDialogFragment() {
                 amount.isNullOrEmpty() -> {
                     Utils.fadeInFadeOutAnimation(buttonConfirm, true)
                 }
-                amount.toString().toDouble() < MIN_TIP_VALUE -> {
+                amount.toString().toDouble() < AppConfigSingleton.dashConfig?.driverTip?.minAmount ?: MIN_TIP_VALUE -> {
                     // Driver tip should always be greater than or equal R5
                     Utils.fadeInFadeOutAnimation(buttonConfirm, true)
                     driverTipErrorText?.visibility = View.VISIBLE
@@ -99,7 +107,7 @@ class CustomDriverTipBottomSheetDialog : WBottomSheetDialogFragment() {
                             MIN_TIP_VALUE
                         )
                 }
-                amount.toString().toDouble() > MAX_TIP_VALUE -> {
+                amount.toString().toDouble() > AppConfigSingleton.dashConfig?.driverTip?.maxAmount ?: MAX_TIP_VALUE -> {
                     // Driver tip should always be less than R1000
                     Utils.fadeInFadeOutAnimation(buttonConfirm, true)
                     driverTipErrorText?.visibility = View.VISIBLE
@@ -128,4 +136,16 @@ class CustomDriverTipBottomSheetDialog : WBottomSheetDialogFragment() {
             )
         }
     }
+
+    private fun getMaxLengthFilter(lengthBeforeDecimal: Int, decimalPlace: Int): Array<InputFilter?> {
+        val filterArray = arrayOfNulls<InputFilter>(2)
+        filterArray[0] =  LengthFilter(lengthBeforeDecimal + decimalPlace)
+        filterArray[1] =
+            DecimalDigitsInputFilter(
+            digitsBeforeZero = lengthBeforeDecimal,
+            digitsAfterZero = decimalPlace
+        )
+        return filterArray
+    }
 }
+
