@@ -818,6 +818,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             return;
         }
 
+        if (mNavController.getCurrentFrag() instanceof ProductListingFragment) {
+            ((ProductListingFragment) mNavController.getCurrentFrag()).onBackPressed();
+        }
+
         // Close slide up panel when expanded
         if (getSlidingLayout() != null) {
             // Send result to store locator fragment onActivityResult
