@@ -102,6 +102,23 @@ object OneAppService : RetrofitConfig() {
         }
     }
 
+    suspend fun productStoreFinder(sku: String, startRadius: String?, endRadius: String?): retrofit2.Response<LocationResponse> {
+        val loc = getMyLocation()
+        return withContext(Dispatchers.IO) {
+            if ("" == startRadius) {
+                //This should never happen for now
+                mApiInterface.productStoreFinder("", "", loc.latitude.toString(),
+                    loc.longitude.toString(), getSessionToken(), getDeviceIdentityToken(), sku,
+                    startRadius, endRadius, true)
+            } else {
+                mApiInterface.productStoreFinder("", "", loc.latitude.toString(),
+                    loc.longitude.toString(), getSessionToken(), getDeviceIdentityToken(), sku,
+                    startRadius, endRadius, true
+                )
+            }
+        }
+    }
+
     fun getMessagesResponse(pageSize: Int, pageNumber: Int): Call<MessageResponse> {
         return mApiInterface.getMessages("", "", getSessionToken(),
             getDeviceIdentityToken(), pageSize, pageNumber)
