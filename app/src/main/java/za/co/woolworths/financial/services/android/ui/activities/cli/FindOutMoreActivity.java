@@ -78,6 +78,7 @@ public class FindOutMoreActivity extends AppCompatActivity implements SelectedIt
 						LinearLayout.LayoutParams.WRAP_CONTENT
 				);
 				params.setMargins(10, 0, 10, 0);
+				pager_indicator.setContentDescription("roundedDots"+i);
 				pager_indicator.addView(dots[i], params);
 			}
 			dots[0].setImageDrawable(ContextCompat.getDrawable(FindOutMoreActivity.this, R.drawable.selected_dot));
