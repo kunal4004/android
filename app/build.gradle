@@ -18,12 +18,11 @@ android {
     def jobNumberFeature = 11838
 
 
-    dataBinding {
-        enabled = true
+    buildFeatures {
+        dataBinding true
+        viewBinding true
     }
-    viewBinding {
-        enabled = true
-    }
+
 
     compileOptions {
         // Support for Java 8 features
@@ -52,6 +51,7 @@ android {
         manifestPlaceholders = [appLabel: "Woolworths", app_links_host: "www.woolworths.co.za"]
         minSdkVersion 22 //Lollipop 5.1
         compileSdkVersion 31
+        buildToolsVersion "30.0.3"
         multiDexEnabled true
         versionName(major + "." + minor + "." + fix)
         vectorDrawables.useSupportLibrary = true
@@ -60,8 +60,6 @@ android {
         dexOptions {
             javaMaxHeapSize "2560M"
         }
-
-        signingConfig null
 
         buildConfigField("String", "HOST", '"' + System.env.WigroupServer_API_URL + '"')
         buildConfigField("String", "SHA1", '"' + System.env.WigroupServer_API_HASH + '"')
@@ -262,14 +260,14 @@ dependencies {
     implementation 'uk.co.chrisjenx:calligraphy:2.2.0'
     implementation 'me.leolin:ShortcutBadger:1.1.22@aar'
     implementation 'com.daimajia.swipelayout:library:1.2.0'
-    implementation 'com.github.barteksc:android-pdf-viewer:3.2.0-beta.1'
+    implementation 'com.github.mhiew:android-pdf-viewer:3.2.0-beta.3'
     api 'com.google.zxing:core:3.3.3'
 
     api 'com.google.zxing:android-core:3.3.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
     implementation "androidx.lifecycle:lifecycle-common-java8:2.4.1"
 
-    implementation 'me.relex:circleindicator:2.1.0@aar'
+    implementation 'me.relex:circleindicator:2.1.6'
     implementation 'com.squareup.retrofit2:converter-scalars:2.9.0'
 
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
@@ -282,7 +280,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0'
-    implementation 'com.daasuu:BubbleLayout:1.2.0'
+    implementation 'com.github.MasayukiSuda:BubbleLayout:v1.2.1'
 
     // Import the Firebase BoM
     implementation platform('com.google.firebase:firebase-bom:28.4.0')
