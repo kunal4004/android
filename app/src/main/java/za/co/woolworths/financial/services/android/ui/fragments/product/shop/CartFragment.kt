@@ -36,6 +36,7 @@ import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getDelivertyType
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getPlaceId
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.getSelectedPlaceId
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.nativeCheckout
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
@@ -119,6 +120,8 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
     private var mCommerceItem: CommerceItem? = null
     private var voucherDetails: VoucherDetails? = null
     var productCountMap: ProductCountMap? = null
+    private var liquorCompliance: LiquorCompliance? = null
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -421,6 +424,16 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                 CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION,
                 true
             )
+            if ((liquorCompliance != null) && liquorCompliance!!.isLiquorOrder && (AppConfigSingleton.liquor!!.noLiquorImgUrl != null) && !AppConfigSingleton.liquor!!.noLiquorImgUrl.isEmpty()) {
+                checkoutActivityIntent.putExtra(
+                    Constant.LIQUOR_ORDER,
+                    liquorCompliance!!.isLiquorOrder
+                )
+                checkoutActivityIntent.putExtra(
+                    Constant.NO_LIQUOR_IMAGE_URL,
+                    AppConfigSingleton.liquor!!.noLiquorImgUrl
+                )
+            }
             activity.startActivityForResult(
                 checkoutActivityIntent,
                 REQUEST_PAYMENT_STATUS
@@ -585,8 +598,18 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                 orderSummary = cartResponse.orderSummary
                 voucherDetails = cartResponse.voucherDetails
                 productCountMap = cartResponse.productCountMap
-                cartProductAdapter =
-                    CartProductAdapter(cartItems, this, orderSummary, activity, voucherDetails)
+                liquorCompliance = LiquorCompliance(
+                    cartResponse.liquorOrder,
+                    if (cartResponse.noLiquorImageUrl != null) cartResponse.noLiquorImageUrl else ""
+                )
+                cartProductAdapter = CartProductAdapter(
+                    cartItems,
+                    this,
+                    orderSummary,
+                    activity,
+                    voucherDetails,
+                    liquorCompliance
+                )
                 queryServiceInventoryCall(cartResponse.cartItems)
                 val mLayoutManager = LinearLayoutManager(activity)
                 mLayoutManager.orientation = LinearLayoutManager.VERTICAL
@@ -615,6 +638,10 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         orderSummary = cartResponse?.orderSummary
         voucherDetails = cartResponse?.voucherDetails
         productCountMap = cartResponse?.productCountMap
+        liquorCompliance = LiquorCompliance(
+            cartResponse?.liquorOrder ?: false,
+            if (cartResponse?.noLiquorImageUrl != null) cartResponse?.noLiquorImageUrl else ""
+        )
         setItemLimitsBanner()
         if (cartResponse?.cartItems?.size ?: 0 > 0 && cartProductAdapter != null) {
             val emptyCartItemGroups = ArrayList<CartItemGroup>(0)
@@ -666,7 +693,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             for (cartItemGroup: CartItemGroup in emptyCartItemGroups) {
                 cartItems?.remove(cartItemGroup)
             }
-            cartProductAdapter?.notifyAdapter(cartItems, orderSummary, voucherDetails)
+            cartProductAdapter?.notifyAdapter(cartItems, orderSummary, voucherDetails, liquorCompliance)
         } else {
             cartProductAdapter?.clear()
             resetToolBarIcons()
@@ -756,10 +783,20 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                 for (cartItemGroup: CartItemGroup in emptyCartItemGroups) {
                     cartItems?.remove(cartItemGroup)
                 }
+
                 orderSummary = cartResponse.orderSummary
                 voucherDetails = cartResponse.voucherDetails
                 productCountMap = cartResponse.productCountMap
-                cartProductAdapter?.notifyAdapter(cartItems, orderSummary, voucherDetails)
+                liquorCompliance = LiquorCompliance(
+                    cartResponse.liquorOrder,
+                    if (cartResponse.noLiquorImageUrl != null) cartResponse.noLiquorImageUrl else ""
+                )
+                cartProductAdapter!!.notifyAdapter(
+                    cartItems,
+                    orderSummary,
+                    voucherDetails,
+                    liquorCompliance
+                )
             } else {
                 val currentCartItemGroup = cartProductAdapter?.cartItems
                 currentCartItemGroup?.forEach { cartItemGroup: CartItemGroup ->
@@ -790,10 +827,15 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                     orderSummary = cartResponse?.orderSummary
                     voucherDetails = cartResponse?.voucherDetails
                     productCountMap = cartResponse?.productCountMap
-                    cartProductAdapter?.notifyAdapter(
+                    liquorCompliance = LiquorCompliance(
+                        cartResponse?.liquorOrder ?: false,
+                        cartResponse?.noLiquorImageUrl ?: ""
+                    )
+                    cartProductAdapter!!.notifyAdapter(
                         currentCartItemGroup,
                         orderSummary,
-                        voucherDetails
+                        voucherDetails,
+                        liquorCompliance
                     )
                     fadeCheckoutButton(false)
                 }
@@ -1888,12 +1930,12 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
     }
 
     companion object {
-        private const val CART_BACK_PRESSED_CODE = 9
-        private const val PDP_LOCATION_CHANGED_BACK_PRESSED_CODE = 18
-        private const val REQUEST_SUBURB_CHANGE = 143
-        private const val MOVE_TO_LIST_ON_TOAST_VIEW_CLICKED = 1020
-        private const val REDEEM_VOUCHERS_REQUEST_CODE = 1979
-        private const val APPLY_PROMO_CODE_REQUEST_CODE = 1989
+        const val CART_BACK_PRESSED_CODE = 9
+        const val PDP_LOCATION_CHANGED_BACK_PRESSED_CODE = 18
+        const val REQUEST_SUBURB_CHANGE = 143
+        const val MOVE_TO_LIST_ON_TOAST_VIEW_CLICKED = 1020
+        const val REDEEM_VOUCHERS_REQUEST_CODE = 1979
+        const val APPLY_PROMO_CODE_REQUEST_CODE = 1989
         const val REQUEST_PAYMENT_STATUS = 4775
 
         private const val TAG_ADDED_TO_LIST_TOAST = "ADDED_TO_LIST"
