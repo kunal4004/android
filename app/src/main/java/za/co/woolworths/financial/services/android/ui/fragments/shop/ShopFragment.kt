@@ -85,19 +85,26 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private var user: String = ""
     private var validateLocationResponse: ValidateLocationResponse? = null
     private var tabWidth: Float? = 0f
-    private val fragmentResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        if(it.resultCode != RESULT_OK) {
-            return@registerForActivityResult
-        }
-        it.data?.extras?.let { extras ->
-            val requestCode = extras.getInt(AppConstant.REQUEST_CODE)
-            if(requestCode == REQUEST_CODE_BARCODE_ACTIVITY) {
-                val searchType = SearchType.valueOf(extras.getString(AppConstant.Keys.EXTRA_SEARCH_TYPE, ""))
-                val searchTerm: String = extras.getString(AppConstant.Keys.EXTRA_SEARCH_TERM, "")
-                (requireActivity() as? BottomNavigationActivity)?.pushFragment(newInstance(searchType, "", searchTerm, false))
+    private val fragmentResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode != RESULT_OK) {
+                return@registerForActivityResult
+            }
+            it.data?.extras?.let { extras ->
+                val requestCode = extras.getInt(AppConstant.REQUEST_CODE)
+                if (requestCode == REQUEST_CODE_BARCODE_ACTIVITY) {
+                    val searchType =
+                        SearchType.valueOf(extras.getString(AppConstant.Keys.EXTRA_SEARCH_TYPE, ""))
+                    val searchTerm: String =
+                        extras.getString(AppConstant.Keys.EXTRA_SEARCH_TERM, "")
+                    (requireActivity() as? BottomNavigationActivity)?.pushFragment(newInstance(
+                        searchType,
+                        "",
+                        searchTerm,
+                        false))
+                }
             }
         }
-    }
 
     companion object {
         private const val LOGIN_MY_LIST_REQUEST_CODE = 9876
@@ -496,6 +503,11 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
 
         if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+            val fragment = viewpager_main?.adapter?.instantiateItem(
+                viewpager_main,
+                viewpager_main.currentItem
+            ) as? DashDeliveryAddressFragment
+            fragment?.onActivityResult(requestCode, resultCode, data)
             refreshViewPagerFragment()
         }
 
@@ -1001,6 +1013,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
             WMaterialShowcaseView.Feature.BARCODE_SCAN -> {
                 checkCameraPermission()
+            }
+            WMaterialShowcaseView.Feature.DELIVERY_DETAILS -> {
+                onEditDeliveryLocation()
             }
             WMaterialShowcaseView.Feature.MY_LIST -> {
                 if (SessionUtilities.getInstance().isUserAuthenticated) {
