@@ -2626,4 +2626,9 @@
     <string name="early_access_shopping">Easily access your shopping lists in My Accounts.</string>
     <string name="view_shopping_list_action">VIEW SHOPPING LISTS</string>
 
+    <string name="please_select_a_reason_for_cancellation">Please select a reason for cancellation:</string>
+    <string name="i_don_t_need_the_item_s_anymore">I don’t need the item(s) anymore.</string>
+    <string name="i_forgot_to_add_something_to_my_order">I forgot to add something to my order.</string>
+    <string name="i_need_to_place_this_order_for_a_different_time">I need to place this order for a different time.</string>
+    <string name="other">Other.</string>
 </resources>
