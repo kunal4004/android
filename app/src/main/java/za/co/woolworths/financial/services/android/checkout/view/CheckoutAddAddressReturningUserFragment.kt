@@ -214,7 +214,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
           if(liquorOrder==true&&containsKey(NO_LIQUOR_IMAGE_URL)){
               liquorImageUrl=getString(NO_LIQUOR_IMAGE_URL)
               ageConfirmationLayout?.visibility=View.VISIBLE
-              liquorComplianceBannerLayout?.visibility=View.VISIBLE;
+              liquorComplianceBannerLayout?.visibility=View.VISIBLE
               setPicture(imgLiquorBanner, liquorImageUrl)
 
               ageConfirmationLayout.visibility = VISIBLE
@@ -233,8 +233,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
           }
        }else{
            ageConfirmationLayout?.visibility=View.GONE
-           liquorComplianceBannerLayout?.visibility=View.GONE;
-
+           liquorComplianceBannerLayout?.visibility=View.GONE
        }
         }
     }
@@ -1014,6 +1013,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         }
     }
     private fun isAgeConfirmationLiquorCompliance() : Boolean {
+        txtAgeConfirmationTitle.parent.requestChildFocus(txtAgeConfirmationTitle, txtAgeConfirmationTitle)
         radioBtnAgeConfirmation.parent.requestChildFocus(radioBtnAgeConfirmation, radioBtnAgeConfirmation)
         return liquorOrder == true && !radioBtnAgeConfirmation.isChecked
     }
@@ -1317,13 +1317,9 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         if(!isChecked) {
             Utils.fadeInFadeOutAnimation(txtContinueToPayment, true)
             radioBtnAgeConfirmation?.isChecked = false
-            txtContinueToPayment?.isClickable = false
-            txtContinueToPayment?.isEnabled = false
         } else {
             Utils.fadeInFadeOutAnimation(txtContinueToPayment, false)
             radioBtnAgeConfirmation?.isChecked = true
-            txtContinueToPayment?.isClickable = true
-            txtContinueToPayment?.isEnabled = true
         }
     }
 }
