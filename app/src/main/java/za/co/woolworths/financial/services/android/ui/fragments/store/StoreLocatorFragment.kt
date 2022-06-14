@@ -148,7 +148,7 @@ class StoreLocatorFragment : Fragment(), DynamicMapDelegate, ViewPager.OnPageCha
     private fun bindDataWithUI(storeDetailsList: MutableList<StoreDetails>) {
         dynamicMapView?.let {
             if (storeDetailsList.size >= 0) {
-                activity?.let { activity -> updateMyCurrentLocationOnMap(Utils.getLastSavedLocation()) }
+                updateMyCurrentLocationOnMap(Utils.getLastSavedLocation())
                 for (i in storeDetailsList.indices) {
                     if (i == 0) {
                         selectedIcon?.let { selectedIcon -> drawMarker(storeDetailsList[i].latitude, storeDetailsList[i].longitude, selectedIcon, i) }

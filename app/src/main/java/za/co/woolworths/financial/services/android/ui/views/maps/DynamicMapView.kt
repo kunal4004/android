@@ -186,17 +186,15 @@ class DynamicMapView @JvmOverloads constructor(
         return if (isGooglePlayServicesAvailable) {
             val markerOptions = GoogleMarkerOptions()
             markerOptions.position(GoogleLatLng(latitude, longitude))
-            icon?.apply {
-                markerOptions.icon(GoogleBitmapDescriptorFactory.fromResource(this))
-            }
-            DynamicMapMarker(googleMarker = googleMap?.addMarker(markerOptions))
+            var marker = DynamicMapMarker(googleMarker = googleMap?.addMarker(markerOptions))
+            marker.setIcon(icon)
+            marker
         } else {
             val markerOptions = HuaweiMarkerOptions()
             markerOptions.position(HuaweiLatLng(latitude, longitude))
-            icon?.apply {
-                markerOptions.icon(HuaweiBitmapDescriptorFactory.fromResource(this))
-            }
-            DynamicMapMarker(huaweiMarker = huaweiMap?.addMarker(markerOptions))
+            var marker = DynamicMapMarker(huaweiMarker = huaweiMap?.addMarker(markerOptions))
+            marker.setIcon(icon)
+            marker
         }
     }
 

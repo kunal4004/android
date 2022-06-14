@@ -48,7 +48,7 @@ object DynamicGeocoder {
                                                 it.county,
                                                 it.state,
                                                 it.countryName
-                                            ).filterNotNull().joinToString(separator = ", "),
+                                            ).filter { item -> !item.isNullOrEmpty() }.joinToString(separator = ", "),
                                             street = it.street,
                                             city = it.city,
                                             suburb = it.county,

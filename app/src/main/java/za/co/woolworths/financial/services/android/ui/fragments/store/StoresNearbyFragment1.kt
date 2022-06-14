@@ -172,7 +172,6 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
                 }
             }
         })
-        initLocationCheck()
 
         /*
 		 init();
@@ -248,6 +247,7 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     override fun onMapReady() {
         unSelectedIcon = R.drawable.unselected_pin
         selectedIcon = R.drawable.selected_pin
+        initLocationCheck()
     }
 
     private fun drawMarker(latitude: Double, longitude: Double, @DrawableRes icon: Int?, pos: Int) {

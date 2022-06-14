@@ -110,27 +110,9 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
         }
 
         if (isDashEnabled && isFragmentVisible) {
-            checkForLocationPermissionAndInitializeRootCategories()
+            startLocationDiscoveryProcess()
         } else if (isFragmentVisible) {
             initializeRootCategoryList()
-        }
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private fun checkForLocationPermissionAndInitializeRootCategories() {
-        activity?.apply {
-            //Check if user has location services enabled. If not, notify user as per current store locator functionality.
-            if (!Utils.isLocationEnabled(this)) {
-                val enableLocationSettingsFragment = EnableLocationSettingsFragment()
-                enableLocationSettingsFragment?.show(
-                    supportFragmentManager,
-                    EnableLocationSettingsFragment::class.java.simpleName
-                )
-                return@apply
-            }
-
-            // If location services enabled, extract latitude and longitude
-            startLocationDiscoveryProcess()
         }
     }
 

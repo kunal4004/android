@@ -486,7 +486,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                     it.city,
                     it.suburb,
                     it.countryName
-                ).toList().joinToString(separator = ", ")
+                ).filter { item -> !item.isNullOrEmpty() }.joinToString(separator = ", ")
             } ?: null
 
             OneAppService.linkDeviceApi(

@@ -94,7 +94,6 @@ class ConfirmAddressMapFragment :
         super.onViewCreated(view, savedInstanceState)
 
         dynamicMapView?.initializeMap(savedInstanceState, this)
-        initView()
     }
 
     private fun initView() {
@@ -285,6 +284,8 @@ class ConfirmAddressMapFragment :
     }
 
     override fun onMapReady() {
+        initView()
+
         if (!isAddAddress!!) {
             if (isMoveMapCameraFirstTime == true){
                 moveMapCamera(latitude, longitude)
@@ -377,6 +378,10 @@ class ConfirmAddressMapFragment :
     }
 
     private fun getStreetNumberAndRoute(placeId: String?) {
+        if (placeId.isNullOrEmpty() || placeId == "null") {
+            showSelectedLocationError(true)
+            return
+        }
         Places.initialize(requireActivity(), getString(R.string.maps_google_api_key))
         val placesClient = Places.createClient(requireActivity())
         val placeFields: MutableList<Place.Field> = mutableListOf(
@@ -475,7 +480,9 @@ class ConfirmAddressMapFragment :
     override fun onResume() {
         super.onResume()
         dynamicMapView?.onResume()
-        isMoveMapCameraFirstTime = false
+        if (dynamicMapView?.isMapInstantiated() == true) {
+            isMoveMapCameraFirstTime = false
+        }
         moveMapCamera(mLatitude?.toDoubleOrNull(), mLongitude?.toDoubleOrNull())
     }
 
