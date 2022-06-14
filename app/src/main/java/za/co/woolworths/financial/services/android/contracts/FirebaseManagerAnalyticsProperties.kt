@@ -102,6 +102,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val WHATSAPP_PAYMENT_OPTION = "whatsapp_payment_option"
         const val WHATSAPP_CONTACT_US = "whatsapp_contact_us"
         const val WHATSAPP_CHAT_WITH_US = "whattsapp_chat_with_us"
+        const val VTSC_CARD_NOT_DELIVERED = "cardnotdelivered"
 
         const val SHOP_SEARCH = "SHOP_Search"
 

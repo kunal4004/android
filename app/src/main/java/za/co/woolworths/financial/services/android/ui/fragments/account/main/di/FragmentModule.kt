@@ -17,6 +17,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dom
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.IStoreCardNavigator
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.StoreCardNavigator
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.*
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.ManageCardFunctionalRequirementImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.IProductLandingRouter
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 
@@ -25,8 +26,11 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 object FragmentModule {
 
     @Provides
-    fun provideProductLandingRouterImpl(accountOptions: AccountOptionsImpl): IProductLandingRouter =
-        ProductLandingRouterImpl(accountOptions)
+    fun provideProductLandingRouterImpl(
+        accountOptions: AccountOptionsImpl,
+        manageCardFunctionalRequirementImpl: ManageCardFunctionalRequirementImpl
+    ): IProductLandingRouter =
+        ProductLandingRouterImpl(accountOptions, manageCardFunctionalRequirementImpl)
 
     @Provides
     fun provideNavigationGraph(): INavigationGraph = NavigationGraph()

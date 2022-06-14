@@ -18,7 +18,7 @@
         android:layout_height="24dp"
         android:layout_alignParentStart="true"
         fresco:placeholderImage="@drawable/appicon"
-        fresco:viewAspectRatio="1.0"/>
+        fresco:viewAspectRatio="1.0" />
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/tvBankName"
@@ -26,22 +26,22 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:layout_marginEnd="@dimen/two_dp"
         android:layout_marginStart="@dimen/thirteen_dp"
+        android:layout_marginEnd="@dimen/two_dp"
         android:layout_toEndOf="@+id/imBankLogo"
         android:letterSpacing="0.2"
         android:text="Standard Bank"
         android:textAllCaps="true"
         android:textColor="@color/black_50"
         android:textSize="12sp"
-        app:WTextView_font="medium"/>
+        app:WTextView_font="medium" />
 
     <ImageView
         android:id="@+id/imgSelectBank"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:src="@drawable/tick_cli_inactive"/>
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/tick_cli_inactive" />
 
 </RelativeLayout>

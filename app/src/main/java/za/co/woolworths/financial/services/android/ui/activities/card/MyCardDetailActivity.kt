@@ -11,6 +11,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import com.awfs.coordination.R
 import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.my_card_activity.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -33,6 +34,7 @@ import za.co.woolworths.financial.services.android.util.wenum.StoreCardViewType
 import java.util.*
 
 
+@AndroidEntryPoint
 class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
 
     companion object {
@@ -77,11 +79,10 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
         if(!primaryCards.isNullOrEmpty()){
             val primaryCard = primaryCards[PRIMARY_CARD_POSITION]
             val blockType = primaryCard.blockType?.toLowerCase(Locale.getDefault())
-            val shouldDisplayStoreCardDetail = TextUtils.isEmpty(blockType) || blockType == TemporaryFreezeStoreCard.TEMPORARY
             val virtualCard = Gson().fromJson(getMyStoreCardDetail(), StoreCardsResponse::class.java)?.storeCardsData?.virtualCard
             // Determine if card is blocked: if blockCode is not null, card is blocked.
             when ((virtualCard != null && AppConfigSingleton.virtualTempCard?.isEnabled == true)
-                    || shouldDisplayStoreCardDetail
+                    || (TextUtils.isEmpty(blockType) || blockType == TemporaryFreezeStoreCard.TEMPORARY)
                     && blockType != TemporaryFreezeStoreCard.PERMANENT) {
                 true -> {
                     addFragment(
@@ -210,6 +211,4 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         supportFragmentManager.findFragmentById(R.id.flMyCard)?.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
-
-    fun getStoreCardDetail() = mStoreCardDetail
 }

@@ -10,6 +10,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.uti
 
 // TODO :: Check against fragment documentation
 abstract class ViewBindingFragment<VB : ViewBinding>(private val inflate: Inflate<VB>) : Fragment() {
+
     private var _binding: VB by autoCleared()
 
     val binding: VB
@@ -26,3 +27,4 @@ abstract class ViewBindingFragment<VB : ViewBinding>(private val inflate: Inflat
 }
 
 typealias Inflate<T> = (LayoutInflater, ViewGroup?, Boolean) -> T
+

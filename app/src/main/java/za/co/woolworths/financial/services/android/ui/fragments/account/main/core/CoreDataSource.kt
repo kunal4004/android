@@ -1,5 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.core
 
+import android.os.Parcelable
+import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.catch
 import retrofit2.Response
@@ -8,7 +11,15 @@ import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.models.network.RetrofitException
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Result
 import java.io.IOException
+import java.io.Serializable
 import javax.inject.Inject
+
+data class ErrorResponse(
+    @SerializedName("httpCode")
+    var httpCode: Int,
+    @SerializedName("response")
+    val response: za.co.woolworths.financial.services.android.models.dto.Response
+) : Serializable
 
 open class CoreDataSource @Inject constructor() : NetworkConfig() {
 
@@ -18,8 +29,10 @@ open class CoreDataSource @Inject constructor() : NetworkConfig() {
      * In case of success, the result will be wrapped around the OnSuccessResponse class
      * In case of error, the throwable causing the error will be wrapped around OnErrorResponse class
      */
+
     sealed class IOTaskResult<out DTO : Any> {
         data class OnSuccess<out DTO : Any>(val data: DTO) : IOTaskResult<DTO>()
+        data class OnFailure(val data: ErrorResponse) : IOTaskResult<Nothing>()
         data class OnFailed(val throwable: Throwable) : IOTaskResult<Nothing>()
         object Empty : IOTaskResult<Nothing>()
     }
@@ -41,20 +54,28 @@ open class CoreDataSource @Inject constructor() : NetworkConfig() {
         return flow {
             with(networkApiCall()) {
                 when (isSuccessful) {
-                    true -> {body()?.let {
-                            emit(IOTaskResult.OnSuccess(it))
-                        } ?:  emit(IOTaskResult.Empty)
+                    true -> {
+                        body()?.let {
+                            emit(IOTaskResult.OnSuccess(it as T))
+                        } ?: emit(IOTaskResult.Empty)
                     }
                     false -> {
                         emit(
-                            IOTaskResult.OnFailed(
-                                IOException(
-                                    "API call failed with error - ${
-                                        errorBody()
-                                            ?.string() ?: "Network error"
-                                    }"
+                            try {
+                                val errorResponse = Gson().fromJson(
+                                    errorBody()?.string(),
+                                    ErrorResponse::class.java)
+                                IOTaskResult.OnFailure(errorResponse)
+                            } catch (e: Exception) {
+                                IOTaskResult.OnFailed(
+                                    IOException(
+                                        "API call failed with error - ${
+                                            errorBody()
+                                                ?.string() ?: "Network error"
+                                        }"
+                                    )
                                 )
-                            )
+                            }
                         )
                     }
                 }
@@ -66,7 +87,12 @@ open class CoreDataSource @Inject constructor() : NetworkConfig() {
     }
 
 
-    private fun <T> error(apiError: za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.ApiError, data: T? = null): Result<T> { return Result.error(apiError, data) }
+    private fun <T> error(
+        apiError: za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.ApiError,
+        data: T? = null
+    ): Result<T> {
+        return Result.error(apiError, data)
+    }
 
     private fun getErrorMessage(responseCode: Int = 0): za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.ApiError {
         return when (responseCode) {
@@ -98,4 +124,5 @@ enum class ApiError(val value: String) {
  */
 typealias NetworkAPIInvoke<T> = suspend () -> Response<T>
 
-private fun <T> displayMaintenanceScreenIfNeeded(url:String, response: Response<T>): Boolean = RetrofitException(url, response.code()).show()
+private fun <T> displayMaintenanceScreenIfNeeded(url: String, response: Response<T>): Boolean =
+    RetrofitException(url, response.code()).show()

@@ -7,7 +7,14 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/fifteen_dp"
     android:background="@color/white">
-
+    <View
+        android:id="@+id/viewAllDevicesTitleSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/one_dp"
+        android:background="@color/color_separator_light_grey"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/deviceRadioButton"
+        app:layout_constraintEnd_toEndOf="parent"/>
     <RadioButton
         android:id="@+id/deviceRadioButton"
         android:layout_width="wrap_content"
@@ -17,15 +24,15 @@
         android:button="@drawable/radio_button_tick_drawable"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/deviceNameTextView"
-        app:layout_constraintBottom_toBottomOf="@id/deviceNameTextView" />
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <TextView
         android:id="@+id/deviceNameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/myriad_pro_regular"
+        android:fontFamily="@font/myriad_pro_semi_bold"
         android:paddingStart="@dimen/fifteen_dp"
-        android:layout_marginTop="@dimen/twenty_dp"
+        android:layout_marginTop="@dimen/_10sdp"
         android:textColor="@color/black"
         android:textSize="@dimen/fifteen_sp"
         app:layout_constraintStart_toEndOf="@id/deviceRadioButton"
@@ -54,7 +61,7 @@
         android:paddingTop="@dimen/three_dp"
         android:textColor="@color/black_50"
         android:textSize="@dimen/twelve_sp"
-        android:layout_marginBottom="@dimen/fifteen_dp"
+        android:layout_marginBottom="@dimen/_10sdp"
         app:layout_constraintStart_toEndOf="@id/deviceRadioButton"
         app:layout_constraintTop_toBottomOf="@id/deviceSubtitleTextView"
         tools:text="Linked 12/01/2021" />

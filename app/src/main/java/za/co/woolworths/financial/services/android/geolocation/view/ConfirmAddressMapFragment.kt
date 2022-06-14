@@ -25,7 +25,6 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.maps.GeoApiContext
 import com.google.maps.GeocodingApi
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.geolocation_confirm_address.*
 import kotlinx.android.synthetic.main.geolocation_confirm_address.autoCompleteTextView
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -43,12 +42,11 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LATITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LONGITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
-import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
-import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LATITUDE
+import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LONGITUDE
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
-import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.*
-import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.*
 import java.util.*
 import javax.inject.Inject
 
@@ -244,7 +242,6 @@ class ConfirmAddressMapFragment :
                     binding?.autoCompleteTextView?.setText(placeName)
                     isAddressFromSearch = true
                     isMainPlaceName = true
-                    getStreetNumberAndRoute(placeId)
                     isStreetNumberAndRouteFromSearch = true
                     val placeFields: MutableList<Place.Field> = mutableListOf(
                         Place.Field.ID,
@@ -302,7 +299,7 @@ class ConfirmAddressMapFragment :
         } else {
             binding?.imgMapMarker?.visibility = View.GONE
             binding?.confirmAddress?.isEnabled = false
-            mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE), 10f))
+            mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE), 5f))
 
         }
 
@@ -343,7 +340,7 @@ class ConfirmAddressMapFragment :
                 address1 = getAddressOne(mAddress)
                 city = it.getOrNull(0)?.locality
                 state = it.getOrNull(0)?.adminArea
-                country = it.getOrNull(0)?.countryName
+                country = it.getOrNull(0)?.countryCode
                 postalCode = it.getOrNull(0)?.postalCode
                 suburb = it.getOrNull(0)?.subLocality
 
@@ -375,8 +372,11 @@ class ConfirmAddressMapFragment :
                 }
             }).await()
 
-        placeId = results.getOrNull(0)?.placeId.toString()
-      if (isStreetNumberAndRouteFromSearch == false) {
+        if (isStreetNumberAndRouteFromSearch == false) {
+            placeId = results.getOrNull(0)?.placeId.toString()
+            getStreetNumberAndRoute(placeId)
+        } else {
+            // here place id is d/f coming search address
             getStreetNumberAndRoute(placeId)
         }
         isStreetNumberAndRouteFromSearch = false
@@ -408,11 +408,17 @@ class ConfirmAddressMapFragment :
                             ROUTE.value -> routeName = address.name
                         }
                     }
+                    if(streetNumber.isNullOrEmpty()){
+                        streetNumber=""
+                    }
+                    if(routeName.isNullOrEmpty()){
+                        routeName=""
+                    }
                     placeName?.let {
                         if (!it.equals("$streetNumber $routeName",
                                 true) && isMainPlaceName == true
                         ) {
-                            sendAddressData(it)
+                            sendAddressData(it,"$streetNumber $routeName")
                             isMainPlaceName = false
                         } else {
                             sendAddressData("$streetNumber $routeName")
@@ -434,12 +440,6 @@ class ConfirmAddressMapFragment :
         }
 
     }
-
-    companion object {
-        private const val DEFAULT_LATITUDE = -33.918861
-        private const val DEFAULT_LONGITUDE = 18.423300
-    }
-
     override fun tryAgain() {
         initView()
     }
@@ -451,7 +451,7 @@ class ConfirmAddressMapFragment :
         ).get(ConfirmAddressViewModel::class.java)
     }
 
-    private fun sendAddressData(placeName: String?) {
+    private fun sendAddressData(placeName: String?,apiAddress1:String?="") {
         val saveAddressLocationRequest = SaveAddressLocationRequest("$placeName",
             city,
             country,
@@ -461,9 +461,16 @@ class ConfirmAddressMapFragment :
             placeId,
             postalCode,
             state,
-            suburb)
-        viewLifecycleOwner.lifecycleScope.launch {
-            confirmAddressViewModel.postSaveAddress(saveAddressLocationRequest)
+            suburb,
+            apiAddress1)
+        try {
+            view?.let{
+                lifecycleScope.launch {
+                    confirmAddressViewModel.postSaveAddress(saveAddressLocationRequest)
+                }
+            }
+        } catch (e: Exception) {
+            FirebaseManager.logException(e)
         }
     }
 

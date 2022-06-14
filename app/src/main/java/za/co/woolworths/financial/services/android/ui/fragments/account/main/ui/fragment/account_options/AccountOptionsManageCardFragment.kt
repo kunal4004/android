@@ -1,18 +1,19 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options
 
+import android.graphics.Paint
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.View.*
 import android.widget.RelativeLayout
 import androidx.annotation.StringRes
+import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountOptionsManageCardFragmentBinding
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,17 +21,15 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
-import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
+import za.co.woolworths.financial.services.android.ui.base.onClick
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeUnfreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card_slider.CardViewPager
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card_slider.ManageCardScreenSlidesAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.loadingState
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.TemporaryFreezeCardFragment.Companion.TEMPORARY_FREEZE_CARD_FRAGMENT_CANCEL_RESULT
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.TemporaryFreezeCardFragment.Companion.TEMPORARY_FREEZE_CARD_FRAGMENT_CONFIRM_RESULT
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.TemporaryUnFreezeCardFragment.Companion.UN_FREEZE_TEMPORARY_CARD_CANCEL_RESULT
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.TemporaryUnFreezeCardFragment.Companion.UN_FREEZE_TEMPORARY_CARD_CONFIRM_RESULT
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.location.Event
@@ -41,29 +40,32 @@ import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AccountOptionsManageCardFragment :
-    ViewBindingFragment<AccountOptionsManageCardFragmentBinding>(
-        AccountOptionsManageCardFragmentBinding::inflate
-    ) {
+class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manage_card_fragment),
+    OnClickListener {
 
     companion object {
-        const val MANAGE_CARD_ACCOUNT_OPTIONS =  "AccountOptionsManageCardFragment"
+        const val MANAGE_CARD_ACCOUNT_OPTIONS = "AccountOptionsManageCardFragment"
     }
 
     @Inject
     lateinit var adapter: ManageCardScreenSlidesAdapter
 
+    @Inject
+    lateinit var router: ProductLandingRouterImpl
+
     private val viewModel: MyAccountsRemoteApiViewModel by activityViewModels()
+    val temporaryFreezeUnfreezeCardViewModel: TemporaryFreezeUnfreezeCardViewModel by activityViewModels()
+
     private val pager by lazy { CardViewPager() }
     private lateinit var locator: Locator
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        initCardViewPager()
-        binding.setupTemporaryFreezeCardSwipe()
-        setResultListeners()
-        startLocationDiscoveryProcess()
+        with(AccountOptionsManageCardFragmentBinding.bind(view)) {
+            initCardViewPager()
+            subscribeObservers()
+            setOnClickListener()
+        }
     }
     private fun startLocationDiscoveryProcess() {
         locator = Locator(activity as AppCompatActivity)
@@ -80,60 +82,22 @@ class AccountOptionsManageCardFragment :
             subscribeObservers()
         }
     }
-    private fun setResultListeners() {
-        setFragmentResultListener(MANAGE_CARD_ACCOUNT_OPTIONS) { _ , bundle ->
-                when(bundle.getString(MANAGE_CARD_ACCOUNT_OPTIONS, "")){
-                    TEMPORARY_FREEZE_CARD_FRAGMENT_CONFIRM_RESULT -> {
-                        queryServiceBlockUnblockStoreCard(binding.accountCardViewPager.currentItem)
-                    }
-
-                    TEMPORARY_FREEZE_CARD_FRAGMENT_CANCEL_RESULT -> {
-                        binding.isTemporaryCardSwitchChecked(false)
-                    }
-
-                    UN_FREEZE_TEMPORARY_CARD_CONFIRM_RESULT -> {
-                        Log.e("blockwaor", "UN_FREEZE_TEMPORARY_CARD_CONFIRM_RESULT")
-
-                    }
-                    UN_FREEZE_TEMPORARY_CARD_CANCEL_RESULT -> {
-                        binding.isTemporaryCardSwitchChecked(true)
-                    }
-                }
-        }
+    private fun AccountOptionsManageCardFragmentBinding.setOnClickListener() {
+        manageCardRelativeLayout.onClick(this@AccountOptionsManageCardFragment)
+        linkNewCardRelativeLayout.onClick(this@AccountOptionsManageCardFragment)
+        activateVirtualTempCardRelativeLayout.onClick(this@AccountOptionsManageCardFragment)
+        replacementCardRelativeLayout.onClick(this@AccountOptionsManageCardFragment)
+        blockCardRelativeLayout.onClick(this@AccountOptionsManageCardFragment)
     }
 
-    private fun AccountOptionsManageCardFragmentBinding.isTemporaryCardSwitchChecked(isChecked : Boolean) {
-        switchTemporaryFreezeCard.isChecked = isChecked
-    }
-
-    private fun queryServiceBlockUnblockStoreCard(position : Int ) {
-        lifecycleScope.launch {
-            viewModel.queryServiceBlockUnblockStoreCard(position).collect {  state ->
-                with(state){
-                    renderLoading {
-                        binding.cardShimmer.loadingState(isLoading,shimmerContainer = binding.rltCardShimmer)
-                    }
-
-                    renderSuccess {
-
-                    }
-
-                    renderFailure {
-                        //Log.e("outputabc", Gson().toJson(output))
-                    }
-                }
-            }
-        }
-    }
-
-    private fun initCardViewPager() {
+    private fun AccountOptionsManageCardFragmentBinding.initCardViewPager() {
         setupCard(pager, items = mutableListOf(StoreCardFeatureType.OnStart)) { feature ->
-            binding.showStoreCardItems(feature)
+            showStoreCardItems(feature)
             dotIndicatorVisibility(adapter.getListOfStoreCards())
         }
     }
 
-    private fun subscribeObservers() {
+    private fun AccountOptionsManageCardFragmentBinding.subscribeObservers() {
         lifecycleScope.launchWhenStarted {
             with(viewModel) {
                 delay(1000)
@@ -145,21 +109,32 @@ class AccountOptionsManageCardFragment :
                                 SessionDao.KEY.STORE_CARD_RESPONSE_PAYLOAD,
                                 this.output
                             )
-                            val listOfStoreCardFeatures =
-                                storeCardDataSource.getStoreCardListByFeatureType()
+                            val listOfStoreCardFeatures =storeCardDataSource.getStoreCardListByFeatureType()
                             adapter.setItem(listOfStoreCardFeatures)
                         }
-                        renderFailure { Log.e("renderStatus", "renderFailure") }
+
+                        renderHttpFailureFromServer {
+                            Log.e(
+                                "renderStatus",
+                                "renderHttpFailureFromServer ${Gson().toJson(error)}"
+                            )
+
+                        }
+
+                        renderFailure {
+                            Log.e("renderStatus", "renderFailure")
+                        }
                         renderEmpty { Log.e("renderStatus", "renderEmpty") }
                         renderLoading {
-                            binding.cardShimmer.loadingState(isLoading,shimmerContainer = binding.rltCardShimmer)
+                            cardShimmer.loadingState(isLoading, shimmerContainer = rltCardShimmer)
                             when (isLoading) {
                                 true -> {
-                                    binding.isAllMenuListItemsVisible(true)
-                                    binding.isTemporaryFreezeCardVisible(false)
-                                    binding.isManageCardVisible(false)
+                                    isAllMenuListItemsVisible(true)
+                                    isBlockCardUIVisible(false)
+                                    isTemporaryFreezeCardVisible(false)
+                                    isManageCardVisible(false)
                                 }
-                                false -> Unit
+                                else -> Unit
                             }
                         }
                     }
@@ -169,8 +144,6 @@ class AccountOptionsManageCardFragment :
     }
 
     private fun AccountOptionsManageCardFragmentBinding.isAllMenuListItemsVisible(isHidden: Boolean) {
-//        menuItem1RelativeLayout.visibility = if (isHidden) GONE else VISIBLE
-//        menuItem2RelativeLayout.visibility = if (isHidden) GONE else VISIBLE
         isLinkNewCardUIVisible(!isHidden)
         isActivateVirtualTempCardUIVisible(!isHidden)
         isInstantReplacementCardUIVisible(!isHidden)
@@ -178,11 +151,11 @@ class AccountOptionsManageCardFragment :
         isMenuItem4UIVisible(!isHidden)
         isTemporaryFreezeCardVisible(!isHidden)
         isManageCardVisible(!isHidden)
+        isBlockCardUIVisible(!isHidden)
     }
 
     private fun AccountOptionsManageCardFragmentBinding.isTemporaryFreezeCardVisible(isVisible: Boolean) {
-        temporaryFreezeCardDivider.visibility = if (isVisible) VISIBLE else GONE
-        temporaryFreezeCardRelativeLayout.visibility = if (isVisible) VISIBLE else GONE
+        temporaryFreezeCardFragmentContainerView.visibility = if (isVisible) VISIBLE else GONE
     }
 
     private fun AccountOptionsManageCardFragmentBinding.setupTemporaryFreezeCardSwipe() {
@@ -231,7 +204,12 @@ class AccountOptionsManageCardFragment :
                             isTemporaryCardSwitchChecked(true)
                         }
                         false -> {
-
+                            isTemporaryFreezeCardVisible(true)
+                            setBadge(R.string.freeze_temp_label, R.string.orange_tag, false)
+                            myCardLabelVisibility(true)
+                            manageCardLabelVisibility(isVisible = true, isLabelUnderline = true)
+                            isTemporaryCardSwitchChecked(false)
+                            isBlockCardUIVisible(true)
                         }
                     }
                 }
@@ -252,16 +230,22 @@ class AccountOptionsManageCardFragment :
                     myCardLabelVisibility(true)
                 }
 
-                else -> {}
+                else -> {
+                }
             }
         }
+
+    private fun isTemporaryCardSwitchChecked(isSwitcherEnabled: Boolean) {
+        temporaryFreezeUnfreezeCardViewModel.isSwitcherEnabled.value = isSwitcherEnabled
+    }
 
     private fun AccountOptionsManageCardFragmentBinding.manageCardLabelVisibility(
         isVisible: Boolean,
         isLabelUnderline: Boolean = false
     ) {
         manageCardText.visibility = if (isVisible) VISIBLE else INVISIBLE
-        manageCardText.paintFlags = if (isLabelUnderline) manageCardText.paintFlags or Paint.UNDERLINE_TEXT_FLAG else 0
+        manageCardText.paintFlags =
+            if (isLabelUnderline) manageCardText.paintFlags or Paint.UNDERLINE_TEXT_FLAG else 0
     }
 
     private fun AccountOptionsManageCardFragmentBinding.myCardLabelVisibility(isVisible: Boolean) {
@@ -282,27 +266,27 @@ class AccountOptionsManageCardFragment :
         }
     }
 
-    private fun setupCard(
+    private fun AccountOptionsManageCardFragmentBinding.setupCard(
         cardViewPager: CardViewPager,
         items: MutableList<StoreCardFeatureType>?,
         onPageSwipeListener: (StoreCardFeatureType?) -> Unit
     ) {
         with(adapter) {
             setItem(items)
-            binding.myCardLabelVisibility(true)
-            binding.manageCardLabelVisibility(isVisible = true, isLabelUnderline = true)
+            myCardLabelVisibility(true)
+            manageCardLabelVisibility(isVisible = true, isLabelUnderline = true)
             dotIndicatorVisibility(getListOfStoreCards())
             cardViewPager.invoke(
-                binding.accountCardViewPager,
-                binding.tab,
+                accountCardViewPager,
+                tab,
                 this,
                 onPageSwipeListener
             )
         }
     }
 
-    private fun dotIndicatorVisibility(items: MutableList<StoreCardFeatureType>?) {
-        binding.tab.visibility = if (items?.size ?: 0 <= 1) INVISIBLE else VISIBLE
+    private fun AccountOptionsManageCardFragmentBinding.dotIndicatorVisibility(items: MutableList<StoreCardFeatureType>?) {
+        tab.visibility = if (items?.size ?: 0 <= 1) INVISIBLE else VISIBLE
     }
 
     private fun AccountOptionsManageCardFragmentBinding.isManageCardVisible(isVisible: Boolean) =
@@ -318,6 +302,13 @@ class AccountOptionsManageCardFragment :
         isMenuItemVisible(
             activateVirtualTempCardDivider,
             activateVirtualTempCardRelativeLayout,
+            isVisible
+        )
+
+    private fun AccountOptionsManageCardFragmentBinding.isBlockCardUIVisible(isVisible: Boolean) =
+        isMenuItemVisible(
+            blockCardDivider,
+            blockCardRelativeLayout,
             isVisible
         )
 
@@ -343,9 +334,14 @@ class AccountOptionsManageCardFragment :
             }
         }
 
-    override fun onPause() {
-        super.onPause()
-        binding.accountCardViewPager.adapter = null
+    override fun onClick(view: View?) {
+        when (view?.id) {
+            R.id.manageCardRelativeLayout -> router.routeToManageMyCard(requireActivity())
+            R.id.linkNewCardRelativeLayout -> router.routeToLinkNewCard(requireActivity())
+            R.id.activateVirtualTempCardRelativeLayout -> router.routeToActivateVirtualTempCard(requireActivity())
+            R.id.replacementCardRelativeLayout -> router.routeToGetReplacementCard(requireActivity())
+            R.id.blockCardRelativeLayout -> router.routeToBlockCard(requireActivity())
+        }
     }
 
 }

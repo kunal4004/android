@@ -168,7 +168,10 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                                 activity,
                                 Locale.getDefault()
                             ).getFromLocation(it.latitude, it.longitude, 1)
-                            tvCurrentLocation.text = addresses[0].getAddressLine(0)
+                            addresses[0]?.getAddressLine(0)?.let{ addressLine ->
+                                tvCurrentLocation?.text = addressLine
+                            }
+
                         } catch (io: IOException) {
                             FirebaseManager.logException(io)
                         }
@@ -194,7 +197,25 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             progressBar?.visibility = View.VISIBLE
             try {
                 savedAddressResponse = confirmAddressViewModel.getSavedAddress()
-                savedAddressResponse?.addresses?.let { setAddressUI(it) }
+                savedAddressResponse?.addresses?.let { addressList ->
+                   val nickName = savedAddressResponse?.defaultAddressNickname
+                    //To Show the DefaultAddress on Top of the Adapter
+                    if (!nickName.isNullOrEmpty()) {
+                        val defaultAddressOptional: Optional<Address> =
+                            addressList.stream().filter { address -> address.nickname.equals(nickName) }
+                                .findFirst()
+                        if (defaultAddressOptional.isPresent) {
+                            val defaultAddress = defaultAddressOptional.get()
+                            addressList.remove(defaultAddress)
+                            addressList.add(0, defaultAddress)
+                            setAddressUI(addressList)
+                        }else{
+                            setAddressUI(addressList)
+                        }
+                    }else{
+                        setAddressUI(addressList)
+                    }
+                }
                 savedAddressResponse?.defaultAddressNickname?.let {
                     setButtonUI(it.length > 1)
                 }
