@@ -7,8 +7,8 @@ import android.view.View
 import android.view.View.*
 import android.widget.RelativeLayout
 import androidx.annotation.StringRes
-import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
@@ -17,6 +17,7 @@ import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -35,8 +36,6 @@ import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator
-import android.graphics.Paint
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -63,11 +62,11 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
         super.onViewCreated(view, savedInstanceState)
         with(AccountOptionsManageCardFragmentBinding.bind(view)) {
             initCardViewPager()
-            subscribeObservers()
+            startLocationDiscoveryProcess()
             setOnClickListener()
         }
     }
-    private fun startLocationDiscoveryProcess() {
+    private fun AccountOptionsManageCardFragmentBinding.startLocationDiscoveryProcess() {
         locator = Locator(activity as AppCompatActivity)
         locator.getCurrentLocation { locationEvent ->
             when (locationEvent) {
@@ -158,16 +157,6 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
         temporaryFreezeCardFragmentContainerView.visibility = if (isVisible) VISIBLE else GONE
     }
 
-    private fun AccountOptionsManageCardFragmentBinding.setupTemporaryFreezeCardSwipe() {
-        switchTemporaryFreezeCard.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (buttonView.isPressed) { // block is active for user interaction only
-                when (isChecked) {
-                    true -> findNavController().navigate(AccountOptionsManageCardFragmentDirections.actionAccountOptionsManageCardFragmentToTemporaryFreezeCardFragment())
-                    false -> findNavController().navigate(AccountOptionsManageCardFragmentDirections.actionAccountOptionsManageCardFragmentToTemporaryUnFreezeCardFragment())
-                }
-            }
-        }
-    }
 
     private fun AccountOptionsManageCardFragmentBinding.showStoreCardItems(storeCardFeatureType: StoreCardFeatureType?) =
         CoroutineScope(Dispatchers.Main).launch {
@@ -343,6 +332,5 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
             R.id.blockCardRelativeLayout -> router.routeToBlockCard(requireActivity())
         }
     }
-
 }
 
