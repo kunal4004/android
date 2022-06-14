@@ -89,6 +89,7 @@ class ContactUsCallCenterDetailFragment : Fragment() {
                         val localCallerRow = layoutInflater.inflate(R.layout.contact_us_email_item, contactFinancialServicesEmailLinearLayout, false)
                         val contactUsEmailTextView = localCallerRow.findViewById<TextView>(R.id.contactUsEmailTextView)
                         val contactUsEmailDescriptionTextView = localCallerRow.findViewById<TextView>(R.id.contactUsEmailDescriptionTextView)
+                        val contactUsEmailDescriptionDivider = localCallerRow.findViewById<View>(R.id.contactUsEmailDescriptionDivider)
 
                         val email = option.value
                         val subject = option.key
@@ -98,6 +99,9 @@ class ContactUsCallCenterDetailFragment : Fragment() {
                         localCallerRow?.tag = index
                         localCallerRow?.setOnClickListener { KotlinUtils.sendEmail(activity, email, subject) }
 
+                        if (index == this.size.minus(1)){
+                            contactUsEmailDescriptionDivider.visibility = GONE
+                        }
                         contactFinancialServicesEmailLinearLayout?.addView(localCallerRow)
                     }
                 }
