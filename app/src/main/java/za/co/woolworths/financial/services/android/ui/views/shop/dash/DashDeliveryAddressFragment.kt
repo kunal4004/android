@@ -683,9 +683,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         when (requestCode) {
             REQUEST_CODE_QUERY_INVENTORY_FOR_STORE, SET_DELIVERY_LOCATION_REQUEST_CODE -> {
                 if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue() || resultCode == Activity.RESULT_OK) {
-                    // check if anonymous user has any location.
-                    if (getAnonymousUserLocationDetails() != null) {
-                        // No Need to confirm the same Dash location Again. So directly call addToCart instead of confirmApi.
+                    // check if user has any location.
+                    if (Utils.getPreferredDeliveryLocation() != null) {
                         val browsingPlaceDetails =
                             WoolworthsApplication.getDashBrowsingValidatePlaceDetails()
                         WoolworthsApplication.setValidatedSuburbProducts(browsingPlaceDetails)
@@ -716,13 +715,15 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         addItemToCart: AddItemToCart?,
         productList: ProductList,
     ) {
+        viewModel.setAddItemToCart(addItemToCart)
         mStoreId =
             fulfilmentTypeId.let { it1 -> RecyclerViewViewHolderItems.getFulFillmentStoreId(it1) }
 
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            ScreenManager.presentSSOSignin(
+            ScreenManager.presentSSOSigninActivity(
                 activity,
-                REQUEST_CODE_QUERY_INVENTORY_FOR_STORE
+                REQUEST_CODE_QUERY_INVENTORY_FOR_STORE,
+                true
             )
             return
         }
@@ -736,7 +737,6 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             return
         }
 
-        viewModel.setAddItemToCart(addItemToCart)
         // Now first check for if delivery location and browsing location is same.
         // if same no issues. If not then show changing delivery location popup.
         if (!KotlinUtils.getDeliveryType()?.deliveryType.equals(Delivery.DASH.type)) {
@@ -756,7 +756,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 progressBar?.visibility = View.GONE
                 when (response?.httpCode) {
                     AppConstant.HTTP_OK -> {
-                        // If user have location then call Confirm Place API else go to geoLocation Flow.
+                        // If user have location then add to cart else go to geoLocation Flow.
                         if (Utils.getPreferredDeliveryLocation() != null) {
                             if (parentFragment is ShopFragment) {
                                 (parentFragment as ShopFragment).setDeliveryView() // update main location UI.
@@ -786,6 +786,11 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     }
 
     private fun addToCart(addItemToCart: AddItemToCart?) {
+        val fulfilmentTypeId = AppConfigSingleton.quickShopDefaultValues?.foodFulfilmentTypeId
+        mStoreId =
+            fulfilmentTypeId?.let { it1 -> RecyclerViewViewHolderItems.getFulFillmentStoreId(it1) }
+                ?: ""
+
         if (mStoreId.isEmpty()) {
             addItemToCart?.catalogRefId?.let { skuId -> productOutOfStockErrorMessage(skuId) }
             return

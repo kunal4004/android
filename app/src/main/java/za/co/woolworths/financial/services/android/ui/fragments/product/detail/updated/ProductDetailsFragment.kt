@@ -784,19 +784,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                                         savedPlaceId)
                             }
 
-                            val browsingPlaceDetails = when (KotlinUtils.browsingDeliveryType) {
-                                Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails()
-                                Delivery.CNC -> WoolworthsApplication.getCncBrowsingValidatePlaceDetails()
-                                Delivery.DASH -> WoolworthsApplication.getDashBrowsingValidatePlaceDetails()
-                                else -> WoolworthsApplication.getValidatePlaceDetails()
-                            }
-                            WoolworthsApplication.setValidatedSuburbProducts(
-                                browsingPlaceDetails)
-                            // set latest response to browsing data.
-                            WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
-                                browsingPlaceDetails)
-                            WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
-                                browsingPlaceDetails)
+                            setBrowsingData()
                             updateStockAvailabilityLocation() // update pdp location.
                             addItemToCart()
                         }
@@ -807,6 +795,22 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 progressBar?.visibility = View.GONE
             }
         }
+    }
+
+    private fun setBrowsingData() {
+        val browsingPlaceDetails = when (KotlinUtils.browsingDeliveryType) {
+            Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails()
+            Delivery.CNC -> WoolworthsApplication.getCncBrowsingValidatePlaceDetails()
+            Delivery.DASH -> WoolworthsApplication.getDashBrowsingValidatePlaceDetails()
+            else -> WoolworthsApplication.getValidatePlaceDetails()
+        }
+        WoolworthsApplication.setValidatedSuburbProducts(
+            browsingPlaceDetails)
+        // set latest response to browsing data.
+        WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
+            browsingPlaceDetails)
+        WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
+            browsingPlaceDetails)
     }
 
     private fun isUnSellableItemsRemoved() {
@@ -833,7 +837,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     fun addItemToCart() {
         isUnSellableItemsRemoved()
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            ScreenManager.presentSSOSignin(activity, SSO_REQUEST_ADD_TO_CART)
+            ScreenManager.presentSSOSigninActivity(activity, SSO_REQUEST_ADD_TO_CART, isUserBrowsing)
             return
         }
 
@@ -1757,7 +1761,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
 
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            ScreenManager.presentSSOSignin(activity, SSO_REQUEST_ADD_TO_SHOPPING_LIST)
+            ScreenManager.presentSSOSigninActivity(activity, SSO_REQUEST_ADD_TO_SHOPPING_LIST, isUserBrowsing)
         } else if (getSelectedSku() != null) {
             activity?.apply {
                 val item = AddToListRequest()
@@ -1917,10 +1921,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 updateStockAvailabilityLocation()
                 when (requestCode) {
                     SSO_REQUEST_ADD_TO_CART, EDIT_LOCATION_LOGIN_REQUEST -> {
-                        // check if anonymous user has any location.
-                        if (KotlinUtils.getAnonymousUserLocationDetails() != null) {
-                            // confirm the location and continue with addToCart Flow.
-                            callConfirmPlace()
+                        // check if user has any location.
+                        if (Utils.getPreferredDeliveryLocation() != null) {
+                            // Continue with addTo cart flow
+                            setBrowsingData()
+                            updateStockAvailabilityLocation() // update pdp location.
+                            addItemToCart()
                         } else {
                             // request cart summary to get the user's location.
                             productDetailsPresenter?.loadCartSummary()
@@ -2283,8 +2289,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     KotlinUtils.getPreferredDeliveryType(),
                     Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                 )
-                false -> ScreenManager.presentSSOSignin(this,
-                    SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK)
+                false -> ScreenManager.presentSSOSigninActivity(this,
+                    SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK, isUserBrowsing)
             }
 
         }
@@ -2661,7 +2667,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             setSuburb?.setOnClickListener {
                 dismiss()
                 if (!SessionUtilities.getInstance().isUserAuthenticated) {
-                    ScreenManager.presentSSOSignin(activity, LOGIN_REQUEST_SUBURB_CHANGE)
+                    ScreenManager.presentSSOSigninActivity(activity, LOGIN_REQUEST_SUBURB_CHANGE, isUserBrowsing)
                 } else {
                     activity?.apply {
                         KotlinUtils.presentEditDeliveryGeoLocationActivity(

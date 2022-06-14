@@ -362,19 +362,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                                     confirmLocationRequest.address.placeId?.equals(savedPlaceId)
                             }
 
-                            val browsingPlaceDetails = when (KotlinUtils.browsingDeliveryType) {
-                                Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails()
-                                Delivery.CNC -> WoolworthsApplication.getCncBrowsingValidatePlaceDetails()
-                                Delivery.DASH -> WoolworthsApplication.getDashBrowsingValidatePlaceDetails()
-                                else -> WoolworthsApplication.getValidatePlaceDetails()
-                            }
-                            WoolworthsApplication.setValidatedSuburbProducts(
-                                browsingPlaceDetails)
-                            // set latest response to browsing data.
-                            WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
-                                browsingPlaceDetails)
-                            WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
-                                browsingPlaceDetails)
+                            setBrowsingData()
                             setTitle() // update plp location.
                             onConfirmLocation() // This will again call addToCart
                         }
@@ -385,6 +373,22 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 dismissProgressBar()
             }
         }
+    }
+
+    private fun setBrowsingData() {
+        val browsingPlaceDetails = when (KotlinUtils.browsingDeliveryType) {
+            Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails()
+            Delivery.CNC -> WoolworthsApplication.getCncBrowsingValidatePlaceDetails()
+            Delivery.DASH -> WoolworthsApplication.getDashBrowsingValidatePlaceDetails()
+            else -> WoolworthsApplication.getValidatePlaceDetails()
+        }
+        WoolworthsApplication.setValidatedSuburbProducts(
+            browsingPlaceDetails)
+        // set latest response to browsing data.
+        WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
+            browsingPlaceDetails)
+        WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
+            browsingPlaceDetails)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -628,7 +632,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             setSuburb?.setOnClickListener {
                 dismiss()
                 if (!SessionUtilities.getInstance().isUserAuthenticated) {
-                    ScreenManager.presentSSOSignin(activity, LOGIN_REQUEST_SUBURB_CHANGE)
+                    ScreenManager.presentSSOSigninActivity(activity, LOGIN_REQUEST_SUBURB_CHANGE, isUserBrowsing)
                 } else {
                     activity?.apply {
                         KotlinUtils.presentEditDeliveryGeoLocationActivity(
@@ -1078,10 +1082,12 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         when (requestCode) {
             QUERY_INVENTORY_FOR_STORE_REQUEST_CODE, SET_DELIVERY_LOCATION_REQUEST_CODE -> {
                 if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue() || resultCode == RESULT_OK) {
-                    // check if anonymous user has any location.
-                    if (KotlinUtils.getAnonymousUserLocationDetails() != null) {
-                        // confirm the location and continue with addToCart Flow.
-                        callConfirmPlace()
+                    // check if user has any location.
+                    if (Utils.getPreferredDeliveryLocation() != null) {
+                        //Continue with addToCart Flow.
+                        setBrowsingData()
+                        setTitle() // update plp location.
+                        onConfirmLocation() // This will again call addToCart
                     } else {
                         // request cart summary to get the user's location.
                         requestCartSummary()
@@ -1269,7 +1275,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         val activity = activity ?: return
 
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            ScreenManager.presentSSOSignin(activity, QUERY_INVENTORY_FOR_STORE_REQUEST_CODE)
+            ScreenManager.presentSSOSigninActivity(activity, QUERY_INVENTORY_FOR_STORE_REQUEST_CODE, isUserBrowsing)
             return
         }
 
