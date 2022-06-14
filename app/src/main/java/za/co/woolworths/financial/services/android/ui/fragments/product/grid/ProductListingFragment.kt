@@ -13,7 +13,6 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Button
 import android.widget.TextView
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
@@ -35,6 +34,7 @@ import kotlinx.android.synthetic.main.grid_layout.vtoTryItOnBanner
 import kotlinx.android.synthetic.main.no_connection_handler.*
 import kotlinx.android.synthetic.main.no_connection_handler.view.*
 import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.*
+import kotlinx.android.synthetic.main.toolbar.*
 import kotlinx.android.synthetic.main.try_it_on_banner.*
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -139,7 +139,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
         activity?.apply {
             arguments?.apply {
                 mSubCategoryName = getString(SUB_CATEGORY_NAME, "")
@@ -188,16 +187,12 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
             hideToolbar()
             setSupportActionBar(findViewById(R.id.toolbarPLP))
+            showBackNavigationIcon(false)
             supportActionBar?.apply {
-                setDisplayHomeAsUpEnabled(true)
-                setHomeButtonEnabled(true)
-                setDisplayShowHomeEnabled(true)
+                setHomeButtonEnabled(false)
+                setDisplayShowHomeEnabled(false)
             }
-            toolbarPLP?.navigationIcon =
-                ContextCompat.getDrawable(requireContext(), R.drawable.back24)
             showBottomNavigationMenu()
-
-            toolbar?.setNavigationOnClickListener { popFragment() }
 
             mErrorHandlerView = ErrorHandlerView(this, no_connection_layout)
             mErrorHandlerView?.setMargin(no_connection_layout, 0, 0, 0, 0)
@@ -219,21 +214,16 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 )
             }
         }
-        addressLayout?.setOnClickListener(this)
+
+        toolbarPLPAddress?.setOnClickListener(this)
+        toolbarPLPTitle?.setOnClickListener(this)
+        plpSearchIcon?.setOnClickListener(this)
+        plpBackIcon?.setOnClickListener(this)
 
         layout_error_blp?.blp_error_back_btn?.setOnClickListener {
             (activity as? BottomNavigationActivity)?.popFragment()
         }
 
-        // On Back pressed
-        requireActivity().onBackPressedDispatcher.addCallback(
-            viewLifecycleOwner,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    isBackPressed = true
-                }
-            }
-        )
         layout_error_blp?.btn_retry_it?.setOnClickListener {
             startProductRequest()
         }
@@ -918,35 +908,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-        inflater.inflate(R.menu.drill_down_category_menu, menu)
-        menuActionSearch = menu.findItem(R.id.action_drill_search)
-        menuActionSearch?.isVisible = isAdded && isVisible
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_drill_search -> {
-                activity?.apply {
-                    val openSearchActivity = Intent(this, ProductSearchActivity::class.java)
-                    startActivity(openSearchActivity)
-                    overridePendingTransition(0, 0)
-                }
-                val arguments = HashMap<String, String>()
-                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SEARCH_TERM] =
-                    mSearchTerm.toString()
-                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SEARCH_TYPE] =
-                    mSearchType.toString()
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SEARCH,
-                    arguments,
-                    activity)
-                true
-            }
-            else -> false
-        }
-    }
 
     override fun onClick(view: View) {
         KotlinUtils.avoidDoubleClicks(view)
@@ -983,8 +944,28 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     )
                     productView?.sortOptions?.let { sortOption -> this.showShortOptions(sortOption) }
                 }
-                R.id.addressLayout -> {
+                R.id.toolbarPLPAddress, R.id.toolbarPLPTitle -> {
                     presentEditDeliveryActivity()
+                }
+
+                R.id.plpSearchIcon -> {
+                    activity?.apply {
+                        val openSearchActivity = Intent(this, ProductSearchActivity::class.java)
+                        startActivity(openSearchActivity)
+                        overridePendingTransition(0, 0)
+                    }
+                    val arguments = HashMap<String, String>()
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SEARCH_TERM] =
+                        mSearchTerm.toString()
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SEARCH_TYPE] =
+                        mSearchType.toString()
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SEARCH,
+                        arguments,
+                        activity)
+                }
+
+                R.id.plpBackIcon -> {
+                    (activity as? BottomNavigationActivity)?.popFragment()
                 }
 
                 else -> return
@@ -994,15 +975,16 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        setHasOptionsMenu(true)
         (activity as? BottomNavigationActivity)?.apply {
             when (hidden) {
                 true -> lockDrawerFragment()
                 else -> {
                     setSupportActionBar(toolbarPLP)
                     showBottomNavigationMenu()
-                    showBackNavigationIcon(true)
-                    setToolbarBackgroundDrawable(R.drawable.appbar_background)
+                    supportActionBar?.apply {
+                        showBackNavigationIcon(false)
+                        setDisplayShowHomeEnabled(false)
+                    }
                     setTitle()
 
                     if (localProductBody.isNotEmpty() && isBackPressed) {
@@ -1021,6 +1003,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
             invalidateOptionsMenu()
         }
+    }
+
+    fun onBackPressed() {
+        isBackPressed = true
     }
 
     override fun onSortOptionSelected(sortOption: SortOption) {
