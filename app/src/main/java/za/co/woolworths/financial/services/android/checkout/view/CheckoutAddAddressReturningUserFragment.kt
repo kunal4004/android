@@ -1013,6 +1013,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         }
     }
     private fun isAgeConfirmationLiquorCompliance() : Boolean {
+        txtAgeConfirmationTitle.parent.requestChildFocus(txtAgeConfirmationTitle, txtAgeConfirmationTitle)
         radioBtnAgeConfirmation.parent.requestChildFocus(radioBtnAgeConfirmation, radioBtnAgeConfirmation)
         return liquorOrder == true && !radioBtnAgeConfirmation.isChecked
     }
@@ -1316,13 +1317,9 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         if(!isChecked) {
             Utils.fadeInFadeOutAnimation(txtContinueToPayment, true)
             radioBtnAgeConfirmation?.isChecked = false
-            txtContinueToPayment?.isClickable = false
-            txtContinueToPayment?.isEnabled = false
         } else {
             Utils.fadeInFadeOutAnimation(txtContinueToPayment, false)
             radioBtnAgeConfirmation?.isChecked = true
-            txtContinueToPayment?.isClickable = true
-            txtContinueToPayment?.isEnabled = true
         }
     }
 }
