@@ -560,7 +560,7 @@ class KotlinUtils {
             return when (deliveryType) {
                 Delivery.STANDARD -> {
                     ConfirmLocationRequest(BundleKeysConstants.STANDARD,
-                        ConfirmLocationAddress(WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId),
+                        ConfirmLocationAddress(WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId ?: getPreferredPlaceId()),
                         "")
                 }
                 Delivery.CNC -> {

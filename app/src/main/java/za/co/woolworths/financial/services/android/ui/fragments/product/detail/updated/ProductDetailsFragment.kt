@@ -45,7 +45,6 @@ import kotlinx.android.synthetic.main.low_stock_product_details.view.*
 import kotlinx.android.synthetic.main.product_details_add_to_cart_and_find_in_store_button_layout.*
 import kotlinx.android.synthetic.main.product_details_delivery_location_layout.*
 import kotlinx.android.synthetic.main.product_details_fragment.*
-import kotlinx.android.synthetic.main.product_details_fragment.progressBar
 import kotlinx.android.synthetic.main.product_details_gift_with_purchase.*
 import kotlinx.android.synthetic.main.product_details_options_and_information_layout.*
 import kotlinx.android.synthetic.main.product_details_price_layout.*
@@ -84,7 +83,6 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.extension.underline
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.ProductNotAvailableForCollectionDialog
@@ -132,21 +130,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.MutableList
-import kotlin.collections.any
-import kotlin.collections.arrayListOf
-import kotlin.collections.forEach
-import kotlin.collections.forEachIndexed
 import kotlin.collections.get
-import kotlin.collections.hashMapOf
-import kotlin.collections.isEmpty
-import kotlin.collections.isNotEmpty
-import kotlin.collections.isNullOrEmpty
-import kotlin.collections.joinToString
 import kotlin.collections.set
 
 @AndroidEntryPoint
@@ -718,6 +702,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         val placeId = when (KotlinUtils.browsingDeliveryType) {
             Delivery.STANDARD ->
                 WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId
+                    ?: KotlinUtils.getPreferredPlaceId()
             Delivery.CNC ->
                 if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() != null)
                     WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.placeDetails?.placeId
@@ -799,19 +784,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                                         savedPlaceId)
                             }
 
-                            val browsingPlaceDetails = when (KotlinUtils.browsingDeliveryType) {
-                                Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails()
-                                Delivery.CNC -> WoolworthsApplication.getCncBrowsingValidatePlaceDetails()
-                                Delivery.DASH -> WoolworthsApplication.getDashBrowsingValidatePlaceDetails()
-                                else -> WoolworthsApplication.getValidatePlaceDetails()
-                            }
-                            WoolworthsApplication.setValidatedSuburbProducts(
-                                browsingPlaceDetails)
-                            // set latest response to browsing data.
-                            WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
-                                browsingPlaceDetails)
-                            WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
-                                browsingPlaceDetails)
+                            setBrowsingData()
                             updateStockAvailabilityLocation() // update pdp location.
                             addItemToCart()
                         }
@@ -822,6 +795,22 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 progressBar?.visibility = View.GONE
             }
         }
+    }
+
+    private fun setBrowsingData() {
+        val browsingPlaceDetails = when (KotlinUtils.browsingDeliveryType) {
+            Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails()
+            Delivery.CNC -> WoolworthsApplication.getCncBrowsingValidatePlaceDetails()
+            Delivery.DASH -> WoolworthsApplication.getDashBrowsingValidatePlaceDetails()
+            else -> WoolworthsApplication.getValidatePlaceDetails()
+        }
+        WoolworthsApplication.setValidatedSuburbProducts(
+            browsingPlaceDetails)
+        // set latest response to browsing data.
+        WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
+            browsingPlaceDetails)
+        WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
+            browsingPlaceDetails)
     }
 
     private fun isUnSellableItemsRemoved() {
@@ -848,7 +837,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     fun addItemToCart() {
         isUnSellableItemsRemoved()
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            ScreenManager.presentSSOSignin(activity, SSO_REQUEST_ADD_TO_CART)
+            ScreenManager.presentSSOSigninActivity(activity, SSO_REQUEST_ADD_TO_CART, isUserBrowsing)
             return
         }
 
@@ -1634,8 +1623,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onCartSummarySuccess(cartSummaryResponse: CartSummaryResponse) {
-
-
         if (Utils.getPreferredDeliveryLocation() == null) {
             activity?.apply {
                 KotlinUtils.presentEditDeliveryGeoLocationActivity(
@@ -1643,12 +1630,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     REQUEST_SUBURB_CHANGE
                 )
             }
-        } else confirmDeliveryLocation()
+        } else {
+            updateStockAvailabilityLocation() // update pdp location.
+            addItemToCart()
+        }
     }
 
     override fun responseFailureHandler(response: Response) {
         if (response.code.equals(HTTP_EXPECTATION_FAILED_417)) {
-            confirmDeliveryLocation()
+            getUpdatedValidateResponse()
             return
         }
         activity?.apply {
@@ -1657,15 +1647,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 CustomPopUpWindow.MODAL_LAYOUT.ERROR,
                 response.desc
             )
-        }
-    }
-
-    private fun confirmDeliveryLocation() {
-        this.childFragmentManager.apply {
-            ConfirmDeliveryLocationFragment.newInstance()?.let {
-                it.isCancelable = false
-                it.show(this, ConfirmDeliveryLocationFragment::class.java.simpleName)
-            }
         }
     }
 
@@ -1780,7 +1761,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
 
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            ScreenManager.presentSSOSignin(activity, SSO_REQUEST_ADD_TO_SHOPPING_LIST)
+            ScreenManager.presentSSOSigninActivity(activity, SSO_REQUEST_ADD_TO_SHOPPING_LIST, isUserBrowsing)
         } else if (getSelectedSku() != null) {
             activity?.apply {
                 val item = AddToListRequest()
@@ -1940,7 +1921,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 updateStockAvailabilityLocation()
                 when (requestCode) {
                     SSO_REQUEST_ADD_TO_CART, EDIT_LOCATION_LOGIN_REQUEST -> {
-                        productDetailsPresenter?.loadCartSummary()
+                        // check if user has any location.
+                        if (Utils.getPreferredDeliveryLocation() != null) {
+                            // Continue with addTo cart flow
+                            setBrowsingData()
+                            updateStockAvailabilityLocation() // update pdp location.
+                            addItemToCart()
+                        } else {
+                            // request cart summary to get the user's location.
+                            productDetailsPresenter?.loadCartSummary()
+                        }
                     }
                     SSO_REQUEST_ADD_TO_SHOPPING_LIST -> {
                         addItemToShoppingList()
@@ -2299,8 +2289,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     KotlinUtils.getPreferredDeliveryType(),
                     Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                 )
-                false -> ScreenManager.presentSSOSignin(this,
-                    SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK)
+                false -> ScreenManager.presentSSOSigninActivity(this,
+                    SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK, isUserBrowsing)
             }
 
         }
@@ -2677,7 +2667,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             setSuburb?.setOnClickListener {
                 dismiss()
                 if (!SessionUtilities.getInstance().isUserAuthenticated) {
-                    ScreenManager.presentSSOSignin(activity, LOGIN_REQUEST_SUBURB_CHANGE)
+                    ScreenManager.presentSSOSigninActivity(activity, LOGIN_REQUEST_SUBURB_CHANGE, isUserBrowsing)
                 } else {
                     activity?.apply {
                         KotlinUtils.presentEditDeliveryGeoLocationActivity(

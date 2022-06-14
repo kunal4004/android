@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.views.shop.dash
 
+import android.app.Activity
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
@@ -23,6 +24,7 @@ import kotlinx.android.synthetic.main.grid_layout.*
 import kotlinx.android.synthetic.main.layout_dash_set_address_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -50,6 +52,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYo
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_QUERY_INVENTORY_FOR_STORE
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_QUERY_STORE_FINDER
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -674,18 +677,53 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        subscribeToObservers()
+        when (requestCode) {
+            REQUEST_CODE_QUERY_INVENTORY_FOR_STORE, SET_DELIVERY_LOCATION_REQUEST_CODE -> {
+                if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue() || resultCode == Activity.RESULT_OK) {
+                    // check if user has any location.
+                    if (Utils.getPreferredDeliveryLocation() != null) {
+                        val browsingPlaceDetails =
+                            WoolworthsApplication.getDashBrowsingValidatePlaceDetails()
+                        WoolworthsApplication.setValidatedSuburbProducts(browsingPlaceDetails)
+                        // set latest response to browsing data.
+                        WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
+                            browsingPlaceDetails)
+                        if (this.parentFragment is ShopFragment) {
+                            (this.parentFragment as ShopFragment).setDeliveryView() // update main location UI.
+                        }
+                        addToCart(viewModel.addItemToCart.value) // This will again call addToCart
+                    } else {
+                        // request cart summary to get the user's location.
+                        requestCartSummary()
+                    }
+                }
+            }
+
+            REQUEST_CODE_QUERY_STORE_FINDER -> {
+                if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+                    queryStoreFinderProductByFusedLocation(null)
+                }
+            }
+        }
+    }
+
     override fun queryInventoryForStore(
         fulfilmentTypeId: String,
         addItemToCart: AddItemToCart?,
         productList: ProductList,
     ) {
+        viewModel.setAddItemToCart(addItemToCart)
         mStoreId =
             fulfilmentTypeId.let { it1 -> RecyclerViewViewHolderItems.getFulFillmentStoreId(it1) }
 
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            ScreenManager.presentSSOSignin(
+            ScreenManager.presentSSOSigninActivity(
                 activity,
-                REQUEST_CODE_QUERY_INVENTORY_FOR_STORE
+                REQUEST_CODE_QUERY_INVENTORY_FOR_STORE,
+                true
             )
             return
         }
@@ -699,7 +737,6 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             return
         }
 
-        viewModel.setAddItemToCart(addItemToCart)
         // Now first check for if delivery location and browsing location is same.
         // if same no issues. If not then show changing delivery location popup.
         if (!KotlinUtils.getDeliveryType()?.deliveryType.equals(Delivery.DASH.type)) {
@@ -712,7 +749,48 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         addToCart(addItemToCart)
     }
 
+    private fun requestCartSummary() {
+        progressBar?.visibility = View.VISIBLE
+        GetCartSummary().getCartSummary(object : IResponseListener<CartSummaryResponse> {
+            override fun onSuccess(response: CartSummaryResponse?) {
+                progressBar?.visibility = View.GONE
+                when (response?.httpCode) {
+                    AppConstant.HTTP_OK -> {
+                        // If user have location then add to cart else go to geoLocation Flow.
+                        if (Utils.getPreferredDeliveryLocation() != null) {
+                            if (parentFragment is ShopFragment) {
+                                (parentFragment as ShopFragment).setDeliveryView() // update main location UI.
+                            }
+                            addToCart(viewModel.addItemToCart.value) // This will again call addToCart
+                        } else
+                            onSetNewLocation()
+                    }
+                }
+            }
+
+            override fun onFailure(error: Throwable?) {
+                progressBar?.visibility = View.GONE
+            }
+        })
+    }
+
+    private fun onSetNewLocation() {
+        activity?.apply {
+            KotlinUtils.presentEditDeliveryGeoLocationActivity(
+                this,
+                ProductListingFragment.SET_DELIVERY_LOCATION_REQUEST_CODE,
+                KotlinUtils.getPreferredDeliveryType(),
+                GeoUtils.getPlaceId()
+            )
+        }
+    }
+
     private fun addToCart(addItemToCart: AddItemToCart?) {
+        val fulfilmentTypeId = AppConfigSingleton.quickShopDefaultValues?.foodFulfilmentTypeId
+        mStoreId =
+            fulfilmentTypeId?.let { it1 -> RecyclerViewViewHolderItems.getFulFillmentStoreId(it1) }
+                ?: ""
+
         if (mStoreId.isEmpty()) {
             addItemToCart?.catalogRefId?.let { skuId -> productOutOfStockErrorMessage(skuId) }
             return
@@ -810,16 +888,5 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 navigateToConfirmAddressScreen()
             }
         }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when (requestCode) {
-            REQUEST_CODE_QUERY_STORE_FINDER -> {
-                if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-                    queryStoreFinderProductByFusedLocation(null)
-                }
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data)
     }
 }

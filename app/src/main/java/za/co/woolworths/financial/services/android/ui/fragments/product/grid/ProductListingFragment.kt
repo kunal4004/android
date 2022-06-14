@@ -73,7 +73,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerVi
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.views.*
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
@@ -199,7 +198,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
             toolbarTitleText =
                 if (mSubCategoryName?.isEmpty() == true) mSearchTerm else mSubCategoryName
-            setTitle()
+            updateToolbarTitle()
             setUpConfirmAddressViewModel()
             startProductRequest()
             setUniqueIds()
@@ -253,6 +252,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         val placeId = when (KotlinUtils.browsingDeliveryType) {
             Delivery.STANDARD ->
                 WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId
+                    ?: KotlinUtils.getPreferredPlaceId()
             Delivery.CNC ->
                 if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() != null)
                     WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.placeDetails?.placeId
@@ -352,20 +352,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                                     confirmLocationRequest.address.placeId?.equals(savedPlaceId)
                             }
 
-                            val browsingPlaceDetails = when (KotlinUtils.browsingDeliveryType) {
-                                Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails()
-                                Delivery.CNC -> WoolworthsApplication.getCncBrowsingValidatePlaceDetails()
-                                Delivery.DASH -> WoolworthsApplication.getDashBrowsingValidatePlaceDetails()
-                                else -> WoolworthsApplication.getValidatePlaceDetails()
-                            }
-                            WoolworthsApplication.setValidatedSuburbProducts(
-                                browsingPlaceDetails)
-                            // set latest response to browsing data.
-                            WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
-                                browsingPlaceDetails)
-                            WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
-                                browsingPlaceDetails)
-                            setTitle() // update plp location.
+                            setBrowsingData()
+                            updateToolbarTitle() // update plp location.
                             onConfirmLocation() // This will again call addToCart
                         }
                     }
@@ -375,6 +363,22 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 dismissProgressBar()
             }
         }
+    }
+
+    private fun setBrowsingData() {
+        val browsingPlaceDetails = when (KotlinUtils.browsingDeliveryType) {
+            Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails()
+            Delivery.CNC -> WoolworthsApplication.getCncBrowsingValidatePlaceDetails()
+            Delivery.DASH -> WoolworthsApplication.getDashBrowsingValidatePlaceDetails()
+            else -> WoolworthsApplication.getValidatePlaceDetails()
+        }
+        WoolworthsApplication.setValidatedSuburbProducts(
+            browsingPlaceDetails)
+        // set latest response to browsing data.
+        WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
+            browsingPlaceDetails)
+        WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
+            browsingPlaceDetails)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -445,7 +449,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         updateProductRequestBodyForRefinement(mNavigationState)
     }
 
-    fun setTitle() {
+    fun updateToolbarTitle() {
         if (!isAdded || !isVisible) {
             return
         }
@@ -455,16 +459,16 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         // set delivery type and icon
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
-                setDeliveryType(it.deliveryType, it.address?.placeId)
+                updateToolbarDeliveryAddress(it.deliveryType, it.address?.placeId)
             }
         } else {
             KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let {
-                setDeliveryType(it.deliveryType, it.address?.placeId)
+                updateToolbarDeliveryAddress(it.deliveryType, it.address?.placeId)
             }
         }
     }
 
-    private fun setDeliveryType(deliveryType: String?, placeId: String?) {
+    private fun updateToolbarDeliveryAddress(deliveryType: String?, placeId: String?) {
         this.placeId = placeId
         when (deliveryType) {
             Delivery.STANDARD.type -> {
@@ -601,7 +605,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         chanel_layout?.rv_chanel?.adapter = brandLandingAdapter
 
         toolbarTitleText = response?.pageHeading ?: mSearchTerm
-        setTitle()
+        updateToolbarTitle()
     }
 
     override fun showLiquorDialog() {
@@ -618,7 +622,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             setSuburb?.setOnClickListener {
                 dismiss()
                 if (!SessionUtilities.getInstance().isUserAuthenticated) {
-                    ScreenManager.presentSSOSignin(activity, LOGIN_REQUEST_SUBURB_CHANGE)
+                    ScreenManager.presentSSOSigninActivity(activity, LOGIN_REQUEST_SUBURB_CHANGE, isUserBrowsing)
                 } else {
                     activity?.apply {
                         KotlinUtils.presentEditDeliveryGeoLocationActivity(
@@ -649,7 +653,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private fun getCategoryNameAndSetTitle() {
         if (!mSubCategoryName.isNullOrEmpty()) {
             toolbarTitleText = mSubCategoryName
-            setTitle()
+            updateToolbarTitle()
         }
     }
 
@@ -985,7 +989,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                         showBackNavigationIcon(false)
                         setDisplayShowHomeEnabled(false)
                     }
-                    setTitle()
+                    updateToolbarTitle()
 
                     if (localProductBody.isNotEmpty() && isBackPressed) {
                         localProductBody.removeLast()
@@ -1064,18 +1068,16 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         when (requestCode) {
             QUERY_INVENTORY_FOR_STORE_REQUEST_CODE, SET_DELIVERY_LOCATION_REQUEST_CODE -> {
                 if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue() || resultCode == RESULT_OK) {
-                    if (Utils.getPreferredDeliveryLocation() != null)
-                        mSelectedProductList?.let { productList ->
-                            mFulfilmentTypeId?.let {
-                                queryInventoryForStore(
-                                    it,
-                                    mAddItemToCart,
-                                    productList
-                                )
-                            }
-                        }
-                    else
+                    // check if user has any location.
+                    if (Utils.getPreferredDeliveryLocation() != null) {
+                        //Continue with addToCart Flow.
+                        setBrowsingData()
+                        updateToolbarTitle() // update plp location.
+                        onConfirmLocation() // This will again call addToCart
+                    } else {
+                        // request cart summary to get the user's location.
                         requestCartSummary()
+                    }
                 }
             }
             QUERY_LOCATION_ITEM_REQUEST_CODE -> {
@@ -1114,7 +1116,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 }
             }
             BundleKeysConstants.REQUEST_CODE -> {
-                setTitle()
+                updateToolbarTitle()
             }
             else -> return
         }
@@ -1259,7 +1261,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         val activity = activity ?: return
 
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            ScreenManager.presentSSOSignin(activity, QUERY_INVENTORY_FOR_STORE_REQUEST_CODE)
+            ScreenManager.presentSSOSigninActivity(activity, QUERY_INVENTORY_FOR_STORE_REQUEST_CODE, isUserBrowsing)
             return
         }
 
@@ -1631,11 +1633,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         private var localPlaceId: String? = null
         private var isBackPressed: Boolean = false
 
-        /*const val REFINEMENT_DATA = "REFINEMENT_DATA"*/
-        const val PRODUCTS_REQUEST_PARAMS = "PRODUCTS_REQUEST_PARAMS"
         private const val SUB_CATEGORY_NAME = "SUB_CATEGORY_NAME"
-
-        const val REFINE_REQUEST_CODE = 77
         private const val QUERY_INVENTORY_FOR_STORE_REQUEST_CODE = 3343
         private const val QUERY_LOCATION_ITEM_REQUEST_CODE = 3344
         const val SET_DELIVERY_LOCATION_REQUEST_CODE = 180
@@ -1705,7 +1703,12 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
                 when (response?.httpCode) {
                     HTTP_OK -> {
-                        confirmDeliveryLocation()
+                        // If user have location then call Confirm Place API else go to geoLocation Flow.
+                        if (Utils.getPreferredDeliveryLocation() != null) {
+                            updateToolbarTitle() // update plp location.
+                            onConfirmLocation() // This will again call addToCart
+                        } else
+                            onSetNewLocation()
                     }
                 }
             }
@@ -1713,17 +1716,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             override fun onFailure(error: Throwable?) {
                 dismissProgressBar()
             }
-
         })
-    }
-
-    fun confirmDeliveryLocation() {
-        this.childFragmentManager.apply {
-            ConfirmDeliveryLocationFragment.newInstance().let {
-                it.isCancelable = false
-                it.show(this, ConfirmDeliveryLocationFragment::class.java.simpleName)
-            }
-        }
     }
 
     override fun onConfirmLocation() {
