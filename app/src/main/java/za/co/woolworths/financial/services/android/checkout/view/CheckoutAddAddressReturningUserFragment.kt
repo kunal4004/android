@@ -214,8 +214,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
           if(liquorOrder==true&&containsKey(NO_LIQUOR_IMAGE_URL)){
               liquorImageUrl=getString(NO_LIQUOR_IMAGE_URL)
               ageConfirmationLayout?.visibility=View.VISIBLE
-              liquorComplianceBannerLayout?.visibility=View.VISIBLE;
-              liquorComplianceBannerSeparator2.visibility = VISIBLE
+              liquorComplianceBannerLayout?.visibility=View.VISIBLE
               setPicture(imgLiquorBanner, liquorImageUrl)
 
               ageConfirmationLayout.visibility = VISIBLE
@@ -234,8 +233,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
           }
        }else{
            ageConfirmationLayout?.visibility=View.GONE
-           liquorComplianceBannerLayout?.visibility=View.GONE;
-           liquorComplianceBannerSeparator2.visibility = GONE
+           liquorComplianceBannerLayout?.visibility=View.GONE
        }
         }
     }
