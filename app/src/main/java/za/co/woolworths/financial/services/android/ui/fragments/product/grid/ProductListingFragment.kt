@@ -203,7 +203,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
             toolbarTitleText =
                 if (mSubCategoryName?.isEmpty() == true) mSearchTerm else mSubCategoryName
-            setTitle()
+            updateToolbarTitle()
             setUpConfirmAddressViewModel()
             startProductRequest()
             setUniqueIds()
@@ -363,7 +363,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                             }
 
                             setBrowsingData()
-                            setTitle() // update plp location.
+                            updateToolbarTitle() // update plp location.
                             onConfirmLocation() // This will again call addToCart
                         }
                     }
@@ -459,7 +459,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         updateProductRequestBodyForRefinement(mNavigationState)
     }
 
-    fun setTitle() {
+    fun updateToolbarTitle() {
         if (!isAdded || !isVisible) {
             return
         }
@@ -469,16 +469,16 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         // set delivery type and icon
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
-                setDeliveryType(it.deliveryType, it.address?.placeId)
+                updateToolbarDeliveryAddress(it.deliveryType, it.address?.placeId)
             }
         } else {
             KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let {
-                setDeliveryType(it.deliveryType, it.address?.placeId)
+                updateToolbarDeliveryAddress(it.deliveryType, it.address?.placeId)
             }
         }
     }
 
-    private fun setDeliveryType(deliveryType: String?, placeId: String?) {
+    private fun updateToolbarDeliveryAddress(deliveryType: String?, placeId: String?) {
         this.placeId = placeId
         when (deliveryType) {
             Delivery.STANDARD.type -> {
@@ -615,7 +615,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         chanel_layout?.rv_chanel?.adapter = brandLandingAdapter
 
         toolbarTitleText = response?.pageHeading ?: mSearchTerm
-        setTitle()
+        updateToolbarTitle()
     }
 
     override fun showLiquorDialog() {
@@ -663,7 +663,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private fun getCategoryNameAndSetTitle() {
         if (!mSubCategoryName.isNullOrEmpty()) {
             toolbarTitleText = mSubCategoryName
-            setTitle()
+            updateToolbarTitle()
         }
     }
 
@@ -1007,7 +1007,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     showBottomNavigationMenu()
                     showBackNavigationIcon(true)
                     setToolbarBackgroundDrawable(R.drawable.appbar_background)
-                    setTitle()
+                    updateToolbarTitle()
 
                     if (localProductBody.isNotEmpty() && isBackPressed) {
                         localProductBody.removeLast()
@@ -1086,7 +1086,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     if (Utils.getPreferredDeliveryLocation() != null) {
                         //Continue with addToCart Flow.
                         setBrowsingData()
-                        setTitle() // update plp location.
+                        updateToolbarTitle() // update plp location.
                         onConfirmLocation() // This will again call addToCart
                     } else {
                         // request cart summary to get the user's location.
@@ -1130,7 +1130,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 }
             }
             BundleKeysConstants.REQUEST_CODE -> {
-                setTitle()
+                updateToolbarTitle()
             }
             else -> return
         }
@@ -1719,7 +1719,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     HTTP_OK -> {
                         // If user have location then call Confirm Place API else go to geoLocation Flow.
                         if (Utils.getPreferredDeliveryLocation() != null) {
-                            setTitle() // update plp location.
+                            updateToolbarTitle() // update plp location.
                             onConfirmLocation() // This will again call addToCart
                         } else
                             onSetNewLocation()
