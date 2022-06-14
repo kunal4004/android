@@ -189,8 +189,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             setSupportActionBar(findViewById(R.id.toolbarPLP))
             showBackNavigationIcon(false)
             supportActionBar?.apply {
-                setHomeButtonEnabled(true)
-                setDisplayShowHomeEnabled(true)
+                setHomeButtonEnabled(false)
+                setDisplayShowHomeEnabled(false)
             }
             showBottomNavigationMenu()
 
@@ -975,14 +975,16 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        setHasOptionsMenu(true)
         (activity as? BottomNavigationActivity)?.apply {
             when (hidden) {
                 true -> lockDrawerFragment()
                 else -> {
                     setSupportActionBar(toolbarPLP)
                     showBottomNavigationMenu()
-                    setToolbarBackgroundDrawable(R.drawable.appbar_background)
+                    supportActionBar?.apply {
+                        showBackNavigationIcon(false)
+                        setDisplayShowHomeEnabled(false)
+                    }
                     setTitle()
 
                     if (localProductBody.isNotEmpty() && isBackPressed) {
