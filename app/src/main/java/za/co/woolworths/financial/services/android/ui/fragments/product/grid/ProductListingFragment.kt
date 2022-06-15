@@ -34,7 +34,6 @@ import kotlinx.android.synthetic.main.grid_layout.vtoTryItOnBanner
 import kotlinx.android.synthetic.main.no_connection_handler.*
 import kotlinx.android.synthetic.main.no_connection_handler.view.*
 import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.*
-import kotlinx.android.synthetic.main.toolbar.*
 import kotlinx.android.synthetic.main.try_it_on_banner.*
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -280,7 +279,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                             if (unsellableList?.isNullOrEmpty() == false && isUnSellableItemsRemoved == false) {
                                 // show unsellable items
                                 unsellableList?.let {
-                                    navigateToUnsellableItemsFragment(it as java.util.ArrayList<UnSellableCommerceItem>,
+                                    navigateToUnsellableItemsFragment(it as ArrayList<UnSellableCommerceItem>,
                                         KotlinUtils.browsingDeliveryType?.name)
                                 }
                             } else
@@ -298,7 +297,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private fun isUnSellableItemsRemoved() {
         UnSellableItemsLiveData.observe(viewLifecycleOwner) {
             isUnSellableItemsRemoved = it
-            if (isUnSellableItemsRemoved == true) {
+            if (isUnSellableItemsRemoved == true && (activity as? BottomNavigationActivity)?.mNavController?.currentFrag is ProductListingFragment) {
                 callConfirmPlace()
                 UnSellableItemsLiveData.value = false
             }
@@ -622,7 +621,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             setSuburb?.setOnClickListener {
                 dismiss()
                 if (!SessionUtilities.getInstance().isUserAuthenticated) {
-                    ScreenManager.presentSSOSigninActivity(activity, LOGIN_REQUEST_SUBURB_CHANGE, isUserBrowsing)
+                    ScreenManager.presentSSOSigninActivity(activity,
+                        LOGIN_REQUEST_SUBURB_CHANGE,
+                        isUserBrowsing)
                 } else {
                     activity?.apply {
                         KotlinUtils.presentEditDeliveryGeoLocationActivity(
@@ -1261,7 +1262,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         val activity = activity ?: return
 
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            ScreenManager.presentSSOSigninActivity(activity, QUERY_INVENTORY_FOR_STORE_REQUEST_CODE, isUserBrowsing)
+            ScreenManager.presentSSOSigninActivity(activity,
+                QUERY_INVENTORY_FOR_STORE_REQUEST_CODE,
+                isUserBrowsing)
             return
         }
 
