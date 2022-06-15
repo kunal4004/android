@@ -73,7 +73,7 @@ class StoreLocatorFragment : Fragment(), DynamicMapDelegate, ViewPager.OnPageCha
     }
 
     private fun drawMarker(latitude: Double?, longitude: Double?, @DrawableRes icon: Int, pos: Int) {
-        val marker: DynamicMapMarker? = dynamicMapView?.addMarker(latitude, longitude, icon)
+        val marker: DynamicMapMarker? = dynamicMapView?.addMarker(requireContext(), latitude, longitude, icon)
         marker?.let { mark ->
             mark.getId()?.let {
                 mMarkers[it] = pos
@@ -100,8 +100,8 @@ class StoreLocatorFragment : Fragment(), DynamicMapDelegate, ViewPager.OnPageCha
     override fun onMarkerClicked(marker: DynamicMapMarker) {
         marker?.getId()?.let { markerId ->
             val markerId = mMarkers[markerId]
-            previousMarker?.setIcon(unSelectedIcon)
-            marker?.setIcon(selectedIcon)
+            previousMarker?.setIcon(requireContext(), unSelectedIcon)
+            marker?.setIcon(requireContext(), selectedIcon)
             dynamicMapView?.animateCamera(
                 marker?.getPositionLatitude(),
                 marker?.getPositionLongitude(),
@@ -125,8 +125,8 @@ class StoreLocatorFragment : Fragment(), DynamicMapDelegate, ViewPager.OnPageCha
 
     override fun onPageSelected(position: Int) {
         previousMarker?.apply {
-            setIcon(unSelectedIcon)
-            markers?.get(position)?.setIcon(selectedIcon)
+            setIcon(requireContext(), unSelectedIcon)
+            markers?.get(position)?.setIcon(requireContext(), selectedIcon)
             dynamicMapView?.animateCamera(
                 latitude = markers?.get(position)?.getPositionLatitude(),
                 longitude = markers?.get(position)?.getPositionLongitude(),
@@ -162,7 +162,7 @@ class StoreLocatorFragment : Fragment(), DynamicMapDelegate, ViewPager.OnPageCha
 
     private fun updateMyCurrentLocationOnMap(location: Location?) {
         location?.apply {
-            dynamicMapView?.addMarker(latitude, longitude, R.drawable.mapcurrentlocation)
+            dynamicMapView?.addMarker(requireContext(), latitude, longitude, R.drawable.mapcurrentlocation)
             dynamicMapView?.animateCamera(
                 latitude, longitude,
                 zoom = 13f,

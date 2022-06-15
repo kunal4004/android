@@ -251,7 +251,7 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     }
 
     private fun drawMarker(latitude: Double, longitude: Double, @DrawableRes icon: Int?, pos: Int) {
-        val marker = dynamicMapView?.addMarker(latitude, longitude, icon)
+        val marker = dynamicMapView?.addMarker(requireContext(), latitude, longitude, icon)
         marker?.apply {
             getId()?.let { id ->
                 mMarkers?.set(id, pos)
@@ -267,8 +267,8 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     override fun onPageSelected(position: Int) {
         if (dynamicMapView?.isMapInstantiated() == false) return
 
-        previousMarker?.setIcon(unSelectedIcon)
-        markers?.get(position)?.setIcon(selectedIcon)
+        previousMarker?.setIcon(requireContext(), unSelectedIcon)
+        markers?.get(position)?.setIcon(requireContext(), selectedIcon)
         dynamicMapView?.animateCamera(markers?.get(position))
         previousMarker = markers?.get(position)
         /*
@@ -284,8 +284,8 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
     override fun onMarkerClicked(marker: DynamicMapMarker) {
         try {
             val id = mMarkers?.get(marker.getId())
-            previousMarker?.setIcon(unSelectedIcon)
-            marker.setIcon(selectedIcon)
+            previousMarker?.setIcon(requireContext(), unSelectedIcon)
+            marker.setIcon(requireContext(), selectedIcon)
             previousMarker = marker
             cardPager?.currentItem = id ?: 0
         } catch (ex: NullPointerException) {
@@ -502,7 +502,7 @@ class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageCh
 
             if (myLocation == null) {
                 myLocation =
-                    dynamicMapView?.addMarker(latitude, longitude, R.drawable.mapcurrentlocation)
+                    dynamicMapView?.addMarker(requireContext(), latitude, longitude, R.drawable.mapcurrentlocation)
             } else {
                 myLocation?.setPosition(latitude, longitude)
             }

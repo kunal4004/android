@@ -149,6 +149,7 @@ class SelectStoreDetailsFragment : Fragment(), DynamicMapDelegate {
 
     fun centerCamera() {
         dynamicMapView?.addMarker(
+            requireContext(),
             latitude = storeDetails?.latitude ?: 0.0,
             longitude = storeDetails?.longitude ?: 0.0,
             icon = R.drawable.selected_pin

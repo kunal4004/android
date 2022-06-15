@@ -175,7 +175,7 @@ public class StoreDetailsActivity extends AppCompatActivity implements DynamicMa
     }
 
     public void centerCamera() {
-        dynamicMapView.addMarker(storeDetails.latitude, storeDetails.longitude, R.drawable.selected_pin);
+        dynamicMapView.addMarker(this, storeDetails.latitude, storeDetails.longitude, R.drawable.selected_pin);
         dynamicMapView.animateCamera(storeDetails.latitude, storeDetails.longitude, 13);
     }
 

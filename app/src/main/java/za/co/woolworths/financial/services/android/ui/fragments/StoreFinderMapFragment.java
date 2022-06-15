@@ -284,7 +284,7 @@ public class StoreFinderMapFragment extends Fragment implements DynamicMapDelega
 	}
 
 	private void drawMarker(Double latitude, Double longitude, @DrawableRes int icon, int pos) {
-		DynamicMapMarker marker = dynamicMapView.addMarker(latitude, longitude, icon);
+		DynamicMapMarker marker = dynamicMapView.addMarker(getContext(), latitude, longitude, icon);
 		if (marker != null) {
 			mMarkers.put(marker.getId(), pos);
 			markers.add(marker);
@@ -298,8 +298,8 @@ public class StoreFinderMapFragment extends Fragment implements DynamicMapDelega
 	@Override
 	public void onPageSelected(int position) {
 		if (previousmarker != null)
-			previousmarker.setIcon(unSelectedIcon);
-		markers.get(position).setIcon(selectedIcon);
+			previousmarker.setIcon(getContext(), unSelectedIcon);
+		markers.get(position).setIcon(getContext(), selectedIcon);
 		dynamicMapView.animateCamera(markers.get(position).getPositionLatitude(), markers.get(position).getPositionLongitude(), 13f, null, null, CAMERA_ANIMATION_SPEED);
 		previousmarker = markers.get(position);
 		/*
@@ -323,8 +323,8 @@ public class StoreFinderMapFragment extends Fragment implements DynamicMapDelega
 		try {
 			int id = mMarkers.get(marker.getId());
 			if (previousmarker != null)
-				previousmarker.setIcon(unSelectedIcon);
-			marker.setIcon(selectedIcon);
+				previousmarker.setIcon(getContext(), unSelectedIcon);
+			marker.setIcon(getContext(), selectedIcon);
 			previousmarker = marker;
 			pager.setCurrentItem(id);
 		} catch (NullPointerException ignored) {
@@ -480,7 +480,7 @@ public class StoreFinderMapFragment extends Fragment implements DynamicMapDelega
 	public void updateMyCurrentLocationOnMap(Location location) {
 		try {
 			if (myLocation == null) {
-				myLocation = dynamicMapView.addMarker(location.getLatitude(), location.getLongitude(), R.drawable.mapcurrentlocation);
+				myLocation = dynamicMapView.addMarker(getContext(), location.getLatitude(), location.getLongitude(), R.drawable.mapcurrentlocation);
 				dynamicMapView.animateCamera(location.getLatitude(), location.getLongitude(), 13f, null, null, CAMERA_ANIMATION_SPEED);
 			} else {
 				myLocation.setPosition(location.getLatitude(), location.getLongitude());

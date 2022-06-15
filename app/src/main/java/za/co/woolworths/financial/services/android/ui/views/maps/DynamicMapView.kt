@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.awfs.coordination.R
-import com.google.android.gms.maps.*
+import com.google.android.gms.maps.GoogleMap
 import com.huawei.hms.maps.HuaweiMap
 import za.co.woolworths.financial.services.android.ui.views.maps.adapter.GoogleMapWindowAdapter
 import za.co.woolworths.financial.services.android.ui.views.maps.adapter.HuaweiMapWindowAdapter
@@ -17,7 +17,6 @@ import za.co.woolworths.financial.services.android.util.Utils
 import com.google.android.gms.maps.CameraUpdateFactory as GoogleCameraUpdateFactory
 import com.google.android.gms.maps.MapView as GoogleMapView
 import com.google.android.gms.maps.OnMapReadyCallback as GoogleOnMapReadyCallback
-import com.google.android.gms.maps.model.BitmapDescriptorFactory as GoogleBitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition as GoogleCameraPosition
 import com.google.android.gms.maps.model.LatLng as GoogleLatLng
 import com.google.android.gms.maps.model.Marker as GoogleMarker
@@ -26,7 +25,6 @@ import com.huawei.hms.maps.CameraUpdateFactory as HuaweiCameraUpdateFactory
 import com.huawei.hms.maps.MapView as HuaweiMapView
 import com.huawei.hms.maps.MapsInitializer as HuaweiMapsInitializer
 import com.huawei.hms.maps.OnMapReadyCallback as HuaweiOnMapReadyCallback
-import com.huawei.hms.maps.model.BitmapDescriptorFactory as HuaweiBitmapDescriptorFactory
 import com.huawei.hms.maps.model.CameraPosition as HuaweiCameraPosition
 import com.huawei.hms.maps.model.LatLng as HuaweiLatLng
 import com.huawei.hms.maps.model.Marker as HuaweiMarker
@@ -181,19 +179,19 @@ class DynamicMapView @JvmOverloads constructor(
         }
     }
 
-    fun addMarker(latitude: Double?, longitude: Double?, @DrawableRes icon: Int?): DynamicMapMarker? {
+    fun addMarker(context: Context, latitude: Double?, longitude: Double?, @DrawableRes icon: Int?): DynamicMapMarker? {
         if (latitude == null || longitude == null) return null
         return if (isGooglePlayServicesAvailable) {
             val markerOptions = GoogleMarkerOptions()
             markerOptions.position(GoogleLatLng(latitude, longitude))
             var marker = DynamicMapMarker(googleMarker = googleMap?.addMarker(markerOptions))
-            marker.setIcon(icon)
+            marker.setIcon(context, icon)
             marker
         } else {
             val markerOptions = HuaweiMarkerOptions()
             markerOptions.position(HuaweiLatLng(latitude, longitude))
             var marker = DynamicMapMarker(huaweiMarker = huaweiMap?.addMarker(markerOptions))
-            marker.setIcon(icon)
+            marker.setIcon(context, icon)
             marker
         }
     }

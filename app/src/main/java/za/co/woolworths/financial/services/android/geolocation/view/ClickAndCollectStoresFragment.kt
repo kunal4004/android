@@ -124,6 +124,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
         addressStoreList?.let {
             for (i in 0..3) {
                 dynamicMapView?.addMarker(
+                    requireContext(),
                     latitude = addressStoreList?.get(i)?.latitude,
                     longitude = addressStoreList?.get(i)?.longitude,
                     icon = R.drawable.pin
