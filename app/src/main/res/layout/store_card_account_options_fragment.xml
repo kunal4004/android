@@ -21,7 +21,7 @@
             android:background="@color/white"
             android:nestedScrollingEnabled="false"
             android:tag="manageCardTag"
-            app:navGraph="@navigation/account_options_manage_card_fragment" />
+            app:navGraph="@navigation/account_options_manage_card_nav" />
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/creditLimitIncreaseContainer"

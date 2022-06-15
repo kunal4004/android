@@ -249,6 +249,13 @@ class KotlinUtils {
             view.background = shape
         }
 
+        fun getCardHolderNameSurname(): String? {
+            val jwtDecoded = SessionUtilities.getInstance()?.jwt
+            val name = jwtDecoded?.name?.get(0)
+            val familyName = jwtDecoded?.family_name?.get(0)
+            return "$name $familyName"
+        }
+
         fun dpToPxConverter(dp: Int): Int {
             return (dp * Resources.getSystem().displayMetrics.density).toInt()
         }
@@ -981,6 +988,8 @@ class KotlinUtils {
             }
             return fulFillmentStoreId
         }
+
+
 
         fun getUniqueDeviceID(result: (String?) -> Unit) {
             val deviceID = Utils.getSessionDaoValue(KEY.DEVICE_ID)

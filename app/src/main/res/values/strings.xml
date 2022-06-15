@@ -2526,5 +2526,8 @@
     <string name="enquiry_failed">Failed To Send Enquiry.</string>
     <string name="enter_valid_email">Please enter valid email.</string>
     <string name="create_list_and_add">create list and add</string>
-
+    <string name="card_label">card</string>
+    <string name="temp_card_label">temp</string>
+    <string name="virtual_temp_card_label">Virtual Temporary Card</string>
+    <string name="primary_card">Primary Card</string>
 </resources>
