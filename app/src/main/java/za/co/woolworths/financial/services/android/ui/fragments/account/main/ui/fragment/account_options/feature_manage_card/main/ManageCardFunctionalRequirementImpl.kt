@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main
 
+
 import android.os.Parcelable
 import android.text.TextUtils
 import kotlinx.android.parcel.Parcelize
@@ -8,37 +9,59 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCard
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsData
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.VirtualCardStaffMemberMessage
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.LoaderType
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.SaveResponseDao
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountProductLandingDao
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import javax.inject.Inject
 
 sealed class StoreCardFeatureType : Parcelable {
     @Parcelize
-    data class StoreCardInGoodStanding(var storeCard: StoreCard?) : StoreCardFeatureType()
+    data class StoreCardInGoodStanding(
+        var storeCard: StoreCard?,
+        var cardHolderName: String? = KotlinUtils.getCardHolderNameSurname()
+    ) : StoreCardFeatureType()
 
     @Parcelize
-    data class StoreCardIsActive(var storeCard: StoreCard?) : StoreCardFeatureType()
+    data class StoreCardIsActive(
+        var storeCard: StoreCard?,
+        var cardHolderName: String? = KotlinUtils.getCardHolderNameSurname()
+    ) : StoreCardFeatureType()
 
     @Parcelize
-    data class StoreCardIsPermanentlyBlocked(var storeCard: StoreCard?) : StoreCardFeatureType()
+    data class StoreCardIsPermanentlyBlocked(
+        var storeCard: StoreCard?,
+        var cardHolderName: String? = KotlinUtils.getCardHolderNameSurname()
+    ) : StoreCardFeatureType()
 
     @Parcelize
-    data class StoreCardIsDefault(var storeCard: StoreCard?) : StoreCardFeatureType()
+    data class StoreCardIsDefault(
+        var storeCard: StoreCard?,
+        var cardHolderName: String? = KotlinUtils.getCardHolderNameSurname()
+    ) : StoreCardFeatureType()
 
     @Parcelize
     data class StoreCardIsTemporaryFreeze(
         var storeCard: StoreCard?,
         var isStoreCardFrozen: Boolean = true,
-        var isAnimationEnabled : Boolean = false
+        var isAnimationEnabled: Boolean = false,
+        var cardHolderName: String? = KotlinUtils.getCardHolderNameSurname()
     ) : StoreCardFeatureType()
 
     @Parcelize
-    data class StoreCardIsInstantReplacementCardAndInactive(var storeCard: StoreCard?) :
+    data class StoreCardIsInstantReplacementCardAndInactive(
+        var storeCard: StoreCard?,
+        var cardHolderName: String? = KotlinUtils.getCardHolderNameSurname()
+    ) :
         StoreCardFeatureType()
 
     @Parcelize
-    data class ActivateVirtualTempCard(var storeCard: StoreCard?) : StoreCardFeatureType()
+    data class ActivateVirtualTempCard(
+        var storeCard: StoreCard?,
+        var cardHolderName: String? = KotlinUtils.getCardHolderNameSurname()
+    ) : StoreCardFeatureType()
 
     @Parcelize
     object OnStart : StoreCardFeatureType()
@@ -46,7 +69,8 @@ sealed class StoreCardFeatureType : Parcelable {
     @Parcelize
     data class TemporaryCardEnabled(
         val isBlockTypeNullInVirtualCardObject: Boolean,
-        var storeCard: StoreCard?
+        var storeCard: StoreCard?,
+        var cardHolderName: String? = KotlinUtils.getCardHolderNameSurname()
     ) : StoreCardFeatureType()
 
     @Parcelize
@@ -74,7 +98,12 @@ interface IManageCardFunctionalRequirement {
     fun isPrimaryCardAvailable(): Boolean
     fun getPrimaryCards(): MutableList<StoreCard>?
     fun getStoreCardData(): StoreCardsData?
-    fun splitStoreCardByCardType(primaryCardIndex: Int, storeCard: StoreCard?): StoreCardFeatureType
+    fun splitStoreCardByCardType(
+        primaryCardIndex: Int,
+        storeCard: StoreCard?,
+        loaderType: LoaderType? = LoaderType.LANDING
+    ): StoreCardFeatureType
+
     fun getBlockCode(primaryCardIndex: Int): String?
     fun getBlockType(primaryCardIndex: Int): StoreCardBlockType?
     fun getCardNumber(position: Int): String?
@@ -83,24 +112,42 @@ interface IManageCardFunctionalRequirement {
     fun isActivateVirtualTempCard(): Boolean
     fun isInstantCardReplacementJourneyEnabled(primaryCardIndex: Int): Boolean
     fun addManageMyCardsLinkOnStoreCardLandingScreen()
-    fun getStoreCardListByFeatureType(): MutableList<StoreCardFeatureType>?
+    fun getStoreCardListByFeatureType(loaderType: LoaderType?): MutableList<StoreCardFeatureType>?
     fun isVirtualCardObjectExist(): Pair<Boolean, StoreCard?>
     fun getVirtualCard(): StoreCard?
     fun isBlockTypeNullInVirtualCardObject(): Boolean
     fun isFreezeStoreCard(primaryCardIndex: Int): Boolean
     fun isUnFreezeTemporaryStoreCard(primaryCardIndex: Int): Boolean
     fun isTemporaryCardEnabled(): Boolean
+    fun isMultiplePrimaryCardItem(): Boolean
+    fun isStaffMemberAndHasTemporaryCard(): Boolean
+    fun getVirtualCardStaffMemberMessage(): VirtualCardStaffMemberMessage?
+    fun refreshStoreCardsData()
+    fun isOneTimePinUnblockStoreCardEnabled(): Boolean
+    fun getCardHolderNameSurname(): String?
 }
 
 class ManageCardFunctionalRequirementImpl @Inject constructor(private val accountDao: AccountProductLandingDao) :
     IManageCardFunctionalRequirement {
 
+    private var storeCardData: StoreCardsData? = getStoreCardData()
+
+    override fun refreshStoreCardsData() {
+        storeCardData = getStoreCardData()
+    }
+
+    override fun isOneTimePinUnblockStoreCardEnabled(): Boolean {
+        return getStoreCardsResponse()?.oneTimePinRequired?.unblockStoreCard ?: false
+    }
+
+    override fun getCardHolderNameSurname(): String? = KotlinUtils.getCardHolderNameSurname()
+
     override fun getStoreCardsResponse(): StoreCardsResponse? {
-        val response = SaveResponseDao.getValue(
+        val response: StoreCardsResponse? = SaveResponseDao.getValue(
             SessionDao.KEY.STORE_CARD_RESPONSE_PAYLOAD,
             StoreCardsResponse::class.java
         )
-        return response.apply {
+        return response?.apply {
             storeCardsData?.productOfferingId = accountDao.product?.productOfferingId.toString()
             storeCardsData?.visionAccountNumber = accountDao.product?.accountNumber.toString()
         }
@@ -109,7 +156,7 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
     // check if primaryCards object exists
     override fun isPrimaryCardAvailable(): Boolean = getPrimaryCards()?.isNotEmpty() ?: false
 
-    override fun getPrimaryCards() = getStoreCardData()?.primaryCards
+    override fun getPrimaryCards() = storeCardData?.primaryCards
 
     override fun getStoreCardData(): StoreCardsData? = getStoreCardsResponse()?.storeCardsData
 
@@ -125,7 +172,7 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
 
     override fun getSequenceNumber(position: Int) = getPrimaryCards()?.get(position)?.sequence
 
-    override fun isGenerateVirtualCard(): Boolean = getStoreCardData()?.generateVirtualCard ?: false
+    override fun isGenerateVirtualCard(): Boolean = storeCardData?.generateVirtualCard ?: false
 
     /**
      * Determine if user can generate virtual temp card
@@ -141,17 +188,29 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
     }
 
     override fun isTemporaryCardEnabled(): Boolean {
-        val response = getStoreCardsResponse()
-        if (response?.storeCardsData?.virtualCard != null
-            && response.storeCardsData?.virtualCard?.number != null
+        if (storeCardData?.virtualCard != null
+            && storeCardData?.virtualCard?.number != null
+            && AppConfigSingleton.virtualTempCard?.isEnabled == true
             && (!TemporaryFreezeStoreCard.PERMANENT.equals(
-                response.storeCardsData?.virtualCard?.blockType,
+                storeCardData?.virtualCard?.blockType,
                 ignoreCase = true
             ))
         ) {
             return true
         }
         return false
+    }
+
+    override fun isMultiplePrimaryCardItem(): Boolean = getPrimaryCards()?.size ?: 0 > 1
+
+    override fun isStaffMemberAndHasTemporaryCard(): Boolean {
+        return isTemporaryCardEnabled()
+                && storeCardData?.isStaffMember == true
+                && storeCardData?.virtualCardStaffMemberMessage != null
+    }
+
+    override fun getVirtualCardStaffMemberMessage(): VirtualCardStaffMemberMessage? {
+        return storeCardData?.virtualCardStaffMemberMessage
     }
 
     /**
@@ -161,13 +220,12 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
      * display Link new Card
      */
     override fun isInstantCardReplacementJourneyEnabled(primaryCardIndex: Int): Boolean {
-        val response = getStoreCardsResponse()
-        if (response?.storeCardsData?.primaryCards.isNullOrEmpty()) {
+        if (storeCardData?.primaryCards.isNullOrEmpty()) {
             return false
         }
-        val primaryCard = response?.storeCardsData?.primaryCards?.get(primaryCardIndex)
+        val primaryCard = storeCardData?.primaryCards?.get(primaryCardIndex)
 
-        if (response?.storeCardsData?.generateVirtualCard == false
+        if (storeCardData?.generateVirtualCard == false
             && !TextUtils.isEmpty(primaryCard?.blockType)
             && TemporaryFreezeStoreCard.PERMANENT.equals(primaryCard?.blockType, ignoreCase = true)
             && AppConfigSingleton.instantCardReplacement?.isEnabled == true
@@ -181,22 +239,22 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
 
     }
 
-    override fun getStoreCardListByFeatureType(): MutableList<StoreCardFeatureType>? {
-        val primaryCards = getStoreCardsResponse()?.storeCardsData?.primaryCards
+
+    override fun getStoreCardListByFeatureType(loaderType: LoaderType?): MutableList<StoreCardFeatureType>? {
+        val primaryCards = storeCardData?.primaryCards
         val listOfStoreCardFeatures = mutableListOf<StoreCardFeatureType>()
         primaryCards?.forEachIndexed { index, storeCard ->
-            val card = splitStoreCardByCardType(index, storeCard)
+            val card = splitStoreCardByCardType(index, storeCard, loaderType)
             listOfStoreCardFeatures.add(card)
         }
         return listOfStoreCardFeatures
     }
 
     override fun isVirtualCardObjectExist(): Pair<Boolean, StoreCard?> {
-        val storeCardData = getStoreCardData()
         return Pair(storeCardData?.virtualCard == null, storeCardData?.virtualCard)
     }
 
-    override fun getVirtualCard() = getStoreCardData()?.virtualCard
+    override fun getVirtualCard() = storeCardData?.virtualCard
 
     override fun isBlockTypeNullInVirtualCardObject(): Boolean {
         val virtualCard = getVirtualCard()
@@ -221,7 +279,7 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
      */
 
     override fun isUnFreezeTemporaryStoreCard(primaryCardIndex: Int): Boolean {
-        val primaryCard = getStoreCardData()?.primaryCards?.get(primaryCardIndex)
+        val primaryCard = storeCardData?.primaryCards?.get(primaryCardIndex)
         val blockType = primaryCard?.blockType
         val virtualCard = getVirtualCard()
 
@@ -246,7 +304,8 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
      */
     override fun splitStoreCardByCardType(
         primaryCardIndex: Int,
-        storeCard: StoreCard?
+        storeCard: StoreCard?,
+        loaderType: LoaderType?
     ): StoreCardFeatureType {
         return when {
             isActivateVirtualTempCard() -> StoreCardFeatureType.ActivateVirtualTempCard(storeCard)
