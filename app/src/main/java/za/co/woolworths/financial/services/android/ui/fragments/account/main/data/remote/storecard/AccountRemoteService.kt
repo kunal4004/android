@@ -90,4 +90,17 @@ interface AccountRemoteService {
         @Body blockCardRequestBody: BlockCardRequestBody
     ): Response<BlockMyCardResponse>
 
+    @Headers(
+        "Content-Type: application/json",
+        "Accept: application/json",
+        "Media-Type: application/json"
+    )
+    @POST("wfs/app/v4/accounts/storecard/unblockStoreCard/{productOfferingId}")
+    suspend fun queryServiceUnBlockStoreCard(
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("productOfferingId") productOfferingId: String,
+        @Body blockCardRequestBody: BlockCardRequestBody
+    ): Response<BlockMyCardResponse>
+
+
 }

@@ -27,7 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AvailableFundsViewModel @Inject constructor(
     repository: StoreCardRepository,
-    private val availableFunds: AvailableFundsImpl,
+    val availableFunds: AvailableFundsImpl,
     private val creditCardDataSource: CreditCardDataSource
     ) : PayMyAccountViewModel(), IAvailableFundsImpl by availableFunds,
     ICreditCardDataSource by creditCardDataSource {

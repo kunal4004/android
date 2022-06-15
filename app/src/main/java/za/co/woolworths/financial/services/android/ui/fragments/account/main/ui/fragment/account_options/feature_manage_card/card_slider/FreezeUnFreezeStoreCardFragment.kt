@@ -7,15 +7,21 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FreezeUnfreezeCardFragmentBinding
+import com.facebook.shimmer.Shimmer
 import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
+import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeUnfreezeCardViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 @AndroidEntryPoint
 class FreezeUnFreezeStoreCardFragment : Fragment(R.layout.freeze_unfreeze_card_fragment) {
 
-    val viewModel: TemporaryFreezeUnfreezeCardViewModel by activityViewModels()
+    val viewModel: TemporaryFreezeCardViewModel by activityViewModels()
+    val accountViewModel: MyAccountsRemoteApiViewModel by activityViewModels()
 
     companion object {
         private const val STORE_CARD_FEATURE_TYPE = "STORE_CARD_FEATURE_TYPE"
@@ -28,13 +34,34 @@ class FreezeUnFreezeStoreCardFragment : Fragment(R.layout.freeze_unfreeze_card_f
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FreezeUnfreezeCardFragmentBinding.bind(view)
-        val storeCard = arguments?.getParcelable<StoreCardFeatureType?>(STORE_CARD_FEATURE_TYPE) as? StoreCardFeatureType.StoreCardIsTemporaryFreeze
+        val card = arguments?.getParcelable<StoreCardFeatureType?>(STORE_CARD_FEATURE_TYPE) as? StoreCardFeatureType.StoreCardIsTemporaryFreeze
         binding.freezeUnfreezeShimmerLayout.setShimmer(null)
-
-        viewModel.isLoading.observe(viewLifecycleOwner){ isLoading ->
-                binding.freezeUnfreezeShimmerLayout.showShimmer(isLoading)
+        binding.accountHolderNameTextView.text = KotlinUtils.getCardHolderNameSurname()
+        viewModel.isTempFreezeUnFreezeLoading.observe(viewLifecycleOwner) { isLoading ->
+            if (isLoading) {
+                // show shimmer
+                binding.freezeUnfreezeShimmerLayout.setShimmer(Shimmer.AlphaHighlightBuilder().build())
+                binding.freezeUnfreezeShimmerLayout.showShimmer(true)
+                binding.freezeUnfreezeShimmerLayout.startShimmer()
+            } else {
+                // hide shimmer
+                binding.freezeUnfreezeShimmerLayout.setShimmer(null)
+                binding.freezeUnfreezeShimmerLayout.showShimmer(false)
+                binding.freezeUnfreezeShimmerLayout.stopShimmer()
+            }
+            setCardImage(card, binding)
+            binding.cardImageView.onClick {
+                (requireActivity() as? StoreCardActivity)?.apply {
+                    accountViewModel.emitEventOnCardTap(card)
+                }
+            }
         }
+    }
 
+    private fun setCardImage(
+        storeCard: StoreCardFeatureType.StoreCardIsTemporaryFreeze?,
+        binding: FreezeUnfreezeCardFragmentBinding
+    ) {
         if (storeCard?.isAnimationEnabled == false) {
             binding.cardImageView.setImageDrawable(
                 ContextCompat.getDrawable(

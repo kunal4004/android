@@ -11,12 +11,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountProductLandingActivityBinding
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.NavigationGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.AccountProductsMainFragment
 import javax.inject.Inject
 
 @Suppress("DEPRECATION")
@@ -72,4 +74,19 @@ class StoreCardActivity : AppCompatActivity() {
             startDestinationArgs = intent.extras
         )
     }
+
+    fun parentNavController(): NavController? {
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.accountProductLandingFragmentContainerView) as? NavHostFragment
+        return navHostFragment?.navController
+    }
+
+    private fun getMainFragment() = supportFragmentManager.findFragmentById(R.id.accountProductLandingFragmentContainerView)?.childFragmentManager?.primaryNavigationFragment as? AccountProductsMainFragment
+
+    fun landingNavController(): NavController? {
+        val fragment = getMainFragment()
+        val navHost = fragment?.getChildNavHost()
+        return navHost?.navController
+    }
+
+    fun getToolbarHelper() = getMainFragment()?.mToolbarContainer
 }

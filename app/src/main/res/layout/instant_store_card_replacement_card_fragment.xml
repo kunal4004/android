@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/cardImageView"
@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
         android:contentDescription="@string/app_name"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -30,13 +31,62 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_16sdp"
         android:layout_marginEnd="@dimen/_16sdp"
-        android:layout_marginBottom="@dimen/_16sdp"
+        android:fontFamily="@font/futura_semi_bold"
         android:text="Card holder name"
+        android:textAllCaps="true"
         android:textColor="@color/black"
-        android:textSize="@dimen/_12sdp"
-        app:layout_constraintBottom_toBottomOf="@+id/spacer"
+        android:textSize="@dimen/ten_sp"
+        app:layout_constraintBottom_toTopOf="@+id/titleGuideLine"
         app:layout_constraintEnd_toEndOf="@+id/cardImageView"
         app:layout_constraintStart_toStartOf="@+id/cardImageView"
         tools:ignore="HardcodedText" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/titleGuideLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.82" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/tempCardGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.14" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/endGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.95" />
+
+    <TextView
+        android:id="@+id/tempCardLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="2dp"
+        android:fontFamily="@font/futura_bold_ttf"
+        android:text="@string/temp_card_label"
+        android:textColor="@color/black"
+        android:textAllCaps="true"
+        android:visibility="gone"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintBottom_toTopOf="@+id/tempCardGuideline"
+        app:layout_constraintEnd_toStartOf="@+id/cardLabel" />
+
+    <TextView
+        android:id="@+id/cardLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/futura_medium"
+        android:text="@string/card_label"
+        android:textAllCaps="true"
+        android:visibility="gone"
+        android:textColor="@color/black"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintBottom_toTopOf="@+id/tempCardGuideline"
+        app:layout_constraintEnd_toStartOf="@+id/endGuideline" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

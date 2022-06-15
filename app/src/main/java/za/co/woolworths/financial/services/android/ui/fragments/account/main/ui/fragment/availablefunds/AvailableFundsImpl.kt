@@ -33,9 +33,6 @@ class AvailableFundsImpl @Inject constructor(
 
    // val balanceflow : StateFlow<AvailableFundsCommand> = MutableStateFlow(AvailableFundsCommand())
 
-    init {
-        setUpView()
-    }
 
     override val product: Account?
         get() = balanceFormat.product
@@ -67,7 +64,7 @@ class AvailableFundsImpl @Inject constructor(
         }
     }
 
-    private fun setUpView() {
+    fun setUpView() {
         command.postValue(
             AvailableFundsCommand.SetViewDetails(
                 getAvailableFunds(),
