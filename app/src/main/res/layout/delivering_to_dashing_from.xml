@@ -192,7 +192,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="55dp"
             android:layout_toRightOf="@+id/dash_pacakging_textView"
-            android:text="Enroute"
+            android:text="En-route"
             android:textAllCaps="true"
             android:textColor="@color/gray"
             android:textSize="@dimen/eight_sp" />
