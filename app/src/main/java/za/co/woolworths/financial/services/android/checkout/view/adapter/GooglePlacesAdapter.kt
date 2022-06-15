@@ -27,6 +27,7 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapte
         const val SEARCH_LENGTH = 3
     }
 
+    private var token: AutocompleteSessionToken? = null
     private var mResultList = arrayListOf<PlaceAutocomplete>()
     private val placesClient = geoData
     private val mContext = context
@@ -108,7 +109,9 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapte
 
     fun getPredictions(constraint: CharSequence): ArrayList<PlaceAutocomplete> {
         val resultList = arrayListOf<PlaceAutocomplete>()
-        val token = AutocompleteSessionToken.newInstance()
+        if (token == null) {
+            token = AutocompleteSessionToken.newInstance()
+        }
         val request = FindAutocompletePredictionsRequest.builder()
             .setCountry("ZA")
             .setSessionToken(token)
@@ -135,7 +138,8 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapte
                     PlaceAutocomplete(
                         prediction.placeId,
                         prediction.getPrimaryText(null).toString(),
-                        prediction.getSecondaryText(null).toString()
+                        prediction.getSecondaryText(null).toString(),
+                        token
                     )
                 )
             }
@@ -153,7 +157,8 @@ internal class ViewHolder {
 class PlaceAutocomplete(
     var placeId: CharSequence,
     var primaryText: CharSequence,
-    var secondaryText: CharSequence
+    var secondaryText: CharSequence,
+    var token:AutocompleteSessionToken?
 ) {
 
     override fun toString(): String {
