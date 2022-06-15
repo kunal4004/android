@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -49,7 +50,7 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
     val viewModel: MyAccountsRemoteApiViewModel by activityViewModels()
     val cardFreezeViewModel: TemporaryFreezeCardViewModel by activityViewModels()
 
-    private val pager by lazy { CardViewPager() }
+    private val landingController by lazy { (requireActivity() as? StoreCardActivity)?.landingNavController() }
     private lateinit var locator: Locator
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -66,7 +67,21 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
             setupView()
         }
     }
-
+    private fun AccountOptionsManageCardFragmentBinding.startLocationDiscoveryProcess() {
+        locator = Locator(activity as AppCompatActivity)
+        locator.getCurrentLocation { locationEvent ->
+            when (locationEvent) {
+                is Event.Location -> Utils.saveLastLocation(locationEvent.locationData, activity)
+                is Event.Permission -> {
+                    if (locationEvent.event == EventType.LOCATION_PERMISSION_NOT_GRANTED) {
+                        Utils.saveLastLocation(null, activity)
+                    }
+                }
+            }
+        }.apply {
+            subscribeObservers()
+        }
+    }
     private fun AccountOptionsManageCardFragmentBinding.setOnClickListener() {
         mOnItemClickListener = ManageCardItemListener(requireActivity(), router, includeListOptions)
         mOnItemClickListener.setOnClickListener()
@@ -76,7 +91,7 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
         mItemList.hideAllRows()
         setupViewPager()
         setCardLabel()
-        subscribeObservers()
+        startLocationDiscoveryProcess()
     }
 
     private fun setCardLabel() {
@@ -96,8 +111,6 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
             with(viewModel) {
                 queryServiceGetStoreCardCards()
                 storeCardResponseResult.collectLatest { response ->
-                delay(1000)
-                queryServiceGetStoreCardCards().collect { response ->
                     with(response) {
                         locator.stopService()
                         renderLoading {
