@@ -13,4 +13,5 @@ class HWLocation {
     var countryName: String? = null
     var countryCode: String? = null
     var postalCode: String? = null
+    var featureName: String? = null
 }
