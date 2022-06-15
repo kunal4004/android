@@ -1897,6 +1897,7 @@
     <string name="promo_discount_dialog_desc">If more than one Promo Code is applied, we select the code with the highest priority for you.</string>
     <string name="earliest_collection_date">Earliest Collection date:</string>
     <string name="earliest_collection_Date">Earliest Collection Date:</string>
+    <string name="driver_tip">Driver Tip</string>
 
     <!-- Dash Details -->
     <string name="dash_banner_text_open_app">Same Day Delivery. Open Our App.</string>
@@ -2525,6 +2526,8 @@
     <string name="set_location_title">Set Your Location</string>
     <string name="set_location_msg">To view and shop using Click &amp; Collect, we need your location.</string>
     <string name="set_location">SET LOCATION</string>
+    <string name="hint_street_address_dash">Home • 28 Eastlake Island Drive</string>
+    <string name="continue_browsing">CONTINUE BROWSING</string>
 
     <string name="change_your_delivery_method_title">You’re About To Change Your Delivery Method</string>
     <string name="change_your_delivery_method_standard">By adding this item to your cart, you will checkout using <b><font color='#000000'>Standard Delivery</font></b> instead.</string>
