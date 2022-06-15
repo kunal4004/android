@@ -1,11 +1,12 @@
-package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card_slider
+package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card_slider.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import javax.inject.Inject
 
-class ManageCardScreenSlidesAdapter @Inject constructor(fragment: Fragment) :
+class ManageCardViewPagerAdapter @Inject constructor(fragment: Fragment) :
     FragmentStateAdapter(fragment) {
 
     private var listOfStoreCards: MutableList<StoreCardFeatureType>? = mutableListOf()
@@ -31,12 +32,20 @@ class ManageCardScreenSlidesAdapter @Inject constructor(fragment: Fragment) :
         return when (isListOfItemsNullOrEmpty()) {
             true -> NoStoreCardFragment()
             else -> when (val card = listOfStoreCards?.get(position)) {
-                is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive -> InstantStoreCardReplacementCardFragment.newInstance(card)
-                is StoreCardFeatureType.StoreCardIsTemporaryFreeze -> FreezeUnFreezeStoreCardFragment.newInstance(storeCard = card)
-                is StoreCardFeatureType.ActivateVirtualTempCard -> ActivateVirtualTempCardFragment()
-                is StoreCardFeatureType.TemporaryCardEnabled -> TemporaryCardFragment()
-                is StoreCardFeatureType.ManageMyCard -> NoStoreCardFragment()
-                else -> NoStoreCardFragment()
+                is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive -> InstantStoreCardReplacementCardFragment.newInstance(
+                    card
+                )
+                is StoreCardFeatureType.StoreCardIsTemporaryFreeze -> FreezeUnFreezeStoreCardFragment.newInstance(
+                    storeCard = card
+                )
+                is StoreCardFeatureType.ActivateVirtualTempCard -> ActivateVirtualTempCardFragment.newInstance(
+                    storeCard = card
+                )
+                is StoreCardFeatureType.TemporaryCardEnabled -> TemporaryCardFragment.newInstance(
+                    storeCard = card
+                )
+                is StoreCardFeatureType.ManageMyCard -> NoStoreCardFragment.newInstance(storeCard = card)
+                else -> NoStoreCardFragment.newInstance(storeCard = card)
             }
         }
     }
