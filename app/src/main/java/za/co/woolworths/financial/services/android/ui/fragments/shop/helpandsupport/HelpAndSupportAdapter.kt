@@ -29,6 +29,21 @@ class HelpAndSupportAdapter(
                 if (itemView.txtHelpTitle?.text.toString().equals(context?.getString(R.string.dash_call_customer_care), true)) {
                     helpAndSupportListener.openCallSupport(itemView?.txtHelpSubTitle?.text.toString())
                 }
+                else if(itemView.txtHelpTitle?.text.toString().equals(context?.getString(R.string.cancel_order), true)){
+                    helpAndSupportListener.onCancelOrder()
+                }
+                else if(itemView.txtHelpTitle?.text.toString().equals(context?.getString(R.string.dash_send_us_an_email), true)){
+                    helpAndSupportListener.openEmailSupport(itemView?.txtHelpSubTitle?.text.toString())
+                }
+                else if(itemView.txtHelpTitle?.text.toString().equals(context?.getString(R.string.dash_Chat_to_your_shopper), true)){
+                    helpAndSupportListener.openChatSupport()
+                }
+                else if(itemView.txtHelpTitle?.text.toString().equals(context?.getString(R.string.dash_track_your_order), true)){
+                    helpAndSupportListener.openTrackYourOrder()
+                }
+                else if(itemView.txtHelpTitle?.text.toString().equals(context?.getString(R.string.view_tax_invoice), true)){
+                    helpAndSupportListener.openTrackYourOrder()
+                }
             }
         }
     }
@@ -50,5 +65,11 @@ class HelpAndSupportAdapter(
 
     interface HelpAndSupportClickListener {
         fun openCallSupport(contactNumber: String)
+        fun onCancelOrder()
+        fun openEmailSupport(emailId: String)
+        fun openChatSupport()
+        fun openTrackYourOrder()
+        fun openTaxInvoice()
+        fun onCancelOrderConfirmation()
     }
 }

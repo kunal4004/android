@@ -1912,6 +1912,10 @@
     <string name="dash_call_customer_care">Call Our Call Centre</string>
     <string name="dash_customer_care_no">+27 860 100 987</string>
     <string name="dash_help">HELP</string>
+    <string name="dash_send_us_an_email">Send Us An Email</string>
+    <string name="dash_Chat_to_your_shopper">Chat To Your Shopper, Refilwe</string>
+    <string name="dash_track_your_order">Track Your Order</string>
+    <string name="dash_email_id">shop@wooliesdash.co.za</string>
 
     <string name="app_feature_title"></string>
     <string name="app_feature_get_delivered">Same-day delivery</string>
