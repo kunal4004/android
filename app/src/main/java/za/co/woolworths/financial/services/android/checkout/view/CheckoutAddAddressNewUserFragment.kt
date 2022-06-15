@@ -386,7 +386,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                         Place.Field.ADDRESS_COMPONENTS
                     )
                     val request =
-                        placeFields.let { FetchPlaceRequest.builder(placeId, it).build() }
+                        placeFields.let { FetchPlaceRequest.builder(placeId, it).setSessionToken(item?.token).build() }
                     request.let { placeRequest ->
                         placesClient.fetchPlace(placeRequest)
                             .addOnSuccessListener { response ->
