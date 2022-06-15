@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.core
 
-
 /**
  * Lets the UI act on a controlled bound of states that can be defined here
  */
@@ -19,7 +18,7 @@ sealed class ViewState<out T> where T : Any? {
      */
     data class RenderSuccess<T>(val output: T) : ViewState<T>()
 
-    data class RenderErrorFromResponse(val error: ErrorResponse?) : ViewState<ErrorResponse>()
+    data class RenderErrorFromResponse<T>(val output: T) : ViewState<T>()
 
     /**
      * Represents the UI state where the operation requested by the UI has failed to complete
@@ -46,7 +45,7 @@ infix fun <T> ViewState<T>.renderSuccess(onSuccess: ViewState.RenderSuccess<T>.(
 }
 
 
-infix fun<T> ViewState<T>.renderHttpFailureFromServer(onFailure: ViewState.RenderErrorFromResponse.() -> Unit): ViewState<T> {
+infix fun <T> ViewState<T>.renderHttpFailureFromServer(onFailure: ViewState.RenderErrorFromResponse<T>.() -> Unit): ViewState<T> {
     return when (this) {
         is ViewState.RenderErrorFromResponse -> {
             onFailure(this)
@@ -57,7 +56,6 @@ infix fun<T> ViewState<T>.renderHttpFailureFromServer(onFailure: ViewState.Rende
         }
     }
 }
-
 
 infix fun <T> ViewState<T>.renderFailure(onError: ViewState.RenderFailure.() -> Unit): ViewState<T> {
     return when (this) {

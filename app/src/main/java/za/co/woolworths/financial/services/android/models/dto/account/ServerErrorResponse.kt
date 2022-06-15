@@ -6,7 +6,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class ServerErrorResponse(
     val code: String = "",
-    val desc: String = "",
+    var desc: String = "",
     val stsParams: String = "",
     val message: String = "",
     val version: String = ""

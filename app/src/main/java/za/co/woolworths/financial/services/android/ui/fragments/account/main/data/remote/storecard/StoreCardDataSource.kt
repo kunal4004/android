@@ -20,10 +20,8 @@ interface IStoreCardDataSource {
     suspend fun getCreditCardToken(): Flow<CoreDataSource.IOTaskResult<CreditCardTokenResponse>>
     suspend fun getPaymentPAYUMethod(): Flow<CoreDataSource.IOTaskResult<PaymentMethodsResponse>>
     suspend fun queryServiceGetStoreCards(): Flow<CoreDataSource.IOTaskResult<StoreCardsResponse>>
-    suspend fun queryServiceBlockUnBlockStoreCard(
-        blockReason: Int? = 6,
-        position: Int
-    ): Flow<CoreDataSource.IOTaskResult<BlockMyCardResponse>>
+    suspend fun queryServiceBlockStoreCard(blockReason: Int? = 6, position: Int): Flow<CoreDataSource.IOTaskResult<BlockMyCardResponse>>
+    suspend fun queryServiceUnBlockStoreCard(blockReason: Int? = 6, position: Int): Flow<CoreDataSource.IOTaskResult<BlockMyCardResponse>>
 }
 
 class StoreCardDataSource @Inject constructor(
@@ -75,7 +73,7 @@ class StoreCardDataSource @Inject constructor(
 
     }
 
-    override suspend fun queryServiceBlockUnBlockStoreCard(blockReason: Int?, position: Int) =
+    override suspend fun queryServiceBlockStoreCard(blockReason: Int?, position: Int) =
         performSafeNetworkApiCall {
             val productOfferingId = getProductOfferingId()
             val visionAccountNumber = getVisionAccountNumber()
@@ -98,4 +96,30 @@ class StoreCardDataSource @Inject constructor(
             )
 
         }
+
+    override suspend fun queryServiceUnBlockStoreCard(
+        blockReason: Int?,
+        position: Int
+    ): Flow<IOTaskResult<BlockMyCardResponse>> = performSafeNetworkApiCall {
+        val productOfferingId = getProductOfferingId()
+        val visionAccountNumber = getVisionAccountNumber()
+        val deviceIdentityToken = super.getDeviceIdentityToken()
+        val blockCardReason = blockReason ?: BLOCK_REASON
+        val cardNumber = getCardNumber(position)
+        val sequenceNumber = getSequenceNumber(position)
+
+        val blockStoreCardRequestBody = BlockCardRequestBody(
+            visionAccountNumber,
+            cardNumber ?: "",
+            sequenceNumber ?: -1,
+            blockCardReason
+        )
+
+        queryServiceUnBlockStoreCard(
+            deviceIdentityToken = deviceIdentityToken,
+            productOfferingId = productOfferingId.toString(),
+            blockStoreCardRequestBody
+        )
+    }
+
 }

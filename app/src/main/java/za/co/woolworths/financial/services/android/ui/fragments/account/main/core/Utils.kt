@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.core
 
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.CoreDataSource.IOTaskResult
@@ -11,13 +12,13 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.cor
  * else a [IOTaskResult.OnFailed] is mapped to a [ViewState.RenderFailure] instance and emitted.
  * The flowable is then completed by emitting a [ViewState.Loading] with false
  */
-suspend fun <T : Any> getViewStateFlowForNetworkCall(ioOperation: suspend () -> Flow<IOTaskResult<T>>): Flow<ViewState<Any>> =
+suspend fun <T : Any> getViewStateFlowForNetworkCall(ioOperation: suspend () -> Flow<IOTaskResult<T>>): Flow<ViewState<T>> =
     flow {
         emit(ViewState.Loading(true))
         ioOperation().map {
             when (it) {
-                is IOTaskResult.OnSuccess -> ViewState.RenderSuccess(it.data as T)
-                is IOTaskResult.OnFailure -> ViewState.RenderErrorFromResponse(it.data as? ErrorResponse)
+                is IOTaskResult.OnSuccess -> ViewState.RenderSuccess(it.data)
+                is IOTaskResult.OnFailure -> ViewState.RenderErrorFromResponse(it.data as T)
                 is IOTaskResult.OnFailed -> ViewState.RenderFailure(it.throwable)
                 is IOTaskResult.Empty -> ViewState.RenderEmpty
             }
