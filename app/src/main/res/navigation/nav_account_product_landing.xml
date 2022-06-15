@@ -38,6 +38,9 @@
         <action
             android:id="@+id/action_accountProductsHomeFragment_to_nav_store_card_temporary_freeze_unfreeze_card"
             app:destination="@id/nav_store_card_temporary_freeze_unfreeze_card" />
+        <action
+            android:id="@+id/action_accountProductsHomeFragment_to_manageMyCardDetailsFragment"
+            app:destination="@id/manageMyCardDetailsFragment" />
     </fragment>
 
     <dialog
@@ -75,4 +78,9 @@
             app:nullable="false" />
     </fragment>
     <include app:graph="@navigation/nav_store_card_temporary_freeze_unfreeze_card" />
+    <fragment
+        android:id="@+id/manageMyCardDetailsFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.ManageMyCardDetailsFragment"
+        android:label="ManageMyCardDetailsFragment"
+        tools:layout="@layout/manage_card_details_fragment" />
 </navigation>
