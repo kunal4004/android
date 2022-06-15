@@ -491,7 +491,7 @@ class ConfirmAddressMapFragment :
                     )
                     val request =
                         placeFields.let {
-                            FetchPlaceRequest.builder(placeId.toString(), it).build()
+                            FetchPlaceRequest.builder(placeId.toString(), it).setSessionToken(item?.token).build()
                         }
                     request.let { placeRequest ->
                         placesClient.fetchPlace(placeRequest)
