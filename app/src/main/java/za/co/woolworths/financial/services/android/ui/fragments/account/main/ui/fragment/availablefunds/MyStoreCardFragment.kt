@@ -24,6 +24,7 @@ class MyStoreCardFragment @Inject constructor() :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.availableFunds.setUpView()
         subscribeObserver()
         setGuideline()
         setAccountInArrearsUI()
