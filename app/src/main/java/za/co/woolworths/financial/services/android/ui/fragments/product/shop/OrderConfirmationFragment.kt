@@ -118,9 +118,10 @@ class OrderConfirmationFragment : Fragment() {
 
     private fun setupDeliveryOrCollectionDetails(response: SubmittedOrderResponse?) {
         context?.let {
-            deliveryCollectionDetailsConstraintLayout.visibility = VISIBLE
             when (Delivery.getType(response?.orderSummary?.fulfillmentDetails?.deliveryType)) {
                 Delivery.CNC -> {
+                    deliveryCollectionDetailsConstraintLayout.visibility = VISIBLE
+                    deliveryOrderDetailsLayout.visibility = VISIBLE
                     optionImage.background =
                         AppCompatResources.getDrawable(it, R.drawable.icon_collection_grey_bg)
                     optionTitle?.text = it.getText(R.string.collecting_from)
@@ -129,6 +130,8 @@ class OrderConfirmationFragment : Fragment() {
                         response?.orderSummary?.fulfillmentDetails?.storeName?.let { convertToTitleCase(it) } ?: ""
                 }
                 Delivery.STANDARD -> {
+                    deliveryCollectionDetailsConstraintLayout.visibility = VISIBLE
+                    deliveryOrderDetailsLayout.visibility = VISIBLE
                     optionImage?.background =
                         AppCompatResources.getDrawable(it, R.drawable.icon_delivery_grey_bg)
                     optionTitle?.text = it.getText(R.string.delivering_to)
