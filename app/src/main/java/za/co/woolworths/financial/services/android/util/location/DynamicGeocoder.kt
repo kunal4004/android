@@ -40,15 +40,19 @@ object DynamicGeocoder {
                             .getFromLocation(GetFromLocationRequest(latitude, longitude, 1))
                             .addOnSuccessListener { addresses ->
                                 addresses.firstOrNull()?.let {
+                                    var addressLine = it.featureName
+                                    if (addressLine.isNullOrEmpty()) {
+                                        addressLine = arrayOf(
+                                            it.street,
+                                            it.city,
+                                            it.county,
+                                            it.state,
+                                            it.countryName
+                                        ).filter { item -> !item.isNullOrEmpty() }.joinToString(separator = ", ")
+                                    }
                                     callback.invoke(
                                         DynamicGeocoderAddress(
-                                            addressLine = arrayOf(
-                                                it.street,
-                                                it.city,
-                                                it.county,
-                                                it.state,
-                                                it.countryName
-                                            ).filter { item -> !item.isNullOrEmpty() }.joinToString(separator = ", "),
+                                            addressLine = addressLine,
                                             street = it.street,
                                             city = it.city,
                                             suburb = it.county,

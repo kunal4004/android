@@ -190,8 +190,8 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         mLastLocation = locationEvent?.locationData
         mLastLocation?.let {
             DynamicGeocoder.getAddressFromLocation(activity, it.latitude, it.longitude) { address ->
-                address?.let {
-                    tvCurrentLocation?.text = it.addressLine
+                address?.let { address ->
+                    tvCurrentLocation?.text = address.addressLine
                 } ?: kotlin.run {
                     hideCurrentLocation()
                 }
