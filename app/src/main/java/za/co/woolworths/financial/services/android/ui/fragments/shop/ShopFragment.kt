@@ -607,11 +607,11 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     fun navigateToMyListFragment() {
-        viewpager_main?.setCurrentItem(1, true)
-    }
-
-    fun navigateToMyShoppingListFragment() {
-        viewpager_main?.setCurrentItem(1, false)
+        (activity as? BottomNavigationActivity)?.let {
+            it.bottomNavigationById.setCurrentItem(INDEX_ACCOUNT)
+            val fragment = MyListsFragment()
+            it.pushFragment(fragment)
+        }
     }
 
     fun scrollToTop() {

@@ -54,6 +54,8 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RE
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_QUERY_STORE_FINDER
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getAnonymousUserLocationDetails
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredPlaceId
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
@@ -95,7 +97,6 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     fun initViews() {
         addFragmentListner()
         isUnSellableItemsRemoved()
-        val savedLocation = Utils.getPreferredDeliveryLocation()
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
             val anonymousUserLocation = getAnonymousUserLocationDetails()?.fulfillmentDetails
             if (anonymousUserLocation != null) {
@@ -115,13 +116,13 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             }
         } else {
             // user logged in
-            if (savedLocation?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
+            if (getDeliveryType()?.deliveryType.isNullOrEmpty()) {
                 // logged in but don't have location
                 showSetAddressScreen() // show set Address screen
             } else {
                 // User Logged in and have location.
-
-                // now check if application class response has deliverable or local object of validatePlace has deliverable. Continue with that object which has deliverable.
+                // now check if application class response has deliverable or local object of validatePlace has deliverable.
+                // Continue with that object which has deliverable.
                 val validatePlace =
                     if (WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.onDemand?.deliverable == true)
                         WoolworthsApplication.getDashBrowsingValidatePlaceDetails()
@@ -134,7 +135,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     // This means user has location but validatePlace response from DB is null.
                     // So call validate place API again.
                     subscribeToObservers()
-                    callValidatePlace(savedLocation?.fulfillmentDetails?.address?.placeId)
+                    callValidatePlace(getPreferredPlaceId())
                 }
                 if (validatePlace?.onDemand != null && validatePlace.onDemand?.deliverable == true) {
                     // Show categories.
