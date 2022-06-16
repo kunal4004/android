@@ -225,7 +225,7 @@ class ConfirmAddressMapFragment :
                 ),
                 activity)
 
-            // first we will call validate Location API after successfull we will decide if it is deliverable for that delivery Type.
+            // first we will call validate Location API after successful we will decide if it is deliverable for that delivery Type.
             validateLocation()
         }
     }
@@ -259,7 +259,7 @@ class ConfirmAddressMapFragment :
                                             KotlinUtils.isDashTabClicked =
                                                 placeId?.equals(KotlinUtils.getDeliveryType()?.address?.placeId) // changing black tooltip flag as user changes his browsing location.
                                             // directly go back to Dash landing screen. Don't call confirm location API as user only wants to browse Dash.
-                                            var intent = Intent()
+                                            val intent = Intent()
                                             intent.putExtra(BundleKeysConstants.VALIDATE_RESPONSE,
                                                 validateLocationResponse)
                                             activity?.setResult(Activity.RESULT_OK, intent)
@@ -410,7 +410,7 @@ class ConfirmAddressMapFragment :
                     when (confirmLocationResponse.httpCode) {
                         HTTP_OK -> {
 
-                            /*reset browsing data for cnc and dash both once fullfillment location is comfirmed*/
+                            /*reset browsing data for cnc and dash both once fulfillment location is confirmed*/
                             WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
                                 validateLocationResponse?.validatePlace)
                             WoolworthsApplication.setDashBrowsingValidatePlaceDetails(

@@ -55,7 +55,6 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RE
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredPlaceId
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
@@ -119,7 +118,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 callValidatePlace(fulfillmentDetails.address?.placeId)
                 return
             }
-            if (validatePlace?.onDemand != null && validatePlace.onDemand?.deliverable == true) {
+            if (validatePlace.onDemand != null && validatePlace.onDemand?.deliverable == true) {
                 // Show categories.
                 setupRecyclerView()
                 initData()
@@ -369,7 +368,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                             saveAnonymousUserLocationDetails(ShoppingDeliveryLocation(response.orderSummary?.fulfillmentDetails))
                         }
                         val savedPlaceId =
-                            KotlinUtils.getDeliveryType()?.address?.placeId
+                            getDeliveryType()?.address?.placeId
                         KotlinUtils.apply {
                             response.orderSummary?.fulfillmentDetails?.address?.placeId.let { responsePlaceId ->
                                 this.placeId = responsePlaceId
@@ -724,7 +723,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
         // Now first check for if delivery location and browsing location is same.
         // if same no issues. If not then show changing delivery location popup.
-        if (!KotlinUtils.getDeliveryType()?.deliveryType.equals(Delivery.DASH.type)) {
+        if (!getDeliveryType()?.deliveryType.equals(Delivery.DASH.type)) {
             KotlinUtils.showChangeDeliveryTypeDialog(
                 requireContext(), requireFragmentManager(),
                 KotlinUtils.browsingDeliveryType
