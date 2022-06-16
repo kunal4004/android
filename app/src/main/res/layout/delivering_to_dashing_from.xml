@@ -34,7 +34,6 @@
         style="@style/futura_semi_bold_black"
         android:layout_marginTop="@dimen/eight_dp"
         android:gravity="center_horizontal"
-        android:textColor="@color/black"
         android:textSize="@dimen/eighteen_sp"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
@@ -86,7 +85,6 @@
 
     </LinearLayout>
 
-
     <LinearLayout
         android:id="@+id/dashDeliveryLinearLayout"
         android:layout_width="@dimen/zero_dp"
@@ -98,7 +96,6 @@
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
         app:layout_constraintTop_toBottomOf="@+id/foodDeliveryLinearLayout">
-
 
         <ImageView
             android:id="@+id/optionImageConfirmed"
@@ -137,8 +134,8 @@
         <View
             android:id="@+id/packaging_delivered"
             style="@style/bottom_line"
-            android:layout_height="@dimen/two_dp"
             android:layout_width="@dimen/seventy_five_dp"
+            android:layout_height="@dimen/two_dp"
             android:layout_marginTop="@dimen/eight_dp" />
 
         <ImageView
@@ -167,9 +164,9 @@
             android:layout_marginStart="@dimen/eighteen_dp"
             android:gravity="center_vertical"
             android:text="@string/dash_status_confirmed"
-            android:textStyle="bold"
             android:textAllCaps="true"
-            android:textSize="@dimen/eight_sp" />
+            android:textSize="@dimen/eight_sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/dash_pacakging_textView"
@@ -177,12 +174,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/fifty_dp"
-            android:layout_toRightOf="@+id/dash_confirmed_textView"
             android:text="@string/dash_status_packaging"
             android:textAllCaps="true"
-            android:textStyle="bold"
             android:textColor="#000000"
-            android:textSize="@dimen/eight_sp" />
+            android:textSize="@dimen/eight_sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/dash_enroute_textView"
@@ -190,7 +186,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/fifty_dp"
-            android:layout_toRightOf="@+id/dash_pacakging_textView"
             android:text="@string/dash_status_en_route"
             android:textAllCaps="true"
             android:textColor="@color/gray"
@@ -202,7 +197,6 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginStart="@dimen/sixty_dp"
-            android:layout_toRightOf="@+id/dash_enroute_textView"
             android:text="@string/dash_status_delivered"
             android:textAllCaps="true"
             android:textColor="@color/gray"
@@ -214,8 +208,8 @@
         android:id="@+id/continueBrowsingLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_margin="@dimen/twenty_four_dp"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="@+id/right_guideline"
         app:layout_constraintStart_toStartOf="@+id/left_guideline"
         app:layout_constraintTop_toBottomOf="@+id/dashStatusLinearLayout">
@@ -223,14 +217,13 @@
         <TextView
             android:id="@+id/btnContinueBrowsing"
             style="@style/call_to_action_text_style"
-            android:layout_height="@dimen/fifty_dp"
             android:layout_width="match_parent"
+            android:layout_height="@dimen/fifty_dp"
             android:layout_marginBottom="@dimen/ten_dp"
             android:background="@color/black"
             android:contentDescription="@string/continue_browsing"
-            android:text="@string/continue_browsing"/>
+            android:text="@string/continue_browsing" />
     </LinearLayout>
-
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_guideline"
