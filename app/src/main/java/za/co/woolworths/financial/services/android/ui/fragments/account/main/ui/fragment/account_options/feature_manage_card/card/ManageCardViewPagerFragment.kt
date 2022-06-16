@@ -60,7 +60,7 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
     }
 
     private fun ManageCardViewpagerFragmentBinding?.setDotIndicatorVisibility(items: MutableList<StoreCardFeatureType>?) {
-        this?.cardTabLayout?.visibility = if ((items?.size ?: 0) <= 1) View.INVISIBLE else View.VISIBLE
+        this?.cardTabLayout?.visibility = if ((items?.size ?: 0) <= 1) View.GONE else View.VISIBLE
     }
 
     private fun ManageCardViewpagerFragmentBinding?.initCardViewPager() {

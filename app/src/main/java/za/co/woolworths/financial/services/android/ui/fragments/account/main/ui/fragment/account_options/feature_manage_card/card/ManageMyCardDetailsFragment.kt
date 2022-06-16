@@ -52,7 +52,7 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
 
     private fun setToolbar() {
         (activity as? StoreCardActivity)?.getToolbarHelper()
-            ?.setManageMyCardDetailsToolbar(viewModel.dataSource.isMultiplePrimaryCardItem())
+            ?.setManageMyCardDetailsToolbar(viewModel.dataSource.isMultipleStoreCardEnabled())
     }
 
     private fun setCardViewPagerNavigationGraph() = setupGraph(
