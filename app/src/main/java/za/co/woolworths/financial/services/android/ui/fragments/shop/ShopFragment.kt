@@ -867,8 +867,10 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 R.string.dash_item_limit,
                 it.onDemand?.quantityLimit?.foodMaximumQuantity
             )
-            /*TODO deliveryFee value will come from config*/
-            deliveryFeeText?.text = "Free for orders over R75"
+            deliveryFeeText?.text = resources.getString(
+                R.string.dash_free_order,
+                it.onDemand?.firstAvailableFoodDeliveryCost
+            )
         }
     }
 
