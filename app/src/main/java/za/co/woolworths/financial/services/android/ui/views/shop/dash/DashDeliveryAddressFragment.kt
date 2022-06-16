@@ -615,7 +615,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     private fun isUnSellableItemsRemoved() {
         UnSellableItemsLiveData.observe(viewLifecycleOwner) {
             isUnSellableItemsRemoved = it
-            if (isUnSellableItemsRemoved == true) {
+            if (isUnSellableItemsRemoved == true && ((activity as? BottomNavigationActivity)?.mNavController?.currentFrag as? ShopFragment)?.getCurrentFragmentIndex() == ShopFragment.SelectedTabIndex.DASH_TAB.index) {
                 callConfirmPlace()
                 UnSellableItemsLiveData.value = false
             }
