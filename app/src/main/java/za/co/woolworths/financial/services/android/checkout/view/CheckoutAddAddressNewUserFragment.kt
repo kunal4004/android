@@ -167,15 +167,23 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     selectedDeliveryAddressType = savedAddress?.addressType
                     if (savedAddress != null) {
                         selectedAddress.savedAddress = savedAddress
-                        var provinceName: String? = ""
-                        provinceName = getProvinceName(savedAddress.region)
-                        if (!provinceName.isNullOrEmpty()) {
-                            selectedAddress?.provinceName = provinceName
-                        } else {
-                            savedAddress?.region?.let {
-                                selectedAddress?.provinceName = it
-                            }
+                        if (!savedAddress?.city.isNullOrEmpty()) {
+                            selectedAddress?.provinceName = savedAddress.city!!
                         }
+                        else {
+                            var provinceName: String? = ""
+                            provinceName = getProvinceName(savedAddress.region)
+                            if (!provinceName.isNullOrEmpty()) {
+                                selectedAddress?.provinceName = provinceName
+                            }
+                            else {
+                                savedAddress?.region?.let {
+                                    selectedAddress?.provinceName = it
+                                }
+                            }
+
+                        }
+
                     }
                     setHasOptionsMenu(true)
                 }

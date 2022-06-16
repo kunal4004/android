@@ -33,6 +33,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.perfectcorp.perfectlib.CameraView
@@ -55,6 +56,7 @@ import kotlinx.coroutines.*
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
+import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
@@ -124,11 +126,8 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VT
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageFileContract
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageGalleryContract
-import java.io.File
-import android.graphics.Bitmap
-import com.google.firebase.analytics.FirebaseAnalytics
-import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import java.io.File
 import javax.inject.Inject
 import kotlin.collections.get
 import kotlin.collections.set
@@ -816,7 +815,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun isUnSellableItemsRemoved() {
         UnSellableItemsLiveData.observe(viewLifecycleOwner) {
             isUnSellableItemsRemoved = it
-            if (isUnSellableItemsRemoved == true) {
+            if (isUnSellableItemsRemoved == true && (activity as? BottomNavigationActivity)?.mNavController?.currentFrag is ProductDetailsFragment) {
                 callConfirmPlace()
                 UnSellableItemsLiveData.value = false
             }
