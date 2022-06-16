@@ -97,55 +97,39 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     fun initViews() {
         addFragmentListner()
         isUnSellableItemsRemoved()
-        if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            val anonymousUserLocation = getAnonymousUserLocationDetails()?.fulfillmentDetails
-            if (anonymousUserLocation != null) {
-                // AnonymousUser who has location
-                val validatePlace = WoolworthsApplication.getValidatePlaceDetails()
-                if (validatePlace?.onDemand != null && validatePlace.onDemand?.deliverable == true) {
-                    // Show categories.
-                    setupRecyclerView()
-                    initData()
-                } else {
-                    // AnonymousUser has location but don't have Dash deliverable.
-                    showSetAddressScreen() // show set Address screen
-                }
+
+        val fulfillmentDetails = getDeliveryType() // fulfillment details of signin or signout user.
+        if (fulfillmentDetails != null) {
+            // User don't have location.
+            // Now check if application class response has deliverable or local object of validatePlace has deliverable.
+            // Continue with that object which has deliverable.
+            val validatePlace =
+                if (WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.onDemand?.deliverable == true)
+                    WoolworthsApplication.getDashBrowsingValidatePlaceDetails()
+                else if (WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.deliverable == true)
+                    WoolworthsApplication.getValidatePlaceDetails()
+                else
+                    WoolworthsApplication.getDashBrowsingValidatePlaceDetails()
+                        ?: WoolworthsApplication.getValidatePlaceDetails()
+
+            if (validatePlace == null) {
+                // This means user has location but validatePlace response is not updated or is null.
+                // So call validate place API again.
+                subscribeToObservers()
+                callValidatePlace(fulfillmentDetails.address?.placeId)
+                return
+            }
+            if (validatePlace?.onDemand != null && validatePlace.onDemand?.deliverable == true) {
+                // Show categories.
+                setupRecyclerView()
+                initData()
             } else {
-                // AnonymousUser who don't have location.
-                showSetAddressScreen() // show set Address screen
+                // user has location but don't have Dash deliverable.
+                showChangeLocationScreen() // show change Address screen
             }
         } else {
-            // user logged in
-            if (getDeliveryType()?.deliveryType.isNullOrEmpty()) {
-                // logged in but don't have location
-                showSetAddressScreen() // show set Address screen
-            } else {
-                // User Logged in and have location.
-                // now check if application class response has deliverable or local object of validatePlace has deliverable.
-                // Continue with that object which has deliverable.
-                val validatePlace =
-                    if (WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.onDemand?.deliverable == true)
-                        WoolworthsApplication.getDashBrowsingValidatePlaceDetails()
-                    else if (WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.deliverable == true)
-                        WoolworthsApplication.getValidatePlaceDetails()
-                    else
-                        WoolworthsApplication.getDashBrowsingValidatePlaceDetails()
-                            ?: WoolworthsApplication.getValidatePlaceDetails()
-                if (validatePlace == null) {
-                    // This means user has location but validatePlace response from DB is null.
-                    // So call validate place API again.
-                    subscribeToObservers()
-                    callValidatePlace(getPreferredPlaceId())
-                }
-                if (validatePlace?.onDemand != null && validatePlace.onDemand?.deliverable == true) {
-                    // Show categories.
-                    setupRecyclerView()
-                    initData()
-                } else {
-                    // user has location but don't have Dash deliverable.
-                    showChangeLocationScreen() // show change Address screen
-                }
-            }
+            //User who don't have location.
+            showSetAddressScreen() // show set Address screen
         }
     }
 

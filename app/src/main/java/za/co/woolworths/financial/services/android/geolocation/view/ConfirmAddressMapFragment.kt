@@ -249,26 +249,21 @@ class ConfirmAddressMapFragment :
                                 if (isFromDashTab == true) {
                                     if (place.onDemand != null && place.onDemand!!.deliverable == true) {
 
-                                        if (!SessionUtilities.getInstance().isUserAuthenticated) {
-                                            // User not logged in that's why we are setting new location.
+                                        if (KotlinUtils.getDeliveryType() == null) {
+                                            // User don't have any location (signin or signout both) that's why we are setting new location.
                                             KotlinUtils.isDashTabClicked =
-                                                placeId?.equals(KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId) // changing black tooltip flag as user changes his browsing location.
+                                                placeId?.equals(KotlinUtils.getDeliveryType()?.address?.placeId) // changing black tooltip flag as user changes in his location.
                                             confirmSetAddress(validateLocationResponse)
                                         } else {
+                                            // User has location. Means only changing browsing location.
                                             KotlinUtils.isDashTabClicked =
-                                                placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId) // changing black tooltip flag as user changes his browsing location.
-                                            val savedLocation = Utils.getPreferredDeliveryLocation()
-                                            if (savedLocation?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
-                                                // user logged in but don't have any location that's why we are setting new location.
-                                                confirmSetAddress(validateLocationResponse)
-                                            } else {
-                                                // directly go back to Dash landing screen. Don't call confirm location API as user only wants to browse Dash.
-                                                var intent = Intent()
-                                                intent.putExtra(BundleKeysConstants.VALIDATE_RESPONSE,
-                                                    validateLocationResponse)
-                                                activity?.setResult(Activity.RESULT_OK, intent)
-                                                activity?.finish()
-                                            }
+                                                placeId?.equals(KotlinUtils.getDeliveryType()?.address?.placeId) // changing black tooltip flag as user changes his browsing location.
+                                            // directly go back to Dash landing screen. Don't call confirm location API as user only wants to browse Dash.
+                                            var intent = Intent()
+                                            intent.putExtra(BundleKeysConstants.VALIDATE_RESPONSE,
+                                                validateLocationResponse)
+                                            activity?.setResult(Activity.RESULT_OK, intent)
+                                            activity?.finish()
                                         }
                                     } else {
                                         // Show not deliverable Bottom Dialog.
@@ -491,7 +486,8 @@ class ConfirmAddressMapFragment :
                     )
                     val request =
                         placeFields.let {
-                            FetchPlaceRequest.builder(placeId.toString(), it).setSessionToken(item?.token).build()
+                            FetchPlaceRequest.builder(placeId.toString(), it)
+                                .setSessionToken(item?.token).build()
                         }
                     request.let { placeRequest ->
                         placesClient.fetchPlace(placeRequest)
@@ -662,7 +658,7 @@ class ConfirmAddressMapFragment :
                         if (!it.equals("$streetNumber $routeName",
                                 true) && isMainPlaceName == true
                         ) {
-                            sendAddressData(it,"$streetNumber $routeName")
+                            sendAddressData(it, "$streetNumber $routeName")
                             isMainPlaceName = false
                         } else {
                             sendAddressData("$streetNumber $routeName")
@@ -696,7 +692,7 @@ class ConfirmAddressMapFragment :
         ).get(ConfirmAddressViewModel::class.java)
     }
 
-    private fun sendAddressData(placeName: String?,apiAddress1:String?="") {
+    private fun sendAddressData(placeName: String?, apiAddress1: String? = "") {
         val saveAddressLocationRequest = SaveAddressLocationRequest("$placeName",
             city,
             country,
