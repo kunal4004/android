@@ -9,6 +9,7 @@ import android.text.style.StyleSpan
 import android.view.*
 import android.view.View.*
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,6 +24,8 @@ import kotlinx.android.synthetic.main.delivering_to_dashing_from.*
 import kotlinx.android.synthetic.main.fragment_order_confirmation.*
 import kotlinx.android.synthetic.main.order_details_bottom_sheet.*
 import kotlinx.android.synthetic.main.other_order_details.*
+import kotlinx.android.synthetic.main.product_details_fragment.*
+import kotlinx.android.synthetic.main.product_details_size_and_color_layout.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -35,6 +38,8 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.adapters.ItemsOrderListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.WrewardsBottomSheetFragment
@@ -120,6 +125,7 @@ class OrderConfirmationFragment : Fragment() {
         context?.let {
             when (Delivery.getType(response?.orderSummary?.fulfillmentDetails?.deliveryType)) {
                 Delivery.CNC -> {
+                    //resetColorSelectionLayout()
                     deliveryCollectionDetailsConstraintLayout.visibility = VISIBLE
                     deliveryOrderDetailsLayout.visibility = VISIBLE
                     optionImage.background =
@@ -130,6 +136,7 @@ class OrderConfirmationFragment : Fragment() {
                         response?.orderSummary?.fulfillmentDetails?.storeName?.let { convertToTitleCase(it) } ?: ""
                 }
                 Delivery.STANDARD -> {
+                    //resetColorSelectionLayout()
                     deliveryCollectionDetailsConstraintLayout.visibility = VISIBLE
                     deliveryOrderDetailsLayout.visibility = VISIBLE
                     optionImage?.background =
@@ -140,7 +147,9 @@ class OrderConfirmationFragment : Fragment() {
                         response?.orderSummary?.fulfillmentDetails?.address?.address1?.let { convertToTitleCase(it) } ?: ""
                 }
                 Delivery.DASH -> {
+                    //resetColorSelectionLayoutDash()
                     dashDeliveryConstraintLayout.visibility = VISIBLE
+                    deliveryOrderDetailsLayout.visibility = GONE
                     dashOrderDetailsLayout.visibility = VISIBLE
 
                     optionLocationTitle.text = response?.orderSummary?.fulfillmentDetails?.address?.address1?.let { convertToTitleCase(it) } ?: ""
@@ -149,6 +158,12 @@ class OrderConfirmationFragment : Fragment() {
                             response
                                     ?.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
                     )
+                    continueBrowsingLinearLayout.setOnClickListener {
+                        (requireActivity() as? BottomNavigator)?.navigateToTabIndex(
+                                BottomNavigationActivity.INDEX_PRODUCT,
+                                null
+                        )
+                    }
 
                 }
             }
@@ -172,6 +187,22 @@ class OrderConfirmationFragment : Fragment() {
             }
         }
     }
+
+    private fun resetColorSelectionLayout() {
+        (otherOrderDetailsConstraintLayout?.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.topToBottom = R.id.deliveryCollectionDetailsConstraintLayout
+            deliveryCollectionDetailsConstraintLayout?.layoutParams = it
+        }
+    }
+
+    private fun resetColorSelectionLayoutDash() {
+        (otherOrderDetailsConstraintLayout?.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.topToBottom = R.id.dashDeliveryConstraintLayout
+            dashDeliveryConstraintLayout?.layoutParams = it
+        }
+    }
+
+
 
     private fun setupOrderTotalDetails(response: SubmittedOrderResponse?) {
 

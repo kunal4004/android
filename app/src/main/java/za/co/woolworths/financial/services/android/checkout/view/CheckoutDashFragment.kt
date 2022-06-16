@@ -950,6 +950,7 @@ class CheckoutDashFragment : Fragment(),
 
     private fun getShipmentDetailsBody() = ShippingDetailsBody().apply {
         requestFrom = "express"
+        shipToAddressName = savedAddress?.defaultAddressNickname
         joinBasket = true
         foodShipOnDate = selectedTimeSlot?.stringShipOnDate
         otherShipOnDate = ""
