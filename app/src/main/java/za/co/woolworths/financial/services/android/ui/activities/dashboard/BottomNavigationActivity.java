@@ -26,6 +26,7 @@ import static za.co.woolworths.financial.services.android.ui.fragments.shoppingl
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.MY_LIST_SEARCH_TERM;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.PRODUCT_DETAILS_FROM_MY_LIST_SEARCH;
 import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
+import static za.co.woolworths.financial.services.android.util.AppConstant.DP_LINKING_MY_ACCOUNTS_ORDER_DETAILS;
 import static za.co.woolworths.financial.services.android.util.AppConstant.REQUEST_CODE_BARCODE_ACTIVITY;
 import static za.co.woolworths.financial.services.android.util.AppConstant.REQUEST_CODE_ORDER_DETAILS_PAGE;
 import static za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS;
@@ -90,6 +91,7 @@ import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.BrandNavigationDetails;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
+import za.co.woolworths.financial.services.android.models.dto.Order;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductSearchTypeAndTerm;
@@ -97,9 +99,9 @@ import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType;
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap;
+import za.co.woolworths.financial.services.android.models.network.Parameter;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
-import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
@@ -114,6 +116,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.grid.Pro
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyListsFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersAccountFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment;
@@ -406,6 +410,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     new Handler().postDelayed(itemView::performClick, AppConstant.DELAY_100_MS);
                     break;
 
+                case DP_LINKING_MY_ACCOUNTS_ORDER_DETAILS:
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        if (appLinkData != null && !TextUtils.isEmpty(appLinkData.toString())) {
+                            Parameter params = new Gson().fromJson(appLinkData.toString(), Parameter.class);
+                            deepLinkToOrderDetails(params);
+                        }
+                    }, AppConstant.DELAY_100_MS);
+                    break;
             }
         }
 
@@ -417,6 +429,19 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         params.addRule(RelativeLayout.ALIGN_END, RelativeLayout.TRUE);
         params.addRule(RelativeLayout.ALIGN_BOTTOM, RelativeLayout.TRUE);
         notificationBadgeOne.setLayoutParams(params);
+    }
+
+    private void deepLinkToOrderDetails(Parameter params) {
+        if (SessionUtilities.getInstance().isUserAuthenticated()) {
+            if (INDEX_ACCOUNT != getBottomNavigationById().getCurrentItem()) {
+                getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
+                switchTab(INDEX_ACCOUNT);
+            }
+            pushFragment(new MyOrdersAccountFragment());
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                pushFragment(OrderDetailsFragment.Companion.getInstance(params));
+            }, AppConstant.DELAY_100_MS);
+        }
     }
 
     @Override
@@ -1014,6 +1039,34 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         permissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        // This flow is only when app is in foreground.
+        if (intent.getExtras() == null || TextUtils.isEmpty(intent.getExtras().getString(AppConstant.Keys.EXTRA_NOTIFICATION_FEATURE))) {
+            return;
+        }
+
+        String featureName = intent.getExtras().getString(AppConstant.Keys.EXTRA_NOTIFICATION_FEATURE);
+        switch (featureName) {
+            // Feature name is Order Details for Push Notification. And app is in foreground.
+            case DP_LINKING_MY_ACCOUNTS_ORDER_DETAILS:
+                String parameters = intent.getExtras().getString(AppConstant.Keys.EXTRA_NOTIFICATION_PARAMETERS);
+                if (!TextUtils.isEmpty(parameters)) {
+                    Parameter params = new Gson().fromJson(parameters, Parameter.class);
+                    deepLinkToOrderDetails(params);
+                }
+
+                break;
+            //  Old way to navigate Deeplinking flows.
+            default:
+                mBundle = intent.getExtras();
+                parseDeepLinkData();
+                renderUI();
+                break;
+        }
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -1023,7 +1076,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         // Navigate from shopping list detail activity
         switch (requestCode) {
             case PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE:
-                if (resultCode == PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE){
+                if (resultCode == PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE) {
                     SearchResultFragment searchResultFragment = new SearchResultFragment();
                     Bundle bundle = new Bundle();
                     bundle.putString(MY_LIST_SEARCH_TERM, data.getStringExtra(MY_LIST_LIST_NAME));
