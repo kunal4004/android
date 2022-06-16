@@ -167,15 +167,23 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     selectedDeliveryAddressType = savedAddress?.addressType
                     if (savedAddress != null) {
                         selectedAddress.savedAddress = savedAddress
-                        var provinceName: String? = ""
-                        provinceName = getProvinceName(savedAddress.region)
-                        if (!provinceName.isNullOrEmpty()) {
-                            selectedAddress?.provinceName = provinceName
-                        } else {
-                            savedAddress?.region?.let {
-                                selectedAddress?.provinceName = it
-                            }
+                        if (!savedAddress?.city.isNullOrEmpty()) {
+                            selectedAddress?.provinceName = savedAddress.city!!
                         }
+                        else {
+                            var provinceName: String? = ""
+                            provinceName = getProvinceName(savedAddress.region)
+                            if (!provinceName.isNullOrEmpty()) {
+                                selectedAddress?.provinceName = provinceName
+                            }
+                            else {
+                                savedAddress?.region?.let {
+                                    selectedAddress?.provinceName = it
+                                }
+                            }
+
+                        }
+
                     }
                     setHasOptionsMenu(true)
                 }
@@ -386,7 +394,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                         Place.Field.ADDRESS_COMPONENTS
                     )
                     val request =
-                        placeFields.let { FetchPlaceRequest.builder(placeId, it).build() }
+                        placeFields.let { FetchPlaceRequest.builder(placeId, it).setSessionToken(item?.token).build() }
                     request.let { placeRequest ->
                         placesClient.fetchPlace(placeRequest)
                             .addOnSuccessListener { response ->
