@@ -14,8 +14,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/ten_dp">
+            android:layout_height="wrap_content">
 
             <include
                 android:id="@+id/deliveryCollectionDetailsConstraintLayout"
@@ -33,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/ten_dp"
                 android:visibility="gone"
-                tools:visibility="visible" />
+                tools:visibility="visible"/>
 
             <include
                 android:id="@+id/otherOrderDetailsConstraintLayout"
@@ -43,7 +42,7 @@
                 android:layout_marginTop="@dimen/ten_dp"
                 android:visibility="gone"
                 tools:visibility="visible"
-                app:layout_constraintTop_toBottomOf="@id/deliveryCollectionDetailsConstraintLayout"/>
+                app:layout_constraintTop_toBottomOf="@id/dashDeliveryConstraintLayout"/>
 
             <include
                 android:id="@+id/dashOrderDetailsLayout"

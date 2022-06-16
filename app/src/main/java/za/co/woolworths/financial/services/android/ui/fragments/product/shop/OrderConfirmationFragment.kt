@@ -125,7 +125,6 @@ class OrderConfirmationFragment : Fragment() {
         context?.let {
             when (Delivery.getType(response?.orderSummary?.fulfillmentDetails?.deliveryType)) {
                 Delivery.CNC -> {
-                    //resetColorSelectionLayout()
                     deliveryCollectionDetailsConstraintLayout.visibility = VISIBLE
                     deliveryOrderDetailsLayout.visibility = VISIBLE
                     optionImage.background =
@@ -136,7 +135,6 @@ class OrderConfirmationFragment : Fragment() {
                         response?.orderSummary?.fulfillmentDetails?.storeName?.let { convertToTitleCase(it) } ?: ""
                 }
                 Delivery.STANDARD -> {
-                    //resetColorSelectionLayout()
                     deliveryCollectionDetailsConstraintLayout.visibility = VISIBLE
                     deliveryOrderDetailsLayout.visibility = VISIBLE
                     optionImage?.background =
@@ -147,12 +145,16 @@ class OrderConfirmationFragment : Fragment() {
                         response?.orderSummary?.fulfillmentDetails?.address?.address1?.let { convertToTitleCase(it) } ?: ""
                 }
                 Delivery.DASH -> {
-                    //resetColorSelectionLayoutDash()
                     dashDeliveryConstraintLayout.visibility = VISIBLE
                     deliveryOrderDetailsLayout.visibility = GONE
                     dashOrderDetailsLayout.visibility = VISIBLE
-
-                    optionLocationTitle.text = response?.orderSummary?.fulfillmentDetails?.address?.address1?.let { convertToTitleCase(it) } ?: ""
+                    val dashLocation = response?.orderSummary?.fulfillmentDetails?.address?.address1?.let { convertToTitleCase(it) }
+                            ?: ""
+                    val dashAddressName =
+                            SpannableString(
+                                    "$dashLocation " + requireContext().getString(R.string.bullet) + "" + dashLocation + " "
+                            )
+                    optionLocationTitle.text = dashAddressName
 
                     dashFoodDeliveryDateTimeTextView?.text = applyBoldBeforeComma(
                             response
@@ -164,7 +166,6 @@ class OrderConfirmationFragment : Fragment() {
                                 null
                         )
                     }
-
                 }
             }
 
@@ -187,23 +188,6 @@ class OrderConfirmationFragment : Fragment() {
             }
         }
     }
-
-    private fun resetColorSelectionLayout() {
-        (otherOrderDetailsConstraintLayout?.layoutParams as ConstraintLayout.LayoutParams).let {
-            it.topToBottom = R.id.deliveryCollectionDetailsConstraintLayout
-            deliveryCollectionDetailsConstraintLayout?.layoutParams = it
-        }
-    }
-
-    private fun resetColorSelectionLayoutDash() {
-        (otherOrderDetailsConstraintLayout?.layoutParams as ConstraintLayout.LayoutParams).let {
-            it.topToBottom = R.id.dashDeliveryConstraintLayout
-            dashDeliveryConstraintLayout?.layoutParams = it
-        }
-    }
-
-
-
     private fun setupOrderTotalDetails(response: SubmittedOrderResponse?) {
 
         otherOrderDetailsConstraintLayout?.visibility = VISIBLE
@@ -244,6 +228,7 @@ class OrderConfirmationFragment : Fragment() {
         when (Delivery.getType(response?.orderSummary?.fulfillmentDetails?.deliveryType)) {
             Delivery.STANDARD -> {
                 driverTipLinearLayout.visibility = GONE
+                driverTipSeparator.visibility = GONE
 
                 val companyDiscount = response?.orderSummary?.discountDetails?.companyDiscount
                 if (companyDiscount != null && companyDiscount > 0) {
@@ -263,6 +248,7 @@ class OrderConfirmationFragment : Fragment() {
             }
             Delivery.CNC -> {
                 driverTipLinearLayout.visibility = GONE
+                driverTipSeparator.visibility = GONE
 
                 val companyDiscount = response?.orderSummary?.discountDetails?.companyDiscount
                 if (companyDiscount != null && companyDiscount > 0) {
@@ -282,7 +268,9 @@ class OrderConfirmationFragment : Fragment() {
             }
             Delivery.DASH -> {
                 companyDiscountLinearLayout.visibility = GONE
+                companyDiscountSeparator?.visibility = GONE
                 wRewardsVouchersLinearLayout.visibility = GONE
+                wRewardsVouchersSeparator
                 deliveryFeeTextView?.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(response?.deliveryDetails?.shippingAmount)
                 driverTipTextView.text = CurrencyFormatter
                         .formatAmountToRandAndCentWithSpace(0.00)
