@@ -30,6 +30,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.adapters.OrderDetailsAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.shop.helpandsupport.HelpAndSupportFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.util.AppConstant
@@ -55,7 +56,6 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
     private var order: Order? = null
     private var orderDetailsResponse: OrderDetailsResponse? = null
     var isNavigatedFromMyAccounts: Boolean = false
-    private var orderText: String = ""
     private var mBottomNavigator: BottomNavigator? = null
 
 
@@ -70,7 +70,6 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         super.onCreate(savedInstanceState)
         arguments?.let {
             order = Utils.jsonStringToObject(it.getString("order"), Order::class.java) as Order?
-            orderText = getString(R.string.order_page_title_prefix) + order?.orderId
             isNavigatedFromMyAccounts = it.getBoolean(AppConstant.NAVIGATED_FROM_MY_ACCOUNTS, false)
         }
     }
@@ -101,12 +100,18 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         mBottomNavigator?.apply {
             removeToolbar()
         }
-        toolbarText?.text = orderText
+        tvSelectAll?.visibility = View.VISIBLE
+        tvSelectAll?.text = getString(R.string.dash_help)
         btnBack?.setOnClickListener { activity?.onBackPressed() }
         orderDetails.layoutManager = LinearLayoutManager(activity)
         orderItemsBtn.setOnClickListener {
             (activity as? BottomNavigationActivity)?.pushFragment(
                 AddOrderToCartFragment.getInstance(orderDetailsResponse!!, order)
+            )
+        }
+        tvSelectAll.setOnClickListener {
+            (activity as? BottomNavigationActivity)?.pushFragment(
+                HelpAndSupportFragment.newInstance()
             )
         }
         order?.orderId?.let { orderId -> requestOrderDetails(orderId) }
@@ -153,13 +158,22 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         val dataList = arrayListOf<OrderDetailsItem>()
 
         dataList.add(OrderDetailsItem(ordersResponse, OrderDetailsItem.ViewType.ORDER_STATUS))
+
         order?.apply {
             if (taxNoteNumbers.isNotEmpty())
                 dataList.add(OrderDetailsItem(null, OrderDetailsItem.ViewType.VIEW_TAX_INVOICE))
             if (orderCancellable && !requestCancellation)
                 dataList.add(OrderDetailsItem(null, OrderDetailsItem.ViewType.CANCEL_ORDER))
+            if (ordersResponse.orderSummary?.isChatEnabled == true)
+                dataList.add(OrderDetailsItem(ordersResponse,
+                    OrderDetailsItem.ViewType.CHAT_VIEW))
+            if (ordersResponse.orderSummary?.isDriverTrackingEnabled == true)
+                dataList.add(OrderDetailsItem(null,
+                    OrderDetailsItem.ViewType.TRACK_ORDER))
         }
         dataList.add(OrderDetailsItem(null, OrderDetailsItem.ViewType.ADD_TO_LIST_LAYOUT))
+        dataList.add(OrderDetailsItem(ordersResponse, OrderDetailsItem.ViewType.ORDER_TOTAL))
+
         val itemsObject = JSONObject(Gson().toJson(ordersResponse.items))
         val keys = itemsObject.keys()
         while ((keys.hasNext())) {
@@ -255,7 +269,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
 
         // Move to shop tab.
         if (!(getActivity() is BottomNavigationActivity)) {
-            return;
+            return
         }
         val bottomNavigationActivity = activity as BottomNavigationActivity
         bottomNavigationActivity.bottomNavigationById.currentItem =
@@ -319,6 +333,14 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
                     .show(this, CancelOrderConfirmationDialogFragment::class.java.simpleName)
             }
         }
+    }
+
+    override fun onOpenChatScreen() {
+        //TODO: open chat screen
+    }
+
+    override fun onOpenTrackOrderScreen() {
+        //TODO: open track order screen
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

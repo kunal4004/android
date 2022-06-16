@@ -114,6 +114,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.contact_us.Conta
 import za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.SetUpDeliveryNowDialog;
 import za.co.woolworths.financial.services.android.ui.fragments.help.HelpSectionFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.mypreferences.MyPreferencesFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shop.MyListsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersAccountFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.views.NotificationBadge;
@@ -250,7 +251,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         Activity activity = getActivity();
         if (activity == null) return;
         myAccountsFragmentViewModel = new ViewModelProvider(requireActivity()).get(MyAccountsFragmentViewModel.class);
-        myAccountsPresenter =  myAccountsFragmentViewModel.getAccountPresenter(mAccountResponse);
+        myAccountsPresenter = myAccountsFragmentViewModel.getAccountPresenter(mAccountResponse);
         JWTDecodedModel jwtDecodedModel = SessionUtilities.getInstance().getJwt();
         Map<String, String> arguments = new HashMap<>();
         arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
@@ -325,6 +326,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             SwipeRefreshLayout mSwipeToRefreshAccount = view.findViewById(R.id.swipeToRefreshAccount);
             imgCreditCardLayout = view.findViewById(R.id.imgCreditCardLayout);
             RelativeLayout myOrdersRelativeLayout = view.findViewById(R.id.myOrdersRelativeLayout);
+            RelativeLayout myShoppingListRelativeLayout = view.findViewById(R.id.myShoppingListRelativeLayout);
             chatWithAgentFloatingButton = view.findViewById(R.id.chatBubbleFloatingButton);
             onlineIndicatorImageView = view.findViewById(R.id.onlineIndicatorImageView);
             notificationBadge = view.findViewById(R.id.badge);
@@ -366,6 +368,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             helpSectionRelativeLayout.setOnClickListener(this);
             storeLocatorRelativeLayout.setOnClickListener(this);
             myOrdersRelativeLayout.setOnClickListener(this);
+            myShoppingListRelativeLayout.setOnClickListener(this);
             creditReportView.setOnClickListener(this);
             viewApplicationStatusRelativeLayout.setOnClickListener(this);
 
@@ -472,10 +475,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 onDeepLinkedProductTap(linkedPersonalCardView, applyPersonalCardView);
                 break;
         }
-        try{
+        try {
             setArguments(null);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             FirebaseManager.logException(e);
         }
         deepLinkParams = null;
@@ -536,7 +538,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         super.onResume();
         Activity activity = getActivity();
         if (activity == null) return;
-        Utils.setScreenName( FirebaseManagerAnalyticsProperties.ScreenNames.MY_ACCOUNTS);
+        Utils.setScreenName(FirebaseManagerAnalyticsProperties.ScreenNames.MY_ACCOUNTS);
         isActivityInForeground = true;
         if (!AppInstanceObject.biometricWalkthroughIsPresented(activity))
             messageCounterRequest();
@@ -915,6 +917,10 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             Activity activity = getActivity();
             if (activity == null || mUpdateMyAccount.accountUpdateActive()) return;
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSIGNIN, activity);
+            /* clear all cnc and dash browsing data when user login*/
+            WoolworthsApplication.setCncBrowsingValidatePlaceDetails(null);
+            WoolworthsApplication.setDashBrowsingValidatePlaceDetails(null);
+            KotlinUtils.setBrowsingCncStore(null);
             ScreenManager.presentSSOSignin(getActivity());
         }
     };
@@ -945,7 +951,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         if (activity == null || mUpdateMyAccount.accountUpdateActive()) return;
         switch (v.getId()) {
             case R.id.viewApplicationStatusRelativeLayout:
-                myAccountsPresenter.viewApplicationStatusLinkInExternalBrowser(MyAccountSection.AccountLanding.INSTANCE,activity);
+                myAccountsPresenter.viewApplicationStatusLinkInExternalBrowser(MyAccountSection.AccountLanding.INSTANCE, activity);
                 break;
 
             case R.id.openMessageActivity:
@@ -1054,6 +1060,19 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 }
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Acc_My_Orders, activity);
                 break;
+
+            case R.id.myShoppingListRelativeLayout:
+                MyListsFragment fragment = new MyListsFragment();
+                if (activity instanceof BottomNavigationActivity) {
+                    if (getBottomNavigationActivity() != null)
+                        getBottomNavigationActivity().pushFragment(fragment);
+                } else {
+                    if (activity instanceof MyAccountActivity) {
+                        ((MyAccountActivity) activity).replaceFragment(fragment);
+                    }
+                }
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS, activity);
+                break;
             case R.id.creditReport:
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Myaccounts_creditview, activity);
                 startActivity(new Intent(getActivity(), CreditReportTUActivity.class));
@@ -1139,21 +1158,22 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         }
     }
 
-    public static void updateLinkedDevices(){
+    public static void updateLinkedDevices() {
         if (SessionUtilities.getInstance().isUserAuthenticated()) {
             OneAppService.INSTANCE.getAllLinkedDevices(true).enqueue(
                     new CompletionHandler(new IResponseListener<ViewAllLinkedDeviceResponse>() {
-                @Override
-                public void onFailure(@org.jetbrains.annotations.Nullable Throwable error) {
-                    //do nothing
-                }
+                        @Override
+                        public void onFailure(@org.jetbrains.annotations.Nullable Throwable error) {
+                            //do nothing
+                        }
 
-                @Override
-                public void onSuccess(@org.jetbrains.annotations.Nullable ViewAllLinkedDeviceResponse response) {
-                    if(response !=null && response.getUserDevices() != null ){
-                        new AppStateRepository().saveLinkedDevices(response.getUserDevices());
-                    }
-                }}, ViewAllLinkedDeviceResponse.class)
+                        @Override
+                        public void onSuccess(@org.jetbrains.annotations.Nullable ViewAllLinkedDeviceResponse response) {
+                            if (response != null && response.getUserDevices() != null) {
+                                new AppStateRepository().saveLinkedDevices(response.getUserDevices());
+                            }
+                        }
+                    }, ViewAllLinkedDeviceResponse.class)
             );
         }
     }
@@ -1461,11 +1481,11 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     private void displayViewApplicationStatus() {
-        myAccountsPresenter =  myAccountsFragmentViewModel.getAccountPresenter(mAccountResponse);
+        myAccountsPresenter = myAccountsFragmentViewModel.getAccountPresenter(mAccountResponse);
         ViewGroup.LayoutParams params = applyNowSpacingView.getLayoutParams();
         if (myAccountsPresenter != null && myAccountsPresenter.isViewApplicationStatusVisible()) {
             viewApplicationStatusVisibility(params, View.VISIBLE, 1);
-        }else {
+        } else {
             viewApplicationStatusVisibility(params, View.GONE, 16);
         }
         applyNowSpacingView.requestLayout();
@@ -1808,7 +1828,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     @Override
-    public void onPromptDismiss() {
+    public void onPromptDismiss(WMaterialShowcaseView.Feature feature) {
         if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity() != null && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
             try {
                 showSetUpDeliveryPopUp();
@@ -1905,7 +1925,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             else
                 act = (MyAccountActivity) activity;
 
-            inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(act, new ChatBubbleVisibility(mAccountResponse.accountList, activity), chatWithAgentFloatingButton, ApplyNowState.STORE_CARD, mScrollView,notificationBadge,onlineIndicatorImageView, VocTriggerEvent.CHAT_SC_MYACCOUNTS);
+            inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(act, new ChatBubbleVisibility(mAccountResponse.accountList, activity), chatWithAgentFloatingButton, ApplyNowState.STORE_CARD, mScrollView, notificationBadge, onlineIndicatorImageView, VocTriggerEvent.CHAT_SC_MYACCOUNTS);
             inAppChatTipAcknowledgement.build();
         }
     }
@@ -2029,14 +2049,15 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     }
 
-    private Account getCCAccount(ArrayList<Account> accountsList){
-        for (Account account:accountsList) {
-            if (account.productGroupCode.equalsIgnoreCase(String.valueOf(ProductGroupCode.CC))){
+    private Account getCCAccount(ArrayList<Account> accountsList) {
+        for (Account account : accountsList) {
+            if (account.productGroupCode.equalsIgnoreCase(String.valueOf(ProductGroupCode.CC))) {
                 return account;
             }
         }
         return null;
     }
+
     @Override
     public void executeCreditCardDeliveryStatusService() {
         Account account = getCCAccount(mAccountResponse.accountList);

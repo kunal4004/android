@@ -88,7 +88,7 @@ class ChanelHeaderBannerItemCellViewHolder(itemView: View) :
 
     private fun setPromotionalText(productList: ProductList?) = with(itemView) {
         if (productList?.promotionsList?.isEmpty() == false) {
-            productList?.promotionsList.forEachIndexed { i, it ->
+            productList?.promotionsList!!.forEachIndexed { i, it ->
                 var editedPromotionalText: String? = it.promotionalText
                 if (it.promotionalText?.contains(":") == true) {
                     val beforeColon: String? = it.promotionalText?.substringBefore(":")
@@ -98,7 +98,7 @@ class ChanelHeaderBannerItemCellViewHolder(itemView: View) :
                 when (i) {
                     0 -> {
                         onlinePromotionalTextView1?.visibility = View.VISIBLE
-                        val promotionsListCount = productList?.promotionsList.size
+                        val promotionsListCount = productList?.promotionsList!!.size
                         onlinePromotionalTextView1?.text = Html.fromHtml(editedPromotionalText)
                         if (promotionsListCount == 1) {
                             onlinePromotionalTextView1?.maxLines = 2

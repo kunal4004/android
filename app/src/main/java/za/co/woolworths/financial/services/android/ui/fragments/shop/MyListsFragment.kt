@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -25,7 +27,9 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListsRespo
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.adapters.ViewShoppingListAdapter
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.util.*
@@ -36,43 +40,71 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     private var mGetShoppingListRequest: Call<ShoppingListsResponse>? = null
     private var isMyListsFragmentVisible: Boolean = false
     private var isFragmentVisible: Boolean = false
-    private var parentFragment: ShopFragment? = null
+    private var shoppingListsResponse: ShoppingListsResponse? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    private var mBottomNavigator: BottomNavigator? = null
+
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is BottomNavigationActivity)
+            mBottomNavigator = context
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View? {
         return inflater.inflate(R.layout.shopping_list_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (isFragmentVisible) {
-            initUI()
-            authenticateUser(false)
-            setListener()
+        initUI()
+        authenticateUser(true)
+        setListener()
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            setupToolbar()
+            getShoppingList(false)
         }
     }
 
     private fun initUI() {
+        setupToolbar()
         activity?.let {
             val itemDecorator = DividerItemDecoration(it, DividerItemDecoration.VERTICAL)
-            ContextCompat.getDrawable(it, R.drawable.divider)?.let { it1 -> itemDecorator.setDrawable(it1) }
-            rcvShoppingLists.addItemDecoration(itemDecorator)
-            rcvShoppingLists.layoutManager = LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false)
+            ContextCompat.getDrawable(it, R.drawable.divider)
+                ?.let { it1 -> itemDecorator.setDrawable(it1) }
+            rcvShoppingLists?.addItemDecoration(itemDecorator)
+            rcvShoppingLists?.layoutManager =
+                LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false)
             mAddToShoppingListAdapter = ViewShoppingListAdapter(mutableListOf(), this)
-            rcvShoppingLists.adapter = mAddToShoppingListAdapter
+            rcvShoppingLists?.adapter = mAddToShoppingListAdapter
+        }
+    }
+
+    private fun setupToolbar() {
+        mBottomNavigator?.apply {
+            setTitle(bindString(R.string.my_lists))
+            displayToolbar()
+            showBackNavigationIcon(true)
         }
     }
 
     private fun setListener() {
-        locationSelectedLayout.setOnClickListener(this)
-        btnGoToProduct.setOnClickListener(this)
-        rlCreateAList.setOnClickListener(this)
-        btnRetry.setOnClickListener(this)
-        rlDeliveryLocationLayout.setOnClickListener(this)
-        swipeToRefresh.setOnRefreshListener { getShoppingList(true) }
+        locationSelectedLayout?.setOnClickListener(this)
+        btnGoToProduct?.setOnClickListener(this)
+        rlCreateAList?.setOnClickListener(this)
+        btnRetry?.setOnClickListener(this)
+        rlDeliveryLocationLayout?.setOnClickListener(this)
+        swipeToRefresh?.setOnRefreshListener { getShoppingList(true) }
     }
 
-    private fun getShoppingList(isPullToRefresh: Boolean) {
+     fun getShoppingList(isPullToRefresh: Boolean) {
         if (isPullToRefresh) swipeToRefresh.isRefreshing = true else loadShoppingList(true)
         noNetworkConnectionLayout(false)
         mGetShoppingListRequest = OneAppService.getShoppingLists().apply {
@@ -82,24 +114,29 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
                         response?.apply {
                             when (httpCode) {
                                 200 -> {
-                                    parentFragment?.setShoppingListResponseData(response)
+                                    shoppingListsResponse = response
                                     bindShoppingListToUI()
                                 }
                                 440 -> {
-                                    parentFragment?.clearCachedData()
+                                    shoppingListsResponse = null
                                     mAddToShoppingListAdapter?.notifyDataSetChanged()
-                                    SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
+                                    SessionUtilities.getInstance()
+                                        .setSessionState(SessionDao.SESSION_STATE.INACTIVE)
                                     showSignOutView()
                                     QueryBadgeCounter.instance.clearBadge()
                                     if (isFragmentVisible)
-                                        activity?.let { SessionExpiredUtilities.getInstance().showSessionExpireDialog(it as? AppCompatActivity?) }
+                                        activity?.let {
+                                            SessionExpiredUtilities.getInstance()
+                                                .showSessionExpireDialog(it as? AppCompatActivity?)
+                                        }
                                 }
                                 else -> {
                                     loadShoppingList(false)
                                     showErrorDialog(this.response?.desc!!)
                                 }
                             }
-                            if (isPullToRefresh) swipeToRefresh.isRefreshing = false else loadShoppingList(false)
+                            if (isPullToRefresh) swipeToRefresh.isRefreshing =
+                                false else loadShoppingList(false)
                         }
                     }
                 }
@@ -107,7 +144,8 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
                 override fun onFailure(error: Throwable?) {
                     activity?.let {
                         it.runOnUiThread {
-                            if (isPullToRefresh) swipeToRefresh.isRefreshing = false else loadShoppingList(false)
+                            if (isPullToRefresh) swipeToRefresh.isRefreshing =
+                                false else loadShoppingList(false)
                             loadShoppingList(false)
                             noNetworkConnectionLayout(true)
                         }
@@ -118,14 +156,15 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     }
 
     private fun bindShoppingListToUI() {
-        val shoppingList: MutableList<ShoppingList> = parentFragment?.getShoppingListResponseData()?.lists
-                ?: mutableListOf()
-        shoppingList.let {
+        val shoppingList: MutableList<ShoppingList> = shoppingListsResponse?.lists
+            ?: mutableListOf()
+        shoppingList?.let {
             when (it.size) {
                 0 -> showEmptyShoppingListView() //no list found
 
                 else -> {
                     rlCreateAList?.visibility = VISIBLE
+                    clSignOutTemplate?.visibility = GONE
                     mAddToShoppingListAdapter?.setShoppingList(shoppingList)
                     mAddToShoppingListAdapter?.notifyDataSetChanged()
                 }
@@ -146,15 +185,22 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
 
     private fun setYourDeliveryLocation() {
         Utils.getPreferredDeliveryLocation()?.apply {
-            rightArrowDelivery?.visibility = GONE
-            editLocation?.visibility = VISIBLE
             activity?.let {
-                KotlinUtils.setDeliveryAddressView(it, this, tvDeliveringTo, tvDeliveryLocation, deliverLocationIcon)
+                KotlinUtils.setDeliveryAddressView(it,
+                    this.fulfillmentDetails,
+                    tvDeliveringTo,
+                    tvDeliveryLocation,
+                    deliverLocationIcon)
             }
-            iconCaretRight?.visibility = GONE
-            editDeliveryLocation?.visibility = VISIBLE
+        }
+
+        Utils.getPreferredDeliveryLocation()?.apply {
             activity?.let {
-                KotlinUtils.setDeliveryAddressView(it, this, tvDeliveringEmptyTo, tvDeliveryEmptyLocation, truckIcon)
+                KotlinUtils.setDeliveryAddressView(it,
+                    this.fulfillmentDetails,
+                    tvDeliveringEmptyTo,
+                    tvDeliveryEmptyLocation,
+                    truckIcon)
             }
         }
     }
@@ -179,7 +225,10 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
             }
 
             R.id.rlCreateAList -> {
-                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_MY_LIST_NEW_LIST, this) }
+                activity?.apply {
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_MY_LIST_NEW_LIST,
+                        this)
+                }
                 navigateToCreateListFragment(mutableListOf())
             }
         }
@@ -199,8 +248,18 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     }
 
     private fun showEmptyShoppingListView() {
-        clSignOutTemplate.visibility = VISIBLE
-        imEmptyIcon.setImageResource(R.drawable.emptylists)
+        rlCreateAList?.visibility = GONE
+        clSignOutTemplate?.visibility = VISIBLE
+        Utils.getPreferredDeliveryLocation()?.apply {
+            activity?.let {
+                KotlinUtils.setDeliveryAddressView(it,
+                    this.fulfillmentDetails,
+                    tvDeliveringEmptyTo,
+                    tvDeliveryEmptyLocation,
+                    truckIcon)
+            }
+        }
+        imEmptyIcon.setImageResource(R.drawable.empty_list_icon)
         imEmptyIcon.alpha = 1.0f
         txtEmptyStateTitle.text = getString(R.string.title_no_shopping_lists)
         txtEmptyStateDesc.text = getString(R.string.description_no_shopping_lists)
@@ -226,10 +285,9 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     }
 
     fun authenticateUser(isNewSession: Boolean) {
-        parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         hideEmptyOverlay()
         if (SessionUtilities.getInstance().isUserAuthenticated) {
-            parentFragment?.clearCachedData()
+            shoppingListsResponse = null
             getShoppingList(isNewSession)
         } else {
             showSignOutView()
@@ -252,12 +310,13 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
 
     private fun deleteShoppingListItem(shoppingList: ShoppingList) {
         val deleteShoppingList = OneAppService.deleteShoppingList(shoppingList.listId)
-        deleteShoppingList.enqueue(CompletionHandler(object : IResponseListener<ShoppingListsResponse> {
-            override fun onSuccess(shoppingListsResponse: ShoppingListsResponse?) {
-                shoppingListsResponse?.apply {
+        deleteShoppingList.enqueue(CompletionHandler(object :
+            IResponseListener<ShoppingListsResponse> {
+            override fun onSuccess(response: ShoppingListsResponse?) {
+                response?.apply {
                     when (httpCode) {
                         200 -> {
-                            parentFragment?.setShoppingListResponseData(this)
+                            shoppingListsResponse = this
                             if (mAddToShoppingListAdapter?.getShoppingList()?.size == 0)
                                 showEmptyShoppingListView()
                         }
@@ -284,7 +343,12 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     }
 
     override fun onShoppingListItemSelected(shoppingList: ShoppingList) {
-        activity?.let { ScreenManager.presentShoppingListDetailActivity(it, shoppingList.listId, shoppingList.listName, true) }
+        activity?.let {
+            ScreenManager.presentShoppingListDetailActivity(it,
+                shoppingList.listId,
+                shoppingList.listName,
+                true)
+        }
     }
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {

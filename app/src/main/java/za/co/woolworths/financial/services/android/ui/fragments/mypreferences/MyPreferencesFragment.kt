@@ -19,7 +19,6 @@ import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
 import kotlinx.android.synthetic.main.fragment_my_preferences.*
-import kotlinx.android.synthetic.main.link_card_fragment.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -33,7 +32,7 @@ import za.co.woolworths.financial.services.android.models.repository.AppStateRep
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDeliveryFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS
@@ -458,7 +457,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                 )
             }
         } else {
-            ScreenManager.presentSSOSignin(activity, DepartmentsFragment.DEPARTMENT_LOGIN_REQUEST)
+            ScreenManager.presentSSOSignin(activity, StandardDeliveryFragment.DEPARTMENT_LOGIN_REQUEST)
         }
 
     }
@@ -478,7 +477,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         deliverLocationIcon.setBackgroundResource(R.drawable.tick_cli_active)
         shoppingDeliveryLocation?.let {
             setDeliveryAddressView(activity,
-                shoppingDeliveryLocation,
+                shoppingDeliveryLocation.fulfillmentDetails,
                 tvDeliveringTo,
                 tvDeliveryLocation,
                 null)

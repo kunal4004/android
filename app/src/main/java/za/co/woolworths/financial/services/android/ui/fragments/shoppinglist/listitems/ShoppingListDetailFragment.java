@@ -201,7 +201,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         editButtonVisibility();
         view.findViewById(R.id.btnRetry).setOnClickListener(this);
         EmptyCartView emptyCartView = new EmptyCartView(view, this);
-        emptyCartView.setView(getString(R.string.title_empty_shopping_list), getString(R.string.description_empty_shopping_list), getString(R.string.button_empty_shopping_list), R.drawable.emptyshoppinglist);
+        emptyCartView.setView(getString(R.string.title_empty_shopping_list), getString(R.string.description_empty_shopping_list), getString(R.string.button_empty_shopping_list), R.drawable.empty_list_icon);
 
         // Show Bottom Navigation Menu
         Activity activity = getActivity();
@@ -1026,17 +1026,17 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         Activity activity = getActivity();
         if (activity == null) return;
         KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
-                activity, resultCode, null, null, false, false, null, null, null);
+                activity, resultCode, null, null, false,false, false, null, null, null);
     }
 
     private void startActivityToSelectDeliveryLocation(boolean addItemToCartOnFinished) {
         if (getActivity() != null) {
             if (addItemToCartOnFinished) {
                 KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
-                        getActivity(), REQUEST_SUBURB_CHANGE, null, null, false, false, null, null, null);
+                        getActivity(), REQUEST_SUBURB_CHANGE, null, null, false, false, false, null, null, null);
             } else {
                 KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
-                        getActivity(), 0, null, null, false, false , null, null, null );
+                        getActivity(), 0, null, null, false,false, false , null, null, null );
             }
             getActivity().overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
         }
@@ -1115,7 +1115,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     public Call<SkusInventoryForStoreResponse> getInventoryStockForStore(String storeId, String multiSku) {
         setInternetConnectionWasLost(false);
 
-        Call<SkusInventoryForStoreResponse> skusInventoryForStoreResponseCall = OneAppService.INSTANCE.getInventorySkuForStore(storeId, multiSku);
+        Call<SkusInventoryForStoreResponse> skusInventoryForStoreResponseCall = OneAppService.INSTANCE.getInventorySkuForStore(storeId, multiSku, false);
         skusInventoryForStoreResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<SkusInventoryForStoreResponse>() {
             @Override
             public void onSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse) {
@@ -1233,6 +1233,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
                 REQUEST_SUBURB_CHANGE,
                 KotlinUtils.Companion.getPreferredDeliveryType(),
                 GeoUtils.Companion.getPlaceId(),
+                false,
                 false,
                 false,
                 null,

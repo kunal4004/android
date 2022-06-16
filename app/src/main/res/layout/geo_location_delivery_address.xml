@@ -1,52 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
-
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineEnd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="@dimen/_16sdp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineStart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="@dimen/_16sdp" />
-
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineBottom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_end="@dimen/_16sdp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineTop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="@dimen/_10sdp" />
-
-    <Button
-        android:id="@+id/btnConfirmAddress"
-        style="@style/blackButtonStyle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@color/black"
-        android:fontFamily="@font/futura_semi_bold"
-        android:text="@string/confirm"
-        app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
-
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imgDelBack"
@@ -59,205 +17,172 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_back_black" />
 
+    <include
+        android:id="@+id/connectionLayout"
+        layout="@layout/no_connection"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/deliveryBagIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/productsAvailableTitle"
+        android:layout_marginBottom="@dimen/ten_dp"
+        app:layout_constraintBottom_toTopOf="@id/changeFulfillmentTitleTextView"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toTopOf="@id/geoCollectTab"
-        app:srcCompat="@drawable/ic_delivery_geo_circle" />
+        app:srcCompat="@drawable/img_delivery_truck" />
 
+    <TextView
+        android:id="@+id/changeFulfillmentTitleTextView"
+        style="@style/futura_semi_bold_black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ten_dp"
+        android:layout_marginBottom="@dimen/ten_dp"
+        android:text="@string/standard_delivery"
+        android:textSize="@dimen/twenty_sp"
+        app:layout_constraintBottom_toTopOf="@id/changeFulfillmentSubTitleTextView"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
+
+    <TextView
+        android:id="@+id/changeFulfillmentSubTitleTextView"
+        style="@style/myriad_pro_regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/thirty_five_dp"
+        android:layout_marginTop="@dimen/ten_dp"
+        android:layout_marginEnd="@dimen/thirty_five_dp"
+        android:layout_marginBottom="@dimen/fourty_dp"
+        android:gravity="center"
+        android:textSize="@dimen/sixteen_sp"
+        app:layout_constraintBottom_toTopOf="@id/geoDeliveryTab"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/geoDeliveryTab"
         android:layout_width="0dp"
         android:layout_height="@dimen/_30sdp"
-        android:layout_marginTop="@dimen/_14sdp"
-        android:layout_marginEnd="@dimen/_5sdp"
         android:background="@drawable/bg_geo_selected_tab"
         android:fontFamily="@font/myriad_pro_regular"
         android:gravity="center"
-        android:maxLines="1"
-        android:paddingStart="@dimen/_5sdp"
-        android:paddingEnd="@dimen/_5sdp"
+        android:maxLines="2"
+        android:paddingStart="@dimen/_4sdp"
+        android:paddingEnd="@dimen/_4sdp"
         android:text="@string/geoloc_delivery"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:textSize="@dimen/_11ssp"
+        android:textSize="@dimen/_10ssp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/geoCollectTab"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@+id/imgDelBack" />
+        app:layout_constraintTop_toBottomOf="@id/imgDelBack" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/geoCollectTab"
         android:layout_width="0dp"
         android:layout_height="@dimen/_30sdp"
-        android:layout_marginStart="@dimen/_5sdp"
-        android:layout_marginTop="@dimen/_14sdp"
+        android:layout_marginStart="@dimen/_4sdp"
         android:background="@drawable/bg_geo_unselected_tab"
         android:fontFamily="@font/myriad_pro_regular"
         android:gravity="center"
         android:maxLines="1"
-        android:paddingStart="@dimen/_5sdp"
-        android:paddingEnd="@dimen/_5sdp"
+        android:paddingStart="@dimen/_4sdp"
+        android:paddingEnd="@dimen/_4sdp"
         android:text="@string/click_collect"
         android:textAllCaps="false"
         android:textColor="@color/color_444444"
-        android:textSize="@dimen/_11ssp"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        android:textSize="@dimen/_10ssp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/geoDashTab"
         app:layout_constraintStart_toEndOf="@+id/geoDeliveryTab"
-        app:layout_constraintTop_toBottomOf="@+id/imgDelBack" />
+        app:layout_constraintTop_toBottomOf="@id/imgDelBack" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/geoDashTab"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_marginStart="@dimen/_4sdp"
+        android:background="@drawable/bg_geo_unselected_tab"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:gravity="center"
+        android:maxLines="1"
+        android:paddingStart="@dimen/_4sdp"
+        android:paddingEnd="@dimen/_4sdp"
+        android:text="@string/dash_delivery"
+        android:textAllCaps="false"
+        android:textColor="@color/color_444444"
+        android:textSize="@dimen/_10ssp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toEndOf="@+id/geoCollectTab"
+        app:layout_constraintTop_toBottomOf="@id/imgDelBack" />
+
+    <TextView
+        android:id="@+id/txtNewFeatureCnC"
+        style="@style/futura_semi_bold"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/sixteen_dp"
+        android:layout_marginTop="@dimen/_24sdp"
+        android:background="@color/color_yellow_FEE600"
+        android:gravity="center"
+        android:paddingStart="@dimen/five_dp"
+        android:paddingEnd="@dimen/five_dp"
+        android:text="@string/food_only"
+        android:textAllCaps="true"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_6ssp"
+        app:layout_constraintEnd_toEndOf="@id/geoCollectTab"
+        app:layout_constraintStart_toStartOf="@id/geoCollectTab"
+        app:layout_constraintTop_toBottomOf="@+id/changeFulfillmentSubTitleTextView" />
 
     <TextView
         android:id="@+id/txtNewFeature"
         style="@style/futura_semi_bold"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/sixteen_dp"
-        android:layout_marginTop="@dimen/_6sdp"
-        android:background="@color/color_4A9521"
+        android:layout_marginTop="@dimen/_24sdp"
+        android:background="@color/color_yellow_FEE600"
         android:gravity="center"
         android:paddingStart="@dimen/five_dp"
         android:paddingEnd="@dimen/five_dp"
         android:text="@string/food_only"
         android:textAllCaps="true"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:textSize="@dimen/_6ssp"
-        app:layout_constraintEnd_toEndOf="@id/geoCollectTab"
-        app:layout_constraintStart_toStartOf="@id/geoCollectTab"
-        app:layout_constraintTop_toBottomOf="@+id/imgDelBack" />
-
-
-    <include
-        android:id="@+id/no_conn_layout"
-        layout="@layout/no_collection_store_fragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toTopOf="@id/guidelineTop" />
-
-
-    <include
-        android:id="@+id/no_loc_layout"
-        layout="@layout/layout_laocation_not_available"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/zero_dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toTopOf="@id/guidelineTop" />
-
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/imgDelIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/_15sdp"
-        app:layout_constraintBottom_toTopOf="@id/btnConfirmAddress"
-        app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
-
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/geoDeliveryText"
-        style="@style/myriad_pro_regular"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_6sdp"
-        android:layout_marginEnd="@dimen/_10sdp"
-        android:layout_marginBottom="@dimen/_17sdp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textColor="@color/color_B3000000"
-        android:textSize="@dimen/_14ssp"
-        app:layout_constraintBottom_toTopOf="@id/btnConfirmAddress"
-        app:layout_constraintEnd_toStartOf="@+id/editDelivery"
-        app:layout_constraintStart_toEndOf="@id/imgDelIcon" />
-
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/editDelivery"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/_22sdp"
-        android:layout_marginBottom="@dimen/_15sdp"
-        android:background="@drawable/bg_change_button"
-        android:fontFamily="@font/futura_semi_bold"
-        android:gravity="center"
-        android:paddingStart="@dimen/_8sdp"
-        android:paddingEnd="@dimen/_8sdp"
-        android:text="@string/edit"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:textSize="@dimen/_10ssp"
-        app:layout_constraintBottom_toTopOf="@id/btnConfirmAddress"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd" />
+        app:layout_constraintEnd_toEndOf="@id/geoDashTab"
+        app:layout_constraintStart_toStartOf="@id/geoDashTab"
+        app:layout_constraintTop_toBottomOf="@+id/changeFulfillmentSubTitleTextView" />
 
     <View
-        android:id="@+id/dividerSpace"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/_15sdp"
-        android:background="@color/white"
-        app:layout_constraintBottom_toTopOf="@id/geoDivider"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
-
-    <View
-        android:id="@+id/geoDivider"
+        android:id="@+id/tabsDivider"
         android:layout_width="0dp"
         android:layout_height="@dimen/_1sdp"
-        android:layout_marginBottom="@dimen/_15sdp"
+        android:layout_marginBottom="@dimen/_24sdp"
         android:background="@color/swatch_border_color"
-        app:layout_constraintBottom_toTopOf="@id/editDelivery"
+        app:layout_constraintBottom_toTopOf="@id/earliestDeliveryDateLabel"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/earliestFashionDeliveryDateLabel"
-        style="@style/myriad_pro_regular"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:minWidth="@dimen/_55sdp"
-        android:text="@string/earliest_fashion_delivery_date"
-        android:textColor="@color/color_666666"
-        android:textSize="@dimen/_13ssp"
-        app:layout_constraintBottom_toTopOf="@id/dividerSpace"
-        app:layout_constraintEnd_toStartOf="@+id/earliestFashionDeliveryDateValue"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/earliestFashionDeliveryDateValue"
-        style="@style/myriad_pro_semi_bold"
-        android:layout_marginStart="@dimen/_10sdp"
-        android:ellipsize="end"
-        android:gravity="end"
-        android:maxLines="1"
-        android:textColor="@color/black"
-        android:textSize="@dimen/_12ssp"
-        app:layout_constraintBottom_toTopOf="@id/dividerSpace"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toEndOf="@id/earliestFashionDeliveryDateLabel" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/earliestDeliveryDateLabel"
         style="@style/myriad_pro_regular"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/_2sdp"
         android:ellipsize="end"
         android:maxLines="1"
         android:minWidth="@dimen/_55sdp"
         android:text="@string/earliest_food_delivery_date"
         android:textColor="@color/color_666666"
         android:textSize="@dimen/_13ssp"
-        app:layout_constraintBottom_toTopOf="@id/earliestFashionDeliveryDateLabel"
+        app:layout_constraintBottom_toTopOf="@+id/earliestFashionDeliveryDateLabel"
         app:layout_constraintEnd_toStartOf="@+id/earliestDeliveryDateValue"
         app:layout_constraintStart_toStartOf="@id/guidelineStart" />
 
@@ -265,107 +190,76 @@
         android:id="@+id/earliestDeliveryDateValue"
         style="@style/myriad_pro_semi_bold"
         android:layout_marginStart="@dimen/_10sdp"
-        android:layout_marginBottom="@dimen/_2sdp"
         android:ellipsize="end"
         android:gravity="end"
         android:maxLines="1"
         android:textColor="@color/black"
         android:textSize="@dimen/_12ssp"
-        app:layout_constraintBottom_toTopOf="@id/earliestFashionDeliveryDateLabel"
+        app:layout_constraintBottom_toTopOf="@+id/earliestFashionDeliveryDateLabel"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toEndOf="@id/earliestDeliveryDateLabel" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/feeLabel"
+        android:id="@+id/earliestFashionDeliveryDateLabel"
         style="@style/myriad_pro_regular"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/_2sdp"
+        android:layout_marginTop="@dimen/_6sdp"
+        android:layout_marginBottom="@dimen/_24sdp"
         android:ellipsize="end"
         android:maxLines="1"
         android:minWidth="@dimen/_55sdp"
-        android:text="@string/geo_delivery_fee"
+        android:text="@string/earliest_fashion_delivery_date"
         android:textColor="@color/color_666666"
         android:textSize="@dimen/_13ssp"
-        app:layout_constraintBottom_toTopOf="@id/earliestDeliveryDateLabel"
-        app:layout_constraintEnd_toStartOf="@+id/feeValue"
+        app:layout_constraintBottom_toTopOf="@+id/geoDivider"
+        app:layout_constraintEnd_toStartOf="@+id/earliestFashionDeliveryDateValue"
         app:layout_constraintStart_toStartOf="@id/guidelineStart" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/feeValue"
+        android:id="@+id/earliestFashionDeliveryDateValue"
         style="@style/myriad_pro_semi_bold"
         android:layout_marginStart="@dimen/_10sdp"
-        android:layout_marginBottom="@dimen/_2sdp"
+        android:layout_marginTop="@dimen/_6sdp"
+        android:layout_marginBottom="@dimen/_24sdp"
         android:ellipsize="end"
         android:gravity="end"
         android:maxLines="1"
         android:textColor="@color/black"
         android:textSize="@dimen/_12ssp"
-        app:layout_constraintBottom_toTopOf="@id/earliestDeliveryDateLabel"
+        app:layout_constraintBottom_toTopOf="@+id/geoDivider"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toEndOf="@id/feeLabel" />
+        app:layout_constraintStart_toEndOf="@id/earliestFashionDeliveryDateLabel" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/itemLimitLabel"
+        android:id="@+id/earliestDeliveryDashLabel"
         style="@style/myriad_pro_regular"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/_2sdp"
+        android:layout_marginBottom="@dimen/_24sdp"
         android:ellipsize="end"
         android:maxLines="1"
         android:minWidth="@dimen/_55sdp"
-        android:text="@string/item_limit"
+        android:text="@string/earliest_dash_delivery_timeslot"
         android:textColor="@color/color_666666"
         android:textSize="@dimen/_13ssp"
-        app:layout_constraintBottom_toTopOf="@id/feeLabel"
-        app:layout_constraintEnd_toStartOf="@+id/itemLimitValue"
+        app:layout_constraintBottom_toTopOf="@+id/geoDivider"
+        app:layout_constraintEnd_toStartOf="@+id/earliestDeliveryDashValue"
         app:layout_constraintStart_toStartOf="@id/guidelineStart" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/itemLimitValue"
+        android:id="@+id/earliestDeliveryDashValue"
         style="@style/myriad_pro_semi_bold"
         android:layout_marginStart="@dimen/_10sdp"
-        android:layout_marginBottom="@dimen/_2sdp"
+        android:layout_marginBottom="@dimen/_24sdp"
         android:ellipsize="end"
         android:gravity="end"
         android:maxLines="1"
         android:textColor="@color/black"
         android:textSize="@dimen/_12ssp"
-        app:layout_constraintBottom_toTopOf="@id/feeLabel"
+        app:layout_constraintBottom_toTopOf="@+id/geoDivider"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toEndOf="@id/itemLimitLabel" />
-
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/productsAvailableTitle"
-        style="@style/myriad_pro_regular"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/_2sdp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:minWidth="@dimen/_55sdp"
-        android:text="@string/products_available_title"
-        android:textColor="@color/color_666666"
-        android:textSize="@dimen/_13ssp"
-        app:layout_constraintBottom_toTopOf="@id/itemLimitLabel"
-        app:layout_constraintEnd_toStartOf="@+id/productsAvailableValue"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/productsAvailableValue"
-        style="@style/myriad_pro_semi_bold"
-        android:layout_marginStart="@dimen/_10sdp"
-        android:layout_marginBottom="@dimen/_2sdp"
-        android:ellipsize="end"
-        android:gravity="end"
-        android:maxLines="1"
-        android:textColor="@color/black"
-        android:textSize="@dimen/_12ssp"
-        app:layout_constraintBottom_toTopOf="@id/itemLimitLabel"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toEndOf="@id/productsAvailableTitle" />
-
+        app:layout_constraintStart_toEndOf="@id/earliestDeliveryDashLabel" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -381,28 +275,117 @@
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintTop_toTopOf="@id/guidelineTop" />
 
-
     <androidx.constraintlayout.widget.Group
         android:id="@+id/geoDeliveryView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
-        app:constraint_referenced_ids="btnConfirmAddress,productsAvailableValue,
-        productsAvailableTitle,itemLimitValue,itemLimitLabel,
-        feeValue,feeLabel,earliestDeliveryDateValue,
-        earliestDeliveryDateLabel,earliestFashionDeliveryDateValue,
-        earliestFashionDeliveryDateLabel,btnConfirmAddress,
-        deliveryBagIcon,geoDivider,
-        editDelivery,imgDelIcon,geoDeliveryText,
-        txtNewFeature" />
+        app:constraint_referenced_ids="btnConfirmAddress,earliestDeliveryDateValue,
+        earliestDeliveryDateLabel,earliestFashionDeliveryDateValue,earliestDeliveryDashLabel,
+        earliestDeliveryDashValue, imgDelIcon,tabsDivider,geoDivider,
+        earliestFashionDeliveryDateLabel,btnConfirmAddress,editDelivery,geoDeliveryText" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/dash_no_connection_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:constraint_referenced_ids="deliveryBagIcon,
+        changeFulfillmentTitleTextView,geoDeliveryTab,geoCollectTab,
+        geoDashTab,txtNewFeature,txtNewFeatureCnC" />
+
+    <View
+        android:id="@+id/geoDivider"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_1sdp"
+        android:layout_marginTop="@dimen/_24sdp"
+        android:layout_marginBottom="@dimen/_24sdp"
+        android:background="@color/swatch_border_color"
+        app:layout_constraintBottom_toTopOf="@id/imgDelIcon"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgDelIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_24sdp"
+        android:background="@drawable/mapview"
+        app:layout_constraintBottom_toTopOf="@id/btnConfirmAddress"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/geoDeliveryText"
+        style="@style/myriad_pro_semi_bold"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_6sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_26sdp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textSize="@dimen/_15ssp"
+        app:layout_constraintBottom_toTopOf="@id/btnConfirmAddress"
+        app:layout_constraintEnd_toStartOf="@+id/editDelivery"
+        app:layout_constraintStart_toEndOf="@id/imgDelIcon" />
 
 
-    <include
-        android:id="@+id/connectionLayout"
-        layout="@layout/no_connection"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/editDelivery"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/_22sdp"
+        android:layout_marginBottom="@dimen/_24sdp"
+        android:background="@drawable/bg_change_button"
+        android:fontFamily="@font/futura_semi_bold"
+        android:gravity="center"
+        android:paddingStart="@dimen/_8sdp"
+        android:paddingEnd="@dimen/_8sdp"
+        android:text="@string/edit"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_10ssp"
+        app:layout_constraintBottom_toTopOf="@id/btnConfirmAddress"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd" />
+
+    <Button
+        android:id="@+id/btnConfirmAddress"
+        style="@style/blackButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:background="@color/black"
+        android:fontFamily="@font/futura_semi_bold"
+        android:text="@string/confirm"
+        app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/sixteen_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/sixteen_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/sixteen_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/_10sdp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

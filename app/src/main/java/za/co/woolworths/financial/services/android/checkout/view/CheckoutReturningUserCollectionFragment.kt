@@ -27,8 +27,6 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.loadingBar
-import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
-import kotlinx.android.synthetic.main.checkout_how_would_you_delivered.*
 import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.*
 import kotlinx.android.synthetic.main.layout_collection_time_details.*
 import kotlinx.android.synthetic.main.layout_collection_user_information.*
@@ -36,6 +34,7 @@ import kotlinx.android.synthetic.main.layout_delivering_to_details.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_order_summary.*
+import kotlinx.android.synthetic.main.layout_native_checkout_driver_tip.*
 import kotlinx.android.synthetic.main.new_shopping_bags_layout.*
 import kotlinx.android.synthetic.main.where_are_we_delivering_items.view.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
@@ -61,11 +60,11 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLo
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
 import za.co.woolworths.financial.services.android.models.network.StorePickupInfoBody
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
-import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.regex.Pattern
@@ -83,6 +82,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     private var whoIsCollectingDetails: WhoIsCollectingDetails? = null
     private var shimmerComponentArray: List<Pair<ShimmerFrameLayout, View>> = ArrayList()
     private var navController: NavController? = null
+
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun afterTextChanged(s: Editable?) {
@@ -115,7 +115,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(
@@ -252,6 +252,14 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             Pair<ShimmerFrameLayout, View>(
                 imageViewCaretForwardCollectionShimmerFrameLayout,
                 imageViewCaretForwardCollection
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                tipDashDriverTitleShimmerFrameLayout,
+                tipDashDriverTitle
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                tipOptionScrollViewShimmerFrameLayout,
+                tipOptionScrollView
             )
         )
         startShimmerView()
@@ -296,11 +304,11 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         ).get(CheckoutAddAddressNewUserViewModel::class.java)
     }
 
-    fun callStorePickupInfoAPI() {
+    private fun callStorePickupInfoAPI() {
         initShimmerView()
 
         checkoutAddAddressNewUserViewModel?.getStorePickupInfo(getStorePickupInfoBody())
-            .observe(viewLifecycleOwner, { response ->
+            .observe(viewLifecycleOwner) { response ->
                 stopShimmerView()
                 when (response) {
                     is ConfirmDeliveryAddressResponse -> {
@@ -325,9 +333,10 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                     return@observe
                                 }
                                 response.orderSummary?.fulfillmentDetails?.let {
-                                     if (!it.deliveryType.isNullOrEmpty()) {
-                                        Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(it))
-                                     }
+                                    if (!it.deliveryType.isNullOrEmpty()) {
+                                        Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(
+                                            it))
+                                    }
                                 }
                                 initializeOrderSummary(response.orderSummary)
                                 response.sortedJoinDeliverySlots?.apply {
@@ -354,7 +363,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                         )
                     }
                 }
-            })
+            }
     }
 
     private fun initializeDatesAndTimeSlots(selectedWeekSlot: Week?) {
@@ -362,7 +371,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             slot.available == true
         }
 
-        if(slots.isNullOrEmpty()) {
+        if (slots.isNullOrEmpty()) {
             return
         }
 
@@ -428,7 +437,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         vehicleRegistration = whoIsCollectingDetails?.vehicleRegistration ?: ""
         taxiOpted = whoIsCollectingDetails?.isMyVehicle != true
         deliveryType = Delivery.CNC.name
-        address = ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
+        address =
+            ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
     }
 
     private fun showEmptyCart() {
@@ -472,7 +482,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         val location = Utils.getPreferredDeliveryLocation()
         checkoutCollectingFromLayout.setOnClickListener(this)
         if (location != null) {
-            val selectedStore = if (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) location.fulfillmentDetails?.storeName else ""
+            val selectedStore =
+                if (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) location.fulfillmentDetails?.storeName else ""
             if (!selectedStore.isNullOrEmpty()) {
                 tvNativeCheckoutDeliveringTitle?.text =
                     context?.getString(R.string.native_checkout_collecting_from)
@@ -653,7 +664,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
     override fun selectedShoppingBagType(
         shoppingBagsOptionsList: ConfigShoppingBagsOptions,
-        position: Int
+        position: Int,
     ) {
         selectedShoppingBagType = shoppingBagsOptionsList.shoppingBagType
     }
@@ -662,21 +673,26 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         when (v?.id) {
             R.id.checkoutCollectingFromLayout -> {
 
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_COLLECTION_USER_EDIT, hashMapOf(
-                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                            FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_EDIT_USER_DETAILS
-                ), activity)
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.CHECKOUT_COLLECTION_USER_EDIT,
+                    hashMapOf(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_EDIT_USER_DETAILS
+                    ),
+                    activity
+                )
 
                 KotlinUtils.presentEditDeliveryGeoLocationActivity(
                     requireActivity(),
                     COLLECTION_SLOT_SLECTION_REQUEST_CODE,
                     GeoUtils.getDelivertyType(),
                     GeoUtils.getPlaceId(),
+                    false,
                     true,
                     true,
                     null,
                     null,
-                     Utils.toJson(whoIsCollectingDetails)
+                    Utils.toJson(whoIsCollectingDetails)
                 )
                 activity?.finish()
             }
@@ -769,7 +785,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         loadingBar?.visibility = View.VISIBLE
         setScreenClickEvents(false)
         checkoutAddAddressNewUserViewModel.getShippingDetails(body)
-            .observe(viewLifecycleOwner, { response ->
+            .observe(viewLifecycleOwner) { response ->
                 loadingBar.visibility = View.GONE
                 setScreenClickEvents(true)
                 when (response) {
@@ -792,7 +808,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                         )
                     }
                 }
-            })
+            }
     }
 
     private fun presentErrorDialog(title: String, subTitle: String, errorType: Int) {
@@ -916,4 +932,5 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     fun testSetStorePickupInfoResponse(mockStorePickupInfoResponse: ConfirmDeliveryAddressResponse) {
         storePickupInfoResponse = mockStorePickupInfoResponse
     }
+
 }

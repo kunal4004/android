@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.sign_out_fragment.*
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService
@@ -39,6 +40,9 @@ class SignOutFragment : WBottomSheetDialogFragment(), View.OnClickListener {
             R.id.okaySignOutButton -> {
                 convertButtonBackgroundToBlack(okaySignOutButton)
                 val cancelHandler: Handler? = Handler()
+                WoolworthsApplication.setValidatedSuburbProducts(null)
+                WoolworthsApplication.setCncBrowsingValidatePlaceDetails(null)
+                WoolworthsApplication.setDashBrowsingValidatePlaceDetails(null)
                 cancelHandler?.postDelayed({
                     ServiceTools.stop(activity, LiveChatService::class.java)
                     dismiss()

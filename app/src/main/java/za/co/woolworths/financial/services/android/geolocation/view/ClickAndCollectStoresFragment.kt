@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.geolocation.view
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,32 +14,24 @@ import za.co.woolworths.financial.services.android.geolocation.network.model.Val
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.StoreListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.BitmapDescriptor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.geo_location_delivery_address.*
 import kotlinx.android.synthetic.main.no_connection.view.*
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
-import za.co.woolworths.financial.services.android.geolocation.viewmodel.StoreLiveData
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.AppConstant
@@ -50,6 +41,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.VALIDATE_RESPONSE
 import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
@@ -62,19 +54,20 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     private var dataStore: Store? = null
     private var bundle: Bundle? = null
-    private  var validateLocationResponse: ValidateLocationResponse? = null
+    private var validateLocationResponse: ValidateLocationResponse? = null
     private var placeId: String? = null
     private var isComingFromConfirmAddress: Boolean? = false
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
 
     companion object {
-        fun newInstance(validateLocationResponse: ValidateLocationResponse?) =
+        fun newInstance(bundle: Bundle?) =
             ClickAndCollectStoresFragment().withArgs {
-                putSerializable(VALIDATE_RESPONSE, validateLocationResponse)
+                this.putBundle(BUNDLE, bundle)
             }
-
     }
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setStyle(STYLE_NO_TITLE, android.R.style.Theme_Material_Light_NoActionBar_Fullscreen)
@@ -132,52 +125,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
     override fun onMapReady(googleMap: GoogleMap?) {
         googleMap?.uiSettings?.setAllGesturesEnabled(false)
         val addressStorList = mValidateLocationResponse?.validatePlace?.stores
-        showFirstFourLocationInMap(addressStorList, googleMap)
-    }
-
-    private fun showFirstFourLocationInMap(addressStorList: List<Store>?, googleMap: GoogleMap?) {
-
-        addressStorList?.let {
-            for (i in 0..3) {
-                googleMap?.addMarker(
-                    MarkerOptions().position(
-                        LatLng(
-                            addressStorList?.get(i)?.latitude!!,
-                            addressStorList?.get(i)?.longitude!!
-                        )
-                    ).icon(BitmapFromVector(requireContext(), R.drawable.pin))
-                )
-                googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(
-                    addressStorList.get(i)?.latitude!!,
-                    addressStorList.get(i)?.longitude!!
-                 ), 11f))
-            }
-        }
-    }
-
-    private fun BitmapFromVector(context: Context, vectorResId: Int): BitmapDescriptor? {
-        val vectorDrawable: Drawable? = ContextCompat.getDrawable(context, vectorResId)
-        vectorDrawable?.apply {
-            setBounds(
-                0,
-                0,
-                vectorDrawable.intrinsicWidth,
-                vectorDrawable.intrinsicHeight
-            )
-        }
-
-        val bitmap: Bitmap? = vectorDrawable?.intrinsicWidth?.let {
-            Bitmap.createBitmap(
-                it,
-                vectorDrawable.intrinsicHeight,
-                Bitmap.Config.ARGB_8888
-            )
-        }
-        val canvas = bitmap?.let { Canvas(it) }
-        if (canvas != null) {
-            vectorDrawable?.draw(canvas)
-        }
-        return BitmapDescriptorFactory.fromBitmap(bitmap)
+        GeoUtils.showFirstFourLocationInMap(addressStorList, googleMap, requireContext())
     }
 
     private fun setAddressUI(
@@ -185,7 +133,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
         mValidateLocationResponse: ValidateLocationResponse?
     ) {
         tvStoresNearMe?.text = resources.getString(R.string.near_stores, address?.size)
-        tvAddress?.text = mValidateLocationResponse?.validatePlace?.placeDetails?.address1
+        tvAddress?.text = KotlinUtils.capitaliseFirstLetter(mValidateLocationResponse?.validatePlace?.placeDetails?.address1)
         setStoreList(address)
     }
 
@@ -234,16 +182,25 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
 
     private fun navigateToFulfillmentScreen() {
         if (IS_FROM_STORE_LOCATOR) {
-            dataStore?.let { StoreLiveData.value = it }
-            bundle?.putString(
-               KEY_PLACE_ID, placeId)
-            IS_FROM_STORE_LOCATOR = false
+            dataStore?.let {
+                bundle?.putString(
+                    KEY_PLACE_ID, placeId
+                )
+                IS_FROM_STORE_LOCATOR = false
+                setFragmentResult(
+                    DeliveryAddressConfirmationFragment.STORE_LOCATOR_REQUEST_CODE,
+                    bundleOf(BUNDLE to it))
+            }
             findNavController().navigate(
                 R.id.action_clickAndCollectStoresFragment_to_deliveryAddressConfirmationFragment,
                 bundleOf(BUNDLE to bundle)
             )
         } else {
-            dataStore?.let { StoreLiveData.value = it }
+            dataStore?.let {
+                setFragmentResult(
+                    DeliveryAddressConfirmationFragment.STORE_LOCATOR_REQUEST_CODE,
+                    bundleOf(BUNDLE to it))
+            }
             dismiss()
         }
     }

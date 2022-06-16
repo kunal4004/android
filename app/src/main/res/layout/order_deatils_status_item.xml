@@ -44,8 +44,8 @@
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/my_orders_textview_style_2"
                 android:layout_alignParentLeft="true"
-                android:textSize="@dimen/thirteen_sp"
-                android:text="@string/number_of_items" />
+                android:text="@string/number_of_items"
+                android:textSize="@dimen/thirteen_sp" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/noOfItems"

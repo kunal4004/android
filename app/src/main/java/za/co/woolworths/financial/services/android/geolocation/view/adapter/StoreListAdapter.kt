@@ -10,6 +10,7 @@ import kotlinx.android.synthetic.main.store_row_layout.view.*
 import za.co.woolworths.financial.services.android.common.changeMeterToKM
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 class StoreListAdapter (
     val context: Context,
@@ -38,7 +39,7 @@ class StoreListAdapter (
 
     inner class SavedAddressViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindItems(store: Store?, position: Int) {
-            itemView.tvAddressNickName.text = store?.storeName?.let { convertToTitleCase(it) }
+            itemView.tvAddressNickName.text = KotlinUtils.capitaliseFirstLetter(store?.storeName)
             itemView.tvAddress.text = store?.storeAddress
             itemView.txtStoreDistance.text = store?.distance?.let { changeMeterToKM(it) }
             if (lastSelectedPosition == position) {

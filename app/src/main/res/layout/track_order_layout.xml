@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_45sdp"
+    android:background="@color/white"
+    android:layout_gravity="center_horizontal"
+    android:paddingStart="@dimen/twenty_four_dp"
+    android:paddingEnd="@dimen/twenty_four_dp">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/trackOrderText"
+        style="@style/my_orders_textview_style_2"
+        android:drawableLeft="@drawable/ic_track_order"
+        android:drawablePadding="@dimen/sixteen_dp"
+        android:gravity="center_vertical"
+        android:text="@string/track_your_order"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_order_history_right" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_1sdp"
+        android:background="@color/orders_bg"
+        android:layout_marginTop="@dimen/_1sdp"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

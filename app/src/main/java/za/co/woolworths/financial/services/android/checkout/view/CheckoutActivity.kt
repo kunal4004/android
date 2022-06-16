@@ -12,6 +12,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_checkout.*
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.DASH_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.GEO_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.IS_DELIVERY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.baseFragBundle
@@ -33,6 +34,7 @@ import za.co.woolworths.financial.services.android.util.Constant.Companion.NO_LI
 class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
 
     private var geoSlotSelection: Boolean? = false
+    private var dashSlotSelection: Boolean? = false
     private var navHostFrag = NavHostFragment()
     private var savedAddressResponse: SavedAddressResponse? = null
     private var whoIsCollectingString: String? = null
@@ -45,6 +47,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         intent?.extras?.apply {
             savedAddressResponse = getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
             geoSlotSelection = getBoolean(GEO_SLOT_SELECTION , false)
+            dashSlotSelection = getBoolean(DASH_SLOT_SELECTION , false)
             whoIsCollectingString = getString(CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS, "")
             isComingFromCnc = getBoolean(IS_COMING_FROM_CNC_SELETION , false)
             baseFragBundle = Bundle()
@@ -142,6 +145,10 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
 
             geoSlotSelection == true -> {
                 R.id.CheckoutAddAddressReturningUserFragment
+            }
+
+            dashSlotSelection == true -> {
+                R.id.checkoutDashFragment
             }
 
             baseFragBundle?.containsKey(IS_DELIVERY) == true && baseFragBundle?.getBoolean(IS_DELIVERY) == false -> {

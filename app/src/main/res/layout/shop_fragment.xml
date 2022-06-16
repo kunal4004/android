@@ -13,8 +13,6 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingLeft="@dimen/sixteen_dp"
-            android:paddingRight="@dimen/sixteen_dp"
             android:visibility="visible">
 
             <androidx.recyclerview.widget.RecyclerView
@@ -35,6 +33,11 @@
         </RelativeLayout>
 
         <include layout="@layout/empty_state_template" />
+
+        <include
+            android:id="@+id/dash_empty_state_template"
+            layout="@layout/layout_dash_set_address_fragment"
+            android:visibility="gone" />
     </FrameLayout>
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

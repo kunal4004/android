@@ -12,7 +12,6 @@ import kotlinx.android.synthetic.main.product_listing_page_row.view.*
 import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
 import kotlinx.android.synthetic.main.product_listing_promotional_images.view.*
 import za.co.woolworths.financial.services.android.contracts.IProductListing
-import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
@@ -50,7 +49,7 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
 
     private fun setPromotionalText(productList: ProductList?) = with(itemView) {
         if (productList?.promotionsList?.isEmpty() == false) {
-            productList?.promotionsList.forEachIndexed { i, it ->
+            productList?.promotionsList?.forEachIndexed { i, it ->
                 var editedPromotionalText: String? = it.promotionalText
                 if (it.promotionalText?.contains(":") == true) {
                     val beforeColon: String? = it.promotionalText?.substringBefore(":")
@@ -60,7 +59,7 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
                 when (i) {
                     0 -> {
                         onlinePromotionalTextView1?.visibility = VISIBLE
-                        val promotionsListCount = productList?.promotionsList.size
+                        val promotionsListCount = productList?.promotionsList?.size ?: 0
                         onlinePromotionalTextView1?.text = Html.fromHtml(editedPromotionalText)
                         if (promotionsListCount == 1) {
                             onlinePromotionalTextView1?.maxLines = 2

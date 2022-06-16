@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/orders_bg">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_6sdp"
+        android:background="@color/white"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineBottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineTop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/orderNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/futura_semi_bold"
+            android:text="@string/order_id"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_16sdp"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toTopOf="@id/guidelineTop" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/orderState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:gravity="center"
+            android:letterSpacing="@integer/point_eighteen"
+            android:lineSpacingExtra="@dimen/eight_sp"
+            android:minWidth="@dimen/_90sdp"
+            android:minHeight="@dimen/_15ssp"
+            android:paddingStart="@dimen/twelve_dp"
+            android:paddingEnd="@dimen/twelve_dp"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/ten_sp"
+            app:fontFamily="@font/futura_semi_bold"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintTop_toTopOf="@id/guidelineTop" />
+
+        <View
+            android:id="@+id/orderNumberDivider"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/one_dp"
+            android:layout_marginTop="@dimen/_14ssp"
+            android:background="@color/bg_light_overlay"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/orderNumber" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/orderTypeTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:fontFamily="@font/myriad_pro_regular"
+            android:text="@string/order_type"
+            android:visibility="gone"
+            android:textColor="@color/color_666666"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/orderNumberDivider" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/orderType"
+            style="@style/myriad_pro_semi_bold"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:maxLines="1"
+            android:visibility="gone"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toEndOf="@+id/orderTypeTitle"
+            app:layout_constraintTop_toBottomOf="@+id/orderNumberDivider" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/numberItemTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:fontFamily="@font/myriad_pro_regular"
+            android:text="@string/number_of_items"
+            android:visibility="gone"
+            android:textColor="@color/color_666666"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/orderTypeTitle" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/numberItem"
+            style="@style/myriad_pro_semi_bold"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:maxLines="1"
+            android:visibility="gone"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toEndOf="@+id/numberItemTitle"
+            app:layout_constraintTop_toBottomOf="@+id/orderTypeTitle" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/purchaseDateTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:fontFamily="@font/myriad_pro_regular"
+            android:text="@string/purchase_date"
+            android:textColor="@color/color_666666"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/numberItemTitle" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/purchaseDate"
+            style="@style/myriad_pro_semi_bold"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:maxLines="1"
+            android:text=""
+            android:textColor="@color/black"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toEndOf="@+id/purchaseDateTitle"
+            app:layout_constraintTop_toBottomOf="@+id/numberItem" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/deliveryAddressTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:fontFamily="@font/myriad_pro_regular"
+            android:text="@string/delivery_address"
+            android:visibility="gone"
+            android:textColor="@color/color_666666"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/purchaseDateTitle" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/deliveryAddress"
+            style="@style/myriad_pro_semi_bold"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:maxLines="1"
+            android:visibility="gone"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toEndOf="@+id/purchaseDateTitle"
+            app:layout_constraintTop_toBottomOf="@+id/purchaseDateTitle" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/timeslotTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:fontFamily="@font/myriad_pro_regular"
+            android:text="@string/timeslot"
+            android:textColor="@color/color_666666"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/deliveryAddressTitle" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/timeslot"
+            style="@style/myriad_pro_semi_bold"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:maxLines="1"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toEndOf="@+id/timeslotTitle"
+            app:layout_constraintTop_toBottomOf="@+id/deliveryAddressTitle" />
+
+        <LinearLayout
+            android:id="@+id/deliveryDateContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/timeslotTitle" />
+
+
+        <View
+            android:id="@+id/orderTotalDivider"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/one_dp"
+            android:layout_marginTop="@dimen/_14ssp"
+            android:background="@color/bg_light_overlay"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/deliveryDateContainer" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/orderTotalTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_15ssp"
+            android:fontFamily="@font/futura_semi_bold"
+            android:letterSpacing="@integer/point_eleven"
+            android:text="@string/order_total_semicolon"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/orderTotalDivider" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgOrderHistory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_1sdp"
+            app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+            app:srcCompat="@drawable/ic_order_history_right" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/orderAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_15ssp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:fontFamily="@font/futura_semi_bold"
+            android:letterSpacing="@integer/point_eleven"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_11sdp"
+            app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
+            app:layout_constraintEnd_toStartOf="@id/imgOrderHistory" />
+
+        <View
+            android:id="@+id/spaceForHistoryDetails"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_16sdp"
+            app:layout_constraintTop_toBottomOf="@+id/deliveryDateContainer" />
+
+        <View
+            android:id="@+id/dividerSpaceForDetailsScreen"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_8sdp"
+            android:background="@color/orders_bg"
+            app:layout_constraintTop_toBottomOf="@+id/spaceForHistoryDetails" />
+
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/orderTotalView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="orderAmount,imgOrderHistory,orderTotalTitle,orderTotalDivider" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/orderHistoryDetailsView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="numberItemTitle,numberItem,
+            deliveryAddressTitle,deliveryAddress,spaceForHistoryDetails,dividerSpaceForDetailsScreen" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/orderTypeView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="orderType,orderTypeTitle" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

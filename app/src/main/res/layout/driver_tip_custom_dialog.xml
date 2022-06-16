@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <include
+        android:id="@+id/incSwipeCloseIndicator"
+        layout="@layout/popup_close_header_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:layout_marginEnd="@dimen/sixteen_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/titleTextView"
+        style="@style/dialog_title_text_style"
+        android:layout_marginTop="@dimen/fifty_dp"
+        android:text="@string/tip_your_dash_driver"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/incSwipeCloseIndicator" />
+
+    <TextView
+        android:id="@+id/subTitleTextView"
+        style="@style/dialog_description_text_style"
+        android:layout_marginTop="@dimen/ten_dp"
+        android:text="@string/enter_your_own_amount"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@id/titleTextView" />
+
+    <TextView
+        android:id="@+id/randTextView"
+        style="@style/futura_medium_black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/thirty_dp"
+        android:text="@string/rand_text"
+        android:textSize="@dimen/fourty_five_sp"
+        app:layout_constraintEnd_toStartOf="@id/driverTipAmtEditText"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@id/subTitleTextView" />
+
+    <EditText
+        android:id="@+id/driverTipAmtEditText"
+        style="@style/futura_medium_black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:inputType="numberDecimal"
+        android:paddingStart="@dimen/ten_dp"
+        android:textSize="@dimen/fourty_five_sp"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@id/subTitleTextView" />
+
+    <TextView
+        android:id="@+id/driverTipErrorText"
+        style="@style/myriad_pro_regular"
+        android:layout_marginTop="@dimen/ten_dp"
+        android:gravity="center"
+        android:lineSpacingMultiplier="1.40"
+        android:text="@string/driver_minimum_tip_amt_error"
+        android:textColor="@color/input_error_color_code"
+        android:textSize="@dimen/fourteen_sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@id/right_guideline"
+        app:layout_constraintStart_toStartOf="@id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@id/driverTipAmtEditText" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WButton
+        android:id="@+id/buttonConfirm"
+        style="@style/call_to_action_text_style"
+        android:layout_height="@dimen/fifty_dp"
+        android:layout_marginTop="@dimen/thirty_five_dp"
+        android:layout_marginBottom="@dimen/twenty_four_dp"
+        android:background="@color/black"
+        android:text="@string/confirm"
+        app:WButton_font="medium_bold"
+        app:layout_constraintBottom_toBottomOf="@id/bottom_guideline"
+        app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+        app:layout_constraintStart_toStartOf="@+id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@id/driverTipErrorText" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/left_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/thirty_two_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/bottom_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/right_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

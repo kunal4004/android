@@ -1,5 +1,8 @@
 package za.co.woolworths.financial.services.android.geolocation.view
 
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
@@ -9,6 +12,8 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -25,28 +30,39 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.maps.GeoApiContext
 import com.google.maps.GeocodingApi
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.geolocation_confirm_address.autoCompleteTextView
+import kotlinx.android.synthetic.main.geolocation_confirm_address.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.ROUTE
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.STREET_NUMBER
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
+import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
+import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment.Companion.MAP_LOCATION_RESULT
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
+import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
+import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_CONFIRM_ADD
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LATITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LONGITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
+import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
 import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LATITUDE
 import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LONGITUDE
-import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
-import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.*
-import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.*
 import javax.inject.Inject
 
@@ -57,6 +73,7 @@ class ConfirmAddressMapFragment :
     private var mMap: GoogleMap? = null
     private var mAddress: String? = null
     private var placeId: String? = null
+    private var deliveryType: String? = null
     private var latLng: LatLng? = null
     private var mLatitude: String? = null
     private var mLongitude: String? = null
@@ -70,10 +87,12 @@ class ConfirmAddressMapFragment :
     private var suburb: String? = null
     private var isAddAddress: Boolean? = false
     private var isComingFromCheckout: Boolean? = false
+    private var isFromDashTab: Boolean? = false
     private var isAddressFromSearch: Boolean = false
     private var isMoveMapCameraFirstTime: Boolean? = true
     private var isAddressSearch: Boolean? = false
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
+
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
     private var placeName: String? = null
@@ -84,7 +103,7 @@ class ConfirmAddressMapFragment :
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         _binding = GeolocationConfirmAddressBinding.inflate(inflater, container, false)
         return binding?.root
@@ -96,20 +115,21 @@ class ConfirmAddressMapFragment :
     ) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-
     }
 
     private fun initView() {
-
         val bundle = arguments ?: return
         val args = ConfirmAddressMapFragmentArgs.fromBundle(bundle)
         latitude = args.mapData.latitude
         longitude = args.mapData.longitude
         isAddAddress = args.mapData.isAddAddress
         isComingFromCheckout = args.mapData.isComingFromCheckout
+        isFromDashTab = args.mapData.isFromDashTab
+        deliveryType = args.mapData.deliveryType
         setUpViewModel()
         clearAddress()
         confirmAddressClick()
+        addFragmentListner()
 
         if (confirmAddressViewModel.isConnectedToInternet(requireActivity())) {
             initMap()
@@ -135,9 +155,21 @@ class ConfirmAddressMapFragment :
         }
     }
 
+    private fun addFragmentListner() {
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, _ ->
+            // change location button clicked as address is not deliverable.
+            initView()
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                delay(AppConstant.DELAY_1500_MS)
+                clearAddressText()
+                clearMapDetails()
+            }
+        }
+    }
+
     private fun checkNetwork(mapFragment: SupportMapFragment?) {
         activity?.let {
-            ConnectivityLiveData.observe(viewLifecycleOwner, { isNetworkAvailable ->
+            ConnectivityLiveData.observe(viewLifecycleOwner) { isNetworkAvailable ->
                 binding?.apply {
                     if (isNetworkAvailable) {
                         mapFragment?.view?.visibility = View.VISIBLE
@@ -157,18 +189,28 @@ class ConfirmAddressMapFragment :
                         showErrorDialog()
                     }
                 }
-            })
+            }
         }
     }
 
     private fun clearAddress() {
         binding?.apply {
             imgRemoveAddress.setOnClickListener {
-                autoCompleteTextView.setText("")
-                errorMassageDivider.visibility = View.GONE
-                errorMessage.visibility = View.GONE
+                clearAddressText()
             }
         }
+    }
+
+    private fun clearAddressText() {
+        autoCompleteTextView.setText("")
+        errorMassageDivider.visibility = View.GONE
+        errorMessage.visibility = View.GONE
+    }
+
+    private fun clearMapDetails() {
+        mLatitude = null
+        mLongitude = null
+        binding?.confirmAddress?.isEnabled = false
     }
 
     private fun confirmAddressClick() {
@@ -183,42 +225,239 @@ class ConfirmAddressMapFragment :
                 ),
                 activity)
 
-            val bundle = Bundle()
-            if(isComingFromCheckout==true) {
-                bundle?.apply {
-                    putString(
-                        KEY_PLACE_ID, placeId
-                    )
-                    putBoolean(
-                        IS_COMING_CONFIRM_ADD, true)
-                    findNavController().navigate(
-                        R.id.actionClickAndCollectStoresFragment,
-                        bundleOf(BUNDLE to bundle)
-                    )
-                }
-            } else {
-                // normal geo flow
-                if (mLatitude != null && mLongitude != null && placeId != null) {
+            // first we will call validate Location API after successfull we will decide if it is deliverable for that delivery Type.
+            validateLocation()
+        }
+    }
 
-                    bundle?.apply {
-                        putString(
-                           KEY_LATITUDE, mLatitude
-                        )
-                        putString(
-                            KEY_LONGITUDE, mLongitude
-                        )
-                        putString(
-                           KEY_PLACE_ID, placeId
-                        )
+    private fun validateLocation() {
+        if (placeId.isNullOrEmpty())
+            return
+
+        // Make Validate Location Call
+        lifecycleScope.launch {
+            binding?.progressBar?.visibility = View.VISIBLE
+            try {
+                val validateLocationResponse =
+                    confirmAddressViewModel.getValidateLocation(placeId!!)
+                binding?.progressBar?.visibility = View.GONE
+                if (validateLocationResponse != null) {
+                    when (validateLocationResponse?.httpCode) {
+                        HTTP_OK -> {
+                            validateLocationResponse.validatePlace?.let { place ->
+
+                                if (isFromDashTab == true) {
+                                    if (place.onDemand != null && place.onDemand!!.deliverable == true) {
+
+                                        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+                                            // User not logged in that's why we are setting new location.
+                                            KotlinUtils.isDashTabClicked =
+                                                placeId?.equals(KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId) // changing black tooltip flag as user changes his browsing location.
+                                            confirmSetAddress(validateLocationResponse)
+                                        } else {
+                                            KotlinUtils.isDashTabClicked =
+                                                placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId) // changing black tooltip flag as user changes his browsing location.
+                                            val savedLocation = Utils.getPreferredDeliveryLocation()
+                                            if (savedLocation?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
+                                                // user logged in but don't have any location that's why we are setting new location.
+                                                confirmSetAddress(validateLocationResponse)
+                                            } else {
+                                                // directly go back to Dash landing screen. Don't call confirm location API as user only wants to browse Dash.
+                                                var intent = Intent()
+                                                intent.putExtra(BundleKeysConstants.VALIDATE_RESPONSE,
+                                                    validateLocationResponse)
+                                                activity?.setResult(Activity.RESULT_OK, intent)
+                                                activity?.finish()
+                                            }
+                                        }
+                                    } else {
+                                        // Show not deliverable Bottom Dialog.
+                                        showChangeLocationDialog()
+                                    }
+                                    return@let
+                                } else if (KotlinUtils.isComingFromCncTab == true) {
+                                    /*user is coming from CNC i.e. set Location flow */
+                                    // navigate to CNC home tab.
+                                    KotlinUtils.isComingFromCncTab = false
+
+                                    /* set cnc browsing data */
+                                    WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
+                                        validateLocationResponse?.validatePlace)
+                                    activity?.finish()
+                                }
+
+                                when (deliveryType) {
+                                    // As per delivery type first we will verify if it is deliverable for that or not.
+                                    Delivery.STANDARD.name -> {
+                                        if (place.deliverable == true) {
+                                            navigateToLastScreen()
+                                        } else
+                                            showChangeLocationDialog()
+                                    }
+                                    Delivery.CNC.name -> {
+                                        if (place.stores?.getOrNull(0)?.deliverable == true) {
+                                            navigateToLastScreen()
+                                        } else
+                                            showNoCollectionStores()
+                                    }
+                                    Delivery.DASH.name -> {
+                                        if (place.onDemand?.deliverable == true) {
+                                            navigateToLastScreen()
+                                        } else
+                                            showChangeLocationDialog()
+                                    }
+                                    else -> {
+                                        // This happens when there is no location. So delivery type might be null.
+                                        if (place.deliverable == true) {
+                                            navigateToLastScreen()
+                                        } else
+                                            showChangeLocationDialog()
+                                    }
+                                }
+                            }
+                        }
+                        else -> {
+                            showErrorDialog()
+                        }
                     }
-                    findNavController().navigate(
-                        R.id.action_confirmAddressMapFragment_to_deliveryAddressConfirmationFragment,
-                        bundleOf(BUNDLE to bundle)
-                    )
                 }
+            } catch (e: HttpException) {
+                FirebaseManager.logException(e)
+                binding?.progressBar?.visibility = View.GONE
+                showErrorDialog()
+            }
+        }
+    }
+
+    @SuppressLint("RestrictedApi")
+    private fun navigateToLastScreen() {
+        if (isComingFromCheckout == true) {
+            val bundle = Bundle()
+            bundle.apply {
+                putString(
+                    KEY_PLACE_ID, placeId
+                )
+                putBoolean(
+                    IS_COMING_CONFIRM_ADD, true)
+                findNavController().navigate(
+                    R.id.actionClickAndCollectStoresFragment,
+                    bundleOf(BUNDLE to bundle)
+                )
+            }
+        }
+        // normal geo flow
+        else if (mLatitude != null && mLongitude != null && placeId != null) {
+            val bundle = Bundle()
+            bundle.apply {
+                putString(KEY_LATITUDE, mLatitude)
+                putString(KEY_LONGITUDE, mLongitude)
+                putString(KEY_PLACE_ID, placeId)
+                putString(BundleKeysConstants.DELIVERY_TYPE,
+                    deliveryType)
             }
 
+            findNavController().navigateUp() // This will land on confirmAddress fragment.
+            if (findNavController().graph.startDestination != findNavController().currentDestination?.id) {
+                // if it's not a first time user then it must have change fulfillment screen in nav graph. so again navigateUp() will land on changeFulfillment screen.
+                findNavController().navigateUp()
+                setFragmentResult(MAP_LOCATION_RESULT, bundleOf(BUNDLE to bundle))
+            } else {
+                // directly go to change fulfillment screen.
+                findNavController().navigate(
+                    R.id.actionToDeliveryAddressConfirmationFragment,
+                    bundleOf(BUNDLE to bundle)
+                )
+            }
         }
+    }
+
+    private fun showChangeLocationDialog() {
+        val customBottomSheetDialogFragment =
+            CustomBottomSheetDialogFragment.newInstance(
+                getString(R.string.no_location_title),
+                getString(R.string.no_location_desc),
+                getString(R.string.change_location),
+                R.drawable.location_disabled, getString(R.string.dismiss))
+        customBottomSheetDialogFragment.show(requireFragmentManager(),
+            CustomBottomSheetDialogFragment::class.java.simpleName)
+    }
+
+    private fun showNoCollectionStores() {
+        // Show no store available Bottom Dialog.
+        val customBottomSheetDialogFragment =
+            CustomBottomSheetDialogFragment.newInstance(getString(R.string.no_location_collection),
+                getString(R.string.no_location_desc),
+                getString(R.string.change_location),
+                R.drawable.img_collection_bag,
+                null)
+        customBottomSheetDialogFragment.show(requireFragmentManager(),
+            CustomBottomSheetDialogFragment::class.java.simpleName)
+    }
+
+    private fun confirmSetAddress(validateLocationResponse: ValidateLocationResponse) {
+        if (placeId.isNullOrEmpty())
+            return
+
+        //make confirm Location call
+        val confirmLocationAddress = ConfirmLocationAddress(placeId)
+        val confirmLocationRequest =
+            ConfirmLocationRequest(BundleKeysConstants.DASH,
+                confirmLocationAddress,
+                validateLocationResponse.validatePlace?.onDemand?.storeId)
+
+        lifecycleScope.launch {
+            binding?.progressBar?.visibility = View.VISIBLE
+            try {
+                val confirmLocationResponse =
+                    confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
+                binding?.progressBar?.visibility = View.GONE
+                if (confirmLocationResponse != null) {
+                    when (confirmLocationResponse.httpCode) {
+                        HTTP_OK -> {
+
+                            /*reset browsing data for cnc and dash both once fullfillment location is comfirmed*/
+                            WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
+                                validateLocationResponse?.validatePlace)
+                            WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
+                                validateLocationResponse?.validatePlace)
+
+                            KotlinUtils.placeId = placeId
+                            KotlinUtils.isLocationSame =
+                                placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
+
+                            WoolworthsApplication.setValidatedSuburbProducts(
+                                validateLocationResponse.validatePlace)
+
+                            // save details in cache
+                            if (SessionUtilities.getInstance().isUserAuthenticated) {
+                                Utils.savePreferredDeliveryLocation(
+                                    ShoppingDeliveryLocation(
+                                        confirmLocationResponse.orderSummary?.fulfillmentDetails
+                                    )
+                                )
+                                if (KotlinUtils.getAnonymousUserLocationDetails() != null)
+                                    KotlinUtils.clearAnonymousUserLocationDetails()
+                            } else {
+                                KotlinUtils.saveAnonymousUserLocationDetails(
+                                    ShoppingDeliveryLocation(
+                                        confirmLocationResponse.orderSummary?.fulfillmentDetails
+                                    )
+                                )
+                            }
+
+                            // navigate to Dash home tab.
+                            activity?.setResult(Activity.RESULT_OK)
+                            activity?.finish()
+                        }
+                    }
+                }
+            } catch (e: HttpException) {
+                binding?.progressBar?.visibility = View.GONE
+                FirebaseManager.logException(e)
+                showErrorDialog()
+            }
+        }
+
     }
 
     private fun initMap() {
@@ -292,14 +531,15 @@ class ConfirmAddressMapFragment :
         mMap = googleMap
         if (!isAddAddress!!) {
             latLng = longitude?.let { latitude?.let { it1 -> LatLng(it1, it) } }
-            if (isMoveMapCameraFirstTime == true){
+            if (isMoveMapCameraFirstTime == true) {
                 moveMapCamera(latLng)
             }
 
         } else {
             binding?.imgMapMarker?.visibility = View.GONE
             binding?.confirmAddress?.isEnabled = false
-            mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE), 5f))
+            mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(DEFAULT_LATITUDE,
+                DEFAULT_LONGITUDE), 5f))
 
         }
 
@@ -312,9 +552,9 @@ class ConfirmAddressMapFragment :
         mMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18f))
         mMap?.setOnCameraMoveListener {
             mMap?.setOnCameraIdleListener {
-                val latLng = mMap?.cameraPosition?.target
-                val latitude = latLng?.latitude
-                val longitude = latLng?.longitude
+                val localLatLng = mMap?.cameraPosition?.target
+                val latitude = localLatLng?.latitude
+                val longitude = localLatLng?.longitude
                 latitude?.let { lat ->
                     longitude?.let { longitude ->
                         getAddressFromLatLng(lat, longitude)
@@ -351,7 +591,10 @@ class ConfirmAddressMapFragment :
         }
         mAddress?.let {
             if (!isAddressFromSearch) {
-                binding?.autoCompleteTextView?.setText(getString(R.string.geo_map_address,address1,city,state))
+                binding?.autoCompleteTextView?.setText(getString(R.string.geo_map_address,
+                    address1,
+                    city,
+                    state))
             }
             isAddressFromSearch = false
             binding?.autoCompleteTextView?.dismissDropDown()
@@ -374,6 +617,7 @@ class ConfirmAddressMapFragment :
 
         if (isStreetNumberAndRouteFromSearch == false) {
             placeId = results.getOrNull(0)?.placeId.toString()
+
             getStreetNumberAndRoute(placeId)
         } else {
             // here place id is d/f coming search address
@@ -396,8 +640,8 @@ class ConfirmAddressMapFragment :
             placeFields.let {
                 FetchPlaceRequest.builder(placeId.toString(), it).build()
             }
-         var streetNumber:String? = null
-         var routeName:String? = null
+        var streetNumber: String? = null
+        var routeName: String? = null
         request.let { placeRequest ->
             placesClient.fetchPlace(placeRequest)
                 .addOnSuccessListener { response ->
@@ -408,11 +652,11 @@ class ConfirmAddressMapFragment :
                             ROUTE.value -> routeName = address.name
                         }
                     }
-                    if(streetNumber.isNullOrEmpty()){
-                        streetNumber=""
+                    if (streetNumber.isNullOrEmpty()) {
+                        streetNumber = ""
                     }
-                    if(routeName.isNullOrEmpty()){
-                        routeName=""
+                    if (routeName.isNullOrEmpty()) {
+                        routeName = ""
                     }
                     placeName?.let {
                         if (!it.equals("$streetNumber $routeName",
@@ -440,6 +684,7 @@ class ConfirmAddressMapFragment :
         }
 
     }
+
     override fun tryAgain() {
         initView()
     }
@@ -464,7 +709,7 @@ class ConfirmAddressMapFragment :
             suburb,
             apiAddress1)
         try {
-            view?.let{
+            view?.let {
                 lifecycleScope.launch {
                     confirmAddressViewModel.postSaveAddress(saveAddressLocationRequest)
                 }

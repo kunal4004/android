@@ -66,7 +66,7 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
 
     public interface IWalkthroughActionListener {
         void onWalkthroughActionButtonClick(Feature feature);
-        void onPromptDismiss();
+        void onPromptDismiss(Feature feature);
     }
 
     private int mOldHeight;
@@ -295,7 +295,7 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
 
     private void notifyOnDismissed() {
         if(actionListener!=null)
-            actionListener.onPromptDismiss();
+            actionListener.onPromptDismiss(feature);
 
         if (mListeners != null) {
             for (IShowcaseListener listener : mListeners) {
@@ -443,6 +443,13 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
     private void setDescription(CharSequence contentText) {
         if (mWalkThroughDesc != null) {
             mWalkThroughDesc.setText(contentText);
+        }
+    }
+
+    private void setTextBlackColor() {
+        if (mWalkThroughDesc != null && mHideTutorialAction !=null) {
+            mWalkThroughDesc.setTextColor(getResources().getColor(R.color.black));
+            mHideTutorialAction.setTextColor(getResources().getColor(R.color.black));
         }
     }
 
@@ -756,6 +763,22 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
          */
         public WMaterialShowcaseView.Builder hideImage() {
             showcaseView.hideImage();
+            return this;
+        }
+
+        /**
+         * Set the descriptive text color as black.
+         */
+        public WMaterialShowcaseView.Builder setDescriptionTextColor() {
+            showcaseView.setTextBlackColor();
+            return this;
+        }
+
+        /**
+         * Set the hide tutorial text  color as black.
+         */
+        public WMaterialShowcaseView.Builder setHideTutorialTextColor() {
+            showcaseView.setTextBlackColor();
             return this;
         }
 
@@ -1153,7 +1176,11 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         STATEMENTS(8),
         CART_REDEEM_VOUCHERS(9),
         CREDIT_SCORE(9),
-        VTO_TRY_IT(10);
+        VTO_TRY_IT(10),
+        SHOPPING(11),
+        DASH(12),
+        DELIVERY_DETAILS(13),
+        MY_LIST(14);
 
         private int value;
 

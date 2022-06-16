@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:CircleProgressView="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <include
+        android:id="@+id/incSwipeCloseIndicator"
+        layout="@layout/popup_close_header_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:layout_marginTop="@dimen/ten_dp"
+        android:layout_marginEnd="@dimen/sixteen_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/success_frame"
+        android:layout_width="@dimen/eighty_dp"
+        android:layout_height="@dimen/eighty_dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/thirty_five_dp">
+
+        <za.co.woolworths.financial.services.android.ui.views.tick_animation.CircleProgressView
+            android:id="@+id/circularProgressIndicator"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            CircleProgressView:cpv_autoTextSize="true"
+            CircleProgressView:cpv_barColor="@color/black"
+            CircleProgressView:cpv_barColor1="@color/black"
+            CircleProgressView:cpv_barColor2="@color/black"
+            CircleProgressView:cpv_barColor3="@color/black"
+            CircleProgressView:cpv_barStartEndLineColor="@color/black"
+            CircleProgressView:cpv_barWidth="@dimen/four_dp_"
+            CircleProgressView:cpv_direction="CW"
+            CircleProgressView:cpv_innerContourColor="@color/black"
+            CircleProgressView:cpv_innerContourSize="0dp"
+            CircleProgressView:cpv_maxValue="100"
+            CircleProgressView:cpv_maxValueAllowed="100"
+            CircleProgressView:cpv_minValueAllowed="0"
+            CircleProgressView:cpv_outerContourSize="0dp"
+            CircleProgressView:cpv_rimColor="@color/grey_bg"
+            CircleProgressView:cpv_rimWidth="@dimen/four_dp_"
+            CircleProgressView:cpv_seekMode="false"
+            CircleProgressView:cpv_showUnit="false"
+            CircleProgressView:cpv_spin="true"
+            CircleProgressView:cpv_spinBarLength="200"
+            CircleProgressView:cpv_spinColor="@color/black"
+            CircleProgressView:cpv_spinSpeed="5"
+            CircleProgressView:cpv_textColor="@android:color/transparent"
+            CircleProgressView:cpv_textScale="1"
+            CircleProgressView:cpv_unit="%"
+            CircleProgressView:cpv_unitColor="@color/black"
+            CircleProgressView:cpv_unitPosition="right_top"
+            CircleProgressView:cpv_unitScale="1"
+            CircleProgressView:cpv_value="0" />
+
+        <za.co.woolworths.financial.services.android.ui.views.tick_animation.SuccessTickView
+            android:id="@+id/success_tick"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/imFailureIcon"
+            android:layout_width="38dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            CircleProgressView:srcCompat="@drawable/npc_failure_icon" />
+    </FrameLayout>
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/progressTitleTextView"
+        style="@style/absa_page_title_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/success_frame"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginTop="@dimen/thirty_five_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:layout_marginBottom="@dimen/eight_dp"
+        android:gravity="center"
+        android:text="@string/amt_tip_added" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/progressDescriptionTextView"
+        style="@style/absa_page_description_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/progressTitleTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginTop="@dimen/eight_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:background="@color/white"
+        android:gravity="center"
+        android:text="@string/processing_your_request_desc"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/actionsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/progressDescriptionTextView"
+        android:layout_marginTop="@dimen/thirty_five_dp"
+        android:orientation="vertical">
+
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/gotItActionButton"
+            style="@style/blackButtonStyle"
+            android:layout_marginLeft="@dimen/twenty_four_dp"
+            android:layout_marginRight="@dimen/twenty_four_dp"
+            android:layout_marginBottom="@dimen/twenty_four_dp"
+            android:text="@string/got_it"
+            android:visibility="gone" />
+    </LinearLayout>
+</RelativeLayout>

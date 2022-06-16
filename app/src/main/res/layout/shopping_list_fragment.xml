@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginTop="?android:attr/actionBarSize"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -23,58 +24,51 @@
                 android:descendantFocusability="blocksDescendants"
                 android:orientation="vertical">
 
-                <RelativeLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/locationSelectedLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/sixteen_dp"
-                    android:layout_marginTop="@dimen/sixteen_dp"
-                    android:layout_marginEnd="@dimen/sixteen_dp"
-                    android:layout_marginBottom="@dimen/sixteen_dp"
                     android:background="@drawable/white_bg_pressed"
-                    android:paddingStart="@dimen/twenty_four_dp"
-                    android:paddingTop="@dimen/twenty_six_dp"
-                    android:paddingEnd="@dimen/twenty_four_dp"
-                    android:paddingBottom="@dimen/twenty_six_dp">
+                    android:layout_marginVertical="@dimen/ten_dp">
 
                     <ImageView
                         android:id="@+id/deliverLocationIcon"
-                        android:layout_width="@dimen/twenty_four_dp"
-                        android:layout_height="@dimen/twenty_four_dp"
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerVertical="true"
-                        android:background="@drawable/ic_delivery_truck" />
+                        android:layout_width="@dimen/thirty_two_dp"
+                        android:layout_height="@dimen/thirty_two_dp"
+                        android:layout_margin="@dimen/five_dp"
+                        android:src="@drawable/ic_delivery_circle"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:id="@+id/tvDeliveringTo"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        android:layout_toLeftOf="@+id/editLocation"
-                        android:layout_toRightOf="@+id/deliverLocationIcon"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:layout_marginStart="@dimen/eight_dp"
+                        android:fontFamily="@font/myriad_pro_regular"
+                        android:gravity="top"
+                        android:text="@string/standard_delivery"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/twelve_sp"
+                        app:layout_constraintBottom_toTopOf="@+id/tvDeliveryLocation"
+                        app:layout_constraintStart_toEndOf="@id/deliverLocationIcon"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_chainStyle="packed" />
 
-                        <za.co.woolworths.financial.services.android.ui.views.WTextView
-                            android:id="@+id/tvDeliveringTo"
-                            style="@style/style_cart_delivery_to_text"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginRight="4dp"
-                            android:gravity="center_vertical"
-                            android:text="@string/delivery_or_collection" />
-
-                        <za.co.woolworths.financial.services.android.ui.views.WTextView
-                            android:id="@+id/tvDeliveryLocation"
-                            style="@style/style_cart_delivery_selected"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:drawablePadding="16dp"
-                            android:ellipsize="end"
-                            android:gravity="center_vertical"
-                            android:singleLine="true"
-                            android:visibility="gone" />
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/tvDeliveryLocation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/myriad_pro_semi_bold"
+                        android:gravity="center"
+                        android:text="@string/cart_default_location"
+                        android:textAlignment="center"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/fourteen_sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="@id/tvDeliveringTo"
+                        app:layout_constraintTop_toBottomOf="@+id/tvDeliveringTo" />
 
                     <ImageView
                         android:id="@+id/rightArrowDelivery"
@@ -82,47 +76,34 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="20dp"
-                        android:src="@drawable/ic_caret_black" />
+                        android:layout_marginStart="@dimen/twenty_dp"
+                        android:layout_marginEnd="@dimen/twenty_dp"
+                        android:src="@drawable/ic_caret_black"
+                        app:layout_constraintBottom_toBottomOf="@id/tvDeliveringTo"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/tvDeliveryLocation" />
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        android:id="@+id/editLocation"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/edit"
-                        android:textColor="@color/black"
-                        android:textSize="12sp"
-                        app:WTextView_font="medium"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="20dp"
-                        android:letterSpacing="0.1"
-                        android:visibility="invisible"
-                        />
-
-                </RelativeLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <RelativeLayout
                     android:visibility="gone"
                     android:id="@+id/rlCreateAList"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/sixteen_dp"
-                    android:layout_marginEnd="@dimen/sixteen_dp"
                     android:background="@color/white"
                     android:gravity="center_vertical"
                     android:paddingTop="@dimen/twenty_six_dp"
                     android:paddingBottom="@dimen/twenty_six_dp">
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
                         android:layout_marginStart="@dimen/twenty_four_dp"
-                        android:text="@string/shop_create_a_list"
+                        android:text="@string/shop_create_list"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/fifteen_sp"
-                        app:WTextView_font="myriadpro_semibold" />
+                        android:textSize="@dimen/twenty_sp"
+                        android:fontFamily="@font/futura_semi_bold"/>
 
                     <ImageView
                         android:layout_width="24dp"
@@ -147,8 +128,6 @@
                         android:id="@+id/rcvShoppingLists"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="@dimen/sixteen_dp"
-                        android:layout_marginEnd="@dimen/sixteen_dp"
                         android:layout_marginBottom="@dimen/sixteen_dp"
                         android:clipToPadding="false"
                         android:nestedScrollingEnabled="false" />

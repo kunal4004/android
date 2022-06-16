@@ -40,12 +40,6 @@ class NavigateToShoppingList {
 
         fun navigateToShoppingListOnToastClicked(activity: Activity?, jsonElement: JsonElement) {
             jsonElement.asJsonObject?.apply {
-                if (activity is BottomNavigationActivity) {
-                    // Move to shop tab first.
-                    activity.bottomNavigationById.currentItem = INDEX_PRODUCT
-                    activity.viewpager_main?.currentItem = 1
-                    activity.viewpager_main?.adapter?.notifyDataSetChanged()
-                }
                 if (size() == 1) {
                     var listName = ""
                     var listId = ""

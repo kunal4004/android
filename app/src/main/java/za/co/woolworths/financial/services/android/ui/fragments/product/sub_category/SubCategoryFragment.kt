@@ -210,7 +210,8 @@ class SubCategoryFragment :
             ProductsRequestParams.SearchType.NAVIGATE,
             subCategory.dimValId,
             subCategory.categoryName,
-            brandNavigationDetails
+            brandNavigationDetails,
+            true
         ))
     }
 

@@ -41,7 +41,7 @@ class ProductListingFragmentTest : Fragment() {
 
         productListingFragment.onLoadProductSuccess(mockProductView, false)
         Mockito.verify(productListingFragment, Mockito.times(1))
-            .setTitle()
+            .updateToolbarTitle()
         Assert.assertEquals(mockProductView.pageHeading, productListingFragment.toolbarTitleText)
     }
 
