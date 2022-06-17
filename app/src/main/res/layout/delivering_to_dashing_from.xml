@@ -203,19 +203,26 @@
             android:textSize="@dimen/eight_sp" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/btnContinueBrowsing"
-        style="@style/call_to_action_text_style"
+    <LinearLayout
+        android:id="@+id/continueBrowsingLinearLayout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/fifty_dp"
+        android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
-        android:layout_marginBottom="@dimen/ten_dp"
-        android:background="@color/black"
-        android:contentDescription="@string/continue_browsing"
-        android:text="@string/continue_browsing"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="@+id/right_guideline"
         app:layout_constraintStart_toStartOf="@+id/left_guideline"
-        app:layout_constraintTop_toBottomOf="@+id/dashStatusLinearLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/dashStatusLinearLayout">
+
+        <TextView
+            android:id="@+id/btnContinueBrowsing"
+            style="@style/call_to_action_text_style"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fifty_dp"
+            android:layout_marginBottom="@dimen/ten_dp"
+            android:background="@color/black"
+            android:contentDescription="@string/continue_browsing"
+            android:text="@string/continue_browsing" />
+    </LinearLayout>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_guideline"

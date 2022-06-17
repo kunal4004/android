@@ -160,7 +160,7 @@ class OrderConfirmationFragment : Fragment() {
                             response
                                     ?.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
                     )
-                    btnContinueBrowsing.setOnClickListener {
+                    continueBrowsingLinearLayout.setOnClickListener {
                         (requireActivity() as? BottomNavigator)?.navigateToTabIndex(
                                 BottomNavigationActivity.INDEX_PRODUCT,
                                 null
@@ -297,10 +297,16 @@ class OrderConfirmationFragment : Fragment() {
                 deliveryLocationText?.text =
                         context?.getText(R.string.collection_location_semicolon)
                 deliveryOrderDetailsTextView?.text = context?.getText(R.string.collection_semicolon)
+                setNumberAndCostItemsBottomSheet(response?.items)
+                initRecyclerView(response?.items)
+                handleAddToShoppingListButton()
             }
             Delivery.STANDARD -> {
                 deliveryLocationText?.text = context?.getText(R.string.delivery_location_semicolon)
                 deliveryOrderDetailsTextView?.text = context?.getText(R.string.delivery_semicolon)
+                setNumberAndCostItemsBottomSheet(response?.items)
+                initRecyclerView(response?.items)
+                handleAddToShoppingListButton()
             }
             else -> {
             }
@@ -328,11 +334,7 @@ class OrderConfirmationFragment : Fragment() {
                     response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
         }
 
-        setNumberAndCostItemsBottomSheet(response?.items)
 
-        initRecyclerView(response?.items)
-
-        handleAddToShoppingListButton()
     }
 
     private fun handleAddToShoppingListButton() {
