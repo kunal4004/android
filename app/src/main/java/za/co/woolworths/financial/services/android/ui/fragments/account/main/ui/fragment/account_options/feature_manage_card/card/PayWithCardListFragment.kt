@@ -11,12 +11,13 @@ import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.PayWithCardListFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.extension.onClick
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderFailure
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderHttpFailureFromServer
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
@@ -77,7 +78,7 @@ class PayWithCardListFragment : Fragment(R.layout.pay_with_card_list_fragment) {
         when (viewModel.dataSource.isOneTimePinUnblockStoreCardEnabled()) {
             true -> router.routeToOTPActivity(requireActivity())
             false -> lifecycleScope.launch {
-                freezeViewModel.queryServiceUnBlockStoreCard().collectLatest { state ->
+                freezeViewModel.queryServiceUnBlockStoreCard().collect { state ->
                     with(state) {
                         renderLoading {
                             when (isLoading) {
@@ -101,6 +102,7 @@ class PayWithCardListFragment : Fragment(R.layout.pay_with_card_list_fragment) {
                         renderHttpFailureFromServer {
                             router.routeToServerErrorDialog(findNavController(), output.response)
                         }
+
                     }
                 }
             }

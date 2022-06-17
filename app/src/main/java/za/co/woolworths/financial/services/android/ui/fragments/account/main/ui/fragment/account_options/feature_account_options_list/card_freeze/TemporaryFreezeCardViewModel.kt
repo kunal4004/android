@@ -22,6 +22,9 @@ class TemporaryFreezeCardViewModel @Inject constructor(private val storeCardData
     val isSwitcherEnabled: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val currentPagePosition: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
 
+    init {
+        currentPagePosition.value = 0
+    }
 
     private val _blockMyCardResponse = MutableSharedFlow<ViewState<BlockMyCardResponse>>(replay = 0)
     val blockMyCardResponse: SharedFlow<ViewState<BlockMyCardResponse>> get() = _blockMyCardResponse
