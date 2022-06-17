@@ -446,37 +446,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         grantResults: IntArray,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == StandardDeliveryFragment.REQUEST_CODE_FINE_GPS && viewpager_main.currentItem == STANDARD_TAB.index) {
-            val fragment = viewpager_main?.adapter?.instantiateItem(
-                viewpager_main,
-                viewpager_main.currentItem
-            ) as? StandardDeliveryFragment
-            callOnActivityResult(grantResults, fragment, requestCode)
-        } else if (requestCode == StandardDeliveryFragment.REQUEST_CODE_FINE_GPS && viewpager_main.currentItem == CLICK_AND_COLLECT_TAB.index) {
-            val fragment = viewpager_main?.adapter?.instantiateItem(
-                viewpager_main,
-                viewpager_main.currentItem
-            ) as? ChangeFullfilmentCollectionStoreFragment
-            callOnActivityResult(grantResults, fragment, requestCode)
-        }
         permissionUtils?.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
-    private fun callOnActivityResult(
-        grantResults: IntArray,
-        fragment: Fragment?,
-        requestCode: Int,
-    ) {
-        // If request is cancelled, the result arrays are empty.
-        if (grantResults.isNotEmpty()
-            && grantResults[0] == PackageManager.PERMISSION_GRANTED
-        ) {
-            // permission was granted, yay! Do the
-            // contacts-related task you need to do.
-            fragment?.onActivityResult(requestCode, RESULT_OK, null)
-        } else {
-            fragment?.onActivityResult(requestCode, RESULT_CANCELED, null)
-        }
     }
 
     private fun navigateToBarcode() {
