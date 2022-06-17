@@ -78,6 +78,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.STANDARD
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.STANDARD_DELIVERY
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.VALIDATE_RESPONSE
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
 
@@ -437,12 +438,12 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                 if (SessionUtilities.getInstance().isUserAuthenticated) {
                                     val savedPlaceId =
                                         Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
-                                    KotlinUtils.apply {
-                                        this.placeId = placeId
-                                        isLocationSame = placeId?.equals(savedPlaceId)
-                                        isDeliveryLocationTabClicked = placeId?.equals(savedPlaceId)
-                                        isCncTabClicked = placeId?.equals(savedPlaceId)
-                                        isDashTabClicked = placeId?.equals(savedPlaceId)
+                                    KotlinUtils.let {
+                                        it.placeId = placeId
+                                        it.isLocationSame = placeId?.equals(savedPlaceId)
+                                        it.isDeliveryLocationTabClicked = placeId?.equals(savedPlaceId)
+                                        it.isCncTabClicked = placeId?.equals(savedPlaceId)
+                                        it.isDashTabClicked = placeId?.equals(savedPlaceId)
                                     }
                                     Utils.savePreferredDeliveryLocation(
                                         ShoppingDeliveryLocation(
@@ -454,13 +455,13 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                 } else {
                                     val anonymousUserPlaceId =
                                         KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId
-                                    KotlinUtils.apply {
-                                        this.placeId = placeId
-                                        isLocationSame = placeId?.equals(anonymousUserPlaceId)
-                                        isDeliveryLocationTabClicked =
+                                    KotlinUtils.let {
+                                        it.placeId = placeId
+                                        it.isLocationSame = placeId?.equals(anonymousUserPlaceId)
+                                        it.isDeliveryLocationTabClicked =
                                             placeId?.equals(anonymousUserPlaceId)
-                                        isCncTabClicked = placeId?.equals(anonymousUserPlaceId)
-                                        isDashTabClicked = placeId?.equals(anonymousUserPlaceId)
+                                        it.isCncTabClicked = placeId?.equals(anonymousUserPlaceId)
+                                        it.isDashTabClicked = placeId?.equals(anonymousUserPlaceId)
                                         saveAnonymousUserLocationDetails(ShoppingDeliveryLocation(
                                             confirmLocationResponse.orderSummary?.fulfillmentDetails))
                                     }

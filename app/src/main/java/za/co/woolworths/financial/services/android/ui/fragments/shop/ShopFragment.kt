@@ -162,7 +162,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             override fun onPageSelected(position: Int) {
                 activity?.apply {
                     when (position) {
-                         STANDARD_TAB.index -> {
+                        STANDARD_TAB.index -> {
                             Utils.triggerFireBaseEvents(
                                 FirebaseManagerAnalyticsProperties.SHOP_CATEGORIES,
                                 this
@@ -170,7 +170,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                             showBlackToolTip(Delivery.STANDARD)
                             KotlinUtils.browsingDeliveryType = Delivery.STANDARD
                         }
-                        CLICK_AND_COLLECT_TAB.index-> {
+                        CLICK_AND_COLLECT_TAB.index -> {
                             //Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS, this)
                             showBlackToolTip(Delivery.CNC)
                             KotlinUtils.browsingDeliveryType = Delivery.CNC
@@ -614,11 +614,11 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     fun navigateToMyListFragment() {
-        viewpager_main?.setCurrentItem(1, true)
-    }
-
-    fun navigateToMyShoppingListFragment() {
-        viewpager_main?.setCurrentItem(1, false)
+        (activity as? BottomNavigationActivity)?.let {
+            it.bottomNavigationById.currentItem = INDEX_ACCOUNT
+            val fragment = MyListsFragment()
+            it.pushFragment(fragment)
+        }
     }
 
     fun scrollToTop() {
@@ -772,7 +772,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             fashionItemDateText?.text = it.firstAvailableOtherDeliveryDate
             productAvailableText?.text = getString(R.string.all_products_available)
             cartIcon.setImageResource(R.drawable.icon_cart_white)
-            bubbleLayout?.setArrowDirection(ArrowDirection.TOP)
+            bubbleLayout?.arrowDirection = ArrowDirection.TOP
             if (tabs_main?.getTabAt(STANDARD_TAB.index)?.view != null) {
                 bubbleLayout?.arrowPosition = tabs_main?.let {
                     it?.getTabAt(STANDARD_TAB.index)?.view?.width?.div(2)?.toFloat()
@@ -830,7 +830,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             )
             return store?.firstAvailableFoodDeliveryDate
         }
-        return "";
+        return ""
     }
 
     private fun showDashToolTip(validateLocationResponse: ValidateLocationResponse?) {
@@ -862,13 +862,16 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             deliveryIcon?.setImageResource(R.drawable.icon_scooter_white)
             bubbleLayout?.setArrowDirection(ArrowDirection.TOP)
             bubbleLayout?.arrowPosition =
-                tabs_main.width - tabs_main.getTabAt(DASH_TAB.index)?.view?.width?.div(2)?.toFloat()!!
+                tabs_main.width - tabs_main.getTabAt(DASH_TAB.index)?.view?.width?.div(2)
+                    ?.toFloat()!!
             productAvailableText?.text = resources.getString(
                 R.string.dash_item_limit,
                 it.onDemand?.quantityLimit?.foodMaximumQuantity
             )
-            /*TODO deliveryFee value will come from config*/
-            deliveryFeeText?.text = "Free for orders over R75"
+            deliveryFeeText?.text = resources.getString(
+                R.string.dash_free_order,
+                it.onDemand?.firstAvailableFoodDeliveryCost
+            )
         }
     }
 
