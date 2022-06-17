@@ -83,6 +83,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
 
     override fun onResume() {
         super.onResume()
+        dynamicMapView?.onResume()
         etEnterNewAddress?.addTextChangedListener(this)
         init()
     }
@@ -459,5 +460,25 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
             }
         }
         setStoreList(list)
+    }
+
+    override fun onPause() {
+        dynamicMapView?.onPause()
+        super.onPause()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        dynamicMapView?.onLowMemory()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        dynamicMapView?.onSaveInstanceState(outState)
+    }
+
+    override fun onDestroyView() {
+        dynamicMapView?.onDestroy()
+        super.onDestroyView()
     }
 }
