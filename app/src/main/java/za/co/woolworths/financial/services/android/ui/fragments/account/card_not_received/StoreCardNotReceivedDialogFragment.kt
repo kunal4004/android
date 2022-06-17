@@ -127,7 +127,7 @@ class StoreCardNotReceivedDialogFragment : ViewBindingBottomSheetFragment<StoreC
             R.id.actionButtonTextView -> {
                 activity ?: return
                 when (binding.actionButtonTextView.text.toString().lowercase()) {
-                    getString(R.string.try_again).lowercase(),
+                    getString(R.string.try_again).lowercase()-> { queryAPIServiceGetCardNotReceived() }
                     getString(R.string.vtsc_card_not_arrived_button_caption).lowercase() -> {
                         Utils.triggerFireBaseEvents(
                             FirebaseManagerAnalyticsProperties.VTSC_CARD_NOT_DELIVERED,
