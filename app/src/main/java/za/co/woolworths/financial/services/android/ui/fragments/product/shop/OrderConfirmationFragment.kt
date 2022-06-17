@@ -152,15 +152,15 @@ class OrderConfirmationFragment : Fragment() {
                             ?: ""
                     val dashAddressName =
                             SpannableString(
-                                    "$dashLocation " + requireContext().getString(R.string.bullet) + "" + dashLocation + " "
+                                    "$dashLocation " + requireContext().getString(R.string.bullet) + "" + "$dashLocation " + " "
                             )
-                    optionLocationTitle.text = dashAddressName
+                    optionLocationTitle?.text = dashAddressName
 
                     dashFoodDeliveryDateTimeTextView?.text = applyBoldBeforeComma(
                             response
                                     ?.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
                     )
-                    continueBrowsingLinearLayout.setOnClickListener {
+                    btnContinueBrowsing.setOnClickListener {
                         (requireActivity() as? BottomNavigator)?.navigateToTabIndex(
                                 BottomNavigationActivity.INDEX_PRODUCT,
                                 null

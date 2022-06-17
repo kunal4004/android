@@ -30,29 +30,15 @@
             android:textColor="@color/black"
             android:textSize="@dimen/fifteen_sp" />
 
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/shoppingListLinearLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingTop="@dimen/fifteen_dp"
-        android:paddingBottom="@dimen/fifteen_dp"
-        android:visibility="visible"
-        android:weightSum="1"
-        app:layout_constraintRight_toRightOf="@+id/right_guideline"
-        tools:ignore="MissingConstraints">
-
         <TextView
             android:id="@+id/addShoppingListButton"
             style="@style/myriad_pro_regular"
-            android:layout_weight="1"
+            android:layout_weight="0.5"
             android:text="@string/add_to_list"
-            android:textColor="@color/account_amount_color"
+            android:gravity="end"
+            android:textColor="@color/color_222222"
+            app:layout_constraintRight_toRightOf="@+id/right_guideline"
             android:textSize="@dimen/fourteen_sp" />
-
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
