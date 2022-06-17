@@ -90,7 +90,7 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
     fun handleStoreCardResponseResult(response: StoreCardsResponse): MutableList<StoreCardFeatureType>? {
         SaveResponseDao.setValue(SessionDao.KEY.STORE_CARD_RESPONSE_PAYLOAD, response)
         dataSource.refreshStoreCardsData()
-        val listOfStoreCards = dataSource.getStoreCardListByFeatureType(LoaderType.LANDING)
+        val listOfStoreCards = dataSource.filterPrimaryCardsGetOneVirtualCardAndOnePrimaryCardOrBoth()
         listOfStoreCardFeatureType = listOfStoreCards
         return listOfStoreCards
     }

@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main
 
-
 import android.os.Parcelable
 import android.text.TextUtils
 import kotlinx.android.parcel.Parcelize
@@ -10,7 +9,6 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsData
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.VirtualCardStaffMemberMessage
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.LoaderType
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.SaveResponseDao
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountProductLandingDao
@@ -100,8 +98,7 @@ interface IManageCardFunctionalRequirement {
     fun getStoreCardData(): StoreCardsData?
     fun splitStoreCardByCardType(
         primaryCardIndex: Int,
-        storeCard: StoreCard?,
-        loaderType: LoaderType? = LoaderType.LANDING
+        storeCard: StoreCard?
     ): StoreCardFeatureType
 
     fun getBlockCode(primaryCardIndex: Int): String?
@@ -111,15 +108,14 @@ interface IManageCardFunctionalRequirement {
     fun isGenerateVirtualCard(): Boolean
     fun isActivateVirtualTempCard(): Boolean
     fun isInstantCardReplacementJourneyEnabled(primaryCardIndex: Int): Boolean
-    fun addManageMyCardsLinkOnStoreCardLandingScreen()
-    fun getStoreCardListByFeatureType(loaderType: LoaderType?): MutableList<StoreCardFeatureType>?
+    fun filterPrimaryCardsGetOneVirtualCardAndOnePrimaryCardOrBoth(): MutableList<StoreCardFeatureType>?
     fun isVirtualCardObjectExist(): Pair<Boolean, StoreCard?>
     fun getVirtualCard(): StoreCard?
     fun isBlockTypeNullInVirtualCardObject(): Boolean
     fun isFreezeStoreCard(primaryCardIndex: Int): Boolean
     fun isUnFreezeTemporaryStoreCard(primaryCardIndex: Int): Boolean
     fun isTemporaryCardEnabled(): Boolean
-    fun isMultiplePrimaryCardItem(): Boolean
+    fun isMultipleStoreCardEnabled(): Boolean
     fun isStaffMemberAndHasTemporaryCard(): Boolean
     fun getVirtualCardStaffMemberMessage(): VirtualCardStaffMemberMessage?
     fun refreshStoreCardsData()
@@ -201,7 +197,7 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
         return false
     }
 
-    override fun isMultiplePrimaryCardItem(): Boolean = getPrimaryCards()?.size ?: 0 > 1
+    override fun isMultipleStoreCardEnabled(): Boolean = (filterPrimaryCardsGetOneVirtualCardAndOnePrimaryCardOrBoth()?.size ?: 0) > 1
 
     override fun isStaffMemberAndHasTemporaryCard(): Boolean {
         return isTemporaryCardEnabled()
@@ -235,18 +231,18 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
         return false
     }
 
-    override fun addManageMyCardsLinkOnStoreCardLandingScreen() {
-
-    }
-
-
-    override fun getStoreCardListByFeatureType(loaderType: LoaderType?): MutableList<StoreCardFeatureType>? {
+    override fun filterPrimaryCardsGetOneVirtualCardAndOnePrimaryCardOrBoth(): MutableList<StoreCardFeatureType>? {
         val primaryCards = storeCardData?.primaryCards
-        val listOfStoreCardFeatures = mutableListOf<StoreCardFeatureType>()
+        val listOfStoreCardFeatures : MutableList<StoreCardFeatureType> = mutableListOf()
         primaryCards?.forEachIndexed { index, storeCard ->
-            val card = splitStoreCardByCardType(index, storeCard, loaderType)
+            val card = splitStoreCardByCardType(index, storeCard)
             listOfStoreCardFeatures.add(card)
         }
+        val filterInstanceVirtualTempCard = listOfStoreCardFeatures.filterIsInstance<StoreCardFeatureType.TemporaryCardEnabled>().firstOrNull()
+        val filterInstancePrimaryCard = listOfStoreCardFeatures.filterNot { it is StoreCardFeatureType.TemporaryCardEnabled }.firstOrNull()
+        listOfStoreCardFeatures.clear()
+        filterInstanceVirtualTempCard?.let { listOfStoreCardFeatures.add( it) }
+        filterInstancePrimaryCard?.let { listOfStoreCardFeatures.add(it) }
         return listOfStoreCardFeatures
     }
 
@@ -304,8 +300,7 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
      */
     override fun splitStoreCardByCardType(
         primaryCardIndex: Int,
-        storeCard: StoreCard?,
-        loaderType: LoaderType?
+        storeCard: StoreCard?
     ): StoreCardFeatureType {
         return when {
             isActivateVirtualTempCard() -> StoreCardFeatureType.ActivateVirtualTempCard(storeCard)

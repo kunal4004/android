@@ -6,6 +6,7 @@ import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountOptionsManageCardFragmentBinding
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.LoaderType
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
@@ -24,7 +25,7 @@ class ManageCardLandingHeaderItems(
 
     fun setCardLabel() {
         mContext ?: return
-        when (viewModel.dataSource.isMultiplePrimaryCardItem()) {
+        when (viewModel.dataSource.isMultipleStoreCardEnabled()) {
             true -> {
                 binding.cardText.text = getString(R.string.my_card, "s")
                 binding.manageCardText.text = getString(R.string.manage_my_card_title, "s")
