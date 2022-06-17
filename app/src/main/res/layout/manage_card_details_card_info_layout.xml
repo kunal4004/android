@@ -10,9 +10,8 @@
         android:id="@+id/headerTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/fourty_dp"
         android:fontFamily="@font/futura_semi_bold"
-        android:text="Primary Card"
+        android:text="@string/virtual_temp_card_label"
         android:textAlignment="center"
         android:textColor="@color/no_active_card_title"
         android:textSize="@dimen/twenty_sp" />
@@ -28,7 +27,14 @@
         android:text="Your card has been blocked and can\nno longer be used."
         android:textAlignment="center"
         android:textColor="@color/permanent_card_block_desc_color"
-        android:textSize="@dimen/fifteen_sp" />
+        android:textSize="@dimen/fifteen_sp"
+        android:visibility="gone" />
+
+    <View
+        android:id="@+id/cardTitleBottomSpacer"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/thirty_five_dp"
+        android:visibility="visible" />
 
     <View
         android:id="@+id/cardDetailDivider"
@@ -45,24 +51,28 @@
             android:id="@+id/cardholderTextView"
             style="@style/accountOptionsLabelStyle"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/_24sdp"
             android:fontFamily="@font/myriad_pro_regular"
             android:text="@string/card_holder"
             android:textColor="@color/black"
-            android:textSize="@dimen/fifteen_sp" />
+            android:textSize="@dimen/_13sdp" />
 
         <TextView
             android:id="@+id/cardholderValueTextView"
             style="@style/accountOptionsLabelStyle"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/twenty_four_dp"
+            android:layout_marginEnd="@dimen/_24sdp"
             android:fontFamily="@font/myriad_pro_semi_bold"
             android:text="@string/manage_my_card_title"
             android:textAllCaps="false"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textSize="@dimen/_13sdp" />
 
     </RelativeLayout>
 </LinearLayout>
