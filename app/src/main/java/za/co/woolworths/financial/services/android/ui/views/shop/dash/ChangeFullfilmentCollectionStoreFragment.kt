@@ -52,6 +52,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
     DepartmentExtensionFragment(), OnMapReadyCallback,
     StoreListAdapter.OnStoreSelected, View.OnClickListener, TextWatcher {
 
+    private var updatedAddressStoreList: List<Store>? = mutableListOf()
     private var storeId: String? = null
     private var placeId: String? = null
     private lateinit var mapFragment: SupportMapFragment
@@ -71,7 +72,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
         super.onViewCreated(view, savedInstanceState)
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         setUpViewModel()
-        init()
+
     }
 
     private fun setUpViewModel() {
@@ -84,6 +85,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
     override fun onResume() {
         super.onResume()
         etEnterNewAddress?.addTextChangedListener(this)
+        init()
     }
 
     fun init() {
@@ -133,7 +135,14 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
 
     private fun setStoreCollectionData(validatePlace: ValidatePlace?) {
         if (validatePlace == null) {
-            showSetLocationUi()
+            val mPlaceId = getDeliveryType()?.address?.placeId ?: return
+            if (!mPlaceId.isNullOrEmpty()) {
+             /* if place id is not null means previously location is set but validate place api
+               is not called yet or not in sync. so need to call again */
+                executeValidatePlaceApi(mPlaceId)
+            } else {
+                showSetLocationUi()
+            }
             return
         }
         if (validatePlace.stores?.isNullOrEmpty() == true) {
@@ -148,6 +157,37 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
             KotlinUtils.capitaliseFirstLetter(validatePlace.placeDetails?.address1)
         placeId = validatePlace.placeDetails?.placeId
         setStoreList(validatePlace.stores)
+    }
+
+    private fun executeValidatePlaceApi(mPlaceId: String) {
+        lifecycleScope.launch {
+            try {
+                cncProgressBar.visibility = View.VISIBLE
+                val validateLocationResponse =
+                    confirmAddressViewModel.getValidateLocation(mPlaceId)
+
+                if (validateLocationResponse != null) {
+                    when (validateLocationResponse.httpCode) {
+                        AppConstant.HTTP_OK -> {
+                            cncProgressBar.visibility = View.GONE
+                            tvStoresNearMe?.text = resources.getString(
+                                R.string.near_stores,
+                                validateLocationResponse?.validatePlace?.stores?.size
+                            )
+                            updatedAddressStoreList = validateLocationResponse?.validatePlace?.stores
+                            mapFragment.getMapAsync(this@ChangeFullfilmentCollectionStoreFragment)
+                            tvAddress?.text =
+                                KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1)
+                            placeId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
+                            setStoreList(validateLocationResponse?.validatePlace?.stores)
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                cncProgressBar?.visibility = View.GONE
+            }
+        }
     }
 
     private fun setStoreList(stores: List<Store>?) {
@@ -216,7 +256,11 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
     override fun onMapReady(googleMap: GoogleMap?) {
         googleMap?.uiSettings?.setAllGesturesEnabled(false)
         val addressStoreList = WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
-        GeoUtils.showFirstFourLocationInMap(addressStoreList, googleMap, requireContext())
+        if (addressStoreList != null && !addressStoreList?.isEmpty()) {
+            GeoUtils.showFirstFourLocationInMap(addressStoreList, googleMap, requireContext())
+        } else if (updatedAddressStoreList?.isEmpty() == false)  {
+            GeoUtils.showFirstFourLocationInMap(updatedAddressStoreList, googleMap, requireContext())
+        }
     }
 
     override fun onClick(v: View?) {
