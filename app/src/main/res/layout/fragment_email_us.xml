@@ -11,7 +11,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/_6sdp"
         android:background="@color/white"
         android:paddingStart="@dimen/_10sdp"
         android:paddingEnd="@dimen/_10sdp">
@@ -26,26 +26,27 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <TextView
                 android:id="@+id/tv_email_us_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:letterSpacing="0.08"
-                android:lineSpacingExtra="8sp"
+                android:fontFamily="@font/myriad_pro_regular"
+                android:letterSpacing="0"
                 android:text="@string/email_us_name"
                 android:textColor="@color/color_222222"
-                app:WTextView_font="medium" />
+                android:textSize="@dimen/_11ssp" />
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/et_email_us_name"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_30sdp"
+                android:layout_height="@dimen/_35sdp"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:background="@drawable/bg_input_edittext"
                 android:gravity="center_vertical"
                 android:inputType="textPersonName"
                 android:paddingStart="@dimen/_5sdp"
-                android:paddingEnd="@dimen/_5sdp" />
+                android:paddingEnd="@dimen/_5sdp"
+                android:textSize="@dimen/_11ssp" />
         </LinearLayout>
 
         <LinearLayout
@@ -58,37 +59,37 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ll_email_us_name">
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <TextView
                 android:id="@+id/tv_email_us_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:letterSpacing="0.08"
+                android:letterSpacing="0"
                 android:lineSpacingExtra="8sp"
                 android:text="@string/email_us_email"
                 android:textColor="@color/color_222222"
-                app:WTextView_font="medium" />
+                android:textSize="@dimen/_11ssp" />
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/et_email_us_email"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_30sdp"
+                android:layout_height="@dimen/_35sdp"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:background="@drawable/bg_input_edittext"
                 android:gravity="center_vertical"
                 android:inputType="textEmailAddress"
                 android:paddingStart="@dimen/_5sdp"
-                android:paddingEnd="@dimen/_5sdp" />
+                android:paddingEnd="@dimen/_5sdp"
+                android:textSize="@dimen/_11ssp" />
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <TextView
                 android:id="@+id/tv_email_us_email_validation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_5sdp"
-                android:letterSpacing="0.08"
-                android:lineSpacingExtra="8sp"
+                android:letterSpacing="0"
+                android:fontFamily="@font/myriad_pro_regular"
                 android:text="@string/email_us_email_validation"
-                android:textSize="@dimen/_8ssp"
-                app:WTextView_font="medium" />
+                android:textSize="@dimen/_9ssp" />
         </LinearLayout>
 
         <LinearLayout
@@ -101,20 +102,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ll_email_us_email">
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <TextView
                 android:id="@+id/tv_email_us_enquiry"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:letterSpacing="0.08"
+                android:letterSpacing="0"
                 android:lineSpacingExtra="8sp"
                 android:text="@string/email_us_enquiry"
                 android:textColor="@color/color_222222"
-                app:WTextView_font="medium" />
+                android:textSize="@dimen/_11ssp" />
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/et_email_us_enquiry"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_30sdp"
+                android:layout_height="@dimen/_35sdp"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:background="@drawable/bg_input_edittext"
                 android:cursorVisible="false"
@@ -122,7 +123,8 @@
                 android:focusable="false"
                 android:gravity="center_vertical"
                 android:paddingStart="@dimen/_5sdp"
-                android:paddingEnd="@dimen/_5sdp" />
+                android:paddingEnd="@dimen/_10sdp"
+                android:textSize="@dimen/_11ssp" />
 
         </LinearLayout>
 
@@ -136,15 +138,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ll_email_us_enquiry">
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <TextView
                 android:id="@+id/tv_email_us_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:letterSpacing="0.08"
+                android:letterSpacing="0"
                 android:lineSpacingExtra="8sp"
                 android:text="@string/email_us_message"
                 android:textColor="@color/color_222222"
-                app:WTextView_font="medium" />
+                android:textSize="@dimen/_11ssp" />
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/et_email_us_message"
@@ -156,7 +158,8 @@
                 android:minHeight="@dimen/_150sdp"
                 android:paddingStart="@dimen/_5sdp"
                 android:paddingTop="@dimen/_5sdp"
-                android:paddingEnd="@dimen/_5sdp" />
+                android:paddingEnd="@dimen/_5sdp"
+                android:textSize="@dimen/_11ssp" />
 
         </LinearLayout>
 
@@ -165,7 +168,7 @@
             style="@style/blackButtonStyle"
             android:layout_marginTop="@dimen/_15sdp"
             android:layout_marginBottom="@dimen/_29sdp"
-            android:background="@drawable/button_disable_color"
+            android:background="@drawable/btn_disable_enable"
             android:enabled="false"
             android:gravity="center"
             android:text="@string/send"
