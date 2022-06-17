@@ -302,11 +302,6 @@ class OrderConfirmationFragment : Fragment() {
                 deliveryLocationText?.text = context?.getText(R.string.delivery_location_semicolon)
                 deliveryOrderDetailsTextView?.text = context?.getText(R.string.delivery_semicolon)
             }
-           /* Delivery.DASH -> {
-                deliveryLocationText?.text =
-                        context?.getText(R.string.collection_location_semicolon)
-                deliveryOrderDetailsTextView?.text = context?.getText(R.string.collection_semicolon)
-            }*/
             else -> {
             }
         }
