@@ -125,7 +125,7 @@ class OrderConfirmationFragment : Fragment() {
         context?.let {
             when (Delivery.getType(response?.orderSummary?.fulfillmentDetails?.deliveryType)) {
                 Delivery.CNC -> {
-                    deliveryCollectionDetailsConstraintLayout.visibility = VISIBLE
+                    deliveryCollectionDetailsConstraintLayout?.visibility = VISIBLE
                     deliveryOrderDetailsLayout.visibility = VISIBLE
                     optionImage.background =
                         AppCompatResources.getDrawable(it, R.drawable.icon_collection_grey_bg)
@@ -135,8 +135,8 @@ class OrderConfirmationFragment : Fragment() {
                         response?.orderSummary?.fulfillmentDetails?.storeName?.let { convertToTitleCase(it) } ?: ""
                 }
                 Delivery.STANDARD -> {
-                    deliveryCollectionDetailsConstraintLayout.visibility = VISIBLE
-                    deliveryOrderDetailsLayout.visibility = VISIBLE
+                    deliveryCollectionDetailsConstraintLayout?.visibility = VISIBLE
+                    deliveryOrderDetailsLayout?.visibility = VISIBLE
                     optionImage?.background =
                         AppCompatResources.getDrawable(it, R.drawable.icon_delivery_grey_bg)
                     optionTitle?.text = it.getText(R.string.delivering_to)
@@ -145,9 +145,9 @@ class OrderConfirmationFragment : Fragment() {
                         response?.orderSummary?.fulfillmentDetails?.address?.address1?.let { convertToTitleCase(it) } ?: ""
                 }
                 Delivery.DASH -> {
-                    dashDeliveryConstraintLayout.visibility = VISIBLE
-                    deliveryOrderDetailsLayout.visibility = GONE
-                    dashOrderDetailsLayout.visibility = VISIBLE
+                    dashDeliveryConstraintLayout?.visibility = VISIBLE
+                    deliveryOrderDetailsLayout?.visibility = GONE
+                    dashOrderDetailsLayout?.visibility = VISIBLE
                     val dashLocation = response?.orderSummary?.fulfillmentDetails?.address?.address1?.let { convertToTitleCase(it) }
                             ?: ""
                     val dashAddressName =
@@ -166,6 +166,7 @@ class OrderConfirmationFragment : Fragment() {
                                 null
                         )
                     }
+                    setUpDashOrderDetailsLayout(response)
                 }
             }
 
@@ -280,6 +281,15 @@ class OrderConfirmationFragment : Fragment() {
         }
     }
 
+    private fun setUpDashOrderDetailsLayout(response: SubmittedOrderResponse?) {
+        setNumberAndCostItemsBottomSheet(response?.items)
+
+        initRecyclerView(response?.items)
+
+        handleAddToShoppingListButton()
+    }
+
+
     private fun setupOrderDetailsBottomSheet(response: SubmittedOrderResponse?) {
 
         when (Delivery.getType(response?.orderSummary?.fulfillmentDetails?.deliveryType)) {
@@ -292,11 +302,11 @@ class OrderConfirmationFragment : Fragment() {
                 deliveryLocationText?.text = context?.getText(R.string.delivery_location_semicolon)
                 deliveryOrderDetailsTextView?.text = context?.getText(R.string.delivery_semicolon)
             }
-            Delivery.DASH -> {
+           /* Delivery.DASH -> {
                 deliveryLocationText?.text =
                         context?.getText(R.string.collection_location_semicolon)
                 deliveryOrderDetailsTextView?.text = context?.getText(R.string.collection_semicolon)
-            }
+            }*/
             else -> {
             }
         }
