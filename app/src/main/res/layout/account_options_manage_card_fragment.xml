@@ -9,29 +9,29 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_30sdp"
-        android:layout_marginBottom="@dimen/_32sdp"
+        android:layout_marginTop="@dimen/twenty_nine_dp"
         android:fontFamily="@font/futura_semi_bold"
         android:text="@string/my_card"
+        android:textAllCaps="true"
         android:textColor="@color/black"
         android:textSize="@dimen/_12sdp"
-        android:textAllCaps="true"
-        app:layout_constraintBottom_toTopOf="@+id/manageAndCardTextGuideline"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/manageCardText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twenty_nine_dp"
         android:layout_marginEnd="@dimen/_24sdp"
-        android:layout_marginBottom="@dimen/_32sdp"
         android:fontFamily="@font/futura_medium"
         android:letterSpacing="0.1"
         android:text="@string/manage_my_card_title"
         android:textAllCaps="true"
         android:textColor="@color/black"
         android:textSize="@dimen/_11sdp"
-        app:layout_constraintBottom_toTopOf="@+id/manageAndCardTextGuideline"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/storeCardTagTextView"
@@ -39,7 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/white"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/manageCardText"
         app:layout_constraintEnd_toEndOf="@+id/manageCardText"
         app:layout_constraintTop_toTopOf="@+id/manageCardText" />
@@ -50,12 +50,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constrainedHeight="true"
-        app:layout_constraintGuide_begin="@dimen/_80sdp" />
+        app:layout_constraintGuide_begin="@dimen/fifty_eight_dp" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/manageCardFragmentContainerView"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/twenty_dp"
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:tag="manageCardFragmentContainerView"
