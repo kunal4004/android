@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -41,12 +42,15 @@ class ContactUsFragment : Fragment(), View.OnClickListener {
                 val contactUsRow = layoutInflater.inflate(R.layout.contact_us_landing_item, contactUsContainerLinearLayout, false)
                 val contactUsLandingTextView = contactUsRow.findViewById<TextView>(R.id.contactUsLandingTextView)
                 val contactUsLandingDescriptionTextView = contactUsRow.findViewById<TextView>(R.id.contactUsLandingDescriptionTextView)
+                val contactUsDividertView = contactUsRow.findViewById<View>(R.id.contactUsDivider)
 
                 contactUsLandingTextView?.text = item.title
                 contactUsLandingDescriptionTextView?.text = item.description
                 contactUsRow?.tag = index
                 contactUsRow?.setOnClickListener (this@ContactUsFragment)
-
+                if (index == contactUsLanding()!!.size.minus(1)){
+                    contactUsDividertView.visibility = GONE
+                }
                 contactUsContainerLinearLayout?.addView(contactUsRow)
             }
         }

@@ -1,19 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,34 +14,29 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import com.awfs.coordination.R;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate;
+import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapView;
+import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.SpannableMenuOption;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-public class StoreDetailsActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class StoreDetailsActivity extends AppCompatActivity implements DynamicMapDelegate {
     private static final int REQUEST_CALL = 1;
-    GoogleMap googleMap;
+
     public Toolbar toolbar;
     StoreDetails storeDetails;
     private String TAG = this.getClass().getSimpleName();
@@ -69,6 +57,7 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
     WTextView nativeMap;
     WTextView cancel;
     ImageView closePage;
+    DynamicMapView dynamicMapView;
 
     LinearLayout mapLayout;
     private SlidingUpPanelLayout mLayout;
@@ -83,6 +72,9 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
         super.onCreate(savedInstanceState);
         Utils.updateStatusBarBackground(this);
         setContentView(R.layout.store_details_activity);
+
+        dynamicMapView = findViewById(R.id.dynamicMapView);
+        dynamicMapView.initializeMap(savedInstanceState, this);
 
         mPopWindowValidationMessage = new PopWindowValidationMessage(this);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -166,37 +158,25 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
                 }
             }
         });
-        initMap();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        dynamicMapView.onResume();
         Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.STORE_DETAILS);
     }
 
     @Override
-    public void onMapReady(GoogleMap map) {
-        googleMap = map;
-        googleMap.getUiSettings().setScrollGesturesEnabled(false);
-        googleMap.setMyLocationEnabled(false);
+    public void onMapReady() {
+        dynamicMapView.setScrollGesturesEnabled(false);
+        dynamicMapView.setMyLocationEnabled(false);
         centerCamera();
     }
 
     public void centerCamera() {
-        googleMap.addMarker(new MarkerOptions().position(new LatLng(storeDetails.latitude, storeDetails.longitude))
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.selected_pin)));
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(
-                new LatLng(storeDetails.latitude, storeDetails.longitude)).zoom(13).build();
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-    }
-
-    public void initMap() {
-        if (googleMap == null) {
-            SupportMapFragment mapFragment = (SupportMapFragment) this.getSupportFragmentManager().findFragmentById(R.id.map);
-            mapFragment.getMapAsync(this);
-
-        }
+        dynamicMapView.addMarker(this, storeDetails.latitude, storeDetails.longitude, R.drawable.selected_pin);
+        dynamicMapView.animateCamera(storeDetails.latitude, storeDetails.longitude, 13);
     }
 
     @Override
@@ -364,5 +344,30 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
         return list;
     }
 
+    @Override
+    public void onMarkerClicked(@NonNull DynamicMapMarker marker) { }
 
+    @Override
+    protected void onDestroy() {
+        dynamicMapView.onDestroy();
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        dynamicMapView.onPause();
+        super.onPause();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        dynamicMapView.onLowMemory();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        dynamicMapView.onSaveInstanceState(outState);
+    }
 }
