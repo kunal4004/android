@@ -92,7 +92,7 @@
         app:layout_constraintTop_toBottomOf="@+id/yourCartLinearLayout" />
 
     <LinearLayout
-        android:id="@+id/discountsLinearLayout"
+        android:id="@+id/driverTipLinearLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -102,6 +102,47 @@
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
         app:layout_constraintTop_toBottomOf="@id/yourCartSeparator">
+
+        <TextView
+            style="@style/myriad_pro_regular"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:gravity="center_vertical"
+            android:text="@string/driver_tip"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/fifteen_sp" />
+
+        <TextView
+            android:id="@+id/driverTipTextView"
+            style="@style/futura_semi_bold_black"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:gravity="end"
+            android:textColor="@color/black"
+            android:textSize="@dimen/fifteen_sp" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/driverTipSeparator"
+        style="@style/bottom_line"
+        android:layout_width="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/driverTipLinearLayout" />
+
+    <LinearLayout
+        android:id="@+id/discountsLinearLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/twenty_dp"
+        android:paddingBottom="@dimen/twenty_dp"
+        android:weightSum="1"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@id/driverTipSeparator">
 
         <TextView
             style="@style/myriad_pro_regular"

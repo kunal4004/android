@@ -1897,6 +1897,7 @@
     <string name="promo_discount_dialog_desc">If more than one Promo Code is applied, we select the code with the highest priority for you.</string>
     <string name="earliest_collection_date">Earliest Collection date:</string>
     <string name="earliest_collection_Date">Earliest Collection Date:</string>
+    <string name="driver_tip">Driver Tip</string>
 
     <!-- Dash Details -->
     <string name="dash_banner_text_open_app">Same Day Delivery. Open Our App.</string>
@@ -2518,6 +2519,7 @@
     <string name="add_street_address">Street Address:</string>
     <string name="dash_free_collection">"Free Collection"</string>
     <string name="dash_item_limit">%d Item Limit</string>
+    <string name="dash_free_order">Free for orders over %d</string>
     <string name="select_delivery_timeslot">Select Delivery Timeslot</string>
     <string name="dash_delivery_date">Delivery Date</string>
     <string name="dash_delivery_timeslot">Delivery Timeslot</string>
@@ -2525,6 +2527,8 @@
     <string name="set_location_title">Set Your Location</string>
     <string name="set_location_msg">To view and shop using Click &amp; Collect, we need your location.</string>
     <string name="set_location">SET LOCATION</string>
+    <string name="hint_street_address_dash">Home • 28 Eastlake Island Drive</string>
+    <string name="continue_browsing">CONTINUE BROWSING</string>
 
     <string name="change_your_delivery_method_title">You’re About To Change Your Delivery Method</string>
     <string name="change_your_delivery_method_standard">By adding this item to your cart, you will checkout using <b><font color='#000000'>Standard Delivery</font></b> instead.</string>
@@ -2631,4 +2635,8 @@
     <string name="i_forgot_to_add_something_to_my_order">I forgot to add something to my order.</string>
     <string name="i_need_to_place_this_order_for_a_different_time">I need to place this order for a different time.</string>
     <string name="other">Other.</string>
+    <string name="dash_status_confirmed">Confirmed</string>
+    <string name="dash_status_packaging">Packaging</string>
+    <string name="dash_status_en_route">En-route</string>
+    <string name="dash_status_delivered">Delivered</string>
 </resources>
