@@ -102,5 +102,11 @@ interface AccountRemoteService {
         @Body blockCardRequestBody: BlockCardRequestBody
     ): Response<BlockMyCardResponse>
 
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/v4/user/email/{emailId}")
+    suspend fun queryServiceNotifyCardNotYetReceived(
+        @Path("emailId") emailId: String,
+        @Body body: Any
+    ): Response<BlockMyCardResponse>
 
 }

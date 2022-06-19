@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.core
 
 import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.catch
 import retrofit2.Response
@@ -10,15 +9,7 @@ import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.models.network.RetrofitException
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Result
 import java.io.IOException
-import java.io.Serializable
 import javax.inject.Inject
-
-data class ErrorResponse(
-    @SerializedName("httpCode")
-    var httpCode: Int,
-    @SerializedName("response")
-    val response: za.co.woolworths.financial.services.android.models.dto.Response
-) : Serializable
 
 open class CoreDataSource @Inject constructor() : NetworkConfig() {
 
@@ -31,7 +22,7 @@ open class CoreDataSource @Inject constructor() : NetworkConfig() {
 
     sealed class IOTaskResult<out DTO : Any> {
         data class OnSuccess<out DTO : Any>(val data: DTO) : IOTaskResult<DTO>()
-        data class OnFailure(val data: ErrorResponse) : IOTaskResult<Nothing>()
+        data class OnFailure<out DTO : Any>(val data: DTO) : IOTaskResult<DTO>()
         data class OnFailed(val throwable: Throwable) : IOTaskResult<Nothing>()
         object Empty : IOTaskResult<Nothing>()
     }
@@ -47,8 +38,8 @@ open class CoreDataSource @Inject constructor() : NetworkConfig() {
      * object wrapping an [Exception] class stating the error
      */
 
-    suspend fun <T : Any> performSafeNetworkApiCall(
-        networkApiCall: NetworkAPIInvoke<T>
+    suspend inline fun <reified T : Any> performSafeNetworkApiCall(
+        crossinline networkApiCall: NetworkAPIInvoke<T>
     ): Flow<IOTaskResult<T>> {
         return flow {
             with(networkApiCall()) {
@@ -61,16 +52,12 @@ open class CoreDataSource @Inject constructor() : NetworkConfig() {
                     false -> {
                         emit(
                             try {
-                                val errorResponse = Gson().fromJson(
-                                    errorBody()?.string(),
-                                    ErrorResponse::class.java)
-                                IOTaskResult.OnFailure(errorResponse)
+                                IOTaskResult.OnFailure(parseJson(errorBody()?.string()) as T)
                             } catch (e: Exception) {
                                 IOTaskResult.OnFailed(
                                     IOException(
                                         "API call failed with error - ${
-                                            errorBody()
-                                                ?.string() ?: "Network error"
+                                            errorBody()?.string() ?: "Network error"
                                         }"
                                     )
                                 )
@@ -125,3 +112,8 @@ typealias NetworkAPIInvoke<T> = suspend () -> Response<T>
 
 private fun <T> displayMaintenanceScreenIfNeeded(url: String, response: Response<T>): Boolean =
     RetrofitException(url, response.code()).show()
+
+inline fun <reified T: Any> parseJson(body: String?): T {
+    // handle OkResponse only
+    return Gson().fromJson(body, T::class.java)
+}
