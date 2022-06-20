@@ -20,7 +20,7 @@
         tools:ignore="MissingConstraints">
 
         <TextView
-            android:id="@+id/numberItemsTextView"
+            android:id="@+id/foodNumberItemsTextView"
             style="@style/futura_semi_bold_black"
             android:layout_width="0dp"
             android:layout_height="match_parent"
