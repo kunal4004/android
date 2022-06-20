@@ -433,10 +433,6 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
         (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(openNextFragment(rootCategory))
     }
 
-    private fun onDashBannerClicked() {
-        /*todo need to delete this one */
-    }
-
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
         // not required
     }
