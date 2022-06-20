@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.OnBackPressedCallback
@@ -15,8 +16,12 @@ import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StorCardCallBack
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.NetworkManager
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -31,6 +36,7 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
     @Inject lateinit var manageCardAdapter: ManageCardViewPagerAdapter
 
     @Inject lateinit var router: ProductLandingRouterImpl
+    private val activityLauncher = BetterActivityResult.registerActivityForResult(this)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -69,9 +75,26 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
 
     private fun ManageCardDetailsFragmentBinding.setOnClickListener() {
         mOnItemClickListener = ManageCardItemListener(requireActivity(), router, includeListOptions)
-        mOnItemClickListener?.setOnClickListener()
+        mOnItemClickListener!!.command.observe(viewLifecycleOwner) {
+            when(it!=null){
+                true->{storeCardLauncher(it)}
+            }
+        }
     }
-
+    private fun storeCardLauncher(intent: Intent) {
+        activityLauncher.launch(intent, onActivityResult = { result ->
+            when (StorCardCallBack().linkNewCardCallBack(result)) {
+                true -> {
+                    if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
+                        viewModel.queryServiceGetStoreCardCards()
+                    } else {
+                        ErrorHandlerView(activity).showToast()
+                    }
+                }
+            }
+        })
+        activity?.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+    }
     private fun setupView() {
         mBindCardInfo?.initView()
         mItemList?.hideAllRows()

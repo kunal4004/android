@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -23,10 +24,13 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.ManageCardItemListener
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.ManageCardLandingHeaderItems
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.ManageCardLandingItemList
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StorCardCallBack
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.loadingState
-import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
@@ -48,7 +52,8 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
     lateinit var router: ProductLandingRouterImpl
 
     val viewModel: MyAccountsRemoteApiViewModel by activityViewModels()
-    val cardFreezeViewModel: TemporaryFreezeCardViewModel by activityViewModels()
+    private val cardFreezeViewModel: TemporaryFreezeCardViewModel by activityViewModels()
+    private val activityLauncher = BetterActivityResult.registerActivityForResult(this)
 
     private val landingController by lazy { (requireActivity() as? StoreCardActivity)?.landingNavController() }
     private lateinit var locator: Locator
@@ -56,7 +61,8 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(AccountOptionsManageCardFragmentBinding.bind(view)) {
-            mHeaderItems = ManageCardLandingHeaderItems(viewModel, this, this@AccountOptionsManageCardFragment)
+            mHeaderItems =
+                ManageCardLandingHeaderItems(viewModel, this, this@AccountOptionsManageCardFragment)
             mItemList = ManageCardLandingItemList(
                 cardFreezeViewModel,
                 includeListOptions,
@@ -66,6 +72,7 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
             setupView()
         }
     }
+
     private fun AccountOptionsManageCardFragmentBinding.startLocationDiscoveryProcess() {
         locator = Locator(activity as AppCompatActivity)
         locator.getCurrentLocation { locationEvent ->
@@ -81,9 +88,29 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
             subscribeObservers()
         }
     }
+
     private fun AccountOptionsManageCardFragmentBinding.setOnClickListener() {
         mOnItemClickListener = ManageCardItemListener(requireActivity(), router, includeListOptions)
-        mOnItemClickListener.setOnClickListener()
+        mOnItemClickListener.command.observe(viewLifecycleOwner) {
+            when(it!=null){
+                true->{storeCardLauncher(it)}
+            }
+        }
+    }
+
+    private fun storeCardLauncher(intent: Intent) {
+        activityLauncher.launch(intent, onActivityResult = { result ->
+            when (StorCardCallBack().linkNewCardCallBack(result)) {
+                true -> {
+                    if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
+                        viewModel.queryServiceGetStoreCardCards()
+                    } else {
+                        ErrorHandlerView(activity).showToast()
+                    }
+                }
+            }
+        })
+        activity?.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
     }
 
     private fun AccountOptionsManageCardFragmentBinding.setupView() {
