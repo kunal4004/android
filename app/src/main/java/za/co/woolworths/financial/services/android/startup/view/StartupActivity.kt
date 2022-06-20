@@ -14,7 +14,6 @@ import android.view.View
 import android.view.WindowManager
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
-
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProviders
