@@ -11,6 +11,8 @@ import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -22,15 +24,19 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.fcm.FCMMessageType;
 import za.co.woolworths.financial.services.android.startup.view.StartupActivity;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 
 public class WFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = WFirebaseMessagingService.class.getSimpleName();
+    private static final String FEATURE_ORDER_DETAILS = "Order Details";
+    private static final String EXTRA_PAYLOAD = "payload";
 
     /**
      * Called if InstanceID token is updated. This may occur if the security of
@@ -78,21 +84,37 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
 
         Intent intent = new Intent(this, StartupActivity.class);
 
+        PendingIntent pendingIntent;
         String payloadParameters = payload.get("parameters");
         String payloadFeature = payload.get("feature");
 
+        // This function will get called only when app is in Foreground
+        // else it will send data to activity extras.
         if (payloadFeature != null &&
-                payloadFeature.equals("Product Listing") &&
+                payloadFeature.equals(FEATURE_ORDER_DETAILS) &&
                 payloadParameters != null) {
 
-            String json = payloadParameters.replaceAll("\\\\", "");
-            JsonObject parameters = new Gson().fromJson(json, JsonObject.class);
+            intent = new Intent(this, BottomNavigationActivity.class);
+            for (Map.Entry<String, String> keyValue : payload.entrySet()) {
+                intent.putExtra(keyValue.getKey(), keyValue.getValue());
+            }
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            pendingIntent = PendingIntent.getActivity(this, DEEP_LINK_REQUEST_CODE, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+        } else {
 
-            intent.setData(Uri.parse(parameters.get("url").getAsString()));
-            intent.setAction(Intent.ACTION_VIEW);
-        }
-        
-        /*Deep link to PDP disabled*/
+            if (payloadFeature != null &&
+                    payloadFeature.equals("Product Listing") &&
+                    payloadParameters != null) {
+
+                String json = payloadParameters.replaceAll("\\\\", "");
+                JsonObject parameters = new Gson().fromJson(json, JsonObject.class);
+
+                intent.setData(Uri.parse(parameters.get("url").getAsString()));
+                intent.setAction(Intent.ACTION_VIEW);
+            }
+
+            /*Deep link to PDP disabled*/
         /*else if (payload.get("feature").equals("Product Detail")){
             String json = payload.get("parameters").replaceAll("\\\\", "");
             JsonObject parameters = new Gson().fromJson(json, JsonObject.class);
@@ -102,17 +124,19 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
             intent.setAction(Intent.ACTION_VIEW);
         }*/
 
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, DEEP_LINK_REQUEST_CODE, intent,
-                PendingIntent.FLAG_ONE_SHOT);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+            pendingIntent = PendingIntent.getActivity(this, DEEP_LINK_REQUEST_CODE, intent,
+                    PendingIntent.FLAG_ONE_SHOT);
+        }
 
         String contentTitle = null;
         String contentText = null;
 
-        if (notification == null){
+        if (notification == null) {
             contentTitle = payload.get("title");
             contentText = payload.get("body");
-        } else{
+        } else {
             contentTitle = notification.getTitle();
             contentText = notification.getBody();
         }
@@ -125,7 +149,7 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
                 .setContentTitle(contentTitle)
                 .setContentText(contentText)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 })
+                .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent);
 
@@ -133,14 +157,13 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
 
-//    #region FCM Methods
-    private void mcConfigClear(){
+    //    #region FCM Methods
+    private void mcConfigClear() {
         try {
             PersistenceLayer.getInstance().executeDeleteQuery("DELETE FROM ApiResponse WHERE ApiRequestId IN (SELECT id FROM ApiRequest WHERE endpoint = '/mobileconfigs');");
             PersistenceLayer.getInstance().executeDeleteQuery("DELETE FROM ApiRequest WHERE endpoint = '/mobileconfigs';");
-        }catch (Exception e)
-        {
-            Log.e(TAG,e.getMessage());
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
         }
     }
 //    #endregion
