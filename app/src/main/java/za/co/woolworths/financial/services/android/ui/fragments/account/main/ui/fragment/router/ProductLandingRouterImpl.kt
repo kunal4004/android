@@ -25,7 +25,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.M
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.MyAccountsScreenNavigator.Companion.navigateToGetTemporaryStoreCardPopupActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.MyAccountsScreenNavigator.Companion.navigateToMyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.StoreCardOptionsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ToastFactory
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountOptionsImpl
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.AccountOptionsManageCardFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_credit_limit_increase.CreditLimitIncreaseLanding
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.PayWithCardListFragmentDirections
@@ -33,7 +35,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
@@ -74,7 +75,6 @@ class ProductLandingRouterImpl @Inject constructor(
     private var accountOptions: AccountOptionsImpl,
     private var manageCardImpl: ManageCardFunctionalRequirementImpl,
 ) : IProductLandingRouter {
-
     override fun routeToDebitOrderActivity(activity: Activity?) {
         activity?.apply {
             val debitOrderIntent = Intent(this, DebitOrderActivity::class.java)
@@ -268,7 +268,7 @@ class ProductLandingRouterImpl @Inject constructor(
     }
 
     override fun showNoConnectionToast(activity: Activity?) {
-        activity?.let { ErrorHandlerView(it).showToast() }
+        ToastFactory.showNoConnectionFound(activity)
     }
 
     companion object {
