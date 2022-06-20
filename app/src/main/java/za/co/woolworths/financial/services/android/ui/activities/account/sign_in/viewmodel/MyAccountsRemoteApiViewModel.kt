@@ -1,7 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,13 +10,15 @@ import za.co.woolworths.financial.services.android.models.dto.EligibilityPlanRes
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.IStoreCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.StoreCardDataSource
-import za.co.woolworths.financial.services.android.models.dto.Response
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
+import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.data.CardNotReceivedDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.data.ICardNotReceivedService
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.ApiResult
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.capitaliseFirstLetterInEveryWord
 import javax.inject.Inject
 
 enum class LoaderType {
@@ -35,13 +35,15 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
 
     var loaderType : LoaderType = LoaderType.LANDING
 
+    val cardHolderName = KotlinUtils.getCardHolderNameSurname()?.capitaliseFirstLetterInEveryWord()
+
     var listOfStoreCardFeatureType : MutableList<StoreCardFeatureType>? = mutableListOf()
 
     private val _viewState = MutableStateFlow(CoreDataSource.IOTaskResult.Empty)
     val viewState = _viewState.asStateFlow()
 
-    private val _notifyCardNotReceived = MutableLiveData<ApiResult<Response>>()
-    val notifyCardNotReceived: LiveData<ApiResult<Response>> = _notifyCardNotReceived
+    private val _notifyCardNotReceived = MutableSharedFlow<ViewState<BlockMyCardResponse>>(0)
+    val notifyCardNotReceived: SharedFlow<ViewState<BlockMyCardResponse>> = _notifyCardNotReceived
 
     private val _storeCardResponseResult = MutableStateFlow<ViewState<StoreCardsResponse>>(ViewState.Loading(true))
     val storeCardResponseResult: StateFlow<ViewState<StoreCardsResponse>> get() = _storeCardResponseResult
@@ -95,10 +97,9 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
         return listOfStoreCards
     }
 
-    fun queryServiceCardNotYetReceived() {
-        viewModelScope.launch {
-            val query = queryServiceNotifyCardNotYetReceived()
-            _notifyCardNotReceived.value = query
+    fun queryServiceCardNotYetReceived() = viewModelScope.launch {
+        getViewStateFlowForNetworkCall {  cardNotReceived.queryServiceNotifyCardNotYetReceived()}.collect{
+            _notifyCardNotReceived.emit(it)
         }
     }
 
@@ -107,5 +108,7 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
             _onViewPagerPageChangeListener.emit(Pair(storeCardFeatureType, position))
         }
     }
+
+
 
 }
