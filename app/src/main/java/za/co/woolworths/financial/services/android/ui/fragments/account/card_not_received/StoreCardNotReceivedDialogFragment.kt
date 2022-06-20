@@ -19,17 +19,17 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingBottomSheetFragment
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderFailure
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderHttpFailureFromServer
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class StoreCardNotReceivedDialogFragment : ViewBindingBottomSheetFragment<StoreCardVtscCardNotReceivedPopupDialogBinding>(), View.OnClickListener {
-
     val viewModel: MyAccountsRemoteApiViewModel by viewModels()
+
+    @Inject lateinit var router: ProductLandingRouterImpl
 
     companion object {
         fun newInstance() = StoreCardNotReceivedDialogFragment()
@@ -86,6 +86,7 @@ class StoreCardNotReceivedDialogFragment : ViewBindingBottomSheetFragment<StoreC
         lifecycleScope.launch {
             viewModel.notifyCardNotReceived.collectLatest {
                 with(it){
+                    renderNoConnection { router.showNoConnectionToast(requireActivity()) }
                     renderLoading { showProgress(isLoading) }
                     renderSuccess { successNotificationView() }
                     renderHttpFailureFromServer { httpErrorFromServer(this.output.response) }

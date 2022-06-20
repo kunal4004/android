@@ -15,9 +15,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.LoaderType
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderFailure
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderHttpFailureFromServer
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.ManageCardItemListener
@@ -26,7 +24,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.loadingState
-import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
@@ -66,6 +63,7 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
             setupView()
         }
     }
+
     private fun AccountOptionsManageCardFragmentBinding.startLocationDiscoveryProcess() {
         locator = Locator(activity as AppCompatActivity)
         locator.getCurrentLocation { locationEvent ->
@@ -81,6 +79,7 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
             subscribeObservers()
         }
     }
+
     private fun AccountOptionsManageCardFragmentBinding.setOnClickListener() {
         mOnItemClickListener = ManageCardItemListener(requireActivity(), router, includeListOptions)
         mOnItemClickListener.setOnClickListener()
@@ -108,10 +107,13 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
     private fun AccountOptionsManageCardFragmentBinding.subscribeObservers() {
         lifecycleScope.launch {
             with(viewModel) {
-                queryServiceGetStoreCardCards()
+                requestGetStoreCardCards()
                 storeCardResponseResult.collectLatest { response ->
                     with(response) {
                         locator.stopService()
+
+                        renderNoConnection { router.showNoConnectionToast(requireActivity()) }
+
                         renderLoading {
                             when (viewModel.loaderType) {
                                 LoaderType.LANDING -> {
@@ -154,4 +156,3 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
 
     }
 }
-

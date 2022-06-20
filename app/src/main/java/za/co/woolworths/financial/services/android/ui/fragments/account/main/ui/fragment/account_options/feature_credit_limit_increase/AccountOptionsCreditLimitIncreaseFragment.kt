@@ -13,9 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
 import za.co.woolworths.financial.services.android.ui.base.onClick
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderFailure
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.MyAccountsUtils
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.loadingState
@@ -73,6 +71,8 @@ class AccountOptionsCreditLimitIncreaseFragment : Fragment(R.layout.account_opti
                     renderFailure {  // TODO :: AutoConnect on internet failure
                     }
                     renderLoading { binding.showProgress(isLoading) }
+                   
+                    renderNoConnection { router.showNoConnectionToast(requireActivity()) }
                 }
             }
         }
