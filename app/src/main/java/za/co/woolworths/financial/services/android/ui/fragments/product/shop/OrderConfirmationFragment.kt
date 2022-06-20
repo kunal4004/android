@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.dash_order_details_layout.*
 import kotlinx.android.synthetic.main.delivering_to_collection_from.*
 import kotlinx.android.synthetic.main.delivering_to_collection_from.foodDeliveryDateTimeTextView
 import kotlinx.android.synthetic.main.delivering_to_collection_from.foodDeliveryLinearLayout
@@ -23,6 +24,8 @@ import kotlinx.android.synthetic.main.delivering_to_collection_from.otherDeliver
 import kotlinx.android.synthetic.main.delivering_to_dashing_from.*
 import kotlinx.android.synthetic.main.fragment_order_confirmation.*
 import kotlinx.android.synthetic.main.order_details_bottom_sheet.*
+import kotlinx.android.synthetic.main.order_details_bottom_sheet.addShoppingListButton
+import kotlinx.android.synthetic.main.order_details_bottom_sheet.itemsRecyclerView
 import kotlinx.android.synthetic.main.other_order_details.*
 import kotlinx.android.synthetic.main.product_details_fragment.*
 import kotlinx.android.synthetic.main.product_details_size_and_color_layout.*
@@ -152,7 +155,7 @@ class OrderConfirmationFragment : Fragment() {
                             ?: ""
                     val dashAddressName =
                             SpannableString(
-                                    "$dashLocation " + requireContext().getString(R.string.bullet) + "" + "$dashLocation " + " "
+                                    "$dashLocation " + requireContext().getString(R.string.bullet) + "" + " " + "$dashLocation "
                             )
                     optionLocationTitle?.text = dashAddressName
 
@@ -282,13 +285,21 @@ class OrderConfirmationFragment : Fragment() {
     }
 
     private fun setUpDashOrderDetailsLayout(response: SubmittedOrderResponse?) {
-        setNumberAndCostItemsBottomSheet(response?.items)
+        setFoodItemCount(response?.items)
 
         initRecyclerView(response?.items)
 
         handleAddToShoppingListButton()
     }
 
+    private fun setFoodItemCount(items: OrderItems?) {
+        val food: Int = items?.food?.size ?: 0
+        val number: Int = food
+        foodNumberItemsTextView?.text = if (number > 1)
+            bindString(R.string.food_number_items, number.toString())
+        else
+            bindString(R.string.food_number_item, number.toString())
+    }
 
     private fun setupOrderDetailsBottomSheet(response: SubmittedOrderResponse?) {
 
