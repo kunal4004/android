@@ -30,6 +30,8 @@ sealed class ViewState<out T> where T : Any? {
 
     object RenderEmpty : ViewState<Nothing>()
 
+    object RenderNoConnection : ViewState<Nothing>()
+
 }
 
 infix fun <T> ViewState<T>.renderSuccess(onSuccess: ViewState.RenderSuccess<T>.() -> Unit): ViewState<T> {
@@ -73,6 +75,18 @@ infix fun <T> ViewState<T>.renderFailure(onError: ViewState.RenderFailure.() -> 
 infix fun <T> ViewState<T>.renderEmpty(onEmpty: ViewState.RenderEmpty.() -> Unit): ViewState<T> {
     return when (this) {
         is ViewState.RenderEmpty -> {
+            onEmpty(this)
+            this
+        }
+        else -> {
+            this
+        }
+    }
+}
+
+infix fun <T> ViewState<T>.renderNoConnection(onEmpty: ViewState.RenderNoConnection.() -> Unit): ViewState<T> {
+    return when (this) {
+        is ViewState.RenderNoConnection -> {
             onEmpty(this)
             this
         }

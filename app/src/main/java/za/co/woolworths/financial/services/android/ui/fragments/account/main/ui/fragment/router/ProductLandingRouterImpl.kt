@@ -33,6 +33,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
@@ -66,6 +67,7 @@ interface IProductLandingRouter {
     fun routeToServerErrorDialog(findNavController: NavController?, serverErrorResponse: ServerErrorResponse?)
     fun routeToManageMyCardDetails(findNavController: NavController)
     fun routeToDefaultErrorMessageDialog(activity: Activity?,findNavController: NavController)
+    fun showNoConnectionToast(activity: Activity?)
 }
 
 class ProductLandingRouterImpl @Inject constructor(
@@ -263,6 +265,10 @@ class ProductLandingRouterImpl @Inject constructor(
         val serverErrorResponse = ServerErrorResponse()
         serverErrorResponse.desc = activity?.getString(R.string.oops_error_message) ?: ""
         findNavController.navigate(AccountOptionsManageCardFragmentDirections.actionAccountOptionsManageCardFragmentToGeneralErrorDialogPopupFragment(serverErrorResponse))
+    }
+
+    override fun showNoConnectionToast(activity: Activity?) {
+        activity?.let { ErrorHandlerView(it).showToast() }
     }
 
     companion object {

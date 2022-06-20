@@ -83,7 +83,7 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
         }
     }
 
-    fun queryServiceGetStoreCardCards() = viewModelScope.launch {
+    fun requestGetStoreCardCards() = viewModelScope.launch {
         getViewStateFlowForNetworkCall { dataSource.queryServiceGetStoreCards() }.collect{
             _storeCardResponseResult.value = it
         }
