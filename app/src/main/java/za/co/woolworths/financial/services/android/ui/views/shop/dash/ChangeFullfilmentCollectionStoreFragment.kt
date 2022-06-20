@@ -14,9 +14,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
 import kotlinx.android.synthetic.main.fragment_click_and_collect_stores.*
 import kotlinx.android.synthetic.main.fragment_click_and_collect_stores.view.*
 import kotlinx.android.synthetic.main.fragment_shop_department.*
@@ -44,18 +41,19 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.grid.Pro
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
+import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate
+import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?) :
-    DepartmentExtensionFragment(), OnMapReadyCallback,
+    DepartmentExtensionFragment(), DynamicMapDelegate,
     StoreListAdapter.OnStoreSelected, View.OnClickListener, TextWatcher {
 
     private var updatedAddressStoreList: List<Store>? = mutableListOf()
     private var storeId: String? = null
     private var placeId: String? = null
-    private lateinit var mapFragment: SupportMapFragment
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     private var parentFragment: ShopFragment? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
@@ -72,6 +70,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
         super.onViewCreated(view, savedInstanceState)
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         setUpViewModel()
+        dynamicMapView?.initializeMap(savedInstanceState, this)
 
     }
 
@@ -84,14 +83,12 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
 
     override fun onResume() {
         super.onResume()
+        dynamicMapView?.onResume()
         etEnterNewAddress?.addTextChangedListener(this)
         init()
     }
 
     fun init() {
-        mapFragment = childFragmentManager
-            .findFragmentById(R.id.mapView) as SupportMapFragment
-        mapFragment.getMapAsync(this)
         tvConfirmStore?.setOnClickListener(this)
         btChange?.setOnClickListener(this)
 
@@ -175,7 +172,6 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
                                 validateLocationResponse?.validatePlace?.stores?.size
                             )
                             updatedAddressStoreList = validateLocationResponse?.validatePlace?.stores
-                            mapFragment.getMapAsync(this@ChangeFullfilmentCollectionStoreFragment)
                             tvAddress?.text =
                                 KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1)
                             placeId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
@@ -253,14 +249,18 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
         tvConfirmStore?.isEnabled = true
     }
 
-    override fun onMapReady(googleMap: GoogleMap?) {
-        googleMap?.uiSettings?.setAllGesturesEnabled(false)
+    override fun onMapReady() {
+        dynamicMapView.setAllGesturesEnabled(false)
         val addressStoreList = WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
         if (addressStoreList != null && !addressStoreList?.isEmpty()) {
-            GeoUtils.showFirstFourLocationInMap(addressStoreList, googleMap, requireContext())
+            GeoUtils.showFirstFourLocationInMap(addressStoreList, dynamicMapView, requireContext())
         } else if (updatedAddressStoreList?.isEmpty() == false)  {
-            GeoUtils.showFirstFourLocationInMap(updatedAddressStoreList, googleMap, requireContext())
+            GeoUtils.showFirstFourLocationInMap(updatedAddressStoreList, dynamicMapView, requireContext())
         }
+    }
+
+    override fun onMarkerClicked(marker: DynamicMapMarker) {
+        TODO("Not yet implemented")
     }
 
     override fun onClick(v: View?) {
@@ -460,5 +460,25 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
             }
         }
         setStoreList(list)
+    }
+
+    override fun onPause() {
+        dynamicMapView?.onPause()
+        super.onPause()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        dynamicMapView?.onLowMemory()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        dynamicMapView?.onSaveInstanceState(outState)
+    }
+
+    override fun onDestroyView() {
+        dynamicMapView?.onDestroy()
+        super.onDestroyView()
     }
 }
