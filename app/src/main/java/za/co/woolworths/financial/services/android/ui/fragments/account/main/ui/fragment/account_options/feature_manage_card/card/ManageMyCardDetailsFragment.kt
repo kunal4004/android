@@ -77,10 +77,11 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
     }
 
     private fun ManageCardDetailsFragmentBinding.setOnClickListener() {
-        mOnItemClickListener = ManageCardItemListener(requireActivity(), router, includeListOptions)
-        mOnItemClickListener!!.command.observe(viewLifecycleOwner) {
-            when(it!=null){
-                true->{storeCardLauncher(it)}
+        mOnItemClickListener = ManageCardItemListener(requireActivity(), router, includeListOptions).apply {
+            command.observe(viewLifecycleOwner) {
+                when(it!=null){
+                    true->{storeCardLauncher(it)}
+                }
             }
         }
     }
@@ -103,7 +104,7 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
         mItemList?.hideAllRows()
         subscribeObservers()
     }
-    
+
     private fun subscribeObservers() {
         lifecycleScope.launch {
             viewModel.onViewPagerPageChangeListener.collect { feature ->

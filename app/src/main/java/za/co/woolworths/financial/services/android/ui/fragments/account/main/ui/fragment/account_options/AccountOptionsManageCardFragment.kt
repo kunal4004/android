@@ -85,10 +85,11 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
         }
     }
     private fun AccountOptionsManageCardFragmentBinding.setOnClickListener() {
-        mOnItemClickListener = ManageCardItemListener(requireActivity(), router, includeListOptions)
-        mOnItemClickListener!!.command.observe(viewLifecycleOwner) {
-            when(it!=null){
-                true->{storeCardLauncher(it)}
+        mOnItemClickListener = ManageCardItemListener(requireActivity(), router, includeListOptions).apply {
+            command.observe(viewLifecycleOwner) {
+                when(it!=null){
+                    true->{storeCardLauncher(it)}
+                }
             }
         }
     }

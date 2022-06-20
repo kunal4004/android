@@ -11,7 +11,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.uti
 
 class ManageCardItemListener(
     private val activity: Activity,
-    val router: ProductLandingRouterImpl,
+    private val router: ProductLandingRouterImpl,
     private val includeListOptions: AccountOptionsManageCardListFragmentBinding,
 ) : (View?) -> Unit {
     val command = SingleLiveEvent<Intent>()
