@@ -31,8 +31,8 @@ class InstantStoreCardReplacementCardFragment : Fragment(R.layout.instant_store_
         with(InstantStoreCardReplacementCardFragmentBinding.bind(view)){
             accountHolderNameTextView.text = card?.cardHolderName
             accountHolderNameTextView.setTextColor(Color.WHITE)
-            cardImageView.onClick { viewModel.emitEventOnCardTap(card) }
-            cardImageView.setImageDrawable(
+            storeCardImageView.onClick { viewModel.emitEventOnCardTap(card) }
+            storeCardImageView.setImageDrawable(
                 ContextCompat.getDrawable(
                     requireContext(),
                         R.drawable.ic_store_card
