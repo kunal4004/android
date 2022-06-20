@@ -21,6 +21,7 @@ suspend fun <T : Any> getViewStateFlowForNetworkCall(ioOperation: suspend () -> 
                 is IOTaskResult.OnFailure -> ViewState.RenderErrorFromResponse(it.data as T)
                 is IOTaskResult.OnFailed -> ViewState.RenderFailure(it.throwable)
                 is IOTaskResult.Empty -> ViewState.RenderEmpty
+                is  IOTaskResult.NoConnectionState -> ViewState.RenderNoConnection
             }
         }.collect {
             emit(it)

@@ -11,7 +11,7 @@ import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethods
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 
-interface AccountRemoteService {
+interface WfsApiService {
     @Headers(
         "Content-Type: application/json",
         "Accept: application/json",
@@ -102,5 +102,11 @@ interface AccountRemoteService {
         @Body blockCardRequestBody: BlockCardRequestBody
     ): Response<BlockMyCardResponse>
 
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/v4/user/email/{emailId}")
+    suspend fun queryServiceNotifyCardNotYetReceived(
+        @Path("emailId") emailId: String,
+        @Body body: Any
+    ): Response<BlockMyCardResponse>
 
 }

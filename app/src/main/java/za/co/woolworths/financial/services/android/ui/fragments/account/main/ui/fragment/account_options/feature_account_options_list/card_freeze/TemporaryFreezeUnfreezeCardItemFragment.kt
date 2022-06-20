@@ -12,21 +12,26 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.TemporaryFreezeUnfreezeCardItemFragmentBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.LoaderType
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.extension.onClick
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.AccountOptionsManageCardFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.TemporaryFreezeCardFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.TemporaryUnFreezeCardFragment
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class TemporaryFreezeUnfreezeCardItemFragment : Fragment(R.layout.temporary_freeze_unfreeze_card_item_fragment) {
 
     val viewModel: TemporaryFreezeCardViewModel by activityViewModels()
     val accountViewModel: MyAccountsRemoteApiViewModel by activityViewModels()
+
+    @Inject lateinit var router : ProductLandingRouterImpl
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -54,6 +59,7 @@ class TemporaryFreezeUnfreezeCardItemFragment : Fragment(R.layout.temporary_free
         lifecycleScope.launch {
             viewModel.blockMyCardResponse.collectLatest { state ->
                 with(state) {
+                    renderNoConnection { router.showNoConnectionToast(requireActivity()) }
                     renderLoading {
                         val isLanding = (accountViewModel.loaderType == LoaderType.LANDING)
                         if (isLoading) { // show progress bar
@@ -71,7 +77,7 @@ class TemporaryFreezeUnfreezeCardItemFragment : Fragment(R.layout.temporary_free
                             }
                         }
                     }
-                    renderSuccess { accountViewModel.queryServiceGetStoreCardCards() }
+                    renderSuccess { accountViewModel.requestGetStoreCardCards() }
                 }
             }
         }

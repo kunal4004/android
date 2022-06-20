@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
@@ -30,6 +31,7 @@ class GeneralErrorDialogPopupFragment : WBottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         val binding = GeneralErrorDialogPopupFragmentBinding.bind(view)
         val response = args.serverErrorResponse
+        binding.titleTextView.visibility = GONE
         binding.descriptionTextView.text = response?.desc
         binding.dismissButton.onClick { dismiss() }
     }

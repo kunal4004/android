@@ -8,22 +8,28 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.StoreCardVtscCardNotReceivedPopupDialogBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.Response
+import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingBottomSheetFragment
-import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.ApiResult
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class StoreCardNotReceivedDialogFragment : ViewBindingBottomSheetFragment<StoreCardVtscCardNotReceivedPopupDialogBinding>(), View.OnClickListener {
-
     val viewModel: MyAccountsRemoteApiViewModel by viewModels()
+
+    @Inject lateinit var router: ProductLandingRouterImpl
 
     companion object {
         fun newInstance() = StoreCardNotReceivedDialogFragment()
@@ -77,17 +83,20 @@ class StoreCardNotReceivedDialogFragment : ViewBindingBottomSheetFragment<StoreC
     }
 
     private fun subscribeObserver() {
-        viewModel.notifyCardNotReceived.observe(viewLifecycleOwner) { result ->
-            when (result) {
-                is ApiResult.Success -> successNotificationView()
-                is ApiResult.Failure -> httpErrorFromServer(result.data)
-                is ApiResult.Error -> errorMessage()
+        lifecycleScope.launch {
+            viewModel.notifyCardNotReceived.collectLatest {
+                with(it){
+                    renderNoConnection { router.showNoConnectionToast(requireActivity()) }
+                    renderLoading { showProgress(isLoading) }
+                    renderSuccess { successNotificationView() }
+                    renderHttpFailureFromServer { httpErrorFromServer(this.output.response) }
+                    renderFailure { errorMessage() }
+                }
             }
         }
     }
 
-    private fun httpErrorFromServer(response: Response?) {
-        showProgress(false)
+    private fun httpErrorFromServer(response: ServerErrorResponse?) {
         with(binding) {
             headerTextView.text = getString(R.string.oops_err_title)
             descriptionTextView.text = response?.desc
@@ -96,7 +105,6 @@ class StoreCardNotReceivedDialogFragment : ViewBindingBottomSheetFragment<StoreC
     }
 
     private fun errorMessage() {
-        showProgress(false)
         with(binding) {
             headerTextView.text = getString(R.string.oops_err_title)
             descriptionTextView.text = getString(R.string.oops_error_message)
@@ -109,7 +117,6 @@ class StoreCardNotReceivedDialogFragment : ViewBindingBottomSheetFragment<StoreC
     }
 
     private fun successNotificationView() {
-        showProgress(false)
         Utils.sessionDaoSave(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN, "1")
         with(binding) {
             headerTextView.text = getString(R.string.vtsc_card_not_arrived_notified_title)
@@ -138,7 +145,6 @@ class StoreCardNotReceivedDialogFragment : ViewBindingBottomSheetFragment<StoreC
     }
 
     private fun queryAPIServiceGetCardNotReceived() {
-        showProgress(true)
         viewModel.queryServiceCardNotYetReceived()
     }
 }

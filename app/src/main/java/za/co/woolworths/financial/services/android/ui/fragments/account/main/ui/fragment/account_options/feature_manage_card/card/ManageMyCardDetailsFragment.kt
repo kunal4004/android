@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.OnBackPressedCallback
@@ -19,6 +18,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StorCardCallBack
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.NetworkManager
@@ -36,19 +36,19 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
     @Inject lateinit var manageCardAdapter: ManageCardViewPagerAdapter
 
     @Inject lateinit var router: ProductLandingRouterImpl
-    private val activityLauncher = BetterActivityResult.registerActivityForResult(this)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Utils.updateStatusBarBackground(requireActivity(), R.color.black, true)
         setToolbar()
         with(ManageCardDetailsFragmentBinding.bind(view)) {
-            setupView()
-            mBindCardInfo = BindCardInfoTypeComponent(incManageCardDetailsInfoLayout,viewModel)
+            mBindCardInfo = BindCardInfoTypeComponent(requireContext(),incManageCardDetailsInfoLayout)
             mItemList = ManageCardLandingItemList(
                 cardFreezeViewModel,
                 includeListOptions,
                 this@ManageMyCardDetailsFragment
             )
+            setupView()
             setCardViewPagerNavigationGraph()
             setOnClickListener()
         }
@@ -58,7 +58,9 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
 
     private fun setToolbar() {
         (activity as? StoreCardActivity)?.getToolbarHelper()
-            ?.setManageMyCardDetailsToolbar(viewModel.dataSource.isMultipleStoreCardEnabled())
+            ?.setManageMyCardDetailsToolbar(viewModel.dataSource.isMultipleStoreCardEnabled()) {
+                findNavController().popBackStack()
+            }
     }
 
     private fun setCardViewPagerNavigationGraph() = setupGraph(
@@ -96,7 +98,7 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
         activity?.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
     }
     private fun setupView() {
-        mBindCardInfo?.initView()
+        mBindCardInfo?.setCardHolderName(viewModel.cardHolderName)
         mItemList?.hideAllRows()
         subscribeObservers()
     }

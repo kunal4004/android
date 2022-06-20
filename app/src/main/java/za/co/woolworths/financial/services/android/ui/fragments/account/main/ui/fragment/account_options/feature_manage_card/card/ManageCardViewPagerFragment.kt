@@ -2,6 +2,8 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 
 import android.os.Bundle
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -60,7 +62,14 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
     }
 
     private fun ManageCardViewpagerFragmentBinding?.setDotIndicatorVisibility(items: MutableList<StoreCardFeatureType>?) {
-        this?.cardTabLayout?.visibility = if ((items?.size ?: 0) <= 1) View.GONE else View.VISIBLE
+        if ((items?.size ?: 0) <= 1){
+            this?.cardTabLayout?.visibility = GONE
+            this?.tabHiddenMargin?.visibility = VISIBLE
+        }else {
+            this?.cardTabLayout?.visibility = VISIBLE
+            this?.tabHiddenMargin?.visibility = GONE
+        }
+
     }
 
     private fun ManageCardViewpagerFragmentBinding?.initCardViewPager() {

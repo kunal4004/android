@@ -7,7 +7,7 @@ import dagger.hilt.InstallIn
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.ContactUsDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.IContactUsDataSource
 import dagger.hilt.android.components.ViewModelComponent
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.AccountRemoteService
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.WfsApiService
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.IStoreCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.StoreCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountProductLandingDao
@@ -25,18 +25,18 @@ class NetworkDiModule {
 
     @Provides
     fun provideStoreCardDataSource(
-        accountRemoteService: AccountRemoteService, landingDao: AccountProductLandingDao,
+        wfsApiService: WfsApiService, landingDao: AccountProductLandingDao,
         manageCard: ManageCardFunctionalRequirementImpl
     ): IStoreCardDataSource {
-        return StoreCardDataSource(accountRemoteService, landingDao, manageCard)
+        return StoreCardDataSource(wfsApiService, landingDao, manageCard)
     }
 
     @Provides
     fun provideCreditLimitIncreaseDataSource(
-        accountRemoteService: AccountRemoteService,
+        wfsApiService: WfsApiService,
         landingDao: AccountProductLandingDao,
     ): ICreditLimitIncrease {
-        return CreditLimitIncreaseDataSource(accountRemoteService, landingDao)
+        return CreditLimitIncreaseDataSource(wfsApiService, landingDao)
     }
 
     @Provides
