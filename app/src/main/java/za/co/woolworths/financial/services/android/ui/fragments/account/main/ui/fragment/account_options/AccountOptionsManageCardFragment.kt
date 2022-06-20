@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -85,9 +86,26 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
     }
     private fun AccountOptionsManageCardFragmentBinding.setOnClickListener() {
         mOnItemClickListener = ManageCardItemListener(requireActivity(), router, includeListOptions)
-        mOnItemClickListener.setOnClickListener()
+        mOnItemClickListener!!.command.observe(viewLifecycleOwner) {
+            when(it!=null){
+                true->{storeCardLauncher(it)}
+            }
+        }
     }
-
+    private fun storeCardLauncher(intent: Intent) {
+        activityLauncher.launch(intent, onActivityResult = { result ->
+            when (StorCardCallBack().linkNewCardCallBack(result)) {
+                true -> {
+                    if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
+                        viewModel.requestGetStoreCardCards()
+                    } else {
+                        ErrorHandlerView(activity).showToast()
+                    }
+                }
+            }
+        })
+        activity?.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+    }
     private fun AccountOptionsManageCardFragmentBinding.setupView() {
         mItemList.hideAllRows()
         setupViewPager()
@@ -159,4 +177,3 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
 
     }
 }
-

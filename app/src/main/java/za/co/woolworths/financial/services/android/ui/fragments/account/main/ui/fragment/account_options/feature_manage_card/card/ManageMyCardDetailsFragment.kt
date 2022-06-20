@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.OnBackPressedCallback
@@ -18,15 +19,14 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StorCardCallBack
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
-import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragment) {
-
     private var mBindCardInfo: BindCardInfoTypeComponent? = null
     private var mOnItemClickListener: ManageCardItemListener? = null
     private var mItemList: ManageCardLandingItemList? = null
@@ -36,6 +36,7 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
     @Inject lateinit var manageCardAdapter: ManageCardViewPagerAdapter
 
     @Inject lateinit var router: ProductLandingRouterImpl
+    private val activityLauncher = BetterActivityResult.registerActivityForResult(this)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -88,7 +89,7 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
             when (StorCardCallBack().linkNewCardCallBack(result)) {
                 true -> {
                     if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
-                        viewModel.queryServiceGetStoreCardCards()
+                        viewModel.requestGetStoreCardCards()
                     } else {
                         ErrorHandlerView(activity).showToast()
                     }
