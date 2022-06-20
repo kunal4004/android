@@ -9,48 +9,64 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:minHeight="50dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="8dp">
+        android:minHeight="70dp"
+        android:padding="16dp">
 
         <ImageView
             android:id="@+id/localCallerImg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:contentDescription="@string/fs_local_caller_number"
-            android:background="@drawable/ic_call24" />
+            android:background="@drawable/ic_phone"
+            android:contentDescription="@string/fs_local_caller_number" />
 
-        <TextView
-            android:id="@+id/localCallerTextView"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_toStartOf="@+id/img2"
             android:layout_toEndOf="@+id/localCallerImg"
-            android:fontFamily="@font/myriad_pro_regular_otf"
-            android:text="@string/txt_local_caller"
-            android:textColor="@color/black"
-            android:textSize="15sp" />
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/localCallerPhoneNumberTextView"
+            <TextView
+                android:id="@+id/localCallerTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/myriad_pro_semi_bold"
+                android:text="@string/txt_local_caller"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/localCallerPhoneNumberTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:fontFamily="@font/myriad_pro_regular_otf"
+                android:gravity="center_vertical"
+                android:text="@string/fs_local_caller_number"
+                android:textColor="@color/color_444444"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/img2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginStart="16dp"
-            android:drawableEnd="@drawable/ic_caret_black"
-            android:fontFamily="@font/myriad_pro_regular_otf"
-            android:gravity="center_vertical"
-            android:text="@string/fs_local_caller_number"
-            android:textColor="#4d000000"
-            android:textSize="15sp" />
+            android:background="@drawable/ic_caret_black" />
+
+
     </RelativeLayout>
 
     <View
+        android:id="@+id/localCallerPhoneNumberDivider"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/_1sdp"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
         android:background="#0a000000" />
 
 </LinearLayout>

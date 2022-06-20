@@ -1,32 +1,27 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account
 
-import android.Manifest
+import android.annotation.TargetApi
 import android.content.Intent
-import android.content.IntentSender
-import android.content.pm.PackageManager
 import android.graphics.Paint
+import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.location.*
-import com.google.android.gms.tasks.Task
+import kotlinx.android.synthetic.main.current_location_row_layout.*
 import kotlinx.android.synthetic.main.fragment_link_device_from_account_prod.*
 import kotlinx.android.synthetic.main.layout_link_device_result.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationInterface
@@ -35,36 +30,19 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.availabl
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.StoreCardOptionsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
 import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment
-import za.co.woolworths.financial.services.android.util.AppConstant
-import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.location.Event
+import za.co.woolworths.financial.services.android.util.location.EventType
+import za.co.woolworths.financial.services.android.util.location.Locator
+import java.util.*
 
 
 class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
 
+    private lateinit var locator: Locator
     private var mApplyNowState: ApplyNowState? = null
     private var toolbar: Toolbar? = null
-    // Register the permissions callback, which handles the user's response to the
-    // system permissions dialog. Save the return value, an instance of
-    // ActivityResultLauncher. You can use either a val, as shown in this snippet,
-    // or a lateinit var in your onAttach() or onCreate() method.
-    val requestPermissionLauncher =
-        registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { isGranted: Boolean ->
-            if (isGranted) {
-                // Permission is granted. Continue the action or workflow in your
-                // app.
-                askToEnableLocationSettings()
-            } else {
-                // Explain to the user that the feature is unavailable because the
-                // features requires a permission that the user has denied. At the
-                // same time, respect the user's decision. Don't link to system
-                // settings in an effort to convince the user to change their
-                // decision.
-                navigateToLinkDeviceFragment()
-            }
-        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,6 +63,7 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        locator = Locator(activity as AppCompatActivity)
         activity?.let {
             if (it is LinkDeviceConfirmationInterface) {
                 toolbar = it.getToolbar() as Toolbar
@@ -95,7 +74,7 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
         skipButton.setOnClickListener(this)
 
         linkDeviceConfirmationButton.setOnClickListener {
-            askLocationPermission()
+            checkForLocationPermissionAndNavigateToLinkDevice()
         }
 
         context?.let {
@@ -121,73 +100,6 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
                 }
             }
         }
-    }
-
-    private fun askLocationPermission() {
-        context?.let { context ->
-            when {
-                ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED -> {
-                    // You can use the API that requires the permission.
-                    askToEnableLocationSettings()
-                }
-                shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
-                    // In an educational UI, explain to the user why your app requires this
-                    // permission for a specific feature to behave as expected. In this UI,
-                    // include a "cancel" or "no thanks" button that allows the user to
-                    // continue using your app without granting the permission.
-                    requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-                }
-                else -> {
-                    // You can directly ask for the permission.
-                    // The registered ActivityResultCallback gets the result of this request.
-                    requestPermissionLauncher.launch(
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    )
-                }
-            }
-        }
-    }
-
-    private fun askToEnableLocationSettings() {
-        activity?.apply {
-            val locationRequest = LocationRequest.create()?.apply {
-                interval = 100
-                fastestInterval = 500
-                priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            }
-            val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
-            val client: SettingsClient = LocationServices.getSettingsClient(this)
-            val task: Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
-            task.addOnSuccessListener { locationSettingsResponse ->
-                // All location settings are satisfied. The client can initialize
-                // location requests here.
-                navigateToLinkDeviceFragment()
-            }
-
-            task.addOnFailureListener { exception ->
-                if (exception is ResolvableApiException) {
-                    // Location settings are not satisfied, but this can be fixed
-                    // by showing the user a dialog.
-                    try {
-                        // Show the dialog by calling startResolutionForResult(),
-                        // and check the result in onActivityResult().
-                        exception.startResolutionForResult(
-                            this,
-                            FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS
-                        )
-                    } catch (sendEx: IntentSender.SendIntentException) {
-                        // Ignore the error.
-                    }
-                }
-                //Even if fails to enable location settings navigate to link device
-                navigateToLinkDeviceFragment()
-            }
-
-        }
-
     }
 
     private fun navigateToLinkDeviceFragment() {
@@ -240,7 +152,7 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
                 visibility = View.VISIBLE
                 paintFlags = Paint.UNDERLINE_TEXT_FLAG
                 setOnClickListener {
-                    askLocationPermission()
+                    checkForLocationPermissionAndNavigateToLinkDevice()
                 }
             }
         }
@@ -259,6 +171,45 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
+    private fun checkForLocationPermissionAndNavigateToLinkDevice() {
+        activity?.apply {
+            //Check if user has location services enabled. If not, notify user as per current store locator functionality.
+            if (!Utils.isLocationEnabled(this)) {
+                val enableLocationSettingsFragment = EnableLocationSettingsFragment()
+                enableLocationSettingsFragment?.show(
+                    supportFragmentManager,
+                    EnableLocationSettingsFragment::class.java.simpleName
+                )
+                return@apply
+            }
+
+            // If location services enabled, extract latitude and longitude
+            startLocationDiscoveryProcess()
+        }
+    }
+
+    private fun startLocationDiscoveryProcess() {
+        locator.getCurrentLocation { locationEvent ->
+            when (locationEvent) {
+                is Event.Location -> handleLocationEvent(locationEvent)
+                is Event.Permission -> handlePermissionEvent(locationEvent)
+            }
+        }
+    }
+
+    private fun handlePermissionEvent(permissionEvent: Event.Permission) {
+        if (permissionEvent.event == EventType.LOCATION_PERMISSION_NOT_GRANTED) {
+            Utils.saveLastLocation(null, activity)
+            handleLocationEvent(null)
+        }
+    }
+
+    private fun handleLocationEvent(locationEvent: Event.Location?) {
+        Utils.saveLastLocation(locationEvent?.locationData, context)
+        navigateToLinkDeviceFragment()
+    }
+
     fun clearAllFlags(){
         MyCardDetailFragment.apply {
             FREEZE_CARD_DETAIL = false
@@ -275,6 +226,14 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
         StatementFragment.VIEW_STATEMENT_DETAIL = false
         StatementFragment.SEND_STATEMENT_DETAIL = false
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE) {
+            startLocationDiscoveryProcess()
+        }
+    }
+
     override fun onDestroy() {
         activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN) }
         super.onDestroy()
