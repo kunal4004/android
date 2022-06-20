@@ -14,14 +14,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:tag="payWithCardTag"
-        app:navGraph="@navigation/freeze_unfreeze_card_item_nav" />
+        android:tag="payWithCardTag" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/temporaryFreezeCardFragmentContainerView"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/white"
         android:tag="freezeUnFreezeTag"
         app:navGraph="@navigation/freeze_unfreeze_card_item_nav" />
@@ -83,13 +82,14 @@
             android:id="@+id/viewTreatmentPlanNext"
             style="@style/accountOptionsNextImageViewStyle"
             android:src="@drawable/ic_caret_black" />
-
     </RelativeLayout>
+
     <View
         android:id="@+id/activateVirtualTempCardDivider"
         style="@style/menuLandingDividerStyle"
         android:layout_marginStart="0dp"
         android:layout_marginEnd="0dp" />
+
     <RelativeLayout
         android:id="@+id/activateVirtualTempCardRelativeLayout"
         style="@style/accountOptionItemsStyle">
@@ -97,7 +97,7 @@
         <ImageView
             android:id="@+id/activateVirtualTempCardImageView"
             style="@style/accountOptionsImageviewStyle"
-            android:src="@drawable/ic_activate_vtc_grey" />
+            android:src="@drawable/icon_activate_virtual_temp_card" />
 
         <TextView
             android:id="@+id/activateVirtualTempCardTextView"

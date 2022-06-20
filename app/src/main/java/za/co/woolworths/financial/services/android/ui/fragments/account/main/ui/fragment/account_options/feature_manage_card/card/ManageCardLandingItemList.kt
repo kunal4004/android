@@ -70,6 +70,13 @@ class ManageCardLandingItemList(
         includeListOptions.payWithCardFragmentContainerView.visibility = VISIBLE
     }
 
+    fun setupTemporaryCardGraph(){
+        fragment?.setupGraph(
+            R.navigation.freeze_unfreeze_card_item_nav,
+            R.id.temporaryFreezeCardFragmentContainerView,
+            R.id.temporaryFreezeUnfreezeCardItemFragment
+        )
+    }
     private fun showStoreCardIsTemporaryFreeze(featureType: StoreCardFeatureType.StoreCardIsTemporaryFreeze) {
         with(includeListOptions) {
             temporaryFreezeCardFragmentContainerView.visibility = VISIBLE

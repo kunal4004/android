@@ -39,14 +39,11 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
         setToolbar()
         with(ManageCardDetailsFragmentBinding.bind(view)) {
             mBindCardInfo = BindCardInfoTypeComponent(requireContext(),incManageCardDetailsInfoLayout)
-            mItemList = ManageCardLandingItemList(
-                cardFreezeViewModel,
-                includeListOptions,
-                this@ManageMyCardDetailsFragment
-            )
+            mItemList = ManageCardLandingItemList(cardFreezeViewModel, includeListOptions, this@ManageMyCardDetailsFragment)
             setupView()
             setCardViewPagerNavigationGraph()
             setOnClickListener()
+            mItemList?.setupTemporaryCardGraph()
         }
 
         onBackPressed()
@@ -90,5 +87,4 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
             }
         }
     }
-
 }

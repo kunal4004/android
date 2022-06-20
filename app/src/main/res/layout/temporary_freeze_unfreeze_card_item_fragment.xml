@@ -5,6 +5,12 @@
     android:orientation="vertical">
 
     <View
+        android:id="@+id/tabHiddenMargin"
+        style="@style/tabHiddenSpacingStyle"
+        android:layout_width="match_parent"
+        android:visibility="visible" />
+
+    <View
         android:id="@+id/temporaryFreezeCardDivider"
         style="@style/menuLandingDividerStyle"
         android:layout_marginStart="0dp"
