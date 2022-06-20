@@ -1,21 +1,16 @@
-package za.co.woolworths.financial.services.android.ui.adapters;
+package za.co.woolworths.financial.services.android.ui.views.maps.adapter;
 
 import android.app.Activity;
 import android.content.Context;
 import android.view.View;
-
 import com.awfs.coordination.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
-/**
- * Created by jamiilangnoo on 2017/01/24.
- */
+public class GoogleMapWindowAdapter implements GoogleMap.InfoWindowAdapter {
+    private Context context;
 
-public class MapWindowAdapter implements GoogleMap.InfoWindowAdapter {
-    private Context context = null;
-
-    public MapWindowAdapter(Context context) {
+    public GoogleMapWindowAdapter(Context context) {
         this.context = context;
     }
 

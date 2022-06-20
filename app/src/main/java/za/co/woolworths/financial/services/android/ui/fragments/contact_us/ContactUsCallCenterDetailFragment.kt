@@ -1,11 +1,15 @@
 package za.co.woolworths.financial.services.android.ui.fragments.contact_us
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
@@ -62,12 +66,18 @@ class ContactUsCallCenterDetailFragment : Fragment() {
                         val localCallerRow = layoutInflater.inflate(R.layout.contact_us_call_options_item, callUsLinearLayoutContainer, false)
                         val localCallerTextView = localCallerRow.findViewById<TextView>(R.id.localCallerTextView)
                         val localCallerPhoneNumberTextView = localCallerRow.findViewById<TextView>(R.id.localCallerPhoneNumberTextView)
+                        val localCallerPhoneNumberDivider = localCallerRow.findViewById<View>(R.id.localCallerPhoneNumberDivider)
+                        val localCallerPhoneNumberImageView = localCallerRow.findViewById<ImageView>(R.id.localCallerImg)
+                        localCallerPhoneNumberImageView.setColorFilter(resources.getColor(R.color.color_444444), PorterDuff.Mode.SRC_IN)
+
 
                         localCallerTextView?.text = item.key
                         localCallerPhoneNumberTextView?.text = item.value
                         localCallerRow?.tag = index
                         localCallerRow?.setOnClickListener { Utils.makeCall(item.value) }
-
+                        if (index == options.size.minus(1)){
+                            localCallerPhoneNumberDivider.visibility = GONE
+                        }
                         callUsLinearLayoutContainer?.addView(localCallerRow)
                     }
 
@@ -79,6 +89,7 @@ class ContactUsCallCenterDetailFragment : Fragment() {
                         val localCallerRow = layoutInflater.inflate(R.layout.contact_us_email_item, contactFinancialServicesEmailLinearLayout, false)
                         val contactUsEmailTextView = localCallerRow.findViewById<TextView>(R.id.contactUsEmailTextView)
                         val contactUsEmailDescriptionTextView = localCallerRow.findViewById<TextView>(R.id.contactUsEmailDescriptionTextView)
+                        val contactUsEmailDescriptionDivider = localCallerRow.findViewById<View>(R.id.contactUsEmailDescriptionDivider)
 
                         val email = option.value
                         val subject = option.key
@@ -88,6 +99,9 @@ class ContactUsCallCenterDetailFragment : Fragment() {
                         localCallerRow?.tag = index
                         localCallerRow?.setOnClickListener { KotlinUtils.sendEmail(activity, email, subject) }
 
+                        if (index == this.size.minus(1)){
+                            contactUsEmailDescriptionDivider.visibility = GONE
+                        }
                         contactFinancialServicesEmailLinearLayout?.addView(localCallerRow)
                     }
                 }

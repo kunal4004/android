@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.contracts.IToastInterface
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.models.network.Parameter
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.activities.CancelOrderProgressActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -50,10 +51,15 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
                 putString(ARG_PARAM, Utils.toJson(order))
                 putBoolean(AppConstant.NAVIGATED_FROM_MY_ACCOUNTS, isNaviagtedFromMyAccount)
             }
+
+        fun getInstance(params: Parameter) = OrderDetailsFragment().withArgs {
+            putParcelable(AppConstant.Keys.ARG_NOTIFICATION_PARAMETERS, params)
+        }
     }
 
     private var dataList = arrayListOf<OrderDetailsItem>()
     private var order: Order? = null
+    private var notificationParams: Parameter? = null
     private var orderDetailsResponse: OrderDetailsResponse? = null
     var isNavigatedFromMyAccounts: Boolean = false
     private var mBottomNavigator: BottomNavigator? = null
@@ -70,6 +76,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         super.onCreate(savedInstanceState)
         arguments?.let {
             order = Utils.jsonStringToObject(it.getString("order"), Order::class.java) as Order?
+            notificationParams = it.getParcelable(AppConstant.Keys.ARG_NOTIFICATION_PARAMETERS)
             isNavigatedFromMyAccounts = it.getBoolean(AppConstant.NAVIGATED_FROM_MY_ACCOUNTS, false)
         }
     }
@@ -115,6 +122,8 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
             )
         }
         order?.orderId?.let { orderId -> requestOrderDetails(orderId) }
+        // This will call only when Push Notification is received.
+        notificationParams?.orderID?.let { orderId -> requestOrderDetails(orderId) }
     }
 
     private fun requestOrderDetails(orderId: String): Call<OrderDetailsResponse> {

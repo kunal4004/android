@@ -83,6 +83,7 @@ class LoanWithdrawalPopupDialog : WBottomSheetDialogFragment() {
                 return@apply
             }
             titleTextView?.text = first
+            descriptionTextView?.text = second
         }
 
         loanWithdrawalGotItButton?.setOnClickListener { dismiss() }
