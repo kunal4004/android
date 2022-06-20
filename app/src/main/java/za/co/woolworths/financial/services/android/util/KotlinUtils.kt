@@ -286,10 +286,10 @@ class KotlinUtils {
 
 
         fun capitaliseFirstWordAndLetters(str: String): CharSequence? {
-            val value = str.toLowerCase()
+            val value = str.lowercase()
             val words = value.split(" ").toMutableList()
 
-            var output = words[0].toUpperCase() + " "
+            var output = words[0].uppercase() + " "
             words.removeAt(0)
             for (word in words) {
                 output += word.capitalize() + " "
@@ -662,6 +662,7 @@ class KotlinUtils {
             }
         }
 
+        fun String.capitaliseFirstLetterInEveryWord(): String = split(" ").map { it.lowercase().replaceFirstChar { it -> it.titlecase() } }.joinToString(" ")
         fun showGeneralInfoDialog(
             fragmentManager: FragmentManager,
             description: String,

@@ -52,8 +52,9 @@ class AccountProductsToolbarHelper(
         }
     }
 
-    fun setManageMyCardDetailsToolbar(isMultipleStoreCard: Boolean) {
+    fun setManageMyCardDetailsToolbar(isMultipleStoreCard: Boolean, onTap : (View) -> Unit) {
         getDetailToolbar(R.string.my_card_title, if (isMultipleStoreCard) "s" else "")
+        binding.navigateBackImageButton.onClick{ onTap(it)}
         setNavigationIconBlack()
         setTitleTextColorBlack()
     }
