@@ -5,9 +5,11 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.catch
 import retrofit2.Response
 import retrofit2.http.*
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.models.network.RetrofitException
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Result
+import za.co.woolworths.financial.services.android.util.NetworkManager
 import java.io.IOException
 import javax.inject.Inject
 
@@ -24,6 +26,7 @@ open class CoreDataSource @Inject constructor() : NetworkConfig() {
         data class OnSuccess<out DTO : Any>(val data: DTO) : IOTaskResult<DTO>()
         data class OnFailure<out DTO : Any>(val data: DTO) : IOTaskResult<DTO>()
         data class OnFailed(val throwable: Throwable) : IOTaskResult<Nothing>()
+        object NoConnectionState : IOTaskResult<Nothing>()
         object Empty : IOTaskResult<Nothing>()
     }
 
@@ -42,11 +45,18 @@ open class CoreDataSource @Inject constructor() : NetworkConfig() {
         crossinline networkApiCall: NetworkAPIInvoke<T>
     ): Flow<IOTaskResult<T>> {
         return flow {
+           // Emit no connection found
+            if (!NetworkManager.getInstance().isConnectedToNetwork(WoolworthsApplication.getInstance())) {
+                emit(IOTaskResult.NoConnectionState)
+                return@flow
+            }
+
+            // Execute api
             with(networkApiCall()) {
                 when (isSuccessful) {
                     true -> {
                         body()?.let {
-                            emit(IOTaskResult.OnSuccess(it as T))
+                            emit(IOTaskResult.OnSuccess(it))
                         } ?: emit(IOTaskResult.Empty)
                     }
                     false -> {

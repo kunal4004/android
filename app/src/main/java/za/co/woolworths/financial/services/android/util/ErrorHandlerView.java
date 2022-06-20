@@ -150,7 +150,6 @@ public class ErrorHandlerView {
 				.setContentGravity(Gravity.CENTER)
 				.setBackgroundColor(R.color.header_red)
 				.setDuration(toastDurationInMilliSeconds)
-				.setIcon(null)
 				.show();
 	}
 
@@ -162,7 +161,6 @@ public class ErrorHandlerView {
 				.setContentGravity(Gravity.CENTER)
 				.setBackgroundColor(R.color.header_red)
 				.setDuration(toastDurationInMilliSeconds)
-				.setIcon(null)
 				.show();
 	}
 
@@ -187,7 +185,6 @@ public class ErrorHandlerView {
 				.setContentGravity(Gravity.CENTER)
 				.setBackgroundColor(R.color.header_red)
 				.setDuration(toastDurationInMilliSeconds)
-				.setIcon(null)
 				.setOnHideListener(listener)
 				.show();
 	}

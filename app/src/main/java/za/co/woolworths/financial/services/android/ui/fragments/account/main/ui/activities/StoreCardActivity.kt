@@ -17,6 +17,7 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountProductLandingActivityBinding
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.NavigationGraph
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ToastFactory
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.AccountProductsMainFragment
 import javax.inject.Inject
@@ -89,4 +90,5 @@ class StoreCardActivity : AppCompatActivity() {
     }
 
     fun getToolbarHelper() = getMainFragment()?.mToolbarContainer
+
 }

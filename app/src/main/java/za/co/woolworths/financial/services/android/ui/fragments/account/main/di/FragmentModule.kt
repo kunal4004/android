@@ -20,11 +20,13 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dom
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.ManageCardFunctionalRequirementImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.IProductLandingRouter
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
+import javax.inject.Singleton
 
 @Module
 @InstallIn(FragmentComponent::class)
 object FragmentModule {
 
+    @Singleton
     @Provides
     fun provideProductLandingRouterImpl(
         accountOptions: AccountOptionsImpl,
