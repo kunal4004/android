@@ -603,7 +603,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         chanel_layout?.rv_chanel?.setHasFixedSize(true)
         chanel_layout?.rv_chanel?.adapter = brandLandingAdapter
 
-        toolbarTitleText = response?.pageHeading ?: mSearchTerm
+        mSearchTerm = response.pageHeading ?: mSearchTerm
         updateToolbarTitle()
     }
 
