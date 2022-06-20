@@ -57,6 +57,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     private var parentFragment: ShopFragment? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
+    private var saveInstanceState: Bundle? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,8 +71,8 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
         super.onViewCreated(view, savedInstanceState)
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         setUpViewModel()
+        this.saveInstanceState = savedInstanceState
         dynamicMapView?.initializeMap(savedInstanceState, this)
-
     }
 
     private fun setUpViewModel() {
@@ -83,6 +84,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
 
     override fun onResume() {
         super.onResume()
+        dynamicMapView?.initializeMap(saveInstanceState, this)
         dynamicMapView?.onResume()
         etEnterNewAddress?.addTextChangedListener(this)
         init()
@@ -469,6 +471,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
+        this.saveInstanceState = outState
         dynamicMapView?.onSaveInstanceState(outState)
     }
 
