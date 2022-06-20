@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.CoreDataSource
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.AccountRemoteService
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.WfsApiService
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import javax.inject.Inject
 
@@ -22,8 +22,8 @@ data class CardNotReceived(
     val productGroupCode: String? = null
 )
 
-class CardNotReceivedDataSource @Inject constructor(@ApplicationContext val context: Context, private val accountRemoteService: AccountRemoteService) :
-    CoreDataSource(), ICardNotReceivedService, AccountRemoteService by accountRemoteService {
+class CardNotReceivedDataSource @Inject constructor(@ApplicationContext val context: Context, private val wfsApiService: WfsApiService) :
+    CoreDataSource(), ICardNotReceivedService, WfsApiService by wfsApiService {
 
     override suspend fun queryServiceNotifyCardNotYetReceived() = performSafeNetworkApiCall {
 

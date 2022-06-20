@@ -71,7 +71,7 @@ class TemporaryFreezeUnfreezeCardItemFragment : Fragment(R.layout.temporary_free
                             }
                         }
                     }
-                    renderSuccess { accountViewModel.queryServiceGetStoreCardCards() }
+                    renderSuccess { accountViewModel.requestGetStoreCardCards() }
                 }
             }
         }

@@ -73,7 +73,7 @@
         android:layout_marginTop="@dimen/_16sdp"
         android:layout_marginEnd="@dimen/_16sdp"
         android:layout_marginBottom="@dimen/_32sdp"
-        android:background="@color/white"
+        android:background="?android:attr/selectableItemBackground"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:gravity="center"
         android:letterSpacing="0.2"

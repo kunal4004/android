@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard
 
-import android.location.Location
 import kotlinx.coroutines.flow.Flow
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
@@ -27,11 +26,11 @@ interface IStoreCardDataSource {
 }
 
 class StoreCardDataSource @Inject constructor(
-    private val accountRemoteService: AccountRemoteService,
+    private val wfsApiService: WfsApiService,
     private val landingDao: AccountProductLandingDao,
     private val manageCard: ManageCardFunctionalRequirementImpl,
 ) : CoreDataSource(), IStoreCardDataSource, IAccountProductLandingDao by landingDao,
-    AccountRemoteService by accountRemoteService, IManageCardFunctionalRequirement by manageCard {
+    WfsApiService by wfsApiService, IManageCardFunctionalRequirement by manageCard {
 
     companion object {
         const val BLOCK_REASON = 6
