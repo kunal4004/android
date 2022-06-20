@@ -415,8 +415,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
         rv_category_layout?.visibility = View.VISIBLE
         mDepartmentAdapter = DepartmentAdapter(
             categories,
-            ::departmentItemClicked,
-            ::onDashBannerClicked
+            ::departmentItemClicked
         ) //{ rootCategory: RootCategory -> departmentItemClicked(rootCategory)}
         activity?.let {
             rclDepartment?.apply {
