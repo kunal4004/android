@@ -46,14 +46,19 @@ class BindCardInfoTypeComponent(
     }
 
     private fun setSubTitleLabel(@StringRes id : Int? = null) {
-        if (id == null) {
-            binding.subTitleTextView.visibility = View.GONE
-            binding.cardTitleBottomSpacer.visibility = View.VISIBLE
-            binding.subTitleTextView.text = ""
-        }else {
-            binding.subTitleTextView.visibility = View.VISIBLE
-            binding.cardTitleBottomSpacer.visibility = View.GONE
-            binding.subTitleTextView.text = mContext.getString(id)
+        with(binding) {
+            when (id == null) {
+                true -> {
+                    subTitleTextView.visibility = View.GONE
+                    cardTitleBottomSpacer.visibility = View.VISIBLE
+                    subTitleTextView.text = ""
+                }
+                false -> {
+                    subTitleTextView.visibility = View.VISIBLE
+                    cardTitleBottomSpacer.visibility = View.GONE
+                    subTitleTextView.text = mContext.getString(id)
+                }
+            }
         }
     }
 
