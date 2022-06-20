@@ -6,6 +6,7 @@ buildscript {
     repositories {
         google()
         maven { url 'https://maven.google.com' }
+        maven { url 'https://developer.huawei.com/repo/' }
         mavenCentral()
     }
     dependencies {
@@ -19,13 +20,14 @@ buildscript {
         classpath 'androidx.navigation:navigation-safe-args-gradle-plugin:2.4.1'
         classpath 'com.google.firebase:perf-plugin:1.4.1'  // Performance Monitoring plugin
         classpath 'com.google.dagger:hilt-android-gradle-plugin:2.40.1'
+        classpath 'com.huawei.agconnect:agcp:1.6.0.300'
     }
 }
 
 allprojects {
     repositories {
-        mavenLocal()
         google()
+        mavenLocal()
         flatDir {
             dirs 'libs'
         }
@@ -34,6 +36,5 @@ allprojects {
         maven { url 'https://maven.google.com' }
         maven { url 'https://developer.huawei.com/repo/' }
         mavenCentral()
-
     }
 }
