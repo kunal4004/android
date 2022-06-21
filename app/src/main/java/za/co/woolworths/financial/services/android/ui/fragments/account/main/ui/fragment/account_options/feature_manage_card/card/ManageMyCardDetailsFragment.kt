@@ -18,6 +18,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StorCardCallBack
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.CallBack
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
 import za.co.woolworths.financial.services.android.util.Utils
@@ -77,8 +78,10 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
     private fun ManageCardDetailsFragmentBinding.setOnClickListener() {
         mOnItemClickListener = ManageCardItemListener(requireActivity(), router, includeListOptions).apply {
             onClickIntentObserver.observe(viewLifecycleOwner) {
-                when(it!=null){
-                    true->{storeCardLauncher(it)}
+                when(it){
+                    is CallBack.IntentCallBack ->{
+                        if(it.intent!=null){storeCardLauncher(it.intent)}
+                    }
                 }
             }
         }

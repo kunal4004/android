@@ -6,6 +6,7 @@ import android.view.View
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountOptionsManageCardListFragmentBinding
 import za.co.woolworths.financial.services.android.ui.extension.onClick
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.CallBack
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.SingleLiveEvent
 
@@ -14,7 +15,7 @@ class ManageCardItemListener(
     private val router: ProductLandingRouterImpl,
     private val includeListOptions: AccountOptionsManageCardListFragmentBinding,
 ) : (View?) -> Unit {
-    val onClickIntentObserver = SingleLiveEvent<Intent>()
+    val onClickIntentObserver = SingleLiveEvent<CallBack>()
 
 
     init {

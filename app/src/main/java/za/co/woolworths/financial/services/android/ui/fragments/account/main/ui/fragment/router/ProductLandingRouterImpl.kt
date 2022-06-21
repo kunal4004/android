@@ -48,11 +48,11 @@ interface IProductLandingRouter {
         creditLimitIncreaseLanding: CreditLimitIncreaseLanding
     )
 
-    fun routeToLinkNewCard(activity: Activity?): Intent
-    fun routeToManageMyCard(activity: Activity): Intent
-    fun routeToActivateVirtualTempCard(activity: Activity): Intent?
-    fun routeToGetReplacementCard(activity: Activity?): Intent
-    fun routeToBlockCard(activity: Activity): Intent
+    fun routeToLinkNewCard(activity: Activity?): CallBack
+    fun routeToManageMyCard(activity: Activity): CallBack
+    fun routeToActivateVirtualTempCard(activity: Activity): CallBack?
+    fun routeToGetReplacementCard(activity: Activity?): CallBack
+    fun routeToBlockCard(activity: Activity): CallBack
     fun routeToHowItWorks(
         requireActivity: Activity?,
         staffMemberAndHasTemporaryCard: Boolean,
@@ -71,6 +71,9 @@ interface IProductLandingRouter {
     fun showNoConnectionToast(activity: Activity?)
 }
 
+sealed class CallBack(){
+   data class IntentCallBack(val intent: Intent?): CallBack()
+}
 class ProductLandingRouterImpl @Inject constructor(
     private var accountOptions: AccountOptionsImpl,
     private var manageCardImpl: ManageCardFunctionalRequirementImpl,
@@ -124,20 +127,20 @@ class ProductLandingRouterImpl @Inject constructor(
         }
     }
 
-    override fun routeToLinkNewCard(activity: Activity?): Intent {
+    override fun routeToLinkNewCard(activity: Activity?): CallBack.IntentCallBack {
         activity.apply {
             Intent(this, InstantStoreCardReplacementActivity::class.java).apply {
                 putExtra(
                     MyCardDetailActivity.STORE_CARD_DETAIL,
                     Utils.objectToJson(manageCardImpl.getStoreCardsResponse())
                 )
-                return this
+                return CallBack.IntentCallBack(this)
             }
         }
     }
 
-    override fun routeToManageMyCard(activity: Activity): Intent {
-        return navigateToTemporaryStoreCard(activity)
+    override fun routeToManageMyCard(activity: Activity): CallBack {
+        return CallBack.IntentCallBack(navigateToTemporaryStoreCard(activity))
     }
 
     private fun navigateToTemporaryStoreCard(activity: Activity): Intent {
@@ -152,7 +155,7 @@ class ProductLandingRouterImpl @Inject constructor(
         }
     }
 
-    override fun routeToActivateVirtualTempCard(activity: Activity): Intent? {
+    override fun routeToActivateVirtualTempCard(activity: Activity): CallBack.IntentCallBack? {
         var intent:Intent? = null
         KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
             StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL = true
@@ -160,10 +163,10 @@ class ProductLandingRouterImpl @Inject constructor(
 
             intent = navigateToTemporaryStoreCard(activity)
         })
-        return intent
+        return CallBack.IntentCallBack(intent)
     }
 
-    override fun routeToGetReplacementCard(activity: Activity?): Intent {
+    override fun routeToGetReplacementCard(activity: Activity?): CallBack.IntentCallBack {
         activity.apply {
             val storeCardResponse =
                 manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
@@ -176,13 +179,13 @@ class ProductLandingRouterImpl @Inject constructor(
                     SelectStoreActivity.STORE_DETAILS,
                     Gson().toJson(storeCardResponse)
                 )
-                return this
+                return CallBack.IntentCallBack(this)
             }
         }
     }
 
 
-    override fun routeToBlockCard(activity: Activity): Intent {
+    override fun routeToBlockCard(activity: Activity): CallBack.IntentCallBack {
         val storeCardResponse = manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
         activity.apply {
             val openBlockMyCardActivity = Intent(this, BlockMyCardActivity::class.java)
@@ -195,7 +198,7 @@ class ProductLandingRouterImpl @Inject constructor(
                     Gson().toJson(storeCardResponse)
                 )
             })
-            return openBlockMyCardActivity
+            return CallBack.IntentCallBack(openBlockMyCardActivity)
         }
     }
 
