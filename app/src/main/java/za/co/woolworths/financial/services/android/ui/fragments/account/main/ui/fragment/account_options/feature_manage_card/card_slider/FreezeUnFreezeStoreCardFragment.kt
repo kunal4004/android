@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card_slider
 
+import android.graphics.Color
 import androidx.fragment.app.Fragment
 import android.os.Bundle
 import android.view.View
@@ -50,7 +51,7 @@ class FreezeUnFreezeStoreCardFragment : Fragment(R.layout.freeze_unfreeze_card_f
                 binding.freezeUnfreezeShimmerLayout.stopShimmer()
             }
             setCardImage(card, binding)
-            binding.cardImageView.onClick {
+            binding.storeCardImageView.onClick {
                 (requireActivity() as? StoreCardActivity)?.apply {
                     accountViewModel.emitEventOnCardTap(card)
                 }
@@ -62,16 +63,18 @@ class FreezeUnFreezeStoreCardFragment : Fragment(R.layout.freeze_unfreeze_card_f
         storeCard: StoreCardFeatureType.StoreCardIsTemporaryFreeze?,
         binding: FreezeUnfreezeCardFragmentBinding
     ) {
-        if (storeCard?.isAnimationEnabled == false) {
-            binding.cardImageView.setImageDrawable(
-                ContextCompat.getDrawable(
-                    requireContext(),
-                    when (storeCard.isStoreCardFrozen) {
-                        true -> R.drawable.card_freeze
-                        false -> R.drawable.w_store_card
-                    }
-                )
-            )
+        binding.accountHolderNameTextView.setTextColor(Color.WHITE)
+        when (storeCard?.isStoreCardFrozen){
+            true -> {
+                binding.accountHolderNameTextView.visibility =View.GONE
+                binding.storeCardImageView.setImageDrawable(ContextCompat.getDrawable(
+                    requireContext(),R.drawable.card_freeze))
+            }
+            else -> {
+                binding.accountHolderNameTextView.visibility = View.VISIBLE
+                binding.storeCardImageView.setImageDrawable( ContextCompat.getDrawable(
+                    requireContext(),R.drawable.ic_store_card))
+            }
         }
     }
 }

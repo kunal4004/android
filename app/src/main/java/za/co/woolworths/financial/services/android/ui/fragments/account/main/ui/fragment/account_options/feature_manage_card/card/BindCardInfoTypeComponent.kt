@@ -9,23 +9,24 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.capitaliseFirstLetterInEveryWord
 
 class BindCardInfoTypeComponent(
-    private val mContext : Context,
-    private val binding: ManageCardDetailsCardInfoLayoutBinding) {
+    private val mContext: Context,
+    private val binding: ManageCardDetailsCardInfoLayoutBinding
+) {
 
     fun setupView(storeCardFeatureType: StoreCardFeatureType?) {
         when (storeCardFeatureType) {
 
             is StoreCardFeatureType.ActivateVirtualTempCard -> {
                 setPrimaryCardLabel()
-                setSubTitleLabel()
+                setSubTitleLabel(R.string.card_block_desc)
             }
 
-            is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive ->{
+            is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive -> {
                 setPrimaryCardLabel()
-                setSubTitleLabel()
+                setSubTitleLabel(R.string.card_block_desc)
             }
 
-            is StoreCardFeatureType.StoreCardIsTemporaryFreeze ->{
+            is StoreCardFeatureType.StoreCardIsTemporaryFreeze -> {
                 setPrimaryCardLabel()
                 setSubTitleLabel()
             }
@@ -70,7 +71,7 @@ class BindCardInfoTypeComponent(
         binding.headerTextView.text = mContext.getString(R.string.virtual_temp_card_label)
     }
 
-    fun setCardHolderName(cardHolderName : String?) {
+    fun setCardHolderName(cardHolderName: String?) {
         binding.cardholderValueTextView.text = cardHolderName?.capitaliseFirstLetterInEveryWord()
     }
 }

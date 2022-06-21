@@ -6,7 +6,6 @@ import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountOptionsManageCardFragmentBinding
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.LoaderType
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
@@ -64,42 +63,42 @@ class ManageCardLandingHeaderItems(
     fun showHeaderItem(storeCardFeatureType: Pair<StoreCardFeatureType?, Int>) {
         myCardLabelVisibility(false)
         manageCardLabelVisibility(isVisible = false, isLabelUnderline = false)
-        setBadge(R.string.inactive, R.string.red_tag, isVisible = false)
         when (val featureType = storeCardFeatureType.first) {
 
             is StoreCardFeatureType.ActivateVirtualTempCard -> {
                 myCardLabelVisibility(true)
-                setBadge(R.string.inactive, R.string.red_tag, isVisible = true)
+                manageCardLabelVisibility(isVisible = true, isLabelUnderline = true)
             }
 
             is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive ->{
                 myCardLabelVisibility(true)
-                setBadge(R.string.inactive, R.string.red_tag, isVisible = true)
+                manageCardLabelVisibility(isVisible = true, isLabelUnderline = true)
             }
 
             is StoreCardFeatureType.StoreCardIsTemporaryFreeze -> {
                 when (featureType.isStoreCardFrozen) {
                     true -> {
-                        setBadge(R.string.freeze_temp_label, R.string.orange_tag, false)
+                       // setBadge(R.string.freeze_temp_label, R.string.orange_tag, false)
                         manageCardLabelVisibility(isVisible = true, isLabelUnderline = true)
                         myCardLabelVisibility(true)
                     }
                     false ->{
-                        setBadge(R.string.freeze_temp_label, R.string.orange_tag, false)
-                        myCardLabelVisibility(true)
+                      //  setBadge(R.string.freeze_temp_label, R.string.orange_tag, false)
                         manageCardLabelVisibility(isVisible = true, isLabelUnderline = true)
+                        myCardLabelVisibility(true)
                     }
                 }
             }
 
             is StoreCardFeatureType.TemporaryCardEnabled -> {
-                setBadge(R.string.temp_card, R.string.orange_tag, false)
+             //   setBadge(R.string.temp_card, R.string.orange_tag, false)
                 manageCardLabelVisibility(isVisible = true, isLabelUnderline = true)
                 myCardLabelVisibility(true)
             }
 
             is StoreCardFeatureType.ManageMyCard -> {
-                setBadge(R.string.inactive, R.string.red_tag, false)
+//                setBadge(R.string.inactive, R.string.red_tag, false)
+                manageCardLabelVisibility(isVisible = true, isLabelUnderline = true)
                 myCardLabelVisibility(true)
             }
 

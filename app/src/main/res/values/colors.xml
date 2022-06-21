@@ -172,4 +172,5 @@
     <color name="grey">#9D9D9D</color>
 
     <color name="color_363636">#363636</color>
+    <color name="inactive_label_color">#928F8F</color>
 </resources>

@@ -44,16 +44,12 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
         Utils.updateStatusBarBackground(requireActivity(), R.color.black, true)
         setToolbar()
         with(ManageCardDetailsFragmentBinding.bind(view)) {
-            mBindCardInfo =
-                BindCardInfoTypeComponent(requireContext(), incManageCardDetailsInfoLayout)
-            mItemList = ManageCardLandingItemList(
-                cardFreezeViewModel,
-                includeListOptions,
-                this@ManageMyCardDetailsFragment
-            )
+            mBindCardInfo = BindCardInfoTypeComponent(requireContext(),incManageCardDetailsInfoLayout)
+            mItemList = ManageCardLandingItemList(cardFreezeViewModel, includeListOptions, this@ManageMyCardDetailsFragment)
             setupView()
             setCardViewPagerNavigationGraph()
             setOnClickListener()
+            mItemList?.setupTemporaryCardGraph()
         }
 
         onBackPressed()
@@ -121,5 +117,4 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
             }
         }
     }
-
 }
