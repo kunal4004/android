@@ -70,6 +70,11 @@ class AccountOptionsCreditLimitIncreaseFragment : Fragment(R.layout.account_opti
                     }
                     renderFailure {  // TODO :: AutoConnect on internet failure
                     }
+
+                    renderNoConnection {
+                        router.showNoConnectionToast(requireActivity())
+                    }
+
                     renderLoading { binding.showProgress(isLoading) }
                    
                     renderNoConnection { router.showNoConnectionToast(requireActivity()) }
