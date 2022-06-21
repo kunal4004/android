@@ -16,18 +16,17 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
+import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.SelectStoreActivity
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity
 import za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity
+import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.HowToUseTemporaryStoreCardActivity
-import za.co.woolworths.financial.services.android.ui.fragments.account.detail.MyAccountsScreenNavigator
-import za.co.woolworths.financial.services.android.ui.fragments.account.detail.MyAccountsScreenNavigator.Companion.navigateToGetTemporaryStoreCardPopupActivity
-import za.co.woolworths.financial.services.android.ui.fragments.account.detail.MyAccountsScreenNavigator.Companion.navigateToMyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.StoreCardOptionsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ToastFactory
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountOptionsImpl
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.AccountOptionsManageCardFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_credit_limit_increase.CreditLimitIncreaseLanding
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.PayWithCardListFragmentDirections
@@ -37,6 +36,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetail
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.wenum.StoreCardViewType
 import javax.inject.Inject
 
 interface IProductLandingRouter {
@@ -48,11 +48,11 @@ interface IProductLandingRouter {
         creditLimitIncreaseLanding: CreditLimitIncreaseLanding
     )
 
-    fun routeToManageMyCard(activity: Activity?)
-    fun routeToLinkNewCard(activity: Activity?)
-    fun routeToActivateVirtualTempCard(activity: Activity?)
-    fun routeToGetReplacementCard(activity: Activity?)
-    fun routeToBlockCard(activity: Activity?)
+    fun routeToLinkNewCard(activity: Activity?): CallBack
+    fun routeToManageMyCard(activity: Activity): CallBack
+    fun routeToActivateVirtualTempCard(activity: Activity): CallBack?
+    fun routeToGetReplacementCard(activity: Activity?): CallBack
+    fun routeToBlockCard(activity: Activity): CallBack
     fun routeToHowItWorks(
         requireActivity: Activity?,
         staffMemberAndHasTemporaryCard: Boolean,
@@ -71,10 +71,14 @@ interface IProductLandingRouter {
     fun showNoConnectionToast(activity: Activity?)
 }
 
+sealed class CallBack{
+   data class IntentCallBack(val intent: Intent?): CallBack()
+}
 class ProductLandingRouterImpl @Inject constructor(
     private var accountOptions: AccountOptionsImpl,
     private var manageCardImpl: ManageCardFunctionalRequirementImpl,
 ) : IProductLandingRouter {
+
     override fun routeToDebitOrderActivity(activity: Activity?) {
         activity?.apply {
             val debitOrderIntent = Intent(this, DebitOrderActivity::class.java)
@@ -123,29 +127,26 @@ class ProductLandingRouterImpl @Inject constructor(
         }
     }
 
-    override fun routeToManageMyCard(activity: Activity?) {
-        navigateToTemporaryStoreCard(activity)
+    override fun routeToLinkNewCard(activity: Activity?): CallBack {
+        activity.apply {
+            Intent(this, InstantStoreCardReplacementActivity::class.java).apply {
+                putExtra(
+                    MyCardDetailActivity.STORE_CARD_DETAIL,
+                    Utils.objectToJson(manageCardImpl.getStoreCardsResponse())
+                )
+                return CallBack.IntentCallBack(this)
+            }
+        }
     }
 
-    override fun routeToLinkNewCard(activity: Activity?) {
-        val storeCardResponse = manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
-        MyAccountsScreenNavigator.navigateToLinkNewCardActivity(
-            activity,
-            Utils.objectToJson(storeCardResponse)
-        )
+    override fun routeToManageMyCard(activity: Activity): CallBack {
+        return CallBack.IntentCallBack(navigateToTemporaryStoreCard(activity))
     }
 
-    override fun routeToActivateVirtualTempCard(activity: Activity?) {
-        KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
-            StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL = true
-        }, {
-            navigateToTemporaryStoreCard(activity)
-        })
-    }
-
-    private fun navigateToTemporaryStoreCard(activity: Activity?) {
-        val storeCardResponse = manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
-        when (manageCardImpl.isActivateVirtualTempCard()) {
+    private fun navigateToTemporaryStoreCard(activity: Activity): Intent {
+        val storeCardResponse =
+            manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
+        return when (manageCardImpl.isActivateVirtualTempCard()) {
             true -> navigateToGetTemporaryStoreCardPopupActivity(
                 activity,
                 storeCardResponse = storeCardResponse
@@ -154,33 +155,51 @@ class ProductLandingRouterImpl @Inject constructor(
         }
     }
 
-    override fun routeToGetReplacementCard(activity: Activity?) {
+    override fun routeToActivateVirtualTempCard(activity: Activity): CallBack? {
+        var intent:Intent? = null
         KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
-            StoreCardOptionsFragment.GET_REPLACEMENT_CARD_DETAIL = true
+            StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL = true
         }, {
-            navigateToInstantReplacementCard(activity)
+
+            intent = navigateToTemporaryStoreCard(activity)
         })
+        return CallBack.IntentCallBack(intent)
     }
 
-    override fun routeToBlockCard(activity: Activity?) {
-        val storeCardResponse = manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
-        KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
-            MyCardDetailFragment.BLOCK_CARD_DETAIL = true
-        }, {
+    override fun routeToGetReplacementCard(activity: Activity?): CallBack {
+        activity.apply {
+            val storeCardResponse =
+                manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
+            Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_GET_CARD,
+                this
+            )
+            Intent(this, SelectStoreActivity::class.java).apply {
+                putExtra(
+                    SelectStoreActivity.STORE_DETAILS,
+                    Gson().toJson(storeCardResponse)
+                )
+                return CallBack.IntentCallBack(this)
+            }
+        }
+    }
 
-            activity?.apply {
-                val openBlockMyCardActivity = Intent(this, BlockMyCardActivity::class.java)
+
+    override fun routeToBlockCard(activity: Activity): CallBack {
+        val storeCardResponse = manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
+        activity.apply {
+            val openBlockMyCardActivity = Intent(this, BlockMyCardActivity::class.java)
+
+            KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
+                MyCardDetailFragment.BLOCK_CARD_DETAIL = true
+            }, {
                 openBlockMyCardActivity.putExtra(
                     MyCardDetailActivity.STORE_CARD_DETAIL,
                     Gson().toJson(storeCardResponse)
                 )
-                startActivityForResult(
-                    openBlockMyCardActivity,
-                    BlockMyCardActivity.REQUEST_CODE_BLOCK_MY_CARD
-                )
-                overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
-            }
-        })
+            })
+            return CallBack.IntentCallBack(openBlockMyCardActivity)
+        }
     }
 
     override fun routeToHowItWorks(
@@ -228,43 +247,75 @@ class ProductLandingRouterImpl @Inject constructor(
         }
     }
 
-    private fun navigateToInstantReplacementCard(activity: Activity?) {
-        activity?.apply {
-            val storeCardResponse = manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
-            Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_GET_CARD,
-                this
-            )
-            Intent(this, SelectStoreActivity::class.java).apply {
+    fun navigateToGetTemporaryStoreCardPopupActivity(
+        activity: Activity,
+        storeCardResponse: StoreCardsResponse,
+        screenType: StoreCardViewType = StoreCardViewType.DEFAULT
+    ): Intent {
+        activity.apply {
+            Intent(this, GetTemporaryStoreCardPopupActivity::class.java).apply {
                 putExtra(
-                    SelectStoreActivity.STORE_DETAILS,
-                    Gson().toJson(storeCardResponse)
+                    MyCardDetailActivity.STORE_CARD_DETAIL,
+                    Utils.objectToJson(storeCardResponse)
                 )
-                startActivityForResult(
-                    this,
-                    MyCardDetailActivity.REQUEST_CODE_GET_REPLACEMENT_CARD
-                )
-                overridePendingTransition(
-                    R.anim.slide_from_right,
-                    R.anim.slide_to_left
-                )
+                if (screenType != StoreCardViewType.DEFAULT)
+                    putExtra(MyCardDetailActivity.STORE_CARD_VIEW_TYPE, screenType)
+
+                return this
             }
         }
     }
 
-    override fun routeToServerErrorDialog( findNavController: NavController?, serverErrorResponse: ServerErrorResponse?) {
-        serverErrorResponse?.let { findNavController?.navigate(
-            AccountOptionsManageCardFragmentDirections.actionAccountOptionsManageCardFragmentToGeneralErrorDialogPopupFragment(it))}
+    fun navigateToMyCardDetailActivity(
+        activity: Activity,
+        storeCardResponse: StoreCardsResponse,
+        requestUnblockStoreCardCall: Boolean = false,
+        screenType: StoreCardViewType = StoreCardViewType.DEFAULT
+    ): Intent {
+        activity.apply {
+            return Intent(this, MyCardDetailActivity::class.java).apply {
+                putExtra(
+                    MyCardDetailActivity.STORE_CARD_DETAIL,
+                    Utils.objectToJson(storeCardResponse)
+                )
+                putExtra(
+                    TemporaryFreezeStoreCard.ACTIVATE_UNBLOCK_CARD_ON_LANDING,
+                    requestUnblockStoreCardCall
+                )
+                if (screenType != StoreCardViewType.DEFAULT)
+                    putExtra(MyCardDetailActivity.STORE_CARD_VIEW_TYPE, screenType)
+            }
+        }
+    }
+
+    override fun routeToServerErrorDialog(
+        findNavController: NavController?,
+        serverErrorResponse: ServerErrorResponse?
+    ) {
+        serverErrorResponse?.let {
+            findNavController?.navigate(
+                AccountOptionsManageCardFragmentDirections.actionAccountOptionsManageCardFragmentToGeneralErrorDialogPopupFragment(
+                    it
+                )
+            )
+        }
     }
 
     override fun routeToManageMyCardDetails(findNavController: NavController) {
         findNavController.navigate(AccountProductsHomeFragmentDirections.actionAccountProductsHomeFragmentToManageMyCardDetailsFragment())
     }
 
-    override fun routeToDefaultErrorMessageDialog(activity: Activity?, findNavController: NavController) {
+    override fun routeToDefaultErrorMessageDialog(
+        activity: Activity?,
+        findNavController: NavController
+    ) {
         val serverErrorResponse = ServerErrorResponse()
         serverErrorResponse.desc = activity?.getString(R.string.oops_error_message) ?: ""
-        findNavController.navigate(AccountOptionsManageCardFragmentDirections.actionAccountOptionsManageCardFragmentToGeneralErrorDialogPopupFragment(serverErrorResponse))
+        findNavController.navigate(
+            AccountOptionsManageCardFragmentDirections.actionAccountOptionsManageCardFragmentToGeneralErrorDialogPopupFragment(
+                serverErrorResponse
+            )
+        )
     }
 
     override fun showNoConnectionToast(activity: Activity?) {
