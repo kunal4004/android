@@ -14,7 +14,7 @@ class ManageCardItemListener(
     private val router: ProductLandingRouterImpl,
     private val includeListOptions: AccountOptionsManageCardListFragmentBinding,
 ) : (View?) -> Unit {
-    val command = SingleLiveEvent<Intent>()
+    val onClickIntentObserver = SingleLiveEvent<Intent>()
 
 
     init {
@@ -32,7 +32,7 @@ class ManageCardItemListener(
     }
 
     override fun invoke(view: View?) {
-        command.value =  when (view?.id) {
+        onClickIntentObserver.value =  when (view?.id) {
             R.id.manageCardRelativeLayout ->{  router.routeToManageMyCard(activity) }
             R.id.linkNewCardRelativeLayout -> {  router.routeToLinkNewCard(activity) }
             R.id.activateVirtualTempCardRelativeLayout ->{  router.routeToActivateVirtualTempCard(activity) }

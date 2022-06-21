@@ -21,8 +21,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
 import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView
-import za.co.woolworths.financial.services.android.util.NetworkManager
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -78,7 +76,7 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
 
     private fun ManageCardDetailsFragmentBinding.setOnClickListener() {
         mOnItemClickListener = ManageCardItemListener(requireActivity(), router, includeListOptions).apply {
-            command.observe(viewLifecycleOwner) {
+            onClickIntentObserver.observe(viewLifecycleOwner) {
                 when(it!=null){
                     true->{storeCardLauncher(it)}
                 }
@@ -89,11 +87,7 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
         activityLauncher.launch(intent, onActivityResult = { result ->
             when (StorCardCallBack().linkNewCardCallBack(result)) {
                 true -> {
-                    if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
                         viewModel.requestGetStoreCardCards()
-                    } else {
-                        ErrorHandlerView(activity).showToast()
-                    }
                 }
             }
         })

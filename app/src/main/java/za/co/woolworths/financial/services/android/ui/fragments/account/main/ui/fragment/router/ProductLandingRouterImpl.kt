@@ -153,14 +153,14 @@ class ProductLandingRouterImpl @Inject constructor(
     }
 
     override fun routeToActivateVirtualTempCard(activity: Activity): Intent? {
-        var rsult:Intent? = null
+        var intent:Intent? = null
         KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
             StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL = true
         }, {
 
-             rsult = navigateToTemporaryStoreCard(activity)
+            intent = navigateToTemporaryStoreCard(activity)
         })
-        return rsult
+        return intent
     }
 
     override fun routeToGetReplacementCard(activity: Activity?): Intent {
