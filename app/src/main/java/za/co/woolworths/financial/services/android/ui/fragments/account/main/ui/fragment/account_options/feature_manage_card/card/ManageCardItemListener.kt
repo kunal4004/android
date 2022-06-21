@@ -39,7 +39,7 @@ class ManageCardItemListener(
             R.id.activateVirtualTempCardRelativeLayout ->{  router.routeToActivateVirtualTempCard(activity) }
             R.id.replacementCardRelativeLayout ->{  router.routeToGetReplacementCard(activity) }
             R.id.blockCardRelativeLayout ->{  router.routeToBlockCard(activity) }
-            else -> {null}
+            else -> null
         }
     }
 }

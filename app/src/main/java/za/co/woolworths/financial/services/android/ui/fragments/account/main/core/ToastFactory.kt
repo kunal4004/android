@@ -3,7 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.co
 import android.app.Activity
 import android.view.Gravity
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.ui.views.alert.Alerter.create
+import za.co.woolworths.financial.services.android.ui.views.alert.Alerter.Companion.create
 
 object ToastFactory  {
 

@@ -30,7 +30,7 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
     private var mOnItemClickListener: ManageCardItemListener? = null
     private var mItemList: ManageCardLandingItemList? = null
     val viewModel: MyAccountsRemoteApiViewModel by activityViewModels()
-    val cardFreezeViewModel: TemporaryFreezeCardViewModel by activityViewModels()
+    private val cardFreezeViewModel: TemporaryFreezeCardViewModel by activityViewModels()
 
     @Inject
     lateinit var manageCardAdapter: ManageCardViewPagerAdapter
