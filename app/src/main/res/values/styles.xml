@@ -2927,4 +2927,11 @@
         <item name="android:windowExitAnimation">@anim/slide_down_anim</item>
     </style>
 
+    <style name="tabHiddenSpacingStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:visibility">gone</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:layout_height">@dimen/_10sdp</item>
+    </style>
+
 </resources>
