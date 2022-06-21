@@ -32,9 +32,11 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
     val viewModel: MyAccountsRemoteApiViewModel by activityViewModels()
     val cardFreezeViewModel: TemporaryFreezeCardViewModel by activityViewModels()
 
-    @Inject lateinit var manageCardAdapter: ManageCardViewPagerAdapter
+    @Inject
+    lateinit var manageCardAdapter: ManageCardViewPagerAdapter
 
-    @Inject lateinit var router: ProductLandingRouterImpl
+    @Inject
+    lateinit var router: ProductLandingRouterImpl
     private val activityLauncher = BetterActivityResult.registerActivityForResult(this)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,7 +44,8 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
         Utils.updateStatusBarBackground(requireActivity(), R.color.black, true)
         setToolbar()
         with(ManageCardDetailsFragmentBinding.bind(view)) {
-            mBindCardInfo = BindCardInfoTypeComponent(requireContext(),incManageCardDetailsInfoLayout)
+            mBindCardInfo =
+                BindCardInfoTypeComponent(requireContext(), incManageCardDetailsInfoLayout)
             mItemList = ManageCardLandingItemList(
                 cardFreezeViewModel,
                 includeListOptions,
@@ -70,32 +73,40 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
     )
 
     fun onBackPressed() {
-        val callback: OnBackPressedCallback = object : OnBackPressedCallback(true /* enabled by default */) {
-                override fun handleOnBackPressed() { findNavController().popBackStack() } }
+        val callback: OnBackPressedCallback =
+            object : OnBackPressedCallback(true /* enabled by default */) {
+                override fun handleOnBackPressed() {
+                    findNavController().popBackStack()
+                }
+            }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
 
     private fun ManageCardDetailsFragmentBinding.setOnClickListener() {
-        mOnItemClickListener = ManageCardItemListener(requireActivity(), router, includeListOptions).apply {
-            onClickIntentObserver.observe(viewLifecycleOwner) {
-                when(it){
-                    is CallBack.IntentCallBack ->{
-                        if(it.intent!=null){storeCardLauncher(it.intent)}
+        mOnItemClickListener =
+            ManageCardItemListener(requireActivity(), router, includeListOptions).apply {
+                onClickIntentObserver.observe(viewLifecycleOwner) {
+                    when (it) {
+                        is CallBack.IntentCallBack -> {
+                            it.intent?.let { intent ->
+                                storeCardLauncher(intent)
+                            }
+                        }
+                        else->Unit
                     }
                 }
             }
-        }
     }
+
     private fun storeCardLauncher(intent: Intent) {
         activityLauncher.launch(intent, onActivityResult = { result ->
-            when (StorCardCallBack().linkNewCardCallBack(result)) {
-                true -> {
-                        viewModel.requestGetStoreCardCards()
-                }
+            if (StorCardCallBack().linkNewCardCallBack(result)) {
+                viewModel.requestGetStoreCardCards()
             }
         })
         activity?.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
     }
+
     private fun setupView() {
         mBindCardInfo?.setCardHolderName(viewModel.cardHolderName)
         mItemList?.hideAllRows()

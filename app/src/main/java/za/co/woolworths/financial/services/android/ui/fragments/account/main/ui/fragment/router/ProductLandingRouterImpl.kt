@@ -71,7 +71,7 @@ interface IProductLandingRouter {
     fun showNoConnectionToast(activity: Activity?)
 }
 
-sealed class CallBack(){
+sealed class CallBack{
    data class IntentCallBack(val intent: Intent?): CallBack()
 }
 class ProductLandingRouterImpl @Inject constructor(
@@ -127,7 +127,7 @@ class ProductLandingRouterImpl @Inject constructor(
         }
     }
 
-    override fun routeToLinkNewCard(activity: Activity?): CallBack.IntentCallBack {
+    override fun routeToLinkNewCard(activity: Activity?): CallBack {
         activity.apply {
             Intent(this, InstantStoreCardReplacementActivity::class.java).apply {
                 putExtra(
@@ -155,7 +155,7 @@ class ProductLandingRouterImpl @Inject constructor(
         }
     }
 
-    override fun routeToActivateVirtualTempCard(activity: Activity): CallBack.IntentCallBack? {
+    override fun routeToActivateVirtualTempCard(activity: Activity): CallBack? {
         var intent:Intent? = null
         KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
             StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL = true
@@ -166,7 +166,7 @@ class ProductLandingRouterImpl @Inject constructor(
         return CallBack.IntentCallBack(intent)
     }
 
-    override fun routeToGetReplacementCard(activity: Activity?): CallBack.IntentCallBack {
+    override fun routeToGetReplacementCard(activity: Activity?): CallBack {
         activity.apply {
             val storeCardResponse =
                 manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
@@ -185,7 +185,7 @@ class ProductLandingRouterImpl @Inject constructor(
     }
 
 
-    override fun routeToBlockCard(activity: Activity): CallBack.IntentCallBack {
+    override fun routeToBlockCard(activity: Activity): CallBack {
         val storeCardResponse = manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
         activity.apply {
             val openBlockMyCardActivity = Intent(this, BlockMyCardActivity::class.java)

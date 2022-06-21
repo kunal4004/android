@@ -58,7 +58,8 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(AccountOptionsManageCardFragmentBinding.bind(view)) {
-            mHeaderItems = ManageCardLandingHeaderItems(viewModel, this, this@AccountOptionsManageCardFragment)
+            mHeaderItems =
+                ManageCardLandingHeaderItems(viewModel, this, this@AccountOptionsManageCardFragment)
             mItemList = ManageCardLandingItemList(
                 cardFreezeViewModel,
                 includeListOptions,
@@ -68,6 +69,7 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
             setupView()
         }
     }
+
     private fun AccountOptionsManageCardFragmentBinding.startLocationDiscoveryProcess() {
         locator = Locator(activity as AppCompatActivity)
         locator.getCurrentLocation { locationEvent ->
@@ -83,28 +85,32 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
             subscribeObservers()
         }
     }
+
     private fun AccountOptionsManageCardFragmentBinding.setOnClickListener() {
-        mOnItemClickListener = ManageCardItemListener(requireActivity(), router, includeListOptions).apply {
-            onClickIntentObserver.observe(viewLifecycleOwner) {
-                when(it){
-                    is CallBack.IntentCallBack ->{
-                        if(it.intent!=null){storeCardLauncher(it.intent)}
+        mOnItemClickListener =
+            ManageCardItemListener(requireActivity(), router, includeListOptions).apply {
+                onClickIntentObserver.observe(viewLifecycleOwner) {
+                    when (it) {
+                        is CallBack.IntentCallBack -> {
+                            it.intent?.let { intent ->
+                                storeCardLauncher(intent)
+                            }
+                        }
+                        else->Unit
                     }
                 }
-
             }
-        }
     }
+
     private fun storeCardLauncher(intent: Intent) {
         activityLauncher.launch(intent, onActivityResult = { result ->
-            when (StorCardCallBack().linkNewCardCallBack(result)) {
-                true -> {
-                    viewModel.requestGetStoreCardCards()
-                }
+            if (StorCardCallBack().linkNewCardCallBack(result)) {
+                viewModel.requestGetStoreCardCards()
             }
         })
         activity?.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
     }
+
     private fun AccountOptionsManageCardFragmentBinding.setupView() {
         mItemList.hideAllRows()
         setupViewPager()
