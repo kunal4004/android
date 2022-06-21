@@ -178,6 +178,5 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
                 mItemList.showListItem(feature)
             }
         }
-
     }
 }
