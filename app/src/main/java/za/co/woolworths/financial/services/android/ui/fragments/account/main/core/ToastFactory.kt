@@ -3,7 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.co
 import android.app.Activity
 import android.view.Gravity
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.ui.views.alert.Alerter.Companion.create
+import za.co.woolworths.financial.services.android.ui.views.alert.Alerter
 
 object ToastFactory  {
 
@@ -11,7 +11,7 @@ object ToastFactory  {
 
     fun showNoConnectionFound(activity: Activity?) {
         activity ?: return
-        create(activity)
+        Alerter.create(activity)
             .setTitle("")
             .setText(activity.resources.getString(R.string.no_connection))
             .setContentGravity(Gravity.CENTER)

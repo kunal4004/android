@@ -73,10 +73,11 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
     }
 
     private fun ManageCardViewpagerFragmentBinding?.initCardViewPager() {
+        val dimens = resources.getDimension(R.dimen._15sdp).toInt()
         this?.cardItemViewPager?.apply {
             disableNestedScrolling()
             offscreenPageLimit = 3
-            setPageTransformer(OffsetPageTransformer(OFFSET, OFFSET))
+           setPageTransformer(OffsetPageTransformer(dimens, dimens))
             adapter = manageCardAdapter
 
             TabLayoutMediator(cardTabLayout, this) { _, _ -> }.attach()
@@ -95,12 +96,8 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
 
         manageCardAdapter?.setItem(viewModel.listOfStoreCardFeatureType)
         setDotIndicatorVisibility(viewModel.listOfStoreCardFeatureType)
-
-        this?.cardItemViewPager?.setCurrentItem(cardFreezeViewModel.currentPagePosition.value ?: 0, true)
-    }
-
-    companion object {
-        private const val OFFSET = 100
+        val defaultPosition = cardFreezeViewModel.currentPagePosition.value ?: 0
+        this?.cardItemViewPager?.setCurrentItem(defaultPosition, true)
     }
 
 }

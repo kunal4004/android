@@ -8,7 +8,7 @@ import com.awfs.coordination.databinding.ManageCardDetailsCardInfoLayoutBinding
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.capitaliseFirstLetterInEveryWord
 
-class BindCardInfoTypeComponent(
+class ManageStoreCardMoreDetail(
     private val mContext: Context,
     private val binding: ManageCardDetailsCardInfoLayoutBinding
 ) {
