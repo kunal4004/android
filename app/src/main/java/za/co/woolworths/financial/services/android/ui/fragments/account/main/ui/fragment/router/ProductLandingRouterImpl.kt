@@ -302,7 +302,7 @@ class ProductLandingRouterImpl @Inject constructor(
     }
 
     override fun routeToManageMyCardDetails(findNavController: NavController) {
-        findNavController.navigate(AccountProductsHomeFragmentDirections.actionAccountProductsHomeFragmentToManageMyCardDetailsFragment())
+            findNavController.navigate(AccountProductsHomeFragmentDirections.actionAccountProductsHomeFragmentToManageMyCardDetailsFragment())
     }
 
     override fun routeToDefaultErrorMessageDialog(

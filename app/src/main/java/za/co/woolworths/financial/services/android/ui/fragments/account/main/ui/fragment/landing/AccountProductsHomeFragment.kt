@@ -3,25 +3,21 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import androidx.fragment.app.Fragment
+import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountProductsHomeFragmentBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
-import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.IBottomSheetBehaviour
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.INavigationGraph
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.NavigationGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.WBottomSheetBehaviour
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountProductLandingDao
 
 class UIComponent(
     bottomSheet: WBottomSheetBehaviour,
-    graph: NavigationGraph
-) : IBottomSheetBehaviour by bottomSheet,
-    INavigationGraph by graph
-
+) : IBottomSheetBehaviour by bottomSheet
 @AndroidEntryPoint
-class AccountProductsHomeFragment : ViewBindingFragment<AccountProductsHomeFragmentBinding>(AccountProductsHomeFragmentBinding::inflate) {
+class AccountProductsHomeFragment : Fragment(R.layout.account_products_home_fragment) {
 
     private var sheetBehavior: BottomSheetBehavior<*>? = null
 
@@ -29,10 +25,12 @@ class AccountProductsHomeFragment : ViewBindingFragment<AccountProductsHomeFragm
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        uiComponent = UIComponent(WBottomSheetBehaviour(requireContext(), AccountProductLandingDao()), NavigationGraph())
-        setupBottomSheet()
+        val binding = AccountProductsHomeFragmentBinding.bind(view)
+        uiComponent = UIComponent(WBottomSheetBehaviour(requireContext(), AccountProductLandingDao()))
+        setupBottomSheet(binding)
     }
-    private fun setupBottomSheet() {
+
+    private fun setupBottomSheet(binding: AccountProductsHomeFragmentBinding) {
         with(uiComponent) {
             with(binding) {
                 sheetBehavior = init(bottomSheetBehaviourView)

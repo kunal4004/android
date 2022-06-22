@@ -3,10 +3,8 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 import android.os.Bundle
 import android.view.View
 import android.view.View.GONE
-import androidx.core.os.bundleOf
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -20,53 +18,40 @@ import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlanResponse
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.toolbar.AccountProductsToolbarHelper
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.NavigationGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOfferingState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.DialogData
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.InformationData
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.StoreCardAccountOptionsViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 
 @AndroidEntryPoint
 class AccountProductsMainFragment : Fragment(R.layout.account_product_landing_main_fragment) {
 
     private var childNavController: NavController? = null
     val viewModel by viewModels<AccountProductsHomeViewModel>()
-    val optionsViewModel: StoreCardAccountOptionsViewModel by activityViewModels()
 
-    private var navigationGraph: NavigationGraph = NavigationGraph()
-
-    lateinit var mToolbarContainer : AccountProductsToolbarHelper
+    lateinit var mToolbarContainer: AccountProductsToolbarHelper
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = AccountProductLandingMainFragmentBinding.bind(view)
         activity?.window?.let { WindowCompat.setDecorFitsSystemWindows(it, false) }
-        mToolbarContainer = AccountProductsToolbarHelper(binding,this@AccountProductsMainFragment)
+        mToolbarContainer = AccountProductsToolbarHelper(binding, this@AccountProductsMainFragment)
         setupLandingScreen()
-        setToolbar()
     }
 
-    private fun setToolbar() {
-        mToolbarContainer.setHomeLandingToolbar(viewModel) { view ->
-            when(view.id){
-                R.id.infoIconImageView -> navigateToInformation()
-                R.id.navigateBackImageButton -> activity?.finish()
-            }
-        }
-    }
 
     private fun setupLandingScreen() {
-        val navHostFragment = childFragmentManager.findFragmentById(R.id.productNavigationView) as NavHostFragment
-        childNavController = navHostFragment.navController
+        val navHostFragment = getChildNavHost()
+        childNavController = navHostFragment?.navController
 
         with(viewModel) {
+
             val startDestinationId = getStartDestinationIdScreen()
-            navigationGraph.setupNavigationGraph(
-                childNavController,
+            setupGraph(
                 graphResId = R.navigation.nav_account_product_landing,
-                startDestinationId = startDestinationId,
-                bundleOf()
+                startDestination = startDestinationId,
+                containerId = R.id.productNavigationContainerView,
+                startDestinationArgs = arguments
             )
 
             getPopupDialogStatus { state ->
@@ -82,8 +67,8 @@ class AccountProductsMainFragment : Fragment(R.layout.account_product_landing_ma
                     }
 
                     is AccountOfferingState.AccountIsChargedOff -> {
-                        when (isCreditCard(product)) {
-                            false -> displayPopUp(DialogData.ChargedOff())
+                        if (!isCreditCard(product)) {
+                            displayPopUp(DialogData.ChargedOff())
                         }
                     }
 
@@ -130,30 +115,29 @@ class AccountProductsMainFragment : Fragment(R.layout.account_product_landing_ma
                     }
                     ViewState.RenderEmpty -> {
                     }
+                    else -> Unit
                 }
             }
         }
     }
 
 
-    fun displayPopUp(dialogData: DialogData, eligibilityPlan: EligibilityPlan? = null) {
-        viewModel.apply {
-            findNavController().navigate(AccountProductsMainFragmentDirections.actionAccountProductsMainFragmentToAccountLandingDialogFragment(product, dialogData, eligibilityPlan)) }
-    }
-
-    private fun navigateToInformation() {
+    private fun displayPopUp(dialogData: DialogData, eligibilityPlan: EligibilityPlan? = null) {
         viewModel.apply {
             findNavController().navigate(
-                AccountProductsMainFragmentDirections.actionAccountProductsMainFragmentToAccountInformationFragment(
-                    if (isProductInGoodStanding()) InformationData.GoodStanding() else InformationData.Arrears()
+                AccountProductsMainFragmentDirections.actionAccountProductsMainFragmentToAccountLandingDialogFragment(
+                    product,
+                    dialogData,
+                    eligibilityPlan
                 )
             )
         }
     }
 
 
-    fun getChildNavHost(): NavHostFragment? {
-        return childFragmentManager.findFragmentById(R.id.productNavigationView) as? NavHostFragment
 
-    }
+
+    fun getChildNavHost(): NavHostFragment? =
+        childFragmentManager.findFragmentById(R.id.productNavigationContainerView) as? NavHostFragment
+
 }

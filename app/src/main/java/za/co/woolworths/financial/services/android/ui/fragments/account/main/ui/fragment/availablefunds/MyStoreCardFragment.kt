@@ -3,12 +3,16 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentAvailableFundBinding
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.WBottomSheetBehaviour
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.InformationData
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.AccountProductsMainFragmentDirections
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -17,7 +21,7 @@ class MyStoreCardFragment @Inject constructor() :
     View.OnClickListener {
 
     private val viewModel by viewModels<AvailableFundsViewModel>()
-    private val homeViewModel by viewModels<AccountProductsHomeViewModel>()
+    val homeViewModel by viewModels<AccountProductsHomeViewModel>()
 
     @Inject
     lateinit var bottomSheet: WBottomSheetBehaviour
@@ -25,11 +29,23 @@ class MyStoreCardFragment @Inject constructor() :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.availableFunds.setUpView()
+        setupToolbar()
         subscribeObserver()
         setGuideline()
         setAccountInArrearsUI()
         background()
         clickListeners()
+    }
+
+    private fun setupToolbar() {
+        (activity as? StoreCardActivity)?.apply {
+            getToolbarHelper()?.setHomeLandingToolbar(homeViewModel) { view ->
+                when (view.id) {
+                    R.id.infoIconImageView -> navigateToInformation()
+                    R.id.navigateBackImageButton -> activity?.finish()
+                }
+            }
+        }
     }
 
     private fun clickListeners() {
@@ -64,6 +80,16 @@ class MyStoreCardFragment @Inject constructor() :
         with(binding) {
             bottomStartGuide.setGuidelinePercent(bottomSheet.buttonsTopGuideline)
             bottomSliderGuideline.setGuidelinePercent(bottomSheet.buttonsBottomGuideline)
+        }
+    }
+
+    private fun navigateToInformation() {
+        with(homeViewModel) {
+            findNavController().navigate(
+                AccountProductsMainFragmentDirections.actionAccountProductsMainFragmentToAccountInformationFragment(
+                    if (isProductInGoodStanding()) InformationData.GoodStanding() else InformationData.Arrears()
+                )
+            )
         }
     }
 
