@@ -57,10 +57,12 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
     }
 
     private fun setToolbar() {
-        (activity as? StoreCardActivity)?.getToolbarHelper()
-            ?.setManageMyCardDetailsToolbar(viewModel.dataSource.isMultipleStoreCardEnabled()) {
-                findNavController().popBackStack()
+        val isMultipleStoreCardEnabled = viewModel.dataSource.isMultipleStoreCardEnabled()
+        (activity as? StoreCardActivity)?.apply {
+            getToolbarHelper()?.setManageMyCardDetailsToolbar(isMultipleStoreCardEnabled) {
+                landingNavController()?.popBackStack()
             }
+        }
     }
 
     private fun setCardViewPagerNavigationGraph() = setupGraph(
