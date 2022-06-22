@@ -102,6 +102,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val WHATSAPP_PAYMENT_OPTION = "whatsapp_payment_option"
         const val WHATSAPP_CONTACT_US = "whatsapp_contact_us"
         const val WHATSAPP_CHAT_WITH_US = "whattsapp_chat_with_us"
+        const val VTSC_CARD_NOT_DELIVERED = "cardnotdelivered"
 
         const val SHOP_SEARCH = "SHOP_Search"
 
@@ -634,6 +635,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val STARTUP: String = "startup"
             const val STARTUP_API_ERROR: String = "startup_api_error"
             const val DEVICE_ROOTED_AT_STARTUP: String = "startup_jailbreak_error"
+            const val DEVICE_SIDELOADED_AT_STARTUP: String = "startup_sideloaded_error"
             const val SPLASH_WITHOUT_CTA: String = "splash_without_cta"
             const val SPLASH_WITH_CTA: String = "splash_with_cta"
             const val ONBOARDING_ONE: String = "onboarding_one"

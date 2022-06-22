@@ -29,6 +29,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Addr
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.*
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
+import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
@@ -428,7 +429,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         StoreLiveData.observe(viewLifecycleOwner,{
             if (it?.storeName != null) {
                 geoDeliveryText?.text =
-                    HtmlCompat.fromHtml(getString(R.string.collecting_from_geo, it?.storeName),
+                    HtmlCompat.fromHtml(getString(R.string.collecting_from_geo, it?.storeName?.let { convertToTitleCase(it) }),
                         HtmlCompat.FROM_HTML_MODE_LEGACY)
                 itemLimitValue?.text  = it?.quantityLimit?.foodMaximumQuantity.toString()
             }
@@ -652,7 +653,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     private fun setGeoDeliveryTextForCnc() {
         if (!StoreLiveData.value?.storeName.isNullOrEmpty()) {
             geoDeliveryText?.text = HtmlCompat.fromHtml(
-                getString(R.string.collecting_from_geo, mStoreName),
+                getString(R.string.collecting_from_geo, mStoreName?.let { convertToTitleCase(it) }),
                 HtmlCompat.FROM_HTML_MODE_LEGACY
             )
             editDelivery?.text = bindString(R.string.edit)
@@ -669,8 +670,10 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 if (it.storeName.equals("null") || it.storeName.isNullOrEmpty()) {
                     whereToCollect()
                 } else {
+                    mStoreName=it.storeName
+                    mStoreId=it.storeId
                     geoDeliveryText?.text = HtmlCompat.fromHtml(
-                        getString(R.string.collecting_from_geo, it.storeName),
+                        getString(R.string.collecting_from_geo, it.storeName?.let { convertToTitleCase(it) }),
                         HtmlCompat.FROM_HTML_MODE_LEGACY
                     )
                     editDelivery?.text = bindString(R.string.edit)
@@ -690,7 +693,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     private fun whereToCollect() {
         geoDeliveryText?.text = HtmlCompat.fromHtml(
-            getString(R.string.collecting_from_geo, getNearestStore(validateLocationResponse?.validatePlace?.stores)),
+            getString(R.string.collecting_from_geo, getNearestStore(validateLocationResponse?.validatePlace?.stores)?.let { convertToTitleCase(it) }),
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
         mStoreId = getNearestStoreId(validateLocationResponse?.validatePlace?.stores)

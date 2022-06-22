@@ -22,8 +22,9 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.Companion.FEATURE_WHATSAPP
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
+import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.list.EnquiriesListFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WhatsAppUnavailableFragment
-import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -54,6 +55,26 @@ class ContactUsFinancialServiceFragment : Fragment(), View.OnClickListener {
 
         setupToolbar()
         with(contactUsModel) {
+            contactUsFinancialServicesEmail()?.apply {
+                val localCallerRow = layoutInflater.inflate(R.layout.contact_us_email_item, contactFinancialServicesEmailLinearLayout, false)
+                val contactUsEmailTextView = localCallerRow.findViewById<TextView>(R.id.contactUsEmailTextView)
+                val contactUsEmailDescriptionTextView = localCallerRow.findViewById<TextView>(R.id.contactUsEmailDescriptionTextView)
+                val contactUsEmailDescriptionDivider = localCallerRow.findViewById<View>(R.id.contactUsEmailDescriptionDivider)
+
+                contactUsEmailTextView?.text = bindString(R.string.send_enquiry)
+                contactUsEmailDescriptionTextView?.visibility = GONE
+                contactUsEmailDescriptionDivider?.visibility = GONE
+                localCallerRow?.setOnClickListener {
+                    if (activity is BottomNavigationActivity)
+                        mBottomNavigator?.pushFragmentSlideUp(EnquiriesListFragment())
+                    else
+                        (activity as? MyAccountActivity)?.replaceFragment(EnquiriesListFragment())
+                }
+
+                contactFinancialServicesEmailLinearLayout?.addView(localCallerRow)
+
+            }
+
             contactUsFinancialServicesCall()?.apply  {
                 options?.forEachIndexed { index, item ->
                     val localCallerRow = layoutInflater.inflate(R.layout.contact_us_call_options_item, callUsLinearLayoutContainer, false)
@@ -69,24 +90,6 @@ class ContactUsFinancialServiceFragment : Fragment(), View.OnClickListener {
                 }
 
                 operationHoursTextView?.text = operatingHours
-            }
-
-            contactUsFinancialServicesEmail()?.apply {
-                forEachIndexed { index, option ->
-                    val localCallerRow = layoutInflater.inflate(R.layout.contact_us_email_item, contactFinancialServicesEmailLinearLayout, false)
-                    val contactUsEmailTextView = localCallerRow.findViewById<TextView>(R.id.contactUsEmailTextView)
-                    val contactUsEmailDescriptionTextView = localCallerRow.findViewById<TextView>(R.id.contactUsEmailDescriptionTextView)
-
-                    val email = option.value
-                    val subject = option.key
-
-                    contactUsEmailTextView?.text = subject
-                    contactUsEmailDescriptionTextView?.text = email
-                    localCallerRow?.tag = index
-                    localCallerRow?.setOnClickListener { KotlinUtils.sendEmail(activity,email,subject) }
-
-                    contactFinancialServicesEmailLinearLayout?.addView(localCallerRow)
-                }
             }
         }
 

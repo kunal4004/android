@@ -5,6 +5,9 @@ import za.co.woolworths.financial.services.android.geolocation.model.response.Co
 import java.io.Serializable
 
 class ShippingDetailsBody : Serializable {
+    @SerializedName("ageConsentConfirmed")
+    var ageConsentConfirmed: Boolean? = null
+
     @SerializedName("requestFrom")
     var requestFrom: String? = null
 

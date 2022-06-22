@@ -41,6 +41,8 @@ import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetailsR
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyOptOutBody
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
+import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.data.CardNotReceived
+import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.EmailUsRequest
 
 interface ApiInterface {
 
@@ -150,7 +152,6 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/user/locations")
     fun getStoresLocation(
-
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -611,10 +612,13 @@ interface ApiInterface {
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("commerceId") commerceId: String): Call<ShoppingCartResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "environment: www-win-dev2")
+    @Headers(
+        "Content-Type: application/json",
+        "Accept: application/json",
+        "Media-Type: application/json"
+    )
     @GET("wfs/app/v4/cart/summary")
     fun getCartSummary(
-
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1167,7 +1171,6 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/accounts/storecard/email")
     fun confirmStoreCardEmail(
-
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1258,9 +1261,18 @@ interface ApiInterface {
     ): EligibilityPlanResponse
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/v4/user/email/{emailId}")
+    suspend fun queryServiceNotifyCardNotYetReceived(
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Path("emailId") emailId: String,
+        @Body body: Any
+    ): Response
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/cartV2/confirmLocation")
     fun confirmLocation(
-
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
         @Header("sessionToken") sessionToken: String,
@@ -1278,5 +1290,15 @@ interface ApiInterface {
         @Body saveAddressLocationRequest: SaveAddressLocationRequest
     ): Call<GenericResponse>
 
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/v4/user/email/{emailId}")
+    suspend fun makeEnquiry(
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Path("emailId") emailId: String = "contactUs",
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body emailUsRequest: EmailUsRequest
+    ): GenericResponse
 }
 
