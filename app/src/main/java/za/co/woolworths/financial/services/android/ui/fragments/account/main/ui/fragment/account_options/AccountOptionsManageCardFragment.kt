@@ -22,7 +22,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.ManageCardItemListener
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.ManageCardLandingHeaderItems
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.ManageCardLandingItemList
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StorCardCallBack
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StoreCardCallBack
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.CallBack
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
@@ -93,7 +93,7 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
                     when (it) {
                         is CallBack.IntentCallBack -> {
                             it.intent?.let { intent ->
-                                storeCardLauncher(intent)
+                                launchStoreCard(intent)
                             }
                         }
                         else->Unit
@@ -102,9 +102,9 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
             }
     }
 
-    private fun storeCardLauncher(intent: Intent) {
+    private fun launchStoreCard(intent: Intent) {
         activityLauncher.launch(intent, onActivityResult = { result ->
-            if (StorCardCallBack().linkNewCardCallBack(result)) {
+            if (StoreCardCallBack().linkNewCardCallBack(result)) {
                 viewModel.requestGetStoreCardCards()
             }
         })

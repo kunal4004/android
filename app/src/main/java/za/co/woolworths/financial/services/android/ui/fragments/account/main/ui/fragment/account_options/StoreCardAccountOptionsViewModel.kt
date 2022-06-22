@@ -43,7 +43,7 @@ class StoreCardAccountOptionsViewModel @Inject constructor(
                 }
         }
     }
-    fun updatBPI(account: Account){
+    fun updateBPI(account: Account){
         viewModelScope.launch {
             product?.bpiInsuranceApplication = account.bpiInsuranceApplication
             _viewState.emit(balanceProtectionInsurance())

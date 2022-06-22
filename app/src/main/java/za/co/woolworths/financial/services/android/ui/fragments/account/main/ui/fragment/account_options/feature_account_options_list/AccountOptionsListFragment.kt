@@ -17,14 +17,12 @@ import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuran
 import za.co.woolworths.financial.services.android.ui.base.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOptionsScreenUI
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.StoreCardAccountOptionsViewModel
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StorCardCallBack
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StoreCardCallBack
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.loadingState
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.NetworkManager
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -143,7 +141,7 @@ class AccountOptionsListFragment : Fragment(R.layout.account_options_list_fragme
             val bpi = viewModel.accountOptions.bpi
             if (bpi.isBpiStatusInProgress(getString(R.string.status_in_progress)))
                 return@onClick
-            storeCardLauncher(bpi.setupIntent(activity))
+            launchStoreCard(bpi.setupIntent(activity))
         }
 
         payMyAccountRelativeLayout.onClick {
@@ -152,12 +150,11 @@ class AccountOptionsListFragment : Fragment(R.layout.account_options_list_fragme
     }
     private val activityLauncher = BetterActivityResult.registerActivityForResult(this)
 
-    private fun storeCardLauncher(intent: Intent) {
+    private fun launchStoreCard(intent: Intent) {
         activityLauncher.launch(intent, onActivityResult = { result ->
-            StorCardCallBack().bpiCallBack(result).apply {
-                this?.let {
-                    viewModel.updatBPI(this)
-                }
+            StoreCardCallBack().bpiCallBack(result).apply {
+                this?.let { viewModel.updateBPI(it) }
+
             }
         })
         activity?.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
