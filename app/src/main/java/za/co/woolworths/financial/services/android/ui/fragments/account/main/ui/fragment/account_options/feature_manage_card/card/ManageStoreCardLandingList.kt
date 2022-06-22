@@ -11,6 +11,8 @@ import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
+import za.co.woolworths.financial.services.android.util.FirebaseManager
+import java.lang.Exception
 
 class ManageStoreCardLandingList(
     private val cardFreezeViewModel: TemporaryFreezeCardViewModel,
@@ -65,12 +67,16 @@ class ManageStoreCardLandingList(
     }
 
     private fun showTemporaryCardEnabled(featureType: StoreCardFeatureType.TemporaryCardEnabled) {
+        try {
         if (featureType.isBlockTypeNullInVirtualCardObject) {
             fragment?.setupGraph(
                 R.navigation.account_options_manage_card_nav,
                 R.id.payWithCardFragmentContainerView,
                 R.id.payWithCardListFragment
             )
+        }
+        }catch (e : Exception){
+          FirebaseManager.logException(e)
         }
         includeListOptions.payWithCardFragmentContainerView.visibility = VISIBLE
     }
