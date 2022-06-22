@@ -22,50 +22,60 @@ class AccountProductsToolbarHelper(
         @ColorRes colorId: Int? = R.color.white
     ) {
         mContext ?: return
-        binding.toolbarTitleTextView.text = mContext.getString(title)
-        binding.toolbarTitleTextView.setTextColor(
-            ContextCompat.getColor(
-                mContext,
-                colorId ?: R.color.white
+        with(binding) {
+            toolbarTitleTextView.text = mContext.getString(title)
+            toolbarTitleTextView.setTextColor(
+                ContextCompat.getColor(
+                    mContext,
+                    colorId ?: R.color.white
+                )
             )
-        )
-        binding.toolbarTitleTextView.visibility = View.VISIBLE
-        binding.accountInArrearsTextView.visibility = View.GONE
+            toolbarTitleTextView.visibility = View.VISIBLE
+            accountInArrearsTextView.visibility = View.GONE
+        }
     }
 
-    fun setHomeLandingToolbar(viewModel: AccountProductsHomeViewModel, onTap : (View) -> Unit) {
-        binding.infoIconImageView.onClick { onTap(it) }
-        binding.navigateBackImageButton.onClick{ onTap(it)}
-        setNavigationIconWhite()
-        setTitleTextColorWhite()
-        when (viewModel.isProductInGoodStanding()) {
-            true -> {
-                binding.toolbarTitleTextView.visibility = View.VISIBLE
-                binding.toolbarTitleTextView.text = getString(viewModel.getTitleId())
-                binding.accountInArrearsTextView.visibility = View.GONE
-            }
-            false -> {
-                binding.toolbarTitleTextView.visibility = View.GONE
-                KotlinUtils.roundCornerDrawable(binding.accountInArrearsTextView, AppConstant.RED_HEX_COLOR)
-                binding.accountInArrearsTextView.visibility = View.VISIBLE
+    fun setHomeLandingToolbar(viewModel: AccountProductsHomeViewModel, onTap: (View) -> Unit) {
+        with(binding) {
+            infoIconImageView.onClick { onTap(it) }
+            navigateBackImageButton.onClick { onTap(it) }
+            setNavigationIconWhite()
+            setTitleTextColorWhite()
+            when (viewModel.isProductInGoodStanding()) {
+                true -> {
+                    toolbarTitleTextView.visibility = View.VISIBLE
+                    toolbarTitleTextView.text = getString(viewModel.getTitleId())
+                    accountInArrearsTextView.visibility = View.GONE
+                }
+                false -> {
+                    toolbarTitleTextView.visibility = View.GONE
+                    KotlinUtils.roundCornerDrawable(
+                        accountInArrearsTextView,
+                        AppConstant.RED_HEX_COLOR
+                    )
+                    accountInArrearsTextView.visibility = View.VISIBLE
+                }
             }
         }
     }
 
-    fun setManageMyCardDetailsToolbar(isMultipleStoreCard: Boolean, onTap : (View) -> Unit) {
+    fun setManageMyCardDetailsToolbar(isMultipleStoreCard: Boolean, onTap: (View) -> Unit) {
         getDetailToolbar(R.string.my_card_title, if (isMultipleStoreCard) "s" else "")
-        binding.navigateBackImageButton.onClick{ onTap(it)}
+        binding.navigateBackImageButton.onClick { onTap(it) }
         setNavigationIconBlack()
         setTitleTextColorBlack()
     }
 
-    private fun getDetailToolbar(@StringRes id : Int, formatArgs : String =""){
-        binding.toolbarTitleTextView.text = getString(id, formatArgs)
-        binding.toolbarTitleTextView.visibility = View.VISIBLE
-        binding.accountInArrearsTextView.visibility = View.GONE
+    private fun getDetailToolbar(@StringRes id: Int, formatArgs: String = "") {
+        with(binding) {
+            toolbarTitleTextView.text = getString(id, formatArgs)
+            toolbarTitleTextView.visibility = View.VISIBLE
+            accountInArrearsTextView.visibility = View.GONE
+        }
     }
 
-    private fun getString(@StringRes id: Int, formatArgs: String = "") = fragment?.getString(id, formatArgs)
+    private fun getString(@StringRes id: Int, formatArgs: String = "") =
+        fragment?.getString(id, formatArgs)
 
     private fun setNavigationIconBlack() {
         binding.navigateBackImageButton.setImageResource(R.drawable.back24)
@@ -75,13 +85,14 @@ class AccountProductsToolbarHelper(
         binding.navigateBackImageButton.setImageResource(R.drawable.back_white)
     }
 
-    private fun setTitleTextColorBlack(){
+    private fun setTitleTextColorBlack() {
         mContext ?: return
-        binding.toolbarTitleTextView.setTextColor(ContextCompat.getColor(mContext,R.color.black))
+        binding.toolbarTitleTextView.setTextColor(ContextCompat.getColor(mContext, R.color.black))
     }
-    private fun setTitleTextColorWhite(){
+
+    private fun setTitleTextColorWhite() {
         mContext ?: return
-        binding.toolbarTitleTextView.setTextColor(ContextCompat.getColor(mContext,R.color.white))
+        binding.toolbarTitleTextView.setTextColor(ContextCompat.getColor(mContext, R.color.white))
     }
 
 }

@@ -8,7 +8,7 @@ import com.awfs.coordination.databinding.ManageCardDetailsCardInfoLayoutBinding
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.capitaliseFirstLetterInEveryWord
 
-class BindCardInfoTypeComponent(
+class ManageStoreCardMoreDetail(
     private val mContext: Context,
     private val binding: ManageCardDetailsCardInfoLayoutBinding
 ) {
@@ -22,7 +22,7 @@ class BindCardInfoTypeComponent(
             }
 
             is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive -> {
-                setPrimaryCardLabel()
+                setStoreCardLabel()
                 setSubTitleLabel(R.string.card_block_desc)
             }
 
@@ -65,6 +65,10 @@ class BindCardInfoTypeComponent(
 
     private fun setPrimaryCardLabel() {
         binding.headerTextView.text = mContext.getString(R.string.primary_card)
+    }
+
+    private fun setStoreCardLabel() {
+        binding.headerTextView.text = mContext.getString(R.string.store_card_title)
     }
 
     private fun setVirtualTempCardLabel() {

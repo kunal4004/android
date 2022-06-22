@@ -33,6 +33,7 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
 
 ) : ViewModel(), IStoreCardDataSource by dataSource,ICardNotReceivedService by cardNotReceived {
 
+    var mStoreCardFeatureType: StoreCardFeatureType? = null
     var loaderType : LoaderType = LoaderType.LANDING
 
     val cardHolderName = KotlinUtils.getCardHolderNameSurname()?.capitaliseFirstLetterInEveryWord()
@@ -105,10 +106,10 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
 
     fun onCardPagerPageSelected(storeCardFeatureType: StoreCardFeatureType?, position: Int) {
         viewModelScope.launch {
+            mStoreCardFeatureType = storeCardFeatureType
             _onViewPagerPageChangeListener.emit(Pair(storeCardFeatureType, position))
         }
     }
-
 
 
 }

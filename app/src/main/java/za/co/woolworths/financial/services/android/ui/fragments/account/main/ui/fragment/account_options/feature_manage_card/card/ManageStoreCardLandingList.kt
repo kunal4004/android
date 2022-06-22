@@ -5,11 +5,16 @@ import android.view.View.VISIBLE
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountOptionsManageCardListFragmentBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
+import za.co.woolworths.financial.services.android.util.FirebaseManager
+import java.lang.Exception
 
-class ManageCardLandingItemList(
+class ManageStoreCardLandingList(
     private val cardFreezeViewModel: TemporaryFreezeCardViewModel,
     private val includeListOptions: AccountOptionsManageCardListFragmentBinding,
     private val fragment: Fragment?
@@ -32,26 +37,28 @@ class ManageCardLandingItemList(
         }
     }
 
-    fun showListItem(storeCardFeatureType: Pair<StoreCardFeatureType?, Int>) {
-        hideAllRows()
-        when (val featureType = storeCardFeatureType.first) {
+    fun showListItem(storeCardFeatureType: Pair<StoreCardFeatureType?, Int?>) {
+        CoroutineScope(Dispatchers.Main).launch {
+            hideAllRows()
+            when (val featureType = storeCardFeatureType.first) {
 
-            is StoreCardFeatureType.ActivateVirtualTempCard ->
-                showActivateVirtualTempCardRow()
+                is StoreCardFeatureType.ActivateVirtualTempCard ->
+                    showActivateVirtualTempCardRow()
 
-            is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive ->
-                showInstantReplacementCardAndInactive()
+                is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive ->
+                    showInstantReplacementCardAndInactive()
 
-            is StoreCardFeatureType.StoreCardIsTemporaryFreeze ->
-                showStoreCardIsTemporaryFreeze(featureType)
+                is StoreCardFeatureType.StoreCardIsTemporaryFreeze ->
+                    showStoreCardIsTemporaryFreeze(featureType)
 
-            is StoreCardFeatureType.TemporaryCardEnabled ->
-                showTemporaryCardEnabled(featureType)
+                is StoreCardFeatureType.TemporaryCardEnabled ->
+                    showTemporaryCardEnabled(featureType)
 
-            StoreCardFeatureType.ManageMyCard -> showManageMyCardRow()
+                StoreCardFeatureType.ManageMyCard -> showManageMyCardRow()
 
-            else -> Unit
+                else -> Unit
 
+            }
         }
     }
 
@@ -60,12 +67,16 @@ class ManageCardLandingItemList(
     }
 
     private fun showTemporaryCardEnabled(featureType: StoreCardFeatureType.TemporaryCardEnabled) {
+        try {
         if (featureType.isBlockTypeNullInVirtualCardObject) {
             fragment?.setupGraph(
                 R.navigation.account_options_manage_card_nav,
                 R.id.payWithCardFragmentContainerView,
                 R.id.payWithCardListFragment
             )
+        }
+        }catch (e : Exception){
+          FirebaseManager.logException(e)
         }
         includeListOptions.payWithCardFragmentContainerView.visibility = VISIBLE
     }

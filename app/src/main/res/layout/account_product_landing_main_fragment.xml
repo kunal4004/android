@@ -81,11 +81,11 @@
         app:layout_constraintTop_toBottomOf="@+id/accountToolbar" />
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/productNavigationView"
+        android:id="@+id/productNavigationContainerView"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:tag="productNavigationView"
+        android:tag="product_navigation_container_view"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

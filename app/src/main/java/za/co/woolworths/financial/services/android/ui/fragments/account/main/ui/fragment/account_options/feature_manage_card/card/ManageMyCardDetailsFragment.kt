@@ -6,11 +6,12 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ManageCardDetailsFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
@@ -26,9 +27,9 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragment) {
-    private var mBindCardInfo: BindCardInfoTypeComponent? = null
+    private var mStoreCardMoreDetail: ManageStoreCardMoreDetail? = null
     private var mOnItemClickListener: ManageCardItemListener? = null
-    private var mItemList: ManageCardLandingItemList? = null
+    private var mListOfStoreCardOptions: ManageStoreCardLandingList? = null
     val viewModel: MyAccountsRemoteApiViewModel by activityViewModels()
     private val cardFreezeViewModel: TemporaryFreezeCardViewModel by activityViewModels()
 
@@ -44,22 +45,24 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
         Utils.updateStatusBarBackground(requireActivity(), R.color.black, true)
         setToolbar()
         with(ManageCardDetailsFragmentBinding.bind(view)) {
-            mBindCardInfo = BindCardInfoTypeComponent(requireContext(),incManageCardDetailsInfoLayout)
-            mItemList = ManageCardLandingItemList(cardFreezeViewModel, includeListOptions, this@ManageMyCardDetailsFragment)
+            mStoreCardMoreDetail = ManageStoreCardMoreDetail(requireContext(),incManageCardDetailsInfoLayout)
+            mListOfStoreCardOptions = ManageStoreCardLandingList(cardFreezeViewModel, includeListOptions, this@ManageMyCardDetailsFragment)
             setupView()
             setCardViewPagerNavigationGraph()
             setOnClickListener()
-            mItemList?.setupTemporaryCardGraph()
+            mListOfStoreCardOptions?.setupTemporaryCardGraph()
         }
 
         onBackPressed()
     }
 
     private fun setToolbar() {
-        (activity as? StoreCardActivity)?.getToolbarHelper()
-            ?.setManageMyCardDetailsToolbar(viewModel.dataSource.isMultipleStoreCardEnabled()) {
-                findNavController().popBackStack()
+        val isMultipleStoreCardEnabled = viewModel.dataSource.isMultipleStoreCardEnabled()
+        (activity as? StoreCardActivity)?.apply {
+            getToolbarHelper()?.setManageMyCardDetailsToolbar(isMultipleStoreCardEnabled) {
+                landingNavController()?.popBackStack()
             }
+        }
     }
 
     private fun setCardViewPagerNavigationGraph() = setupGraph(
@@ -104,16 +107,20 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
     }
 
     private fun setupView() {
-        mBindCardInfo?.setCardHolderName(viewModel.cardHolderName)
-        mItemList?.hideAllRows()
+        mStoreCardMoreDetail?.setCardHolderName(viewModel.cardHolderName)
+        mListOfStoreCardOptions?.hideAllRows()
         subscribeObservers()
     }
 
     private fun subscribeObservers() {
-        lifecycleScope.launch {
+        val position = cardFreezeViewModel.currentPagePosition.value
+        mStoreCardMoreDetail?.setupView(viewModel.mStoreCardFeatureType)
+        val item  = viewModel.mStoreCardFeatureType to position
+        mListOfStoreCardOptions?.showListItem(item)
+        CoroutineScope(Dispatchers.Main).launch {
             viewModel.onViewPagerPageChangeListener.collect { feature ->
-                mItemList?.showListItem(feature)
-                mBindCardInfo?.setupView(feature.first)
+                mListOfStoreCardOptions?.showListItem(feature)
+                mStoreCardMoreDetail?.setupView(feature.first)
             }
         }
     }

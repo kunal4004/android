@@ -21,7 +21,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.ManageCardItemListener
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.ManageCardLandingHeaderItems
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.ManageCardLandingItemList
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StoreCardCallBack
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.CallBack
@@ -43,7 +42,7 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
 
     private lateinit var mOnItemClickListener: ManageCardItemListener
     private lateinit var mHeaderItems: ManageCardLandingHeaderItems
-    private lateinit var mItemList: ManageCardLandingItemList
+    private lateinit var mItemList: ManageStoreCardLandingList
 
     @Inject
     lateinit var router: ProductLandingRouterImpl
@@ -58,9 +57,8 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(AccountOptionsManageCardFragmentBinding.bind(view)) {
-            mHeaderItems =
-                ManageCardLandingHeaderItems(viewModel, this, this@AccountOptionsManageCardFragment)
-            mItemList = ManageCardLandingItemList(
+            mHeaderItems = ManageCardLandingHeaderItems(viewModel, this, this@AccountOptionsManageCardFragment)
+            mItemList = ManageStoreCardLandingList(
                 cardFreezeViewModel,
                 includeListOptions,
                 this@AccountOptionsManageCardFragment
@@ -169,6 +167,9 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
 
         lifecycleScope.launch {
             viewModel.onCardTapEvent.collectLatest {
+                if (landingController?.currentDestination?.label?.equals(ManageMyCardDetailsFragment::class.java.simpleName) == true) {
+                    return@collectLatest
+                }
                 landingController?.let { controller -> router.routeToManageMyCardDetails(controller) }
             }
         }
@@ -179,6 +180,5 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
                 mItemList.showListItem(feature)
             }
         }
-
     }
 }

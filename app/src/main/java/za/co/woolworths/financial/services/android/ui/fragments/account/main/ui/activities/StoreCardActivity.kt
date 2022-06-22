@@ -16,11 +16,9 @@ import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountProductLandingActivityBinding
 import dagger.hilt.android.AndroidEntryPoint
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.NavigationGraph
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ToastFactory
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.AccountProductsMainFragment
-import javax.inject.Inject
 
 @Suppress("DEPRECATION")
 @AndroidEntryPoint
@@ -29,9 +27,6 @@ class StoreCardActivity : AppCompatActivity() {
     lateinit var binding: AccountProductLandingActivityBinding
 
     val viewModel: AccountProductsHomeViewModel by viewModels()
-
-    @Inject
-    lateinit var navigationGraph: NavigationGraph
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,11 +62,10 @@ class StoreCardActivity : AppCompatActivity() {
     }
 
     private fun setupView() {
-        val fragmentContainer = supportFragmentManager.findFragmentById(R.id.accountProductLandingFragmentContainerView) as? NavHostFragment
-        navigationGraph.setupNavigationGraph(
-            fragmentContainer?.navController,
+        setupGraph(
+            containerId = R.id.accountProductLandingFragmentContainerView,
             graphResId = R.navigation.nav_account_product_landing,
-            startDestinationId = R.id.accountProductsMainFragment,
+            startDestination = R.id.accountProductsMainFragment,
             startDestinationArgs = intent.extras
         )
     }
@@ -83,6 +77,9 @@ class StoreCardActivity : AppCompatActivity() {
 
     private fun getMainFragment() = supportFragmentManager.findFragmentById(R.id.accountProductLandingFragmentContainerView)?.childFragmentManager?.primaryNavigationFragment as? AccountProductsMainFragment
 
+
+    private fun getHomeLandingFragment() = supportFragmentManager.findFragmentById(R.id.nav_account_product_landing)?.childFragmentManager?.primaryNavigationFragment as? AccountProductsMainFragment
+
     fun landingNavController(): NavController? {
         val fragment = getMainFragment()
         val navHost = fragment?.getChildNavHost()
@@ -91,4 +88,9 @@ class StoreCardActivity : AppCompatActivity() {
 
     fun getToolbarHelper() = getMainFragment()?.mToolbarContainer
 
+    fun productLandingNavController(): NavController? {
+        val fragment = getHomeLandingFragment()
+        val navHost = fragment?.getChildNavHost()
+        return navHost?.navController
+    }
 }
