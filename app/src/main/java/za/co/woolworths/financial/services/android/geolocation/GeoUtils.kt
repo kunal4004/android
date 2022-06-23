@@ -54,15 +54,17 @@ class GeoUtils {
             return null
         }
 
-        fun showFirstFourLocationInMap(addressStoreList: List<Store>?, dynamicMapView: DynamicMapView?, context: Context) {
+        fun showFirstFourLocationInMap(addressStoreList: List<Store>?, dynamicMapView: DynamicMapView?, context: Context?) {
             addressStoreList?.let {
                 for (i in 0..3) {
-                    dynamicMapView?.addMarker(
-                        context,
-                        addressStoreList?.get(i)?.latitude,
-                        addressStoreList?.get(i)?.longitude,
-                        R.drawable.pin
-                    )
+                    if (context != null) {
+                        dynamicMapView?.addMarker(
+                            context,
+                            addressStoreList?.get(i)?.latitude,
+                            addressStoreList?.get(i)?.longitude,
+                            R.drawable.pin
+                        )
+                    }
                     dynamicMapView?.moveCamera(
                         addressStoreList.get(i)?.latitude,
                         addressStoreList.get(i)?.longitude,

@@ -17,7 +17,6 @@ import kotlinx.android.synthetic.main.fragment_add_order_to_cart.*
 import kotlinx.android.synthetic.main.fragment_add_order_to_cart.btnBack
 import kotlinx.android.synthetic.main.fragment_add_order_to_cart.loadingBar
 import kotlinx.android.synthetic.main.fragment_add_order_to_cart.toolbarText
-import kotlinx.android.synthetic.main.order_details_fragment.*
 import org.json.JSONObject
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -61,17 +60,30 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
         private const val ARG_PARAM = "orderDetailsResponse"
         const val QUANTITY_CHANGED = 2019
         const val REQUEST_SUBURB_CHANGE = 1550
-        fun getInstance(orderDetailsResponse: OrderDetailsResponse, order: Order?) = AddOrderToCartFragment().withArgs {
+        fun getInstance(orderDetailsResponse: OrderDetailsResponse) = AddOrderToCartFragment().withArgs {
             putString(ARG_PARAM, Utils.objectToJson(orderDetailsResponse))
-            putString(OrderDetailsFragment.ARG_PARAM, Utils.objectToJson(order))
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let{
+        arguments?.let{ it ->
             orderDetailsResponse = Utils.jsonStringToObject(it.getString(ARG_PARAM), OrderDetailsResponse::class.java) as OrderDetailsResponse
-            order = Utils.jsonStringToObject(it.getString("order"),Order::class.java) as Order?
+            order = orderDetailsResponse?.orderSummary?.let { orderSummary ->
+                Order(
+                    completedDate = orderSummary.completedDate ?: "",
+                    orderCancellable = orderSummary.orderCancellable,
+                    state = orderSummary.state ?: "",
+                    orderId = orderSummary.orderId ?: "",
+                    submittedDate = orderSummary.submittedDate ?: "",
+                    total = orderSummary.total,
+                    taxNoteNumbers = orderSummary.taxNoteNumbers,
+                    requestCancellation = orderSummary.requestCancellation,
+                    deliveryDates = orderSummary.deliveryDates,
+                    clickAndCollectOrder = orderSummary.clickAndCollectOrder
+
+                )
+            }
             orderText = getString(R.string.order_page_title_prefix) + order?.orderId
         }
     }

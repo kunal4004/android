@@ -57,6 +57,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     private var parentFragment: ShopFragment? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
+    private var saveInstanceState: Bundle? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,8 +71,8 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
         super.onViewCreated(view, savedInstanceState)
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         setUpViewModel()
+        this.saveInstanceState = savedInstanceState
         dynamicMapView?.initializeMap(savedInstanceState, this)
-
     }
 
     private fun setUpViewModel() {
@@ -83,6 +84,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
 
     override fun onResume() {
         super.onResume()
+        dynamicMapView?.initializeMap(saveInstanceState, this)
         dynamicMapView?.onResume()
         etEnterNewAddress?.addTextChangedListener(this)
         init()
@@ -102,7 +104,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
 
         if (isPermissionGranted && Utils.isLocationEnabled(context)) {
 
-            if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() == null && getDeliveryType() == null) {
+            if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() == null && getDeliveryType()?.address?.placeId == null) {
                 // when user comes first time i.e. no location , no fulfillment type
                 // navigate to geo location flow
                 showSetLocationUi()
@@ -115,7 +117,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
                 showCategoryList()
             }
         } else {
-            if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() == null && getDeliveryType() == null) {
+            if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() == null && getDeliveryType()?.address?.placeId == null) {
                 // when user comes first time i.e. no location , no fulfillment type
                 // navigate to geo location flow
                 showSetLocationUi()
@@ -250,17 +252,17 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
     }
 
     override fun onMapReady() {
-        dynamicMapView.setAllGesturesEnabled(false)
+        dynamicMapView?.setAllGesturesEnabled(false)
         val addressStoreList = WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
         if (addressStoreList != null && !addressStoreList?.isEmpty()) {
-            GeoUtils.showFirstFourLocationInMap(addressStoreList, dynamicMapView, requireContext())
+            GeoUtils.showFirstFourLocationInMap(addressStoreList, dynamicMapView, context)
         } else if (updatedAddressStoreList?.isEmpty() == false)  {
-            GeoUtils.showFirstFourLocationInMap(updatedAddressStoreList, dynamicMapView, requireContext())
+            GeoUtils.showFirstFourLocationInMap(updatedAddressStoreList, dynamicMapView, context)
         }
     }
 
     override fun onMarkerClicked(marker: DynamicMapMarker) {
-        TODO("Not yet implemented")
+
     }
 
     override fun onClick(v: View?) {
@@ -395,10 +397,9 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
     }
 
     private fun showCategoryList() {
-        if (KotlinUtils.browsingDeliveryType == Delivery.CNC) {
-            parentFragment?.showSerachAndBarcodeUi()
-        }
+        parentFragment?.showSerachAndBarcodeUi()
         layoutClickAndCollectStore?.visibility = View.GONE
+        layoutEdgeCaseScreen?.visibility = View.GONE
         rv_category_layout?.visibility = View.VISIBLE
         setUpCategoryRecyclerView(mutableListOf())
         initializeRootCategoryList()
@@ -415,8 +416,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
         rv_category_layout?.visibility = View.VISIBLE
         mDepartmentAdapter = DepartmentAdapter(
             categories,
-            ::departmentItemClicked,
-            ::onDashBannerClicked
+            ::departmentItemClicked
         ) //{ rootCategory: RootCategory -> departmentItemClicked(rootCategory)}
         activity?.let {
             rclDepartment?.apply {
@@ -432,10 +432,6 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
 
     private fun departmentItemClicked(rootCategory: RootCategory) {
         (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(openNextFragment(rootCategory))
-    }
-
-    private fun onDashBannerClicked() {
-        /*todo need to delete this one */
     }
 
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -474,6 +470,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
+        this.saveInstanceState = outState
         dynamicMapView?.onSaveInstanceState(outState)
     }
 
