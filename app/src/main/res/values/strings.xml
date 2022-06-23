@@ -2644,4 +2644,5 @@
     <string name="dash_status_packaging">Packaging</string>
     <string name="dash_status_en_route">En-route</string>
     <string name="dash_status_delivered">Delivered</string>
+    <string name="empty" />
 </resources>
