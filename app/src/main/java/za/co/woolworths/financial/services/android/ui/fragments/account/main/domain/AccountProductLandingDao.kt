@@ -31,14 +31,15 @@ interface IAccountProductLandingDao {
 
 class AccountProductLandingDao @Inject constructor() : IAccountProductLandingDao {
 
-    override val product: Account? =
-        SaveResponseDao.getValue(SessionDao.KEY.ACCOUNT_PRODUCT_PAYLOAD)
+    override val product: Account? get() {
+        return SaveResponseDao.getValue(SessionDao.KEY.ACCOUNT_PRODUCT_PAYLOAD)
+    }
 
     override fun getProductByProductGroupCode(): ProductLandingGroupCode {
         return when (product?.productGroupCode) {
             ProductLandingGroupCode.StoreCard().name -> ProductLandingGroupCode.StoreCard()
             ProductLandingGroupCode.PersonalLoan().name -> ProductLandingGroupCode.PersonalLoan()
-            ProductLandingGroupCode.CreditCard().name -> when (product.accountNumberBin) {
+            ProductLandingGroupCode.CreditCard().name -> when (product?.accountNumberBin) {
                 CreditCardType.BLACK_CARD.card -> ProductLandingGroupCode.BlackCreditCard()
                 CreditCardType.SILVER_CARD.card -> ProductLandingGroupCode.SilverCreditCard()
                 else -> ProductLandingGroupCode.GoldCreditCard()
