@@ -38,4 +38,11 @@
         app:layout_constraintTop_toBottomOf="@+id/cardTabLayout"
         style="@style/tabHiddenSpacingStyle" />
 
+    <View android:id="@+id/bottomMargin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_height="@dimen/_8sdp"
+        app:layout_constraintTop_toBottomOf="@+id/tabHiddenMargin"
+        style="@style/tabHiddenSpacingStyle" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

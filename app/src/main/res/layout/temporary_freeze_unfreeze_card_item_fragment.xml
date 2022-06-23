@@ -5,12 +5,6 @@
     android:orientation="vertical">
 
     <View
-        android:id="@+id/tabHiddenMargin"
-        style="@style/tabHiddenSpacingStyle"
-        android:layout_width="match_parent"
-        android:visibility="visible" />
-
-    <View
         android:id="@+id/temporaryFreezeCardDivider"
         style="@style/menuLandingDividerStyle"
         android:layout_marginStart="0dp"
@@ -33,7 +27,6 @@
             android:layout_alignBottom="@+id/switchTemporaryFreezeCard"
             android:layout_marginStart="21dp"
             android:layout_marginTop="2dp"
-            android:layout_marginBottom="-5dp"
             android:layout_toEndOf="@+id/storeCardItem3ImageView"
             android:text="@string/temporary_card_freeze_title" />
 
@@ -43,6 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
+            android:minHeight="48dp"
             android:theme="@style/SwitchTheme" />
 
         <ProgressBar

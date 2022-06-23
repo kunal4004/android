@@ -116,6 +116,7 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
         setupViewPager()
         setCardLabel()
         startLocationDiscoveryProcess()
+        mItemList.setupVirtualTemporaryCardGraph()
     }
 
     private fun setCardLabel() {

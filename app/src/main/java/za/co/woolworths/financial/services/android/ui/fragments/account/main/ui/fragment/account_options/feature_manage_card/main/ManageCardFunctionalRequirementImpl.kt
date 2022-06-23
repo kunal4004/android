@@ -75,11 +75,6 @@ sealed class StoreCardFeatureType : Parcelable {
     object ManageMyCard : StoreCardFeatureType()
 }
 
-enum class StoreCardType(val type: String) {
-    TEMPORARY("p"),
-    PERMANENT("l")
-}
-
 enum class StoreCardBlockType(val type: String?) {
     TEMPORARY("temporary"),
     PERMANENT("permanent"),
@@ -187,7 +182,7 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
         if (storeCardData?.virtualCard != null
             && storeCardData?.virtualCard?.number != null
             && AppConfigSingleton.virtualTempCard?.isEnabled == true
-            && (!TemporaryFreezeStoreCard.PERMANENT.equals(
+            && (!StoreCardBlockType.PERMANENT.type.equals(
                 storeCardData?.virtualCard?.blockType,
                 ignoreCase = true
             ))
@@ -232,17 +227,34 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
     }
 
     override fun filterPrimaryCardsGetOneVirtualCardAndOnePrimaryCardOrBoth(): MutableList<StoreCardFeatureType>? {
-        val primaryCards = storeCardData?.primaryCards
-        val listOfStoreCardFeatures : MutableList<StoreCardFeatureType> = mutableListOf()
-        primaryCards?.forEachIndexed { index, storeCard ->
-            val card = splitStoreCardByCardType(index, storeCard)
-            listOfStoreCardFeatures.add(card)
+
+        val storeCardResponse = getStoreCardsResponse()
+        val virtualCard = storeCardResponse?.storeCardsData?.virtualCard
+        val storeCardInPrimaryCardList = storeCardData?.primaryCards?.get(0)
+        val listOfStoreCardFeatures: MutableList<StoreCardFeatureType> = mutableListOf()
+
+        when(isTemporaryCardEnabled()){
+            true -> {
+                val virtualTempCard = StoreCardFeatureType.TemporaryCardEnabled( isBlockTypeNullInVirtualCardObject(), virtualCard)
+                val primaryStoreCard = splitStoreCardByCardType(0, storeCardInPrimaryCardList)
+                listOfStoreCardFeatures.clear()
+                when(primaryStoreCard){
+                    is StoreCardFeatureType.StoreCardIsTemporaryFreeze -> {
+                        listOfStoreCardFeatures.add(primaryStoreCard)
+                        listOfStoreCardFeatures.add(virtualTempCard)
+                    }
+                    else -> {
+                        listOfStoreCardFeatures.add(virtualTempCard)
+                        listOfStoreCardFeatures.add(primaryStoreCard)
+                    }
+                }
+            }
+            false -> {
+                val primaryStoreCard = splitStoreCardByCardType(0, storeCardInPrimaryCardList)
+                listOfStoreCardFeatures.add(primaryStoreCard)
+            }
         }
-        val filterInstanceVirtualTempCard = listOfStoreCardFeatures.filterIsInstance<StoreCardFeatureType.TemporaryCardEnabled>().firstOrNull()
-        val filterInstancePrimaryCard = listOfStoreCardFeatures.filterNot { it is StoreCardFeatureType.TemporaryCardEnabled }.firstOrNull()
-        listOfStoreCardFeatures.clear()
-        filterInstanceVirtualTempCard?.let { listOfStoreCardFeatures.add( it) }
-        filterInstancePrimaryCard?.let { listOfStoreCardFeatures.add(it) }
+
         return listOfStoreCardFeatures
     }
 
@@ -304,11 +316,6 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
     ): StoreCardFeatureType {
         return when {
             isActivateVirtualTempCard() -> StoreCardFeatureType.ActivateVirtualTempCard(storeCard)
-
-            isTemporaryCardEnabled() -> StoreCardFeatureType.TemporaryCardEnabled(
-                isBlockTypeNullInVirtualCardObject = isBlockTypeNullInVirtualCardObject(),
-                storeCard = storeCard
-            )
 
             isInstantCardReplacementJourneyEnabled(primaryCardIndex) -> StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive(
                 storeCard
