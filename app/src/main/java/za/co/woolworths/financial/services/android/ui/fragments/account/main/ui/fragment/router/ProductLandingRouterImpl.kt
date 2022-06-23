@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 
 import android.app.Activity
 import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import com.awfs.coordination.R
 import com.google.gson.Gson
@@ -27,10 +28,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.S
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ToastFactory
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountOptionsImpl
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.AccountOptionsManageCardFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_credit_limit_increase.CreditLimitIncreaseLanding
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.PayWithCardListFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.ManageCardFunctionalRequirementImpl
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.showErrorDialog
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
@@ -54,8 +55,8 @@ interface IProductLandingRouter {
     fun routeToGetReplacementCard(activity: Activity?): CallBack
     fun routeToBlockCard(activity: Activity): CallBack
     fun routeToHowItWorks(
-        requireActivity: Activity?,
-        staffMemberAndHasTemporaryCard: Boolean,
+        activity: Activity?,
+        isStaffMemberAndHasTemporaryCard: Boolean,
         virtualCardStaffMemberMessage: VirtualCardStaffMemberMessage?
     )
 
@@ -65,9 +66,9 @@ interface IProductLandingRouter {
         storeCardsResponse: StoreCardsResponse?
     )
 
-    fun routeToServerErrorDialog(findNavController: NavController?, serverErrorResponse: ServerErrorResponse?)
+    fun routeToServerErrorDialog(appCompatActivity: Activity?, serverErrorResponse: ServerErrorResponse?)
     fun routeToManageMyCardDetails(findNavController: NavController)
-    fun routeToDefaultErrorMessageDialog(activity: Activity?,findNavController: NavController)
+    fun routeToDefaultErrorMessageDialog(activity: Activity?)
     fun showNoConnectionToast(activity: Activity?)
 }
 
@@ -204,7 +205,7 @@ class ProductLandingRouterImpl @Inject constructor(
 
     override fun routeToHowItWorks(
         activity: Activity?,
-        isVirtualCardEnabled: Boolean,
+        isStaffMemberAndHasTemporaryCard: Boolean,
         virtualCardStaffMemberMessage: VirtualCardStaffMemberMessage?
     ) {
         activity?.apply {
@@ -213,7 +214,7 @@ class ProductLandingRouterImpl @Inject constructor(
                     HowToUseTemporaryStoreCardActivity.TRANSACTION_TYPE,
                     Transition.SLIDE_LEFT
                 )
-                if (isVirtualCardEnabled) {
+                if (isStaffMemberAndHasTemporaryCard) {
                     it.putExtra(
                         HowToUseTemporaryStoreCardActivity.STAFF_DISCOUNT_INFO,
                         virtualCardStaffMemberMessage
@@ -289,16 +290,10 @@ class ProductLandingRouterImpl @Inject constructor(
     }
 
     override fun routeToServerErrorDialog(
-        findNavController: NavController?,
+        activity: Activity?,
         serverErrorResponse: ServerErrorResponse?
     ) {
-        serverErrorResponse?.let {
-            findNavController?.navigate(
-                AccountOptionsManageCardFragmentDirections.actionAccountOptionsManageCardFragmentToGeneralErrorDialogPopupFragment(
-                    it
-                )
-            )
-        }
+        serverErrorResponse?.let { response -> showErrorDialog(activity as? AppCompatActivity, response) }
     }
 
     override fun routeToManageMyCardDetails(findNavController: NavController) {
@@ -306,16 +301,11 @@ class ProductLandingRouterImpl @Inject constructor(
     }
 
     override fun routeToDefaultErrorMessageDialog(
-        activity: Activity?,
-        findNavController: NavController
+        activity: Activity?
     ) {
         val serverErrorResponse = ServerErrorResponse()
         serverErrorResponse.desc = activity?.getString(R.string.oops_error_message) ?: ""
-        findNavController.navigate(
-            AccountOptionsManageCardFragmentDirections.actionAccountOptionsManageCardFragmentToGeneralErrorDialogPopupFragment(
-                serverErrorResponse
-            )
-        )
+        showErrorDialog(activity as? AppCompatActivity, serverErrorResponse)
     }
 
     override fun showNoConnectionToast(activity: Activity?) {

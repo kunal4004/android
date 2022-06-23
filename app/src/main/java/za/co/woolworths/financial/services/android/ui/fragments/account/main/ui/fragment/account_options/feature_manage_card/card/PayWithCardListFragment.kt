@@ -92,6 +92,7 @@ class PayWithCardListFragment : Fragment(R.layout.pay_with_card_list_fragment) {
                                 }
                             }
                         }
+
                         renderSuccess {
                             router.routeToScanToPayBarcode(
                                 findNavController(),
@@ -99,10 +100,10 @@ class PayWithCardListFragment : Fragment(R.layout.pay_with_card_list_fragment) {
                             )
                         }
 
-                        renderHttpFailureFromServer {
-                            router.routeToServerErrorDialog(findNavController(), output.response)
-                        }
+                        renderHttpFailureFromServer { router.routeToServerErrorDialog(requireActivity(), output.response) }
 
+                        renderFailure { router.routeToDefaultErrorMessageDialog(requireActivity()) }
+                        
                     }
                 }
             }
