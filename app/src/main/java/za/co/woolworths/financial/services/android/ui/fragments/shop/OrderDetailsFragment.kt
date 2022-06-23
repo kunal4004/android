@@ -59,7 +59,6 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
 
     private var dataList = arrayListOf<OrderDetailsItem>()
     private var argOrderId: String? = null
-    private var notificationParams: Parameter? = null
     private var orderDetailsResponse: OrderDetailsResponse? = null
     var isNavigatedFromMyAccounts: Boolean = false
     private var mBottomNavigator: BottomNavigator? = null
@@ -75,7 +74,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         super.onCreate(savedInstanceState)
         arguments?.let {
             argOrderId = it.getString(AppConstant.Keys.ARG_ORDER, "")
-            notificationParams = it.getParcelable(AppConstant.Keys.ARG_NOTIFICATION_PARAMETERS)
+            val notificationParams: Parameter? = it.getParcelable(AppConstant.Keys.ARG_NOTIFICATION_PARAMETERS)
             notificationParams?.let { parameter ->
                 argOrderId = parameter.orderID
             }
