@@ -51,8 +51,7 @@ class ManageStoreCardLandingList(
                 is StoreCardFeatureType.StoreCardIsTemporaryFreeze ->
                     showStoreCardIsTemporaryFreeze(featureType)
 
-                is StoreCardFeatureType.TemporaryCardEnabled ->
-                    showTemporaryCardEnabled(featureType)
+                is StoreCardFeatureType.TemporaryCardEnabled -> showTemporaryCardEnabled()
 
                 StoreCardFeatureType.ManageMyCard -> showManageMyCardRow()
 
@@ -66,22 +65,19 @@ class ManageStoreCardLandingList(
         includeListOptions.manageCardDivider.visibility = VISIBLE
     }
 
-    private fun showTemporaryCardEnabled(featureType: StoreCardFeatureType.TemporaryCardEnabled) {
-        try {
-        if (featureType.isBlockTypeNullInVirtualCardObject) {
-            fragment?.setupGraph(
-                R.navigation.account_options_manage_card_nav,
-                R.id.payWithCardFragmentContainerView,
-                R.id.payWithCardListFragment
-            )
-        }
-        }catch (e : Exception){
-          FirebaseManager.logException(e)
-        }
+    private fun showTemporaryCardEnabled() {
         includeListOptions.payWithCardFragmentContainerView.visibility = VISIBLE
     }
 
-    fun setupTemporaryCardGraph(){
+    fun setupVirtualTemporaryCardGraph(){
+        fragment?.setupGraph(
+            R.navigation.account_options_manage_card_nav,
+            R.id.payWithCardFragmentContainerView,
+            R.id.payWithCardListFragment
+        )
+    }
+
+        fun setupTemporaryFreezeCardGraph(){
         fragment?.setupGraph(
             R.navigation.freeze_unfreeze_card_item_nav,
             R.id.temporaryFreezeCardFragmentContainerView,

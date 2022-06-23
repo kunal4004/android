@@ -50,7 +50,8 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
             setupView()
             setCardViewPagerNavigationGraph()
             setOnClickListener()
-            mListOfStoreCardOptions?.setupTemporaryCardGraph()
+            mListOfStoreCardOptions?.setupTemporaryFreezeCardGraph()
+            mListOfStoreCardOptions?.setupVirtualTemporaryCardGraph()
         }
 
         onBackPressed()
