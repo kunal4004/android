@@ -252,7 +252,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
     }
 
     override fun onMapReady() {
-        dynamicMapView.setAllGesturesEnabled(false)
+        dynamicMapView?.setAllGesturesEnabled(false)
         val addressStoreList = WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
         if (addressStoreList != null && !addressStoreList?.isEmpty()) {
             GeoUtils.showFirstFourLocationInMap(addressStoreList, dynamicMapView, requireContext())

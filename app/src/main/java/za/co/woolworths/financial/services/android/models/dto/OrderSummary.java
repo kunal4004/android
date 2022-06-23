@@ -20,6 +20,7 @@ public class OrderSummary implements Parcelable {
 	public boolean shippingAdjusted;
 	public double savedAmount;
 	public double totalStaffDiscount;
+	public double tip;
 	public Suburb suburb;
 	public String state;
 	public String submittedDate;
@@ -41,6 +42,7 @@ public class OrderSummary implements Parcelable {
 		shippingAdjusted = in.readByte() != 0;
 		savedAmount = in.readDouble();
 		totalStaffDiscount = in.readDouble();
+		tip = in.readDouble();
 		state = in.readString();
 		submittedDate = in.readString();
 		orderId = in.readString();
@@ -59,6 +61,7 @@ public class OrderSummary implements Parcelable {
 		dest.writeByte((byte) (shippingAdjusted ? 1 : 0));
 		dest.writeDouble(savedAmount);
 		dest.writeDouble(totalStaffDiscount);
+		dest.writeDouble(tip);
 		dest.writeString(state);
 		dest.writeString(submittedDate);
 		dest.writeString(orderId);

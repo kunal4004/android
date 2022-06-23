@@ -65,7 +65,6 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
             }
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         setStyle(STYLE_NO_TITLE, android.R.style.Theme_Material_Light_NoActionBar_Fullscreen)
         super.onCreate(savedInstanceState)
