@@ -10,8 +10,18 @@ import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 
-class StorCardCallBack {
-
+class StoreCardCallBack {
+    fun bpiCallBack(result: ActivityResult): Account? {
+       return when (result.resultCode) {
+            AppConstant.BALANCE_PROTECTION_INSURANCE_OPT_IN_SUCCESS_RESULT_CODE -> {
+                val extras = result.data?.extras
+                val response =
+                    extras?.getString(BalanceProtectionInsuranceActivity.ACCOUNT_RESPONSE)
+                return Gson().fromJson(response, Account::class.java)
+            }
+           else -> null
+       }
+    }
     fun linkNewCardCallBack(
         result: ActivityResult,
     ): Boolean {

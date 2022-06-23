@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.*
@@ -18,8 +19,9 @@ class StoreCardAccountOptionsViewModel @Inject constructor(
 ) : ViewModel(), IAccountProductLandingDao by accountProduct,
     IAccountOptions by accountOptions {
 
-    private val _viewState = MutableStateFlow(mutableListOf<AccountOptionsScreenUI>())
-    val viewState: StateFlow<MutableList<AccountOptionsScreenUI>> = _viewState
+    private val _viewState = MutableSharedFlow<List<AccountOptionsScreenUI>>()
+
+    val viewState: SharedFlow<List<AccountOptionsScreenUI>> = _viewState
 
     var eligibilityPlanState: MutableStateFlow<EligibilityPlan> = MutableStateFlow(EligibilityPlan("", "", "", ProductGroupCode.CC, "", ""))
 
@@ -39,6 +41,12 @@ class StoreCardAccountOptionsViewModel @Inject constructor(
                         _viewState.emit(collectionTreatmentPlanItem(plan))
                     }
                 }
+        }
+    }
+    fun updateBPI(account: Account){
+        viewModelScope.launch {
+            product?.bpiInsuranceApplication = account.bpiInsuranceApplication
+            _viewState.emit(balanceProtectionInsurance())
         }
     }
 }

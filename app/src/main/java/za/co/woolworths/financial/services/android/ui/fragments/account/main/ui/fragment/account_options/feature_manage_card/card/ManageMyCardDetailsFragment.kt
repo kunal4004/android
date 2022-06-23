@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StorCardCallBack
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StoreCardCallBack
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.CallBack
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
@@ -88,7 +88,7 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
                     when (it) {
                         is CallBack.IntentCallBack -> {
                             it.intent?.let { intent ->
-                                storeCardLauncher(intent)
+                                launchStoreCard(intent)
                             }
                         }
                         else->Unit
@@ -97,9 +97,9 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
             }
     }
 
-    private fun storeCardLauncher(intent: Intent) {
+    private fun launchStoreCard(intent: Intent) {
         activityLauncher.launch(intent, onActivityResult = { result ->
-            if (StorCardCallBack().linkNewCardCallBack(result)) {
+            if (StoreCardCallBack().linkNewCardCallBack(result)) {
                 viewModel.requestGetStoreCardCards()
             }
         })
