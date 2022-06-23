@@ -124,7 +124,7 @@ class AppConstant {
              * const val ARGS_EXAMPLE_NAME = "ARGS_NAME"
              *****************************************************************************************/
             const val ARG_NOTIFICATION_PARAMETERS: String = "parameters"
-
+            const val ARG_ORDER: String = "order"
             /*****************************************************************************************
              * Parameters Keys
              * const val PARAM_EXAMPLE_NAME = "PARAM_NAME"
