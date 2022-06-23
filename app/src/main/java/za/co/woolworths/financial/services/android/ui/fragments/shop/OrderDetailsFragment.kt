@@ -46,9 +46,9 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
 
     companion object {
 
-        fun getInstance(order: String, isNaviagtedFromMyAccount: Boolean = false) =
+        fun getInstance(orderId: String, isNaviagtedFromMyAccount: Boolean = false) =
             OrderDetailsFragment().withArgs {
-                putString(AppConstant.Keys.ARG_ORDER, Utils.toJson(order))
+                putString(AppConstant.Keys.ARG_ORDER, orderId)
                 putBoolean(AppConstant.NAVIGATED_FROM_MY_ACCOUNTS, isNaviagtedFromMyAccount)
             }
 
@@ -168,7 +168,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         dataList.add(OrderDetailsItem(ordersResponse, OrderDetailsItem.ViewType.ORDER_STATUS))
 
         ordersResponse.orderSummary?.apply {
-            if (taxNoteNumbers.isNotEmpty())
+            if (!taxNoteNumbers.isNullOrEmpty())
                 dataList.add(OrderDetailsItem(null, OrderDetailsItem.ViewType.VIEW_TAX_INVOICE))
             if (orderCancellable && !requestCancellation)
                 dataList.add(OrderDetailsItem(null, OrderDetailsItem.ViewType.CANCEL_ORDER))
