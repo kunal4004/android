@@ -104,7 +104,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
 
         if (isPermissionGranted && Utils.isLocationEnabled(context)) {
 
-            if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() == null && getDeliveryType()?.deliveryType == null) {
+            if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() == null && getDeliveryType()?.address?.placeId == null) {
                 // when user comes first time i.e. no location , no fulfillment type
                 // navigate to geo location flow
                 showSetLocationUi()
@@ -117,7 +117,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
                 showCategoryList()
             }
         } else {
-            if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() == null && getDeliveryType()?.deliveryType == null) {
+            if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() == null && getDeliveryType()?.address?.placeId == null) {
                 // when user comes first time i.e. no location , no fulfillment type
                 // navigate to geo location flow
                 showSetLocationUi()
@@ -255,14 +255,14 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
         dynamicMapView?.setAllGesturesEnabled(false)
         val addressStoreList = WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
         if (addressStoreList != null && !addressStoreList?.isEmpty()) {
-            GeoUtils.showFirstFourLocationInMap(addressStoreList, dynamicMapView, requireContext())
+            GeoUtils.showFirstFourLocationInMap(addressStoreList, dynamicMapView, context)
         } else if (updatedAddressStoreList?.isEmpty() == false)  {
-            GeoUtils.showFirstFourLocationInMap(updatedAddressStoreList, dynamicMapView, requireContext())
+            GeoUtils.showFirstFourLocationInMap(updatedAddressStoreList, dynamicMapView, context)
         }
     }
 
     override fun onMarkerClicked(marker: DynamicMapMarker) {
-        TODO("Not yet implemented")
+
     }
 
     override fun onClick(v: View?) {
@@ -397,10 +397,9 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
     }
 
     private fun showCategoryList() {
-        if (KotlinUtils.browsingDeliveryType == Delivery.CNC) {
-            parentFragment?.showSerachAndBarcodeUi()
-        }
+        parentFragment?.showSerachAndBarcodeUi()
         layoutClickAndCollectStore?.visibility = View.GONE
+        layoutEdgeCaseScreen?.visibility = View.GONE
         rv_category_layout?.visibility = View.VISIBLE
         setUpCategoryRecyclerView(mutableListOf())
         initializeRootCategoryList()
