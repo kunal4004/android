@@ -15,6 +15,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.bitmap.TransformationUtils.fitCenter
+import com.bumptech.glide.request.target.Target
 import kotlinx.android.synthetic.main.item_banner_carousel.view.*
 import kotlinx.android.synthetic.main.item_dash_category.view.*
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
@@ -70,7 +71,14 @@ class OnDemandCategoryItemHolder(itemView: View) : RecyclerView.ViewHolder(itemV
             itemView.setOnClickListener {
                 onDemandNavigationListener.onDemandNavigationClicked(it, categoryItem)
             }
-            ImageManager.loadImage(imgCategory, categoryItem.imgUrl)
+            categoryItem.imgUrl?.let{
+                Glide.with(this)
+                    .load(it)
+                    .format(DecodeFormat.PREFER_ARGB_8888)
+                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                    .dontAnimate()
+                    .into(imgCategory)
+            }
             txtCategoryName?.text = categoryItem.categoryName
         }
     }
