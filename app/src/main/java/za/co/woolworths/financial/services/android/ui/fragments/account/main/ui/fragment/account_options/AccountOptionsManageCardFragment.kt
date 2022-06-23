@@ -153,14 +153,12 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
                         }
 
                         renderHttpFailureFromServer {
-                            router.routeToServerErrorDialog(findNavController(), output.response)
+                            router.routeToServerErrorDialog(requireActivity(), output.response)
                         }
 
                         renderFailure {
                             router.routeToDefaultErrorMessageDialog(
-                                requireActivity(),
-                                findNavController()
-                            )
+                                requireActivity())
                         }
                     }
                 }

@@ -78,6 +78,10 @@ class TemporaryFreezeUnfreezeCardItemFragment : Fragment(R.layout.temporary_free
                         }
                     }
                     renderSuccess { accountViewModel.requestGetStoreCardCards() }
+
+                    renderHttpFailureFromServer {  router.routeToServerErrorDialog(requireActivity(), output.response)}
+
+                    renderFailure {  router.routeToDefaultErrorMessageDialog(requireActivity()) }
                 }
             }
         }
