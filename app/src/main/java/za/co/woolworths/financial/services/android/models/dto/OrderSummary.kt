@@ -19,6 +19,7 @@ class OrderSummary(
     var shippingAdjusted: Boolean,
     var savedAmount: Double,
     var staffDiscount: Double,
+    var tip: Double,
     var suburb: @RawValue Suburb? = null,
     var state: String?,
     var submittedDate: String?,

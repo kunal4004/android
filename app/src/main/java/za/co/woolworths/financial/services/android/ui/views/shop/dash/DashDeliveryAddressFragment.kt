@@ -98,7 +98,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         isUnSellableItemsRemoved()
 
         val fulfillmentDetails = getDeliveryType() // fulfillment details of signin or signout user.
-        if (fulfillmentDetails != null) {
+        if (fulfillmentDetails?.address?.placeId != null) {
             // User don't have location.
             // Now check if application class response has deliverable or local object of validatePlace has deliverable.
             // Continue with that object which has deliverable.
