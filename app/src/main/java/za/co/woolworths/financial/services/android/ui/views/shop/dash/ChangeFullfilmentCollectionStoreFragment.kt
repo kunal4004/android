@@ -104,7 +104,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
 
         if (isPermissionGranted && Utils.isLocationEnabled(context)) {
 
-            if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() == null && getDeliveryType() == null) {
+            if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() == null && getDeliveryType()?.deliveryType == null) {
                 // when user comes first time i.e. no location , no fulfillment type
                 // navigate to geo location flow
                 showSetLocationUi()
@@ -117,7 +117,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
                 showCategoryList()
             }
         } else {
-            if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() == null && getDeliveryType() == null) {
+            if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() == null && getDeliveryType()?.deliveryType == null) {
                 // when user comes first time i.e. no location , no fulfillment type
                 // navigate to geo location flow
                 showSetLocationUi()

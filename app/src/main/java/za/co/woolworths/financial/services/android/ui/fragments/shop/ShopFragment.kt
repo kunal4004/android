@@ -296,7 +296,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         if (tabPosition < 0) {
             return
         }
-        if (getDeliveryType() != null) {
+        if (getDeliveryType()?.deliveryType != null) {
             return
         }
 
