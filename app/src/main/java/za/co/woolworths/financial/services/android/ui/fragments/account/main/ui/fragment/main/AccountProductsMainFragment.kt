@@ -5,6 +5,7 @@ import android.view.View
 import android.view.View.GONE
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -17,17 +18,19 @@ import kotlinx.coroutines.flow.collect
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlanResponse
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.toolbar.AccountProductsToolbarHelper
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOfferingState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.DialogData
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.StoreCardAccountOptionsViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 
 @AndroidEntryPoint
 class AccountProductsMainFragment : Fragment(R.layout.account_product_landing_main_fragment) {
 
     private var childNavController: NavController? = null
     val viewModel by viewModels<AccountProductsHomeViewModel>()
+    private val accountOptionsViewModel: StoreCardAccountOptionsViewModel by activityViewModels()
 
     lateinit var mToolbarContainer: AccountProductsToolbarHelper
 
@@ -104,7 +107,8 @@ class AccountProductsMainFragment : Fragment(R.layout.account_product_landing_ma
                 when (response) {
                     is ViewState.RenderSuccess -> {
                         val eligibilityPlanResponse = response.output as? EligibilityPlanResponse
-                        eligibilityPlanResponse?.eligibilityPlan.let {
+                        eligibilityPlanResponse?.eligibilityPlan?.let {
+                            accountOptionsViewModel.eligibilityPlanState.tryEmit(it)
                             displayPopUp(viewModel.getPopUpData(it), it)
                         }
                     }
@@ -133,8 +137,6 @@ class AccountProductsMainFragment : Fragment(R.layout.account_product_landing_ma
             )
         }
     }
-
-
 
 
     fun getChildNavHost(): NavHostFragment? =

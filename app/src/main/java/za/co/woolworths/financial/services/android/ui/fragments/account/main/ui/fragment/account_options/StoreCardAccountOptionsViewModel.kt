@@ -8,7 +8,10 @@ import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.*
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountOptionsImpl
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountProductLandingDao
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.IAccountOptions
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.IAccountProductLandingDao
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOptionsScreenUI
 import javax.inject.Inject
 
@@ -23,7 +26,8 @@ class StoreCardAccountOptionsViewModel @Inject constructor(
 
     val viewState: SharedFlow<List<AccountOptionsScreenUI>> = _viewState
 
-    var eligibilityPlanState: MutableStateFlow<EligibilityPlan> = MutableStateFlow(EligibilityPlan("", "", "", ProductGroupCode.CC, "", ""))
+    var eligibilityPlanState: MutableStateFlow<EligibilityPlan> =
+        MutableStateFlow(EligibilityPlan("", "", "", ProductGroupCode.CC, "", ""))
 
     init {
 
@@ -34,19 +38,23 @@ class StoreCardAccountOptionsViewModel @Inject constructor(
                 emit(paymentOptions())
             }
         }
-
-            viewModelScope.launch {
-                eligibilityPlanState.asStateFlow().collect { plan ->
-                    if (!plan.actionText.isNullOrEmpty() && !plan.displayText.isNullOrEmpty()) {
-                        _viewState.emit(collectionTreatmentPlanItem(plan))
-                    }
-                }
-        }
+        updateEligibility()
     }
-    fun updateBPI(account: Account){
+
+    fun updateBPI(account: Account) {
         viewModelScope.launch {
             product?.bpiInsuranceApplication = account.bpiInsuranceApplication
             _viewState.emit(balanceProtectionInsurance())
+        }
+    }
+
+    fun updateEligibility() {
+        viewModelScope.launch {
+            eligibilityPlanState.asStateFlow().collect { plan ->
+                if (!plan.actionText.isNullOrEmpty() && !plan.displayText.isNullOrEmpty()) {
+                    _viewState.emit(collectionTreatmentPlanItem(plan))
+                }
+            }
         }
     }
 }
