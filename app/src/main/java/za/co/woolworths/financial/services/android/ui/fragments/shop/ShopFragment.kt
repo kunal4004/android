@@ -210,10 +210,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 try {
                     validateLocationResponse =
                         confirmAddressViewModel.getValidateLocation(it)
-
+                    shopProgressbar?.visibility = View.GONE
                     geoDeliveryView?.visibility = View.VISIBLE
                     if (validateLocationResponse != null) {
-                        shopProgressbar?.visibility = View.GONE
                         when (validateLocationResponse?.httpCode) {
                             AppConstant.HTTP_OK -> {
                                 if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() == null) {
