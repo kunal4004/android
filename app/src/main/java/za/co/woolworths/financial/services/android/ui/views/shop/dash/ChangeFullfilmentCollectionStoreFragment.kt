@@ -205,7 +205,6 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
     }
 
     private fun showSetLocationUi() {
-        parentFragment?.hideSerachAndBarcodeUi()
         layoutClickAndCollectStore?.visibility = View.GONE
         layoutEdgeCaseScreen?.visibility = View.VISIBLE
         img_view?.setImageResource(R.drawable.location_disabled)

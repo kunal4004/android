@@ -354,7 +354,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private fun updateTabIconUI(selectedTab: Int) {
         if (selectedTab == STANDARD_TAB.index) {
             showSerachAndBarcodeUi()
-        } else if (selectedTab == CLICK_AND_COLLECT_TAB.index && KotlinUtils.browsingCncStore == null) {
+        } else if (selectedTab == CLICK_AND_COLLECT_TAB.index && KotlinUtils.browsingCncStore == null  && getDeliveryType()?.deliveryType != Delivery.CNC.type) {
             hideSerachAndBarcodeUi()
         }
         tabs_main?.let { tab ->
