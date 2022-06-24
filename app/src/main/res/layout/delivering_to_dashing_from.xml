@@ -38,7 +38,8 @@
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
         app:layout_constraintTop_toBottomOf="@id/optionTitle"
-        tools:text="@string/hint_street_address_dash" />
+        tools:text="@string/hint_street_address_dash"
+        android:maxLines="1"/>
 
     <View
         android:id="@+id/separator"
@@ -176,7 +177,6 @@
             android:layout_marginStart="@dimen/fifty_dp"
             android:text="@string/dash_status_packaging"
             android:textAllCaps="true"
-            android:textColor="#000000"
             android:textSize="@dimen/eight_sp"
             android:textStyle="bold" />
 
@@ -196,7 +196,7 @@
             style="@style/myriad_pro_regular"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/sixty_dp"
+            android:layout_marginStart="@dimen/fifty_five_dp"
             android:text="@string/dash_status_delivered"
             android:textAllCaps="true"
             android:textColor="@color/gray"

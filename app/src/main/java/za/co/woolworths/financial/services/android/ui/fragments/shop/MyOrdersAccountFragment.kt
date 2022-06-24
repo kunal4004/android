@@ -231,13 +231,11 @@ class MyOrdersAccountFragment : Fragment(), IPresentOrderDetailInterface {
             setupToolbar()
     }
 
-    override fun presentOrderDetailsPage(item: Order) {
-        activity?.apply {
-            val orderItem = Utils.toJson(item)
-            val order = Utils.jsonStringToObject(orderItem, Order::class.java) as? Order
+    override fun presentOrderDetailsPage(order: Order) {
+        requireActivity().apply {
             order?.let {
-                (activity as? BottomNavigationActivity)?.pushFragment(
-                        OrderDetailsFragment.getInstance(order, true)
+                (this as? BottomNavigationActivity)?.pushFragment(
+                    OrderDetailsFragment.getInstance(it.orderId, true)
                 )
             }
         }

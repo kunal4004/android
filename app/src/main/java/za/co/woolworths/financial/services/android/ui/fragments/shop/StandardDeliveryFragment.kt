@@ -178,23 +178,13 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
 
     private fun bindDepartment() {
         mDepartmentAdapter?.setRootCategories(parentFragment?.getCategoryResponseData()?.rootCategories)
-        // Add dash banner if only present
-        if (isDashEnabled && isFragmentVisible && context != null && Utils.isLocationEnabled(context)) {
-            mDepartmentAdapter?.setDashBanner(
-                parentFragment?.getCategoryResponseData()?.dash,
-                parentFragment?.getCategoryResponseData()?.rootCategories,
-                getUpdatedBannerText()
-            )
-        }
         mDepartmentAdapter?.notifyDataSetChanged()
     }
 
     private fun setUpRecyclerView(categories: MutableList<RootCategory>?) {
         mDepartmentAdapter = DepartmentAdapter(
             categories,
-            ::departmentItemClicked,
-            ::onDashBannerClicked
-        ) //{ rootCategory: RootCategory -> departmentItemClicked(rootCategory)}
+            ::departmentItemClicked) //{ rootCategory: RootCategory -> departmentItemClicked(rootCategory)}
         activity?.let {
             rclDepartment?.apply {
                 layoutManager = LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false)
@@ -254,29 +244,6 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
         return ""
     }
 
-    private fun onDashBannerClicked() {
-        activity?.apply {
-            KotlinUtils.postOneAppEvent(
-                OneAppEvents.AppScreen.DASH_BANNER_SCREEN_NAME,
-                OneAppEvents.FeatureName.DASH_FEATURE_NAME
-            )
-
-            val intent: Intent? = this.packageManager.getLaunchIntentForPackage(
-                AppConfigSingleton.dashConfig?.appURI
-                    ?: ""
-            )
-            if (intent == null) {
-                presentDashDetailsActivity(
-                    this,
-                    parentFragment?.getCategoryResponseData()?.dash?.dashBreakoutLink
-                )
-            } else {
-                // Launch the woolies dash if already downloaded/installed
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                this.startActivity(intent)
-            }
-        }
-    }
 
     private fun presentDashDetailsActivity(activity: Activity, link: String?) {
         activity.apply {
@@ -396,9 +363,6 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
 
     private fun onProviderDisabled() {
         location = null
-        mDepartmentAdapter?.apply {
-            removeDashBanner(parentFragment?.getCategoryResponseData()?.rootCategories)
-        }
         parentFragment?.getCategoryResponseData()?.dash = null
     }
 

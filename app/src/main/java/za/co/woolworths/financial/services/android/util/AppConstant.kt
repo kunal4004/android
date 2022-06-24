@@ -74,6 +74,7 @@ class AppConstant {
         const val DP_LINKING_MY_ACCOUNTS_PRODUCT = "Accounts Product"
         const val DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT = "Accounts Product Statement"
         const val DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT = "Pay My Account"
+        const val DP_LINKING_MY_ACCOUNTS_ORDER_DETAILS = "Order Details"
 
         const val PLAY_STORE_URL = "https://play.google.com/store/apps/details?id="
         const val VTO_FACE_NOT_DETECT = "face_not_detect"
@@ -103,9 +104,13 @@ class AppConstant {
 
     class Keys {
         companion object {
+
             /*****************************************************************************************
              * Extra Keys
              *****************************************************************************************/
+            const val EXTRA_NOTIFICATION_FEATURE = "feature"
+            const val EXTRA_NOTIFICATION_PARAMETERS = "parameters"
+
             const val EXTRA_PRODUCT_NAME = "PRODUCT_NAME"
             const val EXTRA_SEARCH_TYPE = "searchType"
             const val EXTRA_SEARCH_TERM = "searchTerm"
@@ -118,7 +123,8 @@ class AppConstant {
              * Args Keys
              * const val ARGS_EXAMPLE_NAME = "ARGS_NAME"
              *****************************************************************************************/
-
+            const val ARG_NOTIFICATION_PARAMETERS: String = "parameters"
+            const val ARG_ORDER: String = "order"
             /*****************************************************************************************
              * Parameters Keys
              * const val PARAM_EXAMPLE_NAME = "PARAM_NAME"
