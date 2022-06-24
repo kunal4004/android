@@ -129,12 +129,16 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
                     longitude = addressStoreList?.get(i)?.longitude,
                     icon = R.drawable.pin
                 )
-                dynamicMapView?.moveCamera(
-                    latitude = addressStoreList.get(i)?.latitude,
-                    longitude = addressStoreList.get(i)?.longitude,
-                    zoom = 11f
-                )
             }
+        }
+        //after plotting all the markers pointing the camera to nearest store
+        val store:Store?=addressStoreList?.get(0)
+        store?.let{
+            dynamicMapView?.moveCamera(
+                latitude = store?.latitude,
+                longitude =store?.longitude,
+                zoom = 11f
+            )
         }
     }
 
