@@ -204,15 +204,16 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     private fun executeValidateSuburb() {
         val placeId = getDeliveryType()?.address?.placeId ?: return
-        placeId.let {
+        placeId?.let {
+            shopProgressbar?.visibility = View.VISIBLE
             lifecycleScope.launch {
-                progressBar?.visibility = View.VISIBLE
                 try {
                     validateLocationResponse =
                         confirmAddressViewModel.getValidateLocation(it)
-                    progressBar?.visibility = View.GONE
+
                     geoDeliveryView?.visibility = View.VISIBLE
                     if (validateLocationResponse != null) {
+                        shopProgressbar?.visibility = View.GONE
                         when (validateLocationResponse?.httpCode) {
                             AppConstant.HTTP_OK -> {
                                 if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() == null) {
@@ -238,6 +239,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                         }
                     }
                 } catch (e: HttpException) {
+                    shopProgressbar?.visibility = View.GONE
                     FirebaseManager.logException(e)
                     /*TODO : show error screen*/
                 }
