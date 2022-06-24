@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.view.View
+import android.view.WindowManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -206,11 +207,14 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         val placeId = getDeliveryType()?.address?.placeId ?: return
         placeId?.let {
             shopProgressbar?.visibility = View.VISIBLE
+            tabs_main?.isClickable = false
             lifecycleScope.launch {
                 try {
                     validateLocationResponse =
                         confirmAddressViewModel.getValidateLocation(it)
                     shopProgressbar?.visibility = View.GONE
+                    tabs_main?.isClickable = true
+
                     geoDeliveryView?.visibility = View.VISIBLE
                     if (validateLocationResponse != null) {
                         when (validateLocationResponse?.httpCode) {
@@ -239,6 +243,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     }
                 } catch (e: HttpException) {
                     shopProgressbar?.visibility = View.GONE
+                    tabs_main?.isClickable = true
                     FirebaseManager.logException(e)
                     /*TODO : show error screen*/
                 }
