@@ -277,7 +277,7 @@ class OrderConfirmationFragment : Fragment() {
                 wRewardsVouchersSeparator
                 deliveryFeeTextView?.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(response?.deliveryDetails?.shippingAmount)
                 driverTipTextView.text = CurrencyFormatter
-                        .formatAmountToRandAndCentWithSpace(0.00)
+                        .formatAmountToRandAndCentWithSpace(response?.orderSummary?.tip ?: 0.00)
             }
             else -> {
             }
