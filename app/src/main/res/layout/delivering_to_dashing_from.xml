@@ -107,7 +107,7 @@
         <View
             android:id="@+id/packaging_separator"
             style="@style/bottom_line"
-            android:layout_width="@dimen/seventy_dp"
+            android:layout_width="@dimen/sixty_six_dp"
             android:layout_height="@dimen/two_dp"
             android:layout_marginTop="@dimen/eight_dp"
             android:layout_marginStart="@dimen/four_dp"
@@ -122,7 +122,7 @@
 
         <View
             android:id="@+id/enroute_seperator"
-            android:layout_width="@dimen/seventy_dp"
+            android:layout_width="@dimen/sixty_six_dp"
             android:layout_height="@dimen/two_dp"
             android:layout_marginTop="@dimen/eight_dp"
             android:background="@color/color_E5E5E5"
@@ -138,7 +138,7 @@
         <View
             android:id="@+id/delivered_seperator"
             style="@style/bottom_line"
-            android:layout_width="@dimen/seventy_dp"
+            android:layout_width="@dimen/sixty_six_dp"
             android:layout_height="@dimen/two_dp"
             android:layout_marginTop="@dimen/eight_dp"
             android:layout_marginStart="@dimen/four_dp"
@@ -148,8 +148,7 @@
             android:id="@+id/optionImageDelivered"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_dash_delivered_icon"
-            android:layout_marginEnd="@dimen/twenty_four_dp"/>
+            android:background="@drawable/ic_dash_delivered_icon" />
 
     </LinearLayout>
 
@@ -191,7 +190,7 @@
             style="@style/futura_semi_bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/fourty_eight_dp"
+            android:layout_marginStart="@dimen/valid_date_guideline_begin_42dp"
             android:text="@string/dash_status_en_route"
             android:textAllCaps="true"
             android:textColor="@color/color_9D9D9D"
@@ -207,7 +206,7 @@
             android:textAllCaps="true"
             android:textColor="@color/color_9D9D9D"
             android:textSize="@dimen/eight_sp"
-            android:layout_marginEnd="@dimen/eight_dp"/>
+            android:layout_marginEnd="@dimen/five_dp"/>
     </LinearLayout>
 
     <LinearLayout
