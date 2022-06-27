@@ -134,5 +134,4 @@ class MyStoreCardFragment @Inject constructor() :
         }
     }
 
-
 }

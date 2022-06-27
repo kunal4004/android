@@ -1,18 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities
 
-import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
-import android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-import android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountProductLandingActivityBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,36 +32,6 @@ class StoreCardActivity : AppCompatActivity() {
         setupView()
     }
 
-    private fun setTransparentStatusBar() {
-        window?.apply {
-            when (Build.VERSION.SDK_INT) {
-                in 22..29 -> {
-                    statusBarColor = Color.TRANSPARENT
-                    clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-                    addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-                    decorView.systemUiVisibility = SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or SYSTEM_UI_FLAG_LAYOUT_STABLE
-                }
-                else -> {
-
-                    // getWindow() is a method of Activity
-                    addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-                    clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-
-                    statusBarColor = Color.BLACK
-                    // Making status bar overlaps with the activity
-                    WindowCompat.setDecorFitsSystemWindows(window, true)
-                    // Root ViewGroup of my activity
-                    ViewCompat.setOnApplyWindowInsetsListener(window.decorView){ _, _ ->
-
-                        // Return CONSUMED if you don't want want the window insets to keep being
-                        // passed down to descendant views.
-                        WindowInsetsCompat.CONSUMED
-                    }
-                }
-            }
-        }
-    }
-
     private fun setupView() {
         setupGraph(
             containerId = R.id.accountProductLandingFragmentContainerView,
@@ -77,11 +39,6 @@ class StoreCardActivity : AppCompatActivity() {
             startDestination = R.id.accountProductsMainFragment,
             startDestinationArgs = intent.extras
         )
-    }
-
-    fun parentNavController(): NavController? {
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.accountProductLandingFragmentContainerView) as? NavHostFragment
-        return navHostFragment?.navController
     }
 
     private fun getMainFragment() = supportFragmentManager.findFragmentById(R.id.accountProductLandingFragmentContainerView)?.childFragmentManager?.primaryNavigationFragment as? AccountProductsMainFragment
