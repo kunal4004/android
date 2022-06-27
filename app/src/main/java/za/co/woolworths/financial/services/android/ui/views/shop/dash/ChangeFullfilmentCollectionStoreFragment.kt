@@ -124,7 +124,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
             } else if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() != null && KotlinUtils.browsingCncStore == null) {
                 /*when user comes with location but no store is selected yet*/
                 setStoreCollectionData(WoolworthsApplication.getCncBrowsingValidatePlaceDetails())
-            } else if (KotlinUtils.browsingCncStore == null) {
+            } else if (KotlinUtils.browsingCncStore == null && getDeliveryType()?.deliveryType != Delivery.CNC.type) {
                 setStoreCollectionData(WoolworthsApplication.getCncBrowsingValidatePlaceDetails())
             } else {
                 showCategoryList()
