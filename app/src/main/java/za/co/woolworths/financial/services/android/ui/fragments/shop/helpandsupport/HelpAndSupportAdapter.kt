@@ -42,7 +42,7 @@ class HelpAndSupportAdapter(
                     helpAndSupportListener.openTrackYourOrder()
                 }
                 else if(itemView.txtHelpTitle?.text.toString().equals(context?.getString(R.string.view_tax_invoice), true)){
-                    helpAndSupportListener.openTrackYourOrder()
+                    helpAndSupportListener.openTaxInvoice()
                 }
             }
         }
