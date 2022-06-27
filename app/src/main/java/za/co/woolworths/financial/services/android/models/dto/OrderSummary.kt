@@ -11,7 +11,7 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
  * Created by W7099877 on 2018/02/08.
  */
 @Parcelize
-class OrderSummary(
+data class OrderSummary(
     var totalItemsCount: Int,
     var total: Double,
     var estimatedDelivery: Double,
@@ -34,9 +34,8 @@ class OrderSummary(
     var isDriverTrackingEnabled: Boolean,
     var shopperName: String?,
     var orderStatus: String?,
-    var taxNoteNumbers: ArrayList<String>,
+    var taxNoteNumbers: ArrayList<String>?,
     var requestCancellation: Boolean = false,
     var clickAndCollectOrder: Boolean = false,
     var orderCancellable: Boolean = false
-
 ) : Parcelable
