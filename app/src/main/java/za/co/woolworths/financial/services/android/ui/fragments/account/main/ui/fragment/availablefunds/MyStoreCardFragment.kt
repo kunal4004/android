@@ -40,6 +40,16 @@ class MyStoreCardFragment @Inject constructor() :
         setAccountInArrearsUI()
         background()
         clickListeners()
+        stopPMAShimmer()
+    }
+
+    private fun stopPMAShimmer() {
+        with(binding.incPayMyAccountButton) {
+            viewPaymentOptionImageShimmerLayout.stopShimmer()
+            viewPaymentOptionImageShimmerLayout.setShimmer(null)
+            viewPaymentOptionTextShimmerLayout.stopShimmer()
+            viewPaymentOptionTextShimmerLayout.setShimmer(null)
+        }
     }
 
     private fun setupToolbar() {
@@ -116,9 +126,10 @@ class MyStoreCardFragment @Inject constructor() :
                     navigateToStatementActivity(activity, product)
                 }
                 binding.incRecentTransactionButton.root -> {
-                    navigateToRecentTransactionActivity(activity, product,cardType =  product!!.productGroupCode)
+                    product?.let { navigateToRecentTransactionActivity(activity, product,cardType =  it.productGroupCode) }
                 }
 
+                else -> Unit
             }
         }
     }
