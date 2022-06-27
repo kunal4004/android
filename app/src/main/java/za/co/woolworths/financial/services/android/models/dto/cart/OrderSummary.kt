@@ -5,6 +5,7 @@ import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.DiscountDetails
 
 class OrderSummary {
+    val tip: Double = 0.0
     var totalItemsCount: Double = 0.0
     var groupSubTotal: String = ""
     var giftCardAuthorizedAmount: Double = 0.0
