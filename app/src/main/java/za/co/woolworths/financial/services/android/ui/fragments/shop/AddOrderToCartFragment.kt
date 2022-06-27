@@ -77,7 +77,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
                     orderId = orderSummary.orderId ?: "",
                     submittedDate = orderSummary.submittedDate ?: "",
                     total = orderSummary.total,
-                    taxNoteNumbers = orderSummary.taxNoteNumbers,
+                    taxNoteNumbers = orderSummary.taxNoteNumbers ?: ArrayList(0),
                     requestCancellation = orderSummary.requestCancellation,
                     deliveryDates = orderSummary.deliveryDates,
                     clickAndCollectOrder = orderSummary.clickAndCollectOrder

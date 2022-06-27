@@ -232,19 +232,6 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
     }
 
 
-    private fun getUpdatedBannerText(): String {
-        context?.apply {
-            return if (KotlinUtils.isAppInstalled(
-                    activity,
-                    AppConfigSingleton.dashConfig?.appURI
-                )
-            )
-                this.getString(R.string.dash_banner_text_open_app) else this.getString(R.string.dash_banner_text_download_app)
-        }
-        return ""
-    }
-
-
     private fun presentDashDetailsActivity(activity: Activity, link: String?) {
         activity.apply {
             val mIntent = Intent(this, DashDetailsActivity::class.java)

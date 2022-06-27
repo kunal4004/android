@@ -330,7 +330,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
             orderDetailsResponse?.orderSummary?.let {
                 it.orderId?.let { it1 ->
                     TaxInvoiceLIstFragment.getInstance(
-                        it1, it.taxNoteNumbers
+                        it1, it.taxNoteNumbers ?: ArrayList(0)
                     )
                 }
             }
