@@ -36,7 +36,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:minHeight="48dp"
             android:theme="@style/SwitchTheme" />
 
         <ProgressBar
