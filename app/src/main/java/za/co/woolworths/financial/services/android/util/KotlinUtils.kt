@@ -1076,6 +1076,7 @@ class KotlinUtils {
             }
         }
         fun vocShoppingHandling(deliveryType: String?): VocTriggerEvent {
+            //TODO:: To be delete CHCKOUT_CNT_TO_PMNT if not continue checkout journey not finished
             var event = VocTriggerEvent.CHCKOUT_CNT_TO_PMNT
             when(Delivery.getType(deliveryType)){
                 Delivery.CNC-> event = VocTriggerEvent.SHOP_CLICK_COLLECT_CONFIRM
