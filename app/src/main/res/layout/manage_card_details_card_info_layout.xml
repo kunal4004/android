@@ -14,26 +14,26 @@
         android:text="@string/virtual_temp_card_label"
         android:textAlignment="center"
         android:textColor="@color/no_active_card_title"
-        android:textSize="@dimen/twenty_sp" />
+        android:textSize="@dimen/_19ssp" />
 
     <TextView
         android:id="@+id/subTitleTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/ten_dp"
-        android:layout_marginBottom="41dp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_41sdp"
         android:fontFamily="@font/myriad_pro_regular"
-        android:lineSpacingExtra="1.3dp"
+        android:lineSpacingExtra="@dimen/_1sdp"
         android:text="Your card has been blocked and can\nno longer be used."
         android:textAlignment="center"
         android:textColor="@color/permanent_card_block_desc_color"
-        android:textSize="@dimen/fifteen_sp"
+        android:textSize="@dimen/_14ssp"
         android:visibility="gone" />
 
     <View
         android:id="@+id/cardTitleBottomSpacer"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/thirty_five_dp"
+        android:layout_height="@dimen/_35sdp"
         android:visibility="visible" />
 
     <View
@@ -44,8 +44,8 @@
         android:id="@+id/detailItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/thirty_dp"
-        android:layout_marginBottom="@dimen/twenty_five_dp">
+        android:layout_marginTop="@dimen/_25sdp"
+        android:layout_marginBottom="@dimen/_25sdp">
 
         <TextView
             android:id="@+id/cardholderTextView"

@@ -19,6 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.AccountProductsMainFragment
+import javax.inject.Inject
 
 @Suppress("DEPRECATION")
 @AndroidEntryPoint
@@ -28,11 +29,14 @@ class StoreCardActivity : AppCompatActivity() {
 
     val viewModel: AccountProductsHomeViewModel by viewModels()
 
+    @Inject lateinit var statusBarCompat: SystemBarCompat
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setTransparentStatusBar()
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         binding = AccountProductLandingActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        statusBarCompat.setLightStatusAndNavigationBar()
         setupView()
     }
 
@@ -46,9 +50,14 @@ class StoreCardActivity : AppCompatActivity() {
                     decorView.systemUiVisibility = SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or SYSTEM_UI_FLAG_LAYOUT_STABLE
                 }
                 else -> {
-                    statusBarColor = Color.TRANSPARENT
+
+                    // getWindow() is a method of Activity
+                    addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                    clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+
+                    statusBarColor = Color.BLACK
                     // Making status bar overlaps with the activity
-                    WindowCompat.setDecorFitsSystemWindows(window, false)
+                    WindowCompat.setDecorFitsSystemWindows(window, true)
                     // Root ViewGroup of my activity
                     ViewCompat.setOnApplyWindowInsetsListener(window.decorView){ _, _ ->
 
@@ -78,8 +87,6 @@ class StoreCardActivity : AppCompatActivity() {
     private fun getMainFragment() = supportFragmentManager.findFragmentById(R.id.accountProductLandingFragmentContainerView)?.childFragmentManager?.primaryNavigationFragment as? AccountProductsMainFragment
 
 
-    private fun getHomeLandingFragment() = supportFragmentManager.findFragmentById(R.id.nav_account_product_landing)?.childFragmentManager?.primaryNavigationFragment as? AccountProductsMainFragment
-
     fun landingNavController(): NavController? {
         val fragment = getMainFragment()
         val navHost = fragment?.getChildNavHost()
@@ -88,9 +95,4 @@ class StoreCardActivity : AppCompatActivity() {
 
     fun getToolbarHelper() = getMainFragment()?.mToolbarContainer
 
-    fun productLandingNavController(): NavController? {
-        val fragment = getHomeLandingFragment()
-        val navHost = fragment?.getChildNavHost()
-        return navHost?.navController
-    }
 }

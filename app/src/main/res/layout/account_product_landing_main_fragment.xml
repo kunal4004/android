@@ -8,7 +8,8 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/accountToolbar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_86sdp"
+        android:paddingTop="@dimen/_10ssp"
+        android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:elevation="2dp"
         app:layout_constraintStart_toStartOf="parent"
