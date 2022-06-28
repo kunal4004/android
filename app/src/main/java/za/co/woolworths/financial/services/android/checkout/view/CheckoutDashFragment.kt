@@ -311,7 +311,7 @@ class CheckoutDashFragment : Fragment(),
             ConfirmLocationAddress(defaultAddress?.placesId, defaultAddress?.nickname)
         var body = ConfirmLocationRequest(
             Delivery.DASH.type, confirmLocationAddress,
-            defaultAddress?.nickname, "checkout"
+            KotlinUtils.getDeliveryType()?.storeId, "checkout"
         )
 
         checkoutAddAddressNewUserViewModel?.getConfirmLocationDetails(body)
