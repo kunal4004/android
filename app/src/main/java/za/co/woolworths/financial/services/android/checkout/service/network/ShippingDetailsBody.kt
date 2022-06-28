@@ -72,5 +72,5 @@ class ShippingDetailsBody : Serializable {
     var driverTip: Double = 0.0
 
     var appInstanceId: String? = null
-    var fireBaseToken: String? = null
+    var pushNotificationToken: String? = null
 }

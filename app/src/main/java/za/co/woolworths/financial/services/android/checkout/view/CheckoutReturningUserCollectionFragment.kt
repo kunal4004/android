@@ -864,7 +864,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         deliveryType = Delivery.CNC.type
         address = ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
         KotlinUtils.getUniqueDeviceID {
-            fireBaseToken = Utils.getToken()
+            pushNotificationToken = Utils.getToken()
             appInstanceId = it
         }
     }

@@ -976,7 +976,7 @@ class CheckoutDashFragment : Fragment(),
             ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
         driverTip = removeRandFromAmount(selectedDriverTipValue ?: "0.0").toDouble()
         KotlinUtils.getUniqueDeviceID {
-            fireBaseToken = Utils.getToken()
+            pushNotificationToken = Utils.getToken()
             appInstanceId = it
         }
     }

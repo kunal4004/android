@@ -1136,7 +1136,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         val body = ShippingDetailsBody()
         KotlinUtils.getUniqueDeviceID {
             body.apply {
-                fireBaseToken = Utils.getToken()
+                pushNotificationToken = Utils.getToken()
                 appInstanceId = it
             }
         }
