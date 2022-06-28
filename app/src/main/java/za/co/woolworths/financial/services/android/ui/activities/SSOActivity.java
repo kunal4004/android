@@ -712,7 +712,11 @@ public class SSOActivity extends WebViewActivity {
 		if (event.getAction() == KeyEvent.ACTION_DOWN) {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_BACK:
-					finishActivity();
+					if (webView.canGoBack()) {
+						webView.goBack();
+					} else {
+						finishActivity();
+					}
 					return true;
 			}
 		}
