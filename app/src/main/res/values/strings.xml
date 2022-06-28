@@ -2484,7 +2484,7 @@
     <string name="fica_dialog_title">We need you to confirm your personal details.</string>
     <string name="fica_dialog_desc">As required by law we need you to submit all FICA documentation and/or to verify information requested from you. To continue enjoying all the benefits of your Woolies card, please verify your info.</string>
     <string name="fica_dialog_verify">Verify MY DETAILS</string>
-    <string name="fica_dialog_later">maybe later</string>
+    <string name="fica_dialog_later"><u>maybe later</u></string>
 
     <string name="account_in_recovery_sc_payment_due_unavailable_desc">Your Store Card is currently in a payment plan. Please remember to make your next payment.</string>
     <string name="account_in_recovery_pl_payment_due_unavailable_desc">Your Personal Loan is currently in a payment plan. Please remember to make your next payment.</string>

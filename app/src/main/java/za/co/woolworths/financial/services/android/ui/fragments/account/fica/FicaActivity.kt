@@ -31,7 +31,7 @@ class FicaActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun setClickListeners() {
         btn_fica_maybe_later.setOnClickListener(this)
-        btn_fica_maybe_verify.setOnClickListener(this)
+        btn_fica_verify.setOnClickListener(this)
     }
 
     override fun onClick(view: View?) {
@@ -39,7 +39,7 @@ class FicaActivity : AppCompatActivity(), View.OnClickListener {
             btn_fica_maybe_later -> {
                 onBackPressed()
             }
-            btn_fica_maybe_verify -> {
+            btn_fica_verify -> {
                 Utils.triggerFireBaseEvents(
                     FirebaseManagerAnalyticsProperties.FICA_VERIFY_START,
                     this
