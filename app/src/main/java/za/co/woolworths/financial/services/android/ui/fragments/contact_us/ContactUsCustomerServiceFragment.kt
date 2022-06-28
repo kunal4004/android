@@ -2,9 +2,12 @@ package za.co.woolworths.financial.services.android.ui.fragments.contact_us
 
 import android.content.Context
 import android.os.Bundle
+import android.view.Gravity.CENTER_VERTICAL
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
@@ -37,11 +40,22 @@ class ContactUsCustomerServiceFragment : Fragment() {
             val customerServiceItem = layoutInflater.inflate(R.layout.contact_us_customer_services_landing_item, customerServicesLinearLayout, false)
             val customerServicesTextView = customerServiceItem.findViewById<TextView>(R.id.customerServicesTextView)
             val customerServicesDescriptionTextView = customerServiceItem.findViewById<TextView>(R.id.customerServicesDescriptionTextView)
+            val customerServicesDivider = customerServiceItem.findViewById<View>(R.id.customerServicesDivider)
 
             customerServicesTextView?.text = contactUsOptions.key
-            customerServicesDescriptionTextView?.text = contactUsOptions.description
-            customerServiceItem?.tag = index
+            when(contactUsOptions.description.isNullOrEmpty()){
+                true->{
+                    customerServicesDescriptionTextView?.visibility = GONE
 
+                }
+                false->{
+                    customerServicesDescriptionTextView?.text = contactUsOptions.description
+                }
+            }
+            customerServiceItem?.tag = index
+            if (index == customerServicesModel.contactUsCustomerServicesOptions()!!.size.minus(1)){
+                customerServicesDivider.visibility = View.GONE
+            }
             customerServiceItem?.setOnClickListener { openFragment(ContactUsCallCenterDetailFragment.newInstance(contactUsOptions)) }
             customerServicesLinearLayout?.addView(customerServiceItem)
         }

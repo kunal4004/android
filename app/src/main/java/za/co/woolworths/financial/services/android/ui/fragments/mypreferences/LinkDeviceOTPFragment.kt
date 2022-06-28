@@ -57,6 +57,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextW
 import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
 import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator
@@ -479,127 +480,158 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
 
     private fun sendTokenToLinkDevice(token: String) {
         linkDeviceOTPScreen?.visibility = View.GONE
-        OneAppService.linkDeviceApi(
-            KotlinUtils.getUserDefinedDeviceName(activity),
-            Utils.getUniqueDeviceID(),
-            getLocationAddress(currentLocation?.latitude, currentLocation?.longitude),
-            true,
-            token,
-            otpNumber,
-            otpMethod)
-            .enqueue(CompletionHandler(object : IResponseListener<LinkedDeviceResponse> {
-            override fun onSuccess(response: LinkedDeviceResponse?) {
-                sendinOTPLayout?.visibility = View.GONE
-                when (response?.httpCode) {
-                    AppConstant.HTTP_OK_201.toString() -> {
-                        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_CONFIRMED,
-                            hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
-                            FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceConfirmed)), this) }
+        DynamicGeocoder.getAddressFromLocation(context, currentLocation?.latitude, currentLocation?.longitude) { address ->
+            var locationAddress = address?.let {
+                arrayOf(
+                    it.city,
+                    it.suburb,
+                    it.countryName
+                ).filter { item -> !item.isNullOrEmpty() }.joinToString(separator = ", ")
+            } ?: null
 
-                        if (!isAdded) {
-                            return
-                        }
-                        showDeviceLinked()
-                        response.deviceIdentityToken?.let{ SessionUtilities.getInstance().deviceIdentityToken =
-                            it }
-                        response.deviceIdentityId?.let { saveDeviceId(it) }
-                        setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
-                            MyPreferencesFragment.IS_DEVICE_LINKED to true
-                        ))
-                        Handler().postDelayed({
-
-                            // This will execute only when linking comes from account products.
-                            mApplyNowState?.let {
+            OneAppService.linkDeviceApi(
+                KotlinUtils.getUserDefinedDeviceName(activity),
+                Utils.getUniqueDeviceID(),
+                locationAddress,
+                true,
+                token,
+                otpNumber,
+                otpMethod
+            )
+                .enqueue(CompletionHandler(object : IResponseListener<LinkedDeviceResponse> {
+                    override fun onSuccess(response: LinkedDeviceResponse?) {
+                        sendinOTPLayout?.visibility = View.GONE
+                        when (response?.httpCode) {
+                            AppConstant.HTTP_OK_201.toString() -> {
                                 activity?.apply {
-                                    if (this is LinkDeviceConfirmationActivity) {
-                                        MyAccountsFragment.updateLinkedDevices()
-                                        when (mApplyNowState) {
-                                            ApplyNowState.STORE_CARD,
-                                            ApplyNowState.PERSONAL_LOAN -> {
-                                                when {
-                                                    MyCardDetailFragment.FREEZE_CARD_DETAIL -> {
-                                                        showFreezeStoreCardDialog()
-                                                    }
-                                                    MyCardDetailFragment.BLOCK_CARD_DETAIL -> {
-                                                        showBlockStoreCardScreen()
-                                                    }
-                                                    MyCardDetailFragment.PAY_WITH_CARD_DETAIL -> {
-                                                        showPayWithCardScreen()
-                                                    }
-                                                    StoreCardOptionsFragment.GET_REPLACEMENT_CARD_DETAIL -> {
-                                                        showGetReplacementStoreCardScreen()
-                                                    }
-                                                    StatementFragment.VIEW_STATEMENT_DETAIL -> {
-                                                        showSendStatementScreen()
-                                                    }
-                                                    StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL -> {
-                                                        showActivateVirtualTempCardScreen()
+                                    Utils.triggerFireBaseEvents(
+                                        FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_CONFIRMED,
+                                        hashMapOf(
+                                            Pair(
+                                                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
+                                                FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceConfirmed
+                                            )
+                                        ), this
+                                    )
+                                }
+
+                                if (!isAdded) {
+                                    return
+                                }
+                                showDeviceLinked()
+                                response.deviceIdentityToken?.let {
+                                    SessionUtilities.getInstance().deviceIdentityToken =
+                                        it
+                                }
+                                response.deviceIdentityId?.let { saveDeviceId(it) }
+                                setFragmentResult(
+                                    MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
+                                        MyPreferencesFragment.IS_DEVICE_LINKED to true
+                                    )
+                                )
+                                Handler().postDelayed({
+
+                                    // This will execute only when linking comes from account products.
+                                    mApplyNowState?.let {
+                                        activity?.apply {
+                                            if (this is LinkDeviceConfirmationActivity) {
+                                                MyAccountsFragment.updateLinkedDevices()
+                                                when (mApplyNowState) {
+                                                    ApplyNowState.STORE_CARD,
+                                                    ApplyNowState.PERSONAL_LOAN -> {
+                                                        when {
+                                                            MyCardDetailFragment.FREEZE_CARD_DETAIL -> {
+                                                                showFreezeStoreCardDialog()
+                                                            }
+                                                            MyCardDetailFragment.BLOCK_CARD_DETAIL -> {
+                                                                showBlockStoreCardScreen()
+                                                            }
+                                                            MyCardDetailFragment.PAY_WITH_CARD_DETAIL -> {
+                                                                showPayWithCardScreen()
+                                                            }
+                                                            StoreCardOptionsFragment.GET_REPLACEMENT_CARD_DETAIL -> {
+                                                                showGetReplacementStoreCardScreen()
+                                                            }
+                                                            StatementFragment.VIEW_STATEMENT_DETAIL -> {
+                                                                showSendStatementScreen()
+                                                            }
+                                                            StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL -> {
+                                                                showActivateVirtualTempCardScreen()
+                                                            }
+
+                                                            PersonalLoanFragment.PL_WITHDRAW_FUNDS_DETAIL -> {
+                                                                showPersonalLoanWithdrawFundsScreen()
+                                                            }
+                                                            StatementFragment.SEND_STATEMENT_DETAIL -> {
+                                                                sendStatementToEmailScreen()
+                                                            }
+                                                            else -> {
+                                                                goToProduct()
+                                                            }
+                                                        }
                                                     }
 
-                                                    PersonalLoanFragment.PL_WITHDRAW_FUNDS_DETAIL -> {
-                                                        showPersonalLoanWithdrawFundsScreen()
+                                                    ApplyNowState.SILVER_CREDIT_CARD,
+                                                    ApplyNowState.BLACK_CREDIT_CARD,
+                                                    ApplyNowState.GOLD_CREDIT_CARD -> {
+                                                        when {
+                                                            AbsaStatementsActivity.VIEW_ABSA_CC_STATEMENT_DETAIL -> {
+                                                                showViewAbsaCCStatementScreen()
+                                                            }
+                                                            AccountsOptionFragment.CREDIT_CARD_ACTIVATION_DETAIL -> {
+                                                                activateCreditCard()
+                                                            }
+                                                            AccountsOptionFragment.CREDIT_CARD_SHECULE_OR_MANAGE -> {
+                                                                scheduleOrManageCC()
+                                                            }
+                                                        }
                                                     }
-                                                    StatementFragment.SEND_STATEMENT_DETAIL ->{
-                                                        sendStatementToEmailScreen()
-                                                    }
-                                                    else -> {
-                                                        goToProduct()
-                                                    }
+
+                                                    else -> goToProduct()
                                                 }
                                             }
-
-                                            ApplyNowState.SILVER_CREDIT_CARD,
-                                            ApplyNowState.BLACK_CREDIT_CARD,
-                                            ApplyNowState.GOLD_CREDIT_CARD -> {
-                                                when {
-                                                    AbsaStatementsActivity.VIEW_ABSA_CC_STATEMENT_DETAIL -> {
-                                                        showViewAbsaCCStatementScreen()
-                                                    }
-                                                    AccountsOptionFragment.CREDIT_CARD_ACTIVATION_DETAIL -> {
-                                                        activateCreditCard()
-                                                    }
-                                                    AccountsOptionFragment.CREDIT_CARD_SHECULE_OR_MANAGE -> {
-                                                        scheduleOrManageCC()
-                                                    }
-                                                }
-                                            }
-
-                                            else -> goToProduct()
                                         }
+                                        return@postDelayed
+                                    }
+
+                                    view?.findNavController()?.navigateUp()
+                                }, AppConstant.DELAY_1500_MS)
+
+                            }
+                            AppConstant.HTTP_SESSION_TIMEOUT_440.toString() ->
+                                activity?.apply {
+                                    if (!isFinishing) {
+                                        SessionUtilities.getInstance().setSessionState(
+                                            SessionDao.SESSION_STATE.INACTIVE,
+                                            response.response.stsParams,
+                                            this
+                                        )
                                     }
                                 }
-                                return@postDelayed
-                            }
-
-                            view?.findNavController()?.navigateUp()
-                        }, AppConstant.DELAY_1500_MS)
-
-                    }
-                    AppConstant.HTTP_SESSION_TIMEOUT_440.toString() ->
-                        activity?.apply {
-                            if (!isFinishing) {
-                                SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response.stsParams, this)
+                            else -> response?.response?.desc?.let { desc ->
+                                activity?.let { showValidateOTPError(it.getString(R.string.icr_wrong_otp_error)) }
+                                Handler().postDelayed({
+                                    linkDeviceOTPEdtTxt5.requestFocus()
+                                    val imm: InputMethodManager? =
+                                        context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                                    imm?.showSoftInput(
+                                        linkDeviceOTPEdtTxt5,
+                                        InputMethodManager.SHOW_IMPLICIT
+                                    )
+                                }, AppConstant.DELAY_200_MS)
                             }
                         }
-                    else -> response?.response?.desc?.let { desc ->
-                        activity?.let { showValidateOTPError(it.getString(R.string.icr_wrong_otp_error)) }
-                        Handler().postDelayed({
-                            linkDeviceOTPEdtTxt5.requestFocus()
-                            val imm: InputMethodManager? = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-                            imm?.showSoftInput(linkDeviceOTPEdtTxt5, InputMethodManager.SHOW_IMPLICIT)
-                        }, AppConstant.DELAY_200_MS)
                     }
-                }
-            }
 
-            override fun onFailure(error: Throwable?) {
-                sendinOTPLayout?.visibility = View.GONE
-                linkDeviceOTPScreen?.visibility = View.VISIBLE
-                buttonNext?.visibility = View.VISIBLE
-                didNotReceiveOTPTextView?.visibility = View.VISIBLE
-                showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
-            }
-        }, LinkedDeviceResponse::class.java))
+                    override fun onFailure(error: Throwable?) {
+                        sendinOTPLayout?.visibility = View.GONE
+                        linkDeviceOTPScreen?.visibility = View.VISIBLE
+                        buttonNext?.visibility = View.VISIBLE
+                        didNotReceiveOTPTextView?.visibility = View.VISIBLE
+                        showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
+                    }
+                }, LinkedDeviceResponse::class.java))
+        }
     }
 
     private fun showFreezeStoreCardDialog(){
@@ -670,35 +702,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         intent.putExtra(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, true)
         activity?.setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
         activity?.finish()
-    }
-
-    private fun getLocationAddress(latitude: Double?, longitude: Double?): String? {
-
-        var location = ""
-        if (latitude == null || longitude == null) {
-            return location
-        }
-        try{
-            val gcd = Geocoder(context, Locale.getDefault())
-            val addresses: List<Address> = gcd.getFromLocation(latitude, longitude, 2)
-            if (addresses.isNotEmpty()) {
-                location = if (TextUtils.isEmpty(addresses[0].locality) || "null".equals(addresses[0].locality, ignoreCase = true)) {
-                    for (address in addresses) {
-                        if (!TextUtils.isEmpty(address.locality) && !"null".equals( address.locality, ignoreCase = true)) {
-                            address.locality + ", " + address.countryName
-                        } else if (!TextUtils.isEmpty(address.subLocality) && !"null".equals( address.subLocality, ignoreCase = true)) {
-                            address.subLocality + ", " + address.countryName
-                        }
-                    }
-                    addresses[0].countryName
-                } else
-                    addresses[0].locality + ", " + addresses[0].countryName
-            }
-        }
-        catch(e: Exception){
-            FirebaseManager.logException(e)
-        }
-        return location
     }
 
     private fun saveDeviceId(deviceIdentityId: Long) {

@@ -126,12 +126,18 @@ class StoreCardNotReceivedDialogFragment : ViewBindingBottomSheetFragment<StoreC
         when (view?.id) {
             R.id.actionButtonTextView -> {
                 activity ?: return
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VTSC_CARD_NOT_DELIVERED, requireActivity())
                 when (binding.actionButtonTextView.text.toString().lowercase()) {
-                    getString(R.string.try_again).lowercase(),
-                    getString(R.string.vtsc_card_not_arrived_button_caption).lowercase() -> queryAPIServiceGetCardNotReceived()
+                    getString(R.string.try_again).lowercase()-> { queryAPIServiceGetCardNotReceived() }
+                    getString(R.string.vtsc_card_not_arrived_button_caption).lowercase() -> {
+                        Utils.triggerFireBaseEvents(
+                            FirebaseManagerAnalyticsProperties.VTSC_CARD_NOT_DELIVERED,
+                            requireActivity()
+                        )
+                        queryAPIServiceGetCardNotReceived()
+                    }
                     getString(R.string.got_it).lowercase() -> {
-                        dismiss() }
+                        dismiss()
+                    }
                 }
             }
         }

@@ -52,6 +52,8 @@ object FuseLocationAPISingleton {
      */
     private const val UPDATE_INTERVAL_IN_MILLISECONDS: Long = 5000
 
+    private const val UPDATE_EXPIRATION_DURATION_IN_MILLISECONDS: Long = 20000
+
     /**
      * The fastest rate for active location updates. Exact. Updates will never be more frequent
      * than this value.
@@ -134,13 +136,15 @@ object FuseLocationAPISingleton {
      * updates.
      */
     private fun createLocationRequest() {
-        mLocationRequest = LocationRequest()
+        mLocationRequest = LocationRequest.create()
 
         // Sets the desired interval for active location updates. This interval is
         // inexact. You may not receive updates at all if no location sources are available, or
         // you may receive them slower than requested. You may also receive updates faster than
         // requested if other applications are requesting location at a faster interval.
         mLocationRequest?.interval = UPDATE_INTERVAL_IN_MILLISECONDS
+
+        mLocationRequest?.setExpirationDuration(UPDATE_EXPIRATION_DURATION_IN_MILLISECONDS)
 
         // Sets the fastest rate for active location updates. This interval is exact, and the
         // application will never receive updates faster than this value.
