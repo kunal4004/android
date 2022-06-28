@@ -635,6 +635,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val STARTUP: String = "startup"
             const val STARTUP_API_ERROR: String = "startup_api_error"
             const val DEVICE_ROOTED_AT_STARTUP: String = "startup_jailbreak_error"
+            const val DEVICE_SIDELOADED_AT_STARTUP: String = "startup_sideloaded_error"
             const val SPLASH_WITHOUT_CTA: String = "splash_without_cta"
             const val SPLASH_WITH_CTA: String = "splash_with_cta"
             const val ONBOARDING_ONE: String = "onboarding_one"

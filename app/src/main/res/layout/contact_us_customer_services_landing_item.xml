@@ -1,38 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/generalEnq"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/financialService"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/contact_us_item_bg"
-    android:minHeight="60dp">
+    android:paddingStart="@dimen/_10sdp"
+    android:paddingEnd="@dimen/_10sdp"
+    android:minHeight="@dimen/_50sdp"
+    >
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="10dp"
-        android:layout_toStartOf="@+id/img1"
-        android:orientation="vertical">
+        android:id="@+id/ll"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        app:layout_constraintEnd_toStartOf="@+id/img1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <TextView
             android:id="@+id/customerServicesTextView"
             style="@style/contact_us_item_header_textview"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/myriad_pro_semi_bold"
             android:text="@string/txt_general_enquiry" />
 
         <TextView
             android:id="@+id/customerServicesDescriptionTextView"
             style="@style/contact_us_item_desc_textview"
             android:layout_marginTop="5dp"
-            android:text="@string/general_enquiry_desc" />
+            android:text="@string/general_enquiry_desc"
+            android:textColor="@color/color_444444" />
     </LinearLayout>
 
     <ImageView
         android:id="@+id/img1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="16dp"
-        android:background="@drawable/ic_caret_black" />
+        android:background="@drawable/ic_caret_black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
 
-</RelativeLayout>
+
+    <View
+        android:id="@+id/customerServicesDivider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_1sdp"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:layout_marginEnd="@dimen/_4sdp"
+        android:background="@color/grey_bg"
+        app:layout_constraintEnd_toEndOf="@+id/img1"
+        app:layout_constraintStart_toStartOf="@id/ll"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

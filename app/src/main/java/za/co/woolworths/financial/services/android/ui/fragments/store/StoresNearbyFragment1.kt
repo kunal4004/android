@@ -14,30 +14,26 @@ import android.graphics.Typeface
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
 import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
-import com.google.android.gms.maps.*
-import com.google.android.gms.maps.GoogleMap.CancelableCallback
-import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
-import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.fragment_stores_nearby1.*
 import kotlinx.android.synthetic.main.location_service_off_layout.*
 import kotlinx.android.synthetic.main.store_details_layout_common.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
@@ -50,17 +46,22 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter
-import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout.PanelState
 import za.co.woolworths.financial.services.android.ui.views.WButton
 import za.co.woolworths.financial.services.android.ui.views.WTextView
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment.Companion.ACCESS_MY_LOCATION_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate
+import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapView
+import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
 import za.co.woolworths.financial.services.android.util.*
-import java.util.*
+import za.co.woolworths.financial.services.android.util.location.Event
+import za.co.woolworths.financial.services.android.util.location.EventType
+import za.co.woolworths.financial.services.android.util.location.Locator
 
-class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageChangeListener, OnMarkerClickListener, ILocationProvider {
+class StoresNearbyFragment1 : Fragment(), DynamicMapDelegate, ViewPager.OnPageChangeListener {
 
     companion object {
         private const val TAG = "StoresNearbyFragment1"
@@ -71,26 +72,27 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
         const val REQUEST_CODE_FINE_GPS = 5123
     }
 
+    private lateinit var locator: Locator
+
+    @DrawableRes
+    var unSelectedIcon: Int? = null
+    @DrawableRes
+    var selectedIcon: Int? = null
+
     private var mBottomNavigator: BottomNavigator? = null
-    var googleMap: GoogleMap? = null
-    var unSelectedIcon: BitmapDescriptor? = null
-    var selectedIcon: BitmapDescriptor? = null
     var mMarkers: HashMap<String, Int>? = null
-    var markers: ArrayList<Marker>? = null
-    var previousmarker: Marker? = null
-    var mapFragment: SupportMapFragment? = null
+    var markers: ArrayList<DynamicMapMarker>? = null
+    var previousMarker: DynamicMapMarker? = null
     var currentStorePosition = 0
     var storeDetailsList: List<StoreDetails>? = null
     private var updateMap = false
     var callIntent: Intent? = null
-    var myLocation: Marker? = null
+    var myLocation: DynamicMapMarker? = null
     private var navigateMenuState = false
     private var mPopWindowValidationMessage: PopWindowValidationMessage? = null
     private var mErrorHandlerView: ErrorHandlerView? = null
-    private val mLocation: Location? = null
     var searchMenu: MenuItem? = null
     private var isSearchMenuEnabled = true
-    var isLocationServiceButtonClicked = false
     private var mLocationAPIRequest: Call<LocationResponse>? = null
 
     override fun onAttach(context: Context) {
@@ -108,6 +110,11 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
     @RequiresApi(api = Build.VERSION_CODES.M)
     override fun onViewCreated(v: View, savedInstanceState: Bundle?) {
         super.onViewCreated(v, savedInstanceState)
+
+        locator = Locator(activity as AppCompatActivity)
+        dynamicMapView?.initializeMap(savedInstanceState, this)
+        mMarkers = HashMap()
+        markers = ArrayList()
 
         mPopWindowValidationMessage = PopWindowValidationMessage(activity)
         storesProgressBar?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
@@ -140,9 +147,10 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
                 when (newState) {
                     PanelState.COLLAPSED -> {
                         /*
-					 * Previous result: Application would exit completely when back button is pressed
-                     * New result: Panel just returns to its previous position (Panel collapses)
-                     */sliding_layout?.isFocusableInTouchMode = true
+                         * Previous result: Application would exit completely when back button is pressed
+                         * New result: Panel just returns to its previous position (Panel collapses)
+                         */
+                        sliding_layout?.isFocusableInTouchMode = true
                         sliding_layout?.setOnKeyListener(View.OnKeyListener { _, keyCode, _ ->
                             if (keyCode == KeyEvent.KEYCODE_BACK) {
                                 sliding_layout?.panelState = PanelState.COLLAPSED
@@ -164,21 +172,13 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
                 }
             }
         })
-        initLocationCheck()
 
         /*
 		 init();
          */
         buttonLocationOn?.setOnClickListener {
             updateMap = true
-            if (checkLocationPermission()) {
-                val locIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                activity?.startActivity(locIntent)
-                activity?.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-            } else {
-                isLocationServiceButtonClicked = true
-                checkLocationPermission()
-            }
+            KotlinUtils.openAccessMyLocationDeviceSettings(ACCESS_MY_LOCATION_REQUEST_CODE, activity)
         }
         v.findViewById<WButton>(R.id.btnRetry)?.setOnClickListener {
             if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
@@ -200,8 +200,8 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
 
     private fun selectUnSelectMarkerDrawable() {
         try {
-            unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin)
-            selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin)
+            unSelectedIcon = R.drawable.unselected_pin
+            selectedIcon = R.drawable.selected_pin
         } catch (ex: NullPointerException) {
             FirebaseManager.logException(ex)
         }
@@ -209,81 +209,84 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
 
     private fun initLocationCheck() {
         val locationServiceIsEnabled = Utils.isLocationServiceEnabled(activity)
-        val lastKnownLocationIsNull = Utils.getLastSavedLocation() == null
-        if (!locationServiceIsEnabled and lastKnownLocationIsNull) {
+        val lastKnownLocation = Utils.getLastSavedLocation()
+        when {
+            lastKnownLocation != null -> {
+                updateMap(Utils.getLastSavedLocation())
+            }
+            locationServiceIsEnabled -> {
+                checkLocationServiceAndSetLayout(true)
+                startLocationDiscoveryProcess()
+            }
+            else -> {
+                checkLocationServiceAndSetLayout(false)
+            }
+        }
+    }
+
+    private fun startLocationDiscoveryProcess() {
+        locator.getCurrentLocation { locationEvent ->
+            when (locationEvent) {
+                is Event.Location -> handleLocationEvent(locationEvent)
+                is Event.Permission -> handlePermissionEvent(locationEvent)
+            }
+        }
+    }
+
+    private fun handlePermissionEvent(permissionEvent: Event.Permission) {
+        if (permissionEvent.event == EventType.LOCATION_PERMISSION_NOT_GRANTED) {
+            Utils.saveLastLocation(null, activity)
             checkLocationServiceAndSetLayout(false)
-        } else if (locationServiceIsEnabled && lastKnownLocationIsNull) {
-            checkLocationServiceAndSetLayout(true)
-            startLocationUpdates()
-        } else if (!locationServiceIsEnabled) {
-            updateMap(Utils.getLastSavedLocation())
-        } else {
-            startLocationUpdates()
         }
     }
 
-    private fun initMap() {
-        if (googleMap == null && isAdded) {
-            mapFragment =
-                    this.childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-            mapFragment?.getMapAsync(this)
-            mMarkers = HashMap<String, Int>()
-            markers = ArrayList<Marker>()
+    private fun handleLocationEvent(locationEvent: Event.Location) {
+        updateMap(locationEvent.locationData)
+    }
+
+    override fun onMapReady() {
+        unSelectedIcon = R.drawable.unselected_pin
+        selectedIcon = R.drawable.selected_pin
+        initLocationCheck()
+    }
+
+    private fun drawMarker(latitude: Double, longitude: Double, @DrawableRes icon: Int?, pos: Int) {
+        val marker = dynamicMapView?.addMarker(requireContext(), latitude, longitude, icon)
+        marker?.apply {
+            getId()?.let { id ->
+                mMarkers?.set(id, pos)
+            }
+            markers?.add(this)
         }
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    override fun onMapReady(map: GoogleMap) {
-        googleMap = map
-        onMapReady()
-    }
-
-    private fun onMapReady() {
-        //If permission is not granted, request permission.
-        googleMap?.setInfoWindowAdapter(MapWindowAdapter(context))
-        googleMap?.setOnMarkerClickListener(this@StoresNearbyFragment1)
-        unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin)
-        selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin)
-    }
-
-    private fun drawMarker(point: LatLng, bitmapDescriptor: BitmapDescriptor?, pos: Int) {
-        val markerOptions = MarkerOptions()
-        markerOptions.position(point)
-        markerOptions.icon(bitmapDescriptor)
-        val marker = googleMap?.addMarker(markerOptions)
-        mMarkers?.set(marker!!.id, pos)
-        marker?.let { markers?.add(it) }
         if (pos == 0) {
-            googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(marker?.position, 13f), CAMERA_ANIMATION_SPEED, null)
-            previousmarker = marker
+            dynamicMapView?.animateCamera(marker)
+            previousMarker = marker
         }
     }
 
     override fun onPageSelected(position: Int) {
-        previousmarker?.setIcon(unSelectedIcon)
-        markers?.get(position)?.setIcon(selectedIcon)
-        googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(markers?.get(position)?.position, 13f), CAMERA_ANIMATION_SPEED, null)
-        previousmarker = markers?.get(position)
+        if (dynamicMapView?.isMapInstantiated() == false) return
+
+        previousMarker?.setIcon(requireContext(), unSelectedIcon)
+        markers?.get(position)?.setIcon(requireContext(), selectedIcon)
+        dynamicMapView?.animateCamera(markers?.get(position))
+        previousMarker = markers?.get(position)
         /*
 		 *InfoWindow shows description above a marker.
          *Make info window invisible to make selected marker come in front of unselected marker.
-         */previousmarker?.showInfoWindow()
+         */
+        previousMarker?.showInfoWindow()
     }
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
     override fun onPageScrollStateChanged(state: Int) {}
-    override fun onMarkerClick(marker: Marker): Boolean {
-        onMarkerClicked(marker)
-        return true
-    }
 
-    private fun onMarkerClicked(marker: Marker) {
+    override fun onMarkerClicked(marker: DynamicMapMarker) {
         try {
-            val id = mMarkers?.get(marker.id)
-            previousmarker?.setIcon(unSelectedIcon)
-            marker.setIcon(selectedIcon)
-            //googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 13), CAMERA_ANIMATION_SPEED, null);
-            previousmarker = marker
+            val id = mMarkers?.get(marker.getId())
+            previousMarker?.setIcon(requireContext(), unSelectedIcon)
+            marker.setIcon(requireContext(), selectedIcon)
+            previousMarker = marker
             cardPager?.currentItem = id ?: 0
         } catch (ex: NullPointerException) {
             FirebaseManager.logException(ex)
@@ -299,8 +302,14 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
     }
 
     fun backToAllStoresPage(position: Int) {
-        googleMap?.uiSettings?.isScrollGesturesEnabled = true
-        googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(markers?.get(position)?.position, 13f), 500, null)
+        if (dynamicMapView?.isMapInstantiated() == true) {
+            dynamicMapView?.setScrollGesturesEnabled(isEnabled = true)
+            dynamicMapView?.animateCamera(
+                markers?.get(position),
+                DynamicMapView.CAMERA_ANIMATION_DURATION_SLOW
+            )
+        }
+
         val toolbar = mBottomNavigator?.toolbar()
         toolbar?.animate()?.translationY(toolbar.top.toFloat())?.setInterpolator(AccelerateInterpolator())?.start()
         showAllMarkers(markers)
@@ -308,15 +317,18 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
 
     private fun showStoreDetails(position: Int) {
         storeDetailsList?.get(position)?.let { storeDetails -> initStoreDetailsView(storeDetails) }
-        hideMarkers(markers, position)
-        val center = googleMap?.cameraPosition?.target?.latitude
-        val northMap = googleMap?.projection?.visibleRegion?.latLngBounds?.northeast?.latitude
-        val diff = northMap?.let { center?.minus(it) }
-        val newLat = markers?.get(position)?.position?.latitude?.plus(diff?.div(1.5)!!)
-        val centerCam =
-                CameraUpdateFactory.newLatLng(markers?.get(position)?.position?.longitude?.let { newLat?.let { latitude -> LatLng(latitude, it) } })
-        googleMap?.animateCamera(centerCam, CAMERA_ANIMATION_SPEED, null)
-        googleMap?.uiSettings?.isScrollGesturesEnabled = false
+
+        if (dynamicMapView?.isMapInstantiated() == true) {
+            hideMarkers(markers, position)
+            val center = dynamicMapView?.getCameraPositionTargetLatitude()
+            val northMap = dynamicMapView?.getVisibleRegionNortheastLatitude()
+            val diff = northMap?.let { center?.minus(it) }
+            val newLat = markers?.get(position)?.getPositionLatitude()?.plus(diff?.div(1.5)!!)
+            val newLng = markers?.get(position)?.getPositionLongitude()
+            dynamicMapView?.animateCamera(newLat, newLng)
+            dynamicMapView?.setScrollGesturesEnabled(isEnabled = false)
+        }
+
         if (sliding_layout?.anchorPoint == 1.0f) {
             val toolbar = mBottomNavigator?.toolbar()
             toolbar?.animate()?.translationY(-toolbar.bottom.toFloat())?.setInterpolator(AccelerateInterpolator())?.start()
@@ -325,30 +337,32 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
         }
     }
 
-    private fun hideMarkers(markers: ArrayList<Marker>?, pos: Int) {
-        val indices = markers?.indices
-        for (i in indices!!) {
-            if (i != pos) markers[i].isVisible = false
+    private fun hideMarkers(markers: ArrayList<DynamicMapMarker>?, pos: Int) {
+        markers?.indices?.let { indices ->
+            for (i in indices) {
+                if (i != pos) markers[i].setVisibility(isVisible = false)
+            }
         }
     }
 
-    private fun showAllMarkers(markers: ArrayList<Marker>?) {
-        val indices = markers?.indices
-        for (i in indices!!) {
-            markers[i].isVisible = true
+    private fun showAllMarkers(markers: ArrayList<DynamicMapMarker>?) {
+        markers?.indices?.let { indices ->
+            for (i in indices) {
+                markers[i].setVisibility(isVisible = true)
+            }
         }
     }
 
-    fun bindDataWithUI(storeDetailsList: List<StoreDetails>) {
-        if (googleMap != null && storeDetailsList.size >= 0) {
-            updateMyCurrentLocationOnMap(mLocation)
+    fun bindDataWithUI(storeDetailsList: List<StoreDetails>, currentLocation: Location?) {
+        if (dynamicMapView?.isMapInstantiated() == true && storeDetailsList.size >= 0) {
+            updateMyCurrentLocationOnMap(currentLocation)
             for (i in storeDetailsList.indices) {
                 if (i == 0) {
-                    drawMarker(LatLng(storeDetailsList[i].latitude, storeDetailsList[i].longitude), selectedIcon, i)
-                } else drawMarker(LatLng(storeDetailsList[i].latitude, storeDetailsList[i].longitude), unSelectedIcon, i)
+                    drawMarker(storeDetailsList[i].latitude, storeDetailsList[i].longitude, selectedIcon, i)
+                } else drawMarker(storeDetailsList[i].latitude, storeDetailsList[i].longitude, unSelectedIcon, i)
             }
-            cardPager?.adapter = CardsOnMapAdapter(activity, storeDetailsList)
         }
+        cardPager?.adapter = CardsOnMapAdapter(activity, storeDetailsList)
     }
 
     @SuppressLint("InflateParams", "SetTextI18n")
@@ -424,7 +438,7 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
                 hideProgressBar()
                 storeDetailsList = ArrayList()
                 storeDetailsList = locationResponse?.Locations
-                storeDetailsList?.let { listDetail -> bindDataWithUI(listDetail) }
+                storeDetailsList?.let { listDetail -> bindDataWithUI(listDetail, location) }
             }
 
             override fun onFailure(error: Throwable?) {
@@ -477,6 +491,7 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
                 sliding_layout?.panelState = PanelState.COLLAPSED
                 sliding_layout?.isFocusable = false
             }
+            ACCESS_MY_LOCATION_REQUEST_CODE -> startLocationDiscoveryProcess()
         }
     }
 
@@ -487,12 +502,11 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
 
             if (myLocation == null) {
                 myLocation =
-                        googleMap?.addMarker(MarkerOptions().position(LatLng(latitude, longitude)).icon(BitmapDescriptorFactory.fromResource(R.drawable.mapcurrentlocation)))
-                googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), 13f), CAMERA_ANIMATION_SPEED, null)
+                    dynamicMapView?.addMarker(requireContext(), latitude, longitude, R.drawable.mapcurrentlocation)
             } else {
-                myLocation?.position = LatLng(latitude, longitude)
-                googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), 13f), CAMERA_ANIMATION_SPEED, null)
+                myLocation?.setPosition(latitude, longitude)
             }
+            dynamicMapView?.animateCamera(myLocation)
         } catch (ex: Exception) {
             FirebaseManager.logException(ex)
         }
@@ -514,22 +528,6 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
         return super.onOptionsItemSelected(item)
     }
 
-    private fun goToUser(mLocation: CameraPosition?) {
-        changeCamera(CameraUpdateFactory.newCameraPosition(mLocation), object : CancelableCallback {
-            override fun onFinish() {}
-            override fun onCancel() {}
-        })
-    }
-
-    /**
-     * Change the camera position by moving or animating the camera depending on the state of the
-     * animate toggle button.
-     */
-    private fun changeCamera(update: CameraUpdate, callback: CancelableCallback) {
-        // The duration must be strictly positive so we make it at least 1.
-        googleMap?.animateCamera(update, 2000.coerceAtLeast(1), callback)
-    }
-
     fun showProgressBar() {
         storesProgressBar?.visibility = View.VISIBLE
     }
@@ -538,32 +536,13 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
         storesProgressBar?.visibility = View.GONE
     }
 
-    private fun startLocationUpdates() {
-        val activity = activity ?: return
-        if (checkLocationPermission()) {
-            if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                onLocationLoadStart()
-                FuseLocationAPISingleton.addLocationChangeListener(this)
-                FuseLocationAPISingleton.startLocationUpdate()
-            }
-        } else {
-            checkLocationPermission()
-        }
-    }
-
     private fun updateMap(location: Location?) {
         if (location != null) {
             Utils.saveLastLocation(location, activity)
             checkLocationServiceAndSetLayout(true)
-            initMap()
             updateMyCurrentLocationOnMap(location)
             locationAPIRequest(location)
         }
-        stopLocationUpdate()
-    }
-
-    private fun stopLocationUpdate() {
-        FuseLocationAPISingleton.stopLocationUpdate()
     }
 
     @SuppressLint("NewApi")
@@ -589,13 +568,14 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
     }
 
     private fun zoomToLocation(location: Location) {
-        val mLocation = CameraPosition.Builder().target(LatLng(location.latitude, location
-                .longitude))
-                .zoom(13f)
-                .bearing(0f)
-                .tilt(25f)
-                .build()
-        goToUser(mLocation)
+        dynamicMapView?.animateCamera(
+            location.latitude,
+            location.longitude,
+            zoom = 13f,
+            bearing = 0f,
+            tilt = 25f,
+            duration = 2000.coerceAtLeast(1) // The duration must be strictly positive so we make it at least 1.
+        )
     }
 
     var broadcastCall: BroadcastReceiver = object : BroadcastReceiver() {
@@ -617,6 +597,11 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
         mBottomNavigator?.removeToolbar()
     }
 
+    override fun onDestroyView() {
+        dynamicMapView?.onDestroy()
+        super.onDestroyView()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver()
@@ -625,6 +610,7 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
 
     override fun onResume() {
         super.onResume()
+        dynamicMapView?.onResume()
         activity?.let { Utils.setScreenName(it, FirebaseManagerAnalyticsProperties.ScreenNames.STORES_NEARBY) }
         if (updateMap) {
             checkLocationServiceAndSetLayout(true)
@@ -635,27 +621,6 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
-            REQUEST_CODE_FINE_GPS -> {
-
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    val activity = activity ?: return
-                    // permission was granted. Do the
-                    // contacts-related task you need to do.
-                    if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                        if (isLocationServiceButtonClicked) {
-                            val locIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                            activity.startActivityForResult(locIntent, REQUEST_CHECK_SETTINGS)
-                            activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-                        } else {
-                            startLocationUpdates()
-                            googleMap?.isMyLocationEnabled = false
-                        }
-                    }
-                }
-                return
-            }
             REQUEST_CALL -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) startActivity(callIntent)
         }
     }
@@ -711,15 +676,22 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
         return if (sliding_layout == null) false else sliding_layout?.panelState == PanelState.ANCHORED
     }
 
-    override fun onLocationChange(location: Location?) {
-        updateMap(location)
-    }
-
-    override fun onPopUpLocationDialogMethod() {
-        hideProgressBar()
-    }
-
     fun collapseSlidingPanel() { sliding_layout.panelState = PanelState.COLLAPSED }
 
     fun getSlidingPanelState() = sliding_layout?.panelState
+
+    override fun onPause() {
+        dynamicMapView?.onPause()
+        super.onPause()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        dynamicMapView?.onLowMemory()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        dynamicMapView?.onSaveInstanceState(outState)
+    }
 }

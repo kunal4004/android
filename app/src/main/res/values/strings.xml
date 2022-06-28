@@ -51,13 +51,14 @@
     <string name="please_enter_the_amount">PLEASE ENTER THE AMOUNT YOU WOULD LIKE TO WITHDRAW:</string>
     <string name="confirm_loan_withdrawal">PLEASE CONFIRM YOUR LOAN\nREQUEST DETAILS:</string>
     <string name="call_us">CALL US</string>
+    <string name="call_us_contact_us">Call Us</string>
     <string name="txt_local_caller">Local caller</string>
     <string name="fs_local_caller_number">0861 502 020</string>
     <string name="fs_inter_national_caller_number">+27 21 411 5000</string>
     <string name="txt_international_caller">International caller</string>
-    <string name="txt_call_center_opening_hours">Call Centre Operating Hours</string>
+    <string name="txt_call_center_opening_hours">Call center operating hours:</string>
     <string name="fs_call_center_opening_hours">Daily 7.30am - 9pm</string>
-    <string name="email_us">email us</string>
+    <string name="email_us">Email Us</string>
     <string name="txt_black_credit_card_query">Black Credit Card query</string>
     <string name="txt_complaint">Complaint</string>
     <string name="txt_cc_query">Credit Card query</string>
@@ -797,6 +798,8 @@
     <string name="chat_end_session_dialog_action_text">yes, end session</string>
     <string name="rooted_phone_desc">Your phone is rooted. Unauthorised access.</string>
     <string name="rooted_phone_title">Access Restricted</string>
+    <string name="sideloaded_app_title">Error opening app</string>
+    <string name="sideloaded_app_desc">The app installed is missing some required components. Please reinstall from either Google Play Store or Huawei AppGallery.</string>
     <string name="no_statements_title">No Statements Available</string>
     <string name="absa_no_statement_desc">You have no statements available. If this is \n incorrect please call us.</string>
     <string name="distance_per_km"> %1$s km</string>
@@ -2415,7 +2418,7 @@
     <string name="out_of_stock_item">Unfortunately this item is out of stock in %1$s. Try changing your delivery location and try again.</string>
     <string name="absa_statement_error_try_again_later">We\'re unable to retrieve your Statement. Please try again later.</string>
     <string name="confirm_your_address">Confirm Your Address</string>
-    <string name="we_use_your_location_to_give_you_the_most_naccurate_stock_availabilty_and_pricing">We use your location to give you the most \naccurate stock availabilty and pricing.</string>
+    <string name="we_use_your_location_to_give_you_the_most_naccurate_stock_availabilty_and_pricing">We use your location to give you the most \naccurate stock availability and pricing.</string>
     <string name="enter_new_location">Enter new location</string>
     <string name="my_saved_addresses">My Saved Addresses</string>
     <string name="current_location">Current Location</string>

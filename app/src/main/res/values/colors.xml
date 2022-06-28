@@ -169,5 +169,7 @@
     <color name="low_stock_indicator">#FCA933</color>
     <color name="color_4A9521">#4A9521</color>
     <color name="color_B3000000">#B3000000</color>
+    <color name="grey">#9D9D9D</color>
+
     <color name="color_363636">#363636</color>
 </resources>
