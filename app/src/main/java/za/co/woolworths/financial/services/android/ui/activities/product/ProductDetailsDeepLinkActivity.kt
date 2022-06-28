@@ -15,6 +15,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProviders
 import com.awfs.coordination.R
 import com.google.gson.JsonObject
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_deeplink_pdp.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -40,10 +41,12 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionClickAndCollect
 import za.co.woolworths.financial.services.android.util.ToastUtils.ToastInterface
 import java.util.*
+import javax.inject.Inject
 
 /**
  * Created by Kunal Uttarwar on 26/3/21.
  */
+@AndroidEntryPoint
 class ProductDetailsDeepLinkActivity : AppCompatActivity(),
     ProductDetailsExtension.ProductDetailsStatusListner, ToastInterface {
 
@@ -51,6 +54,8 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(),
     private lateinit var jsonLinkData: JsonObject
     private var mToastUtils: ToastUtils? = null
     private var deepLinkRequestCode = DEEP_LINK_REQUEST_CODE
+
+    @Inject lateinit var notificationUtils : NotificationUtils
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -143,7 +148,7 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(),
 
     private fun init() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationUtils.createNotificationChannelIfNeeded(this)
+            notificationUtils.createNotificationChannelIfNeeded()
         }
         // Disable first time launch splash video screen, remove to enable video on startup
         startupViewModel.setSessionDao(SessionDao.KEY.SPLASH_VIDEO, "1")

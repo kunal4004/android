@@ -24,11 +24,17 @@ import com.google.gson.JsonObject;
 
 import java.util.Map;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.fcm.FCMMessageType;
 import za.co.woolworths.financial.services.android.startup.view.StartupActivity;
 
+@AndroidEntryPoint
 public class WFirebaseMessagingService extends FirebaseMessagingService {
+
+    @Inject NotificationUtils notificationUtils;
 
     private static final String TAG = WFirebaseMessagingService.class.getSimpleName();
 
@@ -40,15 +46,14 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onNewToken(String token) {
         super.onNewToken(token);
-
-        NotificationUtils.getInstance().sendRegistrationToServer(token);
+        notificationUtils.sendRegistrationToServer(token);
     }
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationUtils.createNotificationChannelIfNeeded(this);
+            notificationUtils.createNotificationChannelIfNeeded();
         }
 
         if (WoolworthsApplication.isApplicationInForeground()){

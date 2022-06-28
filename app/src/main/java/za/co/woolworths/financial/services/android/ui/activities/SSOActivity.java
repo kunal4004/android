@@ -43,15 +43,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest;
-import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -65,6 +65,7 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.wenum.ConfirmLocation;
 
+@AndroidEntryPoint
 public class SSOActivity extends WebViewActivity {
 
 	public ErrorHandlerView mErrorHandlerView;
@@ -103,6 +104,8 @@ public class SSOActivity extends WebViewActivity {
 	public static final String FORGOT_PASSWORD = "FORGOT_PASSWORD";
 	public static final String FORGOT_PASSWORD_VALUE = "PASSWORD";
 	private String forgotPasswordLogin = "login=true&source=oneapp";
+
+	@Inject NotificationUtils notificationUtils;
 
 	public static final String TAG_EXTRA_QUERYSTRING_PARAMS = "TAG_EXTRA_QUERYSTRING_PARAMS";
 	//Default redirect url used by LOGIN AND LINK CARDS
@@ -646,7 +649,7 @@ public class SSOActivity extends WebViewActivity {
 					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
 					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.LOGIN, arguments, SSOActivity.this);
 
-					NotificationUtils.getInstance().sendRegistrationToServer();
+					notificationUtils.sendRegistrationToServer();
 					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.ACTIVE);
 					if (KotlinUtils.Companion.getAnonymousUserLocationDetails() != null) {
 						new ConfirmLocation().postRequest(KotlinUtils.Companion.getAnonymousUserLocationDetails());

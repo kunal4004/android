@@ -20,11 +20,18 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.cor
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountProductLandingDao
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.IMyAccountsUtils
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.MyAccountsUtils
+import za.co.woolworths.financial.services.android.util.NotificationUtils
 import java.util.concurrent.TimeUnit
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Singleton
+    @Provides
+    fun provideNotification(@ApplicationContext context: Context): NotificationUtils {
+        return NotificationUtils(context)
+    }
 
     @Singleton
     @Provides
