@@ -204,13 +204,13 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     private fun executeValidateSuburb() {
         val placeId = getDeliveryType()?.address?.placeId ?: return
-        placeId.let {
+        placeId?.let {
+            shopProgressbar?.visibility = View.VISIBLE
             lifecycleScope.launch {
-                progressBar?.visibility = View.VISIBLE
                 try {
                     validateLocationResponse =
                         confirmAddressViewModel.getValidateLocation(it)
-                    progressBar?.visibility = View.GONE
+                    shopProgressbar?.visibility = View.GONE
                     geoDeliveryView?.visibility = View.VISIBLE
                     if (validateLocationResponse != null) {
                         when (validateLocationResponse?.httpCode) {
@@ -238,6 +238,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                         }
                     }
                 } catch (e: HttpException) {
+                    shopProgressbar?.visibility = View.GONE
                     FirebaseManager.logException(e)
                     /*TODO : show error screen*/
                 }
@@ -352,7 +353,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private fun updateTabIconUI(selectedTab: Int) {
         if (selectedTab == STANDARD_TAB.index) {
             showSerachAndBarcodeUi()
-        } else if (selectedTab == CLICK_AND_COLLECT_TAB.index && KotlinUtils.browsingCncStore == null) {
+        } else if (selectedTab == CLICK_AND_COLLECT_TAB.index && KotlinUtils.browsingCncStore == null  && getDeliveryType()?.deliveryType != Delivery.CNC.type) {
             hideSerachAndBarcodeUi()
         }
         tabs_main?.let { tab ->
