@@ -36,7 +36,7 @@ class HelpAndSupportFragment: Fragment(R.layout.layout_help_and_support_fragemen
         /* prepare data list as per delivery type , currently done for standard and CNC only*/
         val dataList = arrayListOf<HelpAndSupport>()
         dataList.add(HelpAndSupport(getString(R.string.dash_call_customer_care),
-            getString(R.string.dash_customer_care_no), R.drawable.ic_phone))
+            getString(R.string.dash_customer_care_no), R.drawable.help_phone))
         dataList.add(HelpAndSupport(getString(R.string.cancel_order),
             "", R.drawable.ic_dash_cancel_order))
         return dataList

@@ -7,12 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmDeliveryAddressResponse
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
-import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
-import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
-import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse
-import za.co.woolworths.financial.services.android.models.dto.RootCategories
-import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.shop.DashCategories
 import za.co.woolworths.financial.services.android.models.network.Event
 import za.co.woolworths.financial.services.android.models.network.Resource
@@ -20,7 +18,6 @@ import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.repository.shop.ShopRepository
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
-import java.lang.ref.PhantomReference
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,6 +36,10 @@ class ShopViewModel @Inject constructor(
     private val _location = MutableLiveData<Location?>()
     val location: LiveData<Location?>
     get() = _location
+
+    private val _productList = MutableLiveData<ProductList?>()
+    val productList: LiveData<ProductList?>
+    get() = _productList
 
     private val _addItemToCart = MutableLiveData<AddItemToCart?>()
     val addItemToCart: LiveData<AddItemToCart?>
@@ -59,7 +60,11 @@ class ShopViewModel @Inject constructor(
     private val _validatePlaceDetails = MutableLiveData<Event<Resource<ValidateLocationResponse>>>()
     val validatePlaceDetails: LiveData<Event<Resource<ValidateLocationResponse>>> = _validatePlaceDetails
 
-    private var validatePlaceResponse: ValidatePlace? = null
+    private val _confirmPlaceDetails = MutableLiveData<Event<Resource<ConfirmDeliveryAddressResponse>>>()
+    val confirmPlaceDetails: LiveData<Event<Resource<ConfirmDeliveryAddressResponse>>> = _confirmPlaceDetails
+
+    private val _productStoreFinder = MutableLiveData<Event<Resource<LocationResponse>>>()
+    val productStoreFinder: LiveData<Event<Resource<LocationResponse>>> = _productStoreFinder
 
     fun getDashLandingDetails() {
         _dashLandingDetails.value = Event(Resource.loading(null))
@@ -88,6 +93,12 @@ class ShopViewModel @Inject constructor(
     }
 
     fun callToAddItemsToCart(mAddItemsToCart: MutableList<AddItemToCart>) {
+
+        // set updated value for _addItemToCart
+        mAddItemsToCart?.get(0)?.let {
+            _addItemToCart.value = it
+        }
+
         _addItemToCartResp.value = Event(Resource.loading(null))
         viewModelScope.launch {
             val response = shopRepository.addItemsToCart(mAddItemsToCart)
@@ -107,6 +118,22 @@ class ShopViewModel @Inject constructor(
         }
     }
 
+    fun callConfirmPlace(confirmLocationRequest: ConfirmLocationRequest) {
+        _confirmPlaceDetails.value = Event(Resource.loading(null))
+        viewModelScope.launch {
+            val response = shopRepository.confirmPlace(confirmLocationRequest)
+            _confirmPlaceDetails.value = Event(response)
+        }
+    }
+
+    fun callStoreFinder(sku: String, startRadius: String?, endRadius: String?) {
+        _productStoreFinder.value = Event(Resource.loading(null))
+        viewModelScope.launch {
+            val response = shopRepository.callStoreFinder(sku, startRadius, endRadius)
+            _productStoreFinder.value = Event(response)
+        }
+    }
+
     fun setLocation(location: Location?) {
         _location.value = location
     }
@@ -114,4 +141,10 @@ class ShopViewModel @Inject constructor(
     fun setAddItemToCart(addItemToCart: AddItemToCart?) {
         _addItemToCart.value = addItemToCart
     }
+
+    fun setProductList(productList: ProductList) {
+        _productList.value = productList
+    }
+
+
 }

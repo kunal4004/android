@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -34,17 +35,19 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLoca
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams.SearchType
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.*
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ShopPagerAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.newInstance
+import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment.SelectedTabIndex.*
 import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDeliveryFragment.Companion.DEPARTMENT_LOGIN_REQUEST
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.DISPLAY_TOAST_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
@@ -54,6 +57,7 @@ import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashDelive
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_3000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_4000_MS
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_BARCODE_ACTIVITY
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_ORDER_DETAILS_PAGE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.CNC_SET_ADDRESS_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DASH_SET_ADDRESS_REQUEST_CODE
@@ -82,6 +86,36 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private var user: String = ""
     private var validateLocationResponse: ValidateLocationResponse? = null
     private var tabWidth: Float? = 0f
+    private val fragmentResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode != RESULT_OK) {
+                return@registerForActivityResult
+            }
+            it.data?.extras?.let { extras ->
+                val requestCode = extras.getInt(AppConstant.REQUEST_CODE)
+                if (requestCode == REQUEST_CODE_BARCODE_ACTIVITY) {
+                    val searchType =
+                        SearchType.valueOf(extras.getString(AppConstant.Keys.EXTRA_SEARCH_TYPE, ""))
+                    val searchTerm: String =
+                        extras.getString(AppConstant.Keys.EXTRA_SEARCH_TERM, "")
+                    (requireActivity() as? BottomNavigationActivity)?.pushFragment(newInstance(
+                        searchType,
+                        "",
+                        searchTerm,
+                        false))
+                }
+            }
+        }
+
+    companion object {
+        private const val LOGIN_MY_LIST_REQUEST_CODE = 9876
+    }
+
+    enum class SelectedTabIndex(val index: Int) {
+        STANDARD_TAB(0),
+        CLICK_AND_COLLECT_TAB(1),
+        DASH_TAB(2)
+    }
 
     private val confirmAddressViewModel: ConfirmAddressViewModel by lazy {
         ViewModelProvider(
@@ -108,7 +142,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         tvSearchProduct?.setOnClickListener { navigateToProductSearch() }
         imBarcodeScanner?.setOnClickListener { checkCameraPermission() }
         shopToolbar?.setOnClickListener { onEditDeliveryLocation() }
-        showSerachAndBarcodeUi()
 
         shopPagerAdapter = ShopPagerAdapter(childFragmentManager, mTabTitle, this)
         viewpager_main?.offscreenPageLimit = 2
@@ -127,11 +160,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
 
             override fun onPageSelected(position: Int) {
-                shopPagerAdapter?.notifyDataSetChanged()
-                updateTabIconUI(position)
                 activity?.apply {
                     when (position) {
-                        0 -> {
+                        STANDARD_TAB.index -> {
                             Utils.triggerFireBaseEvents(
                                 FirebaseManagerAnalyticsProperties.SHOP_CATEGORIES,
                                 this
@@ -139,12 +170,12 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                             showBlackToolTip(Delivery.STANDARD)
                             KotlinUtils.browsingDeliveryType = Delivery.STANDARD
                         }
-                        1 -> {
+                        CLICK_AND_COLLECT_TAB.index -> {
                             //Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS, this)
                             showBlackToolTip(Delivery.CNC)
                             KotlinUtils.browsingDeliveryType = Delivery.CNC
                         }
-                        2 -> {
+                        DASH_TAB.index -> {
                             // Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYORDERS, this)
                             showBlackToolTip(Delivery.DASH)
                             KotlinUtils.browsingDeliveryType = Delivery.DASH
@@ -152,32 +183,34 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     }
                     setupToolbar(position)
                 }
+                shopPagerAdapter?.notifyDataSetChanged()
+                updateTabIconUI(position)
             }
         })
         tabs_main?.setupWithViewPager(viewpager_main)
-        updateTabIconUI(0)
+        updateTabIconUI(STANDARD_TAB.index)
         showShopFeatureWalkThrough()
     }
 
-    fun showSerachAndBarcodeUi(){
+    fun showSerachAndBarcodeUi() {
         tvSearchProduct?.visibility = View.VISIBLE
         imBarcodeScanner?.visibility = View.VISIBLE
     }
 
-    fun hideSerachAndBarcodeUi(){
-        tvSearchProduct?.visibility = View.INVISIBLE
-        imBarcodeScanner?.visibility = View.INVISIBLE
+    fun hideSerachAndBarcodeUi() {
+        tvSearchProduct?.visibility = View.GONE
+        imBarcodeScanner?.visibility = View.GONE
     }
 
     private fun executeValidateSuburb() {
-       val placeId = getDeliveryType()?.address?.placeId ?: return
-        placeId.let {
+        val placeId = getDeliveryType()?.address?.placeId ?: return
+        placeId?.let {
+            shopProgressbar?.visibility = View.VISIBLE
             lifecycleScope.launch {
-                progressBar?.visibility = View.VISIBLE
                 try {
                     validateLocationResponse =
                         confirmAddressViewModel.getValidateLocation(it)
-                    progressBar?.visibility = View.GONE
+                    shopProgressbar?.visibility = View.GONE
                     geoDeliveryView?.visibility = View.VISIBLE
                     if (validateLocationResponse != null) {
                         when (validateLocationResponse?.httpCode) {
@@ -205,6 +238,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                         }
                     }
                 } catch (e: HttpException) {
+                    shopProgressbar?.visibility = View.GONE
                     FirebaseManager.logException(e)
                     /*TODO : show error screen*/
                 }
@@ -248,13 +282,13 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private fun updateCurrentTab(deliveryType: String?) {
         when (deliveryType) {
             BundleKeysConstants.STANDARD -> {
-                viewpager_main.currentItem = 0
+                viewpager_main.currentItem = STANDARD_TAB.index
             }
             BundleKeysConstants.CNC -> {
-                viewpager_main.currentItem = 1
+                viewpager_main.currentItem = CLICK_AND_COLLECT_TAB.index
             }
             BundleKeysConstants.DASH -> {
-                viewpager_main.currentItem = 2
+                viewpager_main.currentItem = DASH_TAB.index
             }
         }
     }
@@ -263,12 +297,12 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         if (tabPosition < 0) {
             return
         }
-        if (getDeliveryType() != null) {
+        if (getDeliveryType()?.address?.placeId != null) {
             return
         }
 
         when (tabPosition) {
-            1 -> {
+            CLICK_AND_COLLECT_TAB.index -> {
                 imgToolbarStart?.setImageDrawable(
                     ContextCompat.getDrawable(
                         requireContext(),
@@ -279,7 +313,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 tvToolbarSubtitle?.text =
                     requireContext().getString(R.string.select_your_preferred_store)
             }
-            2 -> {
+            DASH_TAB.index -> {
                 imgToolbarStart?.setImageDrawable(
                     ContextCompat.getDrawable(
                         requireContext(),
@@ -317,9 +351,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun updateTabIconUI(selectedTab: Int) {
-        if (selectedTab == 0 || selectedTab == 2) {
+        if (selectedTab == STANDARD_TAB.index) {
             showSerachAndBarcodeUi()
-        } else if (selectedTab == 1 && KotlinUtils.browsingCncStore == null)  {
+        } else if (selectedTab == CLICK_AND_COLLECT_TAB.index && KotlinUtils.browsingCncStore == null  && getDeliveryType()?.deliveryType != Delivery.CNC.type) {
             hideSerachAndBarcodeUi()
         }
         tabs_main?.let { tab ->
@@ -341,7 +375,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 Typeface.createFromAsset(activity?.assets, "fonts/MyriadPro-Semibold.otf")
             view?.tvTitle?.typeface = myRiadFont
         }
-        if (pos == 0) {
+        if (pos == STANDARD_TAB.index) {
             view?.foodOnlyText?.visibility = View.INVISIBLE
         }
         return view
@@ -356,7 +390,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
     }
 
-     fun setDeliveryView() {
+    fun setDeliveryView() {
         activity?.let {
             getDeliveryType()?.let { fulfillmentDetails ->
                 KotlinUtils.setDeliveryAddressView(
@@ -384,9 +418,15 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 }, AppConstant.DELAY_1000_MS)
             }
         }
-        setDeliveryView()
+
+        if (getDeliveryType() == null) {
+            setupToolbar(STANDARD_TAB.index)
+            viewpager_main.currentItem = STANDARD_TAB.index
+        } else {
+            setDeliveryView()
+        }
         when (viewpager_main?.currentItem) {
-            0 -> {
+            STANDARD_TAB.index -> {
                 val standardDeliveryFragment = viewpager_main?.adapter?.instantiateItem(
                     viewpager_main,
                     viewpager_main.currentItem
@@ -407,46 +447,12 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         grantResults: IntArray,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == StandardDeliveryFragment.REQUEST_CODE_FINE_GPS && viewpager_main.currentItem == 0) {
-            val fragment = viewpager_main?.adapter?.instantiateItem(
-                viewpager_main,
-                viewpager_main.currentItem
-            ) as? StandardDeliveryFragment
-            callOnActivityResult(grantResults, fragment, requestCode)
-        } else if (requestCode == StandardDeliveryFragment.REQUEST_CODE_FINE_GPS && viewpager_main.currentItem == 1) {
-            val fragment = viewpager_main?.adapter?.instantiateItem(
-                viewpager_main,
-                viewpager_main.currentItem
-            ) as? ChangeFullfilmentCollectionStoreFragment
-            callOnActivityResult(grantResults, fragment, requestCode)
-        }
         permissionUtils?.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-    private fun callOnActivityResult(
-        grantResults: IntArray,
-        fragment: Fragment?,
-        requestCode: Int,
-    ) {
-        // If request is cancelled, the result arrays are empty.
-        if (grantResults.isNotEmpty()
-            && grantResults[0] == PackageManager.PERMISSION_GRANTED
-        ) {
-            // permission was granted, yay! Do the
-            // contacts-related task you need to do.
-            fragment?.onActivityResult(requestCode, RESULT_OK, null)
-        } else {
-            fragment?.onActivityResult(requestCode, RESULT_CANCELED, null)
-        }
-    }
-
     private fun navigateToBarcode() {
-        activity?.apply {
-            val openBarcodeActivity = Intent(this, BarcodeScanActivity::class.java)
-            startActivityForResult(
-                openBarcodeActivity,
-                BarcodeScanActivity.BARCODE_ACTIVITY_REQUEST_CODE
-            )
+        requireActivity().apply {
+            fragmentResultLauncher.launch(Intent(this, BarcodeScanActivity::class.java))
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }
     }
@@ -475,6 +481,11 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
 
         if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+            val fragment = viewpager_main?.adapter?.instantiateItem(
+                viewpager_main,
+                viewpager_main.currentItem
+            ) as? DashDeliveryAddressFragment
+            fragment?.onActivityResult(requestCode, resultCode, data)
             refreshViewPagerFragment()
         }
 
@@ -488,7 +499,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
 
         if ((requestCode == REQUEST_CODE && resultCode == RESULT_OK)
-            || requestCode == DEPARTMENT_LOGIN_REQUEST && viewpager_main.currentItem == 0
+            || requestCode == DEPARTMENT_LOGIN_REQUEST && viewpager_main.currentItem == STANDARD_TAB.index
         ) {
             updateCurrentTab(getDeliveryType()?.deliveryType)
             val fragment = viewpager_main?.adapter?.instantiateItem(
@@ -529,12 +540,20 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 changeFullfilmentCollectionStoreFragment?.init()
             }
         }
+
+        if (requestCode == LOGIN_MY_LIST_REQUEST_CODE) {
+            (activity as? BottomNavigationActivity)?.let {
+                it.bottomNavigationById.currentItem = INDEX_ACCOUNT
+                val fragment = MyListsFragment()
+                it.pushFragment(fragment)
+            }
+        }
     }
 
 
     fun refreshViewPagerFragment() {
         when (viewpager_main.currentItem) {
-            0 -> {
+            STANDARD_TAB.index -> {
                 val departmentsFragment =
                     viewpager_main?.adapter?.instantiateItem(
                         viewpager_main,
@@ -542,7 +561,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     ) as? StandardDeliveryFragment
                 departmentsFragment?.initView()
             }
-            1 -> {
+            CLICK_AND_COLLECT_TAB.index -> {
                 val changeFullfilmentCollectionStoreFragment =
                     viewpager_main?.adapter?.instantiateItem(
                         viewpager_main,
@@ -550,7 +569,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     ) as? ChangeFullfilmentCollectionStoreFragment
                 changeFullfilmentCollectionStoreFragment?.init()
             }
-            2 -> {
+            DASH_TAB.index -> {
                 val dashDeliveryAddressFragment = viewpager_main?.adapter?.instantiateItem(
                     viewpager_main,
                     viewpager_main.currentItem
@@ -566,23 +585,23 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     fun navigateToMyListFragment() {
-        viewpager_main?.setCurrentItem(1, true)
-    }
-
-    fun navigateToMyShoppingListFragment() {
-        viewpager_main?.setCurrentItem(1, false)
+        (activity as? BottomNavigationActivity)?.let {
+            it.bottomNavigationById.currentItem = INDEX_ACCOUNT
+            val fragment = MyListsFragment()
+            it.pushFragment(fragment)
+        }
     }
 
     fun scrollToTop() {
         when (viewpager_main?.currentItem) {
-            0 -> {
+            STANDARD_TAB.index -> {
                 val detailsFragment = viewpager_main?.adapter?.instantiateItem(
                     viewpager_main,
                     viewpager_main.currentItem
                 ) as? StandardDeliveryFragment
                 detailsFragment?.scrollToTop()
             }
-            1 -> {
+            CLICK_AND_COLLECT_TAB.index -> {
                 val changeFullfilmentCollectionStoreFragment =
                     viewpager_main?.adapter?.instantiateItem(
                         viewpager_main,
@@ -590,7 +609,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     ) as? ChangeFullfilmentCollectionStoreFragment
                 changeFullfilmentCollectionStoreFragment?.scrollToTop()
             }
-            2 -> {
+            DASH_TAB.index -> {
                 val dashDeliveryAddressFragment = viewpager_main?.adapter?.instantiateItem(
                     viewpager_main,
                     viewpager_main.currentItem
@@ -644,12 +663,12 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     fun switchToDepartmentTab() {
-        viewpager_main.currentItem = 0
+        viewpager_main.currentItem = STANDARD_TAB.index
     }
 
     fun refreshCategories() {
         when (viewpager_main.currentItem) {
-            0 -> {
+            STANDARD_TAB.index -> {
                 val detailsFragment = viewpager_main?.adapter?.instantiateItem(
                     viewpager_main,
                     viewpager_main.currentItem
@@ -724,10 +743,10 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             fashionItemDateText?.text = it.firstAvailableOtherDeliveryDate
             productAvailableText?.text = getString(R.string.all_products_available)
             cartIcon.setImageResource(R.drawable.icon_cart_white)
-            bubbleLayout?.setArrowDirection(ArrowDirection.TOP)
-            if (tabs_main?.getTabAt(0)?.view != null) {
+            bubbleLayout?.arrowDirection = ArrowDirection.TOP
+            if (tabs_main?.getTabAt(STANDARD_TAB.index)?.view != null) {
                 bubbleLayout?.arrowPosition = tabs_main?.let {
-                    it?.getTabAt(0)?.view?.width?.div(2)?.toFloat()
+                    it?.getTabAt(STANDARD_TAB.index)?.view?.width?.div(2)?.toFloat()
                 }!!
             }
         }
@@ -782,7 +801,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             )
             return store?.firstAvailableFoodDeliveryDate
         }
-        return "";
+        return ""
     }
 
     private fun showDashToolTip(validateLocationResponse: ValidateLocationResponse?) {
@@ -814,13 +833,16 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             deliveryIcon?.setImageResource(R.drawable.icon_scooter_white)
             bubbleLayout?.setArrowDirection(ArrowDirection.TOP)
             bubbleLayout?.arrowPosition =
-                tabs_main.width - tabs_main.getTabAt(2)?.view?.width?.div(2)?.toFloat()!!
+                tabs_main.width - tabs_main.getTabAt(DASH_TAB.index)?.view?.width?.div(2)
+                    ?.toFloat()!!
             productAvailableText?.text = resources.getString(
                 R.string.dash_item_limit,
                 it.onDemand?.quantityLimit?.foodMaximumQuantity
             )
-            /*TODO deliveryFee value will come from config*/
-            deliveryFeeText?.text = "Free for orders over R75"
+            deliveryFeeText?.text = resources.getString(
+                R.string.dash_free_order,
+                it.onDemand?.firstAvailableFoodDeliveryCost
+            )
         }
     }
 
@@ -841,6 +863,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     .setActionText(R.string.walkthrough_shop_action)
                     .setImage(R.drawable.ic_drw_products)
                     .setShapePadding(48)
+                    .setDescriptionTextColor()
+                    .setHideTutorialTextColor()
                     .setAction(this@ShopFragment)
                     .setArrowPosition(WMaterialShowcaseView.Arrow.BOTTOM_LEFT)
                     .setMaskColour(ContextCompat.getColor(it, R.color.semi_transparent_black))
@@ -866,6 +890,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     .setActionText(R.string.walkthrough_dash_action)
                     .setImage(R.drawable.dash_delivery_icon)
                     .setShapePadding(48)
+                    .setDescriptionTextColor()
+                    .setHideTutorialTextColor()
                     .setAction(this@ShopFragment)
                     .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_RIGHT)
                     .setMaskColour(ContextCompat.getColor(it, R.color.semi_transparent_black))
@@ -891,8 +917,62 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     .setActionText(R.string.walkthrough_delivery_details_action)
                     .setImage(R.drawable.ic_delivery_truck)
                     .setShapePadding(48)
+                    .setDescriptionTextColor()
+                    .setHideTutorialTextColor()
                     .setAction(this@ShopFragment)
                     .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
+                    .setMaskColour(ContextCompat.getColor(it, R.color.semi_transparent_black))
+                    .build()
+            it.walkThroughPromtView.show(it)
+        }
+    }
+
+    private fun showMyListsFeatureWalkThrough() {
+        (activity as? BottomNavigationActivity)?.let {
+            // Prevent dialog to display in other section when fragment is not visible
+            if (it.currentFragment !is ShopFragment || !isAdded || AppInstanceObject.get().featureWalkThrough.my_lists || !Utils.isFeatureWalkThroughTutorialsEnabled())
+                return
+            FirebaseManager.setCrashlyticsString(
+                bindString(R.string.crashlytics_materialshowcase_key),
+                this.javaClass.canonicalName
+            )
+            it.walkThroughPromtView =
+                WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.MY_LIST)
+                    .setTarget(it.bottomNavigationById?.getIconAt(INDEX_ACCOUNT))
+                    .setTitle(R.string.new_location_list)
+                    .setDescription(R.string.early_access_shopping)
+                    .setActionText(R.string.view_shopping_list_action)
+                    .setImage(R.drawable.add)
+                    .setShapePadding(56)
+                    .setDescriptionTextColor()
+                    .setHideTutorialTextColor()
+                    .setAction(this@ShopFragment)
+                    .setArrowPosition(WMaterialShowcaseView.Arrow.BOTTOM_RIGHT)
+                    .setMaskColour(ContextCompat.getColor(it, R.color.semi_transparent_black))
+                    .build()
+            it.walkThroughPromtView.show(it)
+        }
+    }
+
+    private fun showBarcodeScannerFeatureWalkThrough() {
+        (activity as? BottomNavigationActivity)?.let {
+            // Prevent dialog to display in other section when fragment is not visible
+            if (it.currentFragment !is ShopFragment || imBarcodeScanner == null || !isAdded || AppInstanceObject.get().featureWalkThrough.barcodeScan || !Utils.isFeatureWalkThroughTutorialsEnabled())
+                return
+            FirebaseManager.setCrashlyticsString(
+                bindString(R.string.crashlytics_materialshowcase_key),
+                this.javaClass.canonicalName
+            )
+            it.walkThroughPromtView =
+                WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.BARCODE_SCAN)
+                    .setTarget(imBarcodeScanner)
+                    .setTitle(R.string.feature_barcode_scanning_title)
+                    .setDescription(R.string.feature_barcode_scanning_desc)
+                    .setActionText(R.string.feature_barcode_scanning_action_text)
+                    .setImage(R.drawable.tips_tricks_ic_scan)
+                    .setShapePadding(20)
+                    .setAction(this@ShopFragment)
+                    .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_RIGHT)
                     .setMaskColour(ContextCompat.getColor(it, R.color.semi_transparent_black))
                     .build()
             it.walkThroughPromtView.show(it)
@@ -903,14 +983,31 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         when (feature) {
             WMaterialShowcaseView.Feature.DASH -> {
                 viewpager_main?.apply {
-                    currentItem = 2
+                    currentItem = DASH_TAB.index
                     adapter?.notifyDataSetChanged()
                 }
-                updateTabIconUI(2)
+                updateTabIconUI(DASH_TAB.index)
                 showDeliveryDetailsFeatureWalkThrough()
             }
             WMaterialShowcaseView.Feature.SHOPPING -> {
                 showDashFeatureWalkThrough()
+            }
+            WMaterialShowcaseView.Feature.BARCODE_SCAN -> {
+                checkCameraPermission()
+            }
+            WMaterialShowcaseView.Feature.DELIVERY_DETAILS -> {
+                onEditDeliveryLocation()
+            }
+            WMaterialShowcaseView.Feature.MY_LIST -> {
+                if (SessionUtilities.getInstance().isUserAuthenticated) {
+                    (activity as? BottomNavigationActivity)?.let {
+                        it.bottomNavigationById.setCurrentItem(INDEX_ACCOUNT)
+                        val fragment = MyListsFragment()
+                        it.pushFragment(fragment)
+                    }
+                } else {
+                    ScreenManager.presentSSOSignin(activity, LOGIN_MY_LIST_REQUEST_CODE)
+                }
             }
         }
     }
@@ -925,9 +1022,15 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
             WMaterialShowcaseView.Feature.DELIVERY_DETAILS -> {
                 executeValidateSuburb()
+                showMyListsFeatureWalkThrough()
+            }
+            WMaterialShowcaseView.Feature.MY_LIST -> {
+                showBarcodeScannerFeatureWalkThrough()
             }
         }
     }
 
     fun isUserAuthenticated() = SessionUtilities.getInstance().isUserAuthenticated
+
+    fun getCurrentFragmentIndex() = viewpager_main?.currentItem
 }

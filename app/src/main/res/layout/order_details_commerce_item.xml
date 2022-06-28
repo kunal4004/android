@@ -9,15 +9,15 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginStart="@dimen/_16sdp"
-        android:layout_marginEnd="@dimen/_16sdp"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
         android:background="@color/bg_light_overlay" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="90dp"
-        android:paddingLeft="@dimen/_16sdp"
-        android:paddingRight="@dimen/_16sdp">
+        android:paddingLeft="@dimen/twenty_four_dp"
+        android:paddingRight="@dimen/twenty_four_dp">
 
         <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
             android:id="@+id/imProductImage"

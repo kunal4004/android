@@ -446,6 +446,13 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         }
     }
 
+    private void setTextBlackColor() {
+        if (mWalkThroughDesc != null && mHideTutorialAction !=null) {
+            mWalkThroughDesc.setTextColor(getResources().getColor(R.color.black));
+            mHideTutorialAction.setTextColor(getResources().getColor(R.color.black));
+        }
+    }
+
     private void setImage(int resId) {
         if (mWalkThroughIcon != null) {
             mWalkThroughIcon.setBackgroundResource(resId);
@@ -756,6 +763,22 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
          */
         public WMaterialShowcaseView.Builder hideImage() {
             showcaseView.hideImage();
+            return this;
+        }
+
+        /**
+         * Set the descriptive text color as black.
+         */
+        public WMaterialShowcaseView.Builder setDescriptionTextColor() {
+            showcaseView.setTextBlackColor();
+            return this;
+        }
+
+        /**
+         * Set the hide tutorial text  color as black.
+         */
+        public WMaterialShowcaseView.Builder setHideTutorialTextColor() {
+            showcaseView.setTextBlackColor();
             return this;
         }
 
@@ -1156,7 +1179,8 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         VTO_TRY_IT(10),
         SHOPPING(11),
         DASH(12),
-        DELIVERY_DETAILS(13);
+        DELIVERY_DETAILS(13),
+        MY_LIST(14);
 
         private int value;
 

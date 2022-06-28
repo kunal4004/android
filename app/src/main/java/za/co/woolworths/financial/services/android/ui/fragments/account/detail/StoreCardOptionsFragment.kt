@@ -11,10 +11,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
 import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.account_cart_item.*
 import kotlinx.android.synthetic.main.account_detail_header_fragment.*
 import kotlinx.android.synthetic.main.account_options_layout.*
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ITemporaryCardFreeze
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -28,7 +31,6 @@ import za.co.woolworths.financial.services.android.ui.activities.card.SelectStor
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
-import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
@@ -38,6 +40,7 @@ import za.co.woolworths.financial.services.android.util.location.*
 import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 
+@AndroidEntryPoint
 class StoreCardOptionsFragment : AccountsOptionFragment() {
 
     private var accountStoreCardCallWasCompleted = false
@@ -145,7 +148,8 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
 
         when (storeCardResponse.httpCode) {
             200 -> {
-                GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    Utils.sessionDaoSave(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN, "")
                     setStoreCardTag()
                     VoiceOfCustomerManager.showPendingSurveyIfNeeded(context)
                 }
@@ -301,7 +305,8 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                 val shouldRefreshCardDetails =
                     getBooleanExtra(MyCardDetailActivity.REFRESH_MY_CARD_DETAILS, false)
                 if (shouldRefreshCardDetails) {
-                    VoiceOfCustomerManager.pendingTriggerEvent = VocTriggerEvent.MYACCOUNTS_BLOCKCARD_CONFIRM
+                    VoiceOfCustomerManager.pendingTriggerEvent =
+                        VocTriggerEvent.MYACCOUNTS_BLOCKCARD_CONFIRM
                     navigateToGetStoreCards()
                 }
             }
@@ -346,11 +351,14 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
         var ACTIVATE_VIRTUAL_CARD_DETAIL = false
     }
 
-    private fun getReplacementCard(){
+    private fun getReplacementCard() {
         mCardPresenterImpl?.apply {
             activity?.apply {
                 getStoreCardResponse()?.let {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_GET_CARD, this)
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_GET_CARD,
+                        this
+                    )
                     Intent(this, SelectStoreActivity::class.java).apply {
                         putExtra(
                             SelectStoreActivity.STORE_DETAILS,
@@ -372,11 +380,20 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
 
     override fun onResume() {
         super.onResume()
-        if(SHOW_GET_REPLACEMENT_CARD_SCREEN) {
+
+        /**
+         *  TODO:: VTSC Card expiration 20 days
+         *  Replace with callbacks in store card enhancement refactoring work or add a
+         *  mechanism to refresh any api on landing page
+         */
+        if (!Utils.getSessionDaoValue(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN).isNullOrEmpty()){
+            navigateToGetStoreCards()
+        }
+
+        if (SHOW_GET_REPLACEMENT_CARD_SCREEN) {
             SHOW_GET_REPLACEMENT_CARD_SCREEN = false
             getReplacementCard()
-        }
-        else if(SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN) {
+        } else if (SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN) {
             SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = false
             mCardPresenterImpl?.apply {
                 navigateToTemporaryStoreCard()
@@ -396,15 +413,15 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                         bindString(R.string.replacement_card_label) -> {
                             KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
                                 GET_REPLACEMENT_CARD_DETAIL = true
-                            },{
+                            }, {
                                 getReplacementCard()
                             })
 
                         }
                         bindString(R.string.activate_vtc_title) -> {
-                            KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
+                            KotlinUtils.linkDeviceIfNecessary(activity = activity, ApplyNowState.STORE_CARD, {
                                 ACTIVATE_VIRTUAL_CARD_DETAIL = true
-                            },{
+                            }, {
                                 navigateToTemporaryStoreCard()
                             })
                         }
@@ -413,7 +430,6 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                                 navigateToTemporaryStoreCard()
                             }
                         }
-
                     }
                 }
 

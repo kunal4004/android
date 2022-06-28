@@ -14,6 +14,7 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:contentDescription="@string/calculatingYourOfferTitle"
             android:scrollbars="none">
 
             <LinearLayout
@@ -23,8 +24,7 @@
                 android:gravity="center_horizontal"
                 android:orientation="vertical">
 
-                <View
-                    style="@style/top_view_style"/>
+                <View style="@style/top_view_style" />
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     android:id="@+id/tvCalculatingYourOffer"
@@ -38,18 +38,19 @@
                     android:textAllCaps="true"
                     android:textColor="@color/offer_title"
                     android:textSize="12sp"
-                    app:WTextView_font="medium_bold"/>
+                    app:WTextView_font="medium_bold" />
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     android:id="@+id/tvLoadTime"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@string/offerTakeUpTo2MinutesSubtitle"
                     android:gravity="center"
                     android:lineSpacingExtra="0.8sp"
                     android:text="@string/amount_of_time_info"
                     android:textColor="@color/black_50"
                     android:textSize="13sp"
-                    app:WTextView_font="myriadpro_regular"/>
+                    app:WTextView_font="myriadpro_regular" />
 
                 <LinearLayout
                     android:id="@+id/llSlideToEditContainer"
@@ -63,12 +64,13 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="50dp"
                         android:background="@android:color/transparent"
+                        android:contentDescription="@string/valueOfferSliderLabel"
                         android:gravity="center"
                         android:letterSpacing="0.0"
                         android:text="R0"
                         android:textColor="@color/overview_color"
                         android:textSize="55dp"
-                        app:WEditTextView_font="medium"/>
+                        app:WEditTextView_font="medium" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -82,30 +84,32 @@
                             android:layout_alignParentBottom="true"
                             android:layout_marginTop="2dp"
                             android:background="@color/black"
+                            android:contentDescription="@string/slideToEditAmountInfoTooltip"
                             android:letterSpacing="0.01"
-                            android:paddingBottom="6dp"
                             android:paddingLeft="25dp"
-                            android:paddingRight="24dp"
                             android:paddingTop="6dp"
+                            android:paddingRight="24dp"
+                            android:paddingBottom="6dp"
                             android:text="@string/slide_to_edit_amount"
                             android:textAllCaps="true"
                             android:textColor="@color/white"
                             android:textSize="12sp"
-                            app:WTextView_font="medium"/>
+                            app:WTextView_font="medium" />
                     </RelativeLayout>
 
                     <SeekBar
                         android:id="@+id/sbSlideAmount"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/twenty_three_dp"
                         android:layout_marginTop="@dimen/seventeen_dp"
+                        android:layout_marginBottom="@dimen/twenty_three_dp"
+                        android:contentDescription="@string/slideAmountSeekbarSlider"
                         android:maxHeight="6dip"
                         android:minHeight="6dip"
-                        android:paddingEnd="@dimen/bank_spacing_width"
                         android:paddingStart="@dimen/bank_spacing_width"
+                        android:paddingEnd="@dimen/bank_spacing_width"
                         android:progressDrawable="@drawable/seekbar_style"
-                        android:thumb="@drawable/custom_thumb"/>
+                        android:thumb="@drawable/custom_thumb" />
 
                 </LinearLayout>
 
@@ -113,61 +117,65 @@
                     android:id="@+id/flCircularProgressSpinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/thirty_dp"
-                    android:layout_marginTop="@dimen/acc_fifteen_dp">
+                    android:layout_marginTop="@dimen/acc_fifteen_dp"
+                    android:layout_marginBottom="@dimen/thirty_dp">
 
                     <ProgressBar
                         android:layout_width="160dp"
                         android:layout_height="160dp"
                         android:layout_gravity="center"
+                        android:contentDescription="@string/circularLoadingSpinner"
                         android:indeterminateDrawable="@drawable/circular"
                         android:max="100"
-                        android:progress="20"
-                        />
+                        android:progress="20" />
 
                     <com.facebook.drawee.view.SimpleDraweeView
                         android:id="@+id/imOfferTime"
                         android:layout_width="38dp"
                         android:layout_height="54dp"
                         android:layout_gravity="center"
-                        />
+                        android:contentDescription="@string/calculatorGifAnimatedIcon" />
                 </FrameLayout>
 
-                <View style="@style/bottom_line"/>
+                <View style="@style/bottom_line" />
 
                 <RelativeLayout style="@style/offer_relative_rowtype_style">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         style="@style/offer_relative_rowtype_key_style"
                         android:layout_toStartOf="@+id/llCPCurrentCreditLimit"
-                        android:text="@string/request_loan_amount"/>
+                        android:contentDescription="@string/currentCreditLimitTextLabel"
+                        android:text="@string/request_loan_amount" />
 
                     <LinearLayout
                         android:id="@+id/llCPCurrentCreditLimit"
                         style="@style/circularProgressBarStyleContainer"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentTop="true">
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true">
 
                         <ProgressBar
                             android:id="@+id/cpCurrentCreditLimit"
-                            style="@style/cliCircularProgressBarStyle"/>
+                            style="@style/cliCircularProgressBarStyle"
+                            android:contentDescription="@string/currentCreditLimitLoadingIndicator" />
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             android:id="@+id/tvCurrentCreditLimitAmount"
                             style="@style/offer_relative_rowtype_value_style"
-                            android:text="R 0"/>
+                            android:contentDescription="@string/currentCreditLimitValueLabel"
+                            android:text="R 0" />
 
                     </LinearLayout>
                 </RelativeLayout>
 
-                <View style="@style/bottom_line_with_margin"/>
+                <View style="@style/bottom_line_with_margin" />
 
                 <RelativeLayout style="@style/offer_relative_rowtype_style">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         style="@style/offer_relative_rowtype_key_style"
                         android:layout_toStartOf="@+id/llCPAdditionalCreditLimit"
-                        android:text="@string/approximate_repayments"/>
+                        android:contentDescription="@string/additionalCreditLimitTextLabel"
+                        android:text="@string/approximate_repayments" />
 
                     <LinearLayout
                         android:id="@+id/llCPAdditionalCreditLimit"
@@ -175,25 +183,28 @@
 
                         <ProgressBar
                             android:id="@+id/cpAdditionalCreditLimit"
-                            style="@style/cliCircularProgressBarStyle"/>
+                            style="@style/cliCircularProgressBarStyle"
+                            android:contentDescription="@string/additionalCreditLimitLoadingIndicator" />
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             android:id="@+id/tvAdditionalCreditLimitAmount"
                             style="@style/offer_relative_rowtype_value_style"
-                            android:text="R 0"/>
+                            android:contentDescription="@string/additionalCreditLimitValueLabel"
+                            android:text="R 0" />
 
 
                     </LinearLayout>
                 </RelativeLayout>
 
-                <View style="@style/bottom_line_with_margin"/>
+                <View style="@style/bottom_line_with_margin" />
 
                 <RelativeLayout style="@style/offer_relative_rowtype_style">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         style="@style/offer_relative_rowtype_key_style"
                         android:layout_toStartOf="@+id/llCPNewCreditLimit"
-                        android:text="@string/term"/>
+                        android:contentDescription="@string/newCreditLimitTextLabel"
+                        android:text="@string/term" />
 
                     <LinearLayout
                         android:id="@+id/llCPNewCreditLimit"
@@ -201,13 +212,15 @@
 
                         <ProgressBar
                             android:id="@+id/cpNewCreditAmount"
-                            style="@style/cliCircularProgressBarStyle"/>
+                            style="@style/cliCircularProgressBarStyle"
+                            android:contentDescription="@string/newCreditLimitLoadingIndicator" />
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             android:id="@+id/tvNewCreditLimitAmount"
                             style="@style/offer_relative_rowtype_value_style"
+                            android:contentDescription="@string/newCreditLimitValueLabel"
                             android:text="R 0"
-                            app:WTextView_font="medium_bold"/>
+                            app:WTextView_font="medium_bold" />
 
                     </LinearLayout>
                 </RelativeLayout>
@@ -217,7 +230,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/default_background"
-                    android:orientation="vertical"/>
+                    android:orientation="vertical" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 

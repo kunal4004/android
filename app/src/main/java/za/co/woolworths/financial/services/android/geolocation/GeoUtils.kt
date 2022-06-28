@@ -6,14 +6,11 @@ import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
+import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapView
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -50,29 +47,29 @@ class GeoUtils {
 
         fun getStoreDetails(storeId: String?, stores: List<Store>?): Store? {
             stores?.forEach {
-               it.storeId == storeId
-               return it
+                if (it.storeId == storeId) {
+                    return it
+                }
             }
             return null
         }
 
-        fun showFirstFourLocationInMap(addressStorList: List<Store>?, googleMap: GoogleMap?, context: Context) {
-            addressStorList?.let {
+        fun showFirstFourLocationInMap(addressStoreList: List<Store>?, dynamicMapView: DynamicMapView?, context: Context?) {
+            addressStoreList?.let {
                 for (i in 0..3) {
-                    googleMap?.addMarker(
-                        MarkerOptions().position(
-                            LatLng(
-                                addressStorList?.get(i)?.latitude!!,
-                                addressStorList?.get(i)?.longitude!!
-                            )
-                        ).icon(BitmapFromVector(context, R.drawable.pin))
+                    if (context != null) {
+                        dynamicMapView?.addMarker(
+                            context,
+                            addressStoreList?.get(i)?.latitude,
+                            addressStoreList?.get(i)?.longitude,
+                            R.drawable.pin
+                        )
+                    }
+                    dynamicMapView?.moveCamera(
+                        addressStoreList.get(i)?.latitude,
+                        addressStoreList.get(i)?.longitude,
+                        11f
                     )
-                    googleMap?.moveCamera(
-                        CameraUpdateFactory.newLatLngZoom(
-                            LatLng(
-                        addressStorList.get(i)?.latitude!!,
-                        addressStorList.get(i)?.longitude!!
-                    ), 11f))
                 }
             }
         }

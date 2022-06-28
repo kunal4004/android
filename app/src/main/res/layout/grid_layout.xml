@@ -20,6 +20,14 @@
             android:orientation="vertical">
 
             <ImageView
+                android:id="@+id/plpBackIcon"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_width="@dimen/twenty_dp"
+                android:layout_height="@dimen/twenty_dp"
+                android:src="@drawable/back24"/>
+
+            <ImageView
                 android:id="@+id/toolbarPLPIcon"
                 android:layout_width="@dimen/twenty_dp"
                 android:layout_height="@dimen/twenty_dp"
@@ -63,6 +71,15 @@
                 android:textAllCaps="true"
                 android:textColor="@color/black"
                 android:textSize="@dimen/twelve_sp" />
+
+            <ImageView
+                android:id="@+id/plpSearchIcon"
+                android:layout_width="@dimen/twenty_dp"
+                android:layout_height="@dimen/twenty_dp"
+                android:layout_marginRight="@dimen/ten_dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_search"/>
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 
@@ -71,7 +88,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbarPLP"
-        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_marginTop="@dimen/one_dp"
         android:background="@color/default_background"
         android:orientation="vertical">
 
@@ -85,7 +102,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/sortAndRefineLayout"
-            android:layout_marginTop="@dimen/one_dp"
             android:visibility="gone" />
 
 

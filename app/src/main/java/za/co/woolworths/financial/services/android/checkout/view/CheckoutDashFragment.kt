@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
@@ -44,6 +45,8 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddr
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FoodSubstitution
 import za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog.Companion.ARGS_KEY_COLLECTION_DATES
 import za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog.Companion.ARGS_KEY_SELECTED_POSITION
+import za.co.woolworths.financial.services.android.checkout.view.CustomDriverTipBottomSheetDialog.Companion.MAX_TIP_VALUE
+import za.co.woolworths.financial.services.android.checkout.view.CustomDriverTipBottomSheetDialog.Companion.MIN_TIP_VALUE
 import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBottomSheetDialog.Companion.ERROR_TYPE_CONFIRM_COLLECTION_ADDRESS
 import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBottomSheetDialog.Companion.ERROR_TYPE_SHIPPING_DETAILS_COLLECTION
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CollectionTimeSlotsAdapter
@@ -304,9 +307,12 @@ class CheckoutDashFragment : Fragment(),
 
     private fun callConfirmLocationAPI() {
         initShimmerView()
-        val  confirmLocationAddress = ConfirmLocationAddress(defaultAddress?.placesId, defaultAddress?.nickname)
-        var body = ConfirmLocationRequest(Delivery.DASH.type, confirmLocationAddress,
-            defaultAddress?.nickname, "checkout")
+        val confirmLocationAddress =
+            ConfirmLocationAddress(defaultAddress?.placesId, defaultAddress?.nickname)
+        var body = ConfirmLocationRequest(
+            Delivery.DASH.type, confirmLocationAddress,
+            defaultAddress?.nickname, "checkout"
+        )
 
         checkoutAddAddressNewUserViewModel?.getConfirmLocationDetails(body)
             .observe(viewLifecycleOwner) { response ->
@@ -335,8 +341,11 @@ class CheckoutDashFragment : Fragment(),
                                 }
                                 response.orderSummary?.fulfillmentDetails?.let {
                                     if (!it.deliveryType.isNullOrEmpty()) {
-                                        Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(
-                                            it))
+                                        Utils.savePreferredDeliveryLocation(
+                                            ShoppingDeliveryLocation(
+                                                it
+                                            )
+                                        )
                                     }
                                 }
                                 initializeOrderSummary(response.orderSummary)
@@ -443,9 +452,12 @@ class CheckoutDashFragment : Fragment(),
 
     private fun initializeDashTimeSlots() {
 
-        checkoutCollectingTimeDetailsLayout?.tvCollectionTimeDetailsTitle?.text = getString(R.string.select_delivery_timeslot)
-        checkoutCollectingTimeDetailsLayout?.tvCollectionTimeDetailsDate?.text = getString(R.string.dash_delivery_date)
-        checkoutCollectingTimeDetailsLayout?.tvCollectionTimeDetailsTimeSlot?.text = getString(R.string.dash_delivery_timeslot)
+        checkoutCollectingTimeDetailsLayout?.tvCollectionTimeDetailsTitle?.text =
+            getString(R.string.select_delivery_timeslot)
+        checkoutCollectingTimeDetailsLayout?.tvCollectionTimeDetailsDate?.text =
+            getString(R.string.dash_delivery_date)
+        checkoutCollectingTimeDetailsLayout?.tvCollectionTimeDetailsTimeSlot?.text =
+            getString(R.string.dash_delivery_timeslot)
         recyclerViewCollectionTimeSlots?.apply {
             layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
             adapter = dashTimeSlotsAdapter
@@ -505,16 +517,27 @@ class CheckoutDashFragment : Fragment(),
                         true // Because we want to change this view after the value entered from user.
                     selectedDriverTipValue = (it as TextView).text as? String
 
-                    if (it.tag == driverTipOptionsList!!.lastIndex) {
-                        val tipValue = if (titleTextView.text.toString()
-                                .equals(driverTipOptionsList!!.lastOrNull())
-                        ) getString(R.string.empty) else removeRandFromAmount(titleTextView.text.toString()
-                            .trim())
+                    if (it.tag == driverTipOptionsList?.lastIndex) {
+                        val tipValue =
+                            if (titleTextView.text.toString() == driverTipOptionsList?.lastOrNull())
+                                getString(R.string.empty)
+                            else removeRandFromAmount(
+                                titleTextView.text.toString().trim()
+                            )
                         val customDriverTipDialog = CustomDriverTipBottomSheetDialog.newInstance(
-                            getString(R.string.tip_your_dash_driver),
-                            getString(R.string.enter_your_own_amount), tipValue, this)
-                        customDriverTipDialog.show(requireFragmentManager(),
-                            CustomDriverTipBottomSheetDialog::class.java.simpleName)
+                            requireContext().getString(R.string.tip_your_dash_driver),
+                            requireContext().getString(
+                                R.string.enter_your_own_amount,
+                                AppConfigSingleton.dashConfig?.driverTip?.minAmount?.toInt()
+                                    ?: MIN_TIP_VALUE.toInt(),
+                                AppConfigSingleton.dashConfig?.driverTip?.maxAmount?.toInt()
+                                    ?: MAX_TIP_VALUE.toInt()
+                            ), tipValue, this
+                        )
+                        customDriverTipDialog.show(
+                            requireActivity().supportFragmentManager,
+                            CustomDriverTipBottomSheetDialog::class.java.simpleName
+                        )
                     } else {
                         isSameSelection = resetAllDriverTip(it.tag as Int)
                         if (isSameSelection) {
@@ -546,10 +569,14 @@ class CheckoutDashFragment : Fragment(),
         var sameSelection = false
         for ((index) in driverTipOptionsList!!.withIndex()) {
             val titleTextView: TextView? = view?.findViewWithTag(index)
-            if (titleTextView?.textColors?.defaultColor?.equals(ContextCompat.getColor(
-                    requireContext(),
-                    R.color.white)) == true && titleTextView.tag.equals(
-                    selectedTag)
+            if (titleTextView?.textColors?.defaultColor?.equals(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.white
+                    )
+                ) == true && titleTextView.tag.equals(
+                    selectedTag
+                )
             ) {
                 sameSelection = true
             }
@@ -752,7 +779,7 @@ class CheckoutDashFragment : Fragment(),
                 txtOrderSummaryPromoCodeDiscountValue?.text =
                     "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.promoCodeDiscount)
 
-                txtOrderTotalValueCollection?.text =
+                txtOrderTotalValue?.text =
                     CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.total)
             }
         }
@@ -923,6 +950,7 @@ class CheckoutDashFragment : Fragment(),
 
     private fun getShipmentDetailsBody() = ShippingDetailsBody().apply {
         requestFrom = "express"
+        shipToAddressName = savedAddress?.defaultAddressNickname
         joinBasket = true
         foodShipOnDate = selectedTimeSlot?.stringShipOnDate
         otherShipOnDate = ""
@@ -944,7 +972,8 @@ class CheckoutDashFragment : Fragment(),
             it.fulfillmentDetails.storeId
         }
         deliveryType = Delivery.DASH.type
-        address = ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
+        address =
+            ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
         driverTip = removeRandFromAmount(selectedDriverTipValue ?: "0.0").toDouble()
         KotlinUtils.getUniqueDeviceID {
             fireBaseToken = Utils.getToken()
@@ -1010,9 +1039,10 @@ class CheckoutDashFragment : Fragment(),
             driverTipTextView?.findViewWithTag(driverTipOptionsList?.lastIndex)
         driverTipOptionsList?.lastIndex?.let { resetAllDriverTip(it) }
         titleTextView?.text = "R$tipValue "
-        val image = context?.resources?.getDrawable(R.drawable.edit_icon_white)
-        image?.setBounds(0, 0, image.intrinsicWidth, image.intrinsicHeight)
-        titleTextView?.setCompoundDrawables(null, null, image, null)
+        val image = AppCompatResources.getDrawable(requireContext(), R.drawable.edit_icon_white)
+        titleTextView?.setCompoundDrawablesWithIntrinsicBounds(null, null, image, null)
+        titleTextView?.compoundDrawablePadding = resources.getDimension(R.dimen.five_dp).toInt()
+
         titleTextView?.background =
             bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
         titleTextView?.setTextColor(

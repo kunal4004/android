@@ -50,6 +50,7 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.Shoppin
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
+import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
@@ -492,7 +493,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                         R.color.black
                     )
                 )
-                tvNativeCheckoutDeliveringValue?.text = selectedStore
+                tvNativeCheckoutDeliveringValue?.text = convertToTitleCase(selectedStore)
             } else
                 checkoutCollectingFromLayout.visibility = View.GONE
         } else

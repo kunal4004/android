@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.startup.view
 
 import android.app.Activity
 import android.content.Intent
+import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.media.MediaPlayer
@@ -13,7 +14,7 @@ import android.view.View
 import android.view.WindowManager
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProviders
 import com.awfs.coordination.R
@@ -22,14 +23,12 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import kotlinx.android.synthetic.main.activity_splash_screen.*
 import kotlinx.android.synthetic.main.activity_startup.*
-import kotlinx.android.synthetic.main.activity_startup_with_message.*
 import kotlinx.android.synthetic.main.activity_startup_without_video.*
 import za.co.wigroup.androidutils.Util
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.firebase.FirebaseConfigUtils
 import za.co.woolworths.financial.services.android.firebase.model.ConfigData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.startup.service.network.StartupApiHelper
@@ -40,7 +39,6 @@ import za.co.woolworths.financial.services.android.startup.viewmodel.ViewModelFa
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.util.*
-import java.util.*
 
 class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     View.OnClickListener {
@@ -52,24 +50,37 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     private var actionUrlFirst: String? = AppConstant.EMPTY_STRING
     private var actionUrlSecond: String? = AppConstant.EMPTY_STRING
     private var remoteConfigJsonString: String = AppConstant.EMPTY_STRING
+    private var isAppSideLoaded = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupViewModel()
-        setSupportActionBar(mToolbar)
         setUpFirebaseconfig()
-        setContentView(R.layout.activity_startup)
 
-        window?.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
-        if (supportActionBar?.isShowing == true)
-            supportActionBar?.hide()
-        progressBar?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
-        retry?.setOnClickListener(this@StartupActivity)
-        deeplinkIntent = intent
-        init()
+        try {
+            // Try to get a drawable, to make sure the app has not
+            // been sideloaded to a device with a different pixel density
+            AppCompatResources.getDrawable(this, R.drawable.splash_w_logo)
+
+            setSupportActionBar(mToolbar)
+            setContentView(R.layout.activity_startup)
+
+            window?.setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
+            )
+            if (supportActionBar?.isShowing == true)
+                supportActionBar?.hide()
+            progressBar?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
+            retry?.setOnClickListener(this@StartupActivity)
+            deeplinkIntent = intent
+            init()
+        } catch (e: Resources.NotFoundException) {
+            // Consider the app has been sideloaded and the split APK doesn't have
+            // the required drawables to run on this specific device
+            setContentView(R.layout.activity_startup_resourcenotfound)
+            isAppSideLoaded = true
+        }
     }
 
     private fun setUpFirebaseconfig() {
@@ -448,21 +459,27 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     override fun onStart() {
         super.onStart()
-        if (Utils.checkForBinarySu() && CommonUtils.isRooted(this) && !Util.isDebug(
-                this.applicationContext
-            )
-        ) {
+        if (isAppSideLoaded) {
             Utils.setScreenName(
-                FirebaseManagerAnalyticsProperties.ScreenNames.DEVICE_ROOTED_AT_STARTUP
+                FirebaseManagerAnalyticsProperties.ScreenNames.DEVICE_SIDELOADED_AT_STARTUP
             )
-            val rootedDeviceInfoFragment = newInstance(getString(R.string.rooted_phone_desc))
-            rootedDeviceInfoFragment.show(
-                supportFragmentManager,
-                RootedDeviceInfoFragment::class.java.simpleName
-            )
-            return
+        } else {
+            if (Utils.checkForBinarySu() && CommonUtils.isRooted(this) && !Util.isDebug(
+                    this.applicationContext
+                )
+            ) {
+                Utils.setScreenName(
+                    FirebaseManagerAnalyticsProperties.ScreenNames.DEVICE_ROOTED_AT_STARTUP
+                )
+                val rootedDeviceInfoFragment = newInstance(getString(R.string.rooted_phone_desc))
+                rootedDeviceInfoFragment.show(
+                    supportFragmentManager,
+                    RootedDeviceInfoFragment::class.java.simpleName
+                )
+                return
+            }
+            onStartInit()
         }
-        onStartInit()
     }
 
     fun onStartInit() {

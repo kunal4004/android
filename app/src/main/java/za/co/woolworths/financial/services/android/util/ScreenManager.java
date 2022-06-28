@@ -180,6 +180,18 @@ public class ScreenManager {
         }
     }
 
+    public static void presentSSOSigninActivity(Activity activity, int requestCode, Boolean isUserBrowsing) {
+        if (activity != null) {
+            Intent intent = new Intent(activity, SSOActivity.class);
+            intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
+            intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
+            intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue());
+            intent.putExtra(SSOActivity.IS_USER_BROWSING, isUserBrowsing);
+            activity.startActivityForResult(intent, requestCode);
+            activity.overridePendingTransition(0, 0);
+        }
+    }
+
     public static void openProductDetailFragment(Activity activity, String productName, String strProductList) {
         if (!(activity instanceof BottomNavigationActivity)) {
             return;

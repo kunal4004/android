@@ -297,6 +297,6 @@ public class CheckOutFragment extends Fragment {
 
     public void initPostCheckout() {
         QueryBadgeCounter.getInstance().setCartCount(0);
-        new ConfirmLocation().postRequest(Utils.getPreferredDeliveryLocation());
+        new ConfirmLocation().postRequest(Utils.getPreferredDeliveryLocation(), false, requireActivity(), null);
     }
 }

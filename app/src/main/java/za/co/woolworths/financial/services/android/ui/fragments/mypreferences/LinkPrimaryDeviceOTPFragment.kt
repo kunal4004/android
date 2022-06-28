@@ -9,11 +9,14 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.os.Handler
 import android.text.TextUtils
+import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
@@ -79,6 +82,8 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
                     linkDeviceOTPEdtTxt4?.requestFocus(View.FOCUS_DOWN)
                 }
             }
+        } else if (keyCode == KeyEvent.KEYCODE_ENTER) {
+            Utils.hideSoftKeyboard(activity)
         }
         false
     }

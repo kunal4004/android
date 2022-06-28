@@ -14,15 +14,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <fragment
-            android:id="@+id/gMap"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
+        <za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapView
+            android:id="@+id/dynamicMapView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
     </FrameLayout>
 
     <ProgressBar

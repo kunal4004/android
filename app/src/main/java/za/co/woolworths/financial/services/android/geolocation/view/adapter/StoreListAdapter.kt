@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.store_row_layout.view.*
 import za.co.woolworths.financial.services.android.common.changeMeterToKM
+import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 

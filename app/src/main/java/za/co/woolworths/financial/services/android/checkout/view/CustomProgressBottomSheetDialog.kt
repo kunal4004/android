@@ -45,11 +45,12 @@ class CustomProgressBottomSheetDialog : WBottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         showProgressBar()
-        progressTitleTextView?.text = bindString(R.string.amt_tip_added, mTipValue)
+        progressTitleTextView?.text = requireContext().getString(R.string.amt_tip_added, mTipValue.toDoubleOrNull())
     }
 
     private fun showProgressBar() {
         gotItActionButton?.visibility = View.VISIBLE
+        success_tick?.colorCode = R.color.color_4ABB77
         val circularProgressIndicator =
             ProgressIndicator(circularProgressIndicator, success_frame, imFailureIcon, success_tick)
         circularProgressIndicator.apply {

@@ -11,6 +11,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import com.awfs.coordination.R
 import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.my_card_activity.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -33,6 +34,7 @@ import za.co.woolworths.financial.services.android.util.wenum.StoreCardViewType
 import java.util.*
 
 
+@AndroidEntryPoint
 class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
 
     companion object {
@@ -210,6 +212,4 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         supportFragmentManager.findFragmentById(R.id.flMyCard)?.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
-
-    fun getStoreCardDetail() = mStoreCardDetail
 }

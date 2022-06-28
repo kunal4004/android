@@ -1,16 +1,20 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
 import android.os.Bundle
+import android.text.InputFilter
+import android.text.InputFilter.LengthFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.core.widget.addTextChangedListener
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.driver_tip_custom_dialog.*
-import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.Utils
+
 
 /**
  * Created by Kunal Uttarwar on 25/03/22.
@@ -29,9 +33,9 @@ class CustomDriverTipBottomSheetDialog : WBottomSheetDialogFragment() {
         private const val TITLE = "TITLE"
         private const val SUB_TITLE = "SUB_TITLE"
         private const val TIP_VALUE = "TIP_VALUE"
-        private const val MIN_TIP_VALUE =
+        const val MIN_TIP_VALUE =
             5.00 // ToDo This will be taken from config once config is ready.
-        private const val MAX_TIP_VALUE =
+        const val MAX_TIP_VALUE =
             1000.00 // ToDo This will be taken from config once config is ready.
         private var clickListner: ClickListner? = null
 
@@ -46,6 +50,14 @@ class CustomDriverTipBottomSheetDialog : WBottomSheetDialogFragment() {
                 putString(SUB_TITLE, subTitle)
                 putString(TIP_VALUE, tipValue)
                 clickListner = listner
+            }.apply {
+                dialog?.window?.let{ window ->
+                    val params = dialog!!.window!!.attributes
+                    params.width = WindowManager.LayoutParams.MATCH_PARENT
+                    params.height = WindowManager.LayoutParams.MATCH_PARENT
+                    window.attributes = params
+                    window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE )
+                }
             }
     }
 
@@ -68,9 +80,16 @@ class CustomDriverTipBottomSheetDialog : WBottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         titleTextView?.text = mTitle
         subTitleTextView?.text = mSubTitle
         driverTipAmtEditText?.setText(mTipValue)
+        driverTipAmtEditText?.filters =
+            getMaxLengthFilter(
+                AppConfigSingleton.dashConfig?.driverTip?.maxAmount?.toString()?.length
+                ?: MAX_TIP_VALUE.toString().length,
+                2
+            )
         if (driverTipAmtEditText?.text.isNullOrEmpty())
             Utils.fadeInFadeOutAnimation(buttonConfirm, true)
         driverTipAmtEditText.addTextChangedListener { amount ->
@@ -78,19 +97,25 @@ class CustomDriverTipBottomSheetDialog : WBottomSheetDialogFragment() {
                 amount.isNullOrEmpty() -> {
                     Utils.fadeInFadeOutAnimation(buttonConfirm, true)
                 }
-                amount.toString().toDouble() < MIN_TIP_VALUE -> {
+                amount.toString().toDouble() < AppConfigSingleton.dashConfig?.driverTip?.minAmount ?: MIN_TIP_VALUE -> {
                     // Driver tip should always be greater than or equal R5
                     Utils.fadeInFadeOutAnimation(buttonConfirm, true)
                     driverTipErrorText?.visibility = View.VISIBLE
                     driverTipErrorText?.text =
-                        requireContext().getString(R.string.driver_minimum_tip_amt_error, MIN_TIP_VALUE)
+                        requireContext().getString(
+                            R.string.driver_minimum_tip_amt_error,
+                            MIN_TIP_VALUE
+                        )
                 }
-                amount.toString().toDouble() > MAX_TIP_VALUE -> {
+                amount.toString().toDouble() > AppConfigSingleton.dashConfig?.driverTip?.maxAmount ?: MAX_TIP_VALUE -> {
                     // Driver tip should always be less than R1000
                     Utils.fadeInFadeOutAnimation(buttonConfirm, true)
                     driverTipErrorText?.visibility = View.VISIBLE
                     driverTipErrorText?.text =
-                        requireContext().getString(R.string.driver_maximum_tip_amt_error, MAX_TIP_VALUE)
+                        requireContext().getString(
+                            R.string.driver_maximum_tip_amt_error,
+                            MAX_TIP_VALUE
+                        )
                 }
                 else -> {
                     driverTipErrorText?.visibility = View.GONE
@@ -105,8 +130,22 @@ class CustomDriverTipBottomSheetDialog : WBottomSheetDialogFragment() {
             clickListner?.onConfirmClick(mTipValue)
             val customProgressBottomSheetDialog =
                 CustomProgressBottomSheetDialog.newInstance(mTipValue)
-            customProgressBottomSheetDialog.show(requireFragmentManager(),
-                CustomProgressBottomSheetDialog::class.java.simpleName)
+            customProgressBottomSheetDialog.show(
+                requireFragmentManager(),
+                CustomProgressBottomSheetDialog::class.java.simpleName
+            )
         }
     }
+
+    private fun getMaxLengthFilter(lengthBeforeDecimal: Int, decimalPlace: Int): Array<InputFilter?> {
+        val filterArray = arrayOfNulls<InputFilter>(2)
+        filterArray[0] =  LengthFilter(lengthBeforeDecimal + decimalPlace)
+        filterArray[1] =
+            DecimalDigitsInputFilter(
+            digitsBeforeZero = lengthBeforeDecimal,
+            digitsAfterZero = decimalPlace
+        )
+        return filterArray
+    }
 }
+

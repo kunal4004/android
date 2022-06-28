@@ -220,7 +220,7 @@
                 android:id="@+id/recipientDetailsTitle"
                 style="@style/futura_semi_bold_black"
                 android:contentDescription="@string/cd_ccd_lablerecipientdetailstitle"
-                android:letterSpacing="0.1"
+                android:lineSpacingExtra="@dimen/two_sp"
                 android:text="@string/recipient_details"
                 android:textSize="@dimen/twenty_sp"
                 app:layout_constraintRight_toRightOf="@id/right_guideline"

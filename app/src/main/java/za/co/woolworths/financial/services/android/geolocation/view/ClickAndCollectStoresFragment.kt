@@ -1,37 +1,36 @@
 package za.co.woolworths.financial.services.android.geolocation.view
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.awfs.coordination.R
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import kotlinx.android.synthetic.main.fragment_click_and_collect_stores.*
-import za.co.woolworths.financial.services.android.geolocation.network.model.Store
-import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
-import za.co.woolworths.financial.services.android.geolocation.view.adapter.StoreListAdapter
-import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import com.google.android.gms.maps.SupportMapFragment
-import android.text.Editable
-import android.text.TextWatcher
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.fragment_click_and_collect_stores.*
 import kotlinx.android.synthetic.main.geo_location_delivery_address.*
 import kotlinx.android.synthetic.main.no_connection.view.*
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.geolocation.GeoUtils
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.showFirstFourLocationInMap
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
+import za.co.woolworths.financial.services.android.geolocation.network.model.Store
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
+import za.co.woolworths.financial.services.android.geolocation.view.adapter.StoreListAdapter
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate
+import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.AppConstant
@@ -46,10 +45,9 @@ import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
+class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
     StoreListAdapter.OnStoreSelected, View.OnClickListener, TextWatcher, VtoTryAgainListener {
 
-    private lateinit var mapFragment: SupportMapFragment
     private var mValidateLocationResponse: ValidateLocationResponse? = null
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     private var dataStore: Store? = null
@@ -66,8 +64,6 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
                 this.putBundle(BUNDLE, bundle)
             }
     }
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setStyle(STYLE_NO_TITLE, android.R.style.Theme_Material_Light_NoActionBar_Fullscreen)
@@ -87,7 +83,6 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
         }
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -98,15 +93,13 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpViewModel()
+        dynamicMapView?.initializeMap(savedInstanceState, this)
         tvConfirmStore?.setOnClickListener(this)
         ivCross?.setOnClickListener(this)
         btChange?.setOnClickListener(this)
         etEnterNewAddress?.addTextChangedListener(this)
         dialog?.window
             ?.attributes?.windowAnimations = R.style.DialogFragmentAnimation
-        mapFragment = childFragmentManager
-            .findFragmentById(R.id.mapView) as SupportMapFragment
-        mapFragment.getMapAsync(this)
         if (isComingFromConfirmAddress == true) {
             placeId?.let {
                 if (confirmAddressViewModel.isConnectedToInternet(requireActivity())) {
@@ -120,12 +113,6 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
             setAddressUI(mValidateLocationResponse?.validatePlace?.stores,
                 mValidateLocationResponse)
         }
-    }
-
-    override fun onMapReady(googleMap: GoogleMap?) {
-        googleMap?.uiSettings?.setAllGesturesEnabled(false)
-        val addressStorList = mValidateLocationResponse?.validatePlace?.stores
-        GeoUtils.showFirstFourLocationInMap(addressStorList, googleMap, requireContext())
     }
 
     private fun setAddressUI(
@@ -276,4 +263,35 @@ class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
         placeId?.let { getDeliveryDetailsFromValidateLocation(it) }
     }
 
+    override fun onMapReady() {
+        dynamicMapView?.setAllGesturesEnabled(false)
+        showFirstFourLocationInMap(mValidateLocationResponse?.validatePlace?.stores, dynamicMapView, requireContext())
+    }
+
+    override fun onMarkerClicked(marker: DynamicMapMarker) { }
+
+    override fun onResume() {
+        super.onResume()
+        dynamicMapView?.onResume()
+    }
+
+    override fun onPause() {
+        dynamicMapView?.onPause()
+        super.onPause()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        dynamicMapView?.onLowMemory()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        dynamicMapView?.onSaveInstanceState(outState)
+    }
+
+    override fun onDestroyView() {
+        dynamicMapView?.onDestroy()
+        super.onDestroyView()
+    }
 }

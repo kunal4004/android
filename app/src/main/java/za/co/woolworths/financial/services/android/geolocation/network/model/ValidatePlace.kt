@@ -40,4 +40,7 @@ data class ValidatePlace (
 
     @SerializedName("firstAvailableOtherDeliveryDate")
     var firstAvailableOtherDeliveryDate: String? = null,
+
+    @SerializedName("deliveryDetails")
+    var deliveryDetails: String? = null
 ): Serializable

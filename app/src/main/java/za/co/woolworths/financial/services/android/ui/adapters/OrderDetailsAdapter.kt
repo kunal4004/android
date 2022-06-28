@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.order_details_gift_commerce_item.view.*
 import kotlinx.android.synthetic.main.order_history_chat_layout.view.*
 import kotlinx.android.synthetic.main.order_history_details_total_amount_layout.view.*
 import kotlinx.android.synthetic.main.order_history_type.view.*
+import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
@@ -128,8 +129,8 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                             Delivery.CNC -> {
                                 deliveryAddressTitle?.text =
                                     context?.resources?.getString(R.string.collection_store)
-                                it.fulfillmentDetails.storeName?.let {
-                                    deliveryAddress?.text = it
+                                it.fulfillmentDetails?.storeName?.let {
+                                    deliveryAddress?.text = convertToTitleCase(it)
                                 }
                                 deliveryAddressTitle?.contentDescription =
                                     context?.resources?.getString(R.string.collection_location_title)
@@ -153,10 +154,10 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                                 deliveryAddressTitle?.text =
                                     context?.resources?.getString(R.string.delivery_address)
                                 deliveryAddress?.text =
-                                    item.orderSummary?.fulfillmentDetails?.address?.address1
+                                    item.orderSummary?.fulfillmentDetails?.address?.address1?.let { convertToTitleCase(it) }
                                 orderType?.text = context.getString(R.string.dash_delivery)
                                 if (item.orderSummary.orderStatus.isNullOrEmpty())
-                                    orderState?.text = item.orderSummary.state.drop(6)
+                                    orderState?.text = item.orderSummary.state?.drop(6)
                                 else
                                     orderState?.text = item.orderSummary.orderStatus
 
@@ -165,13 +166,14 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                         }
                     }
 
-                    if (!item.orderSummary?.deliveryDates.isJsonNull) {
+                    if (!item.orderSummary?.deliveryDates?.isJsonNull!!) {
                         val deliveryDates: HashMap<String, String> = hashMapOf()
                         deliveryDates.clear()
                         itemView.deliveryDateContainer.removeAllViews()
-                        for (i in 0 until item.orderSummary?.deliveryDates.asJsonArray.size()) {
-                            deliveryDates.putAll(Gson().fromJson<Map<String, String>>(item.orderSummary?.deliveryDates.asJsonArray.get(
-                                i).toString(), object : TypeToken<Map<String, String>>() {}.type))
+                        for (i in 0 until (item.orderSummary?.deliveryDates?.asJsonArray?.size() ?: 0)) {
+                            deliveryDates.putAll(Gson().fromJson<Map<String, String>>(
+                                item.orderSummary?.deliveryDates?.asJsonArray?.get(
+                                    i).toString(), object : TypeToken<Map<String, String>>() {}.type))
                         }
                         when (deliveryDates.keys.size) {
                             0 -> {

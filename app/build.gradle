@@ -5,17 +5,18 @@ apply plugin: "kotlin-kapt"
 apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: "androidx.navigation.safeargs"
-apply plugin: 'com.google.gms.google-services'  // Google Services plugin
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.huawei.agconnect'
 apply plugin: 'dagger.hilt.android.plugin'
 
 android {
 
     def major = "9"
-    def minor = "1"
+    def minor = "5"
     def fix = "0"
     def jobNumberProduction = 184
-    def jobNumberQa = 590
-    def jobNumberFeature = 15716
+    def jobNumberQa = 600
+    def jobNumberFeature = 600
 
     dataBinding {
         enabled = true
@@ -66,7 +67,8 @@ android {
         buildConfigField("String", "HOST", '"' + System.env.WigroupServer_API_URL + '"')
         buildConfigField("String", "SHA1", '"' + System.env.WigroupServer_API_HASH + '"')
         buildConfigField("String", "ENV", '"' + System.env.Environment + '"')
-        resValue "string", "maps_api_key", '"' + System.env.MAPS_API_KEY + '"'
+        resValue "string", "maps_google_api_key", '"' + System.env.MAPS_GOOGLE_API_KEY + '"'
+        resValue "string", "maps_huawei_api_key", '"' + System.env.MAPS_HUAWEI_API_KEY + '"'
     }
 
     def secureProps = new Properties()
@@ -89,6 +91,12 @@ android {
         // MARK - Debug build types
         debug {
             debuggable true
+            packagingOptions  {
+                doNotStrip "*/arm64-v8a/libucs-credential.so"
+                doNotStrip "*/armeabi-v7a/libucs-credential.so"
+                doNotStrip "*/x86/libucs-credential.so"
+                doNotStrip "*/x86_64/libucs-credential.so"
+            }
             signingConfig signingConfigs.woneappQa
         }
 
@@ -102,6 +110,12 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-fresco.pro'
+            packagingOptions  {
+                doNotStrip "*/arm64-v8a/libucs-credential.so"
+                doNotStrip "*/armeabi-v7a/libucs-credential.so"
+                doNotStrip "*/x86/libucs-credential.so"
+                doNotStrip "*/x86_64/libucs-credential.so"
+            }
         }
     }
 
@@ -119,7 +133,8 @@ android {
 
                 buildConfigField("String", "HOST", '"' + secureProps['URL_QA_' + apiKey] + '"')
                 buildConfigField("String", "SHA1", '"' + secureProps['HASH_QA_' + apiKey] + '"')
-                resValue "string", "maps_api_key", (secureProps["MAPS_API_KEY"] ?: "Google Maps API Key")
+                resValue "string", "maps_google_api_key", (secureProps["MAPS_GOOGLE_API_KEY"] ?: "Google Maps API Key")
+                resValue "string", "maps_huawei_api_key", (secureProps["MAPS_HUAWEI_API_KEY"] ?: "Huawei Maps API Key")
 
                 signingConfig signingConfigs.woneappQa
             }
@@ -137,7 +152,8 @@ android {
 
                 buildConfigField("String", "HOST", '"' + secureProps['URL_PROD_' + apiKey] + '"')
                 buildConfigField("String", "SHA1", '"' + secureProps['HASH_PROD_' + apiKey] + '"')
-                resValue "string", "maps_api_key", (secureProps["MAPS_API_KEY"] ?: "Google Maps API Key")
+                resValue "string", "maps_google_api_key", (secureProps["MAPS_GOOGLE_API_KEY"] ?: "Google Maps API Key")
+                resValue "string", "maps_huawei_api_key", (secureProps["MAPS_HUAWEI_API_KEY"] ?: "Huawei Maps API Key")
             }
 
             if (file("../ProductionKeystore.properties").exists()) {
@@ -165,7 +181,8 @@ android {
 
                 buildConfigField("String", "HOST", '"' + secureProps['URL_QA_' + apiKey] + '"')
                 buildConfigField("String", "SHA1", '"' + secureProps['HASH_QA_' + apiKey] + '"')
-                resValue "string", "maps_api_key", (secureProps["MAPS_API_KEY"] ?: "Huawei MapKit API Key")
+                resValue "string", "maps_google_api_key", (secureProps["MAPS_GOOGLE_API_KEY"] ?: "Google Maps API Key")
+                resValue "string", "maps_huawei_api_key", (secureProps["MAPS_HUAWEI_API_KEY"] ?: "Huawei Maps API Key")
 
                 signingConfig signingConfigs.woneappQa
             }
@@ -183,7 +200,8 @@ android {
 
                 buildConfigField("String", "HOST", '"' + secureProps['URL_PROD_' + apiKey] + '"')
                 buildConfigField("String", "SHA1", '"' + secureProps['HASH_PROD_' + apiKey] + '"')
-                resValue "string", "maps_api_key", (secureProps["MAPS_API_KEY"] ?: "Huawei MapKit API Key")
+                resValue "string", "maps_google_api_key", (secureProps["MAPS_GOOGLE_API_KEY"] ?: "Google Maps API Key")
+                resValue "string", "maps_huawei_api_key", (secureProps["MAPS_HUAWEI_API_KEY"] ?: "Huawei Maps API Key")
             }
 
             if (file("../ProductionKeystore.properties").exists()) {
@@ -348,9 +366,10 @@ dependencies {
     implementation 'com.google.maps:google-maps-services:2.0.0'
 
     // Huawei
-    huaweiQaImplementation 'com.huawei.hms:location:5.1.0.303'
-    huaweiProductionImplementation 'com.huawei.hms:location:5.1.0.303'
-
+    huaweiQaImplementation 'com.huawei.hms:location:6.4.0.300'
+    huaweiProductionImplementation 'com.huawei.hms:location:6.4.0.300'
+    huaweiQaImplementation 'com.huawei.hms:maps:6.3.1.300'
+    huaweiProductionImplementation 'com.huawei.hms:maps:6.3.1.300'
 }
 
 apply plugin: 'com.google.gms.google-services'

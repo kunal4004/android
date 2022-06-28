@@ -42,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.net.URLEncoder
 
@@ -98,6 +99,23 @@ object OneAppService : RetrofitConfig() {
         } else {
             mApiInterface.getStoresLocationItem("", "", loc.latitude.toString(),
                 loc.longitude.toString(), getSessionToken(), getDeviceIdentityToken(), sku, startRadius, endRadius, true)
+        }
+    }
+
+    suspend fun productStoreFinder(sku: String, startRadius: String?, endRadius: String?): retrofit2.Response<LocationResponse> {
+        val loc = getMyLocation()
+        return withContext(Dispatchers.IO) {
+            if ("" == startRadius) {
+                //This should never happen for now
+                mApiInterface.productStoreFinder("", "", loc.latitude.toString(),
+                    loc.longitude.toString(), getSessionToken(), getDeviceIdentityToken(), sku,
+                    startRadius, endRadius, true)
+            } else {
+                mApiInterface.productStoreFinder("", "", loc.latitude.toString(),
+                    loc.longitude.toString(), getSessionToken(), getDeviceIdentityToken(), sku,
+                    startRadius, endRadius, true
+                )
+            }
         }
     }
 
@@ -218,7 +236,7 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun getSavedAddresses(): Call<SavedAddressResponse> {
-        return mApiInterface.getSavedAddresses( "", "", getSit4Environment(), getSessionToken(),
+        return mApiInterface.getSavedAddresses( "", "",  getSessionToken(),
             getDeviceIdentityToken())
     }
 
@@ -226,7 +244,6 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.addAddress(
             "",
             "",
-            getSit4Environment(),
             getSessionToken(),
             getDeviceIdentityToken(),
             addAddressRequestBody,
@@ -239,21 +256,20 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.editAddress(
             "",
             "",
-            getSit4Environment(),
             getSessionToken(), getDeviceIdentityToken(), addressId, addAddressRequestBody
         )
     }
     fun deleteAddress(addressId: String): Call<DeleteAddressResponse> {
-        return mApiInterface.deleteAddress(getSessionToken(), getSit4Environment(), getDeviceIdentityToken(), addressId)
+        return mApiInterface.deleteAddress(getSessionToken(), getDeviceIdentityToken(), addressId)
     }
 
     fun changeAddress(nickName: String): Call<ChangeAddressResponse> {
-        return mApiInterface.changeAddress(nickName, "", "", getSit4Environment(), getSessionToken(),
+        return mApiInterface.changeAddress(nickName, "", "", getSessionToken(),
             getDeviceIdentityToken())
     }
 
     fun getShippingDetails(body: ShippingDetailsBody): Call<ShippingDetailsResponse>{
-        return mApiInterface.getShippingDetails("", "", getSit4Environment(), getSessionToken(),
+        return mApiInterface.getShippingDetails("", "", getSessionToken(),
         getDeviceIdentityToken(), body)
     }
 
@@ -268,7 +284,7 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun getCartSummary(): Call<CartSummaryResponse> {
-        return mApiInterface.getCartSummary( "", getDev4Environment(), "", getSessionToken(),
+        return mApiInterface.getCartSummary( "", "", getSessionToken(),
             getDeviceIdentityToken())
     }
 
@@ -287,17 +303,24 @@ object OneAppService : RetrofitConfig() {
     fun getProducts(requestParams: ProductsRequestParams): Call<ProductView> {
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
 
+        val deliveryType = if (requestParams.isUserBrowsing) KotlinUtils.browsingDeliveryType?.type
+            ?: Delivery.STANDARD.type
+        else KotlinUtils.getDeliveryType()?.deliveryType ?: Delivery.STANDARD.type
+
         return if (Utils.isLocationEnabled(appContext())) {
-            mApiInterface.getProducts("", "", getSit4Environment(),  "",
+            mApiInterface.getProducts("", "",  "",
                 "", getSessionToken(), getDeviceIdentityToken(), requestParams.searchTerm, requestParams.searchType.value,
                 requestParams.responseType.value, requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption,
-                requestParams.refinement, suburbId = suburbId, storeId = storeId, filterContent = requestParams.filterContent
+                requestParams.refinement, suburbId = suburbId, storeId = storeId, filterContent = requestParams.filterContent,
+                deliveryType = deliveryType, deliveryDetails = KotlinUtils.getDeliveryDetails(requestParams.isUserBrowsing)
             )
         } else {
-            mApiInterface.getProductsWithoutLocation("", "", getSit4Environment(), getSessionToken(),
+            mApiInterface.getProductsWithoutLocation("", "", getSessionToken(),
                 getDeviceIdentityToken(), requestParams.searchTerm, requestParams.searchType.value, requestParams.responseType.value,
                 requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption, requestParams.refinement, suburbId = suburbId,
-                storeId = storeId, filterContent =  requestParams.filterContent)
+                storeId = storeId, filterContent =  requestParams.filterContent,
+                deliveryType = deliveryType, deliveryDetails = KotlinUtils.getDeliveryDetails(requestParams.isUserBrowsing)
+            )
         }
     }
 
@@ -331,7 +354,7 @@ object OneAppService : RetrofitConfig() {
 
         val deliveryType = KotlinUtils.getPreferredDeliveryType()?.type ?: ""
 
-        return mApiInterface.addItemToCart( "", "", getDev4Environment(), getSessionToken(),
+        return mApiInterface.addItemToCart( "", "", getSessionToken(),
             getDeviceIdentityToken(),deliveryType, addToCart)
     }
 
@@ -341,38 +364,43 @@ object OneAppService : RetrofitConfig() {
             val deliveryType = KotlinUtils.getPreferredDeliveryType()?.type ?: ""
 
             mApiInterface.addItemsToCart( "", "", getSessionToken(),
-                getDeviceIdentityToken(),deliveryType, getSit4Environment(), addToCart)
+                getDeviceIdentityToken(),deliveryType, addToCart)
         }
     }
 
     fun getShoppingCart(): Call<ShoppingCartResponse> {
-        return mApiInterface.getShoppingCart( getSessionToken(), getDev4Environment(), getDeviceIdentityToken())
+        return mApiInterface.getShoppingCart( getSessionToken(), getDeviceIdentityToken())
     }
 
     fun getChangeQuantity(changeQuantity: ChangeQuantity): Call<ShoppingCartResponse> {
         return mApiInterface.changeQuantityRequest( "",
-                "", getDev4Environment(), getSessionToken(), getDeviceIdentityToken(), changeQuantity.commerceId, changeQuantity)
+                "", getSessionToken(), getDeviceIdentityToken(), changeQuantity.commerceId, changeQuantity)
     }
 
     fun removeCartItem(commerceId: String): Call<ShoppingCartResponse> {
-        return mApiInterface.removeItemFromCart( getSessionToken(), getDeviceIdentityToken(), getDev4Environment(), commerceId)
+        return mApiInterface.removeItemFromCart( getSessionToken(), getDeviceIdentityToken(), commerceId)
     }
 
     fun removeAllCartItems(): Call<ShoppingCartResponse> {
-        return mApiInterface.removeAllCartItems( getSessionToken(), getDev4Environment(), getDeviceIdentityToken())
+        return mApiInterface.removeAllCartItems( getSessionToken(), getDeviceIdentityToken())
     }
 
-    fun productDetail(productId: String, skuId: String): Call<ProductDetailResponse> {
+    fun productDetail(productId: String, skuId: String, isUserBrowsing: Boolean = false): Call<ProductDetailResponse> {
         val loc = getMyLocation()
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
+        val deliveryType =
+            if (isUserBrowsing) KotlinUtils.browsingDeliveryType?.type ?: Delivery.STANDARD.type
+            else KotlinUtils.getDeliveryType()?.deliveryType ?: Delivery.STANDARD.type
         return if (Utils.isLocationEnabled(appContext())) {
-            mApiInterface.productDetail("", "", getSit4Environment(),
+            mApiInterface.productDetail("", "",
                      loc.longitude, loc.latitude, getSessionToken(), getDeviceIdentityToken(),
-                    productId, skuId, suburbId, storeId)
+                    productId, skuId, suburbId, storeId,
+                deliveryType = deliveryType, deliveryDetails = KotlinUtils.getDeliveryDetails(isUserBrowsing))
         } else {
             mApiInterface.productDetail( "", "",
-                getSit4Environment(), getSessionToken(), getDeviceIdentityToken(),
-                    productId, skuId, suburbId, storeId)
+                getSessionToken(), getDeviceIdentityToken(),
+                    productId, skuId, suburbId, storeId, deliveryType = deliveryType,
+                deliveryDetails = KotlinUtils.getDeliveryDetails(isUserBrowsing))
         }
     }
 
@@ -399,17 +427,20 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun getInventorySku(multipleSku: String): Call<SkuInventoryResponse> {
-        return mApiInterface.getInventorySKU( getSessionToken(), getDeviceIdentityToken(), getDev4Environment(), multipleSku)
+        return mApiInterface.getInventorySKU( getSessionToken(), getDeviceIdentityToken(), multipleSku)
     }
 
-    fun getInventorySkuForStore(store_id: String, multipleSku: String): Call<SkusInventoryForStoreResponse> {
-        return mApiInterface.getInventorySKUForStore( getSessionToken(), getDeviceIdentityToken(), getDev4Environment(), store_id, multipleSku)
-
+    fun getInventorySkuForStore(store_id: String, multipleSku: String, isUserBrowsing: Boolean): Call<SkusInventoryForStoreResponse> {
+        return if ((isUserBrowsing && Delivery.DASH.type == KotlinUtils.browsingDeliveryType?.type) ||
+            (!isUserBrowsing && Delivery.DASH.type == KotlinUtils.getDeliveryType()?.deliveryType)) {
+            mApiInterface.getDashInventorySKUForStore(getSessionToken(), getDeviceIdentityToken(), store_id, multipleSku)
+        } else
+            mApiInterface.getInventorySKUForStore(getSessionToken(), getDeviceIdentityToken(), store_id, multipleSku)
     }
 
     suspend fun fetchInventorySkuForStore(store_id: String, multipleSku: String): retrofit2.Response<SkusInventoryForStoreResponse> {
         return withContext(Dispatchers.IO) {
-            mApiInterface.fetchDashInventorySKUForStore( getSessionToken(), getDeviceIdentityToken(), getSit4Environment(), store_id, multipleSku)
+            mApiInterface.fetchDashInventorySKUForStore( getSessionToken(), getDeviceIdentityToken(), store_id, multipleSku)
         }
     }
 
@@ -419,7 +450,7 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun postCheckoutSuccess(checkoutSuccess: CheckoutSuccess): Call<Void> {
-        return mApiInterface.postCheckoutSuccess( getSessionToken(), getSit4Environment(), getDeviceIdentityToken(), checkoutSuccess)
+        return mApiInterface.postCheckoutSuccess( getSessionToken(), getDeviceIdentityToken(), checkoutSuccess)
     }
 
     fun getOrders(): Call<OrdersResponse> {
@@ -685,7 +716,6 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.getSubmittedOrder(
             "",
             "",
-            getSit4Environment(),
             getSessionToken(),
             getDeviceIdentityToken())
     }
@@ -728,5 +758,15 @@ object OneAppService : RetrofitConfig() {
             getDeviceIdentityToken(),
             body
         )
+    }
+
+    suspend fun confirmLocation(confirmLocationRequest: ConfirmLocationRequest): retrofit2.Response<ConfirmDeliveryAddressResponse> {
+        return withContext(Dispatchers.IO) {
+            mApiInterface.confirmPlaceLocation("",
+                "",
+                getSessionToken(),
+                getDeviceIdentityToken(),
+                confirmLocationRequest)
+        }
     }
 }

@@ -1,30 +1,24 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
-import android.os.Looper
-import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import com.google.android.gms.location.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_shop_department.*
-import kotlinx.android.synthetic.main.geo_location_delivery_address.*
 import kotlinx.android.synthetic.main.no_connection_layout.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -41,33 +35,32 @@ import za.co.woolworths.financial.services.android.ui.adapters.DepartmentAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
-import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
+import za.co.woolworths.financial.services.android.util.location.Event
+import za.co.woolworths.financial.services.android.util.location.EventType
+import za.co.woolworths.financial.services.android.util.location.Locator
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 
 @AndroidEntryPoint
 class StandardDeliveryFragment : DepartmentExtensionFragment() {
 
-    private var isFirstCallToLocationModal: Boolean = false
-    private var isLocationModalShown: Boolean = false
+    private lateinit var locator: Locator
     private var isRootCallInProgress: Boolean = false
     private var location: Location? = null
     private var rootCategoryCall: Call<RootCategories>? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
+    private var isFragmentVisible: Boolean = false
     private var parentFragment: ShopFragment? = null
     private var isDashEnabled = false
-    private var fusedLocationClient: FusedLocationProviderClient? = null
-    private var locationRequest: LocationRequest? = createLocationRequest()
     private var localPlaceId: String? = null
     private val shopViewModel: ShopViewModel by viewModels(
         ownerProducer = { requireParentFragment() }
     )
-
     companion object {
         var DEPARTMENT_LOGIN_REQUEST = 1717
-        const val REQUEST_CODE_FINE_GPS = 4771
     }
 
     init {
@@ -97,9 +90,7 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
     }
 
     fun initView() {
-        activity?.apply {
-            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        }
+        locator = Locator(activity as AppCompatActivity)
 
         isDashEnabled = AppConfigSingleton.dashConfig?.isEnabled ?: false
 
@@ -116,27 +107,37 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
             ) == PackageManager.PERMISSION_GRANTED
         }
 
-        if (isDashEnabled) {
-            if (isPermissionGranted && Utils.isLocationEnabled(context)) {
-                fusedLocationClient?.lastLocation?.addOnSuccessListener {
-                    this@StandardDeliveryFragment.location = it
-                    initializeRootCategoryList()
-                }
-            } else {
-                // when permission granted and location is not enabled
-                if (isPermissionGranted) {
-                    initializeRootCategoryList()
-                }
-                //When Location permission not granted.
-                else if (!checkLocationPermission() && !isLocationModalShown) {
-                    initializeRootCategoryList()
-                }
+        if (isDashEnabled && isFragmentVisible) {
+            startLocationDiscoveryProcess()
+        } else if (isFragmentVisible) {
+            initializeRootCategoryList()
+        }
+    }
+
+    private fun startLocationDiscoveryProcess() {
+        locator.getCurrentLocation { locationEvent ->
+            when (locationEvent) {
+                is Event.Location -> handleLocationEvent(locationEvent)
+                is Event.Permission -> handlePermissionEvent(locationEvent)
             }
         }
     }
 
+    private fun handlePermissionEvent(permissionEvent: Event.Permission) {
+        if (permissionEvent.event == EventType.LOCATION_PERMISSION_NOT_GRANTED) {
+            Utils.saveLastLocation(null, activity)
+            handleLocationEvent(null)
+        }
+    }
+
+    private fun handleLocationEvent(locationEvent: Event.Location?) {
+        Utils.saveLastLocation(locationEvent?.locationData, context)
+        location = locationEvent?.locationData
+        initializeRootCategoryList()
+    }
+
     private fun initializeRootCategoryList() {
-        if (parentFragment?.getCategoryResponseData() != null) bindDepartment() else executeDepartmentRequest(mDepartmentAdapter, parentFragment, location)
+        if (parentFragment?.getCategoryResponseData()?.rootCategories != null) bindDepartment() else executeDepartmentRequest(mDepartmentAdapter, parentFragment, location)
     }
 
     private fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -147,13 +148,9 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
 
         if (context != null && !Utils.isLocationEnabled(context)) {
             onProviderDisabled()
-            if (isFirstCallToLocationModal) {
-                executeDepartmentRequest(mDepartmentAdapter, parentFragment, location)
-            }
         } else {
-            startLocationUpdates()
+            startLocationDiscoveryProcess()
         }
-
     }
 
     private fun setListener() {
@@ -181,23 +178,13 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
 
     private fun bindDepartment() {
         mDepartmentAdapter?.setRootCategories(parentFragment?.getCategoryResponseData()?.rootCategories)
-        // Add dash banner if only present
-        if (isDashEnabled && context != null && Utils.isLocationEnabled(context)) {
-            mDepartmentAdapter?.setDashBanner(
-                parentFragment?.getCategoryResponseData()?.dash,
-                parentFragment?.getCategoryResponseData()?.rootCategories,
-                getUpdatedBannerText()
-            )
-        }
         mDepartmentAdapter?.notifyDataSetChanged()
     }
 
     private fun setUpRecyclerView(categories: MutableList<RootCategory>?) {
         mDepartmentAdapter = DepartmentAdapter(
             categories,
-            ::departmentItemClicked,
-            ::onDashBannerClicked
-        ) //{ rootCategory: RootCategory -> departmentItemClicked(rootCategory)}
+            ::departmentItemClicked) //{ rootCategory: RootCategory -> departmentItemClicked(rootCategory)}
         activity?.let {
             rclDepartment?.apply {
                 layoutManager = LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false)
@@ -245,42 +232,6 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
     }
 
 
-    private fun getUpdatedBannerText(): String {
-        context?.apply {
-            return if (KotlinUtils.isAppInstalled(
-                    activity,
-                    AppConfigSingleton.dashConfig?.appURI
-                )
-            )
-                this.getString(R.string.dash_banner_text_open_app) else this.getString(R.string.dash_banner_text_download_app)
-        }
-        return ""
-    }
-
-    private fun onDashBannerClicked() {
-        activity?.apply {
-            KotlinUtils.postOneAppEvent(
-                OneAppEvents.AppScreen.DASH_BANNER_SCREEN_NAME,
-                OneAppEvents.FeatureName.DASH_FEATURE_NAME
-            )
-
-            val intent: Intent? = this.packageManager.getLaunchIntentForPackage(
-                AppConfigSingleton.dashConfig?.appURI
-                    ?: ""
-            )
-            if (intent == null) {
-                presentDashDetailsActivity(
-                    this,
-                    parentFragment?.getCategoryResponseData()?.dash?.dashBreakoutLink
-                )
-            } else {
-                // Launch the woolies dash if already downloaded/installed
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                this.startActivity(intent)
-            }
-        }
-    }
-
     private fun presentDashDetailsActivity(activity: Activity, link: String?) {
         activity.apply {
             val mIntent = Intent(this, DashDetailsActivity::class.java)
@@ -316,7 +267,8 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
             else -> ProductListingFragment.newInstance(
                 ProductsRequestParams.SearchType.NAVIGATE,
                 rootCategory.categoryName,
-                rootCategory.dimValId
+                rootCategory.dimValId,
+                true
             )
         }
     }
@@ -329,13 +281,18 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
         }
     }
 
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        isFragmentVisible = isVisibleToUser
+    }
+
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
 
         if (!hidden) {
             activity?.apply {
                 //When moved from My Cart to department
-                startLocationUpdates()
+                startLocationDiscoveryProcess()
             }
         }
     }
@@ -359,28 +316,10 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
             } else {
                 requestCartSummary()
             }
-        } else if (requestCode == REQUEST_CODE_FINE_GPS) {
-            when (resultCode) {
-                RESULT_OK -> {
-                    activity?.apply {
-                        if (!Utils.isLocationEnabled(context)) {
-                            val locIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                            startActivityForResult(
-                                locIntent,
-                                StoresNearbyFragment1.REQUEST_CHECK_SETTINGS
-                            )
-                            overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-                        }
-                        isFirstCallToLocationModal = true
-                    }
-                }
-                RESULT_CANCELED -> {
-                    //When user clicks deny location
-                    executeDepartmentRequest(mDepartmentAdapter, parentFragment, location)
-                }
-            }
         } else if (resultCode == RESULT_OK || resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             mDepartmentAdapter?.notifyDataSetChanged()
+        } else if (requestCode == EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE) {
+            startLocationDiscoveryProcess()
         }
     }
 
@@ -411,86 +350,10 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
 
     private fun onProviderDisabled() {
         location = null
-        mDepartmentAdapter?.apply {
-            removeDashBanner(parentFragment?.getCategoryResponseData()?.rootCategories)
-        }
         parentFragment?.getCategoryResponseData()?.dash = null
     }
 
-    @SuppressLint("NewApi")
-    private fun checkLocationPermission(): Boolean {
-
-        activity?.apply {
-            val perms =
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                )
-            return if (ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                )
-                != PackageManager.PERMISSION_GRANTED
-            ) {
-                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    //Asking only once.
-//                    ActivityCompat.requestPermissions(this, perms, REQUEST_CODE_FINE_GPS)
-                } else {
-                    //we can request the permission.
-                    ActivityCompat.requestPermissions(this, perms, REQUEST_CODE_FINE_GPS)
-                    isLocationModalShown = true
-                }
-                false
-            } else {
-                true
-            }
-        }
-        return false
-    }
-
-    private fun startLocationUpdates() {
-        context?.apply {
-            if (ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                return
-            }
-            fusedLocationClient?.requestLocationUpdates(
-                locationRequest,
-                locationCallback,
-                Looper.getMainLooper()
-            )
-        }
-    }
-
-    private fun stopLocationUpdates() {
-        fusedLocationClient?.removeLocationUpdates(locationCallback)
-    }
-
-    private fun createLocationRequest() = LocationRequest.create().apply {
-        interval = 100
-        fastestInterval = 1000
-        priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-    }
-
-    private var locationCallback = object : LocationCallback() {
-        override fun onLocationResult(locationResult: LocationResult?) {
-            locationResult ?: return
-            for (location in locationResult.locations) {
-                this@StandardDeliveryFragment.location = location
-                if (isVisible) {
-                    shopViewModel.setLocation(location)
-                }
-                executeDepartmentRequest(mDepartmentAdapter, parentFragment, location)
-                stopLocationUpdates()
-                break
-            }
-        }
-    }
-
-    fun reloadRequest() {
+    public fun reloadRequest(){
         executeDepartmentRequest(mDepartmentAdapter, parentFragment, location)
     }
 }

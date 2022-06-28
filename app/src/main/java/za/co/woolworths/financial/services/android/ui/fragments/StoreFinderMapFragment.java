@@ -9,10 +9,6 @@ import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
 import android.text.TextUtils;
 import android.text.util.Linkify;
 import android.util.Log;
@@ -25,18 +21,14 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
+
 import com.awfs.coordination.R;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,17 +41,19 @@ import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
-import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderCardsOnMapAdapter;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate;
+import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapView;
+import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.UpdateStoreFinderFragment;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WCustomViewPager;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallback, ViewPager.OnPageChangeListener, GoogleMap.OnMarkerClickListener, UpdateStoreFinderFragment {
+public class StoreFinderMapFragment extends Fragment implements DynamicMapDelegate, ViewPager.OnPageChangeListener, UpdateStoreFinderFragment {
 
 
 	public static final String CARD_CONTACT_INFO = "CARD_CONTACT_INFO";
@@ -82,14 +76,14 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 	private SlidePanelEvent slidePanelEvent;
 	private WGlobalState wGlobalState;
 	WCustomViewPager pager;
-	GoogleMap googleMap;
 	static int CAMERA_ANIMATION_SPEED = 350;
-	BitmapDescriptor unSelectedIcon;
-	BitmapDescriptor selectedIcon;
+	@DrawableRes
+	int unSelectedIcon;
+	@DrawableRes
+	int selectedIcon;
 	HashMap<String, Integer> mMarkers;
-	ArrayList<Marker> markers;
-	Marker previousmarker;
-	SupportMapFragment mapFragment;
+	ArrayList<DynamicMapMarker> markers;
+	DynamicMapMarker previousmarker;
 	ImageView close;
 	int currentStorePostion = 0;
 	private SlidingUpPanelLayout mLayout;
@@ -114,16 +108,20 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 	RelativeLayout layoutLocationServiceOn;
 	RelativeLayout relBrandLayout;
 
-	Marker myLocation;
+	DynamicMapView dynamicMapView;
+
+	DynamicMapMarker myLocation;
 
 	private PopWindowValidationMessage mPopWindowValidationMessage;
 	private Location mLocation;
 	private StoreFinderMapFragment mFragment;
 
-
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		mMarkers = new HashMap<>();
+		markers = new ArrayList<>();
 
 		Bundle argument = getArguments();
 		if (argument != null)
@@ -152,6 +150,9 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		} catch (ClassCastException ignored) {
 		}
 
+		dynamicMapView = v.findViewById(R.id.dynamicMapView);
+		dynamicMapView.initializeMap(savedInstanceState, this);
+
 		mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
 		pager = (WCustomViewPager) v.findViewById(R.id.cardPager);
 		detailsLayout = (LinearLayout) v.findViewById(R.id.detailsView);
@@ -173,8 +174,8 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		makeCall = (RelativeLayout) v.findViewById(R.id.call);
 		layoutLocationServiceOn = (RelativeLayout) v.findViewById(R.id.layoutLocationServiceOn);
 		try {
-			unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin);
-			selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin);
+			unSelectedIcon = R.drawable.unselected_pin;
+			selectedIcon = R.drawable.selected_pin;
 		} catch (NullPointerException ignored) {
 		}
 		pager.addOnPageChangeListener(this);
@@ -260,32 +261,16 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 	@Override
 	public void onResume() {
 		super.onResume();
+		dynamicMapView.onResume();
 		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.STORES_NEARBY);
 	}
 
 	public void initLocationCheck() {
-		initMap();
 		Utils.showOneTimePopup(getActivity(), SessionDao.KEY.STORE_FINDER_ONE_TIME_POPUP, CustomPopUpWindow.MODAL_LAYOUT.INSTORE_AVAILABILITY);
 	}
 
-	public void initMap() {
-		if (googleMap == null) {
-			mapFragment = (SupportMapFragment) this.getChildFragmentManager().findFragmentById(R.id.map);
-			mapFragment.getMapAsync(this);
-			mMarkers = new HashMap<>();
-			markers = new ArrayList<>();
-		}
-	}
-
-	@RequiresApi(api = Build.VERSION_CODES.M)
-
 	@Override
-	public void onMapReady(GoogleMap map) {
-		googleMap = map;
-		onMapReady();
-	}
-
-	private void onMapReady() {
+	public void onMapReady() {
 		try {
 			storeDetailsList = wGlobalState.getStoreDetailsArrayList();
 			if (storeDetailsList != null && storeDetailsList.size() != 0) {
@@ -294,32 +279,28 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		} catch (Exception ex) {
 			Log.e("onMapReady", "exPMapIsReady");
 		}
-		//If permission is not granted, request permission.
-		googleMap.setInfoWindowAdapter(new MapWindowAdapter(getContext()));
-		googleMap.setOnMarkerClickListener(mFragment);
-		unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin);
-		selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin);
+		unSelectedIcon = R.drawable.unselected_pin;
+		selectedIcon = R.drawable.selected_pin;
 	}
 
-	private void drawMarker(LatLng point, BitmapDescriptor bitmapDescriptor, int pos) {
-		MarkerOptions markerOptions = new MarkerOptions();
-		markerOptions.position(point);
-		markerOptions.icon(bitmapDescriptor);
-		Marker mkr = googleMap.addMarker(markerOptions);
-		mMarkers.put(mkr.getId(), pos);
-		markers.add(mkr);
-		if (pos == 0) {
-			googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mkr.getPosition(), 13), CAMERA_ANIMATION_SPEED, null);
-			previousmarker = mkr;
+	private void drawMarker(Double latitude, Double longitude, @DrawableRes int icon, int pos) {
+		DynamicMapMarker marker = dynamicMapView.addMarker(getContext(), latitude, longitude, icon);
+		if (marker != null) {
+			mMarkers.put(marker.getId(), pos);
+			markers.add(marker);
+			if (pos == 0) {
+				dynamicMapView.animateCamera(latitude, longitude, 13f, null, null, CAMERA_ANIMATION_SPEED);
+				previousmarker = marker;
+			}
 		}
 	}
 
 	@Override
 	public void onPageSelected(int position) {
 		if (previousmarker != null)
-			previousmarker.setIcon(unSelectedIcon);
-		markers.get(position).setIcon(selectedIcon);
-		googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(markers.get(position).getPosition(), 13), CAMERA_ANIMATION_SPEED, null);
+			previousmarker.setIcon(getContext(), unSelectedIcon);
+		markers.get(position).setIcon(getContext(), selectedIcon);
+		dynamicMapView.animateCamera(markers.get(position).getPositionLatitude(), markers.get(position).getPositionLongitude(), 13f, null, null, CAMERA_ANIMATION_SPEED);
 		previousmarker = markers.get(position);
 		/*
 		 *InfoWindow shows description above a marker.
@@ -338,64 +319,61 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 	}
 
 	@Override
-	public boolean onMarkerClick(Marker marker) {
+	public void onMarkerClicked(@NonNull DynamicMapMarker marker) {
 		try {
 			int id = mMarkers.get(marker.getId());
 			if (previousmarker != null)
-				previousmarker.setIcon(unSelectedIcon);
-			marker.setIcon(selectedIcon);
+				previousmarker.setIcon(getContext(), unSelectedIcon);
+			marker.setIcon(getContext(), selectedIcon);
 			previousmarker = marker;
 			pager.setCurrentItem(id);
 		} catch (NullPointerException ignored) {
 		}
-		return true;
 	}
 
 
 	public void backToAllStoresPage(int position) {
-		googleMap.getUiSettings().setScrollGesturesEnabled(true);
+		dynamicMapView.setScrollGesturesEnabled(true);
 		showAllMarkers(markers);
 	}
 
 	public void showStoreDetails(int position) {
 		initStoreDetailsView(storeDetailsList.get(position));
 		hideMarkers(markers, position);
-		double center = googleMap.getCameraPosition().target.latitude;
-		double northMap = googleMap.getProjection().getVisibleRegion().latLngBounds.northeast.latitude;
+		dynamicMapView.getCameraPositionTargetLatitude();
+		double center = dynamicMapView.getCameraPositionTargetLatitude();
+		double northMap = dynamicMapView.getVisibleRegionNortheastLatitude();
 		double diff = (center - northMap);
-		double newLat = markers.get(position).getPosition().latitude + diff / 2.4;
-		CameraUpdate centerCam = CameraUpdateFactory.newLatLng(new LatLng(newLat, markers.get(position).getPosition().longitude));
-		googleMap.animateCamera(centerCam, CAMERA_ANIMATION_SPEED, null);
-		googleMap.getUiSettings().setScrollGesturesEnabled(false);
+		double newLat = markers.get(position).getPositionLatitude() + diff / 2.4;
+		dynamicMapView.animateCamera(newLat, markers.get(position).getPositionLongitude(), CAMERA_ANIMATION_SPEED);
+		dynamicMapView.setScrollGesturesEnabled(false);
 		if (mLayout.getAnchorPoint() == 1.0f) {
 			mLayout.setAnchorPoint(0.7f);
 			mLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
-
 		}
-
 	}
 
-	public void hideMarkers(ArrayList<Marker> marKars, int pos) {
+	public void hideMarkers(ArrayList<DynamicMapMarker> marKars, int pos) {
 		for (int i = 0; i < marKars.size(); i++) {
 			if (i != pos)
 				marKars.get(i).setVisible(false);
 		}
 	}
 
-	public void showAllMarkers(ArrayList<Marker> marKars) {
+	public void showAllMarkers(ArrayList<DynamicMapMarker> marKars) {
 		for (int i = 0; i < marKars.size(); i++) {
 			marKars.get(i).setVisible(true);
 		}
 	}
 
 	public void bindDataWithUI(List<StoreDetails> storeDetailsList) {
-		if (googleMap != null && storeDetailsList.size() >= 0) {
+		if (dynamicMapView.isMapInstantiated() && storeDetailsList.size() >= 0) {
 			updateMyCurrentLocationOnMap(mLocation);
 			for (int i = 0; i < storeDetailsList.size(); i++) {
 				if (i == 0) {
-					drawMarker(new LatLng(storeDetailsList.get(i).latitude, storeDetailsList.get(i).longitude), selectedIcon, i);
+					drawMarker(storeDetailsList.get(i).latitude, storeDetailsList.get(i).longitude, selectedIcon, i);
 				} else
-					drawMarker(new LatLng(storeDetailsList.get(i).latitude, storeDetailsList.get(i).longitude), unSelectedIcon, i);
+					drawMarker(storeDetailsList.get(i).latitude, storeDetailsList.get(i).longitude, unSelectedIcon, i);
 			}
 			pager.setAdapter(new StockFinderCardsOnMapAdapter(getActivity(), storeDetailsList));
 		}
@@ -492,38 +470,9 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		}
 	}
 
-	public void goToUser(CameraPosition mLocation) {
-		changeCamera(CameraUpdateFactory.newCameraPosition(mLocation), new GoogleMap.CancelableCallback() {
-			@Override
-			public void onFinish() {
-			}
-
-			@Override
-			public void onCancel() {
-			}
-		});
-	}
-
-	/**
-	 * Change the camera position by moving or animating the camera depending on the state of the
-	 * animate toggle button.
-	 */
-	private void changeCamera(CameraUpdate update, GoogleMap.CancelableCallback callback) {
-		// The duration must be strictly positive so we make it at least 1.
-		googleMap.animateCamera(update, Math.max(2000, 1), callback);
-	}
-
-	private void updateMap(Location location) {
-		if (location != null) {
-			initMap();
-			updateMyCurrentLocationOnMap(location);
-		}
-	}
-
 	private void updateMap(Location location, List<StoreDetails> storeDetailsList) {
 		this.storeDetailsList = storeDetailsList;
 		if (location != null) {
-			initMap();
 			updateMyCurrentLocationOnMap(location);
 		}
 	}
@@ -531,12 +480,11 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 	public void updateMyCurrentLocationOnMap(Location location) {
 		try {
 			if (myLocation == null) {
-				myLocation = googleMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude()))
-						.icon(BitmapDescriptorFactory.fromResource(R.drawable.mapcurrentlocation)));
-				googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13), CAMERA_ANIMATION_SPEED, null);
+				myLocation = dynamicMapView.addMarker(getContext(), location.getLatitude(), location.getLongitude(), R.drawable.mapcurrentlocation);
+				dynamicMapView.animateCamera(location.getLatitude(), location.getLongitude(), 13f, null, null, CAMERA_ANIMATION_SPEED);
 			} else {
-				myLocation.setPosition(new LatLng(location.getLatitude(), location.getLongitude()));
-				googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13), CAMERA_ANIMATION_SPEED, null);
+				myLocation.setPosition(location.getLatitude(), location.getLongitude());
+				dynamicMapView.animateCamera(location.getLatitude(), location.getLongitude(), 13f, null, null, CAMERA_ANIMATION_SPEED);
 			}
 		} catch (Exception ex) {
 		}
@@ -569,6 +517,11 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		unregisterReceiver();
 	}
 
+	@Override
+	public void onDestroyView() {
+		dynamicMapView.onDestroy();
+		super.onDestroyView();
+	}
 
 	public void update(Location location, List<StoreDetails> storeDetail) {
 		updateMap(location, storeDetail);
@@ -577,5 +530,23 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 	@Override
 	public void onFragmentUpdate() {
 
+	}
+
+	@Override
+	public void onPause() {
+		dynamicMapView.onPause();
+		super.onPause();
+	}
+
+	@Override
+	public void onLowMemory() {
+		super.onLowMemory();
+		dynamicMapView.onLowMemory();
+	}
+
+	@Override
+	public void onSaveInstanceState(@NonNull Bundle outState) {
+		super.onSaveInstanceState(outState);
+		dynamicMapView.onSaveInstanceState(outState);
 	}
 }

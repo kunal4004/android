@@ -14,9 +14,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
 import kotlinx.android.synthetic.main.fragment_click_and_collect_stores.*
 import kotlinx.android.synthetic.main.fragment_click_and_collect_stores.view.*
 import kotlinx.android.synthetic.main.fragment_shop_department.*
@@ -44,20 +41,23 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.grid.Pro
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
+import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate
+import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?) :
-    DepartmentExtensionFragment(), OnMapReadyCallback,
+    DepartmentExtensionFragment(), DynamicMapDelegate,
     StoreListAdapter.OnStoreSelected, View.OnClickListener, TextWatcher {
 
+    private var updatedAddressStoreList: List<Store>? = mutableListOf()
     private var storeId: String? = null
     private var placeId: String? = null
-    private lateinit var mapFragment: SupportMapFragment
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     private var parentFragment: ShopFragment? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
+    private var saveInstanceState: Bundle? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,7 +71,8 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
         super.onViewCreated(view, savedInstanceState)
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         setUpViewModel()
-        init()
+        this.saveInstanceState = savedInstanceState
+        dynamicMapView?.initializeMap(savedInstanceState, this)
     }
 
     private fun setUpViewModel() {
@@ -83,17 +84,15 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
 
     override fun onResume() {
         super.onResume()
+        dynamicMapView?.initializeMap(saveInstanceState, this)
+        dynamicMapView?.onResume()
         etEnterNewAddress?.addTextChangedListener(this)
+        init()
     }
 
     fun init() {
-        mapFragment = childFragmentManager
-            .findFragmentById(R.id.mapView) as SupportMapFragment
-        mapFragment.getMapAsync(this)
         tvConfirmStore?.setOnClickListener(this)
         btChange?.setOnClickListener(this)
-
-        tvAddress?.visibility = View.GONE
 
         var isPermissionGranted = false
         activity?.apply {
@@ -105,27 +104,27 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
 
         if (isPermissionGranted && Utils.isLocationEnabled(context)) {
 
-            if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() == null && getDeliveryType() == null) {
-                // when user comes first time i.e. no location , no fullfillment type
+            if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() == null && getDeliveryType()?.address?.placeId == null) {
+                // when user comes first time i.e. no location , no fulfillment type
                 // navigate to geo location flow
-                showSetLocationdUi()
-            } else if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() != null && KotlinUtils.browsingCncStore == null) {
+                showSetLocationUi()
+            } else if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() != null && KotlinUtils.browsingCncStore == null && getDeliveryType()?.deliveryType != Delivery.CNC.type) {
                 /*when user comes with location but no store is selected yet*/
                 setStoreCollectionData(WoolworthsApplication.getCncBrowsingValidatePlaceDetails())
-            } else if (KotlinUtils.browsingCncStore == null) {
+            } else if (KotlinUtils.browsingCncStore == null && getDeliveryType()?.deliveryType != Delivery.CNC.type) {
                 setStoreCollectionData(WoolworthsApplication.getCncBrowsingValidatePlaceDetails())
             } else {
                 showCategoryList()
             }
         } else {
-            if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() == null && getDeliveryType() == null) {
-                // when user comes first time i.e. no location , no fullfillment type
+            if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() == null && getDeliveryType()?.address?.placeId == null) {
+                // when user comes first time i.e. no location , no fulfillment type
                 // navigate to geo location flow
-                showSetLocationdUi()
+                showSetLocationUi()
             } else if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() != null && KotlinUtils.browsingCncStore == null) {
                 /*when user comes with location but no store is selected yet*/
                 setStoreCollectionData(WoolworthsApplication.getCncBrowsingValidatePlaceDetails())
-            } else if (KotlinUtils.browsingCncStore == null) {
+            } else if (KotlinUtils.browsingCncStore == null && getDeliveryType()?.deliveryType != Delivery.CNC.type) {
                 setStoreCollectionData(WoolworthsApplication.getCncBrowsingValidatePlaceDetails())
             } else {
                 showCategoryList()
@@ -134,19 +133,59 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
     }
 
     private fun setStoreCollectionData(validatePlace: ValidatePlace?) {
-        if (validatePlace == null || validatePlace?.stores?.isNullOrEmpty() == true
-        ) {
+        if (validatePlace == null) {
+            val mPlaceId = getDeliveryType()?.address?.placeId ?: return
+            if (!mPlaceId.isNullOrEmpty()) {
+             /* if place id is not null means previously location is set but validate place api
+               is not called yet or not in sync. so need to call again */
+                executeValidatePlaceApi(mPlaceId)
+            } else {
+                showSetLocationUi()
+            }
+            return
+        }
+        if (validatePlace.stores?.isNullOrEmpty() == true) {
             showNoCollectionStoresUi()
             return
         }
         tvStoresNearMe?.text = resources.getString(
             R.string.near_stores,
-            validatePlace?.stores?.size
+            validatePlace.stores?.size
         )
         tvAddress?.text =
-            KotlinUtils.capitaliseFirstLetter(validatePlace?.placeDetails?.address1)
-        placeId = validatePlace?.placeDetails?.placeId
-        setStoreList(validatePlace?.stores)
+            KotlinUtils.capitaliseFirstLetter(validatePlace.placeDetails?.address1)
+        placeId = validatePlace.placeDetails?.placeId
+        setStoreList(validatePlace.stores)
+    }
+
+    private fun executeValidatePlaceApi(mPlaceId: String) {
+        lifecycleScope.launch {
+            try {
+                cncProgressBar.visibility = View.VISIBLE
+                val validateLocationResponse =
+                    confirmAddressViewModel.getValidateLocation(mPlaceId)
+
+                if (validateLocationResponse != null) {
+                    when (validateLocationResponse.httpCode) {
+                        AppConstant.HTTP_OK -> {
+                            cncProgressBar.visibility = View.GONE
+                            tvStoresNearMe?.text = resources.getString(
+                                R.string.near_stores,
+                                validateLocationResponse?.validatePlace?.stores?.size
+                            )
+                            updatedAddressStoreList = validateLocationResponse?.validatePlace?.stores
+                            tvAddress?.text =
+                                KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1)
+                            placeId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
+                            setStoreList(validateLocationResponse?.validatePlace?.stores)
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                cncProgressBar?.visibility = View.GONE
+            }
+        }
     }
 
     private fun setStoreList(stores: List<Store>?) {
@@ -165,7 +204,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
         rvStoreList.adapter?.notifyDataSetChanged()
     }
 
-    private fun showSetLocationdUi() {
+    private fun showSetLocationUi() {
         layoutClickAndCollectStore?.visibility = View.GONE
         layoutEdgeCaseScreen?.visibility = View.VISIBLE
         img_view?.setImageResource(R.drawable.location_disabled)
@@ -212,10 +251,18 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
         tvConfirmStore?.isEnabled = true
     }
 
-    override fun onMapReady(googleMap: GoogleMap?) {
-        googleMap?.uiSettings?.setAllGesturesEnabled(false)
-        val addressStorList = WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
-        GeoUtils.showFirstFourLocationInMap(addressStorList, googleMap, requireContext())
+    override fun onMapReady() {
+        dynamicMapView?.setAllGesturesEnabled(false)
+        val addressStoreList = WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
+        if (addressStoreList != null && !addressStoreList?.isEmpty()) {
+            GeoUtils.showFirstFourLocationInMap(addressStoreList, dynamicMapView, context)
+        } else if (updatedAddressStoreList?.isEmpty() == false)  {
+            GeoUtils.showFirstFourLocationInMap(updatedAddressStoreList, dynamicMapView, context)
+        }
+    }
+
+    override fun onMarkerClicked(marker: DynamicMapMarker) {
+
     }
 
     override fun onClick(v: View?) {
@@ -236,7 +283,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
             postConfirmLocationApi()
             return
         } else {
-            /*location , fullfillment is already available so only browsing location need to be save */
+            /*location , fulfillment is already available so only browsing location need to be save */
             setBrowsingDataInformation()
             showCategoryList()
         }
@@ -293,7 +340,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
                                 )
                             }
 
-                            /* reset browsing data for cnc and dash both once fullfillment location is comfirmed */
+                            /* reset browsing data for cnc and dash both once fulfillment location is confirmed */
 
                             WoolworthsApplication.setValidatedSuburbProducts(validatePlace)
                             setBrowsingDataInformation()
@@ -331,7 +378,8 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
             else -> ProductListingFragment.newInstance(
                 ProductsRequestParams.SearchType.NAVIGATE,
                 rootCategory.categoryName,
-                rootCategory.dimValId
+                rootCategory.dimValId,
+                true
             )
         }
     }
@@ -351,13 +399,14 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
     private fun showCategoryList() {
         parentFragment?.showSerachAndBarcodeUi()
         layoutClickAndCollectStore?.visibility = View.GONE
+        layoutEdgeCaseScreen?.visibility = View.GONE
         rv_category_layout?.visibility = View.VISIBLE
         setUpCategoryRecyclerView(mutableListOf())
         initializeRootCategoryList()
     }
 
     private fun initializeRootCategoryList() {
-        if (parentFragment?.getCategoryResponseData() != null) bindDepartment(
+        if (parentFragment?.getCategoryResponseData()?.rootCategories != null) bindDepartment(
             mDepartmentAdapter,
             parentFragment
         ) else executeDepartmentRequest(mDepartmentAdapter, parentFragment)
@@ -367,8 +416,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
         rv_category_layout?.visibility = View.VISIBLE
         mDepartmentAdapter = DepartmentAdapter(
             categories,
-            ::departmentItemClicked,
-            ::onDashBannerClicked
+            ::departmentItemClicked
         ) //{ rootCategory: RootCategory -> departmentItemClicked(rootCategory)}
         activity?.let {
             rclDepartment?.apply {
@@ -386,10 +434,6 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
         (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(openNextFragment(rootCategory))
     }
 
-    private fun onDashBannerClicked() {
-        /*todo need to delete this one */
-    }
-
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
         // not required
     }
@@ -400,14 +444,38 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
 
     override fun afterTextChanged(s: Editable?) {
         val list = ArrayList<Store>()
-        val stores: List<Store>? = WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
+        val stores: List<Store>? =
+            WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
         stores?.let {
             for (store in it) {
-                if (store.storeName?.contains(s.toString(), true) == true || store.storeAddress?.contains(s.toString(), true)==true) {
+                if (store.storeName?.contains(s.toString(),
+                        true) == true || store.storeAddress?.contains(s.toString(), true) == true
+                ) {
                     list.add(store)
                 }
             }
         }
         setStoreList(list)
+    }
+
+    override fun onPause() {
+        dynamicMapView?.onPause()
+        super.onPause()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        dynamicMapView?.onLowMemory()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        this.saveInstanceState = outState
+        dynamicMapView?.onSaveInstanceState(outState)
+    }
+
+    override fun onDestroyView() {
+        dynamicMapView?.onDestroy()
+        super.onDestroyView()
     }
 }

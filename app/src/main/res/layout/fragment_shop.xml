@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/color_F3F3F3">
 
     <androidx.appcompat.widget.Toolbar
@@ -38,9 +38,9 @@
                 android:fontFamily="@font/myriad_pro_regular"
                 android:gravity="top"
                 android:text="@string/standard_delivery"
-                app:WTextView_font="myriadpro_regular"
                 android:textColor="@color/black"
                 android:textSize="@dimen/twelve_sp"
+                app:WTextView_font="myriadpro_regular"
                 app:layout_constraintBottom_toTopOf="@+id/tvToolbarSubtitle"
                 app:layout_constraintStart_toEndOf="@id/imgToolbarStart"
                 app:layout_constraintTop_toTopOf="parent"
@@ -52,11 +52,11 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/myriad_pro_semi_bold"
                 android:gravity="center"
-                app:WTextView_font="myriadpro_semibold"
                 android:text="Default Location"
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="@dimen/fourteen_sp"
+                app:WTextView_font="myriadpro_semibold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@id/tvToolbarTitle"
                 app:layout_constraintTop_toBottomOf="@+id/tvToolbarTitle" />
@@ -101,16 +101,29 @@
             app:tabMode="fixed"
             app:tabPaddingEnd="@dimen/two_dp"
             app:tabPaddingStart="@dimen/two_dp"
-            app:tabRippleColor="@null"/>
+            app:tabRippleColor="@null" />
 
         <include
             android:id="@+id/blackToolTipLayout"
             layout="@layout/black_tool_tip_layout"
-            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tabs_main" />
+
+        <View
+            android:id="@+id/view_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="@dimen/sixteen_dp"
+            android:layout_marginTop="@dimen/sixteen_dp"
+            android:layout_marginEnd="@dimen/eight_dp"
+            android:layout_marginBottom="@dimen/sixteen_dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/blackToolTipLayout"
+            app:layout_goneMarginTop="@dimen/twenty_four_dp" />
 
         <TextView
             android:id="@+id/tvSearchProduct"
@@ -170,5 +183,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/layout_top"
         app:layout_constraintVertical_bias="0.0" />
+
+    <ProgressBar
+        android:id="@+id/shopProgressbar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="@dimen/fourty_dp"
+        android:layout_height="@dimen/fourty_dp"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/black"
+        android:indeterminateTintMode="src_atop"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

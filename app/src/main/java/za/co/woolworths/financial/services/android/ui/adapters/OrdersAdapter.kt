@@ -54,12 +54,13 @@ class OrdersAdapter(val context: Context, val iPresentOrderDetailInterface: IPre
             itemView.setOnClickListener { iPresentOrderDetailInterface?.presentOrderDetailsPage(item) }
             itemView.orderState.setBackgroundResource(if (item.state.equals("Order Cancelled", true)) R.drawable.order_state_orange_bg else R.drawable.order_state_bg)
 
-            if (!item.deliveryDates.isJsonNull) {
+            if (!item.deliveryDates?.isJsonNull!!) {
                 val deliveryDates: HashMap<String, String> = hashMapOf()
                 deliveryDates.clear()
                 itemView.deliveryDateContainer.removeAllViews()
-                for (i in 0 until item.deliveryDates.asJsonArray.size()) {
-                    deliveryDates.putAll(Gson().fromJson<Map<String, String>>(item.deliveryDates.asJsonArray.get(i).toString(), object : TypeToken<Map<String, String>>() {}.type))
+                for (i in 0 until (item.deliveryDates?.asJsonArray?.size() ?: 0)) {
+                    deliveryDates.putAll(Gson().fromJson<Map<String, String>>(
+                        item.deliveryDates?.asJsonArray?.get(i).toString(), object : TypeToken<Map<String, String>>() {}.type))
                 }
                 when (deliveryDates.keys.size) {
                     0 -> {

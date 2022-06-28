@@ -2,11 +2,10 @@ package za.co.woolworths.financial.services.android.repository.shop
 
 import android.location.Location
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
-import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmDeliveryAddressResponse
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
-import za.co.woolworths.financial.services.android.models.dto.RootCategories
-import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.shop.DashCategories
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Resource
@@ -110,6 +109,52 @@ class MainShopRepository : ShopRepository {
         return try {
 
             val response = OneAppService.getValidateLocation(placeId)
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    return when (it.httpCode) {
+                        AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
+                            Resource.success(it)
+                        else ->
+                            Resource.error(R.string.error_unknown, it)
+                    }
+                } ?: Resource.error(R.string.error_unknown, null)
+            } else {
+                Resource.error(R.string.error_unknown, null)
+            }
+        } catch (e: IOException) {
+            FirebaseManager.logException(e)
+            Resource.error(R.string.error_internet_connection, null)
+        }
+    }
+
+    override suspend fun confirmPlace(confirmLocationRequest: ConfirmLocationRequest): Resource<ConfirmDeliveryAddressResponse> {
+        return try {
+            val response = OneAppService.confirmLocation(confirmLocationRequest)
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    return when (it.httpCode) {
+                        AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
+                            Resource.success(it)
+                        else ->
+                            Resource.error(R.string.error_unknown, it)
+                    }
+                } ?: Resource.error(R.string.error_unknown, null)
+            } else {
+                Resource.error(R.string.error_unknown, null)
+            }
+        } catch (e: IOException) {
+            FirebaseManager.logException(e)
+            Resource.error(R.string.error_internet_connection, null)
+        }
+    }
+
+    override suspend fun callStoreFinder(
+        sku: String,
+        startRadius: String?,
+        endRadius: String?
+    ): Resource<LocationResponse> {
+        return try {
+            val response = OneAppService.productStoreFinder(sku, startRadius, endRadius)
             if (response.isSuccessful) {
                 response.body()?.let {
                     return when (it.httpCode) {

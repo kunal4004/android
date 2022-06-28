@@ -34,5 +34,7 @@ public class Data {
 	public String provinceId;
 
 	public ProductCountMap productCountMap;
+	public Boolean liquorOrder;
+	public String noLiquorImageUrl;
 
 }

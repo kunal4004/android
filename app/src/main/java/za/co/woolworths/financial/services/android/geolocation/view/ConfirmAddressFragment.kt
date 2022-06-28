@@ -1,17 +1,15 @@
 package za.co.woolworths.financial.services.android.geolocation.view
 
-import android.Manifest
-import android.annotation.SuppressLint
+import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.location.Geocoder
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -21,8 +19,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import kotlinx.android.synthetic.main.confirm_address_bottom_sheet_dialog.*
 import kotlinx.android.synthetic.main.current_location_row_layout.*
 import kotlinx.android.synthetic.main.no_connection.*
@@ -40,9 +36,11 @@ import za.co.woolworths.financial.services.android.geolocation.network.model.Con
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.SavedAddressAdapter
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDeliveryFragment.Companion.DEPARTMENT_LOGIN_REQUEST
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.ADDRESS
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
@@ -56,15 +54,19 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LATITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LONGITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
+import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
+import za.co.woolworths.financial.services.android.util.location.Event
+import za.co.woolworths.financial.services.android.util.location.EventType
+import za.co.woolworths.financial.services.android.util.location.Locator
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-import java.io.IOException
 import java.util.*
 
 class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected,
     View.OnClickListener {
+    private lateinit var locator: Locator
     private var mPosition: Int = 0
     private var savedAddressResponse: SavedAddressResponse? = null
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var mLastLocation: Location? = null
     private var selectedAddress = Address()
     private var bundle: Bundle? = null
@@ -107,18 +109,14 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        locator = Locator(activity as AppCompatActivity)
         setUpViewModel()
         initViews()
     }
 
     override fun onResume() {
         super.onResume()
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
-        if (checkPermissions()) {
-            getLastLocation()
-        } else {
-            hideCurrentLocation()
-        }
+        checkForLocationPermissionAndSetLocationAddress()
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             inSavedAddress?.visibility = View.GONE
             tvConfirmAddress?.visibility = View.VISIBLE
@@ -160,36 +158,56 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         no_connection_layout?.btnRetry?.setOnClickListener {
             initViews()
         }
-
     }
 
-    @SuppressLint("MissingPermission")
-    private fun getLastLocation() {
-        fusedLocationClient.lastLocation
-            .addOnCompleteListener(activity as Activity) { task ->
-                if (task.isSuccessful) {
-                    mLastLocation = task.result
-                    mLastLocation?.let {
-                        try {
-                            val addresses = Geocoder(
-                                activity,
-                                Locale.getDefault()
-                            ).getFromLocation(it.latitude, it.longitude, 1)
-                            addresses[0]?.getAddressLine(0)?.let{ addressLine ->
-                                tvCurrentLocation?.text = addressLine
-                            }
+    @TargetApi(Build.VERSION_CODES.M)
+    private fun checkForLocationPermissionAndSetLocationAddress() {
+        activity?.apply {
+            //Check if user has location services enabled. If not, notify user as per current store locator functionality.
+            if (!Utils.isLocationEnabled(this)) {
+                val enableLocationSettingsFragment = EnableLocationSettingsFragment()
+                enableLocationSettingsFragment?.show(
+                    supportFragmentManager,
+                    EnableLocationSettingsFragment::class.java.simpleName
+                )
+                return@apply
+            }
 
-                        } catch (io: IOException) {
-                            FirebaseManager.logException(io)
-                        }
-                    }
-                    if (mLastLocation == null) {
-                        hideCurrentLocation()
-                    }
-                } else {
+            // If location services enabled, extract latitude and longitude
+            startLocationDiscoveryProcess()
+        }
+    }
+
+    private fun startLocationDiscoveryProcess() {
+        locator.getCurrentLocation { locationEvent ->
+            when (locationEvent) {
+                is Event.Location -> handleLocationEvent(locationEvent)
+                is Event.Permission -> handlePermissionEvent(locationEvent)
+            }
+        }
+    }
+
+    private fun handlePermissionEvent(permissionEvent: Event.Permission) {
+        if (permissionEvent.event == EventType.LOCATION_PERMISSION_NOT_GRANTED) {
+            Utils.saveLastLocation(null, activity)
+            handleLocationEvent(null)
+        }
+    }
+
+    private fun handleLocationEvent(locationEvent: Event.Location?) {
+        Utils.saveLastLocation(locationEvent?.locationData, context)
+        mLastLocation = locationEvent?.locationData
+        mLastLocation?.let {
+            DynamicGeocoder.getAddressFromLocation(activity, it.latitude, it.longitude) { address ->
+                address?.let { address ->
+                    tvCurrentLocation?.text = address.addressLine
+                } ?: kotlin.run {
                     hideCurrentLocation()
                 }
             }
+        } ?: kotlin.run {
+            hideCurrentLocation()
+        }
     }
 
     private fun setUpViewModel() {
@@ -204,7 +222,25 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             progressBar?.visibility = View.VISIBLE
             try {
                 savedAddressResponse = confirmAddressViewModel.getSavedAddress()
-                savedAddressResponse?.addresses?.let { setAddressUI(it) }
+                savedAddressResponse?.addresses?.let { addressList ->
+                   val nickName = savedAddressResponse?.defaultAddressNickname
+                    //To Show the DefaultAddress on Top of the Adapter
+                    if (!nickName.isNullOrEmpty()) {
+                        val defaultAddressOptional: Optional<Address> =
+                            addressList.stream().filter { address -> address.nickname.equals(nickName) }
+                                .findFirst()
+                        if (defaultAddressOptional.isPresent) {
+                            val defaultAddress = defaultAddressOptional.get()
+                            addressList.remove(defaultAddress)
+                            addressList.add(0, defaultAddress)
+                            setAddressUI(addressList)
+                        }else{
+                            setAddressUI(addressList)
+                        }
+                    }else{
+                        setAddressUI(addressList)
+                    }
+                }
                 savedAddressResponse?.defaultAddressNickname?.let {
                     setButtonUI(it.length > 1)
                 }
@@ -239,17 +275,6 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 R.color.color_A9A9A9))
         }
 
-    }
-
-
-    private fun checkPermissions(): Boolean {
-        val permissionState = activity?.let {
-            ActivityCompat.checkSelfPermission(
-                it,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            )
-        }
-        return permissionState == PackageManager.PERMISSION_GRANTED
     }
 
     private fun hideCurrentLocation() {
@@ -437,10 +462,9 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                                     if (place.onDemand != null && place.onDemand!!.deliverable == true) {
                                         // directly go back to Dash landing screen. Don't call confirm location API as user only wants to browse Dash.
                                         KotlinUtils.isDashTabClicked =
-                                            address.placesId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId) // changing black tooltip flag as user changes his browsing location.
+                                            address.placesId?.equals(getDeliveryType()?.address?.placeId) // changing black tooltip flag as user changes his browsing location.
                                         val intent = Intent()
-                                        intent.putExtra(BundleKeysConstants.VALIDATE_RESPONSE,
-                                            validateLocationResponse)
+                                        intent.putExtra(BundleKeysConstants.VALIDATE_RESPONSE, validateLocationResponse)
                                         activity?.setResult(Activity.RESULT_OK, intent)
                                         activity?.finish()
                                     } else {
@@ -455,6 +479,15 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                                         customBottomSheetDialogFragment.show(requireFragmentManager(),
                                             CustomBottomSheetDialogFragment::class.java.simpleName)
                                     }
+                                }else if (KotlinUtils.isComingFromCncTab == true) {
+                                    /*user is coming from CNC i.e. set Location flow or change button flow  */
+                                    // navigate to CNC home tab.
+                                    KotlinUtils.isComingFromCncTab = false
+
+                                    /* set cnc browsing data */
+                                    WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
+                                        validateLocationResponse?.validatePlace)
+                                    activity?.finish()
                                 } else {
 
                                     when (deliveryType) {
@@ -600,5 +633,12 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             R.id.action_confirmAddressLocationFragment_to_checkoutAddAddressNewUserFragment,
             bundleOf(BUNDLE to bundle)
         )
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE) {
+            startLocationDiscoveryProcess()
+        }
     }
 }

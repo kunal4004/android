@@ -47,4 +47,7 @@ data class Store (
 
     @SerializedName("latitude")
     var latitude: Double?= null,
+
+    @SerializedName("deliveryDetails")
+    var deliveryDetails: String? = null
 ) : Serializable
