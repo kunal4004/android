@@ -308,6 +308,12 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         }
     }
 
+    private fun deleteAccountShowPopup() {
+        view?.findNavController()?.navigate(
+            R.id.action_myPreferencesFragment_to_deleteAccountBottomSheetDialog
+        )
+    }
+
     @TargetApi(Build.VERSION_CODES.M)
     private fun checkForLocationPermissionAndNavigateToLinkDevice() {
         activity?.apply {
