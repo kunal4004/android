@@ -1,24 +1,17 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities
 
-import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
-import android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-import android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountProductLandingActivityBinding
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.AccountProductsMainFragment
+import javax.inject.Inject
 
 @Suppress("DEPRECATION")
 @AndroidEntryPoint
@@ -28,37 +21,15 @@ class StoreCardActivity : AppCompatActivity() {
 
     val viewModel: AccountProductsHomeViewModel by viewModels()
 
+    @Inject lateinit var statusBarCompat: SystemBarCompat
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setTransparentStatusBar()
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         binding = AccountProductLandingActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        statusBarCompat.setLightStatusAndNavigationBar()
         setupView()
-    }
-
-    private fun setTransparentStatusBar() {
-        window?.apply {
-            when (Build.VERSION.SDK_INT) {
-                in 22..29 -> {
-                    statusBarColor = Color.TRANSPARENT
-                    clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-                    addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-                    decorView.systemUiVisibility = SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or SYSTEM_UI_FLAG_LAYOUT_STABLE
-                }
-                else -> {
-                    statusBarColor = Color.TRANSPARENT
-                    // Making status bar overlaps with the activity
-                    WindowCompat.setDecorFitsSystemWindows(window, false)
-                    // Root ViewGroup of my activity
-                    ViewCompat.setOnApplyWindowInsetsListener(window.decorView){ _, _ ->
-
-                        // Return CONSUMED if you don't want want the window insets to keep being
-                        // passed down to descendant views.
-                        WindowInsetsCompat.CONSUMED
-                    }
-                }
-            }
-        }
     }
 
     private fun setupView() {
@@ -70,15 +41,8 @@ class StoreCardActivity : AppCompatActivity() {
         )
     }
 
-    fun parentNavController(): NavController? {
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.accountProductLandingFragmentContainerView) as? NavHostFragment
-        return navHostFragment?.navController
-    }
-
     private fun getMainFragment() = supportFragmentManager.findFragmentById(R.id.accountProductLandingFragmentContainerView)?.childFragmentManager?.primaryNavigationFragment as? AccountProductsMainFragment
 
-
-    private fun getHomeLandingFragment() = supportFragmentManager.findFragmentById(R.id.nav_account_product_landing)?.childFragmentManager?.primaryNavigationFragment as? AccountProductsMainFragment
 
     fun landingNavController(): NavController? {
         val fragment = getMainFragment()
@@ -88,9 +52,4 @@ class StoreCardActivity : AppCompatActivity() {
 
     fun getToolbarHelper() = getMainFragment()?.mToolbarContainer
 
-    fun productLandingNavController(): NavController? {
-        val fragment = getHomeLandingFragment()
-        val navHost = fragment?.getChildNavHost()
-        return navHost?.navController
-    }
 }

@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities.account.sign_in.toolbar
 
+import android.graphics.Color
 import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
@@ -41,6 +42,7 @@ class AccountProductsToolbarHelper(
             navigateBackImageButton.onClick { onTap(it) }
             setNavigationIconWhite()
             setTitleTextColorWhite()
+            binding.accountToolbar.setBackgroundColor(Color.TRANSPARENT)
             when (viewModel.isProductInGoodStanding()) {
                 true -> {
                     toolbarTitleTextView.visibility = View.VISIBLE
@@ -62,6 +64,7 @@ class AccountProductsToolbarHelper(
     fun setManageMyCardDetailsToolbar(isMultipleStoreCard: Boolean, onTap: (View) -> Unit) {
         getDetailToolbar(R.string.my_card_title, if (isMultipleStoreCard) "s" else "")
         binding.navigateBackImageButton.onClick { onTap(it) }
+        binding.accountToolbar.setBackgroundColor(Color.WHITE)
         setNavigationIconBlack()
         setTitleTextColorBlack()
     }

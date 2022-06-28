@@ -10,6 +10,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.WBottomSheetBehaviour
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.InformationData
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.SystemBarCompat
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.AccountProductsMainFragmentDirections
@@ -26,15 +27,29 @@ class MyStoreCardFragment @Inject constructor() :
     @Inject
     lateinit var bottomSheet: WBottomSheetBehaviour
 
+    @Inject
+    lateinit var statusBarCompat: SystemBarCompat
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.availableFunds.setUpView()
+        statusBarCompat.setLightStatusAndNavigationBar()
         setupToolbar()
         subscribeObserver()
         setGuideline()
         setAccountInArrearsUI()
         background()
         clickListeners()
+        stopPMAShimmer()
+    }
+
+    private fun stopPMAShimmer() {
+        with(binding.incPayMyAccountButton) {
+            viewPaymentOptionImageShimmerLayout.stopShimmer()
+            viewPaymentOptionImageShimmerLayout.setShimmer(null)
+            viewPaymentOptionTextShimmerLayout.stopShimmer()
+            viewPaymentOptionTextShimmerLayout.setShimmer(null)
+        }
     }
 
     private fun setupToolbar() {
@@ -111,12 +126,12 @@ class MyStoreCardFragment @Inject constructor() :
                     navigateToStatementActivity(activity, product)
                 }
                 binding.incRecentTransactionButton.root -> {
-                    navigateToRecentTransactionActivity(activity, product,cardType =  product!!.productGroupCode)
+                    product?.let { navigateToRecentTransactionActivity(activity, product,cardType =  it.productGroupCode) }
                 }
 
+                else -> Unit
             }
         }
     }
-
 
 }

@@ -42,7 +42,6 @@ class AccountProductsMainFragment : Fragment(R.layout.account_product_landing_ma
         setupLandingScreen()
     }
 
-
     private fun setupLandingScreen() {
         val navHostFragment = getChildNavHost()
         childNavController = navHostFragment?.navController

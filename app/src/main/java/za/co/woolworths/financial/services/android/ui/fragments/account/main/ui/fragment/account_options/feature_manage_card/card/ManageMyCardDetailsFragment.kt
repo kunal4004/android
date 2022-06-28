@@ -15,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.SystemBarCompat
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StoreCardCallBack
@@ -22,27 +23,25 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.CallBack
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
-import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragment) {
+
     private var mStoreCardMoreDetail: ManageStoreCardMoreDetail? = null
     private var mOnItemClickListener: ManageCardItemListener? = null
     private var mListOfStoreCardOptions: ManageStoreCardLandingList? = null
     val viewModel: MyAccountsRemoteApiViewModel by activityViewModels()
     private val cardFreezeViewModel: TemporaryFreezeCardViewModel by activityViewModels()
 
-    @Inject
-    lateinit var manageCardAdapter: ManageCardViewPagerAdapter
+    @Inject lateinit var statusBarCompat: SystemBarCompat
 
-    @Inject
-    lateinit var router: ProductLandingRouterImpl
+    @Inject lateinit var router: ProductLandingRouterImpl
     private val activityLauncher = BetterActivityResult.registerActivityForResult(this)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Utils.updateStatusBarBackground(requireActivity(), R.color.black, true)
+        statusBarCompat.setDarkStatusAndNavigationBar()
         setToolbar()
         with(ManageCardDetailsFragmentBinding.bind(view)) {
             mStoreCardMoreDetail = ManageStoreCardMoreDetail(requireContext(),incManageCardDetailsInfoLayout)
