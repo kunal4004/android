@@ -19,6 +19,8 @@ import static za.co.woolworths.financial.services.android.ui.fragments.product.d
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_BRAND_HEADER;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_CATEGORY;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_LIST;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment.REQUEST_PAYMENT_STATUS;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.MY_LIST_LIST_ID;
@@ -91,7 +93,6 @@ import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.BrandNavigationDetails;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
-import za.co.woolworths.financial.services.android.models.dto.Order;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductSearchTypeAndTerm;
@@ -243,8 +244,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         parseDeepLinkData();
         new AmplifyInit();
         mNavController = FragNavController.newBuilder(savedInstanceState,
-                getSupportFragmentManager(),
-                R.id.frag_container)
+                        getSupportFragmentManager(),
+                        R.id.frag_container)
                 .fragmentHideStrategy(FragNavController.HIDE)
                 .transactionListener(this)
                 .switchController(UNLIMITED_TAB_HISTORY, (index, transactionOptions) -> getBottomNavigationById().setCurrentItem(index))
@@ -350,8 +351,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 getBottomNavigationById().setCurrentItem(Integer.parseInt(mSessionExpiredAtTabSection));
                 SessionExpiredUtilities.getInstance().showSessionExpireDialog(BottomNavigationActivity.this);
             }
-           String changePassword = mBundle.getString(FORGOT_PASSWORD);
-            if(null!=changePassword && changePassword.equals(FORGOT_PASSWORD_VALUE)){
+            String changePassword = mBundle.getString(FORGOT_PASSWORD);
+            if (null != changePassword && changePassword.equals(FORGOT_PASSWORD_VALUE)) {
                 navigateMyAccountScreen();
             }
         }
@@ -610,7 +611,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 Bundle arguments = fragment.getArguments();
                 ProductDetails newProductDetails = (ProductDetails) Utils.jsonStringToObject(arguments.getString(STR_PRODUCT_LIST), ProductDetails.class);
 
-                if (productDetails != null && newProductDetails!= null && !TextUtils.isEmpty(productDetails.productId)
+                if (productDetails != null && newProductDetails != null && !TextUtils.isEmpty(productDetails.productId)
                         && !TextUtils.isEmpty(newProductDetails.productId) && productDetails.productId.equals(newProductDetails.productId)) {
                     // when we open same PDP then instead of new PDP it will close existing PDP and opens up new same PDP.
                     mNavController.popFragment();
@@ -1088,6 +1089,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             case ADD_TO_SHOPPING_LIST_REQUEST_CODE:
                 if (resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
                     ToastFactory.Companion.buildShoppingListToast(this, getBottomNavigationById(), true, data, this);
+                    break;
+                }
+
+            case REQUEST_PAYMENT_STATUS:
+                if (resultCode == REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING) {
+                    navigateToTabIndex(BottomNavigationActivity.INDEX_PRODUCT, null);
                     break;
                 }
             case REQUEST_CODE_ORDER_DETAILS_PAGE:// Call back when Toast clicked after adding item to shopping list
@@ -1615,6 +1622,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             shopFragment.refreshCategories();
         }
     }
+
     public int getPreviousTabIndex() {
         return previousTabIndex;
     }
@@ -1628,6 +1636,4 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }, AppConstant.DELAY_500_MS);
 
     }
-
-
 }
