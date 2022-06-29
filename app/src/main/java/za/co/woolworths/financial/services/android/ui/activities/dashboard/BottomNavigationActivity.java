@@ -1636,6 +1636,4 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }, AppConstant.DELAY_500_MS);
 
     }
-
-
 }
