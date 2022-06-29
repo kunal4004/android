@@ -427,7 +427,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                         }
 
                         when {
-                            KotlinUtils.isDeliveryOptionClickAndCollect() &&
+                            (KotlinUtils.isDeliveryOptionClickAndCollect() || KotlinUtils.isDeliveryOptionDash() )&&
                                     response.data?.get(0)?.productCountMap?.quantityLimit?.foodLayoutColour != null -> {
 
                                 response.data?.get(0)?.productCountMap?.let {

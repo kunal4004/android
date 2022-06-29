@@ -305,8 +305,7 @@ class ToastFactory {
         ): PopupWindow {
             val context = WoolworthsApplication.getAppContext()
             // inflate your xml layout
-            val inflater =
-                context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as? LayoutInflater
+            val inflater = LayoutInflater.from(context)
             val view = inflater?.inflate(R.layout.items_limit_custom_toast, null)
             val tvTotalProductCount = view?.findViewById<TextView>(R.id.totalProductCount)
             val tvNoOfItemsAddedToCart = view?.findViewById<TextView>(R.id.noOfItemsAddedToCart)
