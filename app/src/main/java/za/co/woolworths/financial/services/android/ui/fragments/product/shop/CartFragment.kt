@@ -922,7 +922,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                                         cartProductAdapter?.setEditMode(true)
                                     }
                                     setDeliveryLocationEnabled(true)
-                                    if (response.data[0].orderSummary.fulfillmentDetails != null) {
+                                    if (response.data[0].orderSummary.fulfillmentDetails?.address?.placeId != null) {
                                         Utils.savePreferredDeliveryLocation(
                                             ShoppingDeliveryLocation(
                                                 response.data[0].orderSummary.fulfillmentDetails
@@ -1123,7 +1123,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             cartResponse.orderSummary = data.orderSummary
             cartResponse.voucherDetails = data.voucherDetails
             cartResponse.productCountMap = data.productCountMap // set delivery location
-            if (cartResponse.orderSummary.fulfillmentDetails != null) {
+            if (cartResponse.orderSummary.fulfillmentDetails?.address?.placeId != null) {
                 Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(cartResponse.orderSummary.fulfillmentDetails))
             }
             setDeliveryLocation(Utils.getPreferredDeliveryLocation())
