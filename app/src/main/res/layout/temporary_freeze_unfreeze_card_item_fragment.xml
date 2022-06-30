@@ -30,7 +30,7 @@
             android:layout_toEndOf="@+id/storeCardItem3ImageView"
             android:text="@string/temporary_card_freeze_title" />
 
-        <za.co.woolworths.financial.services.android.ui.views.switcher.SwitchCompatEx
+        <za.co.woolworths.financial.services.android.ui.views.switcher.SwitchCompatWidget
             android:id="@+id/switchTemporaryFreezeCard"
             android:layout_width="@dimen/_46sdp"
             android:layout_height="@dimen/_24sdp"

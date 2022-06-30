@@ -11,7 +11,7 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
 
-class SwitchCompatEx : SwitchCompat {
+class SwitchCompatWidget : SwitchCompat {
 
     companion object {
 
