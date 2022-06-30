@@ -513,9 +513,9 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     //LiquorCompliance
     private fun getLiquorComplianceDetails() {
         baseFragBundle?.apply {
-            if(containsKey(Constant.LIQUOR_ORDER)){
+            if(containsKey(Constant.LIQUOR_ORDER)) {
                 liquorOrder=getBoolean(Constant.LIQUOR_ORDER)
-                if(liquorOrder==true&&containsKey(Constant.NO_LIQUOR_IMAGE_URL)){
+                if(liquorOrder==true&&containsKey(Constant.NO_LIQUOR_IMAGE_URL)) {
                     liquorImageUrl=getString(Constant.NO_LIQUOR_IMAGE_URL)
                     ageConfirmationLayoutCollection?.visibility=View.VISIBLE
                     liquorComplianceBannerLayout?.visibility=View.VISIBLE
@@ -535,7 +535,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                         radioBtnAgeConfirmation?.isChecked = true
                     }
                 }
-            }else{
+            } else {
                 ageConfirmationLayoutCollection?.visibility=View.GONE
                 liquorComplianceBannerLayout?.visibility=View.GONE
             }
