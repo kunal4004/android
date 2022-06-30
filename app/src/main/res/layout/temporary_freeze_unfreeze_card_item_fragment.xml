@@ -30,13 +30,13 @@
             android:layout_toEndOf="@+id/storeCardItem3ImageView"
             android:text="@string/temporary_card_freeze_title" />
 
-        <androidx.appcompat.widget.SwitchCompat
+        <za.co.woolworths.financial.services.android.ui.views.switcher.SwitchCompatEx
             android:id="@+id/switchTemporaryFreezeCard"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/_46sdp"
+            android:layout_height="@dimen/_24sdp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:theme="@style/SwitchTheme" />
+      />
 
         <ProgressBar
             android:id="@+id/freezeProgressBar"
