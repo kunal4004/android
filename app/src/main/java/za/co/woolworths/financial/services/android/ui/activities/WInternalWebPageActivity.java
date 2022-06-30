@@ -2,6 +2,8 @@ package za.co.woolworths.financial.services.android.ui.activities;
 
 
 import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl.ELITE_PLAN_MODEL;
+import static za.co.woolworths.financial.services.android.util.ChromeClient.CAMERA_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.util.ChromeClient.INPUT_FILE_REQUEST_CODE;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -44,6 +46,7 @@ import com.google.android.material.appbar.AppBarLayout;
 
 import java.util.HashMap;
 
+import za.co.woolworths.financial.services.android.util.ChromeClient;
 import za.co.woolworths.financial.services.android.util.eliteplan.ElitePlanModel;
 import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -65,8 +68,11 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	private String downLoadConntentDisposition;
 	private Boolean treatmentPlan;
 	private String collectionsExitUrl;
+    private ChromeClient chromeClient;
+    private Boolean ficaCamceled = false;
 
-	@Override
+
+    @Override
 	protected void onStart() {
 		if(treatmentPlan){
 			overridePendingTransition(R.anim.slide_from_right, R.anim.stay);
@@ -106,9 +112,12 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 
 	@SuppressLint("SetJavaScriptEnabled")
 	private void webSetting() {
-		showProgressBar();
+        showProgressBar();
 		webInternalPage.getSettings().setJavaScriptEnabled(true);
-		if(treatmentPlan){
+        chromeClient = new ChromeClient(this);
+        chromeClient.setUpWebViewDefaults(webInternalPage);
+
+        if(treatmentPlan){
 			webInternalPage.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
 			webInternalPage.clearCache(true);
 		}
@@ -170,8 +179,8 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 			@Override
 			public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
 				super.doUpdateVisitedHistory(view, url, isReload);
-				if (treatmentPlan ) {
-					HashMap<String,String> parameters = getQueryString(url);
+                HashMap<String,String> parameters = getQueryString(url);
+                if (treatmentPlan ) {
 					if (parameters.containsKey("Scope") ){
 						if (parameters.get("Scope").equals("paynow")){
 							finishActivityForElite(parameters);
@@ -199,11 +208,15 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 					}
 
 				}else if (url.contains(collectionsExitUrl)){
+                    if (parameters.get("IsCompleted").equals("false")) {
+                        ficaCamceled = true;
+                    }
 					finishActivity();
 				}
 			}
 		});
-		webInternalPage.loadUrl(mExternalLink);
+        webInternalPage.setWebChromeClient(chromeClient);
+        webInternalPage.loadUrl(mExternalLink);
 
 		webInternalPage.setDownloadListener((url, userAgent, contentDisposition, mimeType, contentLength) -> {
 			downLoadUrl=url;
@@ -342,7 +355,9 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	}
 
 	public void finishActivity() {
-		setResult(RESULT_OK);
+        if (!ficaCamceled) {
+            setResult(RESULT_OK);
+        }
 		finish();
 		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 	}
@@ -422,7 +437,38 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 				case REQUEST_CODE:
 					downloadFile(downLoadUrl,downLoadMimeType,downLoadUserAgent,downLoadConntentDisposition);
 					break;
+				case CAMERA_REQUEST_CODE:
+					chromeClient.displayFile();
+					break;
 			}
 		}
 	}
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode != INPUT_FILE_REQUEST_CODE || chromeClient.getMFilePathCallback() == null) {
+            super.onActivityResult(requestCode, resultCode, data);
+            return;
+        }
+
+        Uri[] results = null;
+
+        // Check that the response is a good one
+        if (resultCode == RESULT_OK) {
+            String dataString = data.getDataString();
+
+            if (data.getDataString() == null) {
+                // If there is not data, then we may have taken a photo
+                if (chromeClient.getMCameraPhotoPath() != null) {
+                    results = new Uri[]{Uri.parse(chromeClient.getMCameraPhotoPath())};
+                }
+            } else {
+                results = new Uri[]{Uri.parse(dataString)};
+
+            }
+        }
+
+        chromeClient.getMFilePathCallback().onReceiveValue(results);
+        chromeClient.setMFilePathCallback(null);
+    }
 }
