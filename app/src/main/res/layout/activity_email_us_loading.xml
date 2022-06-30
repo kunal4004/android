@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <ImageView
+        android:id="@+id/iv_email_us_loading"
+        android:layout_width="@dimen/_70sdp"
+        android:layout_height="@dimen/_70sdp"
+        android:layout_marginBottom="@dimen/_25sdp"
+        android:src="@drawable/ic_success"
+        app:layout_constraintBottom_toTopOf="@+id/tv_email_us_loading_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/pb_email_us_loading"
+        android:layout_width="99dp"
+        android:layout_height="102dp"
+        android:layout_gravity="center"
+        android:indeterminateBehavior="repeat"
+        android:indeterminateTint="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/tv_email_us_loading_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_email_us_loading_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_25sdp"
+        android:layout_marginTop="@dimen/_24sdp"
+        android:layout_marginBottom="@dimen/_15sdp"
+        android:fontFamily="@font/futura_semi_bold"
+        android:gravity="center"
+        android:text="@string/sending_enquiry"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_18ssp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_email_us_loading_desc" />
+
+    <TextView
+        android:id="@+id/tv_email_us_loading_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:gravity="center"
+        android:layout_marginStart="@dimen/_32sdp"
+        android:layout_marginEnd="@dimen/_32sdp"
+        android:text="@string/thanks_for_message"
+        android:textColor="@color/color_7f7f7f"
+        android:textSize="@dimen/_12ssp"
+        android:lineSpacingExtra="@dimen/_6sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_email_us_loading_got_it"
+        style="@style/blackButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_24sdp"
+        android:layout_marginEnd="@dimen/_24sdp"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:textSize="@dimen/_10ssp"
+        android:letterSpacing="0.2"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:text="@string/got_it"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/btn_email_us_loading_dismiss"/>
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/btn_email_us_loading_dismiss"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:letterSpacing="0.1"
+        android:text="@string/vto_dismiss"
+        android:textAllCaps="true"
+        android:gravity="center"
+        android:textColor="@color/gray"
+        android:textSize="@dimen/_10ssp"
+        app:WTextView_font="light"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_image_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="btn_email_us_loading_got_it,iv_email_us_loading,btn_email_us_loading_dismiss"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

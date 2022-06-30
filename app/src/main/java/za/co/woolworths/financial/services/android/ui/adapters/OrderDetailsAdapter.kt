@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.my_orders_past_orders_header.view.*
 import kotlinx.android.synthetic.main.order_deatils_status_item.view.*
 import kotlinx.android.synthetic.main.order_details_commerce_item.view.*
 import kotlinx.android.synthetic.main.order_details_gift_commerce_item.view.*
+import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
@@ -111,7 +112,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                                 deliverySuburbLbl?.text =
                                     context?.resources?.getString(R.string.collection_location)
                                 it.fulfillmentDetails.storeName?.let{
-                                    deliverySuburb?.text = it
+                                    deliverySuburb?.text = convertToTitleCase(it)
 
                                 }
                                 deliverySuburbLbl?.contentDescription =
@@ -126,7 +127,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                                 deliverySuburbLbl?.text =
                                     context?.resources?.getString(R.string.delivery_address)
                                 deliverySuburb?.text =
-                                    item.orderSummary?.fulfillmentDetails?.address?.address1
+                                    item.orderSummary?.fulfillmentDetails?.address?.address1?.let { convertToTitleCase(it) }
                             }
 
                         }

@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.integration.uti
 
 import com.awfs.coordination.R
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import org.json.JSONException
 import org.json.JSONObject
 import za.co.absa.openbankingapi.woolworths.integration.dto.Header
@@ -106,6 +107,10 @@ class AbsaApiResponse<W: Any>(isResponseBodyEncrypted: Boolean = false, resultFr
         val response: W?
         try {
             response = Gson().fromJson(payload, typeParameterClass.java)
+        } catch (e: JsonSyntaxException) {
+            setCrashlyticsString("handleAbsaStatusCode - JsonSyntaxException with payload",payload)
+            logException(e)
+            return null
         } catch (e: JSONException) {
             setCrashlyticsString("handleAbsaStatusCode - JSONException with payload",payload)
             logException(e)

@@ -121,9 +121,13 @@
     <TextView
         android:id="@+id/invalidPaymentAmountTextView"
         style="@style/textviewErrorLabelStyle"
-        android:text="@string/update_payment_above_limit_error"
+        android:text="@string/enter_payment_amount_max_input_error"
         app:layout_constraintStart_toStartOf="@+id/pmaAmountEnteredTextView"
         app:layout_constraintTop_toBottomOf="@+id/pmaAmountEnteredTextView"
+        app:layout_constraintEnd_toEndOf="@id/editAmountImageView"
+        android:gravity="center"
+        android:textSize="@dimen/_10ssp"
+        android:visibility="gone"
         android:layout_marginTop="-50dp"/>
 
     <EditText

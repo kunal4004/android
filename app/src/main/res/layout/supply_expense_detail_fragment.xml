@@ -32,12 +32,13 @@
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/cli_supply_detail_text"
-                    android:text="@string/increase_supply_supply_detail"/>
+                    android:contentDescription="@string/supplyExpenseDetailSubTitle"
+                    android:text="@string/increase_supply_supply_detail" />
 
                 <ImageView
                     android:id="@+id/imInfo"
                     style="@style/increase_limit_info_circle"
-                    android:contentDescription="@string/placeholder"/>
+                    android:contentDescription="@string/supplyExpenseDetailIcon" />
 
             </RelativeLayout>
 
@@ -49,13 +50,16 @@
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/textViewLabelStyle"
-                    android:text="@string/expenses_mortgage_payment"/>
+                    android:contentDescription="@string/mortgagePaymentsTextLabel"
+                    android:text="@string/expenses_mortgage_payment" />
 
-                <LinearLayout style="@style/currencyStyleLayout">
+                <LinearLayout
+                    style="@style/currencyStyleLayout"
+                    android:contentDescription="@string/mortgagePaymentsTextField">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/tvMortgagePayments"
-                        style="@style/editCurrencyStyle"/>
+                        style="@style/editCurrencyStyle" />
 
                     <za.co.woolworths.financial.services.android.util.CurrencyEditText
                         android:id="@+id/etMortgagePayments"
@@ -72,13 +76,16 @@
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/textViewLabelStyle"
-                    android:text="@string/expenses_rental_payment"/>
+                    android:contentDescription="@string/rentalPaymentsTextField"
+                    android:text="@string/expenses_rental_payment" />
 
-                <LinearLayout style="@style/currencyStyleLayout">
+                <LinearLayout
+                    style="@style/currencyStyleLayout"
+                    android:contentDescription="@string/rentalPaymentsTextField">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/tvRentalPayments"
-                        style="@style/editCurrencyStyle"/>
+                        style="@style/editCurrencyStyle" />
 
                     <za.co.woolworths.financial.services.android.util.CurrencyEditText
                         android:id="@+id/etRentalPayments"
@@ -95,13 +102,16 @@
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/textViewLabelStyle"
-                    android:text="@string/expenses_maintenance_payment"/>
+                    android:contentDescription="@string/maintenanceExpensesTextLabel"
+                    android:text="@string/expenses_maintenance_payment" />
 
-                <LinearLayout style="@style/currencyStyleLayout">
+                <LinearLayout
+                    style="@style/currencyStyleLayout"
+                    android:contentDescription="@string/maintenanceExpensesTextField">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/tvMaintainanceExpenses"
-                        style="@style/editCurrencyStyle"/>
+                        style="@style/editCurrencyStyle" />
 
                     <za.co.woolworths.financial.services.android.util.CurrencyEditText
                         android:id="@+id/etMaintainanceExpenses"
@@ -118,13 +128,16 @@
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/textViewLabelStyle"
-                    android:text="@string/expense_monthly_credit_payment"/>
+                    android:contentDescription="@string/monthlyCreditPaymentsTextLabel"
+                    android:text="@string/expense_monthly_credit_payment" />
 
-                <LinearLayout style="@style/currencyStyleLayout">
+                <LinearLayout
+                    style="@style/currencyStyleLayout"
+                    android:contentDescription="@string/monthlyCreditPaymentsTextField">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/tvMonthlyCreditPayments"
-                        style="@style/editCurrencyStyle"/>
+                        style="@style/editCurrencyStyle" />
 
                     <za.co.woolworths.financial.services.android.util.CurrencyEditText
                         android:id="@+id/etMonthlyCreditPayments"
@@ -141,13 +154,16 @@
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/textViewLabelStyle"
-                    android:text="@string/cli_other_expenses"/>
+                    android:contentDescription="@string/otherExpensesTextField"
+                    android:text="@string/cli_other_expenses" />
 
-                <LinearLayout style="@style/currencyStyleLayout">
+                <LinearLayout
+                    style="@style/currencyStyleLayout"
+                    android:contentDescription="@string/otherExpensesTextField">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/tvOtherExpenses"
-                        style="@style/editCurrencyStyle"/>
+                        style="@style/editCurrencyStyle" />
 
                     <za.co.woolworths.financial.services.android.util.CurrencyEditText
                         android:id="@+id/etOtherExpenses"

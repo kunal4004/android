@@ -10,20 +10,14 @@ import android.view.*
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_select_store_details.*
+import kotlinx.android.synthetic.main.fragment_select_store_details.dynamicMapView
+import kotlinx.android.synthetic.main.fragment_select_store_details.mapLayout
+import kotlinx.android.synthetic.main.fragment_stores_nearby1.*
 import kotlinx.android.synthetic.main.layout_confirmation.*
 import kotlinx.android.synthetic.main.select_store_activity.*
 import kotlinx.android.synthetic.main.store_details_layout_common.*
@@ -36,6 +30,8 @@ import za.co.woolworths.financial.services.android.ui.activities.card.SelectStor
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ParticipatingStoreFragment.Companion.STORE_CARD
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout.PanelState
+import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate
+import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage
 import za.co.woolworths.financial.services.android.util.SpannableMenuOption
 import za.co.woolworths.financial.services.android.util.Utils
@@ -43,10 +39,9 @@ import za.co.woolworths.financial.services.android.util.WFormatter
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension.Companion.animateViewPushDown
 import java.util.*
 
-class SelectStoreDetailsFragment : Fragment(), OnMapReadyCallback {
+class SelectStoreDetailsFragment : Fragment(), DynamicMapDelegate {
 
     private val REQUEST_CALL = 1
-    var googleMap: GoogleMap? = null
 
     var storeDetails: StoreDetails? = null
     var showStoreSelect: Boolean = false
@@ -81,6 +76,7 @@ class SelectStoreDetailsFragment : Fragment(), OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState)
 
         setupActionBar()
+        dynamicMapView?.initializeMap(savedInstanceState, this)
 
         mPopWindowValidationMessage = PopWindowValidationMessage(context)
         //getting height of device
@@ -131,7 +127,6 @@ class SelectStoreDetailsFragment : Fragment(), OnMapReadyCallback {
                 }
             }
         })
-        initMap()
     }
 
     private fun setupActionBar() {
@@ -142,37 +137,28 @@ class SelectStoreDetailsFragment : Fragment(), OnMapReadyCallback {
 
     override fun onResume() {
         super.onResume()
+        dynamicMapView?.onResume()
         activity?.apply { Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.STORE_DETAILS) }
     }
 
-    override fun onMapReady(map: GoogleMap?) {
-        googleMap = map
-        googleMap?.uiSettings?.isScrollGesturesEnabled = false
-        googleMap?.isMyLocationEnabled = false
+    override fun onMapReady() {
+        dynamicMapView?.setScrollGesturesEnabled(false)
+        dynamicMapView?.setMyLocationEnabled(false)
         centerCamera()
     }
 
     fun centerCamera() {
-        googleMap?.addMarker(MarkerOptions().position(LatLng(storeDetails?.latitude ?: 0.0, storeDetails?.longitude ?: 0.0))
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.selected_pin)))
-        val cameraPosition = CameraPosition.Builder().target(
-                LatLng(storeDetails?.latitude ?: 0.0, storeDetails?.longitude ?: 0.0)).zoom(13f).build()
-        googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
-    }
-
-    fun initMap() {
-        activity?.apply {
-            if (googleMap == null) {
-                val fm: FragmentManager = supportFragmentManager /// getChildFragmentManager();
-                var mapFragment: SupportMapFragment? = null
-                mapFragment = fm.findFragmentById(R.id.map) as? SupportMapFragment
-                if (mapFragment == null) {
-                    mapFragment = SupportMapFragment.newInstance()
-                    fm.beginTransaction().replace(R.id.map, mapFragment).commit()
-                }
-                mapFragment?.getMapAsync(this@SelectStoreDetailsFragment)
-            }
-        }
+        dynamicMapView?.addMarker(
+            requireContext(),
+            latitude = storeDetails?.latitude ?: 0.0,
+            longitude = storeDetails?.longitude ?: 0.0,
+            icon = R.drawable.selected_pin
+        )
+        dynamicMapView?.animateCamera(
+            latitude = storeDetails?.latitude ?: 0.0,
+            longitude = storeDetails?.longitude ?: 0.0,
+            zoom = 13f
+        )
     }
 
     fun onBackPressed() {
@@ -274,5 +260,27 @@ class SelectStoreDetailsFragment : Fragment(), OnMapReadyCallback {
             if (d.type != null && d.type.contains(type!!)) list.add(d)
         }
         return list
+    }
+
+    override fun onMarkerClicked(marker: DynamicMapMarker) { }
+
+    override fun onDestroyView() {
+        dynamicMapView?.onDestroy()
+        super.onDestroyView()
+    }
+
+    override fun onPause() {
+        dynamicMapView?.onPause()
+        super.onPause()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        dynamicMapView?.onLowMemory()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        dynamicMapView?.onSaveInstanceState(outState)
     }
 }

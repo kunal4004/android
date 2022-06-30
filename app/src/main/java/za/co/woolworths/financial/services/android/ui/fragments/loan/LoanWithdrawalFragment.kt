@@ -66,6 +66,7 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as? LoanWithdrawalActivity)?.setContentDescriptionForActionBarHomeIcon("closeIcon")
         mErrorHandlerView = ErrorHandlerView(activity)
         configureEditText()
         menuItemVisible(false)

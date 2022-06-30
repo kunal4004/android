@@ -5,6 +5,15 @@ import com.google.gson.annotations.SerializedName
 import za.co.woolworths.financial.services.android.models.dto.Response
 import java.io.Serializable
 
+data class ErrorResponse(
+        @SerializedName("httpCode")
+        @Expose
+        var httpCode: Int,
+        @SerializedName("response")
+        @Expose
+        val response: Response
+) : Serializable
+
 data class DeleteResponse(
         @SerializedName("httpCode")
         @Expose

@@ -19,6 +19,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.ProductOfferingStatus
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.extension.deviceHeight
+import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.eliteplan.EligibilityImpl
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -76,17 +77,21 @@ class AccountSignedInPresenterImpl(
         val accountInfo = getMyAccountCardInfo()
         bundle.putString(MY_ACCOUNT_RESPONSE, Gson().toJson(accountInfo))
         val graph = navDetailController?.graph
-        graph?.startDestination = when (accountInfo?.first) {
-            ApplyNowState.STORE_CARD -> R.id.storeCardFragment
-            ApplyNowState.SILVER_CREDIT_CARD -> R.id.silverCreditCardFragment
-            ApplyNowState.PERSONAL_LOAN -> R.id.personalLoanFragment
-            ApplyNowState.BLACK_CREDIT_CARD -> R.id.blackCreditCardFragment
-            ApplyNowState.GOLD_CREDIT_CARD -> R.id.goldCreditCardFragment
-            else -> throw (java.lang.RuntimeException(" setAvailableFundBundleInfo() :: Invalid account State found $accountInfo"))
-        }
+        if(accountInfo?.first != null){
+            graph?.startDestination = when (accountInfo.first) {
+                ApplyNowState.STORE_CARD -> R.id.storeCardFragment
+                ApplyNowState.SILVER_CREDIT_CARD -> R.id.silverCreditCardFragment
+                ApplyNowState.PERSONAL_LOAN -> R.id.personalLoanFragment
+                ApplyNowState.BLACK_CREDIT_CARD -> R.id.blackCreditCardFragment
+                ApplyNowState.GOLD_CREDIT_CARD -> R.id.goldCreditCardFragment
+            }
 
-        navDetailController?.setGraph(navDetailController.graph, bundle)
-        showProductOfferOutstanding(accountInfo.first, myAccountsViewModel, true)
+            navDetailController?.setGraph(navDetailController.graph, bundle)
+            showProductOfferOutstanding(accountInfo.first, myAccountsViewModel, true)
+        }
+        else{
+            FirebaseManager.logException("setAvailableFundBundleInfo() :: accountInfo?.first found ${accountInfo?.first}")
+        }
     }
 
     private fun getAccount(accountsResponse: AccountsResponse): Account? {

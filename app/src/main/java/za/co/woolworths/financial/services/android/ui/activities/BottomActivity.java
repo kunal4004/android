@@ -172,7 +172,7 @@ public abstract class BottomActivity extends AppCompatActivity implements Permis
 		closeSlideUpPanel();
 	}
 
-	public void PermissionGranted(int request_code) {
+	public void permissionGranted(int request_code) {
 		//TODO:: Parse result_code and use only onActivityResult line
 		onActivityResult(request_code, 200, null);
 		switch (request_code) {
@@ -184,18 +184,6 @@ public abstract class BottomActivity extends AppCompatActivity implements Permis
 				sendBus(new ProductDetailsFragment());
 				break;
 		}
-	}
-
-	public void PartialPermissionGranted(int request_code, ArrayList<String> granted_permissions) {
-
-	}
-
-	public void PermissionDenied(int request_code) {
-
-	}
-
-	public void NeverAskAgain(int request_code) {
-
 	}
 
 	public void setCurrentSection(int currentSection) {

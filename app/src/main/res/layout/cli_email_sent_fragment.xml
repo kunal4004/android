@@ -23,44 +23,44 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/email_bottom_margin"
-                android:contentDescription="@string/cli_send_to_title"
-                android:src="@drawable/process_complete_email_logo"/>
+                android:contentDescription="@string/emailLogoIcon"
+                android:src="@drawable/process_complete_email_logo" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="1dp"
+                android:contentDescription="@string/documentSentToTitle"
                 android:gravity="center"
                 android:text="@string/cli_email_sent_document_title"
                 android:textAllCaps="true"
                 android:textColor="@color/offer_title"
                 android:textSize="@dimen/email_text_size_12sp"
-                app:WTextView_font="medium"
-                />
+                app:WTextView_font="medium" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/tvEmailAccount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/email_bottom_margin_18"
+                android:contentDescription="@string/userEmailAddressValue"
                 android:gravity="center"
                 android:text="matt@emailaddress.com"
                 android:textColor="@color/offer_title"
                 android:textSize="@dimen/email_text_size_16sp"
-                app:WTextView_font="medium_bold"
-                />
+                app:WTextView_font="medium_bold" />
 
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/tvClearDocumentPhoto"
                 style="@style/take_photo_document_desc_style"
-                android:layout_marginBottom="@dimen/email_bottom_margin_48"
-                android:layout_marginEnd="@dimen/email_bottom_margin_8"
                 android:layout_marginStart="@dimen/email_bottom_margin_8"
+                android:layout_marginEnd="@dimen/email_bottom_margin_8"
+                android:layout_marginBottom="@dimen/email_bottom_margin_48"
+                android:contentDescription="@string/instructionSentToEmailDesc"
                 android:gravity="center"
                 android:text="@string/cli_email_sent_description"
-                android:textSize="@dimen/email_text_size_15sp"
-                />
+                android:textSize="@dimen/email_text_size_15sp" />
 
 
         </LinearLayout>

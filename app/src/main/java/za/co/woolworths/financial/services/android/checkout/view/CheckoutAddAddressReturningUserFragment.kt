@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
+import android.widget.CompoundButton
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResultListener
@@ -21,7 +22,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerFrameLayout
-import kotlinx.android.synthetic.main.checkout_add_address_new_user.*
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
 import kotlinx.android.synthetic.main.checkout_grid_layout_other.*
@@ -29,9 +29,11 @@ import kotlinx.android.synthetic.main.checkout_how_would_you_delivered.*
 import kotlinx.android.synthetic.main.delivery_or_click_and_collect_selector_dialog.*
 import kotlinx.android.synthetic.main.edit_delivery_location_confirmation_fragment.view.*
 import kotlinx.android.synthetic.main.layout_delivering_to_details.*
+import kotlinx.android.synthetic.main.layout_native_checkout_age_confirmation.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_order_summary.*
+import kotlinx.android.synthetic.main.liquor_compliance_banner.*
 import kotlinx.android.synthetic.main.new_shopping_bags_layout.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
@@ -61,7 +63,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.shop.Che
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DEFAULT_ADDRESS
+import za.co.woolworths.financial.services.android.util.Constant.Companion.LIQUOR_ORDER
+import za.co.woolworths.financial.services.android.util.Constant.Companion.NO_LIQUOR_IMAGE_URL
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
+import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPicture
 import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -75,7 +80,7 @@ import java.util.regex.Pattern
 class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFragment(),
     OnClickListener,
     CheckoutDeliveryTypeSelectionListAdapter.EventListner,
-    ShoppingBagsRadioGroupAdapter.EventListner {
+    ShoppingBagsRadioGroupAdapter.EventListner, CompoundButton.OnCheckedChangeListener {
 
     companion object {
         const val REGEX_DELIVERY_INSTRUCTIONS = "^\$|^[a-zA-Z0-9\\s<!>@#\$&().+,-/\\\"']+\$"
@@ -91,6 +96,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     private var storeId: String? = ""
     private var nickName: String? = ""
 
+    private var liquorImageUrl: String? = ""
+    private var liquorOrder:Boolean? = false
 
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -174,7 +181,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         addFragmentListner()
         initializeDeliveringToView()
         initializeDeliveryFoodOtherItems()
-
+        getLiquorComplianceDetails()
         expandableGrid.apply {
             disablePreviousBtnFood()
             disablePreviousBtnOther()
@@ -197,6 +204,37 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             view?.setOnClickListener {
                 Utils.hideSoftKeyboard(this)
             }
+        }
+    }
+    //LiquorCompliance
+    private fun getLiquorComplianceDetails() {
+        baseFragBundle?.apply {
+       if(containsKey(LIQUOR_ORDER)){
+           liquorOrder=getBoolean(LIQUOR_ORDER)
+          if(liquorOrder==true&&containsKey(NO_LIQUOR_IMAGE_URL)){
+              liquorImageUrl=getString(NO_LIQUOR_IMAGE_URL)
+              ageConfirmationLayout?.visibility=View.VISIBLE
+              liquorComplianceBannerLayout?.visibility=View.VISIBLE
+              setPicture(imgLiquorBanner, liquorImageUrl)
+
+              ageConfirmationLayout.visibility = VISIBLE
+              liquorComplianceBannerSeparator.visibility = VISIBLE
+              liquorComplianceBannerLayout.visibility = VISIBLE
+
+              if(!radioBtnAgeConfirmation.isChecked) {
+                  Utils.fadeInFadeOutAnimation(txtContinueToPayment, true)
+                  radioBtnAgeConfirmation?.isChecked = false
+                  txtContinueToPayment?.isClickable = false
+              } else {
+                  Utils.fadeInFadeOutAnimation(txtContinueToPayment, false)
+                  txtContinueToPayment?.isClickable = true
+                  radioBtnAgeConfirmation?.isChecked = true
+              }
+          }
+       }else{
+           ageConfirmationLayout?.visibility=View.GONE
+           liquorComplianceBannerLayout?.visibility=View.GONE
+       }
         }
     }
 
@@ -475,6 +513,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         nextImgBtnFood.setOnClickListener(this)
         previousImgBtnOther.setOnClickListener(this)
         nextImgBtnOther.setOnClickListener(this)
+        radioBtnAgeConfirmation.setOnCheckedChangeListener(this)
     }
 
     /**
@@ -551,6 +590,41 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 radioGroupFoodSubstitutionShimmerFrameLayout,
                 radioGroupFoodSubstitution
             ),
+
+            Pair<ShimmerFrameLayout, View>(
+                ageConfirmationTitleShimmerFrameLayout,
+                txtAgeConfirmationTitle
+            ),
+
+            Pair<ShimmerFrameLayout, View>(
+                ageConfirmationDescShimmerFrameLayout,
+                txtAgeConfirmationDesc),
+
+            Pair<ShimmerFrameLayout, View>(
+            ageConfirmationDescNoteShimmerFrameLayout,
+            txtAgeConfirmationDescNote),
+
+            Pair<ShimmerFrameLayout, View>(
+            radioGroupAgeConfirmationShimmerFrameLayout,
+                    radioBtnAgeConfirmation),
+
+            Pair<ShimmerFrameLayout, View>(
+                ageConfirmationTitleShimmerFrameLayout,
+                txtAgeConfirmationTitle
+            ),
+
+            Pair<ShimmerFrameLayout, View>(
+                ageConfirmationDescShimmerFrameLayout,
+                txtAgeConfirmationDesc),
+
+            Pair<ShimmerFrameLayout, View>(
+            ageConfirmationDescNoteShimmerFrameLayout,
+            txtAgeConfirmationDescNote),
+
+            Pair<ShimmerFrameLayout, View>(
+            radioGroupAgeConfirmationShimmerFrameLayout,
+                    radioBtnAgeConfirmation),
+
             Pair<ShimmerFrameLayout, View>(
                 instructionTxtShimmerFrameLayout,
                 txtSpecialDeliveryInstruction
@@ -857,10 +931,12 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     private fun onCheckoutPaymentClick() {
-        if (isRequiredFieldsMissing() || isInstructionsMissing() || isGiftMessage()) {
+        if ((isRequiredFieldsMissing() || isInstructionsMissing() || isGiftMessage())) {
             return
         }
-
+        if(isAgeConfirmationLiquorCompliance()) {
+            return
+        }
         val body = getShipmentDetailsBody()
         if (TextUtils.isEmpty(body.oddDeliverySlotId) && TextUtils.isEmpty(body.foodDeliverySlotId)
             && TextUtils.isEmpty(body.otherDeliverySlotId)
@@ -893,6 +969,16 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     }
                 }
             })
+        //liquor compliance: age confirmation
+        if(liquorOrder == true && !radioBtnAgeConfirmation.isChecked) {
+            ageConfirmationLayout.visibility = VISIBLE
+            liquorComplianceBannerSeparator.visibility = VISIBLE
+            liquorComplianceBannerLayout.visibility = VISIBLE
+
+            Utils.fadeInFadeOutAnimation(txtContinueToPayment, false)
+        } else {
+            Utils.fadeInFadeOutAnimation(txtContinueToPayment, true)
+        }
     }
 
     private fun isGiftMessage(): Boolean {
@@ -925,6 +1011,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             }
             else -> false
         }
+    }
+    private fun isAgeConfirmationLiquorCompliance() : Boolean {
+        txtAgeConfirmationTitle.parent.requestChildFocus(txtAgeConfirmationTitle, txtAgeConfirmationTitle)
+        radioBtnAgeConfirmation.parent.requestChildFocus(radioBtnAgeConfirmation, radioBtnAgeConfirmation)
+        return liquorOrder == true && !radioBtnAgeConfirmation.isChecked
     }
 
     private fun isRequiredFieldsMissing(): Boolean {
@@ -1048,6 +1139,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 body.apply {
                     requestFrom = "express"
                     joinBasket = true
+                    ageConsentConfirmed = true
                     foodShipOnDate = selectedFoodSlot?.stringShipOnDate
                     otherShipOnDate = ""
                     foodDeliverySlotId = selectedFoodSlot?.slotId
@@ -1217,6 +1309,17 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             }
 
 
+        }
+    }
+
+    override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
+        //single checkbox age confirmation
+        if(!isChecked) {
+            Utils.fadeInFadeOutAnimation(txtContinueToPayment, true)
+            radioBtnAgeConfirmation?.isChecked = false
+        } else {
+            Utils.fadeInFadeOutAnimation(txtContinueToPayment, false)
+            radioBtnAgeConfirmation?.isChecked = true
         }
     }
 }

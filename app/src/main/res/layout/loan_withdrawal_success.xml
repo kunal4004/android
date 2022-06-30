@@ -18,6 +18,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="32dp"
         android:background="@color/white"
+        android:contentDescription="n Success Button Tapped"
         android:letterSpacing="0.08"
         android:text="Ok"
         android:textAllCaps="true" />
@@ -44,17 +45,19 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="37dp"
+        android:contentDescription="personalloansuccessful"
         android:src="@drawable/personalloansuccessful" />
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
         android:layout_below="@+id/imgSmiley"
+        android:layout_alignParentStart="true"
         android:layout_gravity="center"
         android:layout_marginStart="16dp"
         android:layout_marginTop="33dp"
+        android:contentDescription="successTitleText"
         android:gravity="center"
         android:letterSpacing="0.06"
         android:lineSpacingExtra="2sp"

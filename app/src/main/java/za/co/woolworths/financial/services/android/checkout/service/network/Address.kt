@@ -61,4 +61,7 @@ class Address : Serializable {
     @SerializedName("storeId")
     var storeId: String? = null
 
+    @SerializedName("city")
+    var city: String? = null
+
 }

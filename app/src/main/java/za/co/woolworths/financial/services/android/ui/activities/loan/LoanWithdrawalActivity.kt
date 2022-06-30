@@ -111,4 +111,8 @@ class LoanWithdrawalActivity : AppCompatActivity(), IDialogListener, NetworkChan
 
     override fun onDialogButtonAction() {
     }
+
+    fun setContentDescriptionForActionBarHomeIcon(name : String) {
+        supportActionBar?.setHomeActionContentDescription(name)
+    }
 }

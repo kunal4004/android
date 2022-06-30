@@ -51,9 +51,8 @@ class LoanWithdrawalPopupDialog : WBottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val titleDescPair = when (val args =
-            arguments?.getParcelable<LoanWithdrawalPopupType>(LOAN_WITHDRAWAL_ERROR_TYPE)) {
+        val args = arguments?.getParcelable<LoanWithdrawalPopupType>(LOAN_WITHDRAWAL_ERROR_TYPE)
+        val titleDescPair = when (args) {
             is TooLow -> getString(R.string.loan_withdrawal_popup_low_error) to getString(R.string.loan_request_low_desc)
             is TooHigh -> getString(R.string.loan_request_high) to getString(
                 R.string.loan_request_high_desc,
@@ -67,6 +66,15 @@ class LoanWithdrawalPopupDialog : WBottomSheetDialogFragment() {
             else -> null
         }
 
+        val contentDescription = when (args) {
+            is TooLow -> "titleWithdrawalAmountTooLow" to "withdrawalAmountTooLowDescription"
+            is TooHigh -> "titleWithdrawalAmountTooHigh" to "withdrawalAmountTooHighDescription"
+            else -> "" to "responseDescription"
+        }
+
+        titleTextView?.contentDescription = contentDescription.first
+        descriptionTextView?.contentDescription = contentDescription.second
+
         titleDescPair?.apply {
             if (first.isEmpty()) {
                 titleTextView?.visibility = GONE
@@ -75,6 +83,7 @@ class LoanWithdrawalPopupDialog : WBottomSheetDialogFragment() {
                 return@apply
             }
             titleTextView?.text = first
+            descriptionTextView?.text = second
         }
 
         loanWithdrawalGotItButton?.setOnClickListener { dismiss() }

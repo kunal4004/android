@@ -108,13 +108,10 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
 
 
                 pmaAmountEnteredTextView?.apply {
+                    typeface = Typeface.DEFAULT_BOLD
                     if (!payMyAccountViewModel.isAmountBelowMaxLimit(card?.amountEntered)) {
-                        setTextColor(Color.RED)
-                        typeface = Typeface.DEFAULT_BOLD
                         invalidPaymentAmountTextView?.visibility = VISIBLE
                     } else {
-                        setTextColor(Color.BLACK)
-                        typeface = Typeface.DEFAULT
                         invalidPaymentAmountTextView?.visibility = GONE
                     }
                 }

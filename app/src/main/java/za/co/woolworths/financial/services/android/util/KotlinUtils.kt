@@ -44,6 +44,7 @@ import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_COLLECTING_DETAILS
+import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -56,6 +57,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.Transactio
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionHeader
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionItem
 import za.co.woolworths.financial.services.android.models.dto.app_config.chat.ConfigTradingHours
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherErrorMessage
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity
@@ -68,6 +70,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.integration.util
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.CLIErrorMessageButtonDialog
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ErrorMessageDialog
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.LoanWithdrawalPopupDialog
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DEFAULT_ADDRESS
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
@@ -415,7 +420,7 @@ class KotlinUtils {
                         tvDeliveringTo?.text =
                             context?.resources?.getString(R.string.collecting_from)
                         tvDeliveryLocation?.text =
-                            context?.resources?.getString(R.string.store) + storeName ?: ""
+                            context?.resources?.getString(R.string.store) + storeName?.let { convertToTitleCase(it) } ?: ""
 
                         tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setBackgroundResource(R.drawable.icon_basket)
@@ -423,7 +428,7 @@ class KotlinUtils {
                     Delivery.STANDARD -> {
                         tvDeliveringTo.text = context?.resources?.getString(R.string.delivering_to)
                         tvDeliveryLocation.text =
-                            address?.address1 ?: ""
+                            address?.address1?.let { convertToTitleCase(it) } ?: ""
 
                         tvDeliveryLocation.visibility = View.VISIBLE
                         deliverLocationIcon?.setBackgroundResource(R.drawable.icon_delivery)
@@ -1096,6 +1101,17 @@ class KotlinUtils {
                     else -> errorHandler(AbsaApiFailureHandler.NoInternetApiFailure)
                 }
             })
+        }
+
+
+        fun cliErrorMessageDialog(appCompatActivity: AppCompatActivity?, data: ErrorMessageDialog) {
+            appCompatActivity?.apply {
+                val fragmentInstance = CLIErrorMessageButtonDialog.newInstance(data)
+                fragmentInstance.show(
+                    supportFragmentManager,
+                    CLIErrorMessageButtonDialog::class.java.simpleName
+                )
+            }
         }
     }
 }

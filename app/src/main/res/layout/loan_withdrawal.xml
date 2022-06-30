@@ -57,6 +57,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/futura_semi_bold_ttf"
             android:gravity="center_horizontal"
+            android:contentDescription="textLoanWithdrawal"
             android:lineSpacingExtra="1.3dp"
             android:lineSpacingMultiplier="1.3"
             android:text="@string/please_enter_the_amount"
@@ -65,7 +66,8 @@
             android:textSize="16sp"
             app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
             app:layout_constraintStart_toStartOf="@+id/startGuideLine"
-            app:layout_constraintTop_toTopOf="@+id/topLabelGuideLine" />
+            app:layout_constraintTop_toTopOf="@+id/topLabelGuideLine"
+            tools:ignore="HardcodedText" />
 
 
         <View
@@ -74,6 +76,7 @@
             android:layout_height="0dp"
             android:layout_marginEnd="2dp"
             android:background="#10FFFFFF"
+            android:contentDescription="availableFundsView"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/creditLimitView"
             app:layout_constraintHorizontal_bias="0.5"
@@ -87,6 +90,7 @@
             android:layout_height="0dp"
             android:layout_marginStart="2dp"
             android:background="#10FFFFFF"
+            android:contentDescription="creditLimitView"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -99,6 +103,7 @@
             android:layout_height="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginBottom="4dp"
+            android:contentDescription="availableFundsLabelTextView"
             android:fontFamily="@font/myriad_pro_regular_otf"
             android:gravity="start"
             android:text="@string/available_funds_label"
@@ -115,6 +120,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
+            android:contentDescription="availableFunds"
             android:fontFamily="@font/myriad_pro_regular_otf"
             android:gravity="start"
             android:text="R20 000.00"
@@ -132,6 +138,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="4dp"
+            android:contentDescription="creditLimitLabelTextView"
             android:fontFamily="@font/myriad_pro_regular_otf"
             android:gravity="start"
             android:text="@string/credit_limit_label"
@@ -148,6 +155,7 @@
             android:layout_marginEnd="?attr/actionBarSize"
             android:background="@android:color/transparent"
             android:digits="0123456789., "
+            android:contentDescription="editWithdrawalAmount"
             android:gravity="start"
             android:hint=" "
             android:imeOptions="actionNext"
@@ -165,7 +173,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="@dimen/seventy_five_dp"
             app:layout_constraintStart_toStartOf="@+id/startGuideLine"
-            app:layout_constraintTop_toBottomOf="@+id/txtWithdrawAmount">
+            app:layout_constraintTop_toBottomOf="@+id/txtWithdrawAmount"
+            tools:ignore="ContentDescription,HardcodedText">
             <requestFocus />
         </za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView>
 
@@ -175,15 +184,16 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
+            android:contentDescription="creditLimitFunds"
             android:fontFamily="@font/futura_medium_ttf"
             android:gravity="start"
             android:letterSpacing="0.05"
-            tools:text="R30 000.00"
             android:textColor="@color/white"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="@+id/creditLimitView"
             app:layout_constraintStart_toStartOf="@+id/creditLimitView"
-            app:layout_constraintTop_toTopOf="@+id/fundGuideLine" />
+            app:layout_constraintTop_toTopOf="@+id/fundGuideLine"
+            tools:text="R30 000.00" />
 
         <TextView
             android:id="@+id/currencyType"
@@ -191,12 +201,14 @@
             android:layout_height="0dp"
             android:fontFamily="@font/futura_light"
             android:gravity="bottom"
+            android:contentDescription="currencyType"
             android:text="R"
             android:textColor="@color/white"
             android:textSize="45sp"
             app:layout_constraintBottom_toBottomOf="@+id/edtWithdrawAmount"
             app:layout_constraintEnd_toStartOf="@+id/edtWithdrawAmount"
-            app:layout_constraintTop_toTopOf="@+id/edtWithdrawAmount" />
+            app:layout_constraintTop_toTopOf="@+id/edtWithdrawAmount"
+            tools:ignore="HardcodedText" />
 
         <ProgressBar
             android:id="@+id/mLoanWithdrawalProgress"
@@ -215,6 +227,7 @@
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:layout_marginEnd="16dp"
+            android:contentDescription="nextArrowImageView"
             app:layout_constraintBottom_toBottomOf="@+id/currencyType"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/currencyType"

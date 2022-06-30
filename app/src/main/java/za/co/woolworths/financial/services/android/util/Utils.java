@@ -990,7 +990,7 @@ public class Utils {
 
     @Nullable
     public static String retrieveStoreId(String fulFillmentType) {
-        if (fulFillmentType.length() == 1)
+        if (fulFillmentType!=null&&fulFillmentType.length() == 1)
             fulFillmentType = "0" + fulFillmentType;
         return KotlinUtils.Companion.retrieveFulfillmentStoreId(fulFillmentType);
     }

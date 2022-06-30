@@ -51,10 +51,10 @@ public class PermissionUtils {
 
 		if (Build.VERSION.SDK_INT >= 23) {
 			if (checkAndRequestPermissions(permissions, request_code)) {
-				permissionResultCallback.PermissionGranted(request_code);
+				permissionResultCallback.permissionGranted(request_code);
 			}
 		} else {
-			permissionResultCallback.PermissionGranted(request_code);
+			permissionResultCallback.permissionGranted(request_code);
 		}
 
 	}
@@ -114,7 +114,7 @@ public class PermissionUtils {
 							if (ActivityCompat.shouldShowRequestPermissionRationale(current_activity, listPermissionsNeeded.get(i)))
 								pending_permissions.add(listPermissionsNeeded.get(i));
 							else {
-								permissionResultCallback.NeverAskAgain(req_code);
+								permissionResultCallback.neverAskAgain(req_code);
 								Toast.makeText(current_activity, "Go to settings and enable permissions", Toast.LENGTH_LONG).show();
 								return;
 							}
@@ -123,7 +123,7 @@ public class PermissionUtils {
 					}
 
 					if (pending_permissions.size() > 0) {
-						permissionResultCallback.PermissionDenied(req_code);
+						permissionResultCallback.permissionDenied(req_code);
 //                         showMessageOKCancel(dialog_content,
 //                                 new DialogInterface.OnClickListener() {
 //                                     @Override
@@ -147,7 +147,7 @@ public class PermissionUtils {
 //                                 });
 
 					} else {
-						permissionResultCallback.PermissionGranted(req_code);
+						permissionResultCallback.permissionGranted(req_code);
 
 					}
 				}

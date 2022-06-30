@@ -1,29 +1,25 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 import android.Manifest
-import android.annotation.SuppressLint
+import android.annotation.TargetApi
 import android.app.Activity
-import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
-import android.os.Looper
-import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import com.google.android.gms.location.*
 import kotlinx.android.synthetic.main.fragment_shop_department.*
 import kotlinx.android.synthetic.main.geo_location_delivery_address.*
 import kotlinx.android.synthetic.main.no_connection_layout.*
@@ -48,16 +44,18 @@ import za.co.woolworths.financial.services.android.ui.fragments.click_and_collec
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
-import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
+import za.co.woolworths.financial.services.android.util.location.Event
+import za.co.woolworths.financial.services.android.util.location.EventType
+import za.co.woolworths.financial.services.android.util.location.Locator
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 class DepartmentsFragment : DepartmentExtensionFragment(),
     DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection {
 
-    private var isFirstCallToLocationModal: Boolean = false
-    private var isLocationModalShown: Boolean = false
+    private lateinit var locator: Locator
     private var isRootCallInProgress: Boolean = false
     private var location: Location? = null
     private var rootCategoryCall: Call<RootCategories>? = null
@@ -66,19 +64,12 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
     private var parentFragment: ShopFragment? = null
     private var version: String? = ""
     private var isDashEnabled = false
-    private var fusedLocationClient: FusedLocationProviderClient? = null
-    private var locationRequest: LocationRequest? = createLocationRequest()
     private var localPlaceId: String? = null
     private var isValidateSelectedSuburbCallStopped = true
 
-
-
-
     companion object {
         var DEPARTMENT_LOGIN_REQUEST = 1717
-        const val REQUEST_CODE_FINE_GPS = 4771
     }
-
 
     init {
         isDashEnabled =
@@ -101,9 +92,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
                 hasFocus
             )
         }
-        activity?.apply {
-            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        }
+        locator = Locator(activity as AppCompatActivity)
 
         isDashEnabled = AppConfigSingleton.dashConfig?.isEnabled ?: false
 
@@ -121,24 +110,32 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
         }
 
         if (isDashEnabled && isFragmentVisible) {
-            if (isPermissionGranted && Utils.isLocationEnabled(context)) {
-                fusedLocationClient?.lastLocation?.addOnSuccessListener {
-                    this@DepartmentsFragment.location = it
-                    initializeRootCategoryList()
-                }
-            } else {
-                // when permission granted and location is not enabled
-                if (isPermissionGranted) {
-                    initializeRootCategoryList()
-                }
-                //When Location permission not granted.
-                else if (!checkLocationPermission() && !isLocationModalShown) {
-                    initializeRootCategoryList()
-                }
-            }
+            startLocationDiscoveryProcess()
         } else if (isFragmentVisible) {
             initializeRootCategoryList()
         }
+    }
+
+    private fun startLocationDiscoveryProcess() {
+        locator.getCurrentLocation { locationEvent ->
+            when (locationEvent) {
+                is Event.Location -> handleLocationEvent(locationEvent)
+                is Event.Permission -> handlePermissionEvent(locationEvent)
+            }
+        }
+    }
+
+    private fun handlePermissionEvent(permissionEvent: Event.Permission) {
+        if (permissionEvent.event == EventType.LOCATION_PERMISSION_NOT_GRANTED) {
+            Utils.saveLastLocation(null, activity)
+            handleLocationEvent(null)
+        }
+    }
+
+    private fun handleLocationEvent(locationEvent: Event.Location?) {
+        Utils.saveLastLocation(locationEvent?.locationData, context)
+        location = locationEvent?.locationData
+        initializeRootCategoryList()
     }
 
     private fun initializeRootCategoryList() {
@@ -154,11 +151,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
 
         if (context != null && !Utils.isLocationEnabled(context)) {
             onProviderDisabled()
-            if (isFirstCallToLocationModal) {
-                executeDepartmentRequest()
-            }
         } else {
-            startLocationUpdates()
+            startLocationDiscoveryProcess()
         }
 
         showDeliveryOptionDialog()
@@ -375,7 +369,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
             activity?.apply {
                 executeValidateSuburb()
                 //When moved from My Cart to department
-                startLocationUpdates()
+                startLocationDiscoveryProcess()
                 showDeliveryOptionDialog()
             }
         }
@@ -411,29 +405,11 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
             } else {
                 requestCartSummary()
             }
-        } else if (requestCode == REQUEST_CODE_FINE_GPS) {
-            when (resultCode) {
-                RESULT_OK -> {
-                    activity?.apply {
-                        if (!Utils.isLocationEnabled(context)) {
-                            val locIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                            startActivityForResult(
-                                locIntent,
-                                StoresNearbyFragment1.REQUEST_CHECK_SETTINGS
-                            )
-                            overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-                        }
-                        isFirstCallToLocationModal = true
-                    }
-                }
-                RESULT_CANCELED -> {
-                    //When user clicks deny location
-                    executeDepartmentRequest()
-                }
-            }
         } else if (resultCode == RESULT_OK || resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             mDepartmentAdapter?.notifyDataSetChanged()
             executeValidateSuburb()
+        } else if (requestCode == EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE) {
+            startLocationDiscoveryProcess()
         }
     }
 
@@ -564,79 +540,6 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
             removeDashBanner(parentFragment?.getCategoryResponseData()?.rootCategories)
         }
         parentFragment?.getCategoryResponseData()?.dash = null
-    }
-
-    @SuppressLint("NewApi")
-    private fun checkLocationPermission(): Boolean {
-        if (!isFragmentVisible) {
-            return false
-        }
-
-        activity?.apply {
-            val perms =
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                )
-            return if (ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                )
-                != PackageManager.PERMISSION_GRANTED
-            ) {
-                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    //Asking only once.
-//                    ActivityCompat.requestPermissions(this, perms, REQUEST_CODE_FINE_GPS)
-                } else {
-                    //we can request the permission.
-                    ActivityCompat.requestPermissions(this, perms, REQUEST_CODE_FINE_GPS)
-                    isLocationModalShown = true
-                }
-                false
-            } else {
-                true
-            }
-        }
-        return false
-    }
-
-    private fun startLocationUpdates() {
-        context?.apply {
-            if (ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                return
-            }
-            fusedLocationClient?.requestLocationUpdates(
-                locationRequest,
-                locationCallback,
-                Looper.getMainLooper()
-            )
-        }
-    }
-
-    private fun stopLocationUpdates() {
-        fusedLocationClient?.removeLocationUpdates(locationCallback)
-    }
-
-    private fun createLocationRequest() = LocationRequest.create().apply {
-        interval = 100
-        fastestInterval = 1000
-        priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-    }
-
-    private var locationCallback = object : LocationCallback() {
-        override fun onLocationResult(locationResult: LocationResult?) {
-            locationResult ?: return
-            for (location in locationResult.locations) {
-                this@DepartmentsFragment.location = location
-                executeDepartmentRequest()
-                stopLocationUpdates()
-                break
-            }
-        }
     }
 
     public fun reloadRequest(){

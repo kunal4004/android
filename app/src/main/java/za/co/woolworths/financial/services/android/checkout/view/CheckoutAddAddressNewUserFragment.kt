@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.checkout.view
 
 import android.animation.ObjectAnimator
 import android.content.Intent
-import android.location.Geocoder
 import android.os.Bundle
 import android.view.*
 import android.widget.*
@@ -26,6 +25,11 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import kotlinx.android.synthetic.main.checkout_add_address_new_user.*
 import kotlinx.android.synthetic.main.checkout_new_user_address_details.*
 import kotlinx.android.synthetic.main.checkout_new_user_recipient_details.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.ProvinceSuburbType.*
@@ -78,17 +82,19 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
+import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
 import java.net.HttpURLConnection.HTTP_OK
 import java.util.*
 import java.util.regex.Pattern
 import kotlin.collections.ArrayList
+import kotlin.coroutines.CoroutineContext
 
 
 /**
  * Created by Kunal Uttarwar on 29/05/21.
  */
 class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(),
-    View.OnClickListener {
+    View.OnClickListener, CoroutineScope {
 
     private var deliveringOptionsList: List<String>? = null
     private var navController: NavController? = null
@@ -105,7 +111,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     private var selectedAddressPosition: Int = -1
     private var isComingFromCheckout: Boolean = false
     private var isComingFromSlotSelection: Boolean = false
-
+    private var isValidAddress: Boolean = false;
 
     companion object {
         const val PROVINCE_SELECTION_BACK_PRESSED = "5645"
@@ -135,6 +141,11 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         handleBundleResponse()
     }
 
+
+    private val job = Job()
+    override val coroutineContext: CoroutineContext
+        get() = job + Main
+
     fun handleBundleResponse() {
         bundle = arguments?.getBundle(BUNDLE)
         bundle?.apply {
@@ -156,15 +167,23 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     selectedDeliveryAddressType = savedAddress?.addressType
                     if (savedAddress != null) {
                         selectedAddress.savedAddress = savedAddress
-                        var provinceName: String? = ""
-                        provinceName = getProvinceName(savedAddress.region)
-                        if (!provinceName.isNullOrEmpty()) {
-                            selectedAddress?.provinceName = provinceName
-                        } else {
-                            savedAddress?.region?.let {
-                                selectedAddress?.provinceName = it
-                            }
+                        if (!savedAddress?.city.isNullOrEmpty()) {
+                            selectedAddress?.provinceName = savedAddress.city!!
                         }
+                        else {
+                            var provinceName: String? = ""
+                            provinceName = getProvinceName(savedAddress.region)
+                            if (!provinceName.isNullOrEmpty()) {
+                                selectedAddress?.provinceName = provinceName
+                            }
+                            else {
+                                savedAddress?.region?.let {
+                                    selectedAddress?.provinceName = it
+                                }
+                            }
+
+                        }
+
                     }
                     setHasOptionsMenu(true)
                 }
@@ -257,14 +276,18 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         addressNicknameEditText.setText(selectedAddress.savedAddress.nickname)
         unitComplexFloorEditText.setText(selectedAddress.savedAddress.address2)
         suburbEditText.setText(selectedAddress.savedAddress.suburb)
+        suburbEditText.isEnabled = false
         provinceAutocompleteEditText.setText(selectedAddress.provinceName)
+        provinceAutocompleteEditText.isEnabled = false
         cellphoneNumberEditText.setText(selectedAddress.savedAddress.primaryContactNo)
         recipientNameEditText.setText(selectedAddress.savedAddress.recipientName)
         if (selectedAddress.savedAddress.postalCode.isNullOrEmpty()) {
             postalCode.text.clear()
         } else
             postalCode.setText(selectedAddress.savedAddress.postalCode)
+            postalCode.isEnabled = false
         selectedDeliveryAddressType = selectedAddress.savedAddress.addressType
+        isValidAddress=true
     }
 
     private fun initView() {
@@ -351,7 +374,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         deliveringOptionsList = AppConfigSingleton.nativeCheckout?.addressTypes
         showWhereAreWeDeliveringView()
         activity?.applicationContext?.let { context ->
-            Places.initialize(context, getString(R.string.maps_api_key))
+            Places.initialize(context, getString(R.string.maps_google_api_key))
             val placesClient = Places.createClient(context)
             val placesAdapter =
                 GooglePlacesAdapter(requireActivity(), placesClient)
@@ -370,7 +393,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                         Place.Field.ADDRESS_COMPONENTS
                     )
                     val request =
-                        placeFields.let { FetchPlaceRequest.builder(placeId, it).build() }
+                        placeFields.let { FetchPlaceRequest.builder(placeId, it).setSessionToken(item?.token).build() }
                     request.let { placeRequest ->
                         placesClient.fetchPlace(placeRequest)
                             .addOnSuccessListener { response ->
@@ -506,6 +529,18 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                 }
             }
         }
+
+        if (addressText1.isNullOrEmpty() && addressText2.isNullOrEmpty()) {
+            isValidAddress = false
+            launch(Dispatchers.Main) {
+                autocompletePlaceErrorMsg?.text =
+                    getString(R.string.geo_loc_error_msg_on_edit_address)
+                showAnimationErrorMessage(autocompletePlaceErrorMsg, View.VISIBLE, 0)
+            }
+        } else {
+            isValidAddress = true
+
+        }
         if (!selectedAddress.provinceName.isNullOrEmpty() && !selectedAddress.savedAddress.suburb.isNullOrEmpty())
             selectedAddress.savedAddress.region = ""
         selectedAddress.savedAddress.apply {
@@ -520,31 +555,36 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             placesId = place.id
         }
 
+        val setTextAndCheckIfSelectedProvinceExist = {
+            autoCompleteTextView.apply {
+                setText(
+                    if (place.name.isNullOrEmpty()) selectedAddress.savedAddress.address1 else place.name
+                )
+                if (selectedAddress.savedAddress.address1.isNullOrEmpty())
+                    showErrorDialog()
+                setSelection(autoCompleteTextView.length())
+                autoCompleteTextView.dismissDropDown()
+            }
+            checkIfSelectedProvinceExist(AppConfigSingleton.nativeCheckout?.regions as MutableList<Province>)
+        }
+
         if (!selectedAddress.savedAddress.suburb.isNullOrEmpty())
             selectedAddress.savedAddress.suburbId = ""
         if (selectedAddress.savedAddress.postalCode.isNullOrEmpty()) {
             //If Google places failed to give postal code.
-            val geocoder = Geocoder(context, Locale.getDefault())
-            val addresses =
-                geocoder.getFromLocation(
-                    selectedAddress.savedAddress.latitude!!,
-                    selectedAddress.savedAddress.longitude!!,
-                    1
-                )
-            if (!addresses[0]?.postalCode.isNullOrEmpty())
-                selectedAddress.savedAddress.postalCode = addresses[0]?.postalCode.toString()
+            DynamicGeocoder.getAddressFromLocation(
+                context,
+                selectedAddress.savedAddress.latitude,
+                selectedAddress.savedAddress.longitude
+            ) { address ->
+                address?.postcode?.let {
+                    selectedAddress.savedAddress.postalCode = it
+                }
+                setTextAndCheckIfSelectedProvinceExist.invoke()
+            }
+        } else {
+            setTextAndCheckIfSelectedProvinceExist.invoke()
         }
-
-        autoCompleteTextView.apply {
-            setText(
-                if (place.name.isNullOrEmpty()) selectedAddress.savedAddress.address1 else place.name
-            )
-            if (selectedAddress.savedAddress.address1.isNullOrEmpty())
-                showErrorDialog()
-            setSelection(autoCompleteTextView.length())
-            autoCompleteTextView.dismissDropDown()
-        }
-        checkIfSelectedProvinceExist(AppConfigSingleton.nativeCheckout?.regions as MutableList<Province>)
     }
 
     fun checkIfSelectedProvinceExist(provinceList: MutableList<Province>) {
@@ -799,6 +839,11 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             showErrorDialog()
             return
         }
+        if (!isValidAddress) {
+            autocompletePlaceErrorMsg.text = getString(R.string.geo_loc_error_msg_on_edit_address)
+            showAnimationErrorMessage(autocompletePlaceErrorMsg, View.VISIBLE, 0)
+            return
+        }
         Utils.triggerFireBaseEvents(
             FirebaseManagerAnalyticsProperties.CHECKOUT_SAVE_ADDRESS, hashMapOf(
                 FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
@@ -856,6 +901,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                                         navigateToAddressConfirmation(response.address.placesId)
 
                                     }
+                                    KeyboardUtils.hideKeyboardIfVisible(activity)
                                 }
 
                                 AppConstant.HTTP_SESSION_TIMEOUT_400, AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
@@ -1037,18 +1083,19 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                                                 Utils.toJson(savedAddressResponse)
                                             )
                                         }
+                                    KeyboardUtils.hideKeyboardIfVisible(activity)
                                     navController?.navigateUp()
                                 }
                             }
-                            AppConstant.HTTP_SESSION_TIMEOUT_400, AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
+                            AppConstant.HTTP_SESSION_TIMEOUT_400 -> {
                                 addAddressErrorResponse(response, R.string.update_address_error)
                             }
+                            AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
+
+                                validateNickNameWithServerError(response)
+                            }
                             else -> {
-                                presentErrorDialog(
-                                    getString(R.string.common_error_unfortunately_something_went_wrong),
-                                    getString(R.string.no_internet_subtitle),
-                                    ERROR_TYPE_ADD_ADDRESS
-                                )
+                                validateNickNameWithServerError(response)
                             }
                         }
                     }
@@ -1212,6 +1259,18 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
 
+    private fun showNickNameServerError(errorMsg: String?) {
+        addressNicknameEditText?.setBackgroundResource(R.drawable.input_error_background)
+        addressNicknameErrorMsg?.visibility = View.VISIBLE
+        addressNicknameErrorMsg?.text = errorMsg
+        showAnimationErrorMessage(
+            addressNicknameErrorMsg,
+            View.VISIBLE,
+            recipientAddressLayout.y.toInt()
+        )
+    }
+
+
     private fun showErrorInputField(editText: EditText?, visible: Int) {
         editText?.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_error_background else R.drawable.recipient_details_input_edittext_bg)
         if (editText != null) {
@@ -1281,5 +1340,27 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     @VisibleForTesting
     fun testGetSavedAddress(): SavedAddressResponse? {
         return savedAddressResponse
+    }
+
+    private fun validateNickNameWithServerError(response: AddAddressResponse) {
+        var nickNameErrorMessage: String? = ""
+        response?.validationErrors?.let {
+            nickNameErrorMessage = it.stream().filter { error ->
+                error?.getField().equals(BundleKeysConstants.NICK_NAME)
+                    .and(!error?.getField().isNullOrEmpty())
+                    .and(!error?.getMessage().isNullOrEmpty())
+            }.findFirst().orElse(null)?.getMessage()
+        }
+
+        if (!nickNameErrorMessage.isNullOrEmpty()) {
+            showNickNameServerError(nickNameErrorMessage)
+        } else {
+            presentErrorDialog(
+                getString(R.string.common_error_unfortunately_something_went_wrong),
+                getString(R.string.no_internet_subtitle),
+                ERROR_TYPE_ADD_ADDRESS
+            )
+
+        }
     }
 }

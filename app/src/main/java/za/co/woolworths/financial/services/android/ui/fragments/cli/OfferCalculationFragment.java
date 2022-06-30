@@ -532,6 +532,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		hideView(mAcceptOfferProgressBar);
 		showView(btnContinue);
 		btnContinue.setTextColor(Color.WHITE);
+		btnContinue.setContentDescription(getString(R.string.accept_offer));
 	}
 
 	private void setBackgroundColor(View v, int id) {

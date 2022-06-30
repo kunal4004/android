@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:layout_marginBottom="@dimen/_1ssp"
+    android:padding="@dimen/_15sdp">
+
+    <RadioButton
+        android:id="@+id/radio_enquires_list"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:buttonTint="@color/black"
+        android:button="@null"
+        android:clickable="false"
+        android:checked="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:drawableRight="@drawable/shopping_list_item_selector"
+        android:background="?android:selectableItemBackground"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layoutDirection="rtl"
+        android:layout_gravity="start"
+        android:textAlignment="textStart"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

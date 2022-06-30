@@ -33,6 +33,7 @@ import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Ac
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.SupplyInfoDetailFragment;
 import za.co.woolworths.financial.services.android.util.CurrencyEditText;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
@@ -141,6 +142,7 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
         WButton btnContinue = (WButton) view.findViewById(R.id.btnContinue);
         btnContinue.setOnClickListener(this);
         btnContinue.setText(getActivity().getResources().getString(R.string.next));
+        btnContinue.setContentDescription(getString(R.string.expensesNextButton));
     }
 
     @Override
@@ -168,17 +170,11 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
                 break;
 
             case R.id.imInfo:
-                String[] arrTitle = getResources().getStringArray(R.array.supply_info_expenses_title);
-                String[] arrDescription = getResources().getStringArray(R.array.supply_info_expenses_desc);
-
-                LinkedHashMap<String, String> incomeMap = new LinkedHashMap<>();
-                for (int position = 0; position < arrTitle.length; position++) {
-                    incomeMap.put(arrTitle[position], arrDescription[position]);
-                }
-                mIncreaseLimitController.hideSoftKeyboard(getActivity());
-                Utils.displayValidationMessage(getActivity(),
-                        CustomPopUpWindow.MODAL_LAYOUT.SUPPLY_DETAIL_INFO,
-                        new Gson().toJson(incomeMap, LinkedHashMap.class));
+                Activity act = getActivity();
+                if (act == null) return;
+                CLIPhase2Activity cliPhase2Activity = (CLIPhase2Activity) act;
+                SupplyInfoDetailFragment supplyIncomeInfoFragment =  SupplyInfoDetailFragment.Companion.newInstance(SupplyInfoDetailFragment.SupplyDetailViewType.EXPENSE);
+                supplyIncomeInfoFragment.show(cliPhase2Activity.getSupportFragmentManager(), "SupplyInfoDetailFragment");
                 break;
 
             case R.id.llNextButtonLayout:
