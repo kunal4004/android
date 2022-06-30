@@ -311,7 +311,7 @@ class CheckoutDashFragment : Fragment(),
             ConfirmLocationAddress(defaultAddress?.placesId, defaultAddress?.nickname)
         var body = ConfirmLocationRequest(
             Delivery.DASH.type, confirmLocationAddress,
-            defaultAddress?.nickname, "checkout"
+            KotlinUtils.getDeliveryType()?.storeId, "checkout"
         )
 
         checkoutAddAddressNewUserViewModel?.getConfirmLocationDetails(body)
@@ -975,6 +975,10 @@ class CheckoutDashFragment : Fragment(),
         address =
             ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
         driverTip = removeRandFromAmount(selectedDriverTipValue ?: "0.0").toDouble()
+        KotlinUtils.getUniqueDeviceID {
+            pushNotificationToken = Utils.getToken()
+            appInstanceId = it
+        }
     }
 
     private fun isGiftMessage(): Boolean {
