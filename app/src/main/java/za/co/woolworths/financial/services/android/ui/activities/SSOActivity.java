@@ -712,7 +712,7 @@ public class SSOActivity extends WebViewActivity {
 		if (event.getAction() == KeyEvent.ACTION_DOWN) {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_BACK:
-					if (webView.canGoBack()) {
+					if (this.webView != null && webView.canGoBack()) {
 						webView.goBack();
 					} else {
 						finishActivity();
@@ -727,7 +727,11 @@ public class SSOActivity extends WebViewActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case android.R.id.home:
-				finishActivity();
+				if (this.webView != null && webView.canGoBack()) {
+					webView.goBack();
+				} else {
+					finishActivity();
+				}
 				break;
 		}
 		return true;
