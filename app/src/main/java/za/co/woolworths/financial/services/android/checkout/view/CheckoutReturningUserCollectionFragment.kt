@@ -845,8 +845,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     private fun isAgeConfirmationLiquorCompliance() : Boolean {
-        txtAgeConfirmationTitle.parent.requestChildFocus(txtAgeConfirmationTitle, txtAgeConfirmationTitle)
-        radioBtnAgeConfirmation.parent.requestChildFocus(radioBtnAgeConfirmation, radioBtnAgeConfirmation)
+        layoutCollectionInstructions.parent.requestChildFocus(layoutCollectionInstructions, layoutCollectionInstructions)
         return liquorOrder == true && !radioBtnAgeConfirmation.isChecked
     }
     private fun onCheckoutPaymentClick() {
