@@ -863,6 +863,10 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         }
         deliveryType = Delivery.CNC.type
         address = ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
+        KotlinUtils.getUniqueDeviceID {
+            pushNotificationToken = Utils.getToken()
+            appInstanceId = it
+        }
     }
 
     private fun isGiftMessage(): Boolean {
