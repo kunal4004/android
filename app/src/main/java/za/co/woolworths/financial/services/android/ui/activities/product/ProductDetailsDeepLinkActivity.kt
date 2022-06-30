@@ -38,6 +38,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.u
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.showItemsLimitToastOnAddToCart
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionClickAndCollect
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionDash
 import za.co.woolworths.financial.services.android.util.ToastUtils.ToastInterface
 import java.util.*
 
@@ -311,7 +312,8 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(),
         productCountMap: ProductCountMap?,
         noOfItems: Int,
     ) {
-        if (productCountMap != null && isDeliveryOptionClickAndCollect() && productCountMap.quantityLimit!!.foodLayoutColour != null) {
+        if (productCountMap != null && (isDeliveryOptionClickAndCollect() || isDeliveryOptionDash())
+            && productCountMap.quantityLimit?.foodLayoutColour != null) {
             showItemsLimitToastOnAddToCart(
                 pdpBottomNavigation,
                 productCountMap,

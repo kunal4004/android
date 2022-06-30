@@ -77,6 +77,7 @@ import za.co.woolworths.financial.services.android.util.FirebaseManager.Companio
 import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.setCrashlyticsString
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionClickAndCollect
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionDash
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAddressView
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.showGeneralInfoDialog
@@ -1295,7 +1296,8 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                         data?.getStringExtra("ProductCountMap"), ProductCountMap::class.java
                     ) as ProductCountMap
                     val itemsCount = data?.getIntExtra("ItemsCount", 0)
-                    if (isDeliveryOptionClickAndCollect() && productCountMap.quantityLimit?.foodLayoutColour != null) {
+                    if ((isDeliveryOptionClickAndCollect() || isDeliveryOptionDash())
+                        && productCountMap.quantityLimit?.foodLayoutColour != null) {
                         showItemsLimitToastOnAddToCart(
                             rlCheckOut,
                             productCountMap,

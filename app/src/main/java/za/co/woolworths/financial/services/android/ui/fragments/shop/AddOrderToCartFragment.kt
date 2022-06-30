@@ -447,7 +447,8 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
 
                 activity?.onBackPressed()
 
-                if (KotlinUtils.isDeliveryOptionClickAndCollect() && addItemToCartResponse.data[0]?.productCountMap?.quantityLimit?.foodLayoutColour != null) {
+                if ((KotlinUtils.isDeliveryOptionClickAndCollect() || KotlinUtils.isDeliveryOptionDash())
+                    && addItemToCartResponse.data[0]?.productCountMap?.quantityLimit?.foodLayoutColour != null) {
                     addItemToCartResponse.data[0]?.productCountMap?.let {
                         ToastFactory.showItemsLimitToastOnAddToCart(fragment_add_to_order, it, requireActivity(), size) }
                 } else {
