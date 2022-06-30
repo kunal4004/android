@@ -7,28 +7,24 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StyleSpan
 import android.view.*
-import android.view.View.*
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.dash_order_details_layout.*
 import kotlinx.android.synthetic.main.delivering_to_collection_from.*
-import kotlinx.android.synthetic.main.delivering_to_collection_from.foodDeliveryDateTimeTextView
 import kotlinx.android.synthetic.main.delivering_to_collection_from.foodDeliveryLinearLayout
 import kotlinx.android.synthetic.main.delivering_to_collection_from.optionImage
 import kotlinx.android.synthetic.main.delivering_to_collection_from.optionTitle
-import kotlinx.android.synthetic.main.delivering_to_collection_from.otherDeliveryLinearLayout
 import kotlinx.android.synthetic.main.delivering_to_dashing_from.*
 import kotlinx.android.synthetic.main.fragment_order_confirmation.*
 import kotlinx.android.synthetic.main.order_details_bottom_sheet.*
 import kotlinx.android.synthetic.main.order_details_bottom_sheet.addShoppingListButton
 import kotlinx.android.synthetic.main.order_details_bottom_sheet.itemsRecyclerView
 import kotlinx.android.synthetic.main.other_order_details.*
-import kotlinx.android.synthetic.main.product_details_fragment.*
-import kotlinx.android.synthetic.main.product_details_size_and_color_layout.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -39,7 +35,6 @@ import za.co.woolworths.financial.services.android.models.dto.cart.OrderItems
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
@@ -114,13 +109,16 @@ class OrderConfirmationFragment : Fragment() {
     }
 
     private fun setToolbar(orderId: String) {
-        if (activity is CartCheckoutActivity) {
-            (activity as? CartCheckoutActivity)?.apply {
-                showTitleWithCrossButton(bindString(R.string.order_details_toolbar_title, orderId))
-            }
-        }
-        (activity as? CheckoutActivity)?.apply {
-            showTitleWithCrossButton(bindString(R.string.order_details_toolbar_title, orderId))
+
+        orderIdText.text = bindString(R.string.order_details_toolbar_title, orderId)
+        btnClose?.setOnClickListener { requireActivity().onBackPressed() }
+        helpTextView?.setOnClickListener {
+
+           /* (requireActivity() as? BottomNavigationActivity)?.pushFragment(
+                    HelpAndSupportFragment.getInstance()
+            )*/
+
+
         }
     }
 

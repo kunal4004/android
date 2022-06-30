@@ -30,6 +30,8 @@ class HelpAndSupportFragment: Fragment(R.layout.layout_help_and_support_fragemen
         fun newInstance(orderDetailsResponse: OrderDetailsResponse?) = HelpAndSupportFragment().withArgs {
             putSerializable(KEY_ARGS_ORDER_STATUS,orderDetailsResponse)
         }
+
+        fun getInstance()= HelpAndSupportFragment ()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

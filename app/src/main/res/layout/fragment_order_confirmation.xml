@@ -6,23 +6,73 @@
     android:layout_height="match_parent"
     android:background="@color/default_background">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:elevation="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/twelve_dp"
+            android:gravity="center"
+            android:minHeight="?attr/actionBarSize"
+            app:popupTheme="@style/OrderDetailsActivityStyle"
+            app:theme="@style/OrderDetailsActivityStyle"
+            app:layout_scrollFlags="scroll|enterAlways">
+
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/helpTextView"
+                style="@style/toolbar_menu_text_style"
+                android:layout_alignParentRight="true"
+                android:text="@string/dash_help"
+                android:layout_marginStart="@dimen/twenty_four_dp"
+                android:textColor="@drawable/refine_toolbar_menu_text_color" />
+
+            <TextView
+                android:id="@+id/orderIdText"
+                style="@style/appToolbarStyle"
+                android:layout_gravity="center|center_vertical"
+                android:text="@string/order_id" />
+
+            <ImageView
+                android:id="@+id/btnClose"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="@dimen/sixteen_dp"
+                android:src="@drawable/close_24"
+                android:visibility="visible" />
+
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_marginTop="@dimen/fourty_dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/nineteen_dp">
 
             <include
                 android:id="@+id/deliveryCollectionDetailsConstraintLayout"
                 layout="@layout/delivering_to_collection_from"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/ten_dp"
+                android:layout_marginTop="@dimen/nineteen_dp"
                 android:visibility="gone"
                 tools:visibility="visible" />
 
@@ -31,7 +81,7 @@
                 layout="@layout/delivering_to_dashing_from"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/ten_dp"
+                android:layout_marginTop="@dimen/nineteen_dp"
                 android:visibility="gone"
                 tools:visibility="visible"/>
 
