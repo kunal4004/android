@@ -319,9 +319,9 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                     val deliveryType =
                         getType(Utils.getPreferredDeliveryLocation().fulfillmentDetails.deliveryType)
 
-                    if ((deliveryType === Delivery.CNC) && (productCountMap != null)
-                        && (productCountMap!!.quantityLimit != null)
-                        && !productCountMap!!.quantityLimit!!.allowsCheckout!!
+                    if ((deliveryType === Delivery.CNC || deliveryType === Delivery.DASH) && (productCountMap != null)
+                        && (productCountMap?.quantityLimit != null)
+                        && !productCountMap?.quantityLimit?.allowsCheckout!!
                     ) {
                         Utils.triggerFireBaseEvents(
                             FirebaseManagerAnalyticsProperties.CART_CLCK_CLLCT_CNFRM_LMT,
@@ -589,7 +589,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         parentLayout?.visibility = View.VISIBLE
         mSkuInventories = HashMap()
         when {
-            cartResponse != null && cartResponse.cartItems?.size ?: 0 > 0 -> {
+            cartResponse != null && (cartResponse.cartItems?.size ?: 0) > 0 -> {
                 empty_state_template?.visibility = View.GONE
                 rvCartList?.visibility = View.VISIBLE
                 rlCheckOut?.visibility = View.VISIBLE
@@ -606,7 +606,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                     cartItems,
                     this,
                     orderSummary,
-                    activity,
+                    requireActivity(),
                     voucherDetails,
                     liquorCompliance
                 )

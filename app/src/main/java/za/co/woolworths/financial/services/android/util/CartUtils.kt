@@ -27,6 +27,7 @@ class CartUtils {
         }
 
         fun updateItemLimitsBanner(productCountMap: ProductCountMap?, banner: ConstraintLayout?, message: TextView?, counter: TextView?, showBanner: Boolean) {
+            banner?.visibility = View.GONE
             productCountMap?.let {
                 if (it.quantityLimit?.foodLayoutColour != null && showBanner && it.totalProductCount ?: 0 > 0) {
                     message?.text = it.quantityLimit.foodLayoutMessage ?: ""
@@ -34,11 +35,7 @@ class CartUtils {
                     if (it.quantityLimit.foodLayoutColour.isNotEmpty()) {
                         banner?.visibility = View.VISIBLE
                         banner?.setBackgroundColor(Color.parseColor(it.quantityLimit.foodLayoutColour))
-                    } else {
-                        banner?.visibility = View.GONE
                     }
-                } else {
-                    banner?.visibility = View.GONE
                 }
             }
         }
