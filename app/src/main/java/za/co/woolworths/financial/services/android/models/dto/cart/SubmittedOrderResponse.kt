@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.models.dto.cart
 
+import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.Response
 
 class SubmittedOrderResponse {

@@ -467,5 +467,4 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
             KotlinUtils.presentEditDeliveryGeoLocationActivity(this, REQUEST_SUBURB_CHANGE)
         }
     }
-
 }

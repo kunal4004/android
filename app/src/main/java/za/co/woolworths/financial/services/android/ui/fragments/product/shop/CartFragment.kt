@@ -123,7 +123,6 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
     var productCountMap: ProductCountMap? = null
     private var liquorCompliance: LiquorCompliance? = null
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupToolbar()
@@ -621,6 +620,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                 showRedeemVoucherFeatureWalkthrough()
             }
             else -> {
+                productCountMap = null
                 updateCartSummary(0)
                 rvCartList?.visibility = View.GONE
                 rlCheckOut?.visibility = View.GONE
@@ -694,7 +694,12 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             for (cartItemGroup: CartItemGroup in emptyCartItemGroups) {
                 cartItems?.remove(cartItemGroup)
             }
-            cartProductAdapter?.notifyAdapter(cartItems, orderSummary, voucherDetails, liquorCompliance)
+            cartProductAdapter?.notifyAdapter(
+                cartItems,
+                orderSummary,
+                voucherDetails,
+                liquorCompliance
+            )
         } else {
             cartProductAdapter?.clear()
             resetToolBarIcons()
@@ -1297,7 +1302,8 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                     ) as ProductCountMap
                     val itemsCount = data?.getIntExtra("ItemsCount", 0)
                     if ((isDeliveryOptionClickAndCollect() || isDeliveryOptionDash())
-                        && productCountMap.quantityLimit?.foodLayoutColour != null) {
+                        && productCountMap.quantityLimit?.foodLayoutColour != null
+                    ) {
                         showItemsLimitToastOnAddToCart(
                             rlCheckOut,
                             productCountMap,
@@ -1920,7 +1926,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                 itemLimitsBanner,
                 itemLimitsMessage,
                 itemLimitsCounter,
-                isClickAndCollect = getPreferredDeliveryType() === Delivery.CNC
+                showBanner = (getPreferredDeliveryType() === Delivery.CNC || getPreferredDeliveryType() === Delivery.DASH)
             )
         }
     }
