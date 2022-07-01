@@ -521,9 +521,9 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                     liquorComplianceBannerLayout?.visibility=View.VISIBLE
                     ImageManager.setPicture(imgLiquorBanner, liquorImageUrl)
 
-                    ageConfirmationLayoutCollection.visibility = View.VISIBLE
-                    liquorComplianceBannerSeparator.visibility = View.VISIBLE
-                    liquorComplianceBannerLayout.visibility = View.VISIBLE
+                    ageConfirmationLayoutCollection?.visibility = View.VISIBLE
+                    liquorComplianceBannerSeparator?.visibility = View.VISIBLE
+                    liquorComplianceBannerLayout?.visibility = View.VISIBLE
 
                     if(!radioBtnAgeConfirmation.isChecked) {
                         Utils.fadeInFadeOutAnimation(txtContinueToPaymentCollection, true)
