@@ -103,6 +103,7 @@ public class SSOActivity extends WebViewActivity {
 	public static final String FORGOT_PASSWORD = "FORGOT_PASSWORD";
 	public static final String FORGOT_PASSWORD_VALUE = "PASSWORD";
 	private String forgotPasswordLogin = "login=true&source=oneapp";
+	private String TNC_TITLE = "Woolworths.co.za";
 
 	public static final String TAG_EXTRA_QUERYSTRING_PARAMS = "TAG_EXTRA_QUERYSTRING_PARAMS";
 	//Default redirect url used by LOGIN AND LINK CARDS
@@ -727,7 +728,7 @@ public class SSOActivity extends WebViewActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case android.R.id.home:
-				if (this.webView != null && webView.canGoBack()) {
+				if (this.webView != null && webView.canGoBack() && toolbarTextView.getText().toString().contains(TNC_TITLE)) {
 					webView.goBack();
 				} else {
 					finishActivity();
