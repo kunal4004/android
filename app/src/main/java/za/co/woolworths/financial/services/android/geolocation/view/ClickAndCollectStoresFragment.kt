@@ -135,8 +135,8 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
         val store:Store?=addressStoreList?.get(0)
         store?.let{
             dynamicMapView?.moveCamera(
-                latitude = store?.latitude,
-                longitude =store?.longitude,
+                latitude = it.latitude,
+                longitude =it.longitude,
                 zoom = 11f
             )
         }
