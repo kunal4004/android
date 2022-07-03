@@ -31,6 +31,8 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapte
     private var mResultList = arrayListOf<PlaceAutocomplete>()
     private val placesClient = geoData
     private val mContext = context
+    private var startingTime: Long = System.currentTimeMillis()
+    private var currentTime: Long = 0
 
     override fun getCount(): Int {
         return mResultList.size
@@ -109,8 +111,17 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapte
 
     fun getPredictions(constraint: CharSequence): ArrayList<PlaceAutocomplete> {
         val resultList = arrayListOf<PlaceAutocomplete>()
-        if (token == null) {
+        //this logic added for Google Api's cost optimization.
+        if (token == null && currentTime == 0L) {
             token = AutocompleteSessionToken.newInstance()
+        } else {
+            currentTime = System.currentTimeMillis()
+            //this logic added for Google Api's cost optimization.
+            //after 2 min token need to be change
+            if (currentTime - startingTime >= 120000) {
+                token = AutocompleteSessionToken.newInstance()
+                startingTime = currentTime
+            }
         }
         val request = FindAutocompletePredictionsRequest.builder()
             .setCountry("ZA")
