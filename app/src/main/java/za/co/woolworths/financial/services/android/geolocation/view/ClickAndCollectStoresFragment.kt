@@ -21,7 +21,6 @@ import kotlinx.android.synthetic.main.no_connection.view.*
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.geolocation.GeoUtils.Companion.showFirstFourLocationInMap
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
@@ -112,6 +111,28 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
         } else {
             setAddressUI(mValidateLocationResponse?.validatePlace?.stores,
                 mValidateLocationResponse)
+        }
+    }
+
+    private fun showFirstFourLocationInMap(addressStoreList: List<Store>?) {
+        addressStoreList?.let {
+            for (i in 0..3) {
+                dynamicMapView?.addMarker(
+                    requireContext(),
+                    latitude = addressStoreList?.get(i)?.latitude,
+                    longitude = addressStoreList?.get(i)?.longitude,
+                    icon = R.drawable.pin
+                )
+            }
+        }
+        //after plotting all the markers pointing the camera to nearest store
+        val store:Store?=addressStoreList?.get(0)
+        store?.let{
+            dynamicMapView?.moveCamera(
+                latitude = it.latitude,
+                longitude =it.longitude,
+                zoom = 11f
+            )
         }
     }
 
@@ -265,7 +286,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
 
     override fun onMapReady() {
         dynamicMapView?.setAllGesturesEnabled(false)
-        showFirstFourLocationInMap(mValidateLocationResponse?.validatePlace?.stores, dynamicMapView, requireContext())
+        showFirstFourLocationInMap(mValidateLocationResponse?.validatePlace?.stores)
     }
 
     override fun onMarkerClicked(marker: DynamicMapMarker) { }
