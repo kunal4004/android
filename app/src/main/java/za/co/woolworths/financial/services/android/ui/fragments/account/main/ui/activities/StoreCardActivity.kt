@@ -43,7 +43,6 @@ class StoreCardActivity : AppCompatActivity() {
 
     private fun getMainFragment() = supportFragmentManager.findFragmentById(R.id.accountProductLandingFragmentContainerView)?.childFragmentManager?.primaryNavigationFragment as? AccountProductsMainFragment
 
-
     fun landingNavController(): NavController? {
         val fragment = getMainFragment()
         val navHost = fragment?.getChildNavHost()

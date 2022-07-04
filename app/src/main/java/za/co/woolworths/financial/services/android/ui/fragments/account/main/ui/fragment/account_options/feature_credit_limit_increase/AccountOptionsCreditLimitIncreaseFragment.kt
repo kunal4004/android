@@ -11,6 +11,7 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountOptionsCreditLimitIncreaseFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
 import za.co.woolworths.financial.services.android.ui.base.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
@@ -18,17 +19,18 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.loadingState
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class AccountOptionsCreditLimitIncreaseFragment : Fragment(R.layout.account_options_credit_limit_increase_fragment), View.OnClickListener {
 
-    @Inject
-    lateinit var myAccountsUtils: MyAccountsUtils
+    @Inject lateinit var myAccountsUtils: MyAccountsUtils
 
-    @Inject
-    lateinit var router: ProductLandingRouterImpl
+    @Inject lateinit var router: ProductLandingRouterImpl
+
+    @Inject lateinit var connectivityLiveData: ConnectivityLiveData
 
     private val viewModel: CreditLimitIncreaseViewModel by activityViewModels()
 
@@ -37,6 +39,13 @@ class AccountOptionsCreditLimitIncreaseFragment : Fragment(R.layout.account_opti
         val binding = AccountOptionsCreditLimitIncreaseFragmentBinding.bind(view)
         subscribeObservers(binding)
         binding.setListener()
+        requestOfferActive()
+    }
+
+    private fun requestOfferActive() {
+        lifecycleScope.launch {
+            viewModel.queryRemoteServiceCLIOfferActive()
+        }
     }
 
     private fun AccountOptionsCreditLimitIncreaseFragmentBinding.setListener() {
@@ -49,12 +58,23 @@ class AccountOptionsCreditLimitIncreaseFragment : Fragment(R.layout.account_opti
     }
 
     private fun queryCLIOfferActiveRemoteService(binding: AccountOptionsCreditLimitIncreaseFragmentBinding) {
+
         if (viewModel.isCliFlowHiddenForProductNotInGoodStanding()) {
             binding.hideCliComponent()
             return
         }
+
+        lifecycleScope.launch {
+            connectivityLiveData.observe(viewLifecycleOwner){ isConnectionAvailable ->
+                if (isConnectionAvailable && viewModel.retryNetworkRequest.isConnectionAvailableForOfferActive()){
+                    lifecycleScope.launch { viewModel.queryRemoteServiceCLIOfferActive() }
+                }
+            }
+        }
+
         lifecycleScope.launchWhenStarted {
-            viewModel.queryRemoteServiceCLIOfferActive().collect { result ->
+            viewModel.offerActive.collect { result ->
+                viewModel.retryNetworkRequest.popOfferActiveRequest()
                 with(result) {
                     renderSuccess {
                         val response =  output as? OfferActive
@@ -71,7 +91,10 @@ class AccountOptionsCreditLimitIncreaseFragment : Fragment(R.layout.account_opti
 
                     renderFailure { router.routeToDefaultErrorMessageDialog(requireActivity()) }
 
-                    renderNoConnection { router.showNoConnectionToast(requireActivity()) }
+                    renderNoConnection {
+                        viewModel.retryNetworkRequest.putOfferActiveRequest()
+                        router.showNoConnectionToast(requireActivity())
+                    }
 
                     renderLoading { binding.showProgress(isLoading) }
                    

@@ -11,6 +11,7 @@ import za.co.woolworths.financial.services.android.models.network.RetrofitExcept
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Result
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import java.io.IOException
+import java.net.ConnectException
 import javax.inject.Inject
 
 open class CoreDataSource @Inject constructor() : NetworkConfig() {
@@ -76,8 +77,12 @@ open class CoreDataSource @Inject constructor() : NetworkConfig() {
                     }
                 }
             }
-        }.catch { e ->
-            emit(IOTaskResult.OnFailed(IOException("Exception during network API call: ${e.message}")))
+        }.catch { exception ->
+            if (exception is ConnectException){
+                emit(IOTaskResult.NoConnectionState)
+            }else {
+                emit(IOTaskResult.OnFailed(IOException("Exception during network API call: ${exception.message}")))
+            }
             return@catch
         }
     }
