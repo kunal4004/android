@@ -15,6 +15,8 @@ import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
 import com.google.android.libraries.places.api.net.PlacesClient
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DURATION_0_MS
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DURATION_120000_MS
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -31,6 +33,8 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapte
     private var mResultList = arrayListOf<PlaceAutocomplete>()
     private val placesClient = geoData
     private val mContext = context
+    private var startingTime: Long = System.currentTimeMillis()
+    private var currentTime: Long = DURATION_0_MS
 
     override fun getCount(): Int {
         return mResultList.size
@@ -109,8 +113,17 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapte
 
     fun getPredictions(constraint: CharSequence): ArrayList<PlaceAutocomplete> {
         val resultList = arrayListOf<PlaceAutocomplete>()
-        if (token == null) {
+        //this logic added for Google Api's cost optimization.
+        if (token == null && currentTime == DURATION_0_MS) {
             token = AutocompleteSessionToken.newInstance()
+        } else {
+            currentTime = System.currentTimeMillis()
+            //this logic added for Google Api's cost optimization.
+            //after 2 min token need to be change
+            if (currentTime - startingTime >= DURATION_120000_MS) {
+                token = AutocompleteSessionToken.newInstance()
+                startingTime = currentTime
+            }
         }
         val request = FindAutocompletePredictionsRequest.builder()
             .setCountry("ZA")
