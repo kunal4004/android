@@ -45,6 +45,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.helpandsupp
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
@@ -281,7 +282,7 @@ class OrderConfirmationFragment : Fragment() {
                 deliveryFeeTextView?.text =
                     CurrencyFormatter.formatAmountToRandAndCentWithSpace(response?.deliveryDetails?.shippingAmount)
                 driverTipTextView.text = CurrencyFormatter
-                    .formatAmountToRandAndCentWithSpace(response?.orderSummary?.tip)
+                    .formatAmountToRandAndCentWithSpace(response?.orderSummary?.tip ?: 0.00)
             }
             else -> {
             }
