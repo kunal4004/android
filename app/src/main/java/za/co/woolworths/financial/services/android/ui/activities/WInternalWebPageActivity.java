@@ -69,7 +69,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	private Boolean treatmentPlan;
 	private String collectionsExitUrl;
     private ChromeClient chromeClient;
-    private Boolean ficaCamceled = false;
+    private Boolean ficaCanceled = false;
 
 
     @Override
@@ -209,7 +209,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 
 				}else if (url.contains(collectionsExitUrl)){
                     if (parameters.get("IsCompleted").equals("false")) {
-                        ficaCamceled = true;
+                        ficaCanceled = true;
                     }
 					finishActivity();
 				}
@@ -355,7 +355,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	}
 
 	public void finishActivity() {
-        if (!ficaCamceled) {
+        if (!ficaCanceled) {
             setResult(RESULT_OK);
         }
 		finish();

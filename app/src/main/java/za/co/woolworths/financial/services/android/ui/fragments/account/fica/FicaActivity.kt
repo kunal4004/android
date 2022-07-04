@@ -8,9 +8,9 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.ActivityFicaBinding
+import com.awfs.coordination.databinding.FicaDialogBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_credit_report_tu.*
-import kotlinx.android.synthetic.main.fica_dialog.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -19,10 +19,13 @@ import za.co.woolworths.financial.services.android.util.Utils
 class FicaActivity : AppCompatActivity(), View.OnClickListener {
     private val ficaViewModel: FicaViewModel by viewModels()
 
+    private lateinit var binding: ActivityFicaBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_fica)
+        binding = ActivityFicaBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
         ficaViewModel.start(intent)
         Utils.updateStatusBarBackground(this, R.color.bg_e6e6e6)
         setUpActionBar()
@@ -30,16 +33,17 @@ class FicaActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun setClickListeners() {
-        btn_fica_maybe_later.setOnClickListener(this)
-        btn_fica_verify.setOnClickListener(this)
+        binding.ficaDialog.btnFicaMaybeLater.setOnClickListener(this)
+        binding.ficaDialog.btnFicaVerify.setOnClickListener(this)
     }
 
     override fun onClick(view: View?) {
+        binding.ficaDialog.let {
         when (view) {
-            btn_fica_maybe_later -> {
+            it.btnFicaMaybeLater -> {
                 onBackPressed()
             }
-            btn_fica_verify -> {
+            it.btnFicaVerify -> {
                 Utils.triggerFireBaseEvents(
                     FirebaseManagerAnalyticsProperties.FICA_VERIFY_START,
                     this
@@ -47,10 +51,11 @@ class FicaActivity : AppCompatActivity(), View.OnClickListener {
                 ficaViewModel.handleVerify(this)
             }
         }
+        }
     }
 
     private fun setUpActionBar() {
-        setSupportActionBar(toolbarCreditReport)
+        setSupportActionBar(binding.toolbarCreditReport)
         supportActionBar?.apply {
             setDisplayShowTitleEnabled(false)
             setDisplayUseLogoEnabled(false)

@@ -52,6 +52,7 @@
         app:layout_constraintGuide_begin="@dimen/_300sdp" />
 
     <include
+        android:id="@+id/fica_dialog"
         android:layout_width="match_parent"
         android:layout_height="@dimen/zero_dp"
         layout="@layout/fica_dialog"
