@@ -2,10 +2,12 @@ package za.co.woolworths.financial.services.android.models.dto
 
 import android.os.Parcelable
 import com.google.gson.JsonElement
+import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.parcel.RawValue
 import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.DiscountDetails
+import za.co.woolworths.financial.services.android.models.network.Status
 
 /**
  * Created by W7099877 on 2018/02/08.
@@ -33,7 +35,7 @@ data class OrderSummary(
     var isChatEnabled: Boolean,
     var isDriverTrackingEnabled: Boolean,
     var shopperName: String?,
-    var orderStatus: String?,
+    var orderStatus: @RawValue Any,
     var taxNoteNumbers: ArrayList<String>?,
     var requestCancellation: Boolean = false,
     var clickAndCollectOrder: Boolean = false,
