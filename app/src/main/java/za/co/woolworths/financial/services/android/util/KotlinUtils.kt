@@ -52,6 +52,7 @@ import za.co.woolworths.financial.services.android.geolocation.model.response.Co
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton.liquor
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -414,11 +415,16 @@ class KotlinUtils {
             savedAddressResposne: SavedAddressResponse? = null,
             defaultAddress: Address? = null,
             whoISCollecting: String? = null,
+            liquorCompliance: LiquorCompliance? = null
         ) {
 
             activity?.apply {
                 val mIntent = Intent(this, EditDeliveryLocationActivity::class.java)
                 val mBundle = Bundle()
+                if (liquorCompliance != null && liquorCompliance.isLiquorOrder && liquor!=null && liquor!!.noLiquorImgUrl != null && !liquor!!.noLiquorImgUrl.isEmpty()) {
+                    mBundle.putBoolean(Constant.LIQUOR_ORDER, liquorCompliance.isLiquorOrder)
+                    mBundle.putString(Constant.NO_LIQUOR_IMAGE_URL, liquor!!.noLiquorImgUrl)
+                }
                 mBundle.putString(DELIVERY_TYPE, delivery.toString())
                 mBundle.putString(PLACE_ID, placeId)
                 mBundle.putBoolean(IS_FROM_DASH_TAB, isFromDashTab)
