@@ -272,13 +272,13 @@ class ConfirmAddressMapFragment :
     private fun showSelectedLocationError(result: Boolean?) {
         binding?.apply {
             if (result == true) {
-                errorMassageDivider.visibility = View.VISIBLE
-                errorMessage.visibility = View.VISIBLE
-                confirmAddress.isEnabled = false
+                errorMassageDivider?.visibility = View.VISIBLE
+                errorMessage?.visibility = View.VISIBLE
+                confirmAddress?.isEnabled = false
             } else {
-                errorMassageDivider.visibility = View.GONE
-                errorMessage.visibility = View.GONE
-                confirmAddress.isEnabled = true
+                errorMassageDivider?.visibility = View.GONE
+                errorMessage?.visibility = View.GONE
+                confirmAddress?.isEnabled = true
             }
         }
     }
@@ -425,12 +425,18 @@ class ConfirmAddressMapFragment :
                         }
                     } ?: sendAddressData("$streetNumber $routeName")
 
-                    viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                        delay(AppConstant.DELAY_500_MS)
-                        if (streetNumber.isNullOrEmpty() && routeName.isNullOrEmpty())
-                            showSelectedLocationError(true)
-                        else
-                            showSelectedLocationError(false)
+                    try {
+                        view?.let {
+                            lifecycleScope.launchWhenStarted {
+                                delay(AppConstant.DELAY_500_MS)
+                                if (streetNumber.isNullOrEmpty() && routeName.isNullOrEmpty())
+                                    showSelectedLocationError(true)
+                                else
+                                    showSelectedLocationError(false)
+                            }
+                        }
+                    } catch (e: Exception) {
+                        FirebaseManager.logException(e)
                     }
 
                 }.addOnFailureListener {
