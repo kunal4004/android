@@ -891,9 +891,9 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             })
         //liquor compliance: age confirmation
         if(liquorOrder == true && !radioBtnAgeConfirmation.isChecked) {
-            ageConfirmationLayout.visibility = View.VISIBLE
-            liquorComplianceBannerSeparator.visibility = View.VISIBLE
-            liquorComplianceBannerLayout.visibility = View.VISIBLE
+            ageConfirmationLayout?.visibility = View.VISIBLE
+            liquorComplianceBannerSeparator?.visibility = View.VISIBLE
+            liquorComplianceBannerLayout?.visibility = View.VISIBLE
 
             Utils.fadeInFadeOutAnimation(txtContinueToPaymentCollection, false)
         } else {
