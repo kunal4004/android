@@ -1026,17 +1026,17 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         Activity activity = getActivity();
         if (activity == null) return;
         KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
-                activity, resultCode, null, null, false,false, false, null, null, null);
+                activity, resultCode, null, null, false,false, false, null, null, null, null);
     }
 
     private void startActivityToSelectDeliveryLocation(boolean addItemToCartOnFinished) {
         if (getActivity() != null) {
             if (addItemToCartOnFinished) {
                 KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
-                        getActivity(), REQUEST_SUBURB_CHANGE, null, null, false, false, false, null, null, null);
+                        getActivity(), REQUEST_SUBURB_CHANGE, null, null, false, false, false, null, null, null, null);
             } else {
                 KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
-                        getActivity(), 0, null, null, false,false, false , null, null, null );
+                        getActivity(), 0, null, null, false,false, false , null, null, null, null );
             }
             getActivity().overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
         }
@@ -1238,7 +1238,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
                 false,
                 null,
                 null,
-                null
+                null, null
                 );
     }
 
