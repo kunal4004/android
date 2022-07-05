@@ -330,6 +330,14 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                         showMaxItemView()
                         return
                     }
+
+                    if ((deliveryType === Delivery.DASH) && (productCountMap != null)
+                        && (productCountMap!!.quantityLimit != null)
+                        && !productCountMap!!.quantityLimit!!.allowsCheckout!!
+                    ) {
+                        showMaxItemView()
+                        return
+                    }
                     // Go to Web checkout journey if...
                     if (nativeCheckout?.isNativeCheckoutEnabled == false) {
                         val openCheckOutActivity = Intent(context, CartCheckoutActivity::class.java)
@@ -1920,7 +1928,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                 itemLimitsBanner,
                 itemLimitsMessage,
                 itemLimitsCounter,
-                isClickAndCollect = getPreferredDeliveryType() === Delivery.CNC
+                isClickAndCollectOrDash = (getPreferredDeliveryType() === Delivery.CNC) || (getPreferredDeliveryType() === Delivery.DASH)
             )
         }
     }
