@@ -35,6 +35,7 @@ import za.co.woolworths.financial.services.android.models.dto.cart.OrderItems
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ItemsOrderListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -76,7 +77,8 @@ class OrderConfirmationFragment : Fragment() {
                         is SubmittedOrderResponse -> {
                             when (response.httpCode) {
                                 AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 -> {
-                                    response.orderSummary?.orderId?.let { setToolbar(it, Intent()) }
+                                 //   response.orderSummary?.orderId?.let { setToolbar(it, Intent()) }
+                                    response.orderSummary?.orderId?.let { setToolbar(it) }
                                     setupDeliveryOrCollectionDetails(response)
                                     setupOrderTotalDetails(response)
                                     setupOrderDetailsBottomSheet(response)
@@ -106,7 +108,7 @@ class OrderConfirmationFragment : Fragment() {
         }
     }
 
-    private fun setToolbar(orderId: String, data: Intent?) {
+ /*   private fun setToolbar(orderId: String, data: Intent?) {
 
         orderIdText.text = bindString(R.string.order_details_toolbar_title, orderId)
         btnClose?.setOnClickListener { requireActivity().onBackPressed() }
@@ -120,6 +122,17 @@ class OrderConfirmationFragment : Fragment() {
 
                 }
             }
+        }
+    }*/
+
+    private fun setToolbar(orderId: String) {
+        if (activity is CartCheckoutActivity) {
+            (activity as? CartCheckoutActivity)?.apply {
+                showTitleWithCrossButton(bindString(R.string.order_details_toolbar_title, orderId))
+            }
+        }
+        (activity as? CheckoutActivity)?.apply {
+            showTitleWithCrossButton(bindString(R.string.order_details_toolbar_title, orderId))
         }
     }
 

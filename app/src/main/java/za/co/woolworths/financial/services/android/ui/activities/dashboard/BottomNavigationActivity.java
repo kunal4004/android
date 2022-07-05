@@ -22,7 +22,6 @@ import static za.co.woolworths.financial.services.android.ui.fragments.product.d
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment.REQUEST_PAYMENT_STATUS;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_NAVIGATE_TO_HELP_AND_SUPPORT;
-import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_NAVIGATE_TO_TAX_INVOICE;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.MY_LIST_LIST_ID;
@@ -122,7 +121,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.MyListsFrag
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersAccountFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.shop.TaxInvoiceLIstFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.helpandsupport.HelpAndSupportFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment;
@@ -1102,15 +1100,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     break;
                 }
 
-                if (resultCode == RESULT_NAVIGATE_TO_HELP_AND_SUPPORT) {
+              /*  if (resultCode == RESULT_NAVIGATE_TO_HELP_AND_SUPPORT) {
                    pushFragment(new HelpAndSupportFragment());
                     break;
-                }
-
-                if (resultCode == RESULT_NAVIGATE_TO_TAX_INVOICE) {
-                    pushFragment(new TaxInvoiceLIstFragment());
-                    break;
-                }
+                }*/
             case REQUEST_CODE_ORDER_DETAILS_PAGE:// Call back when Toast clicked after adding item to shopping list
             case SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE:
                 navigateToMyList(requestCode, resultCode, data);

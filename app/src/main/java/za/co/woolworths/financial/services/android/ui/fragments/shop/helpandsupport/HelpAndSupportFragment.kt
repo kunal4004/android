@@ -9,21 +9,20 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.layout_help_and_support_fragement.*
 import za.co.woolworths.financial.services.android.models.dto.OrderDetailsResponse
-import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
 import za.co.woolworths.financial.services.android.ui.activities.CancelOrderProgressActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.CancelOrderConfirmationDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.CancelOrderProgressFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.TaxInvoiceLIstFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
-class HelpAndSupportFragment: Fragment(R.layout.layout_help_and_support_fragement) ,CancelOrderConfirmationDialogFragment.ICancelOrderConfirmation,
-    HelpAndSupportAdapter.HelpAndSupportClickListener {
+class HelpAndSupportFragment : Fragment(R.layout.layout_help_and_support_fragement), CancelOrderConfirmationDialogFragment.ICancelOrderConfirmation,
+        HelpAndSupportAdapter.HelpAndSupportClickListener {
 
-    val orderDetailsResponse: OrderDetailsResponse? = null
-    val submittedOrderResponse: SubmittedOrderResponse? = null
+    var orderDetailsResponse: OrderDetailsResponse? = null
     var isNavigatedFromMyAccounts: Boolean = false
 
     companion object {
@@ -33,13 +32,6 @@ class HelpAndSupportFragment: Fragment(R.layout.layout_help_and_support_fragemen
         fun newInstance(orderDetailsResponse: OrderDetailsResponse?) = HelpAndSupportFragment().withArgs {
             putSerializable(KEY_ARGS_ORDER_STATUS, orderDetailsResponse)
         }
-
-
-        /*fun getInstance(submittedOrderResponse: SubmittedOrderResponse)= HelpAndSupportFragment().withArgs {
-            putSerializable(STORE_CARD_DETAIL,submittedOrderResponse)
-
-        }*/
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -48,9 +40,9 @@ class HelpAndSupportFragment: Fragment(R.layout.layout_help_and_support_fragemen
     }
 
     private fun setUpHelpAndSupportUi() {
-     val orderDetailsResponse : OrderDetailsResponse? = arguments?.let {
-         it.getSerializable(KEY_ARGS_ORDER_STATUS) as? OrderDetailsResponse
-     }
+        orderDetailsResponse = arguments?.let {
+            it.getSerializable(KEY_ARGS_ORDER_STATUS) as? OrderDetailsResponse
+        }
         val dataList = prepareHelpAndSupportList(orderDetailsResponse)
         val adapter = HelpAndSupportAdapter(context, dataList, this)
         val llm = LinearLayoutManager(context)
@@ -62,40 +54,38 @@ class HelpAndSupportFragment: Fragment(R.layout.layout_help_and_support_fragemen
         }
     }
 
-   fun prepareHelpAndSupportList(orderDetailsResponse: OrderDetailsResponse?): ArrayList<HelpAndSupport> {
+    fun prepareHelpAndSupportList(orderDetailsResponse: OrderDetailsResponse?): ArrayList<HelpAndSupport> {
         /* prepare data list as per delivery type , currently done for standard and CNC only*/
         val dataList = arrayListOf<HelpAndSupport>()
+        orderDetailsResponse?.orderSummary?.apply {
+            val delivery: String? = fulfillmentDetails?.deliveryType
+            when (Delivery.getType(delivery)) {
+                Delivery.STANDARD -> {
+                    dataList.add(HelpAndSupport(getString(R.string.dash_call_customer_care), getString(R.string.dash_customer_care_no), R.drawable.help_phone))
+                    dataList.add(HelpAndSupport(getString(R.string.dash_send_us_an_email), getString(R.string.email_online_shop), R.drawable.ic_envelope))
+                }
+                Delivery.CNC -> {
+                    dataList.add(HelpAndSupport(getString(R.string.dash_call_customer_care), getString(R.string.dash_customer_care_no), R.drawable.help_phone))
+                    dataList.add(HelpAndSupport(getString(R.string.dash_send_us_an_email), getString(R.string.email_online_shop), R.drawable.ic_envelope))
+                }
+                Delivery.DASH -> {
+                    dataList.add(HelpAndSupport(getString(R.string.dash_call_customer_care), getString(R.string.dash_customer_care_no_phone), R.drawable.help_phone))
+                    dataList.add(HelpAndSupport(getString(R.string.dash_send_us_an_email), getString(R.string.dash_email_id), R.drawable.ic_envelope))
+                }
+            }
 
-       orderDetailsResponse?.orderSummary?.apply {
+            if (orderCancellable && !requestCancellation)
+                dataList.add(HelpAndSupport(getString(R.string.cancel_order), "", R.drawable.ic_dash_cancel_order))
 
-           val delivery: String? = fulfillmentDetails?.deliveryType
-           when (Delivery.getType(delivery)) {
-               Delivery.STANDARD -> {
-                   dataList.add(HelpAndSupport(getString(R.string.dash_call_customer_care), getString(R.string.dash_customer_care_no), R.drawable.help_phone))
-                   dataList.add(HelpAndSupport(getString(R.string.dash_send_us_an_email), getString(R.string.email_online_shop), R.drawable.ic_envelope))
-               }
-               Delivery.CNC -> {
-                   dataList.add(HelpAndSupport(getString(R.string.dash_call_customer_care), getString(R.string.dash_customer_care_no), R.drawable.help_phone))
-                   dataList.add(HelpAndSupport(getString(R.string.dash_send_us_an_email), getString(R.string.email_online_shop), R.drawable.ic_envelope))
-               }
-               Delivery.DASH -> {
-                   dataList.add(HelpAndSupport(getString(R.string.dash_call_customer_care), getString(R.string.dash_customer_care_no_phone), R.drawable.help_phone))
-                   dataList.add(HelpAndSupport(getString(R.string.dash_send_us_an_email), getString(R.string.dash_email_id), R.drawable.ic_envelope))
-               }
-           }
+            if (isChatEnabled)
+                dataList.add(HelpAndSupport(getString(R.string.dash_Chat_to_your_shopper), "", R.drawable.ic_dash_chat_support_icon))
 
-           if (orderCancellable && !requestCancellation)
-               dataList.add(HelpAndSupport(getString(R.string.cancel_order), "", R.drawable.ic_dash_cancel_order))
+            if (isDriverTrackingEnabled)
+                dataList.add(HelpAndSupport(getString(R.string.dash_track_your_order), "", R.drawable.ic_dash_track_order_icon))
 
-           if (isChatEnabled)
-               dataList.add(HelpAndSupport(getString(R.string.dash_Chat_to_your_shopper), "", R.drawable.ic_dash_chat_support_icon))
-
-           if (isDriverTrackingEnabled)
-               dataList.add(HelpAndSupport(getString(R.string.dash_track_your_order), "", R.drawable.ic_dash_track_order_icon))
-
-           if (!taxNoteNumbers.isNullOrEmpty())
-               dataList.add(HelpAndSupport(getString(R.string.view_tax_invoice), "", R.drawable.ic_tax_invoice))
-       }
+            if (!taxNoteNumbers.isNullOrEmpty())
+                dataList.add(HelpAndSupport(getString(R.string.view_tax_invoice), "", R.drawable.ic_tax_invoice))
+        }
         return dataList
     }
 
@@ -143,7 +133,7 @@ class HelpAndSupportFragment: Fragment(R.layout.layout_help_and_support_fragemen
     }
 
     override fun openTaxInvoice() {
-       /* (requireActivity() as? BottomNavigationActivity)?.pushFragment(
+        (requireActivity() as? BottomNavigationActivity)?.pushFragment(
                 orderDetailsResponse?.orderSummary?.let {
                     it.orderId?.let { itData ->
                         TaxInvoiceLIstFragment.getInstance(
@@ -151,27 +141,14 @@ class HelpAndSupportFragment: Fragment(R.layout.layout_help_and_support_fragemen
                         )
                     }
                 }
-        )*/
-        /*intent.putExtra("QUANTITY_CHANGED_FROM_LIST", quantity)
-        setResult(ShoppingListDetailFragment.QUANTITY_CHANGED_FROM_LIST, intent)*/
-
-
-       /* (activity as? CheckoutActivity)?.apply {
-            setResult(CheckOutFragment.RESULT_NAVIGATE_TO_TAX_INVOICE)
-            closeActivity()
-        }*/
-
-        requireActivity()?.setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
-        requireActivity()?.finish()
-
+        )
     }
 
-
     override fun openChatSupport() {
-      //  TODO("Not yet implemented")
+        //  TODO("Not yet implemented")
     }
 
     override fun openTrackYourOrder() {
-       // TODO("Not yet implemented")
+        // TODO("Not yet implemented")
     }
 }
