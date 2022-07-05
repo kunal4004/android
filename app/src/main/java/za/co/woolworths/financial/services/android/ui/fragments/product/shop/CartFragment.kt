@@ -319,7 +319,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                     val deliveryType =
                         getType(Utils.getPreferredDeliveryLocation().fulfillmentDetails.deliveryType)
 
-                    if ((deliveryType === Delivery.CNC || deliveryType === Delivery.DASH) && (productCountMap != null)
+                    if ((deliveryType === Delivery.CNC) && (productCountMap != null)
                         && (productCountMap?.quantityLimit != null)
                         && !productCountMap?.quantityLimit?.allowsCheckout!!
                     ) {
@@ -327,6 +327,14 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                             FirebaseManagerAnalyticsProperties.CART_CLCK_CLLCT_CNFRM_LMT,
                             requireActivity()
                         )
+                        showMaxItemView()
+                        return
+                    }
+
+                    if ((deliveryType === Delivery.DASH) && (productCountMap != null)
+                        && (productCountMap!!.quantityLimit != null)
+                        && !productCountMap!!.quantityLimit!!.allowsCheckout!!
+                    ) {
                         showMaxItemView()
                         return
                     }
@@ -696,12 +704,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             for (cartItemGroup: CartItemGroup in emptyCartItemGroups) {
                 cartItems?.remove(cartItemGroup)
             }
-            cartProductAdapter?.notifyAdapter(
-                cartItems,
-                orderSummary,
-                voucherDetails,
-                liquorCompliance
-            )
+            cartProductAdapter?.notifyAdapter(cartItems, orderSummary, voucherDetails, liquorCompliance)
         } else {
             cartProductAdapter?.clear()
             resetToolBarIcons()
