@@ -36,8 +36,6 @@ import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrde
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.adapters.ItemsOrderListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.WrewardsBottomSheetFragment
@@ -78,7 +76,7 @@ class OrderConfirmationFragment : Fragment() {
                         is SubmittedOrderResponse -> {
                             when (response.httpCode) {
                                 AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 -> {
-                                    response.orderSummary?.orderId?.let { setToolbar(it) }
+                                    response.orderSummary?.orderId?.let { setToolbar(it, Intent()) }
                                     setupDeliveryOrCollectionDetails(response)
                                     setupOrderTotalDetails(response)
                                     setupOrderDetailsBottomSheet(response)
@@ -108,17 +106,20 @@ class OrderConfirmationFragment : Fragment() {
         }
     }
 
-    private fun setToolbar(orderId: String) {
+    private fun setToolbar(orderId: String, data: Intent?) {
 
         orderIdText.text = bindString(R.string.order_details_toolbar_title, orderId)
         btnClose?.setOnClickListener { requireActivity().onBackPressed() }
-        helpTextView?.setOnClickListener {
 
-           /* (requireActivity() as? BottomNavigationActivity)?.pushFragment(
-                    HelpAndSupportFragment.getInstance()
-            )*/
+        data?.putExtra("QUANTITY_CHANGED_FROM_LIST", orderId)
+        data?.apply {
+            helpTextView?.setOnClickListener {
+                (activity as? CheckoutActivity)?.apply {
+                    setResult(CheckOutFragment.RESULT_NAVIGATE_TO_HELP_AND_SUPPORT, data)
+                    closeActivity()
 
-
+                }
+            }
         }
     }
 
