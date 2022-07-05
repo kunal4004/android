@@ -154,17 +154,11 @@ class OrderConfirmationFragment : Fragment() {
                     dashDeliveryConstraintLayout?.visibility = VISIBLE
                     deliveryOrderDetailsLayout?.visibility = GONE
                     dashOrderDetailsLayout?.visibility = VISIBLE
-                    val dashLocation =
+                    optionLocationTitle?.text =
                         response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
                             convertToTitleCase(it)
                         }
                             ?: ""
-                    val dashAddressName =
-                        SpannableString(
-                            "$dashLocation " + requireContext().getString(R.string.bullet) + "" + " " + "$dashLocation "
-                        )
-                    optionLocationTitle?.text = dashAddressName
-
                     dashFoodDeliveryDateTimeTextView?.text = applyBoldBeforeComma(
                         response
                             ?.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
