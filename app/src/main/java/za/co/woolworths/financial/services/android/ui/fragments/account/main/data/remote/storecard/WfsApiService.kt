@@ -41,7 +41,7 @@ interface WfsApiService {
 
     @Headers(
         "Content-Type: application/json",
-        "Accept: application/json",
+        "Accept: application/vnd.appserver.api.v2+json",
         "Media-Type: application/json"
     )
     @POST("wfs/app/v4/accounts/storecard/cards")
