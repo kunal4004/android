@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze
 
-
 import android.os.Bundle
 import android.view.View
 import android.view.View.GONE
@@ -59,23 +58,12 @@ class TemporaryFreezeUnfreezeCardItemFragment : Fragment(R.layout.temporary_free
         lifecycleScope.launch {
             viewModel.blockMyCardResponse.collectLatest { state ->
                 with(state) {
-                    renderNoConnection { router.showNoConnectionToast(requireActivity()) }
+                    renderNoConnection {
+                        router.showNoConnectionToast(requireActivity())
+                        showLoading(ViewState.Loading(false), this@subscribeObservers)
+                    }
                     renderLoading {
-                        val isLanding = (accountViewModel.loaderType == LoaderType.LANDING)
-                        if (isLoading) { // show progress bar
-                            accountViewModel.loaderType = LoaderType.FREEZE_CARD
-                            temporaryFreezeCardRelativeLayout.isEnabled  = false
-                            freezeProgressBar.visibility = VISIBLE
-                            switchTemporaryFreezeCard.visibility = GONE
-                            viewModel.isTempFreezeUnFreezeLoading.value = true
-                        } else { // hide progressbar
-                            if (isLanding) {
-                                temporaryFreezeCardRelativeLayout.isEnabled = true
-                                freezeProgressBar.visibility = GONE
-                                switchTemporaryFreezeCard.visibility = VISIBLE
-                                viewModel.isTempFreezeUnFreezeLoading.value = false
-                            }
-                        }
+                        showLoading(this, this@subscribeObservers)
                     }
                     renderSuccess { accountViewModel.requestGetStoreCardCards() }
 
@@ -83,6 +71,31 @@ class TemporaryFreezeUnfreezeCardItemFragment : Fragment(R.layout.temporary_free
 
                     renderFailure {  router.routeToDefaultErrorMessageDialog(requireActivity()) }
                 }
+            }
+        }
+    }
+
+    private fun showLoading(
+        loading: ViewState.Loading,
+        temporaryFreezeUnfreezeCardItemFragmentBinding: TemporaryFreezeUnfreezeCardItemFragmentBinding
+    ) {
+        val isLanding = (accountViewModel.loaderType == LoaderType.LANDING)
+        if (loading.isLoading) { // show progress bar
+            accountViewModel.loaderType = LoaderType.FREEZE_CARD
+            temporaryFreezeUnfreezeCardItemFragmentBinding.temporaryFreezeCardRelativeLayout.isEnabled =
+                false
+            temporaryFreezeUnfreezeCardItemFragmentBinding.freezeProgressBar.visibility = VISIBLE
+            temporaryFreezeUnfreezeCardItemFragmentBinding.switchTemporaryFreezeCard.visibility =
+                GONE
+            viewModel.isTempFreezeUnFreezeLoading.value = true
+        } else { // hide progressbar
+            if (isLanding) {
+                temporaryFreezeUnfreezeCardItemFragmentBinding.temporaryFreezeCardRelativeLayout.isEnabled =
+                    true
+                temporaryFreezeUnfreezeCardItemFragmentBinding.freezeProgressBar.visibility = GONE
+                temporaryFreezeUnfreezeCardItemFragmentBinding.switchTemporaryFreezeCard.visibility =
+                    VISIBLE
+                viewModel.isTempFreezeUnFreezeLoading.value = false
             }
         }
     }

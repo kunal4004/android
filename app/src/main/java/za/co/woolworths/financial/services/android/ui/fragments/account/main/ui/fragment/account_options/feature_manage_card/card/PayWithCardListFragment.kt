@@ -17,10 +17,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.extension.onClick
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderFailure
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderHttpFailureFromServer
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -80,17 +77,13 @@ class PayWithCardListFragment : Fragment(R.layout.pay_with_card_list_fragment) {
             false -> lifecycleScope.launch {
                 freezeViewModel.queryServiceUnBlockStoreCard().collect { state ->
                     with(state) {
+                        renderNoConnection {
+                            router.showNoConnectionToast(requireActivity())
+                            showLoading(ViewState.Loading(false), this@initPayWithCard)
+                        }
+
                         renderLoading {
-                            when (isLoading) {
-                                true -> {
-                                    payWithCardTokenProgressBar.visibility = VISIBLE
-                                    payWithCardNext.visibility = GONE
-                                }
-                                false -> {
-                                    payWithCardTokenProgressBar.visibility = GONE
-                                    payWithCardNext.visibility = VISIBLE
-                                }
-                            }
+                            showLoading(this@renderLoading, this@initPayWithCard)
                         }
 
                         renderSuccess {
@@ -106,6 +99,22 @@ class PayWithCardListFragment : Fragment(R.layout.pay_with_card_list_fragment) {
                         
                     }
                 }
+            }
+        }
+    }
+
+    private fun showLoading(
+        loading: ViewState.Loading,
+        payWithCardListFragmentBinding: PayWithCardListFragmentBinding
+    ) {
+        when (loading.isLoading) {
+            true -> {
+                payWithCardListFragmentBinding.payWithCardTokenProgressBar.visibility = VISIBLE
+                payWithCardListFragmentBinding.payWithCardNext.visibility = GONE
+            }
+            false -> {
+                payWithCardListFragmentBinding.payWithCardTokenProgressBar.visibility = GONE
+                payWithCardListFragmentBinding.payWithCardNext.visibility = VISIBLE
             }
         }
     }

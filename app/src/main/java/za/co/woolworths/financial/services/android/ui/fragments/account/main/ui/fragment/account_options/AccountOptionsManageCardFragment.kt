@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountOptionsManageCardFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,6 +28,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.loadingState
+import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
@@ -46,8 +46,9 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
     private lateinit var mHeaderItems: ManageCardLandingHeaderItems
     private lateinit var mItemList: ManageStoreCardLandingList
 
-    @Inject
-    lateinit var router: ProductLandingRouterImpl
+    @Inject lateinit var router: ProductLandingRouterImpl
+
+    @Inject lateinit var connectivityLiveData: ConnectivityLiveData
 
     val viewModel: MyAccountsRemoteApiViewModel by activityViewModels()
     private val cardFreezeViewModel: TemporaryFreezeCardViewModel by activityViewModels()
@@ -133,34 +134,29 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
 
     private fun AccountOptionsManageCardFragmentBinding.subscribeObservers() {
         lifecycleScope.launch {
+            connectivityLiveData.observe(viewLifecycleOwner){ isConnectionAvailable ->
+                if (isConnectionAvailable && viewModel.retryNetworkRequest.isConnectionAvailableForGetStoreCard()){
+                   lifecycleScope.launch { viewModel.requestGetStoreCardCards() }
+                }
+            }
+        }
+        lifecycleScope.launch {
             with(viewModel) {
                 requestGetStoreCardCards()
                 storeCardResponseResult.collectLatest { response ->
+                    retryNetworkRequest.popStoreCardRequest()
+                    locator.stopService()
                     with(response) {
-                        locator.stopService()
+                        renderNoConnection {
+                            retryNetworkRequest.putStoreCardRequest()
+                            router.showNoConnectionToast(requireActivity()) }
 
-                        renderNoConnection { router.showNoConnectionToast(requireActivity()) }
+                        renderLoading { showProgress(this@subscribeObservers, this) }
 
-                        renderLoading {
-                            when (viewModel.loaderType) {
-                                LoaderType.LANDING -> {
-                                    cardShimmer.loadingState(
-                                        isLoading,
-                                        shimmerContainer = rltCardShimmer
-                                    )
-                                }
-                                else -> cardFreezeViewModel.stopLoading()
-                            }
-                        }
+                        renderHttpFailureFromServer { router.routeToServerErrorDialog(requireActivity(), output.response) }
 
-                        renderHttpFailureFromServer {
-                            router.routeToServerErrorDialog(requireActivity(), output.response)
-                        }
+                        renderFailure { router.routeToDefaultErrorMessageDialog(requireActivity()) }
 
-                        renderFailure {
-                            router.routeToDefaultErrorMessageDialog(
-                                requireActivity())
-                        }
                     }
                 }
             }
@@ -180,6 +176,21 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
                 mHeaderItems.showHeaderItem(feature)
                 mItemList.showListItem(feature)
             }
+        }
+    }
+
+    private fun showProgress(
+        accountOptionsManageCardFragmentBinding: AccountOptionsManageCardFragmentBinding,
+        loading: ViewState.Loading
+    ) {
+        when (viewModel.loaderType) {
+            LoaderType.LANDING -> {
+                accountOptionsManageCardFragmentBinding.cardShimmer.loadingState(
+                    loading.isLoading,
+                    shimmerContainer = accountOptionsManageCardFragmentBinding.rltCardShimmer
+                )
+            }
+            else -> cardFreezeViewModel.stopLoading()
         }
     }
 }

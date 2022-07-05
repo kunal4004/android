@@ -16,13 +16,14 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.data.CardNotReceivedDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.data.ICardNotReceivedService
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.RetryNetworkRequest
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.ApiResult
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.capitaliseFirstLetterInEveryWord
 import javax.inject.Inject
 
 enum class LoaderType {
-    LANDING, FREEZE_CARD, CARD_DETAIL
+    LANDING, FREEZE_CARD
 }
 
 @HiltViewModel
@@ -35,6 +36,8 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
 
     var mStoreCardFeatureType: StoreCardFeatureType? = null
     var loaderType : LoaderType = LoaderType.LANDING
+
+    @Inject lateinit var retryNetworkRequest: RetryNetworkRequest
 
     val cardHolderName = KotlinUtils.getCardHolderNameSurname()?.capitaliseFirstLetterInEveryWord()
 
@@ -110,6 +113,5 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
             _onViewPagerPageChangeListener.emit(Pair(storeCardFeatureType, position))
         }
     }
-
 
 }

@@ -1,8 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.core
 
-
+import android.net.Network
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import retrofit2.Retrofit
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.CoreDataSource.IOTaskResult
 
 /**
@@ -12,19 +13,25 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.cor
  * else a [IOTaskResult.OnFailed] is mapped to a [ViewState.RenderFailure] instance and emitted.
  * The flowable is then completed by emitting a [ViewState.Loading] with false
  */
-suspend fun <T : Any> getViewStateFlowForNetworkCall(ioOperation: suspend () -> Flow<IOTaskResult<T>>): Flow<ViewState<T>> =
-    flow {
+suspend fun <T : Any> getViewStateFlowForNetworkCall(ioOperation: suspend () -> Flow<IOTaskResult<T>>): Flow<ViewState<T>> {
+    return flow {
         emit(ViewState.Loading(true))
-        ioOperation().map {
-            when (it) {
-                is IOTaskResult.OnSuccess -> ViewState.RenderSuccess(it.data)
-                is IOTaskResult.OnFailure -> ViewState.RenderErrorFromResponse(it.data as T)
-                is IOTaskResult.OnFailed -> ViewState.RenderFailure(it.throwable)
+        ioOperation().map { task ->
+            when (task) {
+                is IOTaskResult.OnSuccess -> ViewState.RenderSuccess(task.data)
+                is IOTaskResult.OnFailure -> ViewState.RenderErrorFromResponse(task.data)
+                is IOTaskResult.OnFailed -> ViewState.RenderFailure(task.throwable)
                 is IOTaskResult.Empty -> ViewState.RenderEmpty
-                is  IOTaskResult.NoConnectionState -> ViewState.RenderNoConnection
+                is IOTaskResult.NoConnectionState -> ViewState.RenderNoConnection
             }
-        }.collect {
-            emit(it)
+        }.collect { viewState ->
+            when (viewState) {
+                is ViewState.RenderNoConnection -> emit(viewState)
+                else -> {
+                    emit(viewState)
+                    emit(ViewState.Loading(false))
+                }
+            }
         }
-        emit(ViewState.Loading(false))
     }.flowOn(Dispatchers.IO)
+}
