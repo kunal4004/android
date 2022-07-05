@@ -82,6 +82,7 @@ import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo;
 import za.co.woolworths.financial.services.android.models.dto.Data;
 import za.co.woolworths.financial.services.android.models.dto.GlobalMessages;
+import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
@@ -113,6 +114,7 @@ import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseVie
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.CartUtils;
+import za.co.woolworths.financial.services.android.util.Constant;
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
@@ -183,6 +185,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     private CommerceItem mCommerceItem;
     private VoucherDetails voucherDetails;
     public ProductCountMap productCountMap;
+    private LiquorCompliance liquorCompliance;
 
     public CartFragment() {
         // Required empty public constructor
@@ -531,6 +534,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             Intent checkoutActivityIntent = new Intent(getActivity(), CheckoutActivity.class);
             checkoutActivityIntent.putExtra(SAVED_ADDRESS_KEY, response);
             checkoutActivityIntent.putExtra(GEO_SLOT_SELECTION, true);
+            if(liquorCompliance!=null&&liquorCompliance.isLiquorOrder()&&AppConfigSingleton.INSTANCE.getLiquor().getNoLiquorImgUrl()!=null&&!AppConfigSingleton.INSTANCE.getLiquor().getNoLiquorImgUrl().isEmpty()){
+                checkoutActivityIntent.putExtra(Constant.LIQUOR_ORDER, liquorCompliance.isLiquorOrder());
+                checkoutActivityIntent.putExtra(Constant.NO_LIQUOR_IMAGE_URL, AppConfigSingleton.INSTANCE.getLiquor().getNoLiquorImgUrl());
+            }
             activity.startActivityForResult(checkoutActivityIntent,
                     REQUEST_PAYMENT_STATUS);
             activity.overridePendingTransition(R.anim.slide_from_right,
@@ -554,7 +561,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     false,
                     response,
                     null,
-                    "");
+                    "", liquorCompliance);
         }
     }
 
@@ -665,8 +672,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     false,
                     null,
                     null,
-                    ""
-            );
+                    "",
+                    null);
         }
     }
 
@@ -684,7 +691,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             orderSummary = cartResponse.orderSummary;
             voucherDetails = cartResponse.voucherDetails;
             productCountMap = cartResponse.productCountMap;
-            cartProductAdapter = new CartProductAdapter(cartItems, this, orderSummary, getActivity(), voucherDetails);
+            liquorCompliance=new LiquorCompliance(cartResponse.liquorOrder,cartResponse.noLiquorImageUrl != null ? cartResponse.noLiquorImageUrl : "");
+            cartProductAdapter = new CartProductAdapter(cartItems, this, orderSummary, getActivity(), voucherDetails,liquorCompliance);
             queryServiceInventoryCall(cartResponse.cartItems);
             LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
             mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -711,6 +719,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         this.orderSummary = cartResponse.orderSummary;
         this.voucherDetails = cartResponse.voucherDetails;
         this.productCountMap = cartResponse.productCountMap;
+        this.liquorCompliance = new LiquorCompliance(cartResponse.liquorOrder, cartResponse.noLiquorImageUrl != null ? cartResponse.noLiquorImageUrl : "");
         setItemLimitsBanner();
         if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null) {
             ArrayList<CartItemGroup> emptyCartItemGroups = new ArrayList<>(0);
@@ -756,7 +765,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 cartItems.remove(cartItemGroup);
             }
 
-            cartProductAdapter.notifyAdapter(cartItems, orderSummary, voucherDetails);
+            cartProductAdapter.notifyAdapter(cartItems, orderSummary, voucherDetails, liquorCompliance);
         } else {
             cartProductAdapter.clear();
             resetToolBarIcons();
@@ -846,7 +855,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 orderSummary = cartResponse.orderSummary;
                 voucherDetails = cartResponse.voucherDetails;
                 productCountMap = cartResponse.productCountMap;
-                cartProductAdapter.notifyAdapter(cartItems, orderSummary, voucherDetails);
+                liquorCompliance = new LiquorCompliance(cartResponse.liquorOrder, cartResponse.noLiquorImageUrl != null ? cartResponse.noLiquorImageUrl : "");
+
+                cartProductAdapter.notifyAdapter(cartItems, orderSummary, voucherDetails, liquorCompliance);
             } else {
                 ArrayList<CartItemGroup> currentCartItemGroup = cartProductAdapter.getCartItems();
                 for (CartItemGroup cartItemGroup : currentCartItemGroup) {
@@ -875,7 +886,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     orderSummary = cartResponse.orderSummary;
                     voucherDetails = cartResponse.voucherDetails;
                     productCountMap = cartResponse.productCountMap;
-                    cartProductAdapter.notifyAdapter(currentCartItemGroup, orderSummary, voucherDetails);
+                    liquorCompliance = new LiquorCompliance(cartResponse.liquorOrder, cartResponse.noLiquorImageUrl != null ? cartResponse.noLiquorImageUrl : "");
+                    cartProductAdapter.notifyAdapter(currentCartItemGroup, orderSummary, voucherDetails, liquorCompliance);
                     fadeCheckoutButton(false);
                 }
             }
@@ -1185,6 +1197,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             cartResponse.orderSummary = data.orderSummary;
             cartResponse.voucherDetails = data.voucherDetails;
             cartResponse.productCountMap = data.productCountMap;// set delivery location
+            cartResponse.liquorOrder=data.liquorOrder;
+            cartResponse.noLiquorImageUrl=data.noLiquorImageUrl;
             if (cartResponse.orderSummary.fulfillmentDetails != null) {
                 Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(cartResponse.orderSummary.fulfillmentDetails));
             }

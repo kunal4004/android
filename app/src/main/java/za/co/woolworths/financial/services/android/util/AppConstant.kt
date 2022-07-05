@@ -24,8 +24,11 @@ class AppConstant {
         const val DELAY_3000_MS: Long = 3000
         const val DELAY_500_MS: Long = 500
 
+
         // Durations
         const val DURATION_1000_MS: Long = 1000
+        const val DURATION_120000_MS:Long=120000
+        const val DURATION_0_MS:Long=0L
 
         //API Response Code
         const val HTTP_OK: Int = 200

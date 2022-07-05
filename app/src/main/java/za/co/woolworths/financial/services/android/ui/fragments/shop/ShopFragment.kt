@@ -162,22 +162,13 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
 
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == DepartmentsFragment.REQUEST_CODE_FINE_GPS && viewpager_main.currentItem == 0) {
-            val fragment = viewpager_main?.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? DepartmentsFragment
-            // If request is cancelled, the result arrays are empty.
-            if (grantResults.isNotEmpty()
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+    override fun partialPermissionGranted(request_code: Int, granted_permissions: ArrayList<String>?) {
+    }
 
-                // permission was granted, yay! Do the
-                // contacts-related task you need to do.
-                fragment?.onActivityResult(requestCode, RESULT_OK, null)
-            } else {
-                fragment?.onActivityResult(requestCode, RESULT_CANCELED, null)
-            }
-        }
-        permissionUtils?.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    override fun permissionDenied(request_code: Int) {
+    }
+
+    override fun neverAskAgain(request_code: Int) {
     }
 
     private fun navigateToBarcode() {
