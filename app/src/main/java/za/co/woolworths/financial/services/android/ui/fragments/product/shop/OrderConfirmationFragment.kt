@@ -38,13 +38,14 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.adapters.ItemsOrderListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.WrewardsBottomSheetFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.helpandsupport.HelpAndSupportFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
@@ -151,17 +152,11 @@ class OrderConfirmationFragment : Fragment() {
                     dashDeliveryConstraintLayout?.visibility = VISIBLE
                     deliveryOrderDetailsLayout?.visibility = GONE
                     dashOrderDetailsLayout?.visibility = VISIBLE
-                    val dashLocation =
+                    optionLocationTitle?.text =
                         response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
                             convertToTitleCase(it)
                         }
                             ?: ""
-                    val dashAddressName =
-                        SpannableString(
-                            "$dashLocation " + requireContext().getString(R.string.bullet) + "" + " " + "$dashLocation "
-                        )
-                    optionLocationTitle?.text = dashAddressName
-
                     dashFoodDeliveryDateTimeTextView?.text = applyBoldBeforeComma(
                         response
                             ?.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
