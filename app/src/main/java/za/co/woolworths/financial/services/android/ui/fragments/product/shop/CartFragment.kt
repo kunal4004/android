@@ -490,7 +490,8 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                 isComingFromSlotSelection = false,
                 savedAddressResposne = response,
                 defaultAddress = null,
-                whoISCollecting = ""
+                whoISCollecting = "",
+                liquorCompliance = liquorCompliance
             )
         }
     }
@@ -588,7 +589,8 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                 isComingFromSlotSelection = false,
                 savedAddressResposne = null,
                 defaultAddress = null,
-                whoISCollecting = ""
+                whoISCollecting = "",
+                liquorCompliance = liquorCompliance
             )
         }
     }
