@@ -455,15 +455,14 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 
         // Check that the response is a good one
         if (resultCode == RESULT_OK) {
-            String dataString = data.getDataString();
 
-            if (data.getDataString() == null) {
+            if ( data == null || data.getDataString() == null) {
                 // If there is not data, then we may have taken a photo
                 if (chromeClient.getMCameraPhotoPath() != null) {
                     results = new Uri[]{Uri.parse(chromeClient.getMCameraPhotoPath())};
                 }
             } else {
-                results = new Uri[]{Uri.parse(dataString)};
+                results = new Uri[]{Uri.parse(data.getDataString())};
 
             }
         }
