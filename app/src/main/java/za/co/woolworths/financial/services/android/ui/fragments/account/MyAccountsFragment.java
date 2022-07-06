@@ -4,6 +4,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.dashboar
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
 import static za.co.woolworths.financial.services.android.ui.fragments.mypreferences.MyPreferencesFragment.IS_NON_WFS_USER;
+import static za.co.woolworths.financial.services.android.ui.fragments.mypreferences.MyPreferencesFragment.RESULT_CODE_DELETE_ACCOUNT;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_EXPECTATION_FAILED_502;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_OK;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_SESSION_TIMEOUT_400;
@@ -25,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.webkit.CookieManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -45,6 +47,7 @@ import androidx.navigation.Navigation;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.awfs.coordination.R;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.installations.FirebaseInstallations;
 import com.google.gson.Gson;
@@ -107,12 +110,14 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility;
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView;
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountCardDetailModelImpl;
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountCardDetailPresenterImpl;
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.ContactUsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.SetUpDeliveryNowDialog;
 import za.co.woolworths.financial.services.android.ui.fragments.help.HelpSectionFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.mypreferences.DeletedSuccessBottomSheetDialog;
 import za.co.woolworths.financial.services.android.ui.fragments.mypreferences.MyPreferencesFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersAccountFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
@@ -132,6 +137,7 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.ProductType;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.ServiceTools;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -1661,7 +1667,21 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             setAccountResponse(activity, null);
             onSignOut();
             initialize();
-        } else {
+        }
+        else if (resultCode == RESULT_CODE_DELETE_ACCOUNT) {
+            Activity activity = getActivity();
+            if (activity == null) return;
+            SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
+            ServiceTools.Companion.stop(activity, LiveChatService.class);
+            Utils.setUserKMSIState(false);
+            AppConfigSingleton.INSTANCE.setBadgesRequired(true);
+            clearAllCookies();
+            setAccountResponse(activity, null);
+            onSignOut();
+            initialize();
+            deletedSuccessShowPopup();
+        }
+        else {
             initialize();
         }
     }
@@ -2135,5 +2155,14 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     @Override
     public void navigateToBalanceProtectionInsuranceApplication(@Nullable String accountInfo, @Nullable BpiInsuranceApplicationStatusType bpiInsuranceStatus) {
 
+    }
+    private void deletedSuccessShowPopup() {
+        BottomSheetDialogFragment deleteSuccessFul = DeletedSuccessBottomSheetDialog.Companion.newInstance();
+        deleteSuccessFul.show(getParentFragmentManager(),TAG);
+    }
+
+    private void clearAllCookies() {
+        CookieManager.getInstance().removeAllCookies(null);
+        CookieManager.getInstance().flush();
     }
 }

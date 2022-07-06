@@ -79,6 +79,11 @@ class AppConstant {
         const val ORDER_ID: String = "ORDER_ID"
         const val REQUEST_CODE_ORDER_DETAILS_PAGE = 1989
         const val NAVIGATED_FROM_MY_ACCOUNTS = "NAVIGATED_FROM_MY_ACCOUNTS"
+
+        // delete my profile
+        const val DELETE_ACCOUNT = "DELETE_ACCOUNT"
+        const val DELETE_ACCOUNT_CONFIRMATION = "DELETE_ACCOUNT_CONFIRMATION"
+        const val RESULT_CODE_DELETE_ACCOUNT = 444
     }
 
     enum class DashDetailsViewType(val value: Int) { HEADER_TITLE(0), APP_FEATURE_LIST(1), TERMS_AND_CONDITION(2) }
