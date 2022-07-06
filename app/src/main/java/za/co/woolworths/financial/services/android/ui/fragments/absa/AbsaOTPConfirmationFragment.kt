@@ -95,7 +95,7 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
             validateSureCheckResponseProperty.observe(viewLifecycleOwner) { validateSureCheckResponseProperty ->
                 when (validateSureCheckResponseProperty?.result?.lowercase()) {
                     "rejected" -> {
-                        validateSureCheckResponseProperty.let { if (it.otpRetriesLeft > 0) showWrongOTPMessage() else showCommonError() }
+                        validateSureCheckResponseProperty.let { if (it.otpRetriesLeft > 0) showWrongOTPMessage() else showMaxOTPError() }
                     }
                     "processed" -> {
                         fetchCreateAlias()
@@ -202,6 +202,12 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
     }
 
     private fun showCommonError() {
+        progressIndicator(View.INVISIBLE)
+        clearPin()
+        showErrorScreen(ErrorHandlerActivity.COMMON)
+    }
+
+    private fun showMaxOTPError() {
         progressIndicator(View.INVISIBLE)
         clearPin()
         showErrorScreen(ErrorHandlerActivity.WITH_NO_ACTION)
