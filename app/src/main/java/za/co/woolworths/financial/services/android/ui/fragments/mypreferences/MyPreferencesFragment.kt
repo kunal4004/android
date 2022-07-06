@@ -36,6 +36,10 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLo
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELETE_ACCOUNT
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELETE_ACCOUNT_CONFIRMATION
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RESULT_CODE_DELETE_ACCOUNT
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAddressView
 import za.co.woolworths.financial.services.android.util.location.Event
@@ -109,8 +113,8 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                 setToolbarTitleGravity(Gravity.START)
             }
         }
-        setFragmentResultListener(DeleteAccountBottomSheetDialog.DELETE_ACCOUNT_CONFIRMATION) { _, bundle ->
-            if (bundle.getString(DeleteAccountBottomSheetDialog.DELETE_ACCOUNT) == DeleteAccountBottomSheetDialog.DELETE_ACCOUNT) {
+        setFragmentResultListener(DELETE_ACCOUNT_CONFIRMATION) { _, bundle ->
+            if (bundle.getString(DELETE_ACCOUNT) == DELETE_ACCOUNT) {
                 callDeleteAccountApi()
             }
         }
@@ -123,7 +127,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
             IResponseListener<DeleteAccountResponse> {
 
             override fun onSuccess(response: DeleteAccountResponse?) {
-                if (response?.httpCode == 200) {
+                if (response?.httpCode == HTTP_OK) {
                     hideProgress()
                     activity?.setResult(RESULT_CODE_DELETE_ACCOUNT)
                     activity?.finish()
@@ -142,15 +146,15 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
     }
 
     private fun hideProgress() {
-        incCenteredProgress.visibility = View.GONE
-        myPreProgressLayout.isClickable = false
-        myPreProgressLayout.isFocusable = false
+        incCenteredProgress?.visibility = View.GONE
+        myPreProgressLayout?.isClickable = false
+        myPreProgressLayout?.isFocusable = false
     }
 
     private fun showProgress() {
-        incCenteredProgress.visibility = View.VISIBLE
-        myPreProgressLayout.isClickable = true
-        myPreProgressLayout.isFocusable = true
+        incCenteredProgress?.visibility = View.VISIBLE
+        myPreProgressLayout?.isClickable = true
+        myPreProgressLayout?.isFocusable = true
     }
 
     fun bindDataWithUI() {
@@ -507,7 +511,6 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
     companion object {
 
         const val RESULT_LISTENER_DELETE_DEVICE: String = "deleteDevice"
-        const val RESULT_CODE_DELETE_ACCOUNT = 444
         const val RESULT_LISTENER_LINK_DEVICE = "linkDevice"
         const val IS_DEVICE_LINKED = "isLinked"
         const val LOCK_REQUEST_CODE_TO_ENABLE = 222

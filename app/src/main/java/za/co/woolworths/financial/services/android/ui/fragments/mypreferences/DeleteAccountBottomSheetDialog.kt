@@ -9,6 +9,8 @@ import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.delete_account_bottom_sheet_dialog.*
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELETE_ACCOUNT
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELETE_ACCOUNT_CONFIRMATION
 
 
 class DeleteAccountBottomSheetDialog : WBottomSheetDialogFragment() ,
@@ -37,10 +39,7 @@ class DeleteAccountBottomSheetDialog : WBottomSheetDialogFragment() ,
     }
 
 
-    companion object {
-        const val DELETE_ACCOUNT = "DELETE_ACCOUNT"
-        const val DELETE_ACCOUNT_CONFIRMATION = "DELETE_ACCOUNT_CONFIRMATION"
-    }
+
 
     override fun onClick(v: View?) {
         when (v?.id) {
