@@ -1081,18 +1081,17 @@ class KotlinUtils {
                 )
             }
         }
-        fun vocShoppingHandling(deliveryType: String?,activity: Activity?): VocTriggerEvent {
-            //TODO:: return event when we start with chckout_cnt_to_pmnt
-            var event = VocTriggerEvent.CHCKOUT_CNT_TO_PMNT
-            var firBaseEvent = FirebaseManagerAnalyticsProperties.CHECKOUT_CONTINUE_TO_PAYMENT
+        fun vocShoppingHandling(deliveryType: String?,activity: Activity?): VocTriggerEvent? {
+            var event:VocTriggerEvent? = null
+            var firBaseEvent:String?
             when(Delivery.getType(deliveryType)){
                 Delivery.CNC->{
                     event = VocTriggerEvent.SHOP_CLICK_COLLECT_CONFIRM
                     firBaseEvent = FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_CConfirm
+                    Utils.triggerFireBaseEvents(firBaseEvent, activity)
                 }
             }
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_CConfirm, activity)
-            return VocTriggerEvent.SHOP_CLICK_COLLECT_CONFIRM
+            return event
         }
     }
 }
