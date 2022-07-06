@@ -8,19 +8,16 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_my_preferences.*
 import kotlinx.android.synthetic.main.link_card_fragment.*
 import retrofit2.Call
-import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBottomSheetDialog
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -36,22 +33,27 @@ import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesIn
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment.Companion.ACCESS_MY_LOCATION_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
+import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAddressView
 import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator
+import javax.inject.Inject
 
-
-class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchListener {
+@AndroidEntryPoint
+class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchListener ,
+    VtoTryAgainListener {
 
     private lateinit var locator: Locator
     private var isNonWFSUser: Boolean = true
     private var mViewAllLinkedDevices: Call<ViewAllLinkedDeviceResponse>? = null
     private var deviceList: ArrayList<UserDevice>? = ArrayList(0)
     private var isUpdateAccountCache: Boolean = false
+    @Inject
+    lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
     private var deleteAccountApi: Call<DeleteAccountResponse>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -107,46 +109,56 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                 setToolbarTitleGravity(Gravity.START)
             }
         }
-        setFragmentResultListener(DeleteAccountBottomSheetDialog.DELETE_ACCOUNT_CONFIRMATION){_,bundle->
-            if(bundle.getString(DeleteAccountBottomSheetDialog.DELETE_ACCOUNT)==DeleteAccountBottomSheetDialog.DELETE_ACCOUNT){
+        setFragmentResultListener(DeleteAccountBottomSheetDialog.DELETE_ACCOUNT_CONFIRMATION) { _, bundle ->
+            if (bundle.getString(DeleteAccountBottomSheetDialog.DELETE_ACCOUNT) == DeleteAccountBottomSheetDialog.DELETE_ACCOUNT) {
                 callDeleteAccountApi()
             }
         }
     }
 
     private fun callDeleteAccountApi() {
-        val spinningAnimation = KotlinUtils.rotateViewAnimation()
-        /*retryLinkDeviceImageView?.startAnimation(spinningAnimation)
-        retryLinkDeviceLinearLayout?.visibility = View.VISIBLE
-        retryLinkDeviceTextView?.visibility = View.GONE*/
-
+        showProgress()
         deleteAccountApi = OneAppService.deleteAccount()
         deleteAccountApi?.enqueue(CompletionHandler(object :
             IResponseListener<DeleteAccountResponse> {
 
             override fun onSuccess(response: DeleteAccountResponse?) {
-                if (response?.message=="Profile Deleted Successfully") {
-
-                    spinningAnimation.cancel()
-                    }
-                    else  {
-                        spinningAnimation.cancel()
-                    }
-
+                if (response?.httpCode == 200) {
+                    hideProgress()
+                    activity?.setResult(RESULT_CODE_DELETE_ACCOUNT)
+                    activity?.finish()
+                } else {
+                    hideProgress()
+                    showErrorDialog()
+                }
             }
 
             override fun onFailure(error: Throwable?) {
-                spinningAnimation.cancel()
+                hideProgress()
+                showErrorDialog()
             }
 
         }, DeleteAccountResponse::class.java))
+    }
+
+    private fun hideProgress() {
+        incCenteredProgress.visibility = View.GONE
+        myPreProgressLayout.isClickable = false
+        myPreProgressLayout.isFocusable = false
+    }
+
+    private fun showProgress() {
+        incCenteredProgress.visibility = View.VISIBLE
+        myPreProgressLayout.isClickable = true
+        myPreProgressLayout.isFocusable = true
     }
 
     fun bindDataWithUI() {
         if (AuthenticateUtils.getInstance(activity).isAppSupportsAuthentication) {
             if (AuthenticateUtils.getInstance(activity).isDeviceSecure) auSwitch.isChecked =
                 AuthenticateUtils.getInstance(activity).isAuthenticationEnabled else setUserAuthentication(
-                false)
+                false
+            )
         } else {
             biometricsLayout.setVerticalGravity(View.GONE)
         }
@@ -185,8 +197,10 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                         AppStateRepository().saveLinkedDevices(deviceList)
                         updateLinkedDeviceView(isDeviceIdentityIdPresent)
                         tvMyPrefManageDevicesTitle.text =
-                            bindString(R.string.my_preferences_linked_devices,
-                                (deviceList?.size ?: 0).toString())
+                            bindString(
+                                R.string.my_preferences_linked_devices,
+                                (deviceList?.size ?: 0).toString()
+                            )
                     }
                     else -> {
                         spinningAnimation.cancel()
@@ -314,6 +328,8 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         )
     }
 
+
+
     @TargetApi(Build.VERSION_CODES.M)
     private fun checkForLocationPermissionAndNavigateToLinkDevice() {
         activity?.apply {
@@ -406,7 +422,8 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                 setUserAuthentication(false)
             }
             SECURITY_INFO_REQUEST_DIALOG -> startBiometricAuthentication(
-                LOCK_REQUEST_CODE_TO_DISABLE)
+                LOCK_REQUEST_CODE_TO_DISABLE
+            )
             else -> {
             }
         }
@@ -427,10 +444,12 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
     }
 
     fun openDeviceSecuritySettings() {
-        Utils.displayValidationMessageForResult(activity,
+        Utils.displayValidationMessageForResult(
+            activity,
             CustomPopUpWindow.MODAL_LAYOUT.SET_UP_BIOMETRICS_ON_DEVICE,
             "",
-            SECURITY_SETTING_REQUEST_DIALOG)
+            SECURITY_SETTING_REQUEST_DIALOG
+        )
     }
 
     override fun onResume() {
@@ -475,17 +494,20 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         editLocation.visibility = View.VISIBLE
         deliverLocationIcon.setBackgroundResource(R.drawable.tick_cli_active)
         shoppingDeliveryLocation?.let {
-            setDeliveryAddressView(activity,
+            setDeliveryAddressView(
+                activity,
                 shoppingDeliveryLocation,
                 tvDeliveringTo,
                 tvDeliveryLocation,
-                null)
+                null
+            )
         }
     }
 
     companion object {
 
         const val RESULT_LISTENER_DELETE_DEVICE: String = "deleteDevice"
+        const val RESULT_CODE_DELETE_ACCOUNT = 444
         const val RESULT_LISTENER_LINK_DEVICE = "linkDevice"
         const val IS_DEVICE_LINKED = "isLinked"
         const val LOCK_REQUEST_CODE_TO_ENABLE = 222
@@ -501,5 +523,20 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
     override fun onDestroy() {
         activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN) }
         super.onDestroy()
+    }
+
+    override fun tryAgain() {
+        callDeleteAccountApi()
+    }
+    private fun showErrorDialog() {
+        requireActivity().resources?.apply {
+            vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
+                this@MyPreferencesFragment,
+                requireActivity(),
+                getString(R.string.vto_generic_error),
+                "",
+                getString(R.string.retry_label)
+            )
+        }
     }
 }

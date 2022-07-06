@@ -4,15 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
-import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.delete_account_bottom_sheet_dialog.*
+import kotlinx.android.synthetic.main.deleted_success_bottom_sheet_dialog.*
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 
-
-class DeleteAccountBottomSheetDialog : WBottomSheetDialogFragment() ,
-    View.OnClickListener{
+class DeletedSuccessBottomSheetDialog : WBottomSheetDialogFragment(),
+    View.OnClickListener {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -20,7 +17,7 @@ class DeleteAccountBottomSheetDialog : WBottomSheetDialogFragment() ,
     ): View? {
 
         return inflater.inflate(
-            R.layout.delete_account_bottom_sheet_dialog,
+            R.layout.deleted_success_bottom_sheet_dialog,
             container,
             false
         )
@@ -32,27 +29,22 @@ class DeleteAccountBottomSheetDialog : WBottomSheetDialogFragment() ,
     }
 
     private fun initClick() {
-        cancelButton.setOnClickListener(this)
-        actionButton.setOnClickListener(this)
-    }
-
-
-    companion object {
-        const val DELETE_ACCOUNT = "DELETE_ACCOUNT"
-        const val DELETE_ACCOUNT_CONFIRMATION = "DELETE_ACCOUNT_CONFIRMATION"
+        gotItButton.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.actionButton -> {
-                setFragmentResult(DELETE_ACCOUNT_CONFIRMATION, bundleOf(DELETE_ACCOUNT to DELETE_ACCOUNT))
-                dismiss()
-            }
-            R.id.cancelButton -> {
+            R.id.gotItButton -> {
                 dismiss()
             }
         }
     }
 
+    companion object {
+        fun newInstance(): DeletedSuccessBottomSheetDialog {
 
+            return DeletedSuccessBottomSheetDialog()
+        }
+        const val TAG = "DeletedSuccessBottomSheetDialog"
+    }
 }
