@@ -76,10 +76,7 @@ class OrderConfirmationFragment : Fragment() {
                                     setupDeliveryOrCollectionDetails(response)
                                     setupOrderTotalDetails(response)
                                     setupOrderDetailsBottomSheet(response)
-                                    VoiceOfCustomerManager.showVocSurveyIfNeeded(
-                                        activity,
-                                        KotlinUtils.vocShoppingHandling(response.orderSummary?.fulfillmentDetails?.deliveryType)
-                                    )
+                                    displayVocifNeeded(response)
 
                                 }
                                 else -> {
@@ -97,6 +94,13 @@ class OrderConfirmationFragment : Fragment() {
                     showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
                 }
             }, SubmittedOrderResponse::class.java))
+    }
+
+    private fun displayVocifNeeded(response: SubmittedOrderResponse) {
+        VoiceOfCustomerManager.showVocSurveyIfNeeded(
+            activity,
+            KotlinUtils.vocShoppingHandling(response.orderSummary?.fulfillmentDetails?.deliveryType,activity)
+        )
     }
 
     private fun showErrorScreen(errorType: Int) {
