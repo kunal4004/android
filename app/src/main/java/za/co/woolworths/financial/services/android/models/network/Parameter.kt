@@ -5,5 +5,5 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Parameter(
-    val orderID: String?
+    val orderId: String?
 ) : Parcelable

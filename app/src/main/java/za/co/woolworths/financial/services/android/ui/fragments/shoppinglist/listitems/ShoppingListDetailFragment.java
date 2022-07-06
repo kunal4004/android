@@ -505,10 +505,19 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             }
         } else {
             // else display shopping list toast
-            if (KotlinUtils.Companion.getPreferredDeliveryType() == Delivery.CNC && addItemToCartResponse.data.get(0).productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
-                ToastFactory.Companion.showItemsLimitToastOnAddToCart(rlCheckOut, addItemToCartResponse.data.get(0).productCountMap, activity, size, true);
-            } else {
-                ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
+            switch (KotlinUtils.Companion.getPreferredDeliveryType()) {
+                case DASH:
+                case CNC:
+                    if (addItemToCartResponse.data.get(0).productCountMap.getQuantityLimit() != null
+                            && addItemToCartResponse.data.get(0).productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
+                        ToastFactory.Companion.showItemsLimitToastOnAddToCart(rlCheckOut, addItemToCartResponse.data.get(0).productCountMap, activity, size, true);
+                    } else {
+                        ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
+                    }
+                    break;
+                default:
+                    ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
+                    break;
             }
         }
     }
@@ -1014,10 +1023,19 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             ProductCountMap productCountMap = (ProductCountMap) Utils.jsonStringToObject(data.getStringExtra("ProductCountMap"), ProductCountMap.class);
             int itemsCount = data.getIntExtra("ItemsCount", 0);
 
-            if (KotlinUtils.Companion.getPreferredDeliveryType() == Delivery.CNC && productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
-                ToastFactory.Companion.showItemsLimitToastOnAddToCart(rlCheckOut, productCountMap, activity, itemsCount, true);
-            } else {
-                ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
+            switch (KotlinUtils.Companion.getPreferredDeliveryType()) {
+                case DASH:
+                case CNC:
+                    if ( productCountMap != null && productCountMap.getQuantityLimit() != null &&
+                            productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
+                        ToastFactory.Companion.showItemsLimitToastOnAddToCart(rlCheckOut, productCountMap, activity, itemsCount, true);
+                    } else {
+                        ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
+                    }
+                    break;
+                default:
+                    ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
+                    break;
             }
         }
     }
