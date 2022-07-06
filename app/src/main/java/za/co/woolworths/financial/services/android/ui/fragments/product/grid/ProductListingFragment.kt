@@ -1423,7 +1423,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                                     return
                                 }
                             }
-                            if (KotlinUtils.isDeliveryOptionClickAndCollect() && addItemToCartResponse.data[0]?.productCountMap?.quantityLimit?.foodLayoutColour != null) {
+                            if ((KotlinUtils.isDeliveryOptionClickAndCollect() || KotlinUtils.isDeliveryOptionDash() )
+                                && addItemToCartResponse.data[0]?.productCountMap?.quantityLimit?.foodLayoutColour != null) {
                                 addItemToCartResponse.data[0]?.productCountMap?.let {
                                     addItemToCart?.quantity?.let { it1 ->
                                         ToastFactory.showItemsLimitToastOnAddToCart(
@@ -1444,7 +1445,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                                     .findViewById(R.id.tvAddedItem)
                                 val quantityAdded = addItemToCart?.quantity?.toString()
                                 val quantityDesc =
-                                    "$quantityAdded ITEM${if (addItemToCart?.quantity == 0) "" else "s"}"
+                                    "$quantityAdded ITEM${if ((addItemToCart?.quantity ?: 0) >= 1) "" else "s"}"
                                 tvAddedItem.text = quantityDesc
 
                                 buttonView.setOnClickListener {

@@ -38,8 +38,7 @@
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
         app:layout_constraintTop_toBottomOf="@id/optionTitle"
-        tools:text="@string/hint_street_address_dash"
-        android:maxLines="1"/>
+        tools:text="@string/hint_street_address_dash"/>
 
     <View
         android:id="@+id/separator"
@@ -59,7 +58,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingTop="@dimen/twenty_two_dp"
-        android:weightSum="1"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
         app:layout_constraintTop_toBottomOf="@+id/separator">
@@ -108,9 +106,11 @@
         <View
             android:id="@+id/packaging_separator"
             style="@style/bottom_line"
-            android:layout_width="@dimen/seventy_five_dp"
+            android:layout_width="@dimen/sixty_six_dp"
             android:layout_height="@dimen/two_dp"
-            android:layout_marginTop="@dimen/eight_dp" />
+            android:layout_marginTop="@dimen/eight_dp"
+            android:layout_marginStart="@dimen/four_dp"
+            android:layout_marginEnd="@dimen/four_dp"/>
 
 
         <ImageView
@@ -120,11 +120,13 @@
             android:background="@drawable/ic_dash_packaging_icon" />
 
         <View
-            android:id="@+id/packaging_enroute"
-            android:layout_width="@dimen/seventy_five_dp"
+            android:id="@+id/enroute_seperator"
+            android:layout_width="@dimen/sixty_six_dp"
             android:layout_height="@dimen/two_dp"
             android:layout_marginTop="@dimen/eight_dp"
-            android:background="@color/color_E5E5E5" />
+            android:background="@color/color_E5E5E5"
+            android:layout_marginStart="@dimen/four_dp"
+            android:layout_marginEnd="@dimen/four_dp"/>
 
         <ImageView
             android:id="@+id/optionImageEnroute"
@@ -133,11 +135,13 @@
             android:background="@drawable/ic_dash_enroute" />
 
         <View
-            android:id="@+id/packaging_delivered"
+            android:id="@+id/delivered_seperator"
             style="@style/bottom_line"
-            android:layout_width="@dimen/seventy_five_dp"
+            android:layout_width="@dimen/sixty_six_dp"
             android:layout_height="@dimen/two_dp"
-            android:layout_marginTop="@dimen/eight_dp" />
+            android:layout_marginTop="@dimen/eight_dp"
+            android:layout_marginStart="@dimen/four_dp"
+            android:layout_marginEnd="@dimen/four_dp"/>
 
         <ImageView
             android:id="@+id/optionImageDelivered"
@@ -162,7 +166,7 @@
             style="@style/futura_semi_bold_black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/eighteen_dp"
+            android:layout_marginStart="@dimen/fifteen_dp"
             android:gravity="center_vertical"
             android:text="@string/dash_status_confirmed"
             android:textAllCaps="true"
@@ -174,7 +178,7 @@
             style="@style/futura_semi_bold_black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/fifty_dp"
+            android:layout_marginStart="@dimen/fourty_five_dp"
             android:text="@string/dash_status_packaging"
             android:textAllCaps="true"
             android:textSize="@dimen/eight_sp"
@@ -182,25 +186,26 @@
 
         <TextView
             android:id="@+id/dash_enroute_textView"
-            style="@style/myriad_pro_regular"
+            style="@style/futura_semi_bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/fifty_dp"
+            android:layout_marginStart="@dimen/valid_date_guideline_begin_42dp"
             android:text="@string/dash_status_en_route"
             android:textAllCaps="true"
-            android:textColor="@color/gray"
+            android:textColor="@color/color_9D9D9D"
             android:textSize="@dimen/eight_sp" />
 
         <TextView
             android:id="@+id/dash_delivered_textView"
-            style="@style/myriad_pro_regular"
+            style="@style/futura_semi_bold"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/fifty_five_dp"
+            android:layout_marginStart="@dimen/fifty_dp"
             android:text="@string/dash_status_delivered"
             android:textAllCaps="true"
-            android:textColor="@color/gray"
-            android:textSize="@dimen/eight_sp" />
+            android:textColor="@color/color_9D9D9D"
+            android:textSize="@dimen/eight_sp"
+            android:layout_marginEnd="@dimen/five_dp"/>
     </LinearLayout>
 
     <LinearLayout

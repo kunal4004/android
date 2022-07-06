@@ -1970,8 +1970,11 @@
     <string name="will_do_later"><u>i’ll do this later</u></string>
     <string name="unable_process_checkout_title">Unable to proceed to Checkout</string>
     <string name="unable_process_checkout_desc">Please remove items from your cart in order to proceed with your checkout.</string>
-    <string name="toast_single_item_added_to_cart_message">%1$s item added to cart</string>
-    <string name="toast_multiple_item_added_to_cart_message">%1$s items added to cart</string>
+    <plurals name="toast_item_added_to_cart_message">
+        <item quantity="one">%d item added to cart.</item>
+        <item quantity="other">%d items added to cart.</item>
+    </plurals>
+
     <string name="cd_labelitemlimit">labelItemLimit</string>
     <string name="cd_totalitemlimit">totalItemLimit</string>
     <string name="cd_layouttoastmessage">layoutToastMessage</string>

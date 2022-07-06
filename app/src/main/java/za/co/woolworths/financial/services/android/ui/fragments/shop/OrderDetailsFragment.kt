@@ -74,9 +74,9 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         super.onCreate(savedInstanceState)
         arguments?.let {
             argOrderId = it.getString(AppConstant.Keys.ARG_ORDER, "")
-            val notificationParams: Parameter? = it.getParcelable(AppConstant.Keys.ARG_NOTIFICATION_PARAMETERS)
+            val notificationParams: Parameter? = it.getParcelable(AppConstant.Keys.ARG_NOTIFICATION_PARAMETERS) as? Parameter
             notificationParams?.let { parameter ->
-                argOrderId = parameter.orderID
+                argOrderId = parameter.orderId
             }
             isNavigatedFromMyAccounts = it.getBoolean(AppConstant.NAVIGATED_FROM_MY_ACCOUNTS, false)
         }
@@ -330,7 +330,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
             orderDetailsResponse?.orderSummary?.let {
                 it.orderId?.let { it1 ->
                     TaxInvoiceLIstFragment.getInstance(
-                        it1, it.taxNoteNumbers
+                        it1, it.taxNoteNumbers ?: ArrayList(0)
                     )
                 }
             }

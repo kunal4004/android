@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.view.View
+import android.view.WindowManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -204,13 +205,16 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     private fun executeValidateSuburb() {
         val placeId = getDeliveryType()?.address?.placeId ?: return
-        placeId.let {
+        placeId?.let {
+            shopProgressbar?.visibility = View.VISIBLE
+            tabs_main?.isClickable = false
             lifecycleScope.launch {
-                progressBar?.visibility = View.VISIBLE
                 try {
                     validateLocationResponse =
                         confirmAddressViewModel.getValidateLocation(it)
-                    progressBar?.visibility = View.GONE
+                    shopProgressbar?.visibility = View.GONE
+                    tabs_main?.isClickable = true
+
                     geoDeliveryView?.visibility = View.VISIBLE
                     if (validateLocationResponse != null) {
                         when (validateLocationResponse?.httpCode) {
@@ -238,6 +242,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                         }
                     }
                 } catch (e: HttpException) {
+                    shopProgressbar?.visibility = View.GONE
+                    tabs_main?.isClickable = true
                     FirebaseManager.logException(e)
                     /*TODO : show error screen*/
                 }
@@ -352,7 +358,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private fun updateTabIconUI(selectedTab: Int) {
         if (selectedTab == STANDARD_TAB.index) {
             showSerachAndBarcodeUi()
-        } else if (selectedTab == CLICK_AND_COLLECT_TAB.index && KotlinUtils.browsingCncStore == null) {
+        } else if (selectedTab == CLICK_AND_COLLECT_TAB.index && KotlinUtils.browsingCncStore == null  && getDeliveryType()?.deliveryType != Delivery.CNC.type) {
             hideSerachAndBarcodeUi()
         }
         tabs_main?.let { tab ->
