@@ -883,6 +883,10 @@ class KotlinUtils {
             return getPreferredDeliveryType() == Delivery.CNC
         }
 
+        fun isDeliveryOptionDash(): Boolean {
+            return getPreferredDeliveryType() == Delivery.DASH
+        }
+
         @SuppressLint("MissingPermission")
         @JvmStatic
         fun setUserPropertiesToNull() {

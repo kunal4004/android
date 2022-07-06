@@ -50,6 +50,7 @@
     <color name="black30">#4D000000</color>
     <color name="black10">#10000000</color>
     <color name="black60">#99000000</color>
+    <color name="black90">#CC000000</color>
     <color name="status_red">#e41f1f</color>
     <color name="status_green">#bad110</color>
     <color name="status_amber">#f4b421</color>

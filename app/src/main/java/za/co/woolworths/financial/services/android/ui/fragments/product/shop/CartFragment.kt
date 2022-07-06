@@ -77,6 +77,7 @@ import za.co.woolworths.financial.services.android.util.FirebaseManager.Companio
 import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.setCrashlyticsString
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionClickAndCollect
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionDash
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAddressView
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.showGeneralInfoDialog
@@ -121,7 +122,6 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
     private var voucherDetails: VoucherDetails? = null
     var productCountMap: ProductCountMap? = null
     private var liquorCompliance: LiquorCompliance? = null
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -320,13 +320,21 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                         getType(Utils.getPreferredDeliveryLocation().fulfillmentDetails.deliveryType)
 
                     if ((deliveryType === Delivery.CNC) && (productCountMap != null)
-                        && (productCountMap!!.quantityLimit != null)
-                        && !productCountMap!!.quantityLimit!!.allowsCheckout!!
+                        && (productCountMap?.quantityLimit != null)
+                        && !productCountMap?.quantityLimit?.allowsCheckout!!
                     ) {
                         Utils.triggerFireBaseEvents(
                             FirebaseManagerAnalyticsProperties.CART_CLCK_CLLCT_CNFRM_LMT,
                             requireActivity()
                         )
+                        showMaxItemView()
+                        return
+                    }
+
+                    if ((deliveryType === Delivery.DASH) && (productCountMap != null)
+                        && (productCountMap!!.quantityLimit != null)
+                        && !productCountMap!!.quantityLimit!!.allowsCheckout!!
+                    ) {
                         showMaxItemView()
                         return
                     }
@@ -591,7 +599,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         parentLayout?.visibility = View.VISIBLE
         mSkuInventories = HashMap()
         when {
-            cartResponse != null && cartResponse.cartItems?.size ?: 0 > 0 -> {
+            cartResponse != null && (cartResponse.cartItems?.size ?: 0) > 0 -> {
                 empty_state_template?.visibility = View.GONE
                 rvCartList?.visibility = View.VISIBLE
                 rlCheckOut?.visibility = View.VISIBLE
@@ -608,7 +616,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                     cartItems,
                     this,
                     orderSummary,
-                    activity,
+                    requireActivity(),
                     voucherDetails,
                     liquorCompliance
                 )
@@ -622,6 +630,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                 showRedeemVoucherFeatureWalkthrough()
             }
             else -> {
+                productCountMap = null
                 updateCartSummary(0)
                 rvCartList?.visibility = View.GONE
                 rlCheckOut?.visibility = View.GONE
@@ -1297,7 +1306,9 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                         data?.getStringExtra("ProductCountMap"), ProductCountMap::class.java
                     ) as ProductCountMap
                     val itemsCount = data?.getIntExtra("ItemsCount", 0)
-                    if (isDeliveryOptionClickAndCollect() && productCountMap.quantityLimit?.foodLayoutColour != null) {
+                    if ((isDeliveryOptionClickAndCollect() || isDeliveryOptionDash())
+                        && productCountMap.quantityLimit?.foodLayoutColour != null
+                    ) {
                         showItemsLimitToastOnAddToCart(
                             rlCheckOut,
                             productCountMap,
@@ -1920,7 +1931,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                 itemLimitsBanner,
                 itemLimitsMessage,
                 itemLimitsCounter,
-                isClickAndCollect = getPreferredDeliveryType() === Delivery.CNC
+                showBanner = (getPreferredDeliveryType() === Delivery.CNC || getPreferredDeliveryType() === Delivery.DASH)
             )
         }
     }

@@ -218,9 +218,6 @@ public class ScreenManager {
         if (activity instanceof BottomNavigationActivity) {
             ((BottomNavigationActivity) activity).navigateToTabIndex(INDEX_CART, null);
         }
-        /*Intent openCartActivity = new Intent(activity, CartActivity.class);
-        activity.startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
-        activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);*/
     }
 
     public static void presentShoppingListDetailActivity(Activity activity, String listId, String listName) {
