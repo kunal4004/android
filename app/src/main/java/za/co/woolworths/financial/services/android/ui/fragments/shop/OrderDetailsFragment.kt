@@ -147,7 +147,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         orderDetails.adapter = activity?.let { OrderDetailsAdapter(it, this, dataList) }
         VoiceOfCustomerManager.showVocSurveyIfNeeded(
             activity,
-            KotlinUtils.vocShoppingHandling(orderDetailsResponse?.orderSummary?.fulfillmentDetails?.deliveryType,activity)
+            KotlinUtils.vocShoppingHandling(orderDetailsResponse?.orderSummary?.fulfillmentDetails?.deliveryType)
         )
     }
 

@@ -1081,14 +1081,11 @@ class KotlinUtils {
                 )
             }
         }
-        fun vocShoppingHandling(deliveryType: String?,activity: Activity?): VocTriggerEvent? {
+        fun vocShoppingHandling(deliveryType: String?): VocTriggerEvent? {
             var event:VocTriggerEvent? = null
-            var firBaseEvent:String?
             when(Delivery.getType(deliveryType)){
                 Delivery.CNC->{
                     event = VocTriggerEvent.SHOP_CLICK_COLLECT_CONFIRM
-                    firBaseEvent = FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_CConfirm
-                    Utils.triggerFireBaseEvents(firBaseEvent, activity)
                 }
             }
             return event

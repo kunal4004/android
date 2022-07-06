@@ -97,10 +97,14 @@ class OrderConfirmationFragment : Fragment() {
     }
 
     private fun displayVocifNeeded(response: SubmittedOrderResponse) {
+        var deliveryType = response.orderSummary?.fulfillmentDetails?.deliveryType
         VoiceOfCustomerManager.showVocSurveyIfNeeded(
             activity,
-            KotlinUtils.vocShoppingHandling(response.orderSummary?.fulfillmentDetails?.deliveryType,activity)
+            KotlinUtils.vocShoppingHandling(deliveryType)
         )
+        if ( Delivery.getType(deliveryType) == Delivery.CNC){
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_CConfirm, activity)
+        }
     }
 
     private fun showErrorScreen(errorType: Int) {
