@@ -2648,4 +2648,5 @@
     <string name="dash_status_en_route">En-route</string>
     <string name="dash_status_delivered">Delivered</string>
     <string name="empty" />
+    <string name="dash_item_limit_message">Dash orders allow %d items max</string>
 </resources>
