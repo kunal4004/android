@@ -18,6 +18,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.SystemBarCompat
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StoreCardCallBack
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.CallBack
@@ -113,15 +114,28 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
     }
 
     private fun subscribeObservers() {
-        val position = cardFreezeViewModel.currentPagePosition.value
+        val position = cardFreezeViewModel.currentPagePosition.value ?: -1
         mStoreCardMoreDetail?.setupView(viewModel.mStoreCardFeatureType)
         val item  = viewModel.mStoreCardFeatureType to position
-        mListOfStoreCardOptions?.showListItem(item)
+        showItems(item)
         CoroutineScope(Dispatchers.Main).launch {
             viewModel.onViewPagerPageChangeListener.collect { feature ->
-                mListOfStoreCardOptions?.showListItem(feature)
+                showItems(feature)
                 mStoreCardMoreDetail?.setupView(feature.first)
             }
         }
     }
+
+    private fun showItems(feature: Pair<StoreCardFeatureType?, Int>) {
+        mListOfStoreCardOptions?.showListItem(feature) { result ->
+            when (result) {
+                is ListCallback.CardNotReceived -> {
+                    if (result.isCardNotReceived) mListOfStoreCardOptions?.showCardNotReceivedDialog(
+                        this@ManageMyCardDetailsFragment
+                    )
+                }
+            }
+        }
+    }
+
 }

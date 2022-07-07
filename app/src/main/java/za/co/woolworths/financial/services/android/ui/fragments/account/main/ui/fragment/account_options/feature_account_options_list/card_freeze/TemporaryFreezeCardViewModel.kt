@@ -8,12 +8,15 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCard
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.getViewStateFlowForNetworkCall
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.IStoreCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.StoreCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.StoreCardType
+import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,19 +38,35 @@ class TemporaryFreezeCardViewModel @Inject constructor(private val storeCardData
     }
 
     fun queryServiceBlockCardTypeFreeze() = viewModelScope.launch {
-        queryServiceBlockStoreCard(StoreCardType.PRIMARY_CARD).collect { _blockMyCardResponse.emit(it) }
+        queryServiceBlockStoreCard(StoreCardType.PRIMARY_CARD).collect {
+            _blockMyCardResponse.emit(
+                it
+            )
+        }
     }
 
     fun queryServiceUnBlockCardTypeFreeze(storeCardType: StoreCardType) = viewModelScope.launch {
         queryServiceUnBlockStoreCard(storeCardType).collect { _blockMyCardResponse.emit(it) }
     }
 
-    suspend fun queryServiceBlockStoreCard(storeCardType: StoreCardType) = getViewStateFlowForNetworkCall {
-        queryServiceBlockStoreCard(position = currentPagePosition.value ?: -1, storeCardType = storeCardType)
-    }
+    suspend fun queryServiceBlockStoreCard(storeCardType: StoreCardType) =
+        getViewStateFlowForNetworkCall {
+            queryServiceBlockStoreCard(
+                position = currentPagePosition.value ?: -1,
+                storeCardType = storeCardType
+            )
+        }
 
-    suspend fun queryServiceUnBlockStoreCard(storeCardType: StoreCardType) = getViewStateFlowForNetworkCall {
-        queryServiceUnBlockStoreCard(position = currentPagePosition.value ?: -1,storeCardType = storeCardType)
-    }
+    suspend fun queryServiceUnBlockStoreCard(storeCardType: StoreCardType) =
+        getViewStateFlowForNetworkCall {
+            queryServiceUnBlockStoreCard(
+                position = currentPagePosition.value ?: -1,
+                storeCardType = storeCardType
+            )
+        }
 
+    fun isCardNotReceived(storeCard: StoreCard?): Boolean {
+        val shouldNotifyUserByEmail = Utils.getSessionDaoValue(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN).isNullOrEmpty()
+        return (storeCard?.cardNotReceived == true && shouldNotifyUserByEmail)
+    }
 }

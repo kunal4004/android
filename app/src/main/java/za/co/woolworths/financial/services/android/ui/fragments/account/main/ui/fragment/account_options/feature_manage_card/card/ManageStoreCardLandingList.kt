@@ -8,11 +8,14 @@ import com.awfs.coordination.databinding.AccountOptionsManageCardListFragmentBin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.StoreCardNotReceivedDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
-import za.co.woolworths.financial.services.android.util.FirebaseManager
-import java.lang.Exception
+
+sealed class ListCallback {
+    data class CardNotReceived (val isCardNotReceived: Boolean) : ListCallback()
+}
 
 class ManageStoreCardLandingList(
     private val cardFreezeViewModel: TemporaryFreezeCardViewModel,
@@ -37,7 +40,7 @@ class ManageStoreCardLandingList(
         }
     }
 
-    fun showListItem(storeCardFeatureType: Pair<StoreCardFeatureType?, Int?>) {
+    fun showListItem(storeCardFeatureType: Pair<StoreCardFeatureType?, Int?>, callback : (ListCallback) -> Unit) {
         CoroutineScope(Dispatchers.Main).launch {
             hideAllRows()
             when (val featureType = storeCardFeatureType.first) {
@@ -49,9 +52,11 @@ class ManageStoreCardLandingList(
                     showInstantReplacementCardAndInactive()
 
                 is StoreCardFeatureType.StoreCardIsTemporaryFreeze ->
-                    showStoreCardIsTemporaryFreeze(featureType)
+                showStoreCardIsTemporaryFreeze(featureType)
 
-                is StoreCardFeatureType.TemporaryCardEnabled -> showTemporaryCardEnabled()
+                is StoreCardFeatureType.TemporaryCardEnabled -> {
+                    showTemporaryCardEnabled(featureType, callback)
+                }
 
                 StoreCardFeatureType.ManageMyCard -> showManageMyCardRow()
 
@@ -65,8 +70,14 @@ class ManageStoreCardLandingList(
         includeListOptions.manageCardDivider.visibility = VISIBLE
     }
 
-    private fun showTemporaryCardEnabled() {
+    private fun showTemporaryCardEnabled(featureType: StoreCardFeatureType.TemporaryCardEnabled, callback : (ListCallback) -> Unit) {
         includeListOptions.payWithCardFragmentContainerView.visibility = VISIBLE
+        callback(ListCallback.CardNotReceived(
+                isCardNotReceived = cardFreezeViewModel.isCardNotReceived(
+                    featureType.storeCard
+                )
+            )
+        )
     }
 
     fun setupVirtualTemporaryCardGraph(){
@@ -118,6 +129,11 @@ class ManageStoreCardLandingList(
             linkNewCardDivider.visibility = VISIBLE
             linkNewCardRelativeLayout.visibility = VISIBLE
         }
+    }
+
+    fun showCardNotReceivedDialog(fragment: Fragment?) {
+        val dialog = StoreCardNotReceivedDialogFragment.newInstance()
+        fragment?.childFragmentManager?.let { dialog.show(it, StoreCardNotReceivedDialogFragment::class.java.simpleName) }
     }
 
 }
