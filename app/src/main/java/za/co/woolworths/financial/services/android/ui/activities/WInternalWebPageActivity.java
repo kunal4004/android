@@ -179,8 +179,8 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 			@Override
 			public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
 				super.doUpdateVisitedHistory(view, url, isReload);
-                HashMap<String,String> parameters = getQueryString(url);
                 if (treatmentPlan ) {
+					HashMap<String,String> parameters = getQueryString(url);
 					if (parameters.containsKey("Scope") ){
 						if (parameters.get("Scope").equals("paynow")){
 							finishActivityForElite(parameters);
@@ -208,7 +208,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 					}
 
 				}else if (url.contains(collectionsExitUrl)){
-                    if (parameters.get("IsCompleted").equals("false")) {
+					if (getQueryString(url).get("IsCompleted").equals("false")) {
                         ficaCanceled = true;
                     }
 					finishActivity();
