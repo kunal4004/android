@@ -8,12 +8,23 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
+import za.co.woolworths.financial.services.android.getstream.common.State
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 
 class InitializerViewModel: ViewModel() {
 
     private val _state = MutableLiveData<State>()
     val state: LiveData<State> = _state
+
+//                        App.instance.userRepository.setUser(
+//                                SampleUser(
+//                                        apiKey = loginCredentials.apiKey,
+//                                        id = loginCredentials.userId,
+//                                        name = loginCredentials.userName,
+//                                        token = loginCredentials.userToken,
+//                                        image = "https://getstream.io/random_png?id=${loginCredentials.userId}&name=${loginCredentials.userName}&size=200"
+//                                )
+//                        )
 
     private val atgId: String //retrieved from the JWT Token
     private val displayName: String //retrieved from the JWT Token, firstName + lastName
@@ -24,7 +35,7 @@ class InitializerViewModel: ViewModel() {
         atgId = "262820175"
         displayName = "Eesa Jacobs"
         userId = "CUST-WWO-DEV-262820175"
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiQ1VTVC1XV08tREVWLTI2MjgyMDE3NSIsImV4cCI6MTY1NzE0MTIzM30.FmJNB-FB3ugTrj3x1YL1Do1iFEFcFtMzUpv082UdzQU"
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiQ1VTVC1XV08tREVWLTI2MjgyMDE3NSIsImV4cCI6MTY1NzIzNDQyN30.N-5f8kofgSiboYt4UEs2J4xcWufBWI5bENF8vmRWehM"
 
         initChatSdk()
         initChatUser()
@@ -46,6 +57,11 @@ class InitializerViewModel: ViewModel() {
     }
 
     private fun initChatUser() {
+        /*
+        * WARNING
+        * You shouldn't call connectUser if the user is already set! You can use ChatClient.instance().getCurrentUser() to verify if the user is already connected.
+        * */
+
         val chatUser = User().apply {
             id = userId
             name = displayName
@@ -55,26 +71,9 @@ class InitializerViewModel: ViewModel() {
                 .enqueue { result ->
                     if (result.isSuccess) {
                         _state.postValue(State.RedirectToChannels)
-
-//                        App.instance.userRepository.setUser(
-//                                SampleUser(
-//                                        apiKey = loginCredentials.apiKey,
-//                                        id = loginCredentials.userId,
-//                                        name = loginCredentials.userName,
-//                                        token = loginCredentials.userToken,
-//                                        image = "https://getstream.io/random_png?id=${loginCredentials.userId}&name=${loginCredentials.userName}&size=200"
-//                                )
-//                        )
                     } else {
                         _state.postValue(State.Error(result.error().message))
                     }
                 }
     }
-}
-
-sealed class State {
-    object RedirectToChannels : State()
-    object Loading : State()
-    data class Error(val errorMessage: String?) : State()
-//    data class ValidationError(val invalidFields: List<ValidatedField>) : State()
 }

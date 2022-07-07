@@ -4,10 +4,10 @@
     android:layout_height="match_parent"
     tools:context="za.co.woolworths.financial.services.android.getstream.InitializerFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/info_text"
+        android:text="Some loading indicator or screen while we authenticate with OneCart and initiate the GetStream Connection." />
 
 </FrameLayout>

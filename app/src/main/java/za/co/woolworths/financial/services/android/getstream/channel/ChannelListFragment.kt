@@ -5,10 +5,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentChannelListBinding
+import za.co.woolworths.financial.services.android.getstream.chat.ChatFragment
+import za.co.woolworths.financial.services.android.getstream.common.State
+import za.co.woolworths.financial.services.android.getstream.common.navigateSafely
 
 class ChannelListFragment : Fragment() {
+
+    private val viewModel: ChannelListViewModel by viewModels()
 
     private var _binding: FragmentChannelListBinding? = null
     private val binding get() = _binding!!
@@ -25,5 +34,34 @@ class ChannelListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        viewModel.state.observe(
+                viewLifecycleOwner,
+                Observer {
+                    when (it) {
+                        is State.RedirectToChat -> redirectToChatScreen(it.channelId)
+                        is State.Loading -> showLoading()
+                        is State.Error -> showErrorMessage(it.errorMessage)
+                    }
+                }
+        )
+
+        viewModel.fetchChannels()
+    }
+
+    private fun showLoading() {
+        //TODO a loading indicator
+    }
+
+    private fun showErrorMessage(errorMessage: String?) {
+        binding.infoText.text = errorMessage;
+    }
+
+    private fun redirectToChatScreen(channelId: String) {
+        val bundle = bundleOf(ChatFragment.ARG_CHANNEL_ID to channelId)
+        findNavController().navigate(R.id.action_initializerFragment_to_channelListFragment, bundle)
     }
 }

@@ -10,9 +10,8 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentGetStreamInitializerBinding
-import io.getstream.chat.android.client.BuildConfig
+import za.co.woolworths.financial.services.android.getstream.common.State
 import za.co.woolworths.financial.services.android.getstream.common.navigateSafely
-import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.showToast
 
 class InitializerFragment : Fragment() {
     private val viewModel: InitializerViewModel by viewModels()
@@ -49,16 +48,14 @@ class InitializerFragment : Fragment() {
     }
 
     private fun showLoading() {
-//        binding.loadingProgressBar.isVisible = true
+        //TODO a loading indicator
     }
 
     private fun showErrorMessage(errorMessage: String?) {
-//        binding.loadingProgressBar.isVisible = false
-//        showToast(errorMessage ?: getString(R.string.backend_error_info))
+        binding.infoText.text = errorMessage;
     }
 
     private fun redirectToChannelsScreen() {
         findNavController().navigateSafely(R.id.action_initializerFragment_to_channelListFragment)
     }
-
 }
