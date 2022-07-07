@@ -72,5 +72,7 @@ class ChatFragment : Fragment() {
     private fun updateRecyclerViewDataSet(){
         recyclerViewAdapter.setDataSet(viewModel.messages.toTypedArray())
         recyclerViewAdapter.notifyDataSetChanged()
+
+        binding.messagesRecyclerView.smoothScrollToPosition(recyclerViewAdapter.itemCount -1)
     }
 }

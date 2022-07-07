@@ -101,7 +101,7 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.getstream.OCChatActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat"/>
+            android:theme="@style/ChatActivityStyle"/>
 
         <meta-data
             android:name="android.webkit.WebView.EnableSafeBrowsing"
