@@ -845,7 +845,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 it.onDemand?.quantityLimit?.foodMaximumQuantity
             )
             deliveryFeeText?.text = resources.getString(
-                R.string.dash_free_order,
+                R.string.dash_delivery_feer,
                 it.onDemand?.firstAvailableFoodDeliveryCost
             )
         }

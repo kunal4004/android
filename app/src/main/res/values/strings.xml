@@ -2527,7 +2527,7 @@
     <string name="add_street_address">Street Address:</string>
     <string name="dash_free_collection">"Free Collection"</string>
     <string name="dash_item_limit">%d Item Limit</string>
-    <string name="dash_free_order">Free for orders over %d</string>
+    <string name="dash_delivery_feer">R%d Delivery Fee</string>
     <string name="select_delivery_timeslot">Select Delivery Timeslot</string>
     <string name="dash_delivery_date">Delivery Date</string>
     <string name="dash_delivery_timeslot">Delivery Timeslot</string>
