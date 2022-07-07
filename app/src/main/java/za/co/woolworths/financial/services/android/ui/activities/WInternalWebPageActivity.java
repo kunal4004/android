@@ -116,9 +116,11 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	private void webSetting() {
         showProgressBar();
 		webInternalPage.getSettings().setJavaScriptEnabled(true);
-        chromeClient = new ChromeClient(this);
-        chromeClient.setUpWebViewDefaults(webInternalPage);
-
+		if (KotlinUtils.Companion.isFicaEnabled()){
+			chromeClient = new ChromeClient(this);
+			chromeClient.setUpWebViewDefaults(webInternalPage);
+			webInternalPage.setWebChromeClient(chromeClient);
+		}
         if(treatmentPlan){
 			webInternalPage.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
 			webInternalPage.clearCache(true);
@@ -213,7 +215,6 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 				ficaHandling(url);
 			}
 		});
-        webInternalPage.setWebChromeClient(chromeClient);
         webInternalPage.loadUrl(mExternalLink);
 
 		webInternalPage.setDownloadListener((url, userAgent, contentDisposition, mimeType, contentLength) -> {
@@ -265,7 +266,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 			Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse(url));
 			startActivity(intent);
 		}
-		if (!privacyUrlForFica().isEmpty() && url.contains(privacyUrlForFica())){
+		if (!privacyUrlForFica().isEmpty() && url.contains(privacyUrlForFica())&& KotlinUtils.Companion.isFicaEnabled()){
 			KotlinUtils.Companion.openUrlInPhoneBrowser(privacyUrlForFica(),WInternalWebPageActivity.this);
 		}
 		else {
@@ -464,28 +465,30 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode != INPUT_FILE_REQUEST_CODE || chromeClient.getMFilePathCallback() == null) {
-            super.onActivityResult(requestCode, resultCode, data);
-            return;
-        }
+		if (KotlinUtils.Companion.isFicaEnabled()) {
+			if (requestCode != INPUT_FILE_REQUEST_CODE || chromeClient.getMFilePathCallback() == null) {
+				super.onActivityResult(requestCode, resultCode, data);
+				return;
+			}
 
-        Uri[] results = null;
+			Uri[] results = null;
 
-        // Check that the response is a good one
-        if (resultCode == RESULT_OK) {
+			// Check that the response is a good one
+			if (resultCode == RESULT_OK) {
 
-            if ( data == null || data.getDataString() == null) {
-                // If there is not data, then we may have taken a photo
-                if (chromeClient.getMCameraPhotoPath() != null) {
-                    results = new Uri[]{Uri.parse(chromeClient.getMCameraPhotoPath())};
-                }
-            } else {
-                results = new Uri[]{Uri.parse(data.getDataString())};
+				if (data == null || data.getDataString() == null) {
+					// If there is not data, then we may have taken a photo
+					if (chromeClient.getMCameraPhotoPath() != null) {
+						results = new Uri[]{Uri.parse(chromeClient.getMCameraPhotoPath())};
+					}
+				} else {
+					results = new Uri[]{Uri.parse(data.getDataString())};
 
-            }
-        }
+				}
+			}
 
-        chromeClient.getMFilePathCallback().onReceiveValue(results);
-        chromeClient.setMFilePathCallback(null);
+			chromeClient.getMFilePathCallback().onReceiveValue(results);
+			chromeClient.setMFilePathCallback(null);
+		}
     }
 }
