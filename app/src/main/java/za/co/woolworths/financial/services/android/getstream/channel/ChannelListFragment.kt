@@ -62,6 +62,6 @@ class ChannelListFragment : Fragment() {
 
     private fun redirectToChatScreen(channelId: String) {
         val bundle = bundleOf(ChatFragment.ARG_CHANNEL_ID to channelId)
-        findNavController().navigate(R.id.action_initializerFragment_to_channelListFragment, bundle)
+        findNavController().navigate(R.id.action_channelListFragment_to_chatFragment, bundle)
     }
 }
