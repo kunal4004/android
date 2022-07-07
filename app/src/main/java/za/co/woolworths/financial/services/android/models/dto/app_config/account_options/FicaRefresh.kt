@@ -5,8 +5,9 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class FicaRefresh(
-    val minimumSupportedAppBuildNumber: Double,
+    val minimumSupportedAppBuildNumber: Int,
     val renderMode: String,
     val ficaRefreshUrl: String,
+    val privacyPolicyUrl: String,
     val exitUrl: String
 ) : Parcelable

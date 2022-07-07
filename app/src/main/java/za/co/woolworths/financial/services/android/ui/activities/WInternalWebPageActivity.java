@@ -46,6 +46,8 @@ import com.google.android.material.appbar.AppBarLayout;
 
 import java.util.HashMap;
 
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
+import za.co.woolworths.financial.services.android.models.dto.app_config.account_options.FicaRefresh;
 import za.co.woolworths.financial.services.android.util.ChromeClient;
 import za.co.woolworths.financial.services.android.util.eliteplan.ElitePlanModel;
 import za.co.woolworths.financial.services.android.util.AppConstant;
@@ -70,7 +72,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	private String collectionsExitUrl;
     private ChromeClient chromeClient;
     private Boolean ficaCanceled = false;
-
+	private FicaRefresh fica;
 
     @Override
 	protected void onStart() {
@@ -207,12 +209,8 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 
 					}
 
-				}else if (url.contains(collectionsExitUrl)){
-					if (getQueryString(url).get("IsCompleted").equals("false")) {
-                        ficaCanceled = true;
-                    }
-					finishActivity();
 				}
+				ficaHandling(url);
 			}
 		});
         webInternalPage.setWebChromeClient(chromeClient);
@@ -229,7 +227,24 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 			}
 		});
 	}
-	public static HashMap<String, String> getQueryString(String url) {
+
+	public void ficaHandling(String url){
+		if (AppConfigSingleton.INSTANCE.getAccountOptions() != null ){
+			fica = AppConfigSingleton.INSTANCE.getAccountOptions().getFicaRefresh();
+			if (url.contains(collectionsExitUrl)){
+				if (getQueryString(url).get("IsCompleted").equals("false")) {
+					ficaCanceled = true;
+				}
+				finishActivity();
+			}
+		}else {
+			fica = null;
+		}
+	}
+	public String privacyUrlForFica() {
+		return fica!=null ? fica.getPrivacyPolicyUrl() : "";
+	}
+	public HashMap<String, String> getQueryString(String url) {
 		Uri uri= Uri.parse(url);
 
 		HashMap<String, String> map = new HashMap<>();
@@ -249,6 +264,9 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 		}if (url.startsWith("tel:")) {
 			Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse(url));
 			startActivity(intent);
+		}
+		if (!privacyUrlForFica().isEmpty() && url.contains(privacyUrlForFica())){
+			KotlinUtils.Companion.openUrlInPhoneBrowser(privacyUrlForFica(),WInternalWebPageActivity.this);
 		}
 		else {
 			view.loadUrl(url);

@@ -1562,8 +1562,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     public void ficaRequest() {
-        if (SessionUtilities.getInstance().isUserAuthenticated()
-        &&KotlinUtils.Companion.hasADayPassed(Utils.getSessionDaoValue(SessionDao.KEY.FICA_LAST_REQUEST_TIME))) {
+        if (SessionUtilities.getInstance().isUserAuthenticated() && KotlinUtils.Companion.isFicaEnabled()
+                && KotlinUtils.Companion.hasADayPassed(Utils.getSessionDaoValue(SessionDao.KEY.FICA_LAST_REQUEST_TIME))) {
             OneAppService.INSTANCE.getFicaResponse().enqueue(new Callback<FicaModel>() {
                 @Override
                 public void onResponse(Call<FicaModel> call, Response<FicaModel> response) {
