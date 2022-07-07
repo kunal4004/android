@@ -12,11 +12,11 @@ apply plugin: 'dagger.hilt.android.plugin'
 android {
 
     def major = "9"
-    def minor = "1"
+    def minor = "2"
     def fix = "0"
-    def jobNumberProduction = 185
-    def jobNumberQa = 600
-    def jobNumberFeature = 16276
+    def jobNumberProduction = 186
+    def jobNumberQa = 602
+    def jobNumberFeature = 125
 
     dataBinding {
         enabled = true
@@ -67,7 +67,7 @@ android {
         buildConfigField("String", "HOST", '"' + System.env.WigroupServer_API_URL + '"')
         buildConfigField("String", "SHA1", '"' + System.env.WigroupServer_API_HASH + '"')
         buildConfigField("String", "ENV", '"' + System.env.Environment + '"')
-        resValue "string", "maps_google_api_key", '"' + System.env.MAPS_API_KEY + '"'
+        resValue "string", "maps_google_api_key", '"' + System.env.MAPS_GOOGLE_API_KEY + '"'
         resValue "string", "maps_huawei_api_key", '"' + System.env.MAPS_HUAWEI_API_KEY + '"'
     }
 
@@ -133,7 +133,7 @@ android {
 
                 buildConfigField("String", "HOST", '"' + secureProps['URL_QA_' + apiKey] + '"')
                 buildConfigField("String", "SHA1", '"' + secureProps['HASH_QA_' + apiKey] + '"')
-                resValue "string", "maps_google_api_key", (secureProps["MAPS_API_KEY"] ?: "Google Maps API Key")
+                resValue "string", "maps_google_api_key", (secureProps["MAPS_GOOGLE_API_KEY"] ?: "Google Maps API Key")
                 resValue "string", "maps_huawei_api_key", (secureProps["MAPS_HUAWEI_API_KEY"] ?: "Huawei Maps API Key")
 
                 signingConfig signingConfigs.woneappQa
@@ -152,7 +152,7 @@ android {
 
                 buildConfigField("String", "HOST", '"' + secureProps['URL_PROD_' + apiKey] + '"')
                 buildConfigField("String", "SHA1", '"' + secureProps['HASH_PROD_' + apiKey] + '"')
-                resValue "string", "maps_google_api_key", (secureProps["MAPS_API_KEY"] ?: "Google Maps API Key")
+                resValue "string", "maps_google_api_key", (secureProps["MAPS_GOOGLE_API_KEY"] ?: "Google Maps API Key")
                 resValue "string", "maps_huawei_api_key", (secureProps["MAPS_HUAWEI_API_KEY"] ?: "Huawei Maps API Key")
             }
 
@@ -181,7 +181,7 @@ android {
 
                 buildConfigField("String", "HOST", '"' + secureProps['URL_QA_' + apiKey] + '"')
                 buildConfigField("String", "SHA1", '"' + secureProps['HASH_QA_' + apiKey] + '"')
-                resValue "string", "maps_google_api_key", (secureProps["MAPS_API_KEY"] ?: "Google Maps API Key")
+                resValue "string", "maps_google_api_key", (secureProps["MAPS_GOOGLE_API_KEY"] ?: "Google Maps API Key")
                 resValue "string", "maps_huawei_api_key", (secureProps["MAPS_HUAWEI_API_KEY"] ?: "Huawei Maps API Key")
 
                 signingConfig signingConfigs.woneappQa
@@ -200,7 +200,7 @@ android {
 
                 buildConfigField("String", "HOST", '"' + secureProps['URL_PROD_' + apiKey] + '"')
                 buildConfigField("String", "SHA1", '"' + secureProps['HASH_PROD_' + apiKey] + '"')
-                resValue "string", "maps_google_api_key", (secureProps["MAPS_API_KEY"] ?: "Google Maps API Key")
+                resValue "string", "maps_google_api_key", (secureProps["MAPS_GOOGLE_API_KEY"] ?: "Google Maps API Key")
                 resValue "string", "maps_huawei_api_key", (secureProps["MAPS_HUAWEI_API_KEY"] ?: "Huawei Maps API Key")
             }
 
