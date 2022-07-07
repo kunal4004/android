@@ -4,10 +4,9 @@
     android:layout_height="match_parent"
     tools:context="za.co.woolworths.financial.services.android.getstream.chat.ChatFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/messagesRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="match_parent" />
 
 </FrameLayout>

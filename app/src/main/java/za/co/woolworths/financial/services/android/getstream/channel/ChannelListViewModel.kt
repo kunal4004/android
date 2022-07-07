@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters.`in`
 import io.getstream.chat.android.client.models.Filters.and
 import io.getstream.chat.android.client.models.Filters.eq
+import za.co.woolworths.financial.services.android.getstream.channel.ChannelListFragment.Companion.messageType
 import za.co.woolworths.financial.services.android.getstream.common.State
 
 class ChannelListViewModel: ViewModel() {
@@ -31,7 +32,7 @@ class ChannelListViewModel: ViewModel() {
 
         // 1. Get the first 30 channels to which thierry belongs
         val filter = and(
-                eq("type", "messaging"),
+                eq("type", messageType),
                 `in`("members", listOf<String>(user.id))
         )
         val sort = QuerySort.desc<Channel>("created_at")

@@ -17,6 +17,10 @@ import za.co.woolworths.financial.services.android.getstream.common.navigateSafe
 
 class ChannelListFragment : Fragment() {
 
+    companion object{
+        val messageType = "messaging"
+    }
+
     private val viewModel: ChannelListViewModel by viewModels()
 
     private var _binding: FragmentChannelListBinding? = null
