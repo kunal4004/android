@@ -25,9 +25,7 @@ class ChatRecyclerViewAdapter(private var dataSet: Array<Message>): RecyclerView
         holder.messageTextView.text = dataSet[position].text
     }
 
-    override fun getItemCount(): Int {
-        return dataSet.size
-    }
+    override fun getItemCount() = dataSet.size
 
     public fun setDataSet(value: Array<Message>){
         this.dataSet = value
