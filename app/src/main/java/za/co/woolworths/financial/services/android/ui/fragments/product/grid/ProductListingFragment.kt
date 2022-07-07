@@ -564,7 +564,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             layoutManager = mRecyclerViewLayoutManager
             if(state!=null) {
                 layoutManager?.onRestoreInstanceState(state)
-                state==null
+                state=null
             }
             adapter = mProductAdapter
             clearOnScrollListeners()
