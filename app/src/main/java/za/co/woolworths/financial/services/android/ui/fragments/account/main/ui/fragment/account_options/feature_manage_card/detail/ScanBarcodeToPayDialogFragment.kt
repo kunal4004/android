@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.detail
 
-
 import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Handler
@@ -9,17 +8,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
+import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
 import com.google.zxing.BarcodeFormat
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.scan_barcode_to_pay_dialog.*
-import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.PayWithCardListFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.PayWithCardListFragment.Companion.PAY_WITH_CARD_ON_DISMISS_RESULT_LISTENER
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -30,7 +31,7 @@ class ScanBarcodeToPayDialogFragment : WBottomSheetDialogFragment() {
 
     val args: ScanBarcodeToPayDialogFragmentArgs by navArgs()
 
-    private val viewModel: TemporaryFreezeCardViewModel by activityViewModels()
+    val viewModel: TemporaryFreezeCardViewModel by activityViewModels()
 
     companion object {
         private const val DURATION_FADE: Long = 300
@@ -138,8 +139,10 @@ class ScanBarcodeToPayDialogFragment : WBottomSheetDialogFragment() {
     }
 
     override fun onDismiss(dialog: DialogInterface) {
+        setFragmentResult(
+            PayWithCardListFragment.PAY_WITH_CARD_REQUEST_LISTENER, bundleOf(
+                PayWithCardListFragment.PAY_WITH_CARD_REQUEST_LISTENER to PAY_WITH_CARD_ON_DISMISS_RESULT_LISTENER))
         super.onDismiss(dialog)
-        lifecycleScope.launch { viewModel.queryServiceBlockStoreCard() }
     }
 
     override fun onDetach() {

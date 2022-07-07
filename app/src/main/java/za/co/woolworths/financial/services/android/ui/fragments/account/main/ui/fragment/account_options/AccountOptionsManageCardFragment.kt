@@ -88,8 +88,7 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
     }
 
     private fun AccountOptionsManageCardFragmentBinding.setOnClickListener() {
-        mOnItemClickListener =
-            ManageCardItemListener(requireActivity(), router, includeListOptions).apply {
+        mOnItemClickListener = ManageCardItemListener(requireActivity(), router, includeListOptions).apply {
                 onClickIntentObserver.observe(viewLifecycleOwner) {
                     when (it) {
                         is CallBack.IntentCallBack -> {
@@ -101,6 +100,10 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
                     }
                 }
             }
+
+        manageCardText.setOnClickListener {
+
+        }
     }
 
     private fun launchStoreCard(intent: Intent) {

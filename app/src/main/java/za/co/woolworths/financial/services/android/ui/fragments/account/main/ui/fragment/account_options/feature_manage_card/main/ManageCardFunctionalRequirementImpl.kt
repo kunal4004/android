@@ -116,6 +116,8 @@ interface IManageCardFunctionalRequirement {
     fun refreshStoreCardsData()
     fun isOneTimePinUnblockStoreCardEnabled(): Boolean
     fun getCardHolderNameSurname(): String?
+    fun getVirtualTempCardNumber(): String
+    fun getVirtualTempCardSequence() : Int
 }
 
 class ManageCardFunctionalRequirementImpl @Inject constructor(private val accountDao: AccountProductLandingDao) :
@@ -257,6 +259,9 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
 
         return listOfStoreCardFeatures
     }
+
+    override fun getVirtualTempCardNumber() = getVirtualCard()?.number ?: ""
+    override fun getVirtualTempCardSequence(): Int  = getVirtualCard()?.sequence ?: -1
 
     override fun isVirtualCardObjectExist(): Pair<Boolean, StoreCard?> {
         return Pair(storeCardData?.virtualCard == null, storeCardData?.virtualCard)

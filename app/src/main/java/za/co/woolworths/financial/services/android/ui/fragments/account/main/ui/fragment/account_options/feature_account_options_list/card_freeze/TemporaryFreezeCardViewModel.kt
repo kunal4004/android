@@ -13,6 +13,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.cor
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.getViewStateFlowForNetworkCall
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.IStoreCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.StoreCardDataSource
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.StoreCardType
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,19 +35,19 @@ class TemporaryFreezeCardViewModel @Inject constructor(private val storeCardData
     }
 
     fun queryServiceBlockCardTypeFreeze() = viewModelScope.launch {
-        queryServiceBlockStoreCard().collect { _blockMyCardResponse.emit(it) }
+        queryServiceBlockStoreCard(StoreCardType.PRIMARY_CARD).collect { _blockMyCardResponse.emit(it) }
     }
 
-    fun queryServiceUnBlockCardTypeFreeze() = viewModelScope.launch {
-        queryServiceUnBlockStoreCard().collect { _blockMyCardResponse.emit(it) }
+    fun queryServiceUnBlockCardTypeFreeze(storeCardType: StoreCardType) = viewModelScope.launch {
+        queryServiceUnBlockStoreCard(storeCardType).collect { _blockMyCardResponse.emit(it) }
     }
 
-    suspend fun queryServiceBlockStoreCard() = getViewStateFlowForNetworkCall {
-        queryServiceBlockStoreCard(position = currentPagePosition.value ?: -1)
+    suspend fun queryServiceBlockStoreCard(storeCardType: StoreCardType) = getViewStateFlowForNetworkCall {
+        queryServiceBlockStoreCard(position = currentPagePosition.value ?: -1, storeCardType = storeCardType)
     }
 
-    suspend fun queryServiceUnBlockStoreCard() = getViewStateFlowForNetworkCall {
-        queryServiceUnBlockStoreCard(position = currentPagePosition.value ?: -1)
+    suspend fun queryServiceUnBlockStoreCard(storeCardType: StoreCardType) = getViewStateFlowForNetworkCall {
+        queryServiceUnBlockStoreCard(position = currentPagePosition.value ?: -1,storeCardType = storeCardType)
     }
 
 }

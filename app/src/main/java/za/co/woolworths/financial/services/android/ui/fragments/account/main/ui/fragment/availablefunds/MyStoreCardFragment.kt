@@ -46,8 +46,15 @@ class MyStoreCardFragment @Inject constructor() :
 
     private fun stopPMAShimmer() {
         with(binding.incPayMyAccountButton) {
+            viewPaymentOptionTextShimmerLayout.setShimmer(null)
+            viewPaymentOptionImageShimmerLayout.setShimmer(null)
+
+            viewPaymentOptionTextShimmerLayout.stopShimmer()
+            viewPaymentOptionImageShimmerLayout.stopShimmer()
+            /** TODO :: Handle independant shimmer
             viewPaymentOptionTextShimmerLayout.loadingState(false)
             viewPaymentOptionImageShimmerLayout.loadingState(false)
+            **/
         }
     }
 

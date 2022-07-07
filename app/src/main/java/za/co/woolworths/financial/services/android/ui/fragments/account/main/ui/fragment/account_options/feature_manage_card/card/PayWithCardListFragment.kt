@@ -2,10 +2,10 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 
 import android.os.Bundle
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
@@ -18,6 +18,8 @@ import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowSt
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.StoreCardType
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.AccountOptionsManageCardFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -29,6 +31,8 @@ class PayWithCardListFragment : Fragment(R.layout.pay_with_card_list_fragment) {
 
     companion object {
         var PAY_WITH_CARD_DETAIL = false
+        const val PAY_WITH_CARD_ON_DISMISS_RESULT_LISTENER = "PAY_WITH_CARD_ON_DISMISS_RESULT_LISTENER"
+        const val PAY_WITH_CARD_REQUEST_LISTENER  = "PAY_WITH_CARD_REQUEST_LISTENER"
     }
 
     @Inject lateinit var router: ProductLandingRouterImpl
@@ -40,6 +44,20 @@ class PayWithCardListFragment : Fragment(R.layout.pay_with_card_list_fragment) {
         super.onViewCreated(view, savedInstanceState)
         with(PayWithCardListFragmentBinding.bind(view)) {
             setOnClickEvent()
+            setResultListener()
+        }
+    }
+
+    private fun setResultListener() {
+        setFragmentResultListener(PAY_WITH_CARD_REQUEST_LISTENER) { _, bundle ->
+            when (bundle.getString(PAY_WITH_CARD_REQUEST_LISTENER, "")) {
+
+                PAY_WITH_CARD_ON_DISMISS_RESULT_LISTENER -> {
+                    lifecycleScope.launch {
+                        viewModel.queryServiceBlockStoreCard(storeCardType = StoreCardType.VIRTUAL_TEMP_CARD).collect {}
+                    }
+                }
+            }
         }
     }
 
@@ -75,7 +93,8 @@ class PayWithCardListFragment : Fragment(R.layout.pay_with_card_list_fragment) {
         when (viewModel.dataSource.isOneTimePinUnblockStoreCardEnabled()) {
             true -> router.routeToOTPActivity(requireActivity())
             false -> lifecycleScope.launch {
-                freezeViewModel.queryServiceUnBlockStoreCard().collect { state ->
+
+                freezeViewModel.queryServiceUnBlockStoreCard(StoreCardType.VIRTUAL_TEMP_CARD).collect { state ->
                     with(state) {
                         renderNoConnection {
                             router.showNoConnectionToast(requireActivity())
@@ -113,7 +132,7 @@ class PayWithCardListFragment : Fragment(R.layout.pay_with_card_list_fragment) {
                 payWithCardListFragmentBinding.payWithCardNext.visibility = GONE
             }
             false -> {
-                payWithCardListFragmentBinding.payWithCardTokenProgressBar.visibility = GONE
+                payWithCardListFragmentBinding.payWithCardTokenProgressBar.visibility = INVISIBLE
                 payWithCardListFragmentBinding.payWithCardNext.visibility = VISIBLE
             }
         }
