@@ -1,16 +1,22 @@
 package za.co.woolworths.financial.services.android.getstream.chat
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentChannelListBinding
 import com.awfs.coordination.databinding.FragmentOneCartChatBinding
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.livedata.ChatDomain
 import za.co.woolworths.financial.services.android.getstream.channel.ChannelListViewModel
 import za.co.woolworths.financial.services.android.getstream.common.ChatState
 import za.co.woolworths.financial.services.android.getstream.common.State
@@ -43,10 +49,10 @@ class ChatFragment : Fragment() {
     ): View {
         _binding = FragmentOneCartChatBinding.inflate(inflater, container, false)
 
-        recyclerViewAdapter = ChatRecyclerViewAdapter(viewModel.messageItems.toTypedArray())
-
-        _binding!!.messagesRecyclerView.layoutManager = LinearLayoutManager(activity)
-        _binding!!.messagesRecyclerView.adapter = recyclerViewAdapter
+        setupRecyclerView()
+        setupInputLayout()
+        setupPresenceIndicator()
+        setupPresenceIndicator()
 
         return binding.root
     }
@@ -62,35 +68,69 @@ class ChatFragment : Fragment() {
                 Observer {
                     when (it) {
                         is ChatState.ReceivedMessagesData -> updateRecyclerViewDataSet()
+                        is ChatState.ReceivedMessageData -> insertIntoRecyclerViewDataSet(it.message)
+                        is ChatState.Error -> showErrorMessage(it.errorMessage)
                     }
                 }
         )
 
+        ChatDomain.instance().typingUpdates.observe(viewLifecycleOwner, Observer {
+            Log.d("Someone", "is typing")
+        })
+
         viewModel.fetchMessages()
-        sendMessages()
-        closeChat()
     }
 
-    private fun closeChat() {
-        binding.chatToolbarLayout.chatBackImg.setOnClickListener {
-            requireActivity().finish()
+    private fun setupRecyclerView(){
+        recyclerViewAdapter = ChatRecyclerViewAdapter(viewModel.messages.toTypedArray(), viewModel.messageItemDelegate)
+
+        binding.messagesRecyclerView.layoutManager = LinearLayoutManager(activity)
+        binding.messagesRecyclerView.adapter = recyclerViewAdapter
+    }
+
+    private fun setupInputLayout(){
+        binding.messageInputLayout.sendMessageImage.setOnClickListener{
+            val messageText = binding.messageInputLayout.messageInputEditText.text.toString()
+            viewModel.sendMessage(messageText)
+
+            binding.messageInputLayout.messageInputEditText.clearFocus()
+            binding.messageInputLayout.messageInputEditText.text?.clear()
+
+            binding.messageInputLayout.messageInputEditText.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                    viewModel.emitIsTyping()
+                }
+
+                override fun afterTextChanged(p0: Editable?) {
+                    TODO("Not yet implemented")
+                }
+
+            })
+            //TODO dismiss the keyboard
         }
     }
 
-    private fun sendMessages() {
-        binding.sendMessageLayout.imgSendMessage.setOnClickListener {
-            if (binding.sendMessageLayout.edTypeMessage != null) {
-                viewModel.sendMessage(binding.sendMessageLayout.edTypeMessage.text.toString())
-            binding.messagesRecyclerView.smoothScrollToPosition(recyclerViewAdapter.itemCount -1)
-          }
-        }
+    private fun setupPresenceIndicator(){
+        viewModel.observeOtherUserPresence()
+    }
+
+    private fun showErrorMessage(errorMessage: String?){
+        Toast.makeText(activity, errorMessage, Toast.LENGTH_LONG).show()
     }
 
     private fun updateRecyclerViewDataSet(){
-        recyclerViewAdapter.setDataSet(viewModel.messageItems.toTypedArray())
-        recyclerViewAdapter.notifyDataSetChanged()
+        recyclerViewAdapter.setDataSet(viewModel.messages.toTypedArray())
 
         binding.messagesRecyclerView.smoothScrollToPosition(recyclerViewAdapter.itemCount -1)
     }
 
+    private fun insertIntoRecyclerViewDataSet(message: Message){
+        recyclerViewAdapter.insertDataSetItem(message)
+
+        binding.messagesRecyclerView.smoothScrollToPosition(recyclerViewAdapter.itemCount -1)
+    }
 }

@@ -3,15 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/messageBubble"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingStart="@dimen/_15sdp"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:layout_marginLeft="@dimen/sixteen_dp"
+        android:layout_marginRight="@dimen/sixteen_dp"
+        android:padding="@dimen/sixteen_dp"
+        app:layout_constraintWidth_percent="0.7"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
@@ -20,7 +23,7 @@
             android:id="@+id/senderTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" ggg"
+            android:text="@string/placeholder"
             android:textColor="@color/black"
             android:textSize="@dimen/_10ssp" />
 
@@ -28,8 +31,8 @@
             android:id="@+id/messageTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/color_666666"
-            android:text="Hello there, how are you?"
+            android:text="@string/placeholder"
+            android:textColor="@color/black"
             android:textSize="@dimen/_12ssp" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>

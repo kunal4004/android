@@ -50,7 +50,7 @@ class InitializerViewModel: ViewModel() {
                 .logLevel(ChatLogLevel.ALL)
                 .build()
 
-        val domain = ChatDomain.Builder(client, WoolworthsApplication.getAppContext())
+        ChatDomain.Builder(client, WoolworthsApplication.getAppContext())
                 .userPresenceEnabled()
                 .offlineEnabled()
                 .build()
