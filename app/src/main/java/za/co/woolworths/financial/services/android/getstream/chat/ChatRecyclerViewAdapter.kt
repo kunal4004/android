@@ -28,8 +28,8 @@ class ChatRecyclerViewAdapter(private var dataSet: Array<MessageItem>): Recycler
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.messageTextView.text = dataSet[position].message.text
         holder.senderTextView.text = dataSet[position].message.user.name
+        holder.messageTextView.text = dataSet[position].message.text
 
         val isMessageMine = dataSet[position].isMine
 

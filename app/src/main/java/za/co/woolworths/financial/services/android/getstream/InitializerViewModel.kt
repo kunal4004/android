@@ -35,7 +35,7 @@ class InitializerViewModel: ViewModel() {
         atgId = "262820175"
         displayName = "Eesa Jacobs"
         userId = "CUST-WWO-DEV-262820175"
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiQ1VTVC1XV08tREVWLTI2MjgyMDE3NSIsImV4cCI6MTY1NzIzNDQyN30.N-5f8kofgSiboYt4UEs2J4xcWufBWI5bENF8vmRWehM"
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiQ1VTVC1XV08tREVWLTI2MjgyMDE3NSIsImV4cCI6MTY1NzM0ODcwNX0.1gcCDEfJt3yEkptMGDP4pPkyXaXpSHcYnrSW0XX2pDU"
 
         initChatSdk()
         initChatUser()
