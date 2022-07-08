@@ -28,12 +28,13 @@ class DeleteAccountBottomSheetDialog : WBottomSheetDialogFragment() ,
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        actionButton?.paint?.isUnderlineText = true
         initClick()
     }
 
     private fun initClick() {
-        cancelButton.setOnClickListener(this)
-        actionButton.setOnClickListener(this)
+        cancelButton?.setOnClickListener(this)
+        actionButton?.setOnClickListener(this)
     }
 
 
