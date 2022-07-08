@@ -99,7 +99,7 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
                     when (question.type) {
                         SurveyQuestion.QuestionType.RATE_SLIDER.type -> {
                             if (answerId == null) {
-                                answerId = (question.maxValue ?: DEFAULT_VALUE_RATE_SLIDER_MAX) - 1
+                                answerId = (question.maxValue ?: DEFAULT_VALUE_RATE_SLIDER_MAX)
                             }
                         }
                         SurveyQuestion.QuestionType.FREE_TEXT.type -> {
