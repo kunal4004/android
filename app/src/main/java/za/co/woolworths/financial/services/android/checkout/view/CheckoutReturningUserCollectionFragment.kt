@@ -932,7 +932,9 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     private fun getShipmentDetailsBody() = ShippingDetailsBody().apply {
         requestFrom = "express"
         joinBasket = true
-        ageConsentConfirmed = true
+        if(liquorOrder == true) {
+            ageConsentConfirmed = true
+        }
         foodShipOnDate = selectedTimeSlot?.stringShipOnDate
         otherShipOnDate = ""
         foodDeliverySlotId = selectedTimeSlot?.slotId
