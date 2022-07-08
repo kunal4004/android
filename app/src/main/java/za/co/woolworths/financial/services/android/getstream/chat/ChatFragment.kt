@@ -43,7 +43,7 @@ class ChatFragment : Fragment() {
     ): View {
         _binding = FragmentOneCartChatBinding.inflate(inflater, container, false)
 
-        recyclerViewAdapter = ChatRecyclerViewAdapter(viewModel.messages.toTypedArray())
+        recyclerViewAdapter = ChatRecyclerViewAdapter(viewModel.messageItems.toTypedArray())
 
         _binding!!.messagesRecyclerView.layoutManager = LinearLayoutManager(activity)
         _binding!!.messagesRecyclerView.adapter = recyclerViewAdapter
@@ -70,7 +70,7 @@ class ChatFragment : Fragment() {
     }
 
     private fun updateRecyclerViewDataSet(){
-        recyclerViewAdapter.setDataSet(viewModel.messages.toTypedArray())
+        recyclerViewAdapter.setDataSet(viewModel.messageItems.toTypedArray())
         recyclerViewAdapter.notifyDataSetChanged()
 
         binding.messagesRecyclerView.smoothScrollToPosition(recyclerViewAdapter.itemCount -1)

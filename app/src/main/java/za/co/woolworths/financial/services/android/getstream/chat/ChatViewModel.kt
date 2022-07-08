@@ -19,15 +19,23 @@ class ChatViewModel: ViewModel() {
     lateinit var channelId: String
 
     val state: LiveData<ChatState> = _state
-    val messages: MutableList<Message> = mutableListOf()
+    val messageItems: MutableList<MessageItem> = mutableListOf()
 
     public fun fetchMessages(){
         chatClient.channel(channelId).watch().enqueue { result ->
             if (result.isSuccess) {
                 var channel = result.data()
 
-                messages.clear()
-                messages.addAll(channel.messages)
+                messageItems.clear()
+                //messages.addAll(channel.messages)
+
+                for (message in channel.messages){
+                    val messageItem = MessageItem(
+                            isMine = isMessageMine(message),
+                            message = message
+                    )
+                    messageItems.add(messageItem)
+                }
 
                 _state.postValue(ChatState.ReceivedMessagesData)
             }
