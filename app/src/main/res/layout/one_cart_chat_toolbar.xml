@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/white">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineEnd"
@@ -16,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="@dimen/_18sdp" />
+        app:layout_constraintGuide_begin="@dimen/_8sdp" />
 
 
     <androidx.constraintlayout.widget.Guideline
@@ -38,20 +39,62 @@
         android:id="@+id/chatBackImg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:padding="@dimen/_10sdp"
         app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintTop_toTopOf="@id/guidelineTop"
-        app:srcCompat="@drawable/ic_back_black" />
+        app:srcCompat="@drawable/ic_one_cart_back_arrow" />
 
 
     <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/chatWithPersonName"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Test Name"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/futura_semi_bold"
+        android:text="Refilwe MATABANE"
+        android:letterSpacing="@integer/point_eleven"
+        android:textColor="@color/black"
         android:textSize="@dimen/_10ssp"
-        android:layout_marginStart="@dimen/_15sdp"
-        app:layout_constraintStart_toStartOf="@+id/chatBackImg"
+        android:textAllCaps="true"
+        android:gravity="center_vertical"
+        android:layout_marginTop="@dimen/_10sdp"
+        app:layout_constraintStart_toEndOf="@+id/chatBackImg"
         app:layout_constraintTop_toTopOf="@id/guidelineTop"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/futura_light"
+        android:text="order #328219"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_10ssp"
+        android:textAllCaps="true"
+        android:ellipsize="end"
+        android:letterSpacing="@integer/point_eleven"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginStart="@dimen/_5sdp"
+        app:layout_constraintEnd_toStartOf="@+id/woolIcon"
+        app:layout_constraintStart_toEndOf="@+id/chatWithPersonName"
+        app:layout_constraintTop_toTopOf="@id/guidelineTop"/>
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/activeStateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:text="Currently Active"
+        android:textColor="@color/color_666666"
+        android:textSize="@dimen/_10ssp"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:layout_marginTop="@dimen/_5sdp"
+        app:layout_constraintEnd_toEndOf="@+id/woolIcon"
+        app:layout_constraintStart_toStartOf="@+id/chatWithPersonName"
+        app:layout_constraintTop_toBottomOf="@id/chatWithPersonName"/>
 
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -61,7 +104,7 @@
         app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintTop_toTopOf="@id/guidelineTop"
-        app:srcCompat="@drawable/circle_black" />
+        app:srcCompat="@drawable/ic_app_logo_24" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

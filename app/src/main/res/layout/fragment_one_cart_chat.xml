@@ -12,15 +12,14 @@
         android:id="@+id/chatToolbarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        layout="@layout/chat_toolbar"
+        layout="@layout/one_cart_chat_toolbar"
         app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/messagesRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/_110sdp"
-        android:layout_marginBottom="@dimen/_90sdp"
+        android:paddingBottom="@dimen/_140sdp"
         app:layout_constraintTop_toBottomOf="@+id/chatToolbarLayout"/>
 
     <include

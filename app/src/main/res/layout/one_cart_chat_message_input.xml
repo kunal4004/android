@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.Guideline
@@ -9,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="@dimen/_18sdp" />
+        app:layout_constraintGuide_end="@dimen/_8sdp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineStart"
@@ -33,16 +34,24 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="@dimen/_12sdp" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_1sdp"
+        android:background="@color/non_editable_button_bg"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/messageInputEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Type message"
-        android:textColorHint="@color/black"
-        android:textSize="@dimen/_10sdp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:hint="@string/type_a_message"
+        android:textColorHint="@color/color_666666"
+        android:textSize="@dimen/_14sdp"
         android:background="@null"
+        android:maxHeight="@dimen/_100sdp"
         android:textColor="@color/black"
+        android:lineSpacingExtra="@dimen/_2sdp"
         app:layout_constraintTop_toTopOf="@id/guidelineTop"
         app:layout_constraintEnd_toStartOf="@+id/sendMessageImage"
         app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -14,7 +13,9 @@
         android:layout_marginLeft="@dimen/sixteen_dp"
         android:layout_marginRight="@dimen/sixteen_dp"
         android:padding="@dimen/sixteen_dp"
-        app:layout_constraintWidth_percent="0.7"
+        app:layout_constraintWidth_max="@dimen/_220sdp"
+        app:layout_constraintWidth_min="@dimen/_60sdp"
+
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
@@ -23,6 +24,7 @@
             android:id="@+id/senderTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/myriad_pro_semi_bold"
             android:text="@string/placeholder"
             android:textColor="@color/black"
             android:textSize="@dimen/_10ssp" />
@@ -31,8 +33,12 @@
             android:id="@+id/messageTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/myriad_pro_regular"
             android:text="@string/placeholder"
-            android:textColor="@color/black"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:lineSpacingExtra="@dimen/_2ssp"
+            android:translationY="-1.5sp"
+            android:textColor="@color/color_666666"
             android:textSize="@dimen/_12ssp" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>

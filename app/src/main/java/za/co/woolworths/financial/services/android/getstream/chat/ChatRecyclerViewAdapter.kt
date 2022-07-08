@@ -6,11 +6,12 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
+import com.awfs.coordination.R
 import com.awfs.coordination.databinding.OneCartChatMessageRowBinding
 import io.getstream.chat.android.client.models.Message
+import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 
 class ChatRecyclerViewAdapter(private var initialDataSet: Array<Message>, private val messageItemDelegate: IMessageItemDelegate): RecyclerView.Adapter<ChatRecyclerViewAdapter.ViewHolder>() {
 
@@ -40,30 +41,32 @@ class ChatRecyclerViewAdapter(private var initialDataSet: Array<Message>, privat
         holder.messageBubble.updateLayoutParams<ConstraintLayout.LayoutParams> {
 
             if(isMessageOwnedByMe){
-                this.rightToRight = ConstraintLayout.LayoutParams.UNSET
-                this.leftToLeft = ConstraintLayout.LayoutParams.PARENT_ID
-                
-                //1. bubble background is white
-                holder.messageBubble.background = Color.WHITE.toDrawable()
 
-                //2. sender name should be black
-                holder.senderTextView.setTextColor(Color.parseColor("#000000"))
-
-                //3. message color is grey
-                holder.messageTextView.setTextColor(Color.parseColor("#000000"))
-
-            } else{
                 this.leftToLeft = ConstraintLayout.LayoutParams.UNSET
                 this.rightToRight = ConstraintLayout.LayoutParams.PARENT_ID
 
-                //1. bubble background is black
-                holder.messageBubble.background = Color.BLACK.toDrawable()
+                //1. bubble background is white
+                holder.messageBubble.background = bindDrawable(R.drawable.bg_one_cart_chat_mine)
 
                 //2. sender name should be white
                 holder.senderTextView.setTextColor(Color.parseColor("#FFFFFF"))
 
                 //3. message color is off white
-                holder.messageTextView.setTextColor(Color.parseColor("#FFFFFF"))
+                holder.messageTextView.setTextColor(Color.parseColor("#EFEFEF"))
+
+            } else{
+                this.rightToRight = ConstraintLayout.LayoutParams.UNSET
+                this.leftToLeft = ConstraintLayout.LayoutParams.PARENT_ID
+
+                //1. bubble background is black
+                holder.messageBubble.background = bindDrawable(R.drawable.bg_one_cart_chat_there)
+
+                //2. sender name should be black
+                holder.senderTextView.setTextColor(Color.parseColor("#000000"))
+
+                //3. message color is grey
+                holder.messageTextView.setTextColor(Color.parseColor("#666666"))
+
             }
         }
     }

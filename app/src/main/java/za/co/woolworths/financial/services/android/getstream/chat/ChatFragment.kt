@@ -12,14 +12,11 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.awfs.coordination.R
-import com.awfs.coordination.databinding.FragmentChannelListBinding
 import com.awfs.coordination.databinding.FragmentOneCartChatBinding
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
-import za.co.woolworths.financial.services.android.getstream.channel.ChannelListViewModel
 import za.co.woolworths.financial.services.android.getstream.common.ChatState
-import za.co.woolworths.financial.services.android.getstream.common.State
+
 
 
 class ChatFragment : Fragment() {
@@ -29,11 +26,10 @@ class ChatFragment : Fragment() {
     }
 
     private val viewModel: ChatViewModel by viewModels()
-
     private var _binding: FragmentOneCartChatBinding? = null
     private val binding get() = _binding!!
-
     private lateinit var recyclerViewAdapter: ChatRecyclerViewAdapter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,7 +94,7 @@ class ChatFragment : Fragment() {
 
             binding.messageInputLayout.messageInputEditText.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                    TODO("Not yet implemented")
+                   // TODO: ("Not yet implemented")
                 }
 
                 override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -106,7 +102,7 @@ class ChatFragment : Fragment() {
                 }
 
                 override fun afterTextChanged(p0: Editable?) {
-                    TODO("Not yet implemented")
+                    //TODO: ("Not yet implemented")
                 }
 
             })
