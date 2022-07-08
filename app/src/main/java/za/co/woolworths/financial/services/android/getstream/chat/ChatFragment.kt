@@ -67,6 +67,23 @@ class ChatFragment : Fragment() {
         )
 
         viewModel.fetchMessages()
+        sendMessages()
+        closeChat()
+    }
+
+    private fun closeChat() {
+        binding.chatToolbarLayout.chatBackImg.setOnClickListener {
+            requireActivity().finish()
+        }
+    }
+
+    private fun sendMessages() {
+        binding.sendMessageLayout.imgSendMessage.setOnClickListener {
+            if (binding.sendMessageLayout.edTypeMessage != null) {
+                viewModel.sendMessage(binding.sendMessageLayout.edTypeMessage.text.toString())
+            binding.messagesRecyclerView.smoothScrollToPosition(recyclerViewAdapter.itemCount -1)
+          }
+        }
     }
 
     private fun updateRecyclerViewDataSet(){
@@ -75,4 +92,5 @@ class ChatFragment : Fragment() {
 
         binding.messagesRecyclerView.smoothScrollToPosition(recyclerViewAdapter.itemCount -1)
     }
+
 }

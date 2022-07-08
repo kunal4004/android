@@ -37,19 +37,24 @@
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/edTypeMessage"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="Type message"
+        android:textColorHint="@color/black"
         android:textSize="@dimen/_10sdp"
+        android:background="@null"
+        android:textColor="@color/black"
         app:layout_constraintTop_toTopOf="@id/guidelineTop"
+        app:layout_constraintEnd_toStartOf="@+id/imgSendMessage"
         app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"/>
 
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imgSendMessage"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:padding="@dimen/_10sdp"
         app:layout_constraintTop_toTopOf="@id/guidelineTop"
         app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"

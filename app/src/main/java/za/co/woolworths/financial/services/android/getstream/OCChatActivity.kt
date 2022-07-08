@@ -15,4 +15,9 @@ class OCChatActivity : AppCompatActivity(R.layout.activity_one_cart_chat_activit
             finishAffinity()
         }
     }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
+    }
 }
