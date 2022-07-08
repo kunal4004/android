@@ -233,6 +233,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 		if (AppConfigSingleton.INSTANCE.getAccountOptions() != null ){
 			fica = AppConfigSingleton.INSTANCE.getAccountOptions().getFicaRefresh();
 			if (url.contains(collectionsExitUrl)){
+				webInternalPage.destroy();
 				if (getQueryString(url).get("IsCompleted").equals("false")) {
 					ficaCanceled = true;
 				}
