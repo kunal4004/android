@@ -6,14 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.getstream.chat.IMessageItemDelegate
 import za.co.woolworths.financial.services.android.getstream.common.State
 import za.co.woolworths.financial.services.android.getstream.network.OCAuthenticationDto
 import za.co.woolworths.financial.services.android.getstream.network.OCAuthenticationResponse

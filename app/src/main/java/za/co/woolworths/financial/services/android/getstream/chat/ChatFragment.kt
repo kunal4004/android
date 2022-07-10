@@ -70,8 +70,22 @@ class ChatFragment : Fragment() {
             updateOtherUserPresenceIndicator(it)
         }
 
+        viewModel.otherUserDisplayName.observe(viewLifecycleOwner) {
+            binding.chatToolbarLayout.chatWithPersonName.text = it
+        }
+
         viewModel.fetchOtherUser()
         viewModel.fetchMessages()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.startWatching()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.stopWatching()
     }
 
     private fun setupToolbar(){

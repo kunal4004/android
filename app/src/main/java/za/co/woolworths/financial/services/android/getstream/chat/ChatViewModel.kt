@@ -25,11 +25,13 @@ class ChatViewModel: ViewModel() {
     private lateinit var otherUser: User
     private val _state = MutableLiveData<ChatState>()
     private val _isOtherUserOnline = MutableLiveData<Boolean>(false)
+    private val _otherUserDisplayName = MutableLiveData<String>("")
 
     lateinit var channelId: String
 
     val state: LiveData<ChatState> = _state
     val isOtherUserOnline: LiveData<Boolean> = _isOtherUserOnline
+    val otherUserDisplayName: LiveData<String> = _otherUserDisplayName
     val messages: MutableList<Message> = mutableListOf()
 
 //    val userPresenceState = ChatDomain.instance().online
@@ -48,8 +50,6 @@ class ChatViewModel: ViewModel() {
     public fun fetchMessages(){
         chatClient.channel(channelId).watch().enqueue { result ->
             if (result.isSuccess) {
-                var channel = result.data()
-
                 messages.clear()
                 messages.addAll(result.data().messages)
 
@@ -66,28 +66,14 @@ class ChatViewModel: ViewModel() {
             if (result.isSuccess) {
                 val member = result.data().last { x -> x.user.id != currentUser!!.id }
                 otherUser = member.user
-                postOtherUserPresence()
+                _otherUserDisplayName.postValue(otherUser.name)
 
+                observeOtherUserEvents()
+                postOtherUserPresence()
             } else {
                 _state.postValue(ChatState.Error(result.error().message))
                 postOtherUserPresence(false)
             }
-        }
-
-        channelClient.subscribe{ event ->
-            Log.d("channelClient.subscribe", event.type)
-        }
-
-        channelClient.subscribeFor(
-                UserStartWatchingEvent::class,
-                UserStopWatchingEvent::class
-        ){ event ->
-            when{
-                event is UserStartWatchingEvent && event.user.id == otherUser.id -> otherUser = event.user
-                event is UserStopWatchingEvent && event.user.id == otherUser.id -> otherUser = event.user
-            }
-
-            postOtherUserPresence()
         }
     }
 
@@ -113,5 +99,39 @@ class ChatViewModel: ViewModel() {
 
     public fun emitIsTyping(){
         chatClient.channel(channelId).keystroke()
+    }
+
+    private fun observeOtherUserEvents(){
+        val channelClient = chatClient.channel(channelId)
+
+        channelClient.subscribe{ event ->
+            Log.d("channelClient.subscribe", event.type)
+        }
+
+        channelClient.subscribeFor(
+                UserStartWatchingEvent::class,
+                UserStopWatchingEvent::class
+        ){ event ->
+            when{
+                event is UserStartWatchingEvent && event.user.id == otherUser.id -> {
+                    otherUser = event.user
+                    postOtherUserPresence(true)
+                }
+                event is UserStopWatchingEvent && event.user.id == otherUser.id -> {
+                    otherUser = event.user
+                    postOtherUserPresence(false)
+                }
+            }
+        }
+    }
+
+    public fun startWatching(){
+        val channelClient = chatClient.channel(channelId)
+        channelClient.watch().enqueue()
+    }
+
+    public fun stopWatching(){
+        val channelClient = chatClient.channel(channelId)
+        channelClient.stopWatching().enqueue()
     }
 }
