@@ -17,8 +17,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
 import za.co.woolworths.financial.services.android.getstream.common.ChatState
 
-
-
 class ChatFragment : Fragment() {
 
     companion object{
@@ -29,7 +27,6 @@ class ChatFragment : Fragment() {
     private var _binding: FragmentOneCartChatBinding? = null
     private val binding get() = _binding!!
     private lateinit var recyclerViewAdapter: ChatRecyclerViewAdapter
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,10 +42,9 @@ class ChatFragment : Fragment() {
     ): View {
         _binding = FragmentOneCartChatBinding.inflate(inflater, container, false)
 
+        setupToolbar()
         setupRecyclerView()
         setupInputLayout()
-        setupPresenceIndicator()
-        setupPresenceIndicator()
 
         return binding.root
     }
@@ -70,11 +66,16 @@ class ChatFragment : Fragment() {
                 }
         )
 
-        ChatDomain.instance().typingUpdates.observe(viewLifecycleOwner, Observer {
-            Log.d("Someone", "is typing")
-        })
+        viewModel.isOtherUserOnline.observe(viewLifecycleOwner) {
+            updateOtherUserPresenceIndicator(it)
+        }
 
+        viewModel.fetchOtherUser()
         viewModel.fetchMessages()
+    }
+
+    private fun setupToolbar(){
+
     }
 
     private fun setupRecyclerView(){
@@ -110,8 +111,8 @@ class ChatFragment : Fragment() {
         }
     }
 
-    private fun setupPresenceIndicator(){
-        viewModel.observeOtherUserPresence()
+    private fun updateOtherUserPresenceIndicator(isOnline: Boolean){
+        binding.chatToolbarLayout.activeStateTextView.text = if(isOnline) "Currently Active" else "Currently Inactive"
     }
 
     private fun showErrorMessage(errorMessage: String?){

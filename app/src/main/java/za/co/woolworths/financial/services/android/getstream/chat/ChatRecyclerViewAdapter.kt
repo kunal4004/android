@@ -13,7 +13,8 @@ import com.awfs.coordination.databinding.OneCartChatMessageRowBinding
 import io.getstream.chat.android.client.models.Message
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 
-class ChatRecyclerViewAdapter(private var initialDataSet: Array<Message>, private val messageItemDelegate: IMessageItemDelegate): RecyclerView.Adapter<ChatRecyclerViewAdapter.ViewHolder>() {
+class ChatRecyclerViewAdapter(initialDataSet: Array<Message>,
+                              private val messageItemDelegate: IMessageItemDelegate): RecyclerView.Adapter<ChatRecyclerViewAdapter.ViewHolder>() {
 
     private var dataSet: MutableList<Message> = initialDataSet.toMutableList()
 
@@ -46,7 +47,7 @@ class ChatRecyclerViewAdapter(private var initialDataSet: Array<Message>, privat
                 this.rightToRight = ConstraintLayout.LayoutParams.PARENT_ID
 
                 //1. bubble background is white
-                holder.messageBubble.background = bindDrawable(R.drawable.bg_one_cart_chat_mine)
+                holder.messageBubble.background = bindDrawable(R.drawable.bg_one_cart_chat_mine_message_bubble)
 
                 //2. sender name should be white
                 holder.senderTextView.setTextColor(Color.parseColor("#FFFFFF"))
@@ -59,7 +60,7 @@ class ChatRecyclerViewAdapter(private var initialDataSet: Array<Message>, privat
                 this.leftToLeft = ConstraintLayout.LayoutParams.PARENT_ID
 
                 //1. bubble background is black
-                holder.messageBubble.background = bindDrawable(R.drawable.bg_one_cart_chat_there)
+                holder.messageBubble.background = bindDrawable(R.drawable.bg_one_cart_chat_theirs_message_bubble)
 
                 //2. sender name should be black
                 holder.senderTextView.setTextColor(Color.parseColor("#000000"))
