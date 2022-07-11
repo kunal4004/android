@@ -80,20 +80,31 @@
         app:layout_constraintTop_toTopOf="@id/guidelineTop"/>
 
 
+    <View
+        android:id="@+id/activeInactiveStatus"
+        android:layout_width="@dimen/_5sdp"
+        android:layout_height="@dimen/_5sdp"
+
+        app:layout_constraintEnd_toEndOf="@+id/activeStateTextView"
+        android:layout_marginTop="@dimen/_10sdp"
+        app:layout_constraintStart_toStartOf="@+id/chatBackImg"
+        app:layout_constraintTop_toBottomOf="@id/chatWithPersonName"/>
+
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/activeStateTextView"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:fontFamily="@font/myriad_pro_regular"
-        android:text=""
+
         android:textColor="@color/color_666666"
         android:textSize="@dimen/_10ssp"
         android:ellipsize="end"
         android:gravity="center_vertical"
         android:maxLines="1"
         android:layout_marginTop="@dimen/_5sdp"
+        android:paddingEnd="@dimen/_10sdp"
         app:layout_constraintEnd_toEndOf="@+id/woolIcon"
-        app:layout_constraintStart_toStartOf="@+id/chatWithPersonName"
+        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
         app:layout_constraintTop_toBottomOf="@id/chatWithPersonName"/>
 
 
