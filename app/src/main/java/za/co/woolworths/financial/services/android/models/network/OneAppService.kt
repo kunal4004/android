@@ -769,4 +769,11 @@ object OneAppService : RetrofitConfig() {
                 confirmLocationRequest)
         }
     }
+
+    fun deleteAccount(): Call<DeleteAccountResponse>{
+        return mApiInterface.deleteAccount("",
+            "",
+            getSessionToken()
+        )
+    }
 }
