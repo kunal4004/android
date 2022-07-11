@@ -1404,5 +1404,14 @@ interface ApiInterface {
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body emailUsRequest: EmailUsRequest
     ): GenericResponse
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @DELETE("wfs/app/v4/user/deleteProfile")
+    fun deleteAccount(
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String
+    ): Call<DeleteAccountResponse>
+
 }
 
