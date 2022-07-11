@@ -116,7 +116,7 @@ class HelpAndSupportFragment : Fragment(R.layout.layout_help_and_support_frageme
         }
     }
 
-    override fun openEmailSupport(emailId: String) {
+   /* override fun openEmailSupport(emailId: String) {
         val intent = Intent().apply {
             action = Intent.ACTION_SEND
             data = Uri.parse("shop@wooliesdash.co.za")
@@ -130,6 +130,21 @@ class HelpAndSupportFragment : Fragment(R.layout.layout_help_and_support_frageme
         } else {
            // Log.d(TAG, "No app available to send email.")
         }
+    }
+*/
+
+
+    override fun openEmailSupport(emailId: String) {
+        val email= "shop@wooliesdash.co.za"
+        val subject= "Dash Order: " +
+                orderDetailsResponse?.orderSummary?.orderId
+       // val message= "HI, WELCOME"
+        val emailIntent = Intent(Intent.ACTION_SEND)
+        emailIntent.type = "plain/text"
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT,  subject)
+      //  emailIntent.putExtra(Intent.EXTRA_TEXT, message)
+        this.startActivity(emailIntent)
     }
 
     override fun openTaxInvoice() {
