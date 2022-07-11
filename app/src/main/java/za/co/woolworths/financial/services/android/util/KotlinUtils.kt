@@ -51,6 +51,7 @@ import za.co.woolworths.financial.services.android.geolocation.model.response.Co
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton.accountOptions
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.liquor
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
@@ -93,6 +94,9 @@ import java.net.SocketException
 import java.text.NumberFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
@@ -1215,6 +1219,45 @@ class KotlinUtils {
                     }
                 }
             )
+        }
+
+        fun hasADayPassed(dateString: String?): Boolean {
+            // when dateString = null it means it's the first time to call api
+            if (dateString == null) return true
+            val from = LocalDateTime.parse(
+                dateString,
+                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
+            )
+            val today = LocalDateTime.now()
+            var period = ChronoUnit.DAYS.between(from, today)
+            return if (period >= 1) {
+                Utils.sessionDaoSave(KEY.FICA_LAST_REQUEST_TIME, null)
+                true
+            } else {
+                false
+            }
+        }
+
+        fun ficaVerifyRedirect(
+            activity: Activity?,
+            url: String?,
+            isWebView: Boolean,
+            collectionsExitUrl: String?
+        ) {
+            activity?.apply {
+                val openInternalWebView = Intent(this, WInternalWebPageActivity::class.java)
+                openInternalWebView.putExtra("externalLink", url)
+                if (isWebView) {
+                    openInternalWebView.putExtra(COLLECTIONS_EXIT_URL, collectionsExitUrl)
+                    startActivityForResult(openInternalWebView, RESULT_CODE_CLOSE_VIEW)
+                } else {
+                    openUrlInPhoneBrowser(url, activity)
+                    activity.finish()
+                }
+            }
+        }
+        fun isFicaEnabled(): Boolean {
+            return Utils.isFeatureEnabled(accountOptions?.ficaRefresh?.minimumSupportedAppBuildNumber)
         }
 
         fun saveAnonymousUserLocationDetails(shoppingDeliveryLocation: ShoppingDeliveryLocation) {
