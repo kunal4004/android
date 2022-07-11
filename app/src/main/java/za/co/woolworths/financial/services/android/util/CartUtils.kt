@@ -26,19 +26,16 @@ class CartUtils {
             return vouchers.filter { it.voucherApplied }.size
         }
 
-        fun updateItemLimitsBanner(productCountMap: ProductCountMap?, banner: ConstraintLayout?, message: TextView?, counter: TextView?, isClickAndCollectOrDash: Boolean) {
+        fun updateItemLimitsBanner(productCountMap: ProductCountMap?, banner: ConstraintLayout?, message: TextView?, counter: TextView?, showBanner: Boolean) {
+            banner?.visibility = View.GONE
             productCountMap?.let {
-                if (it.quantityLimit?.foodLayoutColour != null && isClickAndCollectOrDash   && it.totalProductCount ?: 0 > 0) {
+                if (it.quantityLimit?.foodLayoutColour != null && showBanner && it.totalProductCount ?: 0 > 0) {
                     message?.text = it.quantityLimit.foodLayoutMessage ?: ""
                     counter?.text = it.totalProductCount.toString() + "/" + it.quantityLimit.foodMaximumQuantity?:""
                     if (it.quantityLimit.foodLayoutColour.isNotEmpty()) {
                         banner?.visibility = View.VISIBLE
                         banner?.setBackgroundColor(Color.parseColor(it.quantityLimit.foodLayoutColour))
-                    } else {
-                        banner?.visibility = View.GONE
                     }
-                } else {
-                    banner?.visibility = View.GONE
                 }
             }
         }

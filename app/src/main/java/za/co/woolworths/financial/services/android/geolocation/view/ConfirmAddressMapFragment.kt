@@ -172,9 +172,7 @@ class ConfirmAddressMapFragment :
                     if (isNetworkAvailable) {
                         dynamicMapView?.visibility = View.VISIBLE
                         mapFrameLayout.visibility = View.VISIBLE
-                        imgMapMarker.visibility = View.VISIBLE
                         autoCompleteTextView.isEnabled = true
-                        confirmAddress.isEnabled = true
                         dynamicMapView?.setAllGesturesEnabled(true)
                         if (isAddAddress!! && isAddressSearch == false) {
                             confirmAddress.isEnabled = false
@@ -540,8 +538,10 @@ class ConfirmAddressMapFragment :
     override fun onMarkerClicked(marker: DynamicMapMarker) { }
 
     private fun moveMapCamera(latitude: Double?, longitude: Double?) {
-        binding?.imgMapMarker?.visibility = View.VISIBLE
-        binding?.confirmAddress?.isEnabled = true
+        if(latitude!=null && longitude!=null) {
+            binding?.imgMapMarker?.visibility = View.VISIBLE
+            binding?.confirmAddress?.isEnabled = true
+        }
         isAddAddress = false
         dynamicMapView?.animateCamera(latitude, longitude,
             zoom = 18f

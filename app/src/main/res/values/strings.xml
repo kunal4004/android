@@ -1975,8 +1975,11 @@
     <string name="will_do_later"><u>i’ll do this later</u></string>
     <string name="unable_process_checkout_title">Unable to proceed to Checkout</string>
     <string name="unable_process_checkout_desc">Please remove items from your cart in order to proceed with your checkout.</string>
-    <string name="toast_single_item_added_to_cart_message">%1$s item added to cart</string>
-    <string name="toast_multiple_item_added_to_cart_message">%1$s items added to cart</string>
+    <plurals name="toast_item_added_to_cart_message">
+        <item quantity="one">%d item added to cart.</item>
+        <item quantity="other">%d items added to cart.</item>
+    </plurals>
+
     <string name="cd_labelitemlimit">labelItemLimit</string>
     <string name="cd_totalitemlimit">totalItemLimit</string>
     <string name="cd_layouttoastmessage">layoutToastMessage</string>
@@ -2529,7 +2532,7 @@
     <string name="add_street_address">Street Address:</string>
     <string name="dash_free_collection">"Free Collection"</string>
     <string name="dash_item_limit">%d Item Limit</string>
-    <string name="dash_free_order">Free for orders over %d</string>
+    <string name="dash_delivery_fee">R%d Delivery Fee</string>
     <string name="select_delivery_timeslot">Select Delivery Timeslot</string>
     <string name="dash_delivery_date">Delivery Date</string>
     <string name="dash_delivery_timeslot">Delivery Timeslot</string>
@@ -2650,4 +2653,15 @@
     <string name="dash_status_en_route">En-route</string>
     <string name="dash_status_delivered">Delivered</string>
     <string name="empty" />
+    <string name="dash_item_limit_message">Dash orders allow %d items max</string>
+    <string name="delete_your_profile">DELETE YOUR PROFILE</string>
+    <string name="start_the_process">Start The Process</string>
+    <string name="delete_account_description">If you delete your profile, you won\'t be able to log into your account, view any account information, view history, or access any of our related apps.</string>
+    <string name="delete_online_profile">Delete Online Profile</string>
+    <string name="delete_account_description_in_dialog">If you delete your online profile, you won\'t be able to log in to your account, or access your order history. Deleting your online profile will not close any other accounts you have with Woolworths or Woolworths Financial Services.</string>
+    <string name="to_contact_customer_support_dial_0860_100_987">To contact Customer Support, dial 0860 100 987</string>
+    <string name="delete_my_account">Delete my account</string>
+    <string name="your_online_profile_has_been_successfully_deleted">Your Online Profile Has Been Successfully Deleted</string>
+
+
 </resources>
