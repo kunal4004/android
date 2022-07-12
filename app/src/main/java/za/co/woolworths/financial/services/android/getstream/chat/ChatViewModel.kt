@@ -6,7 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.channel.subscribeFor
+import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
@@ -34,8 +36,6 @@ class ChatViewModel: ViewModel() {
     val otherUserDisplayName: LiveData<String> = _otherUserDisplayName
     val messages: MutableList<Message> = mutableListOf()
 
-//    val userPresenceState = ChatDomain.instance().online
-
     var messageItemDelegate: IMessageItemDelegate
 
     init {
@@ -48,7 +48,11 @@ class ChatViewModel: ViewModel() {
     }
 
     public fun fetchMessages(){
-        chatClient.channel(channelId).watch().enqueue { result ->
+        val watchRequest = WatchChannelRequest().apply {
+            presence = true
+        }
+
+        chatClient.channel(channelId).watch(watchRequest).enqueue { result ->
             if (result.isSuccess) {
                 messages.clear()
                 messages.addAll(result.data().messages)
@@ -69,6 +73,7 @@ class ChatViewModel: ViewModel() {
                 _otherUserDisplayName.postValue(otherUser.name)
 
                 observeOtherUserEvents()
+                observeNewMessageEvents()
                 postOtherUserPresence()
             } else {
                 _state.postValue(ChatState.Error(result.error().message))
@@ -88,10 +93,7 @@ class ChatViewModel: ViewModel() {
         )
 
         chatClient.channel(channelId).sendMessage(message).enqueue{ result ->
-            if (result.isSuccess) {
-                val message: Message = result.data()
-                _state.postValue(ChatState.ReceivedMessageData(message))
-            } else {
+            if (!result.isSuccess) {
                 _state.postValue(ChatState.Error(result.error().message))
             }
         }
@@ -103,10 +105,6 @@ class ChatViewModel: ViewModel() {
 
     private fun observeOtherUserEvents(){
         val channelClient = chatClient.channel(channelId)
-
-        channelClient.subscribe{ event ->
-            Log.d("channelClient.subscribe", event.type)
-        }
 
         channelClient.subscribeFor(
                 UserStartWatchingEvent::class,
@@ -125,9 +123,23 @@ class ChatViewModel: ViewModel() {
         }
     }
 
-    public fun startWatching(){
+    private fun observeNewMessageEvents(){
         val channelClient = chatClient.channel(channelId)
-        channelClient.watch().enqueue()
+
+        // Subscribe for new message events
+        val disposable = channelClient.subscribeFor<NewMessageEvent> { event ->
+            val message = event.message
+            _state.postValue(ChatState.ReceivedMessageData(message))
+        }
+    }
+
+    public fun startWatching(){
+        val watchRequest = WatchChannelRequest().apply {
+            presence = true
+        }
+
+        val channelClient = chatClient.channel(channelId)
+        channelClient.watch(watchRequest).enqueue()
     }
 
     public fun stopWatching(){

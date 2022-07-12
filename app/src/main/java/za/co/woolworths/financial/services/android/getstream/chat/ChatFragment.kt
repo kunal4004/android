@@ -63,15 +63,14 @@ class ChatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.state.observe(
-            viewLifecycleOwner,
-            {
-                when (it) {
-                    is ChatState.ReceivedMessagesData -> updateRecyclerViewDataSet()
-                    is ChatState.ReceivedMessageData -> insertIntoRecyclerViewDataSet(it.message)
-                    is ChatState.Error -> showErrorMessage(it.errorMessage)
-                }
+            viewLifecycleOwner
+        ) {
+            when (it) {
+                is ChatState.ReceivedMessagesData -> updateRecyclerViewDataSet()
+                is ChatState.ReceivedMessageData -> insertIntoRecyclerViewDataSet(it.message)
+                is ChatState.Error -> showErrorMessage(it.errorMessage)
             }
-        )
+        }
         viewModel.fetchOtherUser()
         viewModel.fetchMessages()
     }
