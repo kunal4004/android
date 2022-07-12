@@ -35,7 +35,6 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
-import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
@@ -441,7 +440,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                     KotlinUtils.let {
                                         it.placeId = placeId
                                         it.isLocationSame = placeId?.equals(savedPlaceId)
-                                        it.isDeliveryLocationTabClicked = placeId?.equals(savedPlaceId)
+                                        it.isDeliveryLocationTabClicked =
+                                            placeId?.equals(savedPlaceId)
                                         it.isCncTabClicked = placeId?.equals(savedPlaceId)
                                         it.isDashTabClicked = placeId?.equals(savedPlaceId)
                                     }
@@ -768,7 +768,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         updateDashDetails()
     }
 
-    private fun selectATab(selectedTab: AppCompatTextView) {
+    private fun selectATab(selectedTab: AppCompatTextView?) {
         selectedTab?.setBackgroundResource(R.drawable.bg_geo_selected_tab)
         val myRiadSemiBoldFont =
             Typeface.createFromAsset(activity?.assets, "fonts/MyriadPro-Semibold.otf")
@@ -790,7 +790,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         }
     }
 
-    private fun unSelectATab(unSelectedTab: AppCompatTextView) {
+    private fun unSelectATab(unSelectedTab: AppCompatTextView?) {
         unSelectedTab?.apply {
             val myriadProRegularFont =
                 Typeface.createFromAsset(activity?.assets, "fonts/MyriadPro-Regular.otf")

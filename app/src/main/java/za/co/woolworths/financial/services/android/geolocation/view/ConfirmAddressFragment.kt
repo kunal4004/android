@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -112,6 +113,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         locator = Locator(activity as AppCompatActivity)
         setUpViewModel()
         initViews()
+        addFragmentListener()
     }
 
     override fun onResume() {
@@ -157,6 +159,12 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         setButtonUI(false)
         no_connection_layout?.btnRetry?.setOnClickListener {
             initViews()
+        }
+    }
+
+    private fun addFragmentListener() {
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, _ ->
+            // Do nothing. Only want to close this listener.
         }
     }
 
@@ -223,21 +231,22 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             try {
                 savedAddressResponse = confirmAddressViewModel.getSavedAddress()
                 savedAddressResponse?.addresses?.let { addressList ->
-                   val nickName = savedAddressResponse?.defaultAddressNickname
+                    val nickName = savedAddressResponse?.defaultAddressNickname
                     //To Show the DefaultAddress on Top of the Adapter
                     if (!nickName.isNullOrEmpty()) {
                         val defaultAddressOptional: Optional<Address> =
-                            addressList.stream().filter { address -> address.nickname.equals(nickName) }
+                            addressList.stream()
+                                .filter { address -> address.nickname.equals(nickName) }
                                 .findFirst()
                         if (defaultAddressOptional.isPresent) {
                             val defaultAddress = defaultAddressOptional.get()
                             addressList.remove(defaultAddress)
                             addressList.add(0, defaultAddress)
                             setAddressUI(addressList)
-                        }else{
+                        } else {
                             setAddressUI(addressList)
                         }
-                    }else{
+                    } else {
                         setAddressUI(addressList)
                     }
                 }
@@ -403,7 +412,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                     ),
                     activity)
 
-                if (isComingFromCheckout && deliveryType == Delivery.STANDARD.toString()) {
+                if (isComingFromCheckout && (deliveryType == Delivery.STANDARD.name || deliveryType == Delivery.DASH.name)) {
                     navigateToAddAddress(savedAddressResponse)
                 } else if (isComingFromCheckout && deliveryType == Delivery.CNC.name) {
                     //Navigate to map screen with delivery type or checkout type
@@ -464,7 +473,8 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                                         KotlinUtils.isDashTabClicked =
                                             address.placesId?.equals(getDeliveryType()?.address?.placeId) // changing black tooltip flag as user changes his browsing location.
                                         val intent = Intent()
-                                        intent.putExtra(BundleKeysConstants.VALIDATE_RESPONSE, validateLocationResponse)
+                                        intent.putExtra(BundleKeysConstants.VALIDATE_RESPONSE,
+                                            validateLocationResponse)
                                         activity?.setResult(Activity.RESULT_OK, intent)
                                         activity?.finish()
                                     } else {
@@ -479,7 +489,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                                         customBottomSheetDialogFragment.show(requireFragmentManager(),
                                             CustomBottomSheetDialogFragment::class.java.simpleName)
                                     }
-                                }else if (KotlinUtils.isComingFromCncTab == true) {
+                                } else if (KotlinUtils.isComingFromCncTab == true) {
                                     /*user is coming from CNC i.e. set Location flow or change button flow  */
                                     // navigate to CNC home tab.
                                     KotlinUtils.isComingFromCncTab = false
@@ -620,6 +630,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
             Utils.toJson(savedAddressResponse)
         )
+        bundle.putString(DELIVERY_TYPE, deliveryType)
         IS_COMING_FROM_SLOT_SELECTION
         bundle.putBoolean(
             IS_COMING_FROM_CHECKOUT,
