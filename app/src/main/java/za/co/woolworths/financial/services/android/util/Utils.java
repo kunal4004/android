@@ -1560,4 +1560,12 @@ public class Utils {
         String btnText = btnName.replaceAll("[^a-zA-Z0-9\\s]", "").trim();
         return btnText.replace(" ", "_").toLowerCase();
     }
+   public static String formatAnalyticsButtonText(String btnName){
+       String  btnText =  btnName.replaceAll("[^a-zA-Z0-9\\s]", "").trim();
+       return btnText.replace(" ", "_").toLowerCase();
+   }
+
+    public static int calculatePercentage(int count, int totalCount){
+        return (count*100)/totalCount;
+    }
 }

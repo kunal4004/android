@@ -232,10 +232,12 @@
     <item name="slider_guideline_percent_for_arrears_account_product" type="dimen" format="float">0.82</item>
     <item name="slider_guideline_percent_for_account_product" type="dimen" format="float">0.72</item>
     <dimen name="twenty_two_sp">22sp</dimen>
+    <dimen name="twenty_five_sp">25sp</dimen>
     <dimen name="product_close_image_size">35sp</dimen>
     <dimen name="vto_count_txt_size">90sp</dimen>
     <dimen name="vto_preview_size">380dp</dimen>
     <dimen name="two_hundred_ten_dp">210dp</dimen>
     <dimen name="two_hundred_eight_dp">208dp</dimen>
+    <dimen name="one_hundred_eight_dp">108dp</dimen>
 </resources>
 

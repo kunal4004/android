@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.detail.
 import android.content.Context
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
 
@@ -41,6 +42,8 @@ interface ProductDetailsContract {
         fun showProductNotAvailableForCollection()
         fun clearStockAvailability()
         fun shareProduct()
+        fun onGetRatingNReviewSuccess(ratingNReview: RatingAndReviewData)
+        fun onGetRatingNReviewFailed(response: Response, httpCode: Int)
     }
 
     interface ProductDetailsPresenter {
@@ -52,6 +55,7 @@ interface ProductDetailsContract {
         fun postAddItemToCart(addItemToCart: List<AddItemToCart>)
         fun findStoresForSelectedSku(otherSkus: OtherSkus?)
         fun isSizeGuideApplicable(colourSizeVariants: String?, sizeGuideId: String?): Boolean
+        fun loadRatingNReview(productID: String, limit: Int, offset: Int)
     }
 
     interface ProductDetailsInteractor {
@@ -63,6 +67,7 @@ interface ProductDetailsContract {
         fun getStockAvailability(storeID: String, multiSKU: String, onFinishListener: OnFinishListener)
         fun postAddItemToCart(addItemToCart: List<AddItemToCart>, onFinishListener: OnFinishListener)
         fun getLocationItems(otherSkus: OtherSkus?, onFinishListener: OnFinishListener)
+        fun getRaringNReview(productID: String, limit: Int, offset: Int, onFinishListener: OnFinishListener)
     }
 
 }

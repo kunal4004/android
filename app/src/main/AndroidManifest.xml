@@ -21,7 +21,9 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.FLASHLIGHT" />
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:ignore="ProtectedPermissions" />
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" /> <!-- To check application on background or not for KITKAT -->
     <uses-permission android:name="android.permission.GET_TASKS" /> <!-- Don't require camera, as this requires a rear camera. This allows it to work on the Nexus 7 -->
     <uses-permission
@@ -90,6 +92,18 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="label,android:name">
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.ReportReviewActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.MoreReviewActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.ReviewerInfoDetailsActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
 
         <meta-data
             android:name="android.webkit.WebView.EnableSafeBrowsing"
@@ -308,9 +322,8 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"
-            android:theme="@style/Cart" />
-
+            android:theme="@style/Cart"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity"
             android:screenOrientation="portrait"
@@ -350,7 +363,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/DebitOrder" />
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.PortraitAppCompatActivity" />
-
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.maintenance.MaintenanceMessageActivity"
             android:launchMode="singleTask"
@@ -466,6 +478,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/ShoppingListDetailActivityStyle"
             android:windowSoftInputMode="adjustResize" />
+
         <service
             android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService"
             android:enabled="true"

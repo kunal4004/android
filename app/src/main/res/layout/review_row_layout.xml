@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:layout_marginTop="@dimen/one_dp"
+    android:id="@+id/review_row_layout"
+    android:paddingLeft="@dimen/sixteen_dp"
+    android:paddingRight="@dimen/sixteen_dp"
+    android:paddingBottom="@dimen/sixteen_dp"
+    android:layout_marginBottom="@dimen/sixteen_dp">
+
+    <TextView
+        android:id="@+id/tvName"
+        style="@style/myriad_pro_semi_bold_black_15_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvSkinProfile"
+        style="@style/futura_medium_black_12_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:alpha="0.5"
+        android:text="@string/view_skin_profile"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvVerifiedBuyer"
+        style="@style/myriad_pro_semi_bold_49BB77_15_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:drawableLeft="@drawable/ic_verified_buyer"
+        android:drawablePadding="@dimen/eight_dp"
+        android:text="@string/verified_buyer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvName"
+        tools:layout_editor_absoluteX="@dimen/zero_dp" />
+
+    <TextView
+        android:id="@+id/tvVerifiedStaffMember"
+        style="@style/myriad_pro_semi_bold_777777_15_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/nine_dp"
+        android:drawableLeft="@drawable/verified_icon"
+        android:drawablePadding="@dimen/eight_dp"
+        android:text="@string/verified_staff_member"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvVerifiedBuyer"
+        tools:layout_editor_absoluteX="@dimen/zero_dp" />
+
+    <View
+        android:id="@+id/view1"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/one_dp"
+        android:layout_marginTop="@dimen/twenty_five_dp"
+        android:background="@color/layout_background_gray"
+        app:layout_constraintTop_toBottomOf="@+id/tvVerifiedStaffMember" />
+
+    <RatingBar
+        android:id="@+id/ratingBar"
+        style="@style/pdpRatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/nineteen_dp"
+        android:isIndicator="true"
+        android:numStars="5"
+        android:rating="3.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view1" />
+
+    <TextView
+        android:id="@+id/tvDate"
+        style="@style/myriad_pro_regular_black_15_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/nineteen_dp"
+        android:alpha="0.5"
+        android:gravity="center_vertical"
+        android:textAllCaps="true"
+        android:textSize="@dimen/text_size_12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view1" />
+
+    <LinearLayout
+        android:id="@+id/linear_layout_customer_review"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tvReviewHeading"
+        style="@style/myriad_pro_semi_bold_black_15_text_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ten_dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ratingBar" />
+
+    <TextView
+        android:id="@+id/tvCustomerReview"
+        style="@style/myriad_pro_regular_black_15_text_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/seven_dp"
+        android:alpha="0.5"
+        android:ellipsize="end"
+        android:maxLines="3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvReviewHeading" />
+
+    <TextView
+        android:id="@+id/tvReviewPostedOn"
+        style="@style/myriad_pro_regular_black_13_text_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:ellipsize="end"
+        android:maxLines="3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCustomerReview" />
+
+    <View
+        android:id="@+id/view2"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/one_dp"
+        android:layout_marginTop="@dimen/six_dp"
+        android:background="@color/layout_background_gray"
+        app:layout_constraintTop_toBottomOf="@+id/tvReviewPostedOn" />
+
+    <LinearLayout
+        android:id="@+id/llAdditionalFields"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view2" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvSecondaryRatings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twelve_dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llAdditionalFields"
+        tools:itemCount="1"
+        tools:listitem="@layout/review_secondary_rating_row_item_layout" />
+
+    </LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvThumbnail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twelve_dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linear_layout_customer_review"
+        tools:itemCount="1"
+        tools:listitem="@layout/review_thumbnail_row_item" />
+
+    <include
+        android:id="@+id/reviewHelpfulReport"
+        layout="@layout/review_helpful_and_report_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twenty_two_dp"
+        android:layout_marginBottom="@dimen/sixteen_dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rvThumbnail" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

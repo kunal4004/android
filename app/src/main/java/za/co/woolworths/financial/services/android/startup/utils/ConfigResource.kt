@@ -2,6 +2,10 @@ package za.co.woolworths.financial.services.android.startup.utils
 
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
 import za.co.woolworths.financial.services.android.models.repository.AppConfigRepository
+import za.co.woolworths.financial.services.android.models.dto.RatingsAndReviews
+import za.co.woolworths.financial.services.android.models.dto.chat.Collections
+import za.co.woolworths.financial.services.android.models.dto.chat.CustomerService
+import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModel
 
@@ -30,6 +34,136 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
 
         fun persistGlobalConfig(response: ConfigResponse?, startupViewModel: StartupViewModel) {
             response?.configs?.apply {
+
+                enviroment?.apply {
+
+                    WoolworthsApplication.setStoreCardBlockReasons(storeCardBlockReasons)
+                    WoolworthsApplication.setSsoRedirectURI(getSsoRedirectURI())
+                    WoolworthsApplication.setStsURI(getStsURI())
+                    WoolworthsApplication.setSsoRedirectURILogout(getSsoRedirectURILogout())
+                    WoolworthsApplication.setSsoUpdateDetailsRedirectUri(getSsoUpdateDetailsRedirectUri())
+                    WoolworthsApplication.setWwTodayURI(getWwTodayURI())
+                    WoolworthsApplication.setAuthenticVersionStamp(getAuthenticVersionStamp())
+                    WoolworthsApplication.getInstance().wGlobalState.startRadius =
+                            getStoreStockLocatorConfigStartRadius()
+                    WoolworthsApplication.getInstance().wGlobalState.endRadius =
+                            getStoreStockLocatorConfigEndRadius()
+                }
+
+
+                defaults?.apply {
+                    WoolworthsApplication.setRegistrationTCLink(registerTCLink)
+                    WoolworthsApplication.setFaqLink(faqLink)
+                    WoolworthsApplication.setLogPublicKey(logPublicKey)
+                    WoolworthsApplication.setWrewardsLink(wrewardsLink)
+                    WoolworthsApplication.setRewardingLink(rewardingLink)
+                    WoolworthsApplication.setHowToSaveLink(howtosaveLink)
+                    WoolworthsApplication.setWrewardsTCLink(wrewardsTCLink)
+                    WoolworthsApplication.setCartCheckoutLink(cartCheckoutLink)
+                    WoolworthsApplication.setFirebaseUserPropertiesForDelinquentProductGroupCodes(firebaseUserPropertiesForDelinquentProductGroupCodes)
+                }
+
+                dashConfig?.apply {
+                    minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
+                    WoolworthsApplication.getInstance().dashConfig = this
+                }
+
+                whatsApp?.apply {
+                    showWhatsAppButton = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
+                    WoolworthsApplication.setWhatsAppConfig(this)
+                }
+
+                WoolworthsApplication.setPayMyAccountOption(payMyAccount)
+
+                WoolworthsApplication.setQuickShopDefaultValues(quickShopDefaultValues)
+                WoolworthsApplication.setWhitelistedDomainsForQRScanner(whitelistedDomainsForQRScanner)
+                WoolworthsApplication.setStsValues(sts)
+                WoolworthsApplication.setApplyNowLink(applyNowLinks)
+
+                var absaBankingOpenApiServices: AbsaBankingOpenApiServices? = absaBankingOpenApiServices
+                if (absaBankingOpenApiServices == null) {
+                    absaBankingOpenApiServices = AbsaBankingOpenApiServices(false, "", "", "", 0)
+                } else {
+                    absaBankingOpenApiServices.isEnabled = Utils.isFeatureEnabled(absaBankingOpenApiServices.minimumSupportedAppBuildNumber)
+                }
+
+
+                var inAppChat: InAppChat? = inAppChat
+                if (inAppChat == null) {
+                    inAppChat = InAppChat(0, "", "", "", Collections("", "", "", "", "", mutableListOf()), CustomerService("", "", "", "", "", mutableListOf()), null, mutableListOf())
+                } else {
+                    inAppChat.isEnabled = Utils.isFeatureEnabled(inAppChat.minimumSupportedAppBuildNumber)
+                }
+
+                val virtualTempCard = virtualTempCard
+                if (virtualTempCard != null) {
+                    virtualTempCard.isEnabled = Utils.isFeatureEnabled(virtualTempCard.minimumSupportedAppBuildNumber)
+                }
+
+                contactUs?.let { WoolworthsApplication.setContactUsDetails(it) }
+
+                WoolworthsApplication.setInAppChat(inAppChat)
+
+                WoolworthsApplication.setAbsaBankingOpenApiServices(absaBankingOpenApiServices)
+
+                instantCardReplacement?.isEnabled = instantCardReplacement?.minimumSupportedAppBuildNumber?.let { Utils.isFeatureEnabled(it) }
+                        ?: false
+                WoolworthsApplication.setInstantCardReplacement(instantCardReplacement)
+                WoolworthsApplication.setVirtualTempCard(virtualTempCard)
+
+                creditCardActivation?.apply {
+                    isEnabled = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
+                }
+                WoolworthsApplication.setCreditCardActivation(creditCardActivation)
+                WoolworthsApplication.setCreditCardDelivery(creditCardDelivery)
+                WoolworthsApplication.setClickAndCollect(clickAndCollect)
+                WoolworthsApplication.setProductDetailsPage(productDetailsPage)
+
+                WoolworthsApplication.setCustomerFeedback(customerFeedback)
+
+                creditView?.apply {
+                    isEnabled = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
+                    WoolworthsApplication.setCreditView(creditView)
+                }
+
+                creditLimitIncrease?.apply {
+                    WoolworthsApplication.getInstance().setCreditLimitsIncrease(this)
+                }
+                nativeCheckout.apply {
+                    WoolworthsApplication.setNativeCheckout(nativeCheckout)
+                }
+
+                inAppReview?.apply {
+                    isEnabled = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
+                    WoolworthsApplication.setInAppReview(this)
+                }
+
+                liquor?.apply {
+                    WoolworthsApplication.setLiquor(this)
+                }
+
+                accountOptions?.apply {
+                    WoolworthsApplication.setAccountOptions(this)
+                }
+                deviceSecurity?.apply {
+                    WoolworthsApplication.setDeviceSecurity(this)
+                }
+
+                balanceProtectionInsurance?.apply {
+                    WoolworthsApplication.setBalanceProtectionInsuranceObject(this)
+                }
+
+                virtualTryOn?.apply {
+                    minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
+                    WoolworthsApplication.getInstance().virtualTryOn = this
+                }
+
+                ratingsAndReviews?.apply {
+                    minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
+                    WoolworthsApplication.getInstance().ratingsAndReviews=this;
+                }
+
+
                 AppConfigRepository().saveAppConfigData(this)
             }
         }

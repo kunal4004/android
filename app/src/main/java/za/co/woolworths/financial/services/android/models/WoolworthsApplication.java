@@ -48,6 +48,11 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.bpi.BalanceProtectionInsurance;
+import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat;
+import za.co.woolworths.financial.services.android.models.dto.contact_us.ContactUs;
+import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
+import za.co.woolworths.financial.services.android.models.dto.whatsapp.WhatsApp;
+import za.co.woolworths.financial.services.android.models.dto.RatingsAndReviews;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
@@ -86,6 +91,14 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     private static ValidatePlace validatePlace;
 
+    public static String getLogPublicKey(){
+    return logPublicKey;
+    }
+
+    public static void setLogPublicKey(String logPublicKey) {
+        WoolworthsApplication.logPublicKey = logPublicKey;
+    }
+    private RatingsAndReviews ratingsAndReviews;
 
     public static String getApiId() {
         PackageInfo packageInfo = null;
@@ -409,6 +422,17 @@ public class WoolworthsApplication extends Application implements Application.Ac
                 //sync SDK in background. when update needed.
                 // later may be required show on UI
             }
+    public void setRatingsAndReviews(RatingsAndReviews ratingsAndReviews) {
+        this.ratingsAndReviews = ratingsAndReviews;
+    }
+
+    public RatingsAndReviews getRatingsAndReviews() {
+        return ratingsAndReviews;
+    }
+
+    public static void setBalanceProtectionInsuranceObject(@Nullable BalanceProtectionInsuranceObject balanceProtectionInsurance) {
+        WoolworthsApplication.balanceProtectionInsurance = balanceProtectionInsurance;
+    }
 
             @Override
             public void onSuccess() {

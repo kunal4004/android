@@ -68,6 +68,14 @@ public class ProductList {
     @SerializedName("brandHeaderDescription")
     @Expose
     public String brandHeaderDescription;
+    @SerializedName("isRnREnabled")
+    public Boolean isRnREnabled;
+    @SerializedName("averageRating")
+    @Expose
+    public String averageRating;
+    @SerializedName("reviewCount")
+    @Expose
+    public String reviewCount;
 
     public ProductListingViewType rowType = ProductListingViewType.PRODUCT;
     public Integer numberOfItems;

@@ -103,6 +103,31 @@
         tools:targetApi="lollipop"
         tools:text="Original Free Range Venison Droëwors Nibbles 25g" />
 
+    <RatingBar
+        android:id="@+id/rating_bar"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/eight_dp"
+        android:numStars="5"
+        style="@style/StarRating"
+        android:isIndicator="true"
+        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/tvProductName" />
+
+    <TextView
+        android:id="@+id/txt_rating_count"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/eight_dp"
+        style="@style/reviewCount"
+        android:gravity="start"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/rating_bar"
+        app:layout_constraintStart_toEndOf="@+id/rating_bar"
+        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+        app:layout_constraintTop_toTopOf="@+id/rating_bar"
+        app:layout_constraintTop_toBottomOf="@+id/tvProductName"/>
+
     <TextView
         android:id="@+id/onlinePromotionalTextView1"
         style="@style/futura_medium"
@@ -119,7 +144,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/tvProductName" />
+        app:layout_constraintTop_toBottomOf="@+id/txt_rating_count" />
 
     <TextView
         android:id="@+id/onlinePromotionalTextView2"

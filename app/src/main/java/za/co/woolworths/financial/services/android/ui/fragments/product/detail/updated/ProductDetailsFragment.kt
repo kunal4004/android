@@ -38,6 +38,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.android.synthetic.main.pdp_rating_layout.*
 import com.perfectcorp.perfectlib.CameraView
 import com.perfectcorp.perfectlib.MakeupCam
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,6 +52,7 @@ import kotlinx.android.synthetic.main.product_details_delivery_location_layout.*
 import kotlinx.android.synthetic.main.product_details_fragment.*
 import kotlinx.android.synthetic.main.product_details_gift_with_purchase.*
 import kotlinx.android.synthetic.main.product_details_options_and_information_layout.*
+import kotlinx.android.synthetic.main.product_details_options_and_information_layout.ratingBar
 import kotlinx.android.synthetic.main.product_details_price_layout.*
 import kotlinx.android.synthetic.main.product_details_size_and_color_layout.*
 import kotlinx.android.synthetic.main.promotional_image.view.*
@@ -58,6 +60,10 @@ import kotlinx.android.synthetic.main.vto_layout.*
 import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
+import kotlinx.android.synthetic.main.ratings_ratingdetails.*
+import kotlinx.android.synthetic.main.review_row_layout.*
+import kotlinx.android.synthetic.main.select_vto_option.*
+import kotlinx.android.synthetic.main.select_vto_option.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment
@@ -75,9 +81,6 @@ import za.co.woolworths.financial.services.android.ui.activities.WStockFinderAct
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
-import za.co.woolworths.financial.services.android.ui.adapters.ProductColorSelectorAdapter
-import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeSelectorAdapter
-import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter.MultipleImageInterface
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
@@ -86,12 +89,27 @@ import za.co.woolworths.financial.services.android.ui.fragments.click_and_collec
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.ProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
+import za.co.woolworths.financial.services.android.util.*
+import java.util.*
+import kotlin.collections.ArrayList
+import com.facebook.FacebookSdk.getApplicationContext
+import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
+import za.co.woolworths.financial.services.android.ui.adapters.*
+import za.co.woolworths.financial.services.android.ui.vto.ui.PermissionAction
+import za.co.woolworths.financial.services.android.ui.vto.utils.PermissionUtil
+import kotlinx.android.synthetic.main.vto_imageview_fragment.*
+import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
 import za.co.woolworths.financial.services.android.ui.vto.di.qualifier.OpenSelectOption
@@ -127,6 +145,21 @@ import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
 import kotlin.collections.set
+import android.util.Log
+import android.widget.*
+import androidx.fragment.app.activityViewModels
+import kotlinx.android.synthetic.main.review_helpful_and_report_layout.view.*
+import kotlinx.coroutines.*
+import retrofit2.HttpException
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.*
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.apihelper.RatingAndReviewApiHelper
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModel
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModelFactory
+import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
+import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
+import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1500_MS
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_500_MS
 
 @AndroidEntryPoint
 class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView,
@@ -136,6 +169,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection,
     ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
     VtoSelectOptionListener, WMaterialShowcaseView.IWalkthroughActionListener, VtoTryAgainListener {
+class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView,
+    MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener, OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
+     VtoSelectOptionListener, WMaterialShowcaseView.IWalkthroughActionListener,VtoTryAgainListener ,
+    ReviewThumbnailAdapter.ThumbnailClickListener,View.OnTouchListener,
+    ViewTreeObserver.OnScrollChangedListener {
 
     var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -171,6 +209,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var isOutOfStockFragmentAdded = false
     private var liquorDialog: Dialog? = null
     private var LOGIN_REQUEST_SUBURB_CHANGE = 1419
+    private lateinit var  reviewThumbnailAdapter: ReviewThumbnailAdapter
+    private lateinit var secondaryRatingAdapter: SecondaryRatingAdapter
+    private var thumbnailFullList = listOf<Thumbnails>()
+    private  var ratingReviewResponse: RatingReviewResponse? = null
     private val permissionViewModel: PermissionViewModel by viewModels()
     private var isFromFile = false
     private var liveCamera: Boolean = false
@@ -204,6 +246,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var isVtoSdkInitFail: Boolean = false
     private var bannerLabel: String? = null
     private var bannerImage: String? = null
+    private var takenOriginalPicture : Bitmap? = null
+    private var isRnRAPICalled = false
+    private var prodId: String = "-1"
+    private lateinit var moreReviewViewModel: RatingAndReviewViewModel
 
     @OpenTermAndLighting
     @Inject
@@ -228,6 +274,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         const val HTTP_CODE_502 = 502
         fun newInstance() = ProductDetailsFragment()
         const val REQUEST_PERMISSION_MEDIA = 100
+        const val ZERO_REVIEWS = "0 Reviews"
 
         const val STR_PRODUCT_CATEGORY = "strProductCategory"
         const val STR_PRODUCT_LIST = "strProductList"
@@ -304,6 +351,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         moreColor?.setOnClickListener(this)
         imgCloseVTO?.setOnClickListener(this)
         imgVTORefresh?.setOnClickListener(this)
+        closePage?.setOnClickListener(this)
+        tvRatingDetails.setOnClickListener(this)
+        tvSkinProfile.setOnClickListener(this)
+        btViewMoreReview.setOnClickListener(this)
+        tvTotalReviews.setOnClickListener(this)
+        tvReport.setOnClickListener(this)
+        closePage.setOnClickListener {
+            activity?.apply {
+                setResult(RESULT_CANCELED)
+                onBackPressed()
+            }
+        }
         openCart?.setOnClickListener(this)
         brand_view?.brand_openCart?.setOnClickListener(this)
         backArrow?.setOnClickListener(this)
@@ -317,13 +376,41 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         imgDownloadVTO?.setOnClickListener(this)
         imgVTOSplit?.setOnClickListener(this)
         captureImage?.setOnClickListener(this)
+        iv_like.setOnClickListener(this)
+        scrollView.setOnTouchListener(this)
+        scrollView.viewTreeObserver.addOnScrollChangedListener(this)
         isOutOfStockFragmentAdded = false
         configureDefaultUI()
         cameraSurfaceView.setOnTouchListener { _, event ->
             pinchZoomOnVtoLiveCamera(event)
             true
         }
+        hideRatingAndReview()
+        setupViewModel()
+        updateReportLikeStatus()
+    }
 
+    private fun setupViewModel() {
+        moreReviewViewModel = ViewModelProvider(
+            this,
+            RatingAndReviewViewModelFactory(RatingAndReviewApiHelper())
+        ).get(RatingAndReviewViewModel::class.java)
+    }
+
+    private fun updateReportLikeStatus(){
+        if(ratingReviewResponse?.reviews?.isNotEmpty() == true) {
+            ratingReviewResponse?.reviews?.get(0)?.let {
+                if (RatingAndReviewUtil.likedReviews.contains(it.id.toString())) {
+                    iv_like.setImageResource(R.drawable.iv_like_selected)
+                }
+                if (RatingAndReviewUtil.reportedReviews.contains(it.id.toString())) {
+                    tvReport.setTextColor(Color.RED)
+                    tvReport.text = resources.getString(R.string.reported)
+                    tvReport?.setTypeface(tvReport.typeface,Typeface.BOLD)
+                    tvReport.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                }
+            }
+        }
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -403,7 +490,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
             R.id.imgVTOSplit -> compareWithLiveCamera()
             R.id.captureImage -> captureImageFromVtoLiveCamera()
-
+            R.id.tvRatingDetails -> showRatingDetailsDailog()
+            R.id.tvSkinProfile->viewSkinProfileDialog()
+            R.id.btViewMoreReview->navigateToMoreReviewsScreen()
+            R.id.tvTotalReviews->{ if(tvTotalReviews.text != ZERO_REVIEWS) navigateToMoreReviewsScreen()}
+            R.id.tvReport->navigateToReportReviewScreen()
+            R.id.iv_like->likeButtonClicked()
         }
     }
 
@@ -550,6 +642,92 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun openCart() {
         (activity as? BottomNavigationActivity)?.navigateToTabIndex(INDEX_CART, null)
+    private fun closeScreen() {
+        activity?.apply {
+            setResult(RESULT_CANCELED)
+            onBackPressed()
+        }
+    }
+
+    private fun navigateToReportReviewScreen() {
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSignin(activity)
+        } else {
+            ScreenManager.presentReportReview(activity,
+                    ratingReviewResponse?.reportReviewOptions as ArrayList<String>?,
+                ratingReviewResponse?.reviews?.get(0)
+            )
+        }
+    }
+
+    private fun likeButtonClicked() {
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSignin(activity)
+        } else {
+            lifecycleScope.launch {
+                showProgressBar()
+                try {
+                    val response = moreReviewViewModel.reviewFeedback(
+                        ReviewFeedback(
+                            ratingReviewResponse?.reviews?.get(0)?.id.toString(),
+                            SessionUtilities.getInstance().jwt.AtgId.asString,
+                            KotlinUtils.REWIEW,
+                            KotlinUtils.HELPFULNESS,
+                            KotlinUtils.POSITIVE,
+                            null
+                        )
+                    )
+                    hideProgressBar()
+                    if (response.httpCode == 200) {
+                        iv_like.setImageResource(R.drawable.iv_like_selected)
+                        RatingAndReviewUtil.likedReviews.add(ratingReviewResponse?.reviews?.get(0)?.id.toString())
+                    }
+                } catch (e: HttpException) {
+                    e.printStackTrace()
+                    hideProgressBar()
+                    if (e.code() != 502) {
+                        activity?.supportFragmentManager?.let { fragmentManager ->
+                            Utils.showGeneralErrorDialog(
+                                fragmentManager,
+                                getString(R.string.statement_send_email_false_desc)
+                            )
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
+    private fun navigateToMoreReviewsScreen() {
+        ScreenManager.presentRatingAndReviewDetail(activity, prodId)
+        RatingAndReviewUtil.likedReviews.clear()
+        RatingAndReviewUtil.reportedReviews.clear()
+    }
+
+    private fun showRatingDetailsDailog() {
+        val dialog = ratingReviewResponse?.let { RatingDetailDialog(it) }
+        activity?.apply {
+            this@ProductDetailsFragment.childFragmentManager.beginTransaction()
+                .let { fragmentTransaction ->
+                    dialog?.show(
+                        fragmentTransaction,
+                        RatingDetailDialog::class.java.simpleName
+                    )
+                }
+        }
+    }
+    private fun viewSkinProfileDialog() {
+        val dialog = ratingReviewResponse?.reviews?.get(0)?.let { SkinProfileDialog(it) }
+        activity?.apply {
+            this@ProductDetailsFragment.childFragmentManager.beginTransaction()
+                .let { fragmentTransaction ->
+                    dialog?.show(
+                        fragmentTransaction,
+                        SkinProfileDialog::class.java.simpleName
+                    )
+                }
+        }
     }
 
     private fun onQuantitySelector() {
@@ -1061,6 +1239,19 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     visibility = View.VISIBLE
                 }
             }
+
+
+            if (it.isRnREnabled && RatingAndReviewUtil.isRatingAndReviewConfigavailbel() ) {
+                ratingBarTop.rating = it.averageRating
+                tvTotalReviews.text = resources.getQuantityString(R.plurals.no_review, it.reviewCount, it.reviewCount)
+                ratingBarTop.visibility = View.VISIBLE
+                tvTotalReviews.visibility = View.VISIBLE
+                prodId = it.productId
+                tvTotalReviews.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            }else{
+                hideRatingAndReview()
+            }
+
             if (!it.freeGiftText.isNullOrEmpty()) {
                 freeGiftText?.text = it.freeGiftText
                 freeGiftWithPurchaseLayout?.visibility = View.VISIBLE
@@ -1112,6 +1303,161 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         if (isAllProductsOutOfStock() && isInventoryCalled) {
             showProductOutOfStock()
             return
+        }
+    }
+
+    private fun hideRatingAndReview(){
+        headerCustomerReview.visibility = View.GONE
+        reviewDetailsInformation.visibility = View.GONE
+        customerReview.visibility = View.GONE
+        rlViewMoreReview.visibility = View.GONE
+    }
+
+    private fun showRatingAndReview(){
+        headerCustomerReview.visibility = View.VISIBLE
+        reviewDetailsInformation.visibility = View.VISIBLE
+        customerReview.visibility = View.VISIBLE
+        rlViewMoreReview.visibility = View.VISIBLE
+    }
+
+    private fun setReviewUI(ratingNReviewResponse: RatingReviewResponse){
+        ratingNReviewResponse.apply {
+            reviewStatistics.apply {
+                ratingBar.rating = averageRating
+                ratingBarTop.rating = averageRating
+                tvCustomerReviewCount.text = resources.getQuantityString(R.plurals.customer_review, reviewCount, reviewCount)
+                val recommend= recommendedPercentage.split("%")
+                if (recommend.size == 2) {
+                    tvRecommendPer.text = "${recommend[0]}% "
+                    tvRecommendTxt.text = recommend[1]
+                }
+                if(reviewCount>1)
+                    btViewMoreReview.text = resources.getQuantityString(R.plurals.more_review, (reviewCount-1), (reviewCount-1))
+                else {
+                    btViewMoreReview.visibility = View.GONE
+                }
+                tvTotalReviews.text = resources.getQuantityString(R.plurals.no_review, reviewCount, reviewCount)
+            }
+            tvReport.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            tvSkinProfile.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            tvRatingDetails.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            if(reviews.isNotEmpty()) {
+                reviews[0].apply {
+                    tvName.text = userNickname
+                    if (isVerifiedBuyer)
+                        tvVerifiedBuyer.visibility = View.VISIBLE
+                    else
+                        tvVerifiedBuyer.visibility = View.GONE
+                    if (isStaffMember)
+                        tvVerifiedStaffMember.visibility = View.VISIBLE
+                    else
+                        tvVerifiedStaffMember.visibility = View.GONE
+                    ratingBar.rating = rating
+                    tvReviewHeading.text = title
+                    tvCustomerReview.text = reviewText
+                    tvReviewPostedOn.text = syndicatedSource
+                    tvDate.text = submissionTime
+                    tvLikes.text = totalPositiveFeedbackCount.toString()
+                    setReviewAdditionalFields(additionalFields)
+                    setSecondaryRatingsUI(secondaryRatings)
+                    setReviewThumbnailUI(photos.thumbnails)
+                    if(contextDataValue.isEmpty() && tagDimensions.isEmpty()){
+                        tvSkinProfile.visibility = View.GONE
+                    }
+                    if(RatingAndReviewUtil.likedReviews.contains(id.toString())){
+                        iv_like.setImageResource(R.drawable.iv_like_selected)
+                    }
+
+                    if (RatingAndReviewUtil.reportedReviews.contains(id.toString())){
+                        tvReport.setTextColor(Color.RED)
+                        tvReport.setText(resources.getString(R.string.reported))
+                        tvReport?.setTypeface(tvReport.typeface,Typeface.BOLD)
+                        tvReport.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                    }
+                }
+            }else{
+                customerReview.visibility = View.GONE
+                tvRatingDetails.visibility = View.GONE
+            }
+        }
+
+        linear_layout_customer_review?.setOnClickListener {
+            sendReviewDataToReviewDetailScreen(ratingNReviewResponse)
+        }
+    }
+
+    private fun sendReviewDataToReviewDetailScreen(ratingNReviewResponse: RatingReviewResponse) {
+        ScreenManager.presentReviewDetail(requireActivity(), ratingNReviewResponse)
+    }
+
+    private fun setReviewAdditionalFields(additionalFields: List<AdditionalFields>){
+        for (additionalField in additionalFields){
+            val rootView = LinearLayout(context)
+            rootView.layoutParams =
+                LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            rootView.orientation = LinearLayout.HORIZONTAL
+
+            val tvAdditionalFieldLabel = TextView(context)
+            tvAdditionalFieldLabel.alpha = 0.5F
+            val tvAdditionalFieldValue = TextView(context)
+            tvAdditionalFieldValue.alpha = 0.5F
+            val ivCircle = ImageView(context)
+            val tvParam: LinearLayout.LayoutParams =
+                LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            tvParam.setMargins(25, 0, 0, 8)
+            tvAdditionalFieldValue.layoutParams = tvParam
+            val ivParam: LinearLayout.LayoutParams =
+                LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            ivParam.setMargins(25,15,0,0)
+            ivCircle.layoutParams = ivParam
+            if (Build.VERSION.SDK_INT < 23) {
+                tvAdditionalFieldLabel.setTextAppearance(getApplicationContext(), R.style.myriad_pro_regular_black_15_text_style);
+                tvAdditionalFieldValue.setTextAppearance(getApplicationContext(), R.style.myriad_pro_semi_bold_black_15_text_style);
+            } else{
+                tvAdditionalFieldLabel.setTextAppearance(R.style.myriad_pro_regular_black_15_text_style);
+                tvAdditionalFieldValue.setTextAppearance(R.style.myriad_pro_semi_bold_black_15_text_style);
+            }
+            tvAdditionalFieldLabel.text = additionalField.label
+            ivCircle.setImageResource(R.drawable.ic_circle)
+            tvAdditionalFieldValue.text = additionalField.valueLabel
+
+            rootView.addView(tvAdditionalFieldLabel)
+            rootView.addView(ivCircle)
+            rootView.addView(tvAdditionalFieldValue)
+            llAdditionalFields.addView(rootView)
+        }
+    }
+
+    private fun setSecondaryRatingsUI(secondaryRatings: List<SecondaryRatings>){
+        rvSecondaryRatings.layoutManager = GridLayoutManager(getApplicationContext(),2)
+        secondaryRatingAdapter = SecondaryRatingAdapter()
+        rvSecondaryRatings.adapter = secondaryRatingAdapter
+        secondaryRatingAdapter.setDataList(secondaryRatings)
+    }
+
+    private fun setReviewThumbnailUI(thumbnails: List<Thumbnails>) {
+        rvThumbnail.layoutManager = GridLayoutManager(getApplicationContext(),3)
+        reviewThumbnailAdapter = ReviewThumbnailAdapter(getApplicationContext(),this)
+        rvThumbnail.adapter = reviewThumbnailAdapter
+        thumbnailFullList = thumbnails
+        if(thumbnails.size>2)
+        {
+            reviewThumbnailAdapter.setDataList(thumbnailFullList.subList(0,2))
+        }else
+            reviewThumbnailAdapter.setDataList(thumbnailFullList)
+    }
+
+    override fun thumbnailClicked() {
+        reviewThumbnailAdapter.setDataList(thumbnailFullList)
+        reviewThumbnailAdapter.notifyDataSetChanged()
+    }
+
+    private fun setBrandText(it: ProductDetails) {
+        brandName.apply {
+            if (!it.brandText.isNullOrEmpty()) {
+                text = it.brandText
+                visibility = View.VISIBLE
+            }
         }
     }
 
@@ -2229,6 +2575,14 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         activity?.apply {
             Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL)
         }
+
+        if(RatingAndReviewUtil.isSuccessFullyReported) {
+            tvReport?.text = getString(R.string.reported)
+            tvReport?.setTextColor(Color.RED)
+            tvReport?.setTypeface(tvReport.typeface,Typeface.BOLD)
+            RatingAndReviewUtil.isSuccessFullyReported = false
+        }
+        updateReportLikeStatus()
     }
 
     private fun isAllProductsOutOfStock(): Boolean {
@@ -2431,6 +2785,26 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHARE, arguments, activity)
         }
+    }
+
+    override fun onGetRatingNReviewSuccess(ratingNReview: RatingAndReviewData) {
+        hideProgressBar()
+        if(ratingNReview.data.isNotEmpty()) {
+            showRatingAndReview()
+            setReviewUI(ratingNReview.data[0])
+            ratingReviewResponse = ratingNReview.data[0]
+            scrollView.post {
+                scrollView.fullScroll(View.FOCUS_DOWN)
+            }
+        } else
+            hideRatingAndReview()
+    }
+
+    override fun onGetRatingNReviewFailed(
+        response: Response,
+        httpCode: Int
+    ) {
+        hideRatingAndReview()
     }
 
     /**
@@ -3182,5 +3556,22 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             moreColor?.layoutParams = it
         }
     }
+    override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+        return false
+    }
+
+    override fun onScrollChanged() {
+        if (!scrollView.canScrollVertically(1) && !isRnRAPICalled) {
+            if (productDetails?.isRnREnabled == true && RatingAndReviewUtil.isRatingAndReviewConfigavailbel())
+                productDetails?.productId?.let {
+                    productDetailsPresenter?.loadRatingNReview(it,1,0)
+                isRnRAPICalled = true
+                showProgressBar()
+                    RatingAndReviewUtil.reportedReviews.clear()
+                    RatingAndReviewUtil.likedReviews.clear()
+                }
+        }
+    }
+
 }
 

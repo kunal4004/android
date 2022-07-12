@@ -7,7 +7,8 @@
     android:clickable="true"
     android:focusable="true"
     android:orientation="horizontal"
-    android:visibility="gone">
+    android:visibility="gone"
+    >
 
     <RelativeLayout
         android:id="@+id/sortProducts"
@@ -19,7 +20,6 @@
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             style="@style/sort_and_filter_selection_text_style"
             android:text="@string/sort_by" />
-        />
 
         <ImageView
             android:layout_width="wrap_content"
@@ -46,7 +46,7 @@
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/refinementText"
             style="@style/sort_and_filter_selection_text_style"
-            android:text="@string/refine" />
+            android:text="@string/filter" />
 
         <ImageView
             android:id="@+id/refineDownArrow"

@@ -95,6 +95,7 @@ import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
+import kotlin.math.roundToInt
 
 class KotlinUtils {
     companion object {
@@ -106,6 +107,12 @@ class KotlinUtils {
         const val RESULT_CODE_CLOSE_VIEW = 2203
         var GEO_REQUEST_CODE = -1
 
+        const val REVIEW_DATA = "reviewData"
+        const val PROD_ID = "prod_id"
+        const val REVIEW_REPORT: String = "reviewReport"
+        const val REWIEW = "review"
+        const val HELPFULNESS = "helpfulness"
+        const val POSITIVE = "Positive"
 
         fun highlightTextInDesc(
             context: Context?,
@@ -947,6 +954,19 @@ class KotlinUtils {
                 elseJob()
             }
         }
+
+         fun getUpdatedUtils(rating:Float) :Float{
+             val completeValue: Int =  rating.toInt() %10
+             val decimalValue:Int = ((rating %1)*10).toInt()
+
+            if (decimalValue >= 0 && decimalValue <= 2) {
+                return completeValue.toFloat()
+            } else if (decimalValue > 2 && decimalValue <= 7) {
+                return (completeValue + .5).toFloat()
+            }
+            return rating.roundToInt().toFloat()
+        }
+    }
 
         fun getPreferredDeliveryType(): Delivery? {
             return Delivery.getType(
