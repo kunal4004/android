@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop.helpandsupport
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -78,7 +77,7 @@ class HelpAndSupportFragment : Fragment(R.layout.layout_help_and_support_frageme
                 dataList.add(HelpAndSupport(getString(R.string.cancel_order), "", R.drawable.ic_dash_cancel_order))
 
             if (isChatEnabled)
-                dataList.add(HelpAndSupport(getString(R.string.dash_Chat_to_your_shopper), "", R.drawable.ic_dash_chat_support_icon))
+                dataList.add(HelpAndSupport(getString(R.string.dash_Chat_to_your_shopper) + " " + shopperName, "", R.drawable.ic_dash_chat_support_icon))
 
             if (isDriverTrackingEnabled)
                 dataList.add(HelpAndSupport(getString(R.string.dash_track_your_order), "", R.drawable.ic_dash_track_order_icon))
