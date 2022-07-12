@@ -1,15 +1,20 @@
 package za.co.woolworths.financial.services.android.getstream.chat
 
+import android.content.Intent
+import android.content.Intent.getIntent
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat.recreate
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentOneCartChatBinding
@@ -17,9 +22,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.getstream.chat.android.client.models.Message
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
 import za.co.woolworths.financial.services.android.getstream.common.ChatState
+import za.co.woolworths.financial.services.android.getstream.common.navigateSafely
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.hideKeyboard
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class ChatFragment : Fragment() {
@@ -77,12 +84,17 @@ class ChatFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.startWatching()
+
+        if(!viewModel.isConnected()){
+
+            findNavController().popBackStack()
+            findNavController().navigateSafely(findNavController().graph.startDestination)
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        viewModel.stopWatching()
+        viewModel.disconnect()
     }
 
     private fun setupToolbar(){

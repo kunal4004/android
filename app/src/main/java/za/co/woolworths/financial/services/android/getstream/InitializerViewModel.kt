@@ -23,16 +23,6 @@ class InitializerViewModel: ViewModel() {
     private val _state = MutableLiveData<State>()
     val state: LiveData<State> = _state
 
-//                        App.instance.userRepository.setUser(
-//                                SampleUser(
-//                                        apiKey = loginCredentials.apiKey,
-//                                        id = loginCredentials.userId,
-//                                        name = loginCredentials.userName,
-//                                        token = loginCredentials.userToken,
-//                                        image = "https://getstream.io/random_png?id=${loginCredentials.userId}&name=${loginCredentials.userName}&size=200"
-//                                )
-//                        )
-
     private lateinit var atgId: String //retrieved from the JWT Token
     private lateinit var displayName: String //retrieved from the JWT Token, firstName + lastName
     private lateinit var userId: String //retrieved from OneCart Authentication API
