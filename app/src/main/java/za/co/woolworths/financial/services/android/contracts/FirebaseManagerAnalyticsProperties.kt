@@ -365,6 +365,9 @@ open class FirebaseManagerAnalyticsProperties {
         const val CC_BPI_OPT_IN_CONFIRM: String = "cc_bpi_optin_confirm"
         const val CC_BPI_OPT_IN_SEND_EMAIL: String = "cc_bpi_send_email"
 
+        const val FICA_VERIFY_START: String = "fica_verify_start"
+        const val FICA_VERIFY_SKIP: String = "fica_verify_skip"
+
         const val VIEW_ITEM_LIST: String = "view_item_list"
         const val VIEW_ITEM_EVENT: String = "view_item"
         const val SELECT_ITEM_EVENT: String = "select_item"
@@ -413,7 +416,6 @@ open class FirebaseManagerAnalyticsProperties {
         const val ADDRESS_OFFICE = "Office"
         const val ADDRESS_COMPLEX_ESTATE = "Complex / Estate"
         const val ADDRESS_APARTMENT = "Apartment"
-
 
 
     }
