@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.channel.subscribeFor
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
@@ -15,7 +14,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.observable.Disposable
 import za.co.woolworths.financial.services.android.getstream.common.ChatState
 
-class ChatViewModel: ViewModel() {
+class ChatViewModel : ViewModel() {
 
     private val chatClient: ChatClient by lazy { ChatClient.instance() }
     private val currentUser: User? by lazy { chatClient.getCurrentUser() }
@@ -23,30 +22,25 @@ class ChatViewModel: ViewModel() {
     private val _state = MutableLiveData<ChatState>()
     private val _isOtherUserOnline = MutableLiveData<Boolean>(false)
     private val _otherUserDisplayName = MutableLiveData<String>("")
-
     lateinit var channelId: String
-
     val state: LiveData<ChatState> = _state
     val isOtherUserOnline: LiveData<Boolean> = _isOtherUserOnline
     val otherUserDisplayName: LiveData<String> = _otherUserDisplayName
     val messages: MutableList<Message> = mutableListOf()
-
     var messageItemDelegate: IMessageItemDelegate
-
     private lateinit var userWatchingEventsDisposable: Disposable
     private lateinit var newMessageEventDisposable: Disposable
 
     init {
         messageItemDelegate = MessageItemDelegateImpl(
-                isMessageOwnedByMe = { message: Message ->
-                    currentUser ?: false
-                    message.user.id == currentUser!!.id
-                }
+            isMessageOwnedByMe = { message: Message ->
+                currentUser ?: false
+                message.user.id == currentUser!!.id
+            }
         )
     }
 
-    public fun fetchMessages(){
-
+    fun fetchMessages() {
         chatClient.channel(channelId).watch().enqueue { result ->
             if (result.isSuccess) {
                 messages.clear()
@@ -57,14 +51,13 @@ class ChatViewModel: ViewModel() {
         }
     }
 
-    public fun fetchOtherUser(){
+    fun fetchOtherUser() {
         val channelClient = chatClient.channel(channelId)
         channelClient.queryMembers(0, 2, Filters.neutral()).enqueue { result ->
             if (result.isSuccess) {
                 val member = result.data().last { x -> x.user.id != currentUser!!.id }
                 otherUser = member.user
                 _otherUserDisplayName.postValue(otherUser.name)
-
                 observeOtherUserEvents()
                 observeNewMessageEvents()
                 postOtherUserPresence()
@@ -75,35 +68,36 @@ class ChatViewModel: ViewModel() {
         }
     }
 
-    private fun postOtherUserPresence(isOnline: Boolean? = null){
+    private fun postOtherUserPresence(isOnline: Boolean? = null) {
         _isOtherUserOnline.postValue(isOnline ?: otherUser.online)
     }
 
-    public fun sendMessage(messageText: String){
+    fun sendMessage(messageText: String) {
         val message = Message(
-                cid = channelId,
-                text = messageText
+            cid = channelId,
+            text = messageText
         )
-
-        chatClient.channel(channelId).sendMessage(message).enqueue{ result ->
-            if (!result.isSuccess) {
+        chatClient.channel(channelId).sendMessage(message).enqueue { result ->
+            if (result.isSuccess) {
+                val message: Message = result.data()
+                _state.postValue(ChatState.ReceivedMessageData(message))
+            } else {
                 _state.postValue(ChatState.Error(result.error().message))
             }
         }
     }
 
-    public fun emitIsTyping(){
+    fun emitIsTyping() {
         chatClient.channel(channelId).keystroke()
     }
 
-    private fun observeOtherUserEvents(){
+    private fun observeOtherUserEvents() {
         val channelClient = chatClient.channel(channelId)
-
         this.userWatchingEventsDisposable = channelClient.subscribeFor(
-                UserStartWatchingEvent::class,
-                UserStopWatchingEvent::class
-        ){ event ->
-            when{
+            UserStartWatchingEvent::class,
+            UserStopWatchingEvent::class
+        ) { event ->
+            when {
                 event is UserStartWatchingEvent && event.user.id == otherUser.id -> {
                     otherUser = event.user
                     postOtherUserPresence(true)
@@ -116,9 +110,8 @@ class ChatViewModel: ViewModel() {
         }
     }
 
-    private fun observeNewMessageEvents(){
+    private fun observeNewMessageEvents() {
         val channelClient = chatClient.channel(channelId)
-
         // Subscribe for new message events
         this.newMessageEventDisposable = channelClient.subscribeFor<NewMessageEvent> { event ->
             val message = event.message
@@ -126,19 +119,17 @@ class ChatViewModel: ViewModel() {
         }
     }
 
-    public fun disconnect(){
+    fun disconnect() {
         userWatchingEventsDisposable.dispose()
         newMessageEventDisposable.dispose()
-
         chatClient.disconnect()
     }
 
-    public fun isConnected(): Boolean{
+    fun isConnected(): Boolean {
         val currentUser = ChatClient.instance().getCurrentUser()
         currentUser?.let {
             return true
         }
-
         return false
     }
 }

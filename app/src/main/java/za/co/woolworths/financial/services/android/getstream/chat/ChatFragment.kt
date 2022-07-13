@@ -1,9 +1,6 @@
 package za.co.woolworths.financial.services.android.getstream.chat
 
 import android.content.Intent
-import android.content.Intent
-import android.content.Intent.getIntent
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat.recreate
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -81,12 +77,11 @@ class ChatFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-
-        if(!viewModel.isConnected()){
-
-            findNavController().popBackStack()
-            findNavController().navigateSafely(findNavController().graph.startDestination)
-        }
+//        if(!viewModel.isConnected()){
+//
+//            findNavController().popBackStack()
+//            findNavController().navigateSafely(findNavController().graph.startDestination)
+//        }
     }
 
     override fun onPause() {
@@ -120,22 +115,27 @@ class ChatFragment : Fragment() {
                 binding.messageInputLayout.messageInputEditText.clearFocus()
                 binding.messageInputLayout.messageInputEditText.text?.clear()
             }
-            binding.messageInputLayout.messageInputEditText.addTextChangedListener(object :
-                TextWatcher {
-                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                    // TODO: ("Not yet implemented")
-                }
-
-                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                    viewModel.emitIsTyping()
-                }
-
-                override fun afterTextChanged(p0: Editable?) {
-                    //TODO: ("Not yet implemented")
-                }
-            })
-
         }
+        binding.messageInputLayout.messageInputEditText.addTextChangedListener(object :
+            TextWatcher {
+            override fun beforeTextChanged(cs: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                // TODO: ("Not yet implemented")
+
+            }
+
+            override fun onTextChanged(cs: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                viewModel.emitIsTyping()
+                if(cs.toString().trim().isEmpty()){
+                    binding.messageInputLayout.sendMessageImage.alpha = 0.3F
+                } else {
+                    binding.messageInputLayout.sendMessageImage.alpha = 0.9F
+                }
+            }
+            override fun afterTextChanged(p0: Editable?) {
+                //TODO: ("Not yet implemented")
+            }
+        })
+
     }
 
     private fun updateOtherUserPresenceIndicator(isOnline: Boolean) {
