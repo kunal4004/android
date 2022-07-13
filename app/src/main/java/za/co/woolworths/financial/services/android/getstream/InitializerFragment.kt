@@ -34,15 +34,14 @@ class InitializerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.state.observe(
-            viewLifecycleOwner,
-            {
-                when (it) {
-                    is State.RedirectToChannels -> redirectToChannelsScreen()
-                    is State.Loading -> showLoading()
-                    is State.Error -> showErrorMessage(it.errorMessage)
-                }
+            viewLifecycleOwner
+        ) {
+            when (it) {
+                is State.RedirectToChannels -> redirectToChannelsScreen()
+                is State.Loading -> showLoading()
+                is State.Error -> showErrorMessage(it.errorMessage)
             }
-        )
+        }
     }
 
     private fun showLoading() {

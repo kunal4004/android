@@ -1,22 +1,28 @@
 package za.co.woolworths.financial.services.android.getstream.chat
 
 import android.content.Intent
+import android.content.Intent
+import android.content.Intent.getIntent
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat.recreate
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentOneCartChatBinding
 import io.getstream.chat.android.client.models.Message
 import za.co.woolworths.financial.services.android.getstream.common.ChatState
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity
+import za.co.woolworths.financial.services.android.getstream.common.navigateSafely
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.hideKeyboard
 
@@ -61,27 +67,31 @@ class ChatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.state.observe(
-            viewLifecycleOwner,
-            {
-                when (it) {
-                    is ChatState.ReceivedMessagesData -> updateRecyclerViewDataSet()
-                    is ChatState.ReceivedMessageData -> insertIntoRecyclerViewDataSet(it.message)
-                    is ChatState.Error -> showErrorMessage(it.errorMessage)
-                }
+            viewLifecycleOwner
+        ) {
+            when (it) {
+                is ChatState.ReceivedMessagesData -> updateRecyclerViewDataSet()
+                is ChatState.ReceivedMessageData -> insertIntoRecyclerViewDataSet(it.message)
+                is ChatState.Error -> showErrorMessage(it.errorMessage)
             }
-        )
+        }
         viewModel.fetchOtherUser()
         viewModel.fetchMessages()
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.startWatching()
+
+        if(!viewModel.isConnected()){
+
+            findNavController().popBackStack()
+            findNavController().navigateSafely(findNavController().graph.startDestination)
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        viewModel.stopWatching()
+        viewModel.disconnect()
     }
 
     private fun setupToolbar(){
@@ -122,7 +132,6 @@ class ChatFragment : Fragment() {
 
                 override fun afterTextChanged(p0: Editable?) {
                     //TODO: ("Not yet implemented")
-
                 }
             })
 
