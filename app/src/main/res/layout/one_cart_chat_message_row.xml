@@ -15,7 +15,6 @@
         android:padding="@dimen/sixteen_dp"
         app:layout_constraintWidth_max="@dimen/_220sdp"
         app:layout_constraintWidth_min="@dimen/_60sdp"
-
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
@@ -38,8 +37,16 @@
             android:layout_marginTop="@dimen/_6sdp"
             android:lineSpacingExtra="@dimen/_2ssp"
             android:translationY="-1.5sp"
+            android:visibility="gone"
             android:textColor="@color/color_666666"
             android:textSize="@dimen/_12ssp" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/oneCartChatAttachment"
+            android:layout_width="@dimen/_130sdp"
+            android:layout_height="@dimen/_140sdp"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:visibility="gone"/>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

@@ -32,7 +32,7 @@ class ChannelListViewModel: ViewModel() {
 
         // 1. Get the first 30 channels to which thierry belongs
         val filter = and(
-                eq("type", messageType),
+               // eq("type", messageType),
                 `in`("members", listOf<String>(user.id))
         )
         val sort = QuerySort.desc<Channel>("created_at")

@@ -3,10 +3,10 @@ package za.co.woolworths.financial.services.android.getstream
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.awfs.coordination.R
-import dagger.hilt.android.AndroidEntryPoint
+
 
 @Suppress("JoinDeclarationAndAssignment")
-@AndroidEntryPoint
+
 class OCChatActivity : AppCompatActivity(R.layout.activity_one_cart_chat_activity) {
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -27,7 +27,7 @@ class OneCartService {
                     chain.proceed(requestBuilder.build())
                 }.readTimeout(if (BuildConfig.ENV.equals("qa", true)) RetrofitConfig.READ_CONNECT_TIMEOUT_UNIT_QA else RetrofitConfig.READ_CONNECT_TIMEOUT_UNIT, TimeUnit.SECONDS)
                 .build()
-        val baseUrl = "https://dev-sls-api.onecart.co.za" //TODO: retrieve this from config
+        val baseUrl = "https://staging-sls-api.onecart.co.za" //TODO: retrieve this from config
         val retrofit = Retrofit.Builder().baseUrl(baseUrl).client(httpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()

@@ -76,7 +76,7 @@ class InitializerViewModel: ViewModel() {
     }
 
     private fun initChatSdk() {
-        val client = ChatClient.Builder("94v4edc6mnn8", WoolworthsApplication.getAppContext())
+        val client = ChatClient.Builder("xztua823gaf9", WoolworthsApplication.getAppContext())
                 .logLevel(ChatLogLevel.ALL)
                 .build()
 

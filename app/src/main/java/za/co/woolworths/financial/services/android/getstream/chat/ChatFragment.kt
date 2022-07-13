@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.getstream.chat
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,15 +14,14 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentOneCartChatBinding
-import dagger.hilt.android.AndroidEntryPoint
 import io.getstream.chat.android.client.models.Message
-import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
 import za.co.woolworths.financial.services.android.getstream.common.ChatState
+import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.hideKeyboard
-import javax.inject.Inject
 
-@AndroidEntryPoint
+
+
 class ChatFragment : Fragment() {
 
     companion object{
@@ -32,8 +32,6 @@ class ChatFragment : Fragment() {
     private var _binding: FragmentOneCartChatBinding? = null
     private val binding get() = _binding!!
     private lateinit var recyclerViewAdapter: ChatRecyclerViewAdapter
-    @Inject
-    lateinit var showEmptyMessageAlert: SingleMessageCommonToast
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,7 +94,9 @@ class ChatFragment : Fragment() {
     }
 
     private fun setupRecyclerView(){
-        recyclerViewAdapter = ChatRecyclerViewAdapter(viewModel.messages.toTypedArray(), viewModel.messageItemDelegate)
+        recyclerViewAdapter = ChatRecyclerViewAdapter(ChatRecyclerViewAdapter.OnClickListener{
+            openAttachmentSelectedImage(it)
+        },viewModel.messages.toTypedArray(), viewModel.messageItemDelegate)
         binding.messagesRecyclerView.layoutManager = LinearLayoutManager(activity)
         binding.messagesRecyclerView.adapter = recyclerViewAdapter
     }
@@ -109,8 +109,6 @@ class ChatFragment : Fragment() {
                 binding.messageInputLayout.messageInputEditText.hideKeyboard(requireActivity() as AppCompatActivity)
                 binding.messageInputLayout.messageInputEditText.clearFocus()
                 binding.messageInputLayout.messageInputEditText.text?.clear()
-            } else {
-                showEmptyMessageAlert.showMessage(requireActivity(), getString(R.string.please_enter_a_message), 250)
             }
             binding.messageInputLayout.messageInputEditText.addTextChangedListener(object :
                 TextWatcher {
@@ -124,6 +122,7 @@ class ChatFragment : Fragment() {
 
                 override fun afterTextChanged(p0: Editable?) {
                     //TODO: ("Not yet implemented")
+
                 }
             })
 
@@ -155,5 +154,15 @@ class ChatFragment : Fragment() {
     private fun insertIntoRecyclerViewDataSet(message: Message){
         recyclerViewAdapter.insertDataSetItem(message)
         binding.messagesRecyclerView.smoothScrollToPosition(recyclerViewAdapter.itemCount -1)
+    }
+
+
+    private fun openAttachmentSelectedImage(image: String?) {
+        activity?.apply {
+            val intent = Intent(requireActivity(), MultipleImageActivity::class.java)
+            intent.putExtra("auxiliaryImages", image)
+            startActivity(intent)
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+        }
     }
 }

@@ -2,7 +2,9 @@ package za.co.woolworths.financial.services.android.getstream.chat
 
 import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -12,8 +14,9 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.OneCartChatMessageRowBinding
 import io.getstream.chat.android.client.models.Message
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
+import za.co.woolworths.financial.services.android.util.ImageManager
 
-class ChatRecyclerViewAdapter(initialDataSet: Array<Message>,
+class ChatRecyclerViewAdapter(private val onClickListener: OnClickListener,initialDataSet: Array<Message>,
                               private val messageItemDelegate: IMessageItemDelegate): RecyclerView.Adapter<ChatRecyclerViewAdapter.ViewHolder>() {
 
     private var dataSet: MutableList<Message> = initialDataSet.toMutableList()
@@ -22,6 +25,7 @@ class ChatRecyclerViewAdapter(initialDataSet: Array<Message>,
         val messageBubble: LinearLayoutCompat by lazy { binding.messageBubble }
         val messageTextView: AppCompatTextView by lazy { binding.messageTextView }
         val senderTextView: AppCompatTextView by lazy { binding.senderTextView }
+        val oneCartChatAttachment: AppCompatImageView by lazy { binding.oneCartChatAttachment }
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
@@ -35,7 +39,20 @@ class ChatRecyclerViewAdapter(initialDataSet: Array<Message>,
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val message = dataSet[position]
         holder.senderTextView.text = message.user.name
-        holder.messageTextView.text = message.text
+        if (!message.text.isNullOrEmpty()){
+            holder.messageTextView.text = message.text
+            holder.messageTextView.visibility = View.VISIBLE
+            holder.oneCartChatAttachment.visibility = View.GONE
+        } else {
+            holder.messageTextView.visibility = View.GONE
+            holder.oneCartChatAttachment.visibility = View.VISIBLE
+            ImageManager.setPictureWithoutPlaceHolder(holder.oneCartChatAttachment,
+                message.attachments.getOrNull(0)?.imageUrl.toString())
+            holder.oneCartChatAttachment.setOnClickListener {
+                onClickListener.onClick(message.attachments.getOrNull(0)?.imageUrl.toString())
+            }
+        }
+
 
         val isMessageOwnedByMe = messageItemDelegate.isMessageOwnedByMe(message)
 
@@ -86,4 +103,10 @@ class ChatRecyclerViewAdapter(initialDataSet: Array<Message>,
 
         this.notifyDataSetChanged()
     }
+
+    class OnClickListener(val clickListener: (selectedImage: String) -> Unit) {
+        fun onClick(selectedImage: String) = clickListener(selectedImage)
+    }
 }
+
+
