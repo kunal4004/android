@@ -47,6 +47,8 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturni
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton.accountOptions
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton.liquor
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -57,7 +59,6 @@ import za.co.woolworths.financial.services.android.models.dto.account.Transactio
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionHeader
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionItem
 import za.co.woolworths.financial.services.android.models.dto.app_config.chat.ConfigTradingHours
-import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherErrorMessage
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity
@@ -72,7 +73,6 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.CLIErrorMessageButtonDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ErrorMessageDialog
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.LoanWithdrawalPopupDialog
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DEFAULT_ADDRESS
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
@@ -80,13 +80,18 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
+import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
+import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.io.*
 import java.net.SocketException
 import java.text.NumberFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
@@ -384,11 +389,16 @@ class KotlinUtils {
             savedAddressResposne: SavedAddressResponse? = null,
             defaultAddress: Address? = null,
             whoISCollecting: String? = null,
+            liquorCompliance: LiquorCompliance? = null
         ) {
 
             activity?.apply {
                 val mIntent = Intent(this, EditDeliveryLocationActivity::class.java)
                 val mBundle = Bundle()
+                if (liquorCompliance != null && liquorCompliance.isLiquorOrder && liquor!=null && liquor!!.noLiquorImgUrl != null && !liquor!!.noLiquorImgUrl.isEmpty()) {
+                    mBundle.putBoolean(Constant.LIQUOR_ORDER, liquorCompliance.isLiquorOrder)
+                    mBundle.putString(Constant.NO_LIQUOR_IMAGE_URL, liquor!!.noLiquorImgUrl)
+                }
                 mBundle.putString(DELIVERY_TYPE, delivery.toString())
                 mBundle.putString(PLACE_ID, placeId)
                 mBundle.putBoolean(IS_COMING_FROM_CHECKOUT, isComingFromCheckout)
@@ -1016,6 +1026,45 @@ class KotlinUtils {
             )
         }
 
+        fun hasADayPassed(dateString: String?): Boolean {
+            // when dateString = null it means it's the first time to call api
+            if (dateString == null) return true
+            val from = LocalDateTime.parse(
+                dateString,
+                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
+            )
+            val today = LocalDateTime.now()
+            var period = ChronoUnit.DAYS.between(from, today)
+            return if (period >= 1) {
+                Utils.sessionDaoSave(KEY.FICA_LAST_REQUEST_TIME, null)
+                true
+            } else {
+                false
+            }
+        }
+
+        fun ficaVerifyRedirect(
+            activity: Activity?,
+            url: String?,
+            isWebView: Boolean,
+            collectionsExitUrl: String?
+        ) {
+            activity?.apply {
+                val openInternalWebView = Intent(this, WInternalWebPageActivity::class.java)
+                openInternalWebView.putExtra("externalLink", url)
+                if (isWebView) {
+                    openInternalWebView.putExtra(COLLECTIONS_EXIT_URL, collectionsExitUrl)
+                    startActivityForResult(openInternalWebView, RESULT_CODE_CLOSE_VIEW)
+                } else {
+                    openUrlInPhoneBrowser(url, activity)
+                    activity.finish()
+                }
+            }
+        }
+        fun isFicaEnabled(): Boolean {
+            return Utils.isFeatureEnabled(accountOptions?.ficaRefresh?.minimumSupportedAppBuildNumber)
+        }
+
         fun saveAnonymousUserLocationDetails(shoppingDeliveryLocation: ShoppingDeliveryLocation) {
             Utils.sessionDaoSave(
                 KEY.ANONYMOUS_USER_LOCATION_DETAILS,
@@ -1072,6 +1121,15 @@ class KotlinUtils {
                     CLIErrorMessageButtonDialog::class.java.simpleName
                 )
             }
+        }
+        fun vocShoppingHandling(deliveryType: String?): VocTriggerEvent? {
+            var event:VocTriggerEvent? = null
+            when(Delivery.getType(deliveryType)){
+                Delivery.CNC->{
+                    event = VocTriggerEvent.SHOP_CLICK_COLLECT_CONFIRM
+                }
+            }
+            return event
         }
     }
 }
