@@ -546,6 +546,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             putString(KEY_LONGITUDE, address.longitude?.toString())
             putString(KEY_PLACE_ID, address.placesId)
             putString(ADDRESS, address.address1)
+            putString(CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY, Utils.toJson(address))
             putSerializable(DEFAULT_ADDRESS, address)
             putBoolean(IS_COMING_CONFIRM_ADD, true)
         }
