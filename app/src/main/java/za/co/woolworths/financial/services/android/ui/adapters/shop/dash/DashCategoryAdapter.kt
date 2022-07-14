@@ -298,8 +298,8 @@ class ProductCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(it
         with(productList) {
             setProductImage(this)
             setPromotionalImage(promotionImages, virtualTryOn)
-            setProductName(this)
             setBrandText(this, nextProduct, previousProduct)
+            setProductName(this)
             setPromotionalText(this)
             val priceItem = PriceItem()
             priceItem.setPrice(productList, itemView)
@@ -349,7 +349,7 @@ class ProductCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(it
                 if (it.promotionalText?.contains(":") == true) {
                     val beforeColon: String? = it.promotionalText?.substringBefore(":")
                     val afterColon: String? = it.promotionalText?.substringAfter(":")
-                    editedPromotionalText = "<b>" + beforeColon + ":" + "</b>" + afterColon
+                    editedPromotionalText = "<b>$beforeColon:</b>$afterColon"
                 }
                 when (i) {
                     0 -> {
@@ -392,26 +392,8 @@ class ProductCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(it
         previousProduct: ProductList?
     ) = with(itemView) {
         brandName?.text = productList?.brandText ?: ""
-        previousProduct?.let {
-            if (productList?.brandText.isNullOrEmpty() && it.brandText.isNullOrEmpty()) {
-                brandName?.visibility = View.GONE
-            } else {
-                brandName?.visibility =
-                    if (productList?.brandText.isNullOrEmpty()) View.GONE else View.VISIBLE
-                brandNameFakeView?.visibility =
-                    if (productList?.brandText.isNullOrEmpty()) View.VISIBLE else View.GONE
-            }
-        }
-        nextProduct?.let {
-            if (productList?.brandText.isNullOrEmpty() && it.brandText.isNullOrEmpty()) {
-                brandName?.visibility = View.GONE
-            } else {
-                brandName?.visibility =
-                    if (productList?.brandText.isNullOrEmpty()) View.GONE else View.VISIBLE
-                brandNameFakeView?.visibility =
-                    if (productList?.brandText.isNullOrEmpty()) View.VISIBLE else View.GONE
-            }
-        }
+        brandName?.visibility =
+            if (productList?.brandText.isNullOrEmpty()) View.GONE else View.VISIBLE
     }
 
     private fun setPromotionalImage(imPromo: PromotionImages?, virtualTryOn: String?) {
