@@ -6,6 +6,7 @@ import android.text.TextUtils
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
@@ -17,8 +18,7 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.baseFragBundle
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.*
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.OrderConfirmationFragment
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CNC_SELETION
 import za.co.woolworths.financial.services.android.util.KeyboardUtils
@@ -200,7 +200,12 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                 setReloadResultAndFinish()
             }
             is OrderConfirmationFragment -> {
-                setResult(REQUEST_CHECKOUT_ON_DESTROY)
+                if(isComingFromCnc == true) {
+                    //set BR to update cart fragment
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(TAG_CART_BROADCAST_RECEIVER))
+                } else {
+                    setResult(REQUEST_CHECKOUT_ON_DESTROY)
+                }
                 closeActivity()
             }
             else -> {

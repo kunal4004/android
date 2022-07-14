@@ -61,7 +61,7 @@ public class CheckOutFragment extends Fragment {
     public static final int RESULT_EMPTY_CART = 109;
     public static String ORDER_CONFIRMATION = "order-confirmation.jsp";
     public static String IS_NATIVE_CHECKOUT = "isNativeCheckout";
-
+    public static final String TAG_CART_BROADCAST_RECEIVER = "cart_broadcast_receiver";
     private enum QueryString {
         COMPLETE("goto=complete"),
         ABANDON("goto=abandon");
