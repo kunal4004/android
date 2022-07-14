@@ -966,9 +966,7 @@ class KotlinUtils {
             }
             return rating.roundToInt().toFloat()
         }
-    }
-
-        fun getPreferredDeliveryType(): Delivery? {
+          fun getPreferredDeliveryType(): Delivery? {
             return Delivery.getType(
                 Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType ?: ""
             )
@@ -1152,4 +1150,7 @@ class KotlinUtils {
             return event
         }
     }
+
+
+
 }

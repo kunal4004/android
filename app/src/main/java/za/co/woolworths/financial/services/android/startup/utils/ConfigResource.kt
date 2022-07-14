@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.startup.utils
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
 import za.co.woolworths.financial.services.android.models.repository.AppConfigRepository
 import za.co.woolworths.financial.services.android.models.dto.RatingsAndReviews

@@ -1765,10 +1765,6 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
-    <style name="myriad_pro_regular_black_13_text_style" parent="myriad_pro_regular_black">
-        <item name="android:textSize">@dimen/thirteen_sp</item>
-    </style>
-
     <style name="body_text_style">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
