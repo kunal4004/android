@@ -24,12 +24,12 @@ public class AppInstanceObject {
     public static final int MAX_USERS = 1;
     public boolean biometric;
     public FeatureWalkThrough featureWalkThrough;
-    private InAppChatTipAcknowledgements inAppChatTipAcknowledgements;
+    private final InAppChatTipAcknowledgements inAppChatTipAcknowledgements;
 
 
     public AppInstanceObject() {
         users = new ArrayList<>();
-        featureWalkThrough =  new FeatureWalkThrough();
+        featureWalkThrough = new FeatureWalkThrough();
         inAppChatTipAcknowledgements = new InAppChatTipAcknowledgements(false, new ConfigChatEnabledForProductFeatures(false, false, false, false), new ConfigChatEnabledForProductFeatures(false, false, false, false), new ConfigChatEnabledForProductFeatures(false, false, false, false), false);
     }
 
@@ -40,7 +40,7 @@ public class AppInstanceObject {
                 return new Gson().fromJson(sessionDao.value, AppInstanceObject.class);
             }
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
 
         return new AppInstanceObject();
@@ -71,7 +71,7 @@ public class AppInstanceObject {
         }
     }
 
-    public class User {
+    public static class User {
         public String id;
         public ShoppingDeliveryLocation preferredShoppingDeliveryLocation;
         public ArrayList<ShoppingDeliveryLocation> shoppingDeliveryLocationHistory;
@@ -129,24 +129,29 @@ public class AppInstanceObject {
         this.biometric = biometric;
     }
 
-    public class FeatureWalkThrough {
+    public static class FeatureWalkThrough {
         //Show Tutorials
         public boolean showTutorials = true; // Default to show
 
         //features
         public boolean barcodeScan;
         public boolean findInStore;
-		public boolean deliveryLocation;
-		public boolean vouchers;
-		public boolean refineProducts;
-		public boolean account;
-		public boolean shoppingList;
-		public boolean statements;
-		public boolean cartRedeemVoucher;
-		public boolean creditScore;
+        public boolean deliveryLocation;
+        public boolean vouchers;
+        public boolean refineProducts;
+        public boolean account;
+        public boolean shoppingList;
+        public boolean statements;
+        public boolean cartRedeemVoucher;
+        public boolean creditScore;
         public boolean isTryItOn;
+        public boolean shopping;
+        public boolean dash;
+        public boolean delivery_details;
+        public boolean my_lists;
 
     }
+
     /***
      * Check to determine if biometric custom popup should be displayed
      */

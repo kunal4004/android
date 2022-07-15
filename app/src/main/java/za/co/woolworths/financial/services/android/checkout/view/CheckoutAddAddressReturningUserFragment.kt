@@ -26,8 +26,6 @@ import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
 import kotlinx.android.synthetic.main.checkout_grid_layout_other.*
 import kotlinx.android.synthetic.main.checkout_how_would_you_delivered.*
-import kotlinx.android.synthetic.main.delivery_or_click_and_collect_selector_dialog.*
-import kotlinx.android.synthetic.main.edit_delivery_location_confirmation_fragment.view.*
 import kotlinx.android.synthetic.main.layout_delivering_to_details.*
 import kotlinx.android.synthetic.main.layout_native_checkout_age_confirmation.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
@@ -38,8 +36,10 @@ import kotlinx.android.synthetic.main.new_shopping_bags_layout.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.DeliveryType.*
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.*
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.WeekCounter.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.FOOD
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.OTHER
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.WeekCounter.FIRST
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.WeekCounter.SECOND
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutPaymentWebFragment.Companion.KEY_ARGS_WEB_TOKEN
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutPaymentWebFragment.Companion.REQUEST_KEY_PAYMENT_STATUS
@@ -911,6 +911,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     SLOT_SELECTION_REQUEST_CODE,
                     KotlinUtils.getPreferredDeliveryType(),
                     placesId,
+                    false,
                     true,
                     true,
                     savedAddress,
@@ -1133,13 +1134,21 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
     private fun getShipmentDetailsBody(): ShippingDetailsBody {
         val body = ShippingDetailsBody()
+        KotlinUtils.getUniqueDeviceID {
+            body.apply {
+                pushNotificationToken = Utils.getToken()
+                appInstanceId = it
+            }
+        }
         when {
             // Food Items Basket
             foodType == ONLY_FOOD -> {
                 body.apply {
                     requestFrom = "express"
                     joinBasket = true
-                    ageConsentConfirmed = true
+                    if(liquorOrder == true) {
+                        ageConsentConfirmed = true
+                    }
                     foodShipOnDate = selectedFoodSlot?.stringShipOnDate
                     otherShipOnDate = ""
                     foodDeliverySlotId = selectedFoodSlot?.slotId
@@ -1174,6 +1183,9 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             foodType == MIXED_FOOD || otherType == MIXED_OTHER -> {
                 body.apply {
                     joinBasket = false
+                    if(liquorOrder == true) {
+                        ageConsentConfirmed = true
+                    }
                     if (selectedOpenDayDeliverySlot.deliveryType != null && selectedOpenDayDeliverySlot.deliveryType == DELIVERY_TYPE_TIMESLOT) {
                         foodShipOnDate = selectedFoodSlot?.stringShipOnDate
                         otherShipOnDate = selectedOtherSlot?.stringShipOnDate
@@ -1262,7 +1274,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
     override fun selectedShoppingBagType(
         shoppingBagsOptionsList: ConfigShoppingBagsOptions,
-        position: Int
+        position: Int,
     ) {
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_SHOPPING_BAGS_INFO,
             hashMapOf(

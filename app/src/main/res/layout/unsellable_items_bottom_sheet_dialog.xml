@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <include
+        android:id="@+id/incSwipeCloseIndicator"
+        layout="@layout/popup_close_header_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:layout_marginEnd="@dimen/sixteen_dp" />
+
+    <RelativeLayout
+        android:id="@+id/unsellableItemsFragmentRelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/twenty_four_dp"
+        android:paddingTop="@dimen/_35sdp"
+        android:paddingRight="@dimen/twenty_four_dp"
+        android:paddingBottom="@dimen/twenty_four_dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/dialog_title_text_style"
+            android:layout_width="wrap_content"
+            android:layout_alignParentStart="true"
+            android:gravity="center"
+            android:paddingStart="@dimen/_20sdp"
+            android:paddingTop="@dimen/_2ssp"
+            android:paddingEnd="@dimen/_20sdp"
+            android:paddingBottom="@dimen/_2ssp"
+            android:text="@string/these_items_will_be_removed_from_your_cart" />
+
+        <TextView
+            android:id="@+id/subTitle"
+            style="@style/myriad_pro_regular_black_15_text_style"
+            android:layout_width="match_parent"
+            android:layout_below="@+id/title"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/sixteen_dp"
+            android:gravity="center"
+            android:lineSpacingMultiplier="1.2"
+            android:paddingStart="@dimen/_15sdp"
+            android:paddingEnd="@dimen/_15sdp"
+            android:text="@string/remove_items_dialog_desc"
+            android:textColor="@color/gray" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcvItemsList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/subTitle"
+            android:clipToPadding="true"
+            android:paddingTop="@dimen/sixteen_dp"
+            android:paddingBottom="@dimen/sixteen_dp"
+            android:scrollbars="vertical" />
+
+        <TextView
+            android:id="@+id/removeItems"
+            style="@style/call_to_action_text_style"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fifty_dp"
+            android:layout_below="@+id/rcvItemsList"
+            android:layout_marginBottom="@dimen/twenty_four_dp"
+            android:background="@drawable/order_add_to_cart_button_bg"
+            android:text="@string/remove_these_items_continue" />
+
+        <TextView
+            android:id="@+id/changeStore"
+            style="@style/dialog_action_text_style_gray_medium"
+            android:layout_width="wrap_content"
+            android:layout_below="@+id/removeItems"
+            android:layout_centerHorizontal="true"
+            android:text="@string/cancel_underline"
+            android:textAllCaps="true" />
+
+        <ProgressBar
+            android:id="@+id/progressRemoveItems"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:elevation="@dimen/two_dp"
+            android:indeterminateTint="@color/black"
+            android:visibility="invisible" />
+
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

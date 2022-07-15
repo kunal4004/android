@@ -307,6 +307,7 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity"
             android:label="@string/title_activity_bottom_navigation"
             android:screenOrientation="portrait"
+            android:launchMode="singleInstance"
             android:theme="@style/bottomNavigationStyle"
             android:windowSoftInputMode="adjustNothing" />
         <activity
@@ -471,7 +472,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/ShoppingListDetailActivityStyle"
             android:windowSoftInputMode="adjustResize" />
-
         <service
             android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService"
             android:enabled="true"
@@ -538,12 +538,42 @@
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.GetAPaymentPlanActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:screenOrientation="portrait"/>
+
+
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity"
+            android:name="za.co.woolworths.financial.services.android.ui.fragments.account.fica.FicaActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
+            android:theme="@style/FaqStyle"
+            android:windowSoftInputMode="adjustResize" />
+
     </application>
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="mailto"/>
+        </intent>
+
+
+        <!-- Gallery -->
+        <intent>
+            <action android:name="android.intent.action.GET_CONTENT" />
+        </intent>
+        <!-- Camera -->
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="https" />
+        </intent>
+    </queries>
 
 </manifest>

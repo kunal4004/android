@@ -7,11 +7,10 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/_60sdp"
+        android:layout_marginBottom="@dimen/_76sdp"
         android:background="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/tvConfirmStore"
+        app:layout_constraintBottom_toTopOf="@+id/tvConfirmStoreLayout"
         app:layout_constraintTop_toTopOf="parent">
-
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/clickAndCollectLayout"
@@ -165,7 +164,6 @@
                 android:clipToPadding="true"
                 android:contentDescription="@string/plp_sortOptionList"
                 android:nestedScrollingEnabled="false"
-                android:paddingBottom="@dimen/twenty_four_dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/viewSeparator"
@@ -185,39 +183,44 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cvMapView" />
 
-
             <include
                 android:id="@+id/noClickAndCollectConnectionLayout"
                 layout="@layout/no_connection"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>
 
-    <TextView
-        android:id="@+id/tvConfirmStore"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/tvConfirmStoreLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/twenty_four_dp"
-        android:layout_marginTop="@dimen/ten_dp"
-        android:layout_marginBottom="@dimen/twenty_four_dp"
-        android:background="@drawable/order_add_to_cart_button_bg"
-        android:enabled="false"
-        android:fontFamily="@font/futura_semi_bold_ttf"
-        android:gravity="center"
-        android:letterSpacing="0.2"
-        android:minHeight="@dimen/fifty_dp"
-        android:text="@string/confirm"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:textSize="@dimen/twelve_sp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        android:background="@color/white"
+        android:padding="@dimen/twenty_four_dp"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-
+        <TextView
+            android:id="@+id/tvConfirmStore"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/order_add_to_cart_button_bg"
+            android:enabled="false"
+            android:fontFamily="@font/futura_semi_bold_ttf"
+            android:gravity="center"
+            android:letterSpacing="0.2"
+            android:minHeight="@dimen/fifty_dp"
+            android:text="@string/confirm"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/twelve_sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

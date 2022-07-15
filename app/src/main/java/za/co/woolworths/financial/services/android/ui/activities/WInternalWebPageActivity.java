@@ -2,6 +2,8 @@ package za.co.woolworths.financial.services.android.ui.activities;
 
 
 import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl.ELITE_PLAN_MODEL;
+import static za.co.woolworths.financial.services.android.util.ChromeClient.CAMERA_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.util.ChromeClient.INPUT_FILE_REQUEST_CODE;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -44,6 +46,9 @@ import com.google.android.material.appbar.AppBarLayout;
 
 import java.util.HashMap;
 
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
+import za.co.woolworths.financial.services.android.models.dto.app_config.account_options.FicaRefresh;
+import za.co.woolworths.financial.services.android.util.ChromeClient;
 import za.co.woolworths.financial.services.android.util.eliteplan.ElitePlanModel;
 import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -65,8 +70,11 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	private String downLoadConntentDisposition;
 	private Boolean treatmentPlan;
 	private String collectionsExitUrl;
+    private ChromeClient chromeClient;
+    private Boolean ficaCanceled = false;
+	private FicaRefresh fica;
 
-	@Override
+    @Override
 	protected void onStart() {
 		if(treatmentPlan){
 			overridePendingTransition(R.anim.slide_from_right, R.anim.stay);
@@ -106,9 +114,14 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 
 	@SuppressLint("SetJavaScriptEnabled")
 	private void webSetting() {
-		showProgressBar();
+        showProgressBar();
 		webInternalPage.getSettings().setJavaScriptEnabled(true);
-		if(treatmentPlan){
+		if (KotlinUtils.Companion.isFicaEnabled()){
+			chromeClient = new ChromeClient(this);
+			chromeClient.setUpWebViewDefaults(webInternalPage);
+			webInternalPage.setWebChromeClient(chromeClient);
+		}
+        if(treatmentPlan){
 			webInternalPage.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
 			webInternalPage.clearCache(true);
 		}
@@ -170,7 +183,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 			@Override
 			public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
 				super.doUpdateVisitedHistory(view, url, isReload);
-				if (treatmentPlan ) {
+                if (treatmentPlan ) {
 					HashMap<String,String> parameters = getQueryString(url);
 					if (parameters.containsKey("Scope") ){
 						if (parameters.get("Scope").equals("paynow")){
@@ -199,9 +212,10 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 					}
 
 				}
+				ficaHandling(url);
 			}
 		});
-		webInternalPage.loadUrl(mExternalLink);
+        webInternalPage.loadUrl(mExternalLink);
 
 		webInternalPage.setDownloadListener((url, userAgent, contentDisposition, mimeType, contentLength) -> {
 			downLoadUrl=url;
@@ -214,7 +228,25 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 			}
 		});
 	}
-	public static HashMap<String, String> getQueryString(String url) {
+
+	public void ficaHandling(String url){
+		if (AppConfigSingleton.INSTANCE.getAccountOptions() != null ){
+			fica = AppConfigSingleton.INSTANCE.getAccountOptions().getFicaRefresh();
+			if (url.contains(collectionsExitUrl)){
+				webInternalPage.destroy();
+				if (getQueryString(url).get("IsCompleted").equals("false")) {
+					ficaCanceled = true;
+				}
+				finishActivity();
+			}
+		}else {
+			fica = null;
+		}
+	}
+	public String privacyUrlForFica() {
+		return fica!=null ? fica.getPrivacyPolicyUrl() : "";
+	}
+	public HashMap<String, String> getQueryString(String url) {
 		Uri uri= Uri.parse(url);
 
 		HashMap<String, String> map = new HashMap<>();
@@ -234,6 +266,9 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 		}if (url.startsWith("tel:")) {
 			Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse(url));
 			startActivity(intent);
+		}
+		if (!privacyUrlForFica().isEmpty() && url.contains(privacyUrlForFica())&& KotlinUtils.Companion.isFicaEnabled()){
+			KotlinUtils.Companion.openUrlInPhoneBrowser(privacyUrlForFica(),WInternalWebPageActivity.this);
 		}
 		else {
 			view.loadUrl(url);
@@ -340,7 +375,9 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	}
 
 	public void finishActivity() {
-		setResult(RESULT_OK);
+        if (!ficaCanceled) {
+            setResult(RESULT_OK);
+        }
 		finish();
 		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 	}
@@ -420,7 +457,39 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 				case REQUEST_CODE:
 					downloadFile(downLoadUrl,downLoadMimeType,downLoadUserAgent,downLoadConntentDisposition);
 					break;
+				case CAMERA_REQUEST_CODE:
+					chromeClient.displayFile();
+					break;
 			}
 		}
 	}
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (KotlinUtils.Companion.isFicaEnabled()) {
+			if (requestCode != INPUT_FILE_REQUEST_CODE || chromeClient.getMFilePathCallback() == null) {
+				super.onActivityResult(requestCode, resultCode, data);
+				return;
+			}
+
+			Uri[] results = null;
+
+			// Check that the response is a good one
+			if (resultCode == RESULT_OK) {
+
+				if (data == null || data.getDataString() == null) {
+					// If there is not data, then we may have taken a photo
+					if (chromeClient.getMCameraPhotoPath() != null) {
+						results = new Uri[]{Uri.parse(chromeClient.getMCameraPhotoPath())};
+					}
+				} else {
+					results = new Uri[]{Uri.parse(data.getDataString())};
+
+				}
+			}
+
+			chromeClient.getMFilePathCallback().onReceiveValue(results);
+			chromeClient.setMFilePathCallback(null);
+		}
+    }
 }

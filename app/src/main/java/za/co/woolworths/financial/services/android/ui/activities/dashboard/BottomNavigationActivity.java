@@ -15,9 +15,12 @@ import static za.co.woolworths.financial.services.android.ui.activities.TipsAndT
 import static za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity.RESULT_CODE_MY_ACCOUNT_FRAGMENT;
 import static za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity.PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.BRAND_NAVIGATION_DETAILS;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.IS_BROWSING;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_BRAND_HEADER;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_CATEGORY;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_LIST;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment.REQUEST_PAYMENT_STATUS;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.MY_LIST_LIST_ID;
@@ -25,6 +28,8 @@ import static za.co.woolworths.financial.services.android.ui.fragments.shoppingl
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.MY_LIST_SEARCH_TERM;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.PRODUCT_DETAILS_FROM_MY_LIST_SEARCH;
 import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
+import static za.co.woolworths.financial.services.android.util.AppConstant.DP_LINKING_MY_ACCOUNTS_ORDER_DETAILS;
+import static za.co.woolworths.financial.services.android.util.AppConstant.REQUEST_CODE_BARCODE_ACTIVITY;
 import static za.co.woolworths.financial.services.android.util.AppConstant.REQUEST_CODE_ORDER_DETAILS_PAGE;
 import static za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
@@ -95,9 +100,9 @@ import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType;
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap;
+import za.co.woolworths.financial.services.android.models.network.Parameter;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
-import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
@@ -111,6 +116,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.u
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shop.MyListsFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersAccountFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment;
@@ -126,6 +134,7 @@ import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
+import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFullfilmentCollectionStoreFragment;
 import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.DeepLinkingUtils;
@@ -148,8 +157,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener,
         PermissionResultCallback, ToastUtils.ToastInterface, IToastInterface, Observer {
 
-    public static final int INDEX_TODAY = FragNavController.TAB1;
-    public static final int INDEX_PRODUCT = FragNavController.TAB2;
+    public static final int INDEX_PRODUCT = FragNavController.TAB1;
+    public static final int INDEX_TODAY = FragNavController.TAB2;
     public static final int INDEX_CART = FragNavController.TAB3;
     public static final int INDEX_REWARD = FragNavController.TAB4;
     public static final int INDEX_ACCOUNT = FragNavController.TAB5;
@@ -235,8 +244,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         parseDeepLinkData();
         new AmplifyInit();
         mNavController = FragNavController.newBuilder(savedInstanceState,
-                getSupportFragmentManager(),
-                R.id.frag_container)
+                        getSupportFragmentManager(),
+                        R.id.frag_container)
                 .fragmentHideStrategy(FragNavController.HIDE)
                 .transactionListener(this)
                 .switchController(UNLIMITED_TAB_HISTORY, (index, transactionOptions) -> getBottomNavigationById().setCurrentItem(index))
@@ -251,7 +260,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             if (object instanceof LoadState) {
                 String searchProduct = ((LoadState) object).getSearchProduct();
                 if (!TextUtils.isEmpty((searchProduct))) {
-                    pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.SEARCH, "", searchProduct));
+                    pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.SEARCH, "", searchProduct, true));
                 }
             } else if (object instanceof CartSummaryResponse) {
                 // product item successfully added to cart
@@ -315,7 +324,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     }
 
     public void setToast(String message, String cartText, ProductCountMap productCountMap, int noOfItems) {
-        if (productCountMap != null && KotlinUtils.Companion.isDeliveryOptionClickAndCollect() && productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
+        if (productCountMap != null
+                && (KotlinUtils.Companion.isDeliveryOptionClickAndCollect()
+                    || KotlinUtils.Companion.isDeliveryOptionDash())
+                && productCountMap.getQuantityLimit() != null
+                && productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
             ToastFactory.Companion.showItemsLimitToastOnAddToCart(getBottomNavigationById(), productCountMap, this, noOfItems, true);
             return;
         }
@@ -342,8 +355,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 getBottomNavigationById().setCurrentItem(Integer.parseInt(mSessionExpiredAtTabSection));
                 SessionExpiredUtilities.getInstance().showSessionExpireDialog(BottomNavigationActivity.this);
             }
-           String changePassword = mBundle.getString(FORGOT_PASSWORD);
-            if(null!=changePassword && changePassword.equals(FORGOT_PASSWORD_VALUE)){
+            String changePassword = mBundle.getString(FORGOT_PASSWORD);
+            if (null != changePassword && changePassword.equals(FORGOT_PASSWORD_VALUE)) {
                 navigateMyAccountScreen();
             }
         }
@@ -381,7 +394,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                         arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.ENTRY_POINT, FirebaseManagerAnalyticsProperties.EntryPoint.DEEP_LINK.getValue());
                         arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.DEEP_LINK_URL, linkData.toString());
                         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTDELIVERY, arguments, this);
-                        pushFragment(ProductListingFragment.Companion.newInstance(productSearchTypeAndSearchTerm.getSearchType(), "", productSearchTypeAndSearchTerm.getSearchTerm()));
+                        pushFragment(ProductListingFragment.Companion.newInstance(productSearchTypeAndSearchTerm.getSearchType(), "", productSearchTypeAndSearchTerm.getSearchTerm(), true));
                     }
                     break;
 
@@ -402,6 +415,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     new Handler().postDelayed(itemView::performClick, AppConstant.DELAY_100_MS);
                     break;
 
+                case DP_LINKING_MY_ACCOUNTS_ORDER_DETAILS:
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        if (appLinkData != null && !TextUtils.isEmpty(appLinkData.toString())) {
+                            Parameter params = new Gson().fromJson(appLinkData.toString(), Parameter.class);
+                            deepLinkToOrderDetails(params);
+                        }
+                    }, AppConstant.DELAY_100_MS);
+                    break;
             }
         }
 
@@ -413,6 +434,19 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         params.addRule(RelativeLayout.ALIGN_END, RelativeLayout.TRUE);
         params.addRule(RelativeLayout.ALIGN_BOTTOM, RelativeLayout.TRUE);
         notificationBadgeOne.setLayoutParams(params);
+    }
+
+    private void deepLinkToOrderDetails(Parameter params) {
+        if (SessionUtilities.getInstance().isUserAuthenticated()) {
+            if (INDEX_ACCOUNT != getBottomNavigationById().getCurrentItem()) {
+                getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
+                switchTab(INDEX_ACCOUNT);
+            }
+            pushFragment(new MyOrdersAccountFragment());
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                pushFragment(OrderDetailsFragment.Companion.getInstance(params));
+            }, AppConstant.DELAY_100_MS);
+        }
     }
 
     @Override
@@ -517,13 +551,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         pushFragment(productDetailsFragmentNew);
     }
 
-    public void openProductDetailFragment(String productName, ProductList productList, String bannerLabel, String bannerImage) {
+    public void openProductDetailFragment(String productName, ProductList productList, String bannerLabel, String bannerImage, Boolean isUserBrowsing) {
         Gson gson = new Gson();
         String strProductList = gson.toJson(productList);
         Bundle bundle = new Bundle();
         bundle.putString(STR_PRODUCT_LIST, strProductList);
         bundle.putString(STR_PRODUCT_CATEGORY, productName);
         bundle.putString(STR_BRAND_HEADER, productList.brandHeaderDescription);
+        bundle.putBoolean(IS_BROWSING, isUserBrowsing);
         bundle.putSerializable(BRAND_NAVIGATION_DETAILS, new BrandNavigationDetails(
                 productList.brandText,
                 bannerLabel,
@@ -580,7 +615,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 Bundle arguments = fragment.getArguments();
                 ProductDetails newProductDetails = (ProductDetails) Utils.jsonStringToObject(arguments.getString(STR_PRODUCT_LIST), ProductDetails.class);
 
-                if (productDetails != null && newProductDetails!= null && !TextUtils.isEmpty(productDetails.productId)
+                if (productDetails != null && newProductDetails != null && !TextUtils.isEmpty(productDetails.productId)
                         && !TextUtils.isEmpty(newProductDetails.productId) && productDetails.productId.equals(newProductDetails.productId)) {
                     // when we open same PDP then instead of new PDP it will close existing PDP and opens up new same PDP.
                     mNavController.popFragment();
@@ -1000,6 +1035,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
         } else if (fragment instanceof ProductDetailsFragment) {
             fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        } else if (fragment instanceof ChangeFullfilmentCollectionStoreFragment) {
+            fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
 
@@ -1007,6 +1044,34 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         permissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        // This flow is only when app is in foreground.
+        if (intent.getExtras() == null || TextUtils.isEmpty(intent.getExtras().getString(AppConstant.Keys.EXTRA_NOTIFICATION_FEATURE))) {
+            return;
+        }
+
+        String featureName = intent.getExtras().getString(AppConstant.Keys.EXTRA_NOTIFICATION_FEATURE);
+        switch (featureName) {
+            // Feature name is Order Details for Push Notification. And app is in foreground.
+            case DP_LINKING_MY_ACCOUNTS_ORDER_DETAILS:
+                String parameters = intent.getExtras().getString(AppConstant.Keys.EXTRA_NOTIFICATION_PARAMETERS);
+                if (!TextUtils.isEmpty(parameters)) {
+                    Parameter params = new Gson().fromJson(parameters, Parameter.class);
+                    deepLinkToOrderDetails(params);
+                }
+
+                break;
+            //  Old way to navigate Deeplinking flows.
+            default:
+                mBundle = intent.getExtras();
+                parseDeepLinkData();
+                renderUI();
+                break;
+        }
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -1016,7 +1081,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         // Navigate from shopping list detail activity
         switch (requestCode) {
             case PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE:
-                if (resultCode == PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE){
+                if (resultCode == PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE) {
                     SearchResultFragment searchResultFragment = new SearchResultFragment();
                     Bundle bundle = new Bundle();
                     bundle.putString(MY_LIST_SEARCH_TERM, data.getStringExtra(MY_LIST_LIST_NAME));
@@ -1030,20 +1095,22 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     ToastFactory.Companion.buildShoppingListToast(this, getBottomNavigationById(), true, data, this);
                     break;
                 }
+
+            case REQUEST_PAYMENT_STATUS:
+                if (resultCode == REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING) {
+                    navigateToTabIndex(BottomNavigationActivity.INDEX_PRODUCT, null);
+                    break;
+                }
             case REQUEST_CODE_ORDER_DETAILS_PAGE:// Call back when Toast clicked after adding item to shopping list
             case SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE:
                 navigateToMyList(requestCode, resultCode, data);
 
                 switch (resultCode) {
                     case ADD_TO_SHOPPING_LIST_REQUEST_CODE:
-                        // refresh my list view
-                        getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
-                        clearStack();
                         Fragment fragment = mNavController.getCurrentFrag();
-                        if (fragment instanceof ShopFragment) {
-                            ShopFragment shopFragment = (ShopFragment) fragment;
-                            shopFragment.navigateToMyListFragment();
-                            shopFragment.refreshViewPagerFragment(true);
+                        if (fragment instanceof MyListsFragment) {
+                            MyListsFragment myListsFragment = (MyListsFragment) fragment;
+                            myListsFragment.getShoppingList(false);
                         }
                         break;
 
@@ -1082,10 +1149,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             ProductList productList = (ProductList) Utils.jsonStringToObject(productLIstStr, ProductList.class);
             openProductDetailFragment(data.getStringExtra(KEY_PRODUCT_NAME), productList);
         }
-        if ((requestCode == BarcodeScanActivity.BARCODE_ACTIVITY_REQUEST_CODE || requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE) && resultCode == RESULT_OK) {
+        if ((requestCode == REQUEST_CODE_BARCODE_ACTIVITY || requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE) && resultCode == RESULT_OK) {
             ProductsRequestParams.SearchType searchType = ProductsRequestParams.SearchType.valueOf(data.getStringExtra("searchType"));
             String searchTerm = data.getStringExtra("searchTerm");
-            pushFragment(ProductListingFragment.Companion.newInstance(searchType, "", searchTerm));
+            pushFragment(ProductListingFragment.Companion.newInstance(searchType, "", searchTerm, true));
             return;
         }
 
@@ -1098,7 +1165,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     Fragment fragment = mNavController.getCurrentFrag();
                     if (fragment instanceof ShopFragment) {
                         ShopFragment shopFragment = (ShopFragment) fragment;
-                        shopFragment.refreshViewPagerFragment(false);
+                        shopFragment.refreshViewPagerFragment();
                         shopFragment.navigateToMyListFragment();
                         return;
                     }
@@ -1120,7 +1187,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     if (fragment instanceof ShopFragment) {
                         ShopFragment shopFragment = (ShopFragment) fragment;
                         shopFragment.navigateToMyListFragment();
-                        shopFragment.refreshViewPagerFragment(false);
+                        shopFragment.refreshViewPagerFragment();
                         return;
                     }
                     break;
@@ -1374,8 +1441,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if (mNavController != null && mNavController.getCurrentFrag() instanceof CartFragment) {
             NavigateToShoppingList.Companion navigateTo = NavigateToShoppingList.Companion;
             if (jsonElement != null) {
-                //Navigate to shop tab, select My list tab and open shopping list
-                getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
+                //Navigate to Account tab, select My list tab and open shopping list
+                getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
                 if (getCurrentFragment() instanceof ShopFragment) {
                     ShopFragment shopFragment = (ShopFragment) getCurrentFragment();
                     shopFragment.navigateToMyListFragment();
@@ -1458,15 +1525,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     listId = entry.getKey();
                     shoppingList = entry.getValue();
                 }
-                if (shoppingList != null)
+                if (shoppingList != null) {
+                    getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
                     ScreenManager.presentShoppingListDetailActivity(this, listId, shoppingList.getAsJsonObject().get("name").getAsString());
-            } else {
-                getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
-                if (mNavController.getCurrentFrag() instanceof ShopFragment) {
-                    ShopFragment shopFragment = (ShopFragment) mNavController.getCurrentFrag();
-                    shopFragment.navigateToMyListFragment();
-                    shopFragment.refreshViewPagerFragment(true);
                 }
+            } else {
+                getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
+                MyListsFragment fragment = new MyListsFragment();
+                pushFragment(fragment);
             }
         }
     }
@@ -1560,6 +1626,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             shopFragment.refreshCategories();
         }
     }
+
     public int getPreviousTabIndex() {
         return previousTabIndex;
     }
@@ -1573,6 +1640,4 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }, AppConstant.DELAY_500_MS);
 
     }
-
-
 }

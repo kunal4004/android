@@ -7,15 +7,23 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StyleSpan
 import android.view.*
-import android.view.View.*
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.dash_order_details_layout.*
 import kotlinx.android.synthetic.main.delivering_to_collection_from.*
+import kotlinx.android.synthetic.main.delivering_to_collection_from.foodDeliveryLinearLayout
+import kotlinx.android.synthetic.main.delivering_to_collection_from.optionImage
+import kotlinx.android.synthetic.main.delivering_to_collection_from.optionTitle
+import kotlinx.android.synthetic.main.delivering_to_dashing_from.*
 import kotlinx.android.synthetic.main.fragment_order_confirmation.*
 import kotlinx.android.synthetic.main.order_details_bottom_sheet.*
+import kotlinx.android.synthetic.main.order_details_bottom_sheet.addShoppingListButton
+import kotlinx.android.synthetic.main.order_details_bottom_sheet.itemsRecyclerView
 import kotlinx.android.synthetic.main.other_order_details.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
@@ -35,7 +43,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.shop.com
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 
@@ -73,6 +83,8 @@ class OrderConfirmationFragment : Fragment() {
                                     setupDeliveryOrCollectionDetails(response)
                                     setupOrderTotalDetails(response)
                                     setupOrderDetailsBottomSheet(response)
+                                    displayVocifNeeded(response)
+
                                 }
                                 else -> {
                                     showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
@@ -89,6 +101,17 @@ class OrderConfirmationFragment : Fragment() {
                     showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
                 }
             }, SubmittedOrderResponse::class.java))
+    }
+
+    private fun displayVocifNeeded(response: SubmittedOrderResponse) {
+        var deliveryType = response.orderSummary?.fulfillmentDetails?.deliveryType
+        VoiceOfCustomerManager.showVocSurveyIfNeeded(
+            activity,
+            KotlinUtils.vocShoppingHandling(deliveryType)
+        )
+        if ( Delivery.getType(deliveryType) == Delivery.CNC){
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_CConfirm, activity)
+        }
     }
 
     private fun showErrorScreen(errorType: Int) {
@@ -112,25 +135,49 @@ class OrderConfirmationFragment : Fragment() {
 
     private fun setupDeliveryOrCollectionDetails(response: SubmittedOrderResponse?) {
         context?.let {
-            deliveryCollectionDetailsConstraintLayout.visibility = VISIBLE
             when (Delivery.getType(response?.orderSummary?.fulfillmentDetails?.deliveryType)) {
                 Delivery.CNC -> {
+                    deliveryCollectionDetailsConstraintLayout?.visibility = VISIBLE
+                    deliveryOrderDetailsLayout.visibility = VISIBLE
                     optionImage.background =
                         AppCompatResources.getDrawable(it, R.drawable.icon_collection_grey_bg)
                     optionTitle?.text = it.getText(R.string.collecting_from)
                     deliveryTextView?.text = it.getText(R.string.collection_semicolon)
                     optionLocation?.text =
-                        response?.orderSummary?.fulfillmentDetails?.storeName?.let { convertToTitleCase(it) } ?: ""
+                        response?.orderSummary?.fulfillmentDetails?.storeName?.let {
+                            convertToTitleCase(it)
+                        } ?: ""
                 }
                 Delivery.STANDARD -> {
+                    deliveryCollectionDetailsConstraintLayout?.visibility = VISIBLE
+                    deliveryOrderDetailsLayout?.visibility = VISIBLE
                     optionImage?.background =
                         AppCompatResources.getDrawable(it, R.drawable.icon_delivery_grey_bg)
                     optionTitle?.text = it.getText(R.string.delivering_to)
                     deliveryTextView?.text = it.getText(R.string.delivery_semicolon)
                     optionLocation?.text =
-                        response?.orderSummary?.fulfillmentDetails?.address?.address1?.let { convertToTitleCase(it) } ?: ""
+                        response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
+                            convertToTitleCase(it)
+                        } ?: ""
                 }
-                else -> {
+                Delivery.DASH -> {
+                    dashDeliveryConstraintLayout?.visibility = VISIBLE
+                    deliveryOrderDetailsLayout?.visibility = GONE
+                    dashOrderDetailsLayout?.visibility = VISIBLE
+                    optionLocationTitle?.text =
+                        response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
+                            convertToTitleCase(it)
+                        }
+                            ?: ""
+                    dashFoodDeliveryDateTimeTextView?.text = applyBoldBeforeComma(
+                        response
+                            ?.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
+                    )
+                    continueBrowsingLinearLayout.setOnClickListener {
+                        requireActivity()?.setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
+                        requireActivity()?.finish()
+                    }
+                    setUpDashOrderDetailsLayout(response)
                 }
             }
 
@@ -155,6 +202,7 @@ class OrderConfirmationFragment : Fragment() {
     }
 
     private fun setupOrderTotalDetails(response: SubmittedOrderResponse?) {
+
         otherOrderDetailsConstraintLayout?.visibility = VISIBLE
 
         orderTotalTextView?.text = CurrencyFormatter
@@ -174,24 +222,6 @@ class OrderConfirmationFragment : Fragment() {
             discountsSeparator?.visibility = GONE
         }
 
-        val companyDiscount = response?.orderSummary?.discountDetails?.companyDiscount
-        if (companyDiscount != null && companyDiscount > 0) {
-            companyDiscountTextView?.text = "- ".plus(
-                CurrencyFormatter
-                    .formatAmountToRandAndCentWithSpace(companyDiscount)
-            )
-        } else {
-            companyDiscountLinearLayout?.visibility = GONE
-            companyDiscountSeparator?.visibility = GONE
-        }
-
-        wRewardsVouchersLinearLayout?.visibility =
-            if ((response?.orderSummary?.discountDetails?.voucherDiscount
-                    ?: 0.0) > 0.0
-            ) VISIBLE else GONE
-        wRewardsVouchersTextView?.text = CurrencyFormatter
-            .formatAmountToRandAndCentWithSpace(response?.orderSummary?.discountDetails?.voucherDiscount)
-
         val totalDiscount = response?.orderSummary?.discountDetails?.totalDiscount
         if (totalDiscount != null && totalDiscount > 0) {
             totalDiscountTextView?.text = "- ".plus(
@@ -203,9 +233,6 @@ class OrderConfirmationFragment : Fragment() {
             totalDiscountSeparator?.visibility = GONE
         }
 
-        deliveryFeeTextView?.text = CurrencyFormatter
-            .formatAmountToRandAndCentWithSpace(response?.deliveryDetails?.shippingAmount)
-
         // Commenting this Till Jan-2022 Release as per WOP-13825
         /*if (response?.wfsCardDetails?.isWFSCardAvailable == false) {
             if (response.orderSummary?.discountDetails?.wrewardsDiscount!! > 0.0) {
@@ -216,6 +243,100 @@ class OrderConfirmationFragment : Fragment() {
         } else {*/
         missedRewardsLinearLayout?.visibility = GONE
         //}
+
+        when (Delivery.getType(response?.orderSummary?.fulfillmentDetails?.deliveryType)) {
+            Delivery.STANDARD -> {
+                driverTipLinearLayout.visibility = GONE
+                driverTipSeparator.visibility = GONE
+
+                val companyDiscount = response?.orderSummary?.discountDetails?.companyDiscount
+                if (companyDiscount != null && companyDiscount > 0) {
+                    companyDiscountTextView?.text =
+                        "- ".plus(CurrencyFormatter.formatAmountToRandAndCentWithSpace(
+                            companyDiscount))
+                } else {
+                    companyDiscountLinearLayout?.visibility = GONE
+                    companyDiscountSeparator?.visibility = GONE
+                }
+                val wRewardsVouchers = response?.orderSummary?.discountDetails?.voucherDiscount
+                        ?: 0.0
+                if (wRewardsVouchers > 0.0) {
+                    wRewardsVouchersTextView?.text = CurrencyFormatter
+                            .formatAmountToRandAndCentWithSpace(response?.orderSummary?.discountDetails?.voucherDiscount)
+                } else {
+                    wRewardsVouchersLinearLayout?.visibility = GONE
+                    wRewardsVouchersSeparator?.visibility = GONE
+                }
+
+                deliveryFeeTextView?.text = CurrencyFormatter
+                    .formatAmountToRandAndCentWithSpace(response?.deliveryDetails?.shippingAmount)
+            }
+            Delivery.CNC -> {
+                driverTipLinearLayout.visibility = GONE
+                driverTipSeparator.visibility = GONE
+
+                val companyDiscount = response?.orderSummary?.discountDetails?.companyDiscount
+                if (companyDiscount != null && companyDiscount > 0) {
+                    companyDiscountTextView?.text =
+                        "- ".plus(CurrencyFormatter.formatAmountToRandAndCentWithSpace(
+                            companyDiscount))
+                } else {
+                    companyDiscountLinearLayout?.visibility = GONE
+                    companyDiscountSeparator?.visibility = GONE
+                }
+
+                val wRewardsVouchers = response?.orderSummary?.discountDetails?.voucherDiscount
+                        ?: 0.0
+                if (wRewardsVouchers > 0.0) {
+                    wRewardsVouchersTextView?.text = CurrencyFormatter
+                            .formatAmountToRandAndCentWithSpace(response?.orderSummary?.discountDetails?.voucherDiscount)
+                } else {
+                    wRewardsVouchersLinearLayout?.visibility = GONE
+                    wRewardsVouchersSeparator?.visibility = GONE
+                }
+
+                deliveryFeeTextView?.text = CurrencyFormatter
+                    .formatAmountToRandAndCentWithSpace(response?.deliveryDetails?.shippingAmount)
+
+            }
+            Delivery.DASH -> {
+                companyDiscountLinearLayout.visibility = GONE
+                companyDiscountSeparator?.visibility = GONE
+                wRewardsVouchersLinearLayout.visibility = GONE
+                wRewardsVouchersSeparator.visibility = GONE
+                deliveryFeeTextView?.text =
+                    CurrencyFormatter.formatAmountToRandAndCentWithSpace(response?.deliveryDetails?.shippingAmount)
+
+                val driverTip = response?.orderSummary?.tip?:0.00
+                if (driverTip > 0) {
+                    driverTipTextView?.text =
+                            CurrencyFormatter
+                                    .formatAmountToRandAndCentWithSpace(driverTip)
+                } else {
+                    driverTipLinearLayout?.visibility = GONE
+                    driverTipSeparator?.visibility = GONE
+                }
+            }
+            else -> {
+            }
+        }
+    }
+
+    private fun setUpDashOrderDetailsLayout(response: SubmittedOrderResponse?) {
+        setFoodItemCount(response?.items)
+
+        initRecyclerView(response?.items)
+
+        handleAddToShoppingListButton()
+    }
+
+    private fun setFoodItemCount(items: OrderItems?) {
+        val food: Int = items?.food?.size ?: 0
+        val number: Int = food
+        foodNumberItemsTextView?.text = if (number > 1)
+            bindString(R.string.food_number_items, number.toString())
+        else
+            bindString(R.string.food_number_item, number.toString())
     }
 
     private fun setupOrderDetailsBottomSheet(response: SubmittedOrderResponse?) {
@@ -225,10 +346,16 @@ class OrderConfirmationFragment : Fragment() {
                 deliveryLocationText?.text =
                     context?.getText(R.string.collection_location_semicolon)
                 deliveryOrderDetailsTextView?.text = context?.getText(R.string.collection_semicolon)
+                setNumberAndCostItemsBottomSheet(response?.items)
+                initRecyclerView(response?.items)
+                handleAddToShoppingListButton()
             }
             Delivery.STANDARD -> {
                 deliveryLocationText?.text = context?.getText(R.string.delivery_location_semicolon)
                 deliveryOrderDetailsTextView?.text = context?.getText(R.string.delivery_semicolon)
+                setNumberAndCostItemsBottomSheet(response?.items)
+                initRecyclerView(response?.items)
+                handleAddToShoppingListButton()
             }
             else -> {
             }
@@ -255,12 +382,6 @@ class OrderConfirmationFragment : Fragment() {
             deliveryDateTimeBottomSheetTextView?.text =
                 response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
         }
-
-        setNumberAndCostItemsBottomSheet(response?.items)
-
-        initRecyclerView(response?.items)
-
-        handleAddToShoppingListButton()
     }
 
     private fun handleAddToShoppingListButton() {

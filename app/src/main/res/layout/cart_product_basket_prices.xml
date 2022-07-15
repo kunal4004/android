@@ -14,7 +14,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="16dp"
+        android:layout_height="@dimen/eight_dp"
         android:background="@color/recent_search_bg"/>
 
     <LinearLayout

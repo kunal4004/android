@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/hundred_and_ninety_five_dp"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/five_dp"
+    android:minWidth="@dimen/hundred_and_eighty_dp">
+
+    <include
+        android:id="@+id/row_layout"
+        layout="@layout/product_listing_page_row" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
