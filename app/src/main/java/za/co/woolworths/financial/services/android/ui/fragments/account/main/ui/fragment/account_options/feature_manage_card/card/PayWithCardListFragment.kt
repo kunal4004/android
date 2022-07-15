@@ -18,8 +18,6 @@ import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowSt
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.StoreCardType
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -37,7 +35,6 @@ class PayWithCardListFragment : Fragment(R.layout.pay_with_card_list_fragment) {
     @Inject lateinit var router: ProductLandingRouterImpl
 
     private val viewModel: MyAccountsRemoteApiViewModel by activityViewModels()
-    private val freezeViewModel: TemporaryFreezeCardViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -53,7 +50,7 @@ class PayWithCardListFragment : Fragment(R.layout.pay_with_card_list_fragment) {
 
                 PAY_WITH_CARD_ON_DISMISS_RESULT_LISTENER -> {
                     lifecycleScope.launch {
-                        viewModel.queryServiceBlockStoreCard(storeCardType = StoreCardType.VIRTUAL_TEMP_CARD).collect {}
+                        viewModel.queryServiceBlockPayWithCardStoreCard()
                     }
                 }
             }
@@ -92,8 +89,8 @@ class PayWithCardListFragment : Fragment(R.layout.pay_with_card_list_fragment) {
         when (viewModel.dataSource.isOneTimePinUnblockStoreCardEnabled()) {
             true -> router.routeToOTPActivity(requireActivity())
             false -> lifecycleScope.launch {
-
-                freezeViewModel.queryServiceUnBlockStoreCard(StoreCardType.VIRTUAL_TEMP_CARD).collect { state ->
+                viewModel.queryServiceUnBlockPayWithCardStoreCard()
+                viewModel.payWithCardUnBlockCardResponse.collect { state ->
                     with(state) {
                         renderNoConnection {
                             router.showNoConnectionToast(requireActivity())

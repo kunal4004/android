@@ -13,6 +13,7 @@ import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardRes
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCard
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.getViewStateFlowForNetworkCall
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.BlockStoreCardType
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.IStoreCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.StoreCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.StoreCardType
@@ -21,6 +22,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TemporaryFreezeCardViewModel @Inject constructor(private val storeCardDataSource: StoreCardDataSource) : ViewModel(), IStoreCardDataSource by storeCardDataSource {
+
+    var mStoreCardType  : StoreCardType = StoreCardType.None
 
     val isTempFreezeUnFreezeLoading: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val isSwitcherEnabled: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
@@ -38,18 +41,20 @@ class TemporaryFreezeCardViewModel @Inject constructor(private val storeCardData
     }
 
     fun queryServiceBlockCardTypeFreeze() = viewModelScope.launch {
-        queryServiceBlockStoreCard(StoreCardType.PRIMARY_CARD).collect {
+        mStoreCardType = StoreCardType.PrimaryCard(BlockStoreCardType.FREEZE)
+        queryServiceBlockStoreCard(mStoreCardType).collect {
             _blockMyCardResponse.emit(
                 it
             )
         }
     }
 
-    fun queryServiceUnBlockCardTypeFreeze(storeCardType: StoreCardType) = viewModelScope.launch {
-        queryServiceUnBlockStoreCard(storeCardType).collect { _blockMyCardResponse.emit(it) }
+    fun queryServiceUnBlockCardTypeFreeze() = viewModelScope.launch {
+        mStoreCardType = StoreCardType.PrimaryCard(BlockStoreCardType.UNFREEZE)
+        queryServiceUnBlockStoreCard(mStoreCardType).collect { _blockMyCardResponse.emit(it) }
     }
 
-    suspend fun queryServiceBlockStoreCard(storeCardType: StoreCardType) =
+    private suspend fun queryServiceBlockStoreCard(storeCardType: StoreCardType) =
         getViewStateFlowForNetworkCall {
             queryServiceBlockStoreCard(
                 position = currentPagePosition.value ?: -1,
@@ -68,5 +73,9 @@ class TemporaryFreezeCardViewModel @Inject constructor(private val storeCardData
     fun isCardNotReceived(storeCard: StoreCard?): Boolean {
         val shouldNotifyUserByEmail = Utils.getSessionDaoValue(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN).isNullOrEmpty()
         return (storeCard?.cardNotReceived == true && shouldNotifyUserByEmail)
+    }
+
+    fun resetCardPosition() {
+        currentPagePosition.value = 0
     }
 }

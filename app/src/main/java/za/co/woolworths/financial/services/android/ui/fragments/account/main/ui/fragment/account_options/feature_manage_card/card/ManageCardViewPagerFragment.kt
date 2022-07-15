@@ -14,16 +14,15 @@ import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCard
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.LoaderType
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
-import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.StoreCardNotReceivedDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.BlockStoreCardType
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.StoreCardType
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.disableNestedScrolling
-import za.co.woolworths.financial.services.android.util.Utils
 
 @AndroidEntryPoint
 class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_fragment) {
@@ -51,18 +50,45 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
                 storeCardResponseResult.collectLatest { response ->
                     with(response) {
                         renderSuccess {
-                            val currentPosition  = cardFreezeViewModel.currentPagePosition.value ?: 0
+
                             val listOfStoreCardFeatures = handleStoreCardResponseResult(output)
+                            val currentPosition = getCardPosition(listOfStoreCardFeatures)
+
                             manageCardAdapter?.setItem(listOfStoreCardFeatures)
                             setDotIndicatorVisibility(listOfStoreCardFeatures)
                             viewModel.onCardPagerPageSelected(listOfStoreCardFeatures?.get(currentPosition),currentPosition)
-                            viewModel.loaderType = LoaderType.LANDING
-                            cardFreezeViewModel.stopLoading()
+
+                            handleBlockUnBlockStoreCardResult()
+
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun getCardPosition(listOfStoreCardFeatures: MutableList<StoreCardFeatureType>?): Int
+    = if ((listOfStoreCardFeatures?.size ?: 0) == 1) {
+            cardFreezeViewModel.resetCardPosition()
+            0
+        } else cardFreezeViewModel.currentPagePosition.value ?: 0
+
+
+    private fun handleBlockUnBlockStoreCardResult() {
+        viewModel.loaderType = LoaderType.LANDING
+
+        when (val type = cardFreezeViewModel.mStoreCardType) {
+            is StoreCardType.PrimaryCard -> {
+                (activity as? StoreCardActivity)?.showToast( if (type.block == BlockStoreCardType.BLOCK){
+                  R.string.card_temporarily_frozen_label
+                }else R.string.card_temporarily_unfrozen_label )
+            }
+            else -> Unit
+        }
+
+        cardFreezeViewModel.stopLoading()
+        viewModel.mStoreCardType = StoreCardType.None
+        cardFreezeViewModel.mStoreCardType = StoreCardType.None
     }
 
     private fun ManageCardViewpagerFragmentBinding?.setDotIndicatorVisibility(items: MutableList<StoreCardFeatureType>?) {

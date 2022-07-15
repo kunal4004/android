@@ -242,8 +242,12 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
                 listOfStoreCardFeatures.clear()
                 when(primaryStoreCard){
                     is StoreCardFeatureType.StoreCardIsTemporaryFreeze -> {
-                        listOfStoreCardFeatures.add(primaryStoreCard)
-                        listOfStoreCardFeatures.add(virtualTempCard)
+                        if (primaryStoreCard.isStoreCardFrozen) {
+                            listOfStoreCardFeatures.add(virtualTempCard)
+                            listOfStoreCardFeatures.add(primaryStoreCard)
+                        }else {
+                            listOfStoreCardFeatures.add(primaryStoreCard)
+                        }
                     }
                     else -> {
                         listOfStoreCardFeatures.add(virtualTempCard)

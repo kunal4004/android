@@ -15,6 +15,8 @@ import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardRes
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.data.CardNotReceivedDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.data.ICardNotReceivedService
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.BlockStoreCardType
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.StoreCardType
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.RetryNetworkRequest
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.ApiResult
@@ -31,8 +33,9 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
     private val collection: TreatmentPlanDataSource,
     val dataSource: StoreCardDataSource,
     private val cardNotReceived: CardNotReceivedDataSource
-
 ) : ViewModel(), IStoreCardDataSource by dataSource,ICardNotReceivedService by cardNotReceived {
+
+     var mStoreCardType: StoreCardType = StoreCardType.None
 
     var mStoreCardFeatureType: StoreCardFeatureType? = null
     var loaderType : LoaderType = LoaderType.LANDING
@@ -48,6 +51,9 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
 
     private val _notifyCardNotReceived = MutableSharedFlow<ViewState<BlockMyCardResponse>>(0)
     val notifyCardNotReceived: SharedFlow<ViewState<BlockMyCardResponse>> = _notifyCardNotReceived
+
+    private val _payWithCardUnBlockCardResponse = MutableSharedFlow<ViewState<BlockMyCardResponse>>(0)
+    val payWithCardUnBlockCardResponse: SharedFlow<ViewState<BlockMyCardResponse>> = _payWithCardUnBlockCardResponse
 
     private val _storeCardResponseResult = MutableStateFlow<ViewState<StoreCardsResponse>>(ViewState.Loading(true))
     val storeCardResponseResult: StateFlow<ViewState<StoreCardsResponse>> get() = _storeCardResponseResult
@@ -111,6 +117,22 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
         viewModelScope.launch {
             mStoreCardFeatureType = storeCardFeatureType
             _onViewPagerPageChangeListener.emit(Pair(storeCardFeatureType, position))
+        }
+    }
+
+    fun queryServiceBlockPayWithCardStoreCard() = viewModelScope.launch {
+        mStoreCardType = StoreCardType.VirtualTempCard(block = BlockStoreCardType.BLOCK)
+        getViewStateFlowForNetworkCall {
+            queryServiceBlockStoreCard(storeCardType = mStoreCardType)
+        }
+    }
+
+    fun queryServiceUnBlockPayWithCardStoreCard() = viewModelScope.launch {
+        getViewStateFlowForNetworkCall {
+            mStoreCardType = StoreCardType.VirtualTempCard(block = BlockStoreCardType.UNBLOCK)
+            queryServiceUnBlockStoreCard(storeCardType = mStoreCardType)
+        }.collect {
+            _payWithCardUnBlockCardResponse.emit(it)
         }
     }
 

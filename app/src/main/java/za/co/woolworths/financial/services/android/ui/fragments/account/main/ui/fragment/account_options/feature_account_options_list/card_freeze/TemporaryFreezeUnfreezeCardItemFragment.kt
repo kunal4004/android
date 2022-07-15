@@ -18,7 +18,6 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.StoreCardType
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.AccountOptionsManageCardFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.TemporaryFreezeCardFragment
@@ -59,13 +58,16 @@ class TemporaryFreezeUnfreezeCardItemFragment : Fragment(R.layout.temporary_free
         lifecycleScope.launch {
             viewModel.blockMyCardResponse.collectLatest { state ->
                 with(state) {
+
                     renderNoConnection {
                         router.showNoConnectionToast(requireActivity())
                         showLoading(ViewState.Loading(false), this@subscribeObservers)
                     }
+
                     renderLoading {
                         showLoading(this, this@subscribeObservers)
                     }
+
                     renderSuccess { accountViewModel.requestGetStoreCardCards() }
 
                     renderHttpFailureFromServer {  router.routeToServerErrorDialog(requireActivity(), output.response)}
@@ -115,7 +117,7 @@ class TemporaryFreezeUnfreezeCardItemFragment : Fragment(R.layout.temporary_free
                 }
 
                 TemporaryUnFreezeCardFragment.UN_FREEZE_TEMPORARY_CARD_CONFIRM_RESULT -> {
-                    viewModel.queryServiceUnBlockCardTypeFreeze(StoreCardType.PRIMARY_CARD)
+                    viewModel.queryServiceUnBlockCardTypeFreeze()
                 }
 
                 TemporaryUnFreezeCardFragment.UN_FREEZE_TEMPORARY_CARD_CANCEL_RESULT -> {

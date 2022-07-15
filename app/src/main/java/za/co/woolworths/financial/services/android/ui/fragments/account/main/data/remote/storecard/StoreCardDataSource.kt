@@ -16,7 +16,13 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
-enum class StoreCardType {PRIMARY_CARD, VIRTUAL_TEMP_CARD }
+enum class BlockStoreCardType { BLOCK, UNBLOCK, FREEZE, UNFREEZE, NONE }
+
+sealed class StoreCardType {
+    data class PrimaryCard(val block: BlockStoreCardType) : StoreCardType()
+    data class VirtualTempCard(val block: BlockStoreCardType) : StoreCardType()
+    object None : StoreCardType()
+}
 
 interface IStoreCardDataSource {
     var account: Account?
@@ -67,7 +73,7 @@ class StoreCardDataSource @Inject constructor(
         )
         val location = Utils.getLastSavedLocation()
         //TODO :: Retrieve Locations...
-        queryServiceStoreCards(
+        requestPostAccountsStoreCardCards(
             deviceIdentityToken,
             location.latitude,
             location.longitude,
