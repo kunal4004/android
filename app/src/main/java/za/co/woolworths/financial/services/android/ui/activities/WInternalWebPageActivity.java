@@ -149,7 +149,6 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 
 			@Override
 			public void onPageFinished(WebView view, String url) {
-				// TODO Auto-generated method stub
 				super.onPageFinished(view, url);
 				hideProgressBar();
 			}
@@ -183,7 +182,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 			@Override
 			public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
 				super.doUpdateVisitedHistory(view, url, isReload);
-                if (treatmentPlan ) {
+                if (treatmentPlan) {
 					HashMap<String,String> parameters = getQueryString(url);
 					if (parameters.containsKey("Scope") ){
 						if (parameters.get("Scope").equals("paynow")){
@@ -230,7 +229,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	}
 
 	public void ficaHandling(String url){
-		if (AppConfigSingleton.INSTANCE.getAccountOptions() != null ){
+		if (AppConfigSingleton.INSTANCE.getAccountOptions() != null && collectionsExitUrl != null){
 			fica = AppConfigSingleton.INSTANCE.getAccountOptions().getFicaRefresh();
 			if (url.contains(collectionsExitUrl)){
 				webInternalPage.destroy();
@@ -267,7 +266,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 			Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse(url));
 			startActivity(intent);
 		}
-		if (!privacyUrlForFica().isEmpty() && url.contains(privacyUrlForFica())&& KotlinUtils.Companion.isFicaEnabled()){
+		if (!privacyUrlForFica().isEmpty() && url.contains(privacyUrlForFica()) && KotlinUtils.Companion.isFicaEnabled()){
 			KotlinUtils.Companion.openUrlInPhoneBrowser(privacyUrlForFica(),WInternalWebPageActivity.this);
 		}
 		else {
