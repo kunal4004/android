@@ -84,7 +84,6 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
 import java.net.HttpURLConnection.HTTP_OK
-import java.util.*
 import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 import kotlin.coroutines.CoroutineContext
@@ -112,6 +111,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     private var isComingFromCheckout: Boolean = false
     private var isComingFromSlotSelection: Boolean = false
     private var isValidAddress: Boolean = false;
+    private var placeName: String? = null
 
     companion object {
         const val PROVINCE_SELECTION_BACK_PRESSED = "5645"
@@ -383,8 +383,9 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             }
             autoCompleteTextView?.onItemClickListener =
                 AdapterView.OnItemClickListener { parent, _, position, _ ->
-                    val item = parent.getItemAtPosition(position) as? PlaceAutocomplete
-                    val placeId = item?.placeId.toString()
+                    val item = parent.getItemAtPosition(position) as? PlaceAutocomplete//
+                    val placeId = item?.placeId.toString()//
+                    placeName = item?.primaryText.toString()
                     val placeFields: MutableList<Place.Field> = mutableListOf(
                         Place.Field.ID,
                         Place.Field.NAME,
@@ -397,7 +398,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     request.let { placeRequest ->
                         placesClient.fetchPlace(placeRequest)
                             .addOnSuccessListener { response ->
-                                val place = response.place
+                                val place = response.place//
                                 selectedAddress = SelectedPlacesAddress()
                                 setAddress(place)
                             }.addOnFailureListener { exception ->
@@ -502,13 +503,13 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             isErrorScreen = false
         )
         provinceSuburbEnableType = null
-        var addressText1 = ""
-        var addressText2 = ""
+        var streetNumber = ""
+        var routeName = ""
         for (address in place.addressComponents?.asList()!!) {
             when (address.types[0]) {
-                STREET_NUMBER.value -> addressText1 = address.name
-                ROUTE.value -> addressText2 =
-                    if (!address.name.isNullOrEmpty()) address.name else addressText2
+                STREET_NUMBER.value -> streetNumber = address.name
+                ROUTE.value -> routeName =
+                    if (!address.name.isNullOrEmpty()) address.name else routeName
                 ADMINISTRATIVE_AREA_LEVEL_1.value -> {
                     selectedAddress.provinceName = address.name
                 }
@@ -525,12 +526,12 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                 LOCALITY.value -> selectedAddress.provinceName = address.name
 
                 PREMISE.value -> {
-                    if (addressText2.isNullOrEmpty()) addressText2 = address.name
+                    if (routeName.isNullOrEmpty()) routeName = address.name
                 }
             }
         }
 
-        if (addressText1.isNullOrEmpty() && addressText2.isNullOrEmpty()) {
+        if (streetNumber.isNullOrEmpty() && routeName.isNullOrEmpty()) {
             isValidAddress = false
             launch(Dispatchers.Main) {
                 autocompletePlaceErrorMsg?.text =
@@ -543,13 +544,33 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         }
         if (!selectedAddress.provinceName.isNullOrEmpty() && !selectedAddress.savedAddress.suburb.isNullOrEmpty())
             selectedAddress.savedAddress.region = ""
+        if (streetNumber.isNullOrEmpty()) {
+            streetNumber = ""
+        }
+        if (routeName.isNullOrEmpty()) {
+            routeName = ""
+        }
         selectedAddress.savedAddress.apply {
             val tempAddress1 =
-                if (addressText1.isNullOrEmpty()) addressText2 else addressText1.plus(" ")
-                    .plus(addressText2)
-            val googlePlacesName = place.name
-            address1 =
-                if (googlePlacesName.isNullOrEmpty()) tempAddress1 else if (googlePlacesName.length > 50) tempAddress1 else googlePlacesName
+                if (streetNumber.isNullOrEmpty())
+                    routeName
+                else
+                    streetNumber.plus(" ").plus(routeName)
+
+            placeName?.let {
+
+                if (!it.equals("$streetNumber $routeName", true)) {
+                    address1 = it
+                }
+
+            } ?: run {
+                val googlePlacesName = place.name
+                address1 =
+                    if (googlePlacesName.isNullOrEmpty())
+                        tempAddress1
+                    else if (googlePlacesName.length > 50) tempAddress1
+                    else googlePlacesName
+            }
             latitude = place.latLng?.latitude
             longitude = place.latLng?.longitude
             placesId = place.id
@@ -557,9 +578,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
         val setTextAndCheckIfSelectedProvinceExist = {
             autoCompleteTextView.apply {
-                setText(
-                    if (place.name.isNullOrEmpty()) selectedAddress.savedAddress.address1 else place.name
-                )
+                setText(selectedAddress.savedAddress.address1)
+
                 if (selectedAddress.savedAddress.address1.isNullOrEmpty())
                     showErrorDialog()
                 setSelection(autoCompleteTextView.length())
