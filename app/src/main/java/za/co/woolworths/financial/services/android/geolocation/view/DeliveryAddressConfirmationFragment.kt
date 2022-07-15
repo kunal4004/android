@@ -35,7 +35,6 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
-import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
@@ -128,6 +127,28 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        updateBundleValues()
+
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.apply {
+                if (deliveryType == Delivery.CNC.type) {
+                    //storeName will only be used in CnC flow. But storeId will be use in CnC or Dash.
+                    mStoreName = this.storeName
+                }
+                mStoreId = this.storeId
+            }
+        } else {
+            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.apply {
+                if (deliveryType == Delivery.CNC.type) {
+                    //storeName will only be used in CnC flow. But storeId will be use in CnC or Dash.
+                    mStoreName = this.storeName
+                }
+                mStoreId = this.storeId
+            }
+        }
+    }
+
+    private fun updateBundleValues() {
         bundle = arguments?.getBundle(BUNDLE)
 
         bundle?.apply {
@@ -170,24 +191,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             ) {
                 savedAddressResponse =
                     this.getSerializable(SAVED_ADDRESS_RESPONSE) as SavedAddressResponse
-            }
-        }
-
-        if (SessionUtilities.getInstance().isUserAuthenticated) {
-            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.apply {
-                if (deliveryType == Delivery.CNC.type) {
-                    //storeName will only be used in CnC flow. But storeId will be use in CnC or Dash.
-                    mStoreName = this.storeName
-                }
-                mStoreId = this.storeId
-            }
-        } else {
-            KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.apply {
-                if (deliveryType == Delivery.CNC.type) {
-                    //storeName will only be used in CnC flow. But storeId will be use in CnC or Dash.
-                    mStoreName = this.storeName
-                }
-                mStoreId = this.storeId
             }
         }
     }
@@ -344,6 +347,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         }
         setFragmentResultListener(MAP_LOCATION_RESULT) { _, bundle ->
             // Assign new lat long and Reload the fragment.
+            updateBundleValues()
             val localBundle = bundle.getBundle(BUNDLE)
             localBundle.apply {
                 latitude = this?.getString(KEY_LATITUDE, "")
@@ -381,7 +385,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         var unSellableCommerceItems: MutableList<UnSellableCommerceItem>? = ArrayList()
         when (deliveryType) {
             Delivery.STANDARD.name -> {
-                mStoreId = ""
                 unSellableCommerceItems =
                     validateLocationResponse?.validatePlace?.unSellableCommerceItems
             }
@@ -393,7 +396,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 }
             }
             Delivery.DASH.name -> {
-                mStoreId = validateLocationResponse?.validatePlace?.onDemand?.storeId
                 unSellableCommerceItems =
                     validateLocationResponse?.validatePlace?.onDemand?.unSellableCommerceItems
             }
@@ -412,12 +414,14 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             val confirmLocationAddress = ConfirmLocationAddress(placeId)
             val confirmLocationRequest = when (deliveryType) {
                 Delivery.STANDARD.name -> {
-                    ConfirmLocationRequest(STANDARD, confirmLocationAddress, "")
+                    mStoreId = ""
+                    ConfirmLocationRequest(STANDARD, confirmLocationAddress, mStoreId)
                 }
                 Delivery.CNC.name -> {
                     ConfirmLocationRequest(CNC, confirmLocationAddress, mStoreId)
                 }
                 Delivery.DASH.name -> {
+                    mStoreId = validateLocationResponse?.validatePlace?.onDemand?.storeId
                     ConfirmLocationRequest(DASH, confirmLocationAddress, mStoreId)
                 }
                 else -> {
@@ -441,7 +445,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                     KotlinUtils.let {
                                         it.placeId = placeId
                                         it.isLocationSame = placeId?.equals(savedPlaceId)
-                                        it.isDeliveryLocationTabClicked = placeId?.equals(savedPlaceId)
+                                        it.isDeliveryLocationTabClicked =
+                                            placeId?.equals(savedPlaceId)
                                         it.isCncTabClicked = placeId?.equals(savedPlaceId)
                                         it.isDashTabClicked = placeId?.equals(savedPlaceId)
                                     }
@@ -768,7 +773,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         updateDashDetails()
     }
 
-    private fun selectATab(selectedTab: AppCompatTextView) {
+    private fun selectATab(selectedTab: AppCompatTextView?) {
         selectedTab?.setBackgroundResource(R.drawable.bg_geo_selected_tab)
         val myRiadSemiBoldFont =
             Typeface.createFromAsset(activity?.assets, "fonts/MyriadPro-Semibold.otf")
@@ -790,7 +795,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         }
     }
 
-    private fun unSelectATab(unSelectedTab: AppCompatTextView) {
+    private fun unSelectATab(unSelectedTab: AppCompatTextView?) {
         unSelectedTab?.apply {
             val myriadProRegularFont =
                 Typeface.createFromAsset(activity?.assets, "fonts/MyriadPro-Regular.otf")
