@@ -285,6 +285,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
         } else {
             /*location , fulfillment is already available so only browsing location need to be save */
             setBrowsingDataInformation()
+            parentFragment?.showClickAndCollectToolTipUi(storeId)
             showCategoryList()
         }
     }
@@ -345,6 +346,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
                             WoolworthsApplication.setValidatedSuburbProducts(validatePlace)
                             setBrowsingDataInformation()
                             setDeliveryView()
+                            parentFragment?.showClickAndCollectToolTipUi(storeId)
                             showCategoryList()
                         }
                     }
