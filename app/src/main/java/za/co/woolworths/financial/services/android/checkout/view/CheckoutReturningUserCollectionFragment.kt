@@ -44,6 +44,7 @@ import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutA
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.Companion.REGEX_DELIVERY_INSTRUCTIONS
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FoodSubstitution
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.baseFragBundle
 import za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog.Companion.ARGS_KEY_COLLECTION_DATES
 import za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog.Companion.ARGS_KEY_SELECTED_POSITION
@@ -84,6 +85,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private var selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
     private var whoIsCollectingDetails: WhoIsCollectingDetails? = null
+    private var savedAddressResponse = SavedAddressResponse()
     private var shimmerComponentArray: List<Pair<ShimmerFrameLayout, View>> = ArrayList()
     private var navController: NavController? = null
     private var liquorImageUrl: String? = ""
@@ -595,6 +597,9 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 whoIsCollectingDetails =
                     Gson().fromJson(it, object : TypeToken<WhoIsCollectingDetails>() {}.type)
             }
+            savedAddressResponse = Utils.jsonStringToObject(getString(SAVED_ADDRESS_KEY),
+                SavedAddressResponse::class.java) as? SavedAddressResponse ?: getSerializable(
+                SAVED_ADDRESS_KEY) as? SavedAddressResponse ?: SavedAddressResponse()
         }
         if (whoIsCollectingDetails != null) {
             tvCollectionUserName.text = whoIsCollectingDetails?.recipientName
@@ -770,6 +775,12 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                     ),
                     activity
                 )
+                var defaultAddress = Address()
+                savedAddressResponse.addresses?.forEach { address ->
+                    if (savedAddressResponse.defaultAddressNickname.equals(address.nickname)) {
+                        defaultAddress = address
+                    }
+                }
 
                 KotlinUtils.presentEditDeliveryGeoLocationActivity(
                     requireActivity(),
@@ -779,8 +790,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                     false,
                     true,
                     true,
-                    null,
-                    null,
+                    savedAddressResponse,
+                    defaultAddress,
                     Utils.toJson(whoIsCollectingDetails)
                 )
                 activity?.finish()
@@ -950,7 +961,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     private fun getShipmentDetailsBody() = ShippingDetailsBody().apply {
         requestFrom = "express"
         joinBasket = true
-        if(liquorOrder == true) {
+        if (liquorOrder == true) {
             ageConsentConfirmed = true
         }
         foodShipOnDate = selectedTimeSlot?.stringShipOnDate

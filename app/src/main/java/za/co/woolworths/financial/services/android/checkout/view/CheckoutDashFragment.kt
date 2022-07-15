@@ -31,7 +31,6 @@ import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.loading
 import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.*
 import kotlinx.android.synthetic.main.layout_collection_time_details.*
 import kotlinx.android.synthetic.main.layout_collection_time_details.view.*
-import kotlinx.android.synthetic.main.layout_collection_user_information.*
 import kotlinx.android.synthetic.main.layout_delivering_to_details.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
@@ -169,7 +168,7 @@ class CheckoutDashFragment : Fragment(),
         }
     }
 
-    fun initShimmerView() {
+    private fun initShimmerView() {
 
         shimmerComponentArray = listOf(
             Pair<ShimmerFrameLayout, View>(
@@ -267,7 +266,7 @@ class CheckoutDashFragment : Fragment(),
         startShimmerView()
     }
 
-    fun startShimmerView() {
+    private fun startShimmerView() {
         txtNeedBags?.visibility = View.GONE
         switchNeedBags?.visibility = View.GONE
 
@@ -279,7 +278,7 @@ class CheckoutDashFragment : Fragment(),
         }
     }
 
-    fun stopShimmerView() {
+    private fun stopShimmerView() {
         shimmerComponentArray.forEach {
             if (it.first.isShimmerStarted) {
                 it.first.stopShimmer()
@@ -422,7 +421,7 @@ class CheckoutDashFragment : Fragment(),
         dashTimeSlotsAdapter.setCollectionTimeSlotData(ArrayList(slots))
     }
 
-    fun getFirstAvailableSlot(list: List<SortedJoinDeliverySlot>): Week? {
+    private fun getFirstAvailableSlot(list: List<SortedJoinDeliverySlot>): Week? {
         if (list.isNullOrEmpty()) {
             return null
         }
@@ -581,7 +580,7 @@ class CheckoutDashFragment : Fragment(),
                 sameSelection = true
             }
             if (index == driverTipOptionsList?.size?.minus(1) ?: null) {
-                titleTextView?.setText(driverTipOptionsList?.lastOrNull())
+                titleTextView?.text = driverTipOptionsList?.lastOrNull()
                 titleTextView?.setCompoundDrawables(null, null, null, null)
             }
             titleTextView?.background =
@@ -667,7 +666,7 @@ class CheckoutDashFragment : Fragment(),
                         return@forEach
                     }
                     if (savedAddresses.defaultAddressNickname.isNullOrEmpty()) {
-                        checkoutDeliveryDetailsLayout.visibility = View.GONE
+                        checkoutDeliveryDetailsLayout?.visibility = View.GONE
                     }
                 }
                 tvNativeCheckoutDeliveringValue?.text = deliveringToAddress
@@ -677,7 +676,7 @@ class CheckoutDashFragment : Fragment(),
     }
 
 
-    fun initializeDeliveryInstructions() {
+    private fun initializeDeliveryInstructions() {
         edtTxtSpecialDeliveryInstruction?.addTextChangedListener(deliveryInstructionsTextWatcher)
         edtTxtGiftInstructions?.addTextChangedListener(deliveryInstructionsTextWatcher)
         edtTxtInputLayoutSpecialDeliveryInstruction?.visibility = View.GONE
@@ -846,7 +845,7 @@ class CheckoutDashFragment : Fragment(),
         }
     }
 
-    fun navigateToCollectionDateDialog(weekDaysList: ArrayList<Week>) {
+    private fun navigateToCollectionDateDialog(weekDaysList: ArrayList<Week>) {
         navController?.navigate(
             R.id.action_checkoutReturningUserCollectionFragment_to_collectionDatesBottomSheetDialog,
             bundleOf(

@@ -1352,6 +1352,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                 CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY -> reloadFragment()
                 CheckOutFragment.RESULT_RELOAD_CART -> checkLocationChangeAndReload()
                 Activity.RESULT_OK -> requireActivity().onBackPressed()
+                Activity.RESULT_CANCELED -> reloadFragment()
             }
         }
         if (requestCode == REQUEST_SUBURB_CHANGE) {
