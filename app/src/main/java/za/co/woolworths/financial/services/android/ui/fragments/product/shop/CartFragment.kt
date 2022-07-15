@@ -488,7 +488,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                 placeId,
                 isComingFromCheckout = true,
                 isComingFromSlotSelection = false,
-                savedAddressResposne = response,
+                savedAddressResponse = response,
                 defaultAddress = null,
                 whoISCollecting = "",
                 liquorCompliance = liquorCompliance
@@ -587,7 +587,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                 it.placeId,
                 isComingFromCheckout = false,
                 isComingFromSlotSelection = false,
-                savedAddressResposne = null,
+                savedAddressResponse = null,
                 defaultAddress = null,
                 whoISCollecting = "",
                 liquorCompliance = liquorCompliance
@@ -1352,6 +1352,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                 CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY -> reloadFragment()
                 CheckOutFragment.RESULT_RELOAD_CART -> checkLocationChangeAndReload()
                 Activity.RESULT_OK -> requireActivity().onBackPressed()
+                Activity.RESULT_CANCELED -> reloadFragment()
             }
         }
         if (requestCode == REQUEST_SUBURB_CHANGE) {

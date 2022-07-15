@@ -198,6 +198,16 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         imBarcodeScanner?.visibility = View.VISIBLE
     }
 
+    fun showClickAndCollectToolTipUi(browsingStoreId: String?) {
+        showClickAndCollectToolTip(true, browsingStoreId)
+        object : CountDownTimer(DELAY_4000_MS, 100) {
+            override fun onTick(millisUntilFinished: Long) {}
+            override fun onFinish() {
+                blackToolTipLayout?.visibility = View.GONE
+            }
+        }.start()
+    }
+
     fun hideSerachAndBarcodeUi() {
         tvSearchProduct?.visibility = View.GONE
         imBarcodeScanner?.visibility = View.GONE
@@ -757,17 +767,21 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
     }
 
-    private fun showClickAndCollectToolTip() {
+     fun showClickAndCollectToolTip(isStoreSelectedForBrowsing:Boolean = false, browsingStoreId: String? = "") {
         if (KotlinUtils.isCncTabClicked == true) {
             blackToolTipLayout?.visibility = View.GONE
             return
         }
-
-        if (isUserAuthenticated() && getFirstAvailableFoodDeliveryDate().isNullOrEmpty() == true) {
+        if (browsingStoreId == null) {
+            return
+        }
+        if (isUserAuthenticated() && getFirstAvailableFoodDeliveryDate(isStoreSelectedForBrowsing,
+                browsingStoreId).isNullOrEmpty() == true) {
             blackToolTipLayout?.visibility = View.GONE
             return
         } else {
-            if (getFirstAvailableFoodDeliveryDate().isNullOrEmpty() == true) {
+            if (getFirstAvailableFoodDeliveryDate(isStoreSelectedForBrowsing,
+                    browsingStoreId).isNullOrEmpty() == true) {
                 blackToolTipLayout?.visibility = View.GONE
                 return
             }
@@ -782,7 +796,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             deliveryIconLayout?.visibility = View.VISIBLE
 
             val store = GeoUtils.getStoreDetails(
-                getDeliveryType()?.storeId,
+                getStoreId(isStoreSelectedForBrowsing, browsingStoreId),
                 validatePlace.stores
             )
             foodItemDateText?.text = store?.firstAvailableFoodDeliveryDate
@@ -798,16 +812,30 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
     }
 
-    private fun getFirstAvailableFoodDeliveryDate(): String? {
+
+    private fun getStoreId(isStoreSelectedForBrowsing: Boolean, browsingStoreId: String): String? {
+        if (isStoreSelectedForBrowsing) {
+            /* select store from store list */
+            return browsingStoreId
+        } else {
+            return getDeliveryType()?.storeId
+        }
+    }
+
+    private fun getFirstAvailableFoodDeliveryDate(
+        isStoreSelectedForBrowsing: Boolean,
+        browsingStoreId: String
+    ): String? {
+        var storeId: String? = getStoreId(isStoreSelectedForBrowsing, browsingStoreId)
         validateLocationResponse?.validatePlace?.let { validatePlace ->
             val store = GeoUtils.getStoreDetails(
-                getDeliveryType()?.storeId,
+                storeId,
                 validatePlace.stores
             )
             return store?.firstAvailableFoodDeliveryDate
         }
-        return ""
-    }
+    return ""
+}
 
     private fun showDashToolTip(validateLocationResponse: ValidateLocationResponse?) {
         val dashDeliverable = validateLocationResponse?.validatePlace?.onDemand?.deliverable
@@ -845,7 +873,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 it.onDemand?.quantityLimit?.foodMaximumQuantity
             )
             deliveryFeeText?.text = resources.getString(
-                R.string.dash_free_order,
+                R.string.dash_delivery_fee,
                 it.onDemand?.firstAvailableFoodDeliveryCost
             )
         }

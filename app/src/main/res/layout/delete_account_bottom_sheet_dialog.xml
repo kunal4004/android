@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <include
+        android:id="@+id/incSwipeCloseIndicator"
+        layout="@layout/popup_close_header_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:layout_marginEnd="@dimen/sixteen_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/deleteLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/incSwipeCloseIndicator"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/fourty_dp"
+        android:contentDescription="@string/placeholder"
+        android:src="@drawable/ic_delete_icon_big" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/deleteTitle"
+        style="@style/absa_page_title_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/deleteLogo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginTop="@dimen/thirty_five_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:layout_marginBottom="@dimen/eight_dp"
+        android:gravity="center"
+        android:text="@string/delete_online_profile" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/deleteDescription"
+        style="@style/absa_page_description_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/deleteTitle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginTop="@dimen/eight_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:background="@color/white"
+        android:gravity="center"
+        android:text="@string/delete_account_description_in_dialog" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/deleteDescription_2"
+        style="@style/absa_page_description_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/deleteDescription"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:background="@color/white"
+        android:autoLink="phone"
+        android:gravity="center"
+        android:text="@string/to_contact_customer_support_dial_0860_100_987" />
+
+    <LinearLayout
+        android:id="@+id/actionsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/deleteDescription_2"
+        android:layout_marginTop="@dimen/thirty_five_dp"
+        android:orientation="vertical">
+
+
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/cancelButton"
+            style="@style/blackButtonStyle"
+            android:layout_marginLeft="@dimen/twenty_four_dp"
+            android:layout_marginRight="@dimen/twenty_four_dp"
+            android:layout_marginBottom="@dimen/twenty_four_dp"
+            android:text="@string/cancel" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/actionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/twenty_four_dp"
+            android:letterSpacing="0.1"
+            android:text="@string/delete_my_account"
+            android:textAllCaps="true"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/twelve_sp"
+            app:WTextView_font="light" />
+    </LinearLayout>
+
+</RelativeLayout>

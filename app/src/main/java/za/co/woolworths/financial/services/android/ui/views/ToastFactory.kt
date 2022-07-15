@@ -37,8 +37,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.mod
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_TOAST
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE
 import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.ReceiverManager
 import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 class ToastFactory {
 
@@ -331,7 +333,12 @@ class ToastFactory {
 //                (toastView?.background as GradientDrawable).setColor(Color.parseColor(it.quantityLimit?.foodLayoutColour))
                 // Removing Toast colors for CNC / Dash toast
                 (toastView?.background as GradientDrawable).setColor(ContextCompat.getColor(context, R.color.black90))
-                tvFoodLayoutMessage?.text = it.quantityLimit?.foodLayoutMessage ?: ""
+                tvFoodLayoutMessage?.text =
+                if(KotlinUtils.isDeliveryOptionDash())
+                    context.getString(R.string.dash_item_limit_message, it.quantityLimit?.foodMaximumQuantity ?: 0)
+                else
+                    it.quantityLimit?.foodLayoutMessage ?: ""
+
                 tvNoOfItemsAddedToCart?.text = context.resources.getQuantityString(R.plurals.toast_item_added_to_cart_message, count, count)
             }
 
