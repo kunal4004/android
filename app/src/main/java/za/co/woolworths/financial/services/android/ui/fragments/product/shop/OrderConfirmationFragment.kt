@@ -212,19 +212,25 @@ class OrderConfirmationFragment : Fragment() {
             .formatAmountToRandAndCentWithSpace(response?.orderSummary?.basketTotal)
 
         val otherDiscount = response?.orderSummary?.discountDetails?.otherDiscount
-        if (otherDiscount != null && otherDiscount >= 0) {
+        if (otherDiscount != null && otherDiscount > 0) {
             discountsTextView?.text = "- ".plus(
                 CurrencyFormatter
                     .formatAmountToRandAndCentWithSpace(otherDiscount)
             )
+        } else {
+            discountsLinearLayout?.visibility = GONE
+            discountsSeparator?.visibility = GONE
         }
 
         val totalDiscount = response?.orderSummary?.discountDetails?.totalDiscount
-        if (totalDiscount != null && totalDiscount >= 0) {
+        if (totalDiscount != null && totalDiscount > 0) {
             totalDiscountTextView?.text = "- ".plus(
                 CurrencyFormatter
                     .formatAmountToRandAndCentWithSpace(totalDiscount)
             )
+        } else {
+            totalDiscountLinearLayout?.visibility = GONE
+            totalDiscountSeparator?.visibility = GONE
         }
 
         // Commenting this Till Jan-2022 Release as per WOP-13825
@@ -252,13 +258,16 @@ class OrderConfirmationFragment : Fragment() {
                     companyDiscountLinearLayout?.visibility = GONE
                     companyDiscountSeparator?.visibility = GONE
                 }
+                val wRewardsVouchers = response?.orderSummary?.discountDetails?.voucherDiscount
+                        ?: 0.0
+                if (wRewardsVouchers > 0.0) {
+                    wRewardsVouchersTextView?.text = CurrencyFormatter
+                            .formatAmountToRandAndCentWithSpace(response?.orderSummary?.discountDetails?.voucherDiscount)
+                } else {
+                    wRewardsVouchersLinearLayout?.visibility = GONE
+                    wRewardsVouchersSeparator?.visibility = GONE
+                }
 
-                wRewardsVouchersLinearLayout?.visibility =
-                    if ((response?.orderSummary?.discountDetails?.voucherDiscount
-                            ?: 0.0) > 0.0
-                    ) VISIBLE else GONE
-                wRewardsVouchersTextView?.text = CurrencyFormatter
-                    .formatAmountToRandAndCentWithSpace(response?.orderSummary?.discountDetails?.voucherDiscount)
                 deliveryFeeTextView?.text = CurrencyFormatter
                     .formatAmountToRandAndCentWithSpace(response?.deliveryDetails?.shippingAmount)
             }
@@ -276,12 +285,16 @@ class OrderConfirmationFragment : Fragment() {
                     companyDiscountSeparator?.visibility = GONE
                 }
 
-                wRewardsVouchersLinearLayout?.visibility =
-                    if ((response?.orderSummary?.discountDetails?.voucherDiscount
-                            ?: 0.0) > 0.0
-                    ) VISIBLE else GONE
-                wRewardsVouchersTextView?.text = CurrencyFormatter
-                    .formatAmountToRandAndCentWithSpace(response?.orderSummary?.discountDetails?.voucherDiscount)
+                val wRewardsVouchers = response?.orderSummary?.discountDetails?.voucherDiscount
+                        ?: 0.0
+                if (wRewardsVouchers > 0.0) {
+                    wRewardsVouchersTextView?.text = CurrencyFormatter
+                            .formatAmountToRandAndCentWithSpace(response?.orderSummary?.discountDetails?.voucherDiscount)
+                } else {
+                    wRewardsVouchersLinearLayout?.visibility = GONE
+                    wRewardsVouchersSeparator?.visibility = GONE
+                }
+
                 deliveryFeeTextView?.text = CurrencyFormatter
                     .formatAmountToRandAndCentWithSpace(response?.deliveryDetails?.shippingAmount)
 
@@ -290,11 +303,19 @@ class OrderConfirmationFragment : Fragment() {
                 companyDiscountLinearLayout.visibility = GONE
                 companyDiscountSeparator?.visibility = GONE
                 wRewardsVouchersLinearLayout.visibility = GONE
-                wRewardsVouchersSeparator
+                wRewardsVouchersSeparator.visibility = GONE
                 deliveryFeeTextView?.text =
                     CurrencyFormatter.formatAmountToRandAndCentWithSpace(response?.deliveryDetails?.shippingAmount)
-                driverTipTextView.text = CurrencyFormatter
-                    .formatAmountToRandAndCentWithSpace(response?.orderSummary?.tip ?: 0.00)
+
+                val driverTip = response?.orderSummary?.tip?:0.00
+                if (driverTip > 0) {
+                    driverTipTextView?.text =
+                            CurrencyFormatter
+                                    .formatAmountToRandAndCentWithSpace(driverTip)
+                } else {
+                    driverTipLinearLayout?.visibility = GONE
+                    driverTipSeparator?.visibility = GONE
+                }
             }
             else -> {
             }
@@ -342,8 +363,7 @@ class OrderConfirmationFragment : Fragment() {
 
         bottomSheetScrollView?.visibility = VISIBLE
         orderStatusTextView?.text = response?.orderSummary?.state
-        deliveryLocationTextView?.text =
-            optionLocation.text?.let { convertToTitleCase(it as String) }
+        deliveryLocationTextView?.text = optionLocation.text?.let { convertToTitleCase(it as String) }
 
         if (response?.deliveryDetails?.deliveryInfos?.size == 2) {
             oneDeliveryBottomSheetLinearLayout?.visibility = GONE
@@ -362,8 +382,6 @@ class OrderConfirmationFragment : Fragment() {
             deliveryDateTimeBottomSheetTextView?.text =
                 response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
         }
-
-
     }
 
     private fun handleAddToShoppingListButton() {
@@ -429,14 +447,12 @@ class OrderConfirmationFragment : Fragment() {
             .formatAmountToRandAndCentWithSpace(amount)
 
         wrewardsIconImageView?.setOnClickListener {
-            Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.CHECKOUT_MISSED_WREWARD_SAVINGS,
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_MISSED_WREWARD_SAVINGS,
                 hashMapOf(
                     FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
                             FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_WREWARDS_SAVING
                 ),
-                activity
-            )
+                activity)
             val bottomSheetFragment = WrewardsBottomSheetFragment(activity)
 
             val bundle = Bundle()
