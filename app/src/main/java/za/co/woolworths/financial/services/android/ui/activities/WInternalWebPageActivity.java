@@ -229,11 +229,12 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	}
 
 	public void ficaHandling(String url){
-		if (AppConfigSingleton.INSTANCE.getAccountOptions() != null && collectionsExitUrl != null){
+		if (AppConfigSingleton.INSTANCE.getAccountOptions() != null && url != null && collectionsExitUrl != null){
 			fica = AppConfigSingleton.INSTANCE.getAccountOptions().getFicaRefresh();
 			if (url.contains(collectionsExitUrl)){
 				webInternalPage.destroy();
-				if (getQueryString(url).get("IsCompleted").equals("false")) {
+				HashMap<String,String> parameters = getQueryString(url);
+				if (parameters.containsKey("IsCompleted") && parameters.get("IsCompleted").equals("false")) {
 					ficaCanceled = true;
 				}
 				finishActivity();
@@ -245,6 +246,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	public String privacyUrlForFica() {
 		return fica!=null ? fica.getPrivacyPolicyUrl() : "";
 	}
+
 	public HashMap<String, String> getQueryString(String url) {
 		Uri uri= Uri.parse(url);
 
