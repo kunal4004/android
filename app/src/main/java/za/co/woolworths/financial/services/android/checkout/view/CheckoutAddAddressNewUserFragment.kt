@@ -383,8 +383,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             }
             autoCompleteTextView?.onItemClickListener =
                 AdapterView.OnItemClickListener { parent, _, position, _ ->
-                    val item = parent.getItemAtPosition(position) as? PlaceAutocomplete//
-                    val placeId = item?.placeId.toString()//
+                    val item = parent.getItemAtPosition(position) as? PlaceAutocomplete
+                    val placeId = item?.placeId.toString()
                     placeName = item?.primaryText.toString()
                     val placeFields: MutableList<Place.Field> = mutableListOf(
                         Place.Field.ID,
@@ -398,7 +398,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     request.let { placeRequest ->
                         placesClient.fetchPlace(placeRequest)
                             .addOnSuccessListener { response ->
-                                val place = response.place//
+                                val place = response.place
                                 selectedAddress = SelectedPlacesAddress()
                                 setAddress(place)
                             }.addOnFailureListener { exception ->
