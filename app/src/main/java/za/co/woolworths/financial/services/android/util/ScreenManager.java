@@ -17,6 +17,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.awfs.coordination.R;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,9 +33,6 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment;
-import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity;
-import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity;
-import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity;
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Reviews;
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.MoreReviewActivity;
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.ReportReviewActivity;
