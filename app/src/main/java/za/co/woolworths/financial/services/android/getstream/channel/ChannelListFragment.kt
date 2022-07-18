@@ -10,19 +10,25 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentGetStreamInitializerBinding
+import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.getstream.chat.ChatFragment
 import za.co.woolworths.financial.services.android.getstream.common.State
+import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
+import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
+import javax.inject.Inject
 
-class ChannelListFragment : Fragment() {
+@AndroidEntryPoint
+class ChannelListFragment : Fragment(), VtoTryAgainListener {
 
     companion object{
         val messageType = "messaging"
     }
 
     private val viewModel: ChannelListViewModel by viewModels()
-
     private var _binding: FragmentGetStreamInitializerBinding? = null
     private val binding get() = _binding!!
+    @Inject
+    lateinit var errorBottomSheetDialog: VtoErrorBottomSheetDialog
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -39,18 +45,20 @@ class ChannelListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        initViewModel()
+    }
 
+    private fun initViewModel() {
         viewModel.state.observe(
-                viewLifecycleOwner,
-                 {
-                    when (it) {
-                        is State.RedirectToChat -> redirectToChatScreen(it.channelId)
-                        is State.Loading -> showLoading()
-                        is State.Error -> showErrorMessage(it.errorMessage)
-                    }
+            viewLifecycleOwner,
+            {
+                when (it) {
+                    is State.RedirectToChat -> redirectToChatScreen(it.channelId)
+                    is State.Loading -> showLoading()
+                    is State.Error -> showErrorDialog()
                 }
+            }
         )
-
         viewModel.fetchChannels()
     }
 
@@ -58,14 +66,29 @@ class ChannelListFragment : Fragment() {
         binding.oneCartChatProgressBar.visibility = View.VISIBLE
     }
 
-    private fun showErrorMessage(errorMessage: String?) {
-        binding.infoText.text = errorMessage
-        binding.oneCartChatProgressBar.visibility = View.GONE
-    }
+
 
     private fun redirectToChatScreen(channelId: String) {
         binding.oneCartChatProgressBar.visibility = View.GONE
         val bundle = bundleOf(ChatFragment.ARG_CHANNEL_ID to channelId)
         findNavController().navigate(R.id.action_channelListFragment_to_chatFragment, bundle)
     }
+
+    private fun showErrorDialog(){
+        binding.oneCartChatProgressBar.visibility = View.GONE
+        requireContext().apply {
+            errorBottomSheetDialog.showErrorBottomSheetDialog(
+                this@ChannelListFragment,
+                this,
+                getString(R.string.pma_retry_error_title),
+                getString(R.string.vto_generic_error),
+                getString(R.string.try_again)
+            )
+        }
+    }
+
+    override fun tryAgain() {
+        requireActivity().finish()
+    }
+
 }

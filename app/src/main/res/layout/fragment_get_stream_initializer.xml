@@ -14,11 +14,11 @@
         android:layout_gravity="center"/>
 
 
-    <TextView
+    <include
+        android:id="@+id/oneCartChatConnectionLayout"
+        layout="@layout/no_connection"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/info_text"
-        android:gravity="center" />
+        android:layout_height="match_parent" />
 
 
 </FrameLayout>

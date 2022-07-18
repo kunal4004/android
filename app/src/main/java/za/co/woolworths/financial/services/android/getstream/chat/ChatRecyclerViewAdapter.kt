@@ -91,14 +91,14 @@ class ChatRecyclerViewAdapter(private val onClickListener: OnClickListener,initi
 
     override fun getItemCount() = dataSet.size
 
-    public fun setDataSet(value: Array<Message>){
+    internal fun setDataSet(value: Array<Message>){
         this.dataSet.clear()
         this.dataSet.addAll(value)
 
         this.notifyDataSetChanged()
     }
 
-    public fun insertDataSetItem(value: Message){
+    internal fun insertDataSetItem(value: Message){
         this.dataSet.add(value)
 
         this.notifyDataSetChanged()

@@ -22,7 +22,6 @@ import kotlinx.android.synthetic.main.add_to_list_content.*
 import kotlinx.android.synthetic.main.wtoday_main_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IWTodayInterface
-import za.co.woolworths.financial.services.android.getstream.OCChatActivity
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.isConnectedToNetwork
@@ -77,10 +76,6 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
             }
         }
 
-        btnChatDummy.setOnClickListener {
-            val intent = Intent(activity, OCChatActivity::class.java)
-            startActivity(intent)
-        }
     }
 
     private fun setClient() {

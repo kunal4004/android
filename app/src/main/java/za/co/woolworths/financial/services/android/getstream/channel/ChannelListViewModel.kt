@@ -20,7 +20,7 @@ class ChannelListViewModel: ViewModel() {
 
     private val chatClient: ChatClient by lazy { ChatClient.instance() }
 
-    public fun fetchChannels() {
+     fun fetchChannels() {
         val user = chatClient.getCurrentUser()
 
         if(user == null){

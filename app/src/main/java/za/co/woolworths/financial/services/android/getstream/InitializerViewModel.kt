@@ -1,6 +1,7 @@
 
 package za.co.woolworths.financial.services.android.getstream
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,7 +16,9 @@ import za.co.woolworths.financial.services.android.getstream.common.State
 import za.co.woolworths.financial.services.android.getstream.network.OCAuthenticationDto
 import za.co.woolworths.financial.services.android.getstream.network.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.getstream.network.OneCartService
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 
 class InitializerViewModel: ViewModel() {
@@ -66,7 +69,7 @@ class InitializerViewModel: ViewModel() {
     }
 
     private fun initChatSdk() {
-        val client = ChatClient.Builder("xztua823gaf9", WoolworthsApplication.getAppContext())
+        val client = ChatClient.Builder(AppConfigSingleton.dashConfig?.inAppChat?.apiKey.toString(), WoolworthsApplication.getAppContext())
                 .logLevel(ChatLogLevel.ALL)
                 .build()
 
@@ -101,4 +104,7 @@ class InitializerViewModel: ViewModel() {
                     }
                 }
     }
+
+    fun isConnectedToInternet(context: Context) =
+        NetworkManager.getInstance().isConnectedToNetwork(context)
 }

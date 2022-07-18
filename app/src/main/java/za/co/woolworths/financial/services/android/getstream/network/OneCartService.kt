@@ -5,6 +5,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.network.RetrofitConfig
 import java.util.concurrent.TimeUnit
 
@@ -22,12 +23,12 @@ class OneCartService {
                 .addNetworkInterceptor { chain ->
                     val requestBuilder: Request.Builder = chain.request().newBuilder()
                     requestBuilder.header("Content-Type", "application/json")
-                    requestBuilder.header("x-api-key", "OYAFDCA0gwzgzQMMk9ePTQ==") //TODO: retrieve API key from config
-                    requestBuilder.header("Authorization", "DioZxoUt8u+DT/UR11nK3t407bghXhK5axq4FELIo6o=") //TODO: retrieve API secret from config
+                    requestBuilder.header("x-api-key", AppConfigSingleton.dashConfig?.inAppChat?.authKey.toString())
+                    requestBuilder.header("Authorization", AppConfigSingleton.dashConfig?.inAppChat?.authSecretKey.toString())
                     chain.proceed(requestBuilder.build())
                 }.readTimeout(if (BuildConfig.ENV.equals("qa", true)) RetrofitConfig.READ_CONNECT_TIMEOUT_UNIT_QA else RetrofitConfig.READ_CONNECT_TIMEOUT_UNIT, TimeUnit.SECONDS)
                 .build()
-        val baseUrl = "https://staging-sls-api.onecart.co.za" //TODO: retrieve this from config
+        val baseUrl = AppConfigSingleton.dashConfig?.inAppChat?.baseUrl.toString()
         val retrofit = Retrofit.Builder().baseUrl(baseUrl).client(httpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()

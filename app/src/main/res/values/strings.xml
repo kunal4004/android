@@ -2637,7 +2637,7 @@
     <string name="currently_active">Currently Active</string>
     <string name="currently_in_active">Currently Inactive</string>
     <string name="please_enter_a_message">Please Enter a Message</string>
-
+    <string name="one_cart_chat_order_id">ORDER #%s</string>
     <!-- Feature Walkthrough : Barcode Scanning  -->
     <string name="feature_barcode_scanning_title">BARCODE SCANNING</string>
     <string name="feature_barcode_scanning_desc">Scan a product\'s barcode to view it\'s information or add it straight to your shopping list.</string>

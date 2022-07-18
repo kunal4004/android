@@ -15,13 +15,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btnChatDummy"
-        android:layout_width="100dp"
-        android:layout_height="50dp"
-        android:text="Chat"
-        tools:ignore="MissingConstraints" />
-
     <include
         android:id="@+id/incNoConnectionHandler"
         layout="@layout/no_connection_handler"

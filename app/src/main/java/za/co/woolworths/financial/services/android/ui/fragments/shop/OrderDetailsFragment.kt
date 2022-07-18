@@ -21,6 +21,7 @@ import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.contracts.IToastInterface
+import za.co.woolworths.financial.services.android.getstream.OCChatActivity
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -361,8 +362,8 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         }
     }
 
-    override fun onOpenChatScreen() {
-        //TODO: open chat screen
+    override fun onOpenChatScreen(orderId:String?) {
+        startActivity(OCChatActivity.newIntent(requireActivity(), orderId!!))
     }
 
     override fun onOpenTrackOrderScreen() {

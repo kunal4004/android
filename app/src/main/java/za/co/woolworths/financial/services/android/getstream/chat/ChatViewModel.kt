@@ -5,9 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.subscribeFor
-import io.getstream.chat.android.client.events.NewMessageEvent
-import io.getstream.chat.android.client.events.UserStartWatchingEvent
-import io.getstream.chat.android.client.events.UserStopWatchingEvent
+import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -22,14 +20,17 @@ class ChatViewModel : ViewModel() {
     private val _state = MutableLiveData<ChatState>()
     private val _isOtherUserOnline = MutableLiveData<Boolean>(false)
     private val _otherUserDisplayName = MutableLiveData<String>("")
+    private val _otherUserTyping = MutableLiveData<String>("")
     lateinit var channelId: String
     val state: LiveData<ChatState> = _state
     val isOtherUserOnline: LiveData<Boolean> = _isOtherUserOnline
     val otherUserDisplayName: LiveData<String> = _otherUserDisplayName
+    val otherUserTyping: LiveData<String> = _otherUserTyping
     val messages: MutableList<Message> = mutableListOf()
     var messageItemDelegate: IMessageItemDelegate
     private lateinit var userWatchingEventsDisposable: Disposable
     private lateinit var newMessageEventDisposable: Disposable
+    private lateinit var userTypingEvent: Disposable
 
     init {
         messageItemDelegate = MessageItemDelegateImpl(
@@ -61,6 +62,8 @@ class ChatViewModel : ViewModel() {
                 observeOtherUserEvents()
                 observeNewMessageEvents()
                 postOtherUserPresence()
+                typingIndicator()
+
             } else {
                 _state.postValue(ChatState.Error(result.error().message))
                 postOtherUserPresence(false)
@@ -78,17 +81,18 @@ class ChatViewModel : ViewModel() {
             text = messageText
         )
         chatClient.channel(channelId).sendMessage(message).enqueue { result ->
-            if (result.isSuccess) {
-                val message: Message = result.data()
-                _state.postValue(ChatState.ReceivedMessageData(message))
-            } else {
+            if (!result.isSuccess) {
                 _state.postValue(ChatState.Error(result.error().message))
             }
         }
     }
 
     fun emitIsTyping() {
-        chatClient.channel(channelId).keystroke()
+        chatClient.channel(channelId).keystroke().enqueue()
+    }
+
+    fun stopTyping() {
+        chatClient.channel(channelId).stopTyping().enqueue()
     }
 
     private fun observeOtherUserEvents() {
@@ -101,10 +105,12 @@ class ChatViewModel : ViewModel() {
                 event is UserStartWatchingEvent && event.user.id == otherUser.id -> {
                     otherUser = event.user
                     postOtherUserPresence(true)
+
                 }
                 event is UserStopWatchingEvent && event.user.id == otherUser.id -> {
                     otherUser = event.user
                     postOtherUserPresence(false)
+
                 }
             }
         }
@@ -119,9 +125,31 @@ class ChatViewModel : ViewModel() {
         }
     }
 
+
+    private fun typingIndicator() {
+        val nobodyTyping = ""
+        val currentlyTyping = mutableSetOf<String>()
+        val channelClient = chatClient.channel(channelId)
+        this.userTypingEvent = channelClient.subscribeFor(
+            TypingStartEvent::class, TypingStopEvent::class
+        ) { event ->
+            when (event) {
+                is TypingStartEvent -> currentlyTyping.add(event.user.name)
+                is TypingStopEvent -> currentlyTyping.remove(event.user.name)
+            }
+            when {
+                currentlyTyping.isNotEmpty() -> _otherUserTyping.value =
+                    currentlyTyping.joinToString(prefix = "typing: ")
+                else -> _otherUserTyping.value = nobodyTyping
+            }
+        }
+    }
+
+
     fun disconnect() {
         userWatchingEventsDisposable.dispose()
         newMessageEventDisposable.dispose()
+        userTypingEvent.dispose()
         chatClient.disconnect()
     }
 
