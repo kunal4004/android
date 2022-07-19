@@ -960,6 +960,10 @@ public class Utils {
         Utils.removeFromDb(SessionDao.KEY.STORES_USER_SEARCH);
         Utils.removeFromDb(SessionDao.KEY.STORES_USER_LAST_LOCATION);
         Utils.removeFromDb(SessionDao.KEY.LIVE_CHAT_EXTRAS);
+
+        AppInstanceObject appInstanceObject = AppInstanceObject.get();
+        appInstanceObject.setDefaultInAppChatTipAcknowledgements();
+        appInstanceObject.save();
     }
 
     public static void truncateMaxLine(final TextView tv) {
