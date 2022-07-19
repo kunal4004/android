@@ -236,9 +236,17 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     private fun sendConfirmLocation() {
         var unSellableCommerceItems: MutableList<UnSellableCommerceItem>? = null
-        validateLocationResponse?.validatePlace?.stores?.forEach {
-            if (it.storeName.equals(mStoreName)) {
-                unSellableCommerceItems = it.unSellableCommerceItems
+        when (deliveryType) {
+            Delivery.STANDARD.name -> {
+                unSellableCommerceItems =
+                        validateLocationResponse?.validatePlace?.unSellableCommerceItems
+            }
+            Delivery.CNC.name -> {
+                validateLocationResponse?.validatePlace?.stores?.forEach {
+                    if (it.storeId.equals(mStoreId)) {
+                        unSellableCommerceItems = it.unSellableCommerceItems
+                    }
+                }
             }
         }
         if (unSellableCommerceItems?.isNullOrEmpty() == false && isUnSellableItemsRemoved == false) {
