@@ -8,9 +8,12 @@ import androidx.navigation.NavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountProductLandingActivityBinding
 import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.AccountProductsMainFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.ACCOUNT_PRODUCT_PAYLOAD
+import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 @Suppress("DEPRECATION")
@@ -27,6 +30,7 @@ class StoreCardActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         binding = AccountProductLandingActivityBinding.inflate(layoutInflater)
+        viewModel.product = Utils.jsonStringToObject(intent.extras?.getString(ACCOUNT_PRODUCT_PAYLOAD),Account::class.java) as Account
         setContentView(binding.root)
         statusBarCompat.setLightStatusAndNavigationBar()
         setupView()

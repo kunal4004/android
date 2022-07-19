@@ -15,7 +15,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 interface IAccountProductLandingDao {
-    val product: Account?
+    var product: Account?
     fun getProductByProductGroupCode(): ProductLandingGroupCode
     fun getProductOfferingId(): Int
     fun isProductInGoodStanding(): Boolean
@@ -31,9 +31,7 @@ interface IAccountProductLandingDao {
 
 class AccountProductLandingDao @Inject constructor() : IAccountProductLandingDao {
 
-    override val product: Account? get() {
-        return SaveResponseDao.getValue(SessionDao.KEY.ACCOUNT_PRODUCT_PAYLOAD)
-    }
+    override var product: Account? = null
 
     override fun getProductByProductGroupCode(): ProductLandingGroupCode {
         return when (product?.productGroupCode) {
