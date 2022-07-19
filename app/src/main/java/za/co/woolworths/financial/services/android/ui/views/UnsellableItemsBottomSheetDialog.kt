@@ -9,6 +9,10 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.unsellable_items_bottom_sheet_dialog.*
+import kotlinx.android.synthetic.main.unsellable_items_bottom_sheet_dialog.rcvItemsList
+import kotlinx.android.synthetic.main.unsellable_items_bottom_sheet_dialog.removeItems
+import kotlinx.android.synthetic.main.unsellable_items_bottom_sheet_dialog.subTitle
+import kotlinx.android.synthetic.main.unsellable_items_fragment.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
@@ -58,7 +62,7 @@ class UnsellableItemsBottomSheetDialog: WBottomSheetDialogFragment(),
     }
 
     private fun init() {
-        incSwipeCloseIndicator.visibility = View.VISIBLE
+        incSwipeCloseIndicator?.visibility = View.VISIBLE
         removeItems?.setOnClickListener(this)
         arguments?.apply {
             deliveryType = getString(KEY_ARGS_DELIVERY_TYPE, Delivery.STANDARD.type)
@@ -66,22 +70,22 @@ class UnsellableItemsBottomSheetDialog: WBottomSheetDialogFragment(),
         }
         when(deliveryType) {
             Delivery.STANDARD.name -> {
-                subTitle.text = getText(R.string.remove_items_standard_dialog_desc)
+                subTitle?.text = getText(R.string.remove_items_standard_dialog_desc)
             }
             Delivery.CNC.name -> {
-                subTitle.text = getText(R.string.remove_items_cnc_dialog_desc)
+                subTitle?.text = getText(R.string.remove_items_cnc_dialog_desc)
             }
             Delivery.DASH.name -> {
-                subTitle.text = getText(R.string.remove_items_dash_dialog_desc)
+                subTitle?.text = getText(R.string.remove_items_dash_dialog_desc)
             }
             else -> {
-                subTitle.text = getText(R.string.remove_items_standard_dialog_desc)
+                subTitle?.text = getText(R.string.remove_items_standard_dialog_desc)
             }
         }
         if(activity is CheckoutActivity) {
             initCheckoutUnsellableItemsView()
         } else {
-            changeStore?.apply {
+            cancel_btn?.apply {
                 visibility = View.VISIBLE
                 paintFlags = Paint.UNDERLINE_TEXT_FLAG
                 setOnClickListener(this@UnsellableItemsBottomSheetDialog)
