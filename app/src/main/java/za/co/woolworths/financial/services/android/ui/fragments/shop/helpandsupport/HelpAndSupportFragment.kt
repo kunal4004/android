@@ -105,7 +105,7 @@ class HelpAndSupportFragment : Fragment(R.layout.layout_help_and_support_frageme
         requireActivity().apply {
             val intent = Intent(this, CancelOrderProgressActivity::class.java)
             orderDetailsResponse?.orderSummary?.let {
-                it.orderId?.let { itData ->
+                it.orderId?.let { _ ->
                     intent.putExtra(CancelOrderProgressFragment.ORDER_ID, it.orderId)
                     intent.putExtra(AppConstant.NAVIGATED_FROM_MY_ACCOUNTS, isNavigatedFromMyAccounts)
                     startActivityForResult(intent, CancelOrderProgressFragment.REQUEST_CODE_CANCEL_ORDER)
@@ -115,34 +115,14 @@ class HelpAndSupportFragment : Fragment(R.layout.layout_help_and_support_frageme
         }
     }
 
-   /* override fun openEmailSupport(emailId: String) {
-        val intent = Intent().apply {
-            action = Intent.ACTION_SEND
-            data = Uri.parse("shop@wooliesdash.co.za")
-            type = "text/plain"
-            putExtra(Intent.EXTRA_EMAIL, "shop@wooliesdash.co.za")
-            putExtra(Intent.EXTRA_SUBJECT, "Dash Order: ")
-        }
-        if (intent.resolveActivity(requireActivity().packageManager) != null) {
-          //  intent.setPackage("com.google.android.gm")
-            startActivity(intent)
-        } else {
-           // Log.d(TAG, "No app available to send email.")
-        }
-    }
-*/
-
-
     override fun openEmailSupport(emailId: String) {
-        val email= "shop@wooliesdash.co.za"
-        val subject= "Dash Order: " +
-                orderDetailsResponse?.orderSummary?.orderId
-       // val message= "HI, WELCOME"
+        val email = getString(R.string.dash_email_id)
+        val orderId = orderDetailsResponse?.orderSummary?.orderId
+        val subject = getString(R.string.dash_order) + orderId
         val emailIntent = Intent(Intent.ACTION_SEND)
-        emailIntent.type = "plain/text"
+        emailIntent.type = getString(R.string.dash_email_type)
         emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT,  subject)
-      //  emailIntent.putExtra(Intent.EXTRA_TEXT, message)
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject)
         this.startActivity(emailIntent)
     }
 

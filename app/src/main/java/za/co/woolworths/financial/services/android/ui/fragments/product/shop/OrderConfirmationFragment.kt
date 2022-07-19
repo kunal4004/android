@@ -79,7 +79,6 @@ class OrderConfirmationFragment : Fragment() {
                         is SubmittedOrderResponse -> {
                             when (response.httpCode) {
                                 AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 -> {
-                                 //   response.orderSummary?.orderId?.let { setToolbar(it, Intent()) }
                                     response.orderSummary?.orderId?.let { setToolbar(it) }
                                     setupDeliveryOrCollectionDetails(response)
                                     setupOrderTotalDetails(response)
@@ -122,23 +121,6 @@ class OrderConfirmationFragment : Fragment() {
             startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
         }
     }
-
- /*   private fun setToolbar(orderId: String, data: Intent?) {
-
-        orderIdText.text = bindString(R.string.order_details_toolbar_title, orderId)
-        btnClose?.setOnClickListener { requireActivity().onBackPressed() }
-
-        data?.putExtra("QUANTITY_CHANGED_FROM_LIST", orderId)
-        data?.apply {
-            helpTextView?.setOnClickListener {
-                (activity as? CheckoutActivity)?.apply {
-                    setResult(CheckOutFragment.RESULT_NAVIGATE_TO_HELP_AND_SUPPORT, data)
-                    closeActivity()
-
-                }
-            }
-        }
-    }*/
 
     private fun setToolbar(orderId: String) {
         if (activity is CartCheckoutActivity) {
