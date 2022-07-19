@@ -161,96 +161,96 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
     VtoSelectOptionListener, WMaterialShowcaseView.IWalkthroughActionListener, VtoTryAgainListener,View.OnTouchListener,ReviewThumbnailAdapter.ThumbnailClickListener, ViewTreeObserver.OnScrollChangedListener {
 
-        var productDetails: ProductDetails? = null
-        private var subCategoryTitle: String? = null
-        private var brandHeaderText: String? = null
-        private var mFetchFromJson: Boolean = false
-        private var defaultProductResponse: String? = null
-        private var auxiliaryImages: MutableList<String> = ArrayList()
-        private var productDetailsPresenter: ProductDetailsContract.ProductDetailsPresenter? = null
-        private var storeIdForInventory: String? = ""
-        private var otherSKUsByGroupKey: HashMap<String, ArrayList<OtherSkus>> = hashMapOf()
-        private var hasColor: Boolean = false
-        private var hasSize: Boolean = false
-        private var defaultSku: OtherSkus? = null
-        private var selectedSku: OtherSkus? = null
-        private var selectedGroupKey: String? = null
-        private var productSizeSelectorAdapter: ProductSizeSelectorAdapter? = null
-        private var productColorSelectorAdapter: ProductColorSelectorAdapter? = null
-        private var selectedQuantity: Int? = 1
-        private val SSO_REQUEST_ADD_TO_CART = 1010
-        private val REQUEST_SUBURB_CHANGE = 153
-        private val REQUEST_SUBURB_CHANGE_FOR_STOCK = 155
-        private val REQUEST_SUBURB_CHANGE_FOR_LIQUOR = 156
-        private val SSO_REQUEST_ADD_TO_SHOPPING_LIST = 1011
-        private val SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK = 1012
-        private var permissionUtils: PermissionUtils? = null
-        private var mFuseLocationAPISingleton: FuseLocationAPISingleton? = null
-        private var isApiCallInProgress: Boolean = false
-        private var defaultGroupKey: String? = null
-        private var mFreeGiftPromotionalImage: String? = null
-        private var EDIT_LOCATION_LOGIN_REQUEST = 2020
-        private var HTTP_EXPECTATION_FAILED_417: String = "417"
-        private var isOutOfStock_502 = false
-        private var isOutOfStockFragmentAdded = false
-        private var liquorDialog: Dialog? = null
-        private var LOGIN_REQUEST_SUBURB_CHANGE = 1419
-        private lateinit var reviewThumbnailAdapter: ReviewThumbnailAdapter
-        private lateinit var secondaryRatingAdapter: SecondaryRatingAdapter
-        private var thumbnailFullList = listOf<Thumbnails>()
-        private var ratingReviewResponse: RatingReviewResponse? = null
-        private val permissionViewModel: PermissionViewModel by viewModels()
-        private var isFromFile = false
-        private var liveCamera: Boolean = false
-        private lateinit var uri: Uri
-        private var isVtoImage: Boolean = false
-        private var isTryIt: Boolean = true
-        private var selectedImageUri: Uri? = null
-        private var isPhotoPickedFromGallery: Boolean = false
-        private var isPhotoPickedFromDefaultCamera: Boolean = false
-        private var saveVtoApplyImage: Bitmap? = null
-        private var isColorSelectionLayoutOnTop: Boolean = false
-        private var isLiveCamera: Boolean = false
-        private var isColorAppliedWithLiveCamera: Boolean = false
-        private val vtoApplyEffectOnImageViewModel: VtoApplyEffectOnImageViewModel? by activityViewModels()
-        private val liveCameraViewModel: LiveCameraViewModel? by activityViewModels()
-        private val dataPrefViewModel: DataPrefViewModel? by activityViewModels()
-        private var makeupCamera: MakeupCam? = null
-        private var isObserveImageData: Boolean = false
-        private var isRefreshImageEffectLiveCamera: Boolean = false
-        private var isDividerVtoEffect: Boolean = false
-        private var isLiveCameraResumeState: Boolean = false
-        private var isLiveCameraOpened: Boolean = false
-        private lateinit var job: Job
-        private lateinit var coroutineScope: CoroutineScope
-        private var isFaceNotDetect: Boolean = false
-        private var isFaceDetect: Boolean = false
-        private var isColorNotMatch: Boolean = false
-        private var isTakePicture: Boolean = false
-        private var isPickedImageFromLiveCamera: Boolean = false
-        private var takenOriginalPicture: Bitmap? = null
-        private var isVtoSdkInitFail: Boolean = false
-        private var bannerLabel: String? = null
-        private var bannerImage: String? = null
-        private var isRnRAPICalled = false
-        private var prodId: String = "-1"
-        private lateinit var moreReviewViewModel: RatingAndReviewViewModel
+    var productDetails: ProductDetails? = null
+    private var subCategoryTitle: String? = null
+    private var brandHeaderText: String? = null
+    private var mFetchFromJson: Boolean = false
+    private var defaultProductResponse: String? = null
+    private var auxiliaryImages: MutableList<String> = ArrayList()
+    private var productDetailsPresenter: ProductDetailsContract.ProductDetailsPresenter? = null
+    private var storeIdForInventory: String? = ""
+    private var otherSKUsByGroupKey: HashMap<String, ArrayList<OtherSkus>> = hashMapOf()
+    private var hasColor: Boolean = false
+    private var hasSize: Boolean = false
+    private var defaultSku: OtherSkus? = null
+    private var selectedSku: OtherSkus? = null
+    private var selectedGroupKey: String? = null
+    private var productSizeSelectorAdapter: ProductSizeSelectorAdapter? = null
+    private var productColorSelectorAdapter: ProductColorSelectorAdapter? = null
+    private var selectedQuantity: Int? = 1
+    private val SSO_REQUEST_ADD_TO_CART = 1010
+    private val REQUEST_SUBURB_CHANGE = 153
+    private val REQUEST_SUBURB_CHANGE_FOR_STOCK = 155
+    private val REQUEST_SUBURB_CHANGE_FOR_LIQUOR = 156
+    private val SSO_REQUEST_ADD_TO_SHOPPING_LIST = 1011
+    private val SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK = 1012
+    private var permissionUtils: PermissionUtils? = null
+    private var mFuseLocationAPISingleton: FuseLocationAPISingleton? = null
+    private var isApiCallInProgress: Boolean = false
+    private var defaultGroupKey: String? = null
+    private var mFreeGiftPromotionalImage: String? = null
+    private var EDIT_LOCATION_LOGIN_REQUEST = 2020
+    private var HTTP_EXPECTATION_FAILED_417: String = "417"
+    private var isOutOfStock_502 = false
+    private var isOutOfStockFragmentAdded = false
+    private var liquorDialog: Dialog? = null
+    private var LOGIN_REQUEST_SUBURB_CHANGE = 1419
+    private lateinit var reviewThumbnailAdapter: ReviewThumbnailAdapter
+    private lateinit var secondaryRatingAdapter: SecondaryRatingAdapter
+    private var thumbnailFullList = listOf<Thumbnails>()
+    private var ratingReviewResponse: RatingReviewResponse? = null
+    private val permissionViewModel: PermissionViewModel by viewModels()
+    private var isFromFile = false
+    private var liveCamera: Boolean = false
+    private lateinit var uri: Uri
+    private var isVtoImage: Boolean = false
+    private var isTryIt: Boolean = true
+    private var selectedImageUri: Uri? = null
+    private var isPhotoPickedFromGallery: Boolean = false
+    private var isPhotoPickedFromDefaultCamera: Boolean = false
+    private var saveVtoApplyImage: Bitmap? = null
+    private var isColorSelectionLayoutOnTop: Boolean = false
+    private var isLiveCamera: Boolean = false
+    private var isColorAppliedWithLiveCamera: Boolean = false
+    private val vtoApplyEffectOnImageViewModel: VtoApplyEffectOnImageViewModel? by activityViewModels()
+    private val liveCameraViewModel: LiveCameraViewModel? by activityViewModels()
+    private val dataPrefViewModel: DataPrefViewModel? by activityViewModels()
+    private var makeupCamera: MakeupCam? = null
+    private var isObserveImageData: Boolean = false
+    private var isRefreshImageEffectLiveCamera: Boolean = false
+    private var isDividerVtoEffect: Boolean = false
+    private var isLiveCameraResumeState: Boolean = false
+    private var isLiveCameraOpened: Boolean = false
+    private lateinit var job: Job
+    private lateinit var coroutineScope: CoroutineScope
+    private var isFaceNotDetect: Boolean = false
+    private var isFaceDetect: Boolean = false
+    private var isColorNotMatch: Boolean = false
+    private var isTakePicture: Boolean = false
+    private var isPickedImageFromLiveCamera: Boolean = false
+    private var takenOriginalPicture: Bitmap? = null
+    private var isVtoSdkInitFail: Boolean = false
+    private var bannerLabel: String? = null
+    private var bannerImage: String? = null
+    private var isRnRAPICalled = false
+    private var prodId: String = "-1"
+    private lateinit var moreReviewViewModel: RatingAndReviewViewModel
 
-        @OpenTermAndLighting
-        @Inject
-        lateinit var vtoBottomSheetDialog: VtoBottomSheetDialog
+    @OpenTermAndLighting
+    @Inject
+    lateinit var vtoBottomSheetDialog: VtoBottomSheetDialog
 
-        @OpenSelectOption
-        @Inject
-        lateinit var vtoOptionSelectBottomDialog: VtoBottomSheetDialog
+    @OpenSelectOption
+    @Inject
+    lateinit var vtoOptionSelectBottomDialog: VtoBottomSheetDialog
 
-        @Inject
-        lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
+    @Inject
+    lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
 
-        @Inject
-        lateinit var vtoSavedPhotoToast: SingleMessageCommonToast
+    @Inject
+    lateinit var vtoSavedPhotoToast: SingleMessageCommonToast
 
-        companion object {
+    companion object {
         const val INDEX_STORE_FINDER = 1
         const val INDEX_ADD_TO_CART = 2
         const val INDEX_ADD_TO_SHOPPING_LIST = 3
@@ -267,132 +267,115 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         const val BRAND_NAVIGATION_DETAILS = "BRAND_NAVIGATION_DETAILS"
     }
 
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            arguments?.apply {
-                productDetails = Utils.jsonStringToObject(
-                    getString(STR_PRODUCT_LIST),
-                    ProductDetails::class.java
-                ) as ProductDetails
-                subCategoryTitle = getString(STR_PRODUCT_CATEGORY)
-                brandHeaderText = getString(STR_BRAND_HEADER, AppConstant.EMPTY_STRING)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.apply {
+            productDetails = Utils.jsonStringToObject(
+                getString(STR_PRODUCT_LIST),
+                ProductDetails::class.java
+            ) as ProductDetails
+            subCategoryTitle = getString(STR_PRODUCT_CATEGORY)
+            brandHeaderText = getString(STR_BRAND_HEADER, AppConstant.EMPTY_STRING)
 
-                (getSerializable(BRAND_NAVIGATION_DETAILS) as? BrandNavigationDetails)?.let {
-                    bannerLabel = it.bannerLabel ?: ""
-                    bannerImage = it.bannerImage ?: ""
-                }
-
-                brandHeaderText = getString(STR_BRAND_HEADER, AppConstant.EMPTY_STRING)
-                defaultProductResponse = getString("productResponse")
-                mFetchFromJson = getBoolean("fetchFromJson")
+            (getSerializable(BRAND_NAVIGATION_DETAILS) as? BrandNavigationDetails)?.let {
+                bannerLabel = it.bannerLabel ?: ""
+                bannerImage = it.bannerImage ?: ""
             }
-            productDetailsPresenter =
-                ProductDetailsPresenterImpl(this, ProductDetailsInteractorImpl())
-        }
 
-        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-            super.onViewCreated(view, savedInstanceState)
-            mFuseLocationAPISingleton = FuseLocationAPISingleton
-            initViews()
-            setUniqueIds()
-            productDetails?.let { addViewItemEvent(it) }
+            brandHeaderText = getString(STR_BRAND_HEADER, AppConstant.EMPTY_STRING)
+            defaultProductResponse = getString("productResponse")
+            mFetchFromJson = getBoolean("fetchFromJson")
         }
+        productDetailsPresenter =
+            ProductDetailsPresenterImpl(this, ProductDetailsInteractorImpl())
+    }
 
-        //firebase event view_item
-        private fun addViewItemEvent(productDetails: ProductDetails) {
-            val mFirebaseAnalytics = FirebaseManager.getInstance().getAnalytics()
-            val viewItemListParams = Bundle()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        mFuseLocationAPISingleton = FuseLocationAPISingleton
+        initViews()
+        setUniqueIds()
+        productDetails?.let { addViewItemEvent(it) }
+    }
+
+    //firebase event view_item
+    private fun addViewItemEvent(productDetails: ProductDetails) {
+        val mFirebaseAnalytics = FirebaseManager.getInstance().getAnalytics()
+        val viewItemListParams = Bundle()
+        viewItemListParams.putString(
+            FirebaseAnalytics.Param.CURRENCY,
+            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+        )
+        for (products in 0..(productDetails.otherSkus?.size ?: 0)) {
+            val viewItem = Bundle()
+            viewItem.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
+            viewItem.putString(FirebaseAnalytics.Param.ITEM_NAME, productDetails?.productName)
+            viewItem.putString(
+                FirebaseAnalytics.Param.ITEM_CATEGORY,
+                productDetails?.categoryName
+            )
+            viewItem.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
+            viewItem.putString(
+                FirebaseAnalytics.Param.ITEM_VARIANT,
+                productDetails?.colourSizeVariants
+            )
+            viewItem.putString(FirebaseAnalytics.Param.PRICE, productDetails?.price?.toString())
             viewItemListParams.putString(
-                FirebaseAnalytics.Param.CURRENCY,
-                FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+                FirebaseAnalytics.Param.ITEM_LIST_NAME,
+                productDetails?.categoryName
             )
-            for (products in 0..(productDetails.otherSkus?.size ?: 0)) {
-                val viewItem = Bundle()
-                viewItem.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
-                viewItem.putString(FirebaseAnalytics.Param.ITEM_NAME, productDetails?.productName)
-                viewItem.putString(
-                    FirebaseAnalytics.Param.ITEM_CATEGORY,
-                    productDetails?.categoryName
-                )
-                viewItem.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
-                viewItem.putString(
-                    FirebaseAnalytics.Param.ITEM_VARIANT,
-                    productDetails?.colourSizeVariants
-                )
-                viewItem.putString(FirebaseAnalytics.Param.PRICE, productDetails?.price?.toString())
-                viewItemListParams.putString(
-                    FirebaseAnalytics.Param.ITEM_LIST_NAME,
-                    productDetails?.categoryName
-                )
-                viewItemListParams.putParcelableArray(
-                    FirebaseAnalytics.Param.ITEMS,
-                    arrayOf(viewItem)
-                )
-            }
-            mFirebaseAnalytics.logEvent(
-                FirebaseManagerAnalyticsProperties.VIEW_ITEM_EVENT,
-                viewItemListParams
+            viewItemListParams.putParcelableArray(
+                FirebaseAnalytics.Param.ITEMS,
+                arrayOf(viewItem)
             )
         }
+        mFirebaseAnalytics.logEvent(
+            FirebaseManagerAnalyticsProperties.VIEW_ITEM_EVENT,
+            viewItemListParams
+        )
+    }
 
-        override fun onAttach(context: Context) {
-            super.onAttach(context)
-            setUpToolBar()
-        }
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        setUpToolBar()
+    }
 
-        private fun initViews() {
-            addToCartAction?.setOnClickListener(this)
-            quantitySelector?.setOnClickListener(this)
-            addToShoppingList?.setOnClickListener(this)
-            checkInStoreAvailability?.setOnClickListener(this)
-            editDeliveryLocation?.setOnClickListener(this)
-            findInStoreAction?.setOnClickListener(this)
-            productDetailsInformation?.setOnClickListener(this)
-            productIngredientsInformation?.setOnClickListener(this)
-            nutritionalInformation?.setOnClickListener(this)
-            dietaryInformation?.setOnClickListener(this)
-            allergensInformation?.setOnClickListener(this)
-            moreColor?.setOnClickListener(this)
-            imgCloseVTO?.setOnClickListener(this)
-            imgVTORefresh?.setOnClickListener(this)
-            closePage?.setOnClickListener(this)
-            tvRatingDetails.setOnClickListener(this)
-            tvSkinProfile.setOnClickListener(this)
-            btViewMoreReview.setOnClickListener(this)
-            tvTotalReviews.setOnClickListener(this)
-            tvReport.setOnClickListener(this)
-            closePage.setOnClickListener {
-                activity?.apply {
-                    setResult(RESULT_CANCELED)
-                    onBackPressed()
-                }
-            }
-            openCart?.setOnClickListener(this)
-            brand_view?.brand_openCart?.setOnClickListener(this)
-            backArrow?.setOnClickListener(this)
-            brand_view?.brand_backArrow?.setOnClickListener(this)
-            share?.setOnClickListener(this)
-            sizeGuide?.setOnClickListener(this)
-            imgVTOOpen?.setOnClickListener(this)
-            retakeCamera?.setOnClickListener(this)
-            changeImage?.setOnClickListener(this)
-            changeImageFiles?.setOnClickListener(this)
-            imgDownloadVTO?.setOnClickListener(this)
-            imgVTOSplit?.setOnClickListener(this)
-            captureImage?.setOnClickListener(this)
-            iv_like.setOnClickListener(this)
-            scrollView.setOnTouchListener(this)
-            scrollView.viewTreeObserver.addOnScrollChangedListener(this)
-            isOutOfStockFragmentAdded = false
-            configureDefaultUI()
-            cameraSurfaceView.setOnTouchListener { _, event ->
-                pinchZoomOnVtoLiveCamera(event)
-                true
-            }
-            hideRatingAndReview()
-            setupViewModel()
-            updateReportLikeStatus()
+    private fun initViews() {
+        addToCartAction?.setOnClickListener(this)
+        quantitySelector?.setOnClickListener(this)
+        addToShoppingList?.setOnClickListener(this)
+        checkInStoreAvailability?.setOnClickListener(this)
+        editDeliveryLocation?.setOnClickListener(this)
+        findInStoreAction?.setOnClickListener(this)
+        productDetailsInformation?.setOnClickListener(this)
+        productIngredientsInformation?.setOnClickListener(this)
+        nutritionalInformation?.setOnClickListener(this)
+        dietaryInformation?.setOnClickListener(this)
+        allergensInformation?.setOnClickListener(this)
+        moreColor?.setOnClickListener(this)
+        imgCloseVTO?.setOnClickListener(this)
+        imgVTORefresh?.setOnClickListener(this)
+        openCart?.setOnClickListener(this)
+        brand_view?.brand_openCart?.setOnClickListener(this)
+        backArrow?.setOnClickListener(this)
+        brand_view?.brand_backArrow?.setOnClickListener(this)
+        share?.setOnClickListener(this)
+        sizeGuide?.setOnClickListener(this)
+        imgVTOOpen?.setOnClickListener(this)
+        retakeCamera?.setOnClickListener(this)
+        changeImage?.setOnClickListener(this)
+        changeImageFiles?.setOnClickListener(this)
+        imgDownloadVTO?.setOnClickListener(this)
+        imgVTOSplit?.setOnClickListener(this)
+        captureImage?.setOnClickListener(this)
+        isOutOfStockFragmentAdded = false
+        configureDefaultUI()
+        cameraSurfaceView.setOnTouchListener { _, event ->
+            pinchZoomOnVtoLiveCamera(event)
+            true
         }
+    }
+
 
         private fun setupViewModel() {
             moreReviewViewModel = ViewModelProvider(

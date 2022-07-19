@@ -178,7 +178,7 @@
                     android:layout_marginTop="10dp"
                     app:layout_constraintEnd_toStartOf="@+id/right_guideline"
                     app:layout_constraintStart_toStartOf="@+id/left_guideline"
-                    />
+                    app:layout_constraintTop_toBottomOf="@id/productName" />
 
                 <TextView
                     android:id="@+id/onlinePromotionalTextView1"
@@ -223,6 +223,7 @@
                     app:layout_constraintEnd_toEndOf="@id/right_guideline"
                     app:layout_constraintStart_toStartOf="@id/left_guideline"
                     app:layout_constraintTop_toBottomOf="@+id/onlinePromotionalTextView2" />
+
 
                 <include
                     android:id="@+id/freeGiftWithPurchaseLayout"
@@ -279,7 +280,6 @@
                     android:id="@+id/viewsToHideOnProductLoading"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
                     app:constraint_referenced_ids="productDetailOptionsAndInformation,sizeColorSelectorLayout" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
