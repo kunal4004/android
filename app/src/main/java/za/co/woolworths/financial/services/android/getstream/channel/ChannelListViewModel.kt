@@ -24,7 +24,7 @@ class ChannelListViewModel: ViewModel() {
         val user = chatClient.getCurrentUser()
 
         if(user == null){
-            _state.postValue(State.Error("Unable to retrieve channels when connection is not established."))
+            _state.postValue(State.Error(""))
             return
         }
 

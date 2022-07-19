@@ -37,6 +37,7 @@ class ChatFragment : Fragment() , VtoTryAgainListener {
     private var _binding: FragmentOneCartChatBinding? = null
     private val binding get() = _binding!!
     private lateinit var recyclerViewAdapter: ChatRecyclerViewAdapter
+    private var isErrorDialogVisible: Boolean = true
     @Inject
     lateinit var errorBottomSheetDialog: VtoErrorBottomSheetDialog
 
@@ -55,14 +56,19 @@ class ChatFragment : Fragment() , VtoTryAgainListener {
         _binding = FragmentOneCartChatBinding.inflate(inflater, container, false)
 
         setupRecyclerView()
-        setupInputLayout()
         setupToolbar()
 
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        setupInputLayout()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
+        viewModel.disconnect()
         _binding = null
     }
 
@@ -80,16 +86,10 @@ class ChatFragment : Fragment() , VtoTryAgainListener {
         viewModel.fetchMessages()
     }
 
-
-
-    override fun onPause() {
-        super.onPause()
-        viewModel.disconnect()
-    }
-
     private fun setupToolbar(){
         viewModel.isOtherUserOnline.observe(viewLifecycleOwner) {
             updateOtherUserPresenceIndicator(it)
+
         }
         viewModel.otherUserDisplayName.observe(viewLifecycleOwner) {
             binding.chatToolbarLayout.chatWithPersonName.text = it
@@ -120,7 +120,7 @@ class ChatFragment : Fragment() , VtoTryAgainListener {
                 binding.messageInputLayout.messageInputEditText.text?.clear()
             }
         }
-        viewModel.emitIsTyping()
+
         binding.messageInputLayout.messageInputEditText.addTextChangedListener(object :
             TextWatcher {
             override fun beforeTextChanged(cs: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -128,7 +128,7 @@ class ChatFragment : Fragment() , VtoTryAgainListener {
             }
 
             override fun onTextChanged(cs: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                viewModel.emitIsTyping()
+
                 if (cs.toString().trim().isEmpty()) {
                     viewModel.stopTyping()
                     binding.messageInputLayout.sendMessageImage.alpha = 0.3F
@@ -136,8 +136,10 @@ class ChatFragment : Fragment() , VtoTryAgainListener {
                     binding.messageInputLayout.sendMessageImage.alpha = 0.9F
                 }
             }
-            override fun afterTextChanged(p0: Editable?) {
-                // Do Nothing
+            override fun afterTextChanged(s: Editable?) {
+                if (s.toString().trim().length == 1){
+                    viewModel.emitIsTyping()
+                }
             }
         })
 
@@ -153,6 +155,8 @@ class ChatFragment : Fragment() , VtoTryAgainListener {
         binding.chatToolbarLayout.chatBackImg.setOnClickListener {
             requireActivity().finish()
         }
+        if (!isOnline && isErrorDialogVisible)
+            showErrorDialog()
 
     }
 
@@ -177,18 +181,21 @@ class ChatFragment : Fragment() , VtoTryAgainListener {
     }
 
    private fun showErrorDialog(){
+       isErrorDialogVisible = false
        requireContext().apply {
            errorBottomSheetDialog.showErrorBottomSheetDialog(
                this@ChatFragment,
                this,
-               getString(R.string.pma_retry_error_title),
                getString(R.string.vto_generic_error),
-               getString(R.string.try_again)
+               getString(R.string.one_cart_chat_error_disc),
+               getString(R.string.got_it)
            )
        }
     }
 
+
     override fun tryAgain() {
-       requireActivity().finish()
+        isErrorDialogVisible = true
+        requireActivity().finish()
     }
 }

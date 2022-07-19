@@ -59,7 +59,7 @@ class InitializerFragment : Fragment(), VtoTryAgainListener {
         }
 
         binding.oneCartChatConnectionLayout.btnRetry.setOnClickListener {
-            initChat()
+           requireActivity().finish()
         }
     }
 
@@ -78,9 +78,9 @@ class InitializerFragment : Fragment(), VtoTryAgainListener {
             errorBottomSheetDialog.showErrorBottomSheetDialog(
                 this@InitializerFragment,
                 this,
-                getString(R.string.pma_retry_error_title),
                 getString(R.string.vto_generic_error),
-                getString(R.string.try_again)
+                getString(R.string.one_cart_chat_error_disc),
+                getString(R.string.got_it)
             )
         }
     }
