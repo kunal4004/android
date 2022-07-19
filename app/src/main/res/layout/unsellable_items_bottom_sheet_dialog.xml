@@ -18,7 +18,7 @@
         android:layout_marginTop="@dimen/sixteen_dp" />
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/unsellable_title"
         style="@style/dialog_title_text_style"
         android:layout_width="wrap_content"
         android:layout_below="@+id/incSwipeCloseIndicator"
@@ -27,10 +27,10 @@
         android:text="@string/remove_items_dialog_title" />
 
     <TextView
-        android:id="@+id/subTitle"
+        android:id="@+id/unsellable_subTitle"
         style="@style/myriad_pro_regular_black_15_text_style"
         android:layout_width="match_parent"
-        android:layout_below="@+id/title"
+        android:layout_below="@+id/unsellable_title"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/sixteen_dp"
         android:lineSpacingMultiplier="1.2"
@@ -43,7 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/removeItems"
-        android:layout_below="@+id/subTitle"
+        android:layout_below="@+id/unsellable_subTitle"
         android:clipToPadding="true"
         android:paddingTop="@dimen/sixteen_dp"
         android:paddingBottom="@dimen/sixteen_dp"
@@ -57,7 +57,7 @@
         android:layout_above="@+id/cancel_btn"
         android:layout_marginBottom="@dimen/twenty_four_dp"
         android:background="@drawable/order_add_to_cart_button_bg"
-        android:text="@string/remove_these_items_continue" />
+        android:text="@string/remove_and_continue" />
 
     <TextView
         android:id="@+id/cancel_btn"

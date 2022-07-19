@@ -1998,6 +1998,7 @@
     <string name="loan_request_fund_not_available_desc">Your credit facility does not allow for a Personal Loan drawdown at this time.</string>
     <string name="cd_lnksizeguide">lnkSizeGuide</string>
     <string name="my_lists">MY LISTS</string>
+    <string name="remove_and_continue">Remove and continue</string>
 
     <!--  CLI Marital status  -->
     <string name="cli_marital_status_txt">Marital Status</string>
@@ -2545,6 +2546,16 @@
     <string name="continue_with_standard_delivery">CONTINUE WITH STANDARD DELIVERY</string>
     <string name="continue_with_cnc_delivery">CONTINUE WITH Click &amp; Collect</string>
     <string name="continue_with_dash_delivery">CONTINUE WITH DASH DELIVERY</string>
+
+    <plurals name="unsellable_subtitle">
+        <item quantity="one">This item cannot be delivered using Dash Delivery. The following will be removed from your cart:</item>
+        <item quantity="other">These items cannot be delivered using Dash Delivery. The following will be removed from your cart:</item>
+    </plurals>
+
+    <plurals name="unsellable_title">
+        <item quantity="one">This Item Will Be Removed From Your Cart.</item>
+        <item quantity="other">These Items Will Be Removed From Your Cart.</item>
+    </plurals>
 
 
     <string name="product_listing_price_from">From</string>

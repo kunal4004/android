@@ -8,10 +8,10 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.checkout_address_confirmation_click_and_collect.*
 import kotlinx.android.synthetic.main.unsellable_items_bottom_sheet_dialog.*
 import kotlinx.android.synthetic.main.unsellable_items_bottom_sheet_dialog.rcvItemsList
 import kotlinx.android.synthetic.main.unsellable_items_bottom_sheet_dialog.removeItems
-import kotlinx.android.synthetic.main.unsellable_items_bottom_sheet_dialog.subTitle
 import kotlinx.android.synthetic.main.unsellable_items_fragment.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
@@ -105,6 +105,12 @@ class UnsellableItemsBottomSheetDialog: WBottomSheetDialogFragment(),
 
     private fun loadUnsellableItems() {
         rcvItemsList?.layoutManager = LinearLayoutManager(activity)
+        val itemCount = commerceItems?.size?:0
+        unsellable_title?.text =
+            resources.getQuantityString(R.plurals.unsellable_title, itemCount, itemCount)
+        unsellable_subTitle?.text =
+            resources.getQuantityString(R.plurals.unsellable_subtitle, itemCount, itemCount)
+
         commerceItems?.let { rcvItemsList?.adapter = UnsellableItemsListAdapter(it) }
     }
 
