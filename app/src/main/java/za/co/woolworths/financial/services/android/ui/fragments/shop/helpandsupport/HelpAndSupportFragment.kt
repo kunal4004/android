@@ -21,7 +21,7 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 class HelpAndSupportFragment : Fragment(R.layout.layout_help_and_support_fragement), CancelOrderConfirmationDialogFragment.ICancelOrderConfirmation,
         HelpAndSupportAdapter.HelpAndSupportClickListener {
 
-    var orderDetailsResponse: OrderDetailsResponse? = null
+    private var orderDetailsResponse: OrderDetailsResponse? = null
     var isNavigatedFromMyAccounts: Boolean = false
 
     companion object {
