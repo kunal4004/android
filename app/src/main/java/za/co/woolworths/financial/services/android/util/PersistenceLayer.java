@@ -85,9 +85,14 @@ public class PersistenceLayer extends SQLiteOpenHelper {
         return instance;
     }
 
-    public void executeVoidQuery(String query, String[] arguments) throws Exception {
+    private SQLiteDatabase openDatabase() {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
         db.enableWriteAheadLogging();
+        return db;
+    }
+
+    public void executeVoidQuery(String query, String[] arguments) throws Exception {
+        SQLiteDatabase db = openDatabase();
         Cursor cursor = db.rawQuery(query, arguments);
 
         if(cursor.getCount() == 0){//consider this as a failure as no rows were updated
@@ -98,8 +103,7 @@ public class PersistenceLayer extends SQLiteOpenHelper {
     }
 
     public void executeSQLStatements(final List<String> queries){
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
-        db.enableWriteAheadLogging();
+        SQLiteDatabase db = openDatabase();
 
         for (String query : queries){
             db.execSQL(query);
@@ -108,10 +112,8 @@ public class PersistenceLayer extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void executeDeleteQuery(String query)
-    {
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
-        db.enableWriteAheadLogging();
+    public void executeDeleteQuery(String query) {
+        SQLiteDatabase db = openDatabase();
         db.execSQL(query);
         db.close();
     }
@@ -119,8 +121,7 @@ public class PersistenceLayer extends SQLiteOpenHelper {
     public Map<String, String> executeReturnableQuery(String query, String[] arguments){
         HashMap<String, String> result = new HashMap<String, String>();
 
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
-        db.enableWriteAheadLogging();
+        SQLiteDatabase db = openDatabase();
 
         Cursor cursor = db.rawQuery(query, arguments);
         cursor.moveToFirst();
@@ -141,9 +142,7 @@ public class PersistenceLayer extends SQLiteOpenHelper {
     }
 
     public long executeInsertQuery(String tableName, Map<String, String> arguments) {
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
-        db.enableWriteAheadLogging();
-
+        SQLiteDatabase db = openDatabase();
         ContentValues row = new ContentValues();
 
         for(Map.Entry<String, String> entry : arguments.entrySet()){
