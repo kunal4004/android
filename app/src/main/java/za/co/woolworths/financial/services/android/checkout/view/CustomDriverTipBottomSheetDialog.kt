@@ -34,9 +34,9 @@ class CustomDriverTipBottomSheetDialog : WBottomSheetDialogFragment() {
         private const val SUB_TITLE = "SUB_TITLE"
         private const val TIP_VALUE = "TIP_VALUE"
         const val MIN_TIP_VALUE =
-            5.00 // ToDo This will be taken from config once config is ready.
+            5.00
         const val MAX_TIP_VALUE =
-            1000.00 // ToDo This will be taken from config once config is ready.
+            1000.00
         private var clickListner: ClickListner? = null
 
         fun newInstance(
@@ -97,24 +97,24 @@ class CustomDriverTipBottomSheetDialog : WBottomSheetDialogFragment() {
                 amount.isNullOrEmpty() -> {
                     Utils.fadeInFadeOutAnimation(buttonConfirm, true)
                 }
-                amount.toString().toDouble() < AppConfigSingleton.dashConfig?.driverTip?.minAmount ?: MIN_TIP_VALUE -> {
+                amount.toString().toDouble() < (AppConfigSingleton.dashConfig?.driverTip?.minAmount ?: MIN_TIP_VALUE) -> {
                     // Driver tip should always be greater than or equal R5
                     Utils.fadeInFadeOutAnimation(buttonConfirm, true)
                     driverTipErrorText?.visibility = View.VISIBLE
                     driverTipErrorText?.text =
                         requireContext().getString(
                             R.string.driver_minimum_tip_amt_error,
-                            MIN_TIP_VALUE
+                            AppConfigSingleton.dashConfig?.driverTip?.minAmount ?: 0.0
                         )
                 }
-                amount.toString().toDouble() > AppConfigSingleton.dashConfig?.driverTip?.maxAmount ?: MAX_TIP_VALUE -> {
+                amount.toString().toDouble() > (AppConfigSingleton.dashConfig?.driverTip?.maxAmount ?: MAX_TIP_VALUE) -> {
                     // Driver tip should always be less than R1000
                     Utils.fadeInFadeOutAnimation(buttonConfirm, true)
                     driverTipErrorText?.visibility = View.VISIBLE
                     driverTipErrorText?.text =
                         requireContext().getString(
                             R.string.driver_maximum_tip_amt_error,
-                            MAX_TIP_VALUE
+                            AppConfigSingleton.dashConfig?.driverTip?.maxAmount ?: 0.0
                         )
                 }
                 else -> {

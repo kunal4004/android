@@ -266,11 +266,11 @@ class BannerGridLayoutViewHolder(itemView: View) : RecyclerView.ViewHolder(itemV
     ) {
         itemView.dashCategoryTitle.text = productCatalogue?.headerText
         itemView.rvDashCategories?.apply {
-            val bannerCarouselAdapter = DashCategoryAdapter(context, dashLandingNavigationListener, null)
+            val bannerGridAdapter = DashCategoryAdapter(context, dashLandingNavigationListener, null)
             layoutManager = GridLayoutManager(context, 2)
-            adapter = bannerCarouselAdapter
+            adapter = bannerGridAdapter
             productCatalogue?.let {
-                bannerCarouselAdapter.setData(it)
+                bannerGridAdapter.setData(it)
             }
         }
     }
@@ -306,11 +306,11 @@ class LongBannerCarouselLayoutViewHolder(itemView: View) : RecyclerView.ViewHold
     ) {
         itemView.dashCategoryTitle.text = productCatalogue?.headerText
         itemView.rvDashCategories?.apply {
-            val bannerCarouselAdapter = DashCategoryAdapter(context, dashLandingNavigationListener, null)
+            val longBannerCarouselAdapter = DashCategoryAdapter(context, dashLandingNavigationListener, null)
             layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
-            adapter = bannerCarouselAdapter
+            adapter = longBannerCarouselAdapter
             productCatalogue?.let {
-                bannerCarouselAdapter.setData(it)
+                longBannerCarouselAdapter.setData(it)
             }
         }
     }
@@ -326,11 +326,11 @@ class LongBannerListLayoutViewHolder(itemView: View) : RecyclerView.ViewHolder(i
     ) {
         itemView.dashCategoryTitle.text = productCatalogue?.headerText
         itemView.rvDashCategories?.apply {
-            val bannerCarouselAdapter = DashCategoryAdapter(context, dashLandingNavigationListener, null)
+            val longBannerListAdapter = DashCategoryAdapter(context, dashLandingNavigationListener, null)
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-            adapter = bannerCarouselAdapter
+            adapter = longBannerListAdapter
             productCatalogue?.let {
-                bannerCarouselAdapter.setData(it)
+                longBannerListAdapter.setData(it)
             }
         }
     }

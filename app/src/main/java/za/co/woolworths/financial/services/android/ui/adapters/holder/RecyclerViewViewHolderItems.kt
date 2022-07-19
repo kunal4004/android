@@ -99,7 +99,6 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
                 brandName?.visibility = GONE
             } else {
                 brandName?.visibility = if (productList?.brandText.isNullOrEmpty()) GONE else VISIBLE
-                brandNameFakeView?.visibility = if (productList?.brandText.isNullOrEmpty()) VISIBLE else GONE
             }
         }
         nextProduct?.let {
@@ -107,7 +106,6 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
                 brandName?.visibility = GONE
             } else {
                 brandName?.visibility = if (productList?.brandText.isNullOrEmpty()) GONE else VISIBLE
-                brandNameFakeView?.visibility = if (productList?.brandText.isNullOrEmpty()) VISIBLE else GONE
             }
         }
     }

@@ -13,10 +13,15 @@ android {
 
     def major = "9"
     def minor = "5"
-    def fix = "1"
-    def jobNumberProduction = 189
-    def jobNumberQa = 602
-    def jobNumberFeature = 602
+    def fix = "0"
+    def jobNumberProduction = 186
+    def jobNumberQa = 605
+    def jobNumberFeature = 757
+
+//    def fix = "1"
+//    def jobNumberProduction = 189
+//    def jobNumberQa = 602
+//    def jobNumberFeature = 602
 
     dataBinding {
         enabled = true
