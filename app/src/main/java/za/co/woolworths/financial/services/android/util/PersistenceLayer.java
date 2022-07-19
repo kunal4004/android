@@ -87,6 +87,7 @@ public class PersistenceLayer extends SQLiteOpenHelper {
 
     public void executeVoidQuery(String query, String[] arguments) throws Exception {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
+        db.enableWriteAheadLogging();
         Cursor cursor = db.rawQuery(query, arguments);
 
         if(cursor.getCount() == 0){//consider this as a failure as no rows were updated
@@ -98,6 +99,7 @@ public class PersistenceLayer extends SQLiteOpenHelper {
 
     public void executeSQLStatements(final List<String> queries){
         SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
+        db.enableWriteAheadLogging();
 
         for (String query : queries){
             db.execSQL(query);
@@ -109,6 +111,7 @@ public class PersistenceLayer extends SQLiteOpenHelper {
     public void executeDeleteQuery(String query)
     {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
+        db.enableWriteAheadLogging();
         db.execSQL(query);
         db.close();
     }
@@ -117,6 +120,7 @@ public class PersistenceLayer extends SQLiteOpenHelper {
         HashMap<String, String> result = new HashMap<String, String>();
 
         SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
+        db.enableWriteAheadLogging();
 
         Cursor cursor = db.rawQuery(query, arguments);
         cursor.moveToFirst();
@@ -138,6 +142,7 @@ public class PersistenceLayer extends SQLiteOpenHelper {
 
     public long executeInsertQuery(String tableName, Map<String, String> arguments) {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
+        db.enableWriteAheadLogging();
 
         ContentValues row = new ContentValues();
 
