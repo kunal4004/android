@@ -110,7 +110,7 @@ class UnsellableItemsBottomSheetDialog: WBottomSheetDialogFragment(),
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.changeStore -> {
+            R.id.cancel_btn -> {
                 UnSellableItemsLiveData.value = false
                 confirmRemoveItems()
             }
