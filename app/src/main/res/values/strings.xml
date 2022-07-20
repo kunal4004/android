@@ -1590,9 +1590,6 @@
     <string name="change_delivery_option">CHANGE DELIVERY OPTION</string>
     <string name="remove_items_dialog_title">These items will be removed</string>
     <string name="remove_items_dialog_desc">We always show you items available at the store closest to your location. When you change this location, the items you see may change too.</string>
-    <string name="remove_items_dash_dialog_desc">This item cannot be delivered using <b><font color='#000000'>Dash Delivery.</font></b> The following will be removed from your cart:</string>
-    <string name="remove_items_standard_dialog_desc">This item cannot be delivered using <b><font color='#000000'>Standard Delivery.</font></b> The following will be removed from your cart:</string>
-    <string name="remove_items_cnc_dialog_desc">This item cannot be collected using <b><font color='#000000'>Click &amp; Collect.</font></b> The following will be removed from your cart:</string>
     <string name="no_stores_for_province_message">Sorry, we currently do not have stores that support this feature in\u0020</string>
     <string name="no_stores_available">No Stores Available</string>
     <string name="set_your_collection_location">Set your Collection Location</string>
@@ -2547,14 +2544,24 @@
     <string name="continue_with_cnc_delivery">CONTINUE WITH Click &amp; Collect</string>
     <string name="continue_with_dash_delivery">CONTINUE WITH DASH DELIVERY</string>
 
-    <plurals name="unsellable_subtitle">
-        <item quantity="one">This item cannot be delivered using Dash Delivery. The following will be removed from your cart:</item>
-        <item quantity="other">These items cannot be delivered using Dash Delivery. The following will be removed from your cart:</item>
+    <plurals name="remove_items_dash_dialog_desc">
+        <item quantity="one">This item cannot be delivered using <b><font color='#000000'>Dash Delivery.</font></b>. The following will be removed from your cart:</item>
+        <item quantity="other">These items cannot be delivered using <b><font color='#000000'>Dash Delivery.</font></b>. The following will be removed from your cart:</item>
+    </plurals>
+
+    <plurals name="remove_items_standard_dialog_desc">
+        <item quantity="one">This item cannot be delivered using <b><font color='#000000'>Standard Delivery.</font></b>. The following will be removed from your cart:</item>
+        <item quantity="other">These items cannot be delivered using <b><font color='#000000'>Standard Delivery.</font></b>. The following will be removed from your cart:</item>
+    </plurals>
+
+    <plurals name="remove_items_cnc_dialog_desc">
+        <item quantity="one">This item cannot be delivered using <b><font color="black">Click &amp; Collect.</font></b>. The following will be removed from your cart:</item>
+        <item quantity="other">These items cannot be delivered using <b><font color="black">Click &amp; Collect.</font></b>. The following will be removed from your cart:</item>
     </plurals>
 
     <plurals name="unsellable_title">
         <item quantity="one">This Item Will Be Removed From Your Cart.</item>
-        <item quantity="other">These Items Will Be Removed From Your Cart.</item>
+        <item quantity="other">@string/these_items_will_be_removed_from_your_cart</item>
     </plurals>
 
 
@@ -2674,6 +2681,7 @@
     <string name="to_contact_customer_support_dial_0860_100_987">To contact Customer Support, dial 0860 100 987</string>
     <string name="delete_my_account">Delete my account</string>
     <string name="your_online_profile_has_been_successfully_deleted">Your Online Profile Has Been Successfully Deleted</string>
+    <string name="remove_items_standard_dialog_desc" />
 
 
 </resources>
