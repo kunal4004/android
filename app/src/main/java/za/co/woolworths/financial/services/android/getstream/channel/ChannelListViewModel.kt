@@ -43,11 +43,11 @@ class ChannelListViewModel: ViewModel() {
         )
 
         chatClient.queryChannels(request).enqueue { result ->
-            if (result.isSuccess) {
+            if (result.isSuccess && (!result.data().isNullOrEmpty())) {
                 val channelId = result.data().first().cid
                 _state.postValue(State.RedirectToChat(channelId))
             } else {
-                _state.postValue(State.Error(result.error().message))
+                _state.postValue(State.Error(""))
             }
         }
     }

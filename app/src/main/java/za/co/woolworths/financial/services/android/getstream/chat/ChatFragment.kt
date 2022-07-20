@@ -37,7 +37,7 @@ class ChatFragment : Fragment() , VtoTryAgainListener {
     private var _binding: FragmentOneCartChatBinding? = null
     private val binding get() = _binding!!
     private lateinit var recyclerViewAdapter: ChatRecyclerViewAdapter
-    private var isErrorDialogVisible: Boolean = true
+
     @Inject
     lateinit var errorBottomSheetDialog: VtoErrorBottomSheetDialog
 
@@ -155,8 +155,6 @@ class ChatFragment : Fragment() , VtoTryAgainListener {
         binding.chatToolbarLayout.chatBackImg.setOnClickListener {
             requireActivity().finish()
         }
-        if (!isOnline && isErrorDialogVisible)
-            showErrorDialog()
 
     }
 
@@ -181,7 +179,6 @@ class ChatFragment : Fragment() , VtoTryAgainListener {
     }
 
    private fun showErrorDialog(){
-       isErrorDialogVisible = false
        requireContext().apply {
            errorBottomSheetDialog.showErrorBottomSheetDialog(
                this@ChatFragment,
@@ -195,7 +192,6 @@ class ChatFragment : Fragment() , VtoTryAgainListener {
 
 
     override fun tryAgain() {
-        isErrorDialogVisible = true
         requireActivity().finish()
     }
 }
