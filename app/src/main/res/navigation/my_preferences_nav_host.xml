@@ -28,6 +28,9 @@
         <action
             android:id="@+id/action_myPreferencesFragment_to_deliveryAddressConfirmationFragment"
             app:destination="@id/deliveryAddressConfirmationFragment" />
+        <action
+            android:id="@+id/action_myPreferencesFragment_to_deleteAccountBottomSheetDialog"
+            app:destination="@id/deleteAccountBottomSheetDialog" />
     </fragment>
 
     <dialog
@@ -87,4 +90,8 @@
         android:id="@+id/deliveryAddressConfirmationFragment"
         android:name="za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment"
         android:label="DeliveryAddressConfirmationFragment" />
+    <dialog
+        android:id="@+id/deleteAccountBottomSheetDialog"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.mypreferences.DeleteAccountBottomSheetDialog"
+        android:label="DeleteAccountBottomSheetDialog" />
 </navigation>

@@ -505,10 +505,19 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             }
         } else {
             // else display shopping list toast
-            if (KotlinUtils.Companion.getPreferredDeliveryType() == Delivery.CNC && addItemToCartResponse.data.get(0).productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
-                ToastFactory.Companion.showItemsLimitToastOnAddToCart(rlCheckOut, addItemToCartResponse.data.get(0).productCountMap, activity, size, true);
-            } else {
-                ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
+            switch (KotlinUtils.Companion.getPreferredDeliveryType()) {
+                case DASH:
+                case CNC:
+                    if (addItemToCartResponse.data.get(0).productCountMap.getQuantityLimit() != null
+                            && addItemToCartResponse.data.get(0).productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
+                        ToastFactory.Companion.showItemsLimitToastOnAddToCart(rlCheckOut, addItemToCartResponse.data.get(0).productCountMap, activity, size, true);
+                    } else {
+                        ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
+                    }
+                    break;
+                default:
+                    ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
+                    break;
             }
         }
     }
@@ -1014,10 +1023,19 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             ProductCountMap productCountMap = (ProductCountMap) Utils.jsonStringToObject(data.getStringExtra("ProductCountMap"), ProductCountMap.class);
             int itemsCount = data.getIntExtra("ItemsCount", 0);
 
-            if (KotlinUtils.Companion.getPreferredDeliveryType() == Delivery.CNC && productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
-                ToastFactory.Companion.showItemsLimitToastOnAddToCart(rlCheckOut, productCountMap, activity, itemsCount, true);
-            } else {
-                ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
+            switch (KotlinUtils.Companion.getPreferredDeliveryType()) {
+                case DASH:
+                case CNC:
+                    if ( productCountMap != null && productCountMap.getQuantityLimit() != null &&
+                            productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
+                        ToastFactory.Companion.showItemsLimitToastOnAddToCart(rlCheckOut, productCountMap, activity, itemsCount, true);
+                    } else {
+                        ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
+                    }
+                    break;
+                default:
+                    ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
+                    break;
             }
         }
     }
@@ -1026,17 +1044,17 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         Activity activity = getActivity();
         if (activity == null) return;
         KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
-                activity, resultCode, null, null, false,false, false, null, null, null);
+                activity, resultCode, null, null, false,false, false, null, null, null, null);
     }
 
     private void startActivityToSelectDeliveryLocation(boolean addItemToCartOnFinished) {
         if (getActivity() != null) {
             if (addItemToCartOnFinished) {
                 KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
-                        getActivity(), REQUEST_SUBURB_CHANGE, null, null, false, false, false, null, null, null);
+                        getActivity(), REQUEST_SUBURB_CHANGE, null, null, false, false, false, null, null, null, null);
             } else {
                 KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
-                        getActivity(), 0, null, null, false,false, false , null, null, null );
+                        getActivity(), 0, null, null, false,false, false , null, null, null, null );
             }
             getActivity().overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
         }
@@ -1238,7 +1256,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
                 false,
                 null,
                 null,
-                null
+                null, null
                 );
     }
 

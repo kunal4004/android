@@ -38,6 +38,8 @@ data class ProductList(
 
     var promotionsList: ArrayList<Promotions>? = null,
 
+    var promotions: ArrayList<Promotions>? = null,
+
     @JvmField
     var saveText: String? = null,
 

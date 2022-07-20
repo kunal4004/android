@@ -190,8 +190,10 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
             // Both API data available
             viewModel.isDashCategoriesAvailable.value == true &&
                     viewModel.isOnDemandCategoriesAvailable.value == true -> {
+
                 // set data to views
                 layoutDashSetAddress?.visibility = View.GONE
+                progressBar?.visibility = View.GONE
                 dashDeliveryAdapter.setData(
                     viewModel.onDemandCategories.value?.peekContent()?.data?.onDemandCategories,
                     viewModel.dashLandingDetails.value?.peekContent()?.data?.productCatalogues
@@ -427,13 +429,13 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                         }
 
                         when {
-                            KotlinUtils.isDeliveryOptionClickAndCollect() &&
+                            (KotlinUtils.isDeliveryOptionClickAndCollect() || KotlinUtils.isDeliveryOptionDash() )&&
                                     response.data?.get(0)?.productCountMap?.quantityLimit?.foodLayoutColour != null -> {
 
                                 response.data?.get(0)?.productCountMap?.let {
                                     viewModel.addItemToCart.value?.quantity?.let { count ->
                                         ToastFactory.showItemsLimitToastOnAddToCart(
-                                            productsRecyclerView,
+                                            rvDashDelivery,
                                             it,
                                             requireActivity(),
                                             count

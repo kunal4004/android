@@ -65,9 +65,7 @@
                         android:visibility="gone" />
 
                 </RelativeLayout>
-
             </androidx.appcompat.widget.Toolbar>
-
         </com.google.android.material.appbar.AppBarLayout>
 
         <RelativeLayout

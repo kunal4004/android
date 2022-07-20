@@ -12,6 +12,7 @@ import za.co.woolworths.financial.services.android.geolocation.network.model.Val
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.Response
+import za.co.woolworths.financial.services.android.models.dto.account.FicaModel
 import za.co.woolworths.financial.services.android.models.dto.bpi.BPIBody
 import za.co.woolworths.financial.services.android.models.dto.bpi.InsuranceTypeOptInBody
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
@@ -750,6 +751,12 @@ object OneAppService : RetrofitConfig() {
         )
     }
 
+    fun getFicaResponse(): Call<FicaModel> {
+        return mApiInterface.getFica(
+            getSessionToken(),
+            getDeviceIdentityToken()
+        )
+    }
 
     fun getConfirmDeliveryAddressDetails(body: ConfirmLocationRequest): Call<ConfirmDeliveryAddressResponse>{
         return mApiInterface.confirmLocation("",
@@ -768,5 +775,12 @@ object OneAppService : RetrofitConfig() {
                 getDeviceIdentityToken(),
                 confirmLocationRequest)
         }
+    }
+
+    fun deleteAccount(): Call<DeleteAccountResponse>{
+        return mApiInterface.deleteAccount("",
+            "",
+            getSessionToken()
+        )
     }
 }

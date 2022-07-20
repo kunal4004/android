@@ -10,5 +10,4 @@
         android:id="@+id/row_layout"
         layout="@layout/product_listing_page_row" />
 
-
 </androidx.constraintlayout.widget.ConstraintLayout>

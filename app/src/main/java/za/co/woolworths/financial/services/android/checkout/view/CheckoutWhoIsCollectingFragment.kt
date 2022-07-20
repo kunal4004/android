@@ -18,16 +18,18 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.checkout_new_user_recipient_details.*
 import kotlinx.android.synthetic.main.checkout_who_is_collecting_fragment.*
 import kotlinx.android.synthetic.main.vehicle_details_layout.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_COLLECTING_DETAILS
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CNC_SELETION
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
+import za.co.woolworths.financial.services.android.util.Constant
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.regex.Pattern
 
@@ -42,6 +44,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
     private var isMyVehicle = true
     private var navController: NavController? = null
     private var isComingFromCnc: Boolean? = false
+
     companion object {
         const val REGEX_VEHICLE_TEXT: String = "^\$|^[a-zA-Z0-9\\s<!>@\$&().+,-/\\\"']+\$"
     }
@@ -49,7 +52,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.checkout_who_is_collecting_fragment, container, false)
     }
@@ -60,7 +63,8 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
             navController = Navigation.findNavController(view)
         val bundle = arguments?.getBundle(BUNDLE)
         bundle?.apply {
-            isComingFromCnc = getBoolean(IS_COMING_FROM_CNC_SELETION, false)}
+            isComingFromCnc = getBoolean(IS_COMING_FROM_CNC_SELETION, false)
+        }
 
         initView()
     }
@@ -82,9 +86,9 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
     private fun onVehicleSelected() {
         Utils.triggerFireBaseEvents(
             FirebaseManagerAnalyticsProperties.CHECKOUT_COLLECTION_VECHILE_SELECT, hashMapOf(
-            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_VEHICLE_SELECT
-        ), activity)
+                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_VEHICLE_SELECT
+            ), activity)
         isMyVehicle = true
         taxiDescription.visibility = View.GONE
         vehicleDetailsLayout.visibility = View.VISIBLE
@@ -169,6 +173,15 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
 
     private fun startCheckoutActivity(toJson: String) {
         val checkoutActivityIntent = Intent(activity, CheckoutActivity::class.java)
+        val bundle = arguments?.getBundle(BUNDLE)
+        bundle?.apply {
+            if (containsKey(Constant.LIQUOR_ORDER) && containsKey(Constant.NO_LIQUOR_IMAGE_URL)) {
+                checkoutActivityIntent.putExtra(Constant.LIQUOR_ORDER,
+                    getBoolean(Constant.LIQUOR_ORDER))
+                checkoutActivityIntent.putExtra(Constant.NO_LIQUOR_IMAGE_URL,
+                    getString((Constant.NO_LIQUOR_IMAGE_URL)))
+            }
+        }
         checkoutActivityIntent.putExtra(
             KEY_COLLECTING_DETAILS,
             toJson
@@ -177,6 +190,10 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
             IS_COMING_FROM_CNC_SELETION,
             isComingFromCnc
         )
+        if (bundle?.containsKey(SAVED_ADDRESS_RESPONSE) == true) {
+            checkoutActivityIntent.putExtra(SAVED_ADDRESS_KEY,
+                bundle?.getSerializable(SAVED_ADDRESS_RESPONSE))
+        }
         activity?.let {
             startActivityForResult(
                 checkoutActivityIntent,
@@ -336,7 +353,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
     private fun showAnimationErrorMessage(
         textView: TextView,
         visible: Int,
-        recipientLayoutValue: Int
+        recipientLayoutValue: Int,
     ) {
         if (View.VISIBLE == visible && textView.visibility == View.GONE) {
             val anim = ObjectAnimator.ofInt(

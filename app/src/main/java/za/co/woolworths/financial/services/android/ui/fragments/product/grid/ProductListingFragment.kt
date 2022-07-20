@@ -8,6 +8,7 @@ import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
+import android.os.Parcelable
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -97,6 +98,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     WMaterialShowcaseView.IWalkthroughActionListener,
     IOnConfirmDeliveryLocationActionListener, ChanelNavigationClickListener {
 
+    private var state: Parcelable? = null
     private var LOGIN_REQUEST_SUBURB_CHANGE = 1419
     private var lastVisibleItem: Int = 0
     internal var totalItemCount: Int = 0
@@ -112,7 +114,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var filterContent: Boolean = false
 
     private var mSearchType: ProductsRequestParams.SearchType? = null
-    private var menuActionSearch: MenuItem? = null
     private var mAddItemsToCart: MutableList<AddItemToCart>? = null
     private var mErrorHandlerView: ErrorHandlerView? = null
     private var mProductAdapter: ProductListingAdapter? = null
@@ -777,6 +778,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             if (visibility == View.INVISIBLE)
                 visibility = VISIBLE
             layoutManager = mRecyclerViewLayoutManager
+            if(state!=null) {
+                layoutManager?.onRestoreInstanceState(state)
+                state=null
+            }
             adapter = mProductAdapter
             clearOnScrollListeners()
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -1203,6 +1208,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     override fun openProductDetailView(productList: ProductList) {
         //firebase event select_item
+        state = productsRecyclerView.layoutManager?.onSaveInstanceState()
         val mFirebaseAnalytics = FirebaseManager.getInstance().getAnalytics()
         val selectItemParams = Bundle()
         selectItemParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_LIST_NAME,
@@ -1236,6 +1242,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         bannerLabel: String?,
         bannerImage: String?,
     ) {
+        state = productsRecyclerView.layoutManager?.onSaveInstanceState()
         val title = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
         (activity as? BottomNavigationActivity)?.openProductDetailFragment(
             title,
@@ -1423,7 +1430,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                                     return
                                 }
                             }
-                            if (KotlinUtils.isDeliveryOptionClickAndCollect() && addItemToCartResponse.data[0]?.productCountMap?.quantityLimit?.foodLayoutColour != null) {
+                            if ((KotlinUtils.isDeliveryOptionClickAndCollect() || KotlinUtils.isDeliveryOptionDash() )
+                                && addItemToCartResponse.data[0]?.productCountMap?.quantityLimit?.foodLayoutColour != null) {
                                 addItemToCartResponse.data[0]?.productCountMap?.let {
                                     addItemToCart?.quantity?.let { it1 ->
                                         ToastFactory.showItemsLimitToastOnAddToCart(
@@ -1444,7 +1452,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                                     .findViewById(R.id.tvAddedItem)
                                 val quantityAdded = addItemToCart?.quantity?.toString()
                                 val quantityDesc =
-                                    "$quantityAdded ITEM${if (addItemToCart?.quantity == 0) "" else "s"}"
+                                    "$quantityAdded ITEM${if ((addItemToCart?.quantity ?: 0) >= 1) "" else "s"}"
                                 tvAddedItem.text = quantityDesc
 
                                 buttonView.setOnClickListener {

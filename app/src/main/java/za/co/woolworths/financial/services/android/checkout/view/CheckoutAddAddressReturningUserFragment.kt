@@ -1134,13 +1134,21 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
     private fun getShipmentDetailsBody(): ShippingDetailsBody {
         val body = ShippingDetailsBody()
+        KotlinUtils.getUniqueDeviceID {
+            body.apply {
+                pushNotificationToken = Utils.getToken()
+                appInstanceId = it
+            }
+        }
         when {
             // Food Items Basket
             foodType == ONLY_FOOD -> {
                 body.apply {
                     requestFrom = "express"
                     joinBasket = true
-                    ageConsentConfirmed = true
+                    if(liquorOrder == true) {
+                        ageConsentConfirmed = true
+                    }
                     foodShipOnDate = selectedFoodSlot?.stringShipOnDate
                     otherShipOnDate = ""
                     foodDeliverySlotId = selectedFoodSlot?.slotId
@@ -1175,6 +1183,9 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             foodType == MIXED_FOOD || otherType == MIXED_OTHER -> {
                 body.apply {
                     joinBasket = false
+                    if(liquorOrder == true) {
+                        ageConsentConfirmed = true
+                    }
                     if (selectedOpenDayDeliverySlot.deliveryType != null && selectedOpenDayDeliverySlot.deliveryType == DELIVERY_TYPE_TIMESLOT) {
                         foodShipOnDate = selectedFoodSlot?.stringShipOnDate
                         otherShipOnDate = selectedOtherSlot?.stringShipOnDate

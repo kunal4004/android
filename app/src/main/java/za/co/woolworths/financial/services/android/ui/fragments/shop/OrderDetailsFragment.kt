@@ -35,10 +35,8 @@ import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.helpandsupport.HelpAndSupportFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
-import za.co.woolworths.financial.services.android.util.AppConstant
-import za.co.woolworths.financial.services.android.util.ProductTypeDetails
-import za.co.woolworths.financial.services.android.util.ScreenManager
-import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 
 class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
     CancelOrderConfirmationDialogFragment.ICancelOrderConfirmation,
@@ -74,9 +72,9 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         super.onCreate(savedInstanceState)
         arguments?.let {
             argOrderId = it.getString(AppConstant.Keys.ARG_ORDER, "")
-            val notificationParams: Parameter? = it.getParcelable(AppConstant.Keys.ARG_NOTIFICATION_PARAMETERS)
+            val notificationParams: Parameter? = it.getParcelable(AppConstant.Keys.ARG_NOTIFICATION_PARAMETERS) as? Parameter
             notificationParams?.let { parameter ->
-                argOrderId = parameter.orderID
+                argOrderId = parameter.orderId
             }
             isNavigatedFromMyAccounts = it.getBoolean(AppConstant.NAVIGATED_FROM_MY_ACCOUNTS, false)
         }
@@ -119,7 +117,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         }
         tvSelectAll.setOnClickListener {
             (requireActivity() as? BottomNavigationActivity)?.pushFragment(
-                HelpAndSupportFragment.newInstance()
+                HelpAndSupportFragment.newInstance(orderDetailsResponse)
             )
         }
         argOrderId?.let { orderId -> requestOrderDetails(orderId) }
@@ -160,6 +158,10 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
     private fun bindData(ordersResponse: OrderDetailsResponse) {
         dataList = buildDataForOrderDetailsView(ordersResponse)
         orderDetails.adapter = requireActivity().let { OrderDetailsAdapter(it, this, dataList) }
+        VoiceOfCustomerManager.showVocSurveyIfNeeded(
+            activity,
+            KotlinUtils.vocShoppingHandling(orderDetailsResponse?.orderSummary?.fulfillmentDetails?.deliveryType)
+        )
     }
 
     private fun buildDataForOrderDetailsView(ordersResponse: OrderDetailsResponse): ArrayList<OrderDetailsItem> {
