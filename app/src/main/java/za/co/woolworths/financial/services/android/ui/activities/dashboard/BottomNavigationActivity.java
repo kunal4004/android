@@ -1101,6 +1101,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             case REQUEST_PAYMENT_STATUS:
                 if (resultCode == REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING) {
                     navigateToTabIndex(BottomNavigationActivity.INDEX_PRODUCT, null);
+                    QueryBadgeCounter.getInstance().queryCartSummaryCount();
                     break;
                 }
                 if (resultCode == RESULT_NAVIGATE_TO_HELP_AND_SUPPORT) {
