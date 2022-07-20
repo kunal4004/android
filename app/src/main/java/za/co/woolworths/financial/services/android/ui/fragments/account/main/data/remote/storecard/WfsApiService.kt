@@ -41,11 +41,11 @@ interface WfsApiService {
 
     @Headers(
         "Content-Type: application/json",
-        "Accept: application/json",
+        "Accept: application/vnd.appserver.api.v2+json",
         "Media-Type: application/json"
     )
     @POST("wfs/app/v4/accounts/storecard/cards")
-    suspend fun queryServiceStoreCards(
+    suspend fun requestPostAccountsStoreCardCards(
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Query("lat") latitude: Double?,
         @Query("lon") longitude: Double?,

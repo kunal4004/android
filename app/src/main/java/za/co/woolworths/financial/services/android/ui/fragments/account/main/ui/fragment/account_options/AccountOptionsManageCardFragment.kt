@@ -15,13 +15,11 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.LoaderType
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.StoreCardNotReceivedDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.ManageCardItemListener
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.ManageCardLandingHeaderItems
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.ManageMyCardDetailsFragment
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.ManageStoreCardLandingList
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StoreCardCallBack
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.CallBack
@@ -88,8 +86,7 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
     }
 
     private fun AccountOptionsManageCardFragmentBinding.setOnClickListener() {
-        mOnItemClickListener =
-            ManageCardItemListener(requireActivity(), router, includeListOptions).apply {
+        mOnItemClickListener = ManageCardItemListener(requireActivity(), router, includeListOptions).apply {
                 onClickIntentObserver.observe(viewLifecycleOwner) {
                     when (it) {
                         is CallBack.IntentCallBack -> {
@@ -101,6 +98,10 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
                     }
                 }
             }
+
+        manageCardText.setOnClickListener {
+
+        }
     }
 
     private fun launchStoreCard(intent: Intent) {
@@ -174,10 +175,15 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
         lifecycleScope.launch {
             viewModel.onViewPagerPageChangeListener.collect { feature ->
                 mHeaderItems.showHeaderItem(feature)
-                mItemList.showListItem(feature)
+                mItemList.showListItem(feature) { result ->
+                    when (result) {
+                        is ListCallback.CardNotReceived -> { if (result.isCardNotReceived) mItemList.showCardNotReceivedDialog(this@AccountOptionsManageCardFragment)}
+                    }
+                }
             }
         }
     }
+
 
     private fun showProgress(
         accountOptionsManageCardFragmentBinding: AccountOptionsManageCardFragmentBinding,
