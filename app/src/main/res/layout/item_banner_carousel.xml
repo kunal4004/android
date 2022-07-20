@@ -8,21 +8,22 @@
     android:layout_gravity="top|center"
     android:layout_marginHorizontal="@dimen/ten_dp"
     android:layout_marginTop="@dimen/fifteen_dp"
-    android:minWidth="@dimen/hundred_and_fifty_dp"
-    android:minHeight="@dimen/hundred_and_sixty_four_dp">
+    android:minWidth="@dimen/hundred_and_fifty_dp">
 
     <TextView
         android:id="@+id/tvCategoryTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constrainedWidth="true"
         android:layout_margin="@dimen/fifteen_dp"
-        app:layout_constraintEnd_toEndOf="@+id/imgCategoryImage"
         android:background="@color/transparent"
         android:fontFamily="@font/futura_semi_bold"
         android:textColor="@color/black"
         android:textSize="@dimen/fourteen_sp"
         android:translationZ="@dimen/fifty_dp"
+        android:paddingBottom="@dimen/eight_dp"
+        app:layout_constrainedHeight="true"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toEndOf="@+id/imgCategoryImage"
         app:layout_constraintStart_toStartOf="@+id/imgCategoryImage"
         app:layout_constraintTop_toTopOf="@+id/imgCategoryImage"
         tools:text="Vegan" />
@@ -31,7 +32,6 @@
         android:id="@+id/imgCategoryImage"
         android:layout_width="@dimen/hundred_and_fifty_dp"
         android:layout_height="wrap_content"
-        android:minHeight="@dimen/hundred_and_sixty_four_dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

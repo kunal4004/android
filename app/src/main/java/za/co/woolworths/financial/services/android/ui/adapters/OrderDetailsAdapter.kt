@@ -78,7 +78,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
     inner class OrderStatusViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
         override fun bind(position: Int) {
 
-            itemView?.apply {
+            itemView.apply {
                 orderTotalView?.visibility = View.GONE
                 orderHistoryDetailsView?.visibility = View.VISIBLE
                 orderTypeView?.visibility = View.VISIBLE
@@ -157,11 +157,10 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                                     item.orderSummary?.fulfillmentDetails?.address?.address1?.let { convertToTitleCase(it) }
                                 orderType?.text = context.getString(R.string.dash_delivery)
                                 val orderStatus = item.orderSummary.orderStatus as? String
-                                if (orderStatus?.isNullOrEmpty() == true)
+                                if (orderStatus.isNullOrEmpty())
                                     orderState?.text = item.orderSummary.state?.drop(6)
                                 else
                                     orderState?.text = orderStatus
-
                             }
 
                         }
