@@ -432,13 +432,17 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     HtmlCompat.fromHtml(getString(R.string.collecting_from_geo, it?.storeName?.let { convertToTitleCase(it) }),
                         HtmlCompat.FROM_HTML_MODE_LEGACY)
                 itemLimitValue?.text  = it?.quantityLimit?.foodMaximumQuantity.toString()
+                editDelivery?.text = bindString(R.string.choose)
+                btnConfirmAddress?.isEnabled = true
+                btnConfirmAddress?.setBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.black
+                    )
+                )
+                mStoreName = it?.storeName.toString()
+                mStoreId = it?.storeId.toString()
             }
-            editDelivery?.text = bindString(R.string.edit)
-            btnConfirmAddress?.isEnabled = true
-            btnConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
-            mStoreName = it?.storeName.toString()
-            mStoreId = it?.storeId.toString()
-
         })
         isUnSellableItemsRemoved()
         placeId?.let {
@@ -656,7 +660,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 getString(R.string.collecting_from_geo, mStoreName?.let { convertToTitleCase(it) }),
                 HtmlCompat.FROM_HTML_MODE_LEGACY
             )
-            editDelivery?.text = bindString(R.string.edit)
+            editDelivery?.text = bindString(R.string.choose)
             btnConfirmAddress?.isEnabled = true
             btnConfirmAddress?.setBackgroundColor(
                 ContextCompat.getColor(
@@ -676,7 +680,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                         getString(R.string.collecting_from_geo, it.storeName?.let { convertToTitleCase(it) }),
                         HtmlCompat.FROM_HTML_MODE_LEGACY
                     )
-                    editDelivery?.text = bindString(R.string.edit)
+                    editDelivery?.text = bindString(R.string.choose)
                     btnConfirmAddress?.isEnabled = true
                     btnConfirmAddress?.setBackgroundColor(
                         ContextCompat.getColor(
@@ -693,16 +697,16 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     private fun whereToCollect() {
         geoDeliveryText?.text = HtmlCompat.fromHtml(
-            getString(R.string.collecting_from_geo, getNearestStore(validateLocationResponse?.validatePlace?.stores)?.let { convertToTitleCase(it) }),
+            getString(R.string.where_do_you_want_to_collect, ""),
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
-        mStoreId = getNearestStoreId(validateLocationResponse?.validatePlace?.stores)
-        editDelivery?.text = bindString(R.string.edit)
-        btnConfirmAddress?.isEnabled = true
+        mStoreId = ""
+        editDelivery?.text = bindString(R.string.choose)
+        btnConfirmAddress?.isEnabled = false
         btnConfirmAddress?.setBackgroundColor(
             ContextCompat.getColor(
-                requireContext(),
-                R.color.black
+                requireActivity(),
+                R.color.color_A9A9A9
             )
         )
 
