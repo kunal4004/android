@@ -1916,6 +1916,11 @@
     <string name="dash_call_customer_care">Call Our Call Centre</string>
     <string name="dash_customer_care_no">+27 860 100 987</string>
     <string name="dash_help">HELP</string>
+    <string name="dash_send_us_an_email">Send Us An Email</string>
+    <string name="dash_Chat_to_your_shopper">Chat To Your Shopper, </string>
+    <string name="dash_track_your_order">Track Your Order</string>
+    <string name="dash_email_id">shop@wooliesdash.co.za</string>
+    <string name="dash_customer_care_no_phone">087 210 0305</string>
 
     <string name="app_feature_title"></string>
     <string name="app_feature_get_delivered">Same-day delivery</string>
@@ -2669,6 +2674,6 @@
     <string name="to_contact_customer_support_dial_0860_100_987">To contact Customer Support, dial 0860 100 987</string>
     <string name="delete_my_account">Delete my account</string>
     <string name="your_online_profile_has_been_successfully_deleted">Your Online Profile Has Been Successfully Deleted</string>
-
-
+    <string name="dash_order">Dash Order</string>
+    <string name="dash_email_type">plain/text</string>
 </resources>

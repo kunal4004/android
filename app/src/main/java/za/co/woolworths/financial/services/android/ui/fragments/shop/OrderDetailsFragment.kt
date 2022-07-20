@@ -118,7 +118,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         }
         tvSelectAll.setOnClickListener {
             (requireActivity() as? BottomNavigationActivity)?.pushFragment(
-                HelpAndSupportFragment.newInstance()
+                HelpAndSupportFragment.newInstance(orderDetailsResponse)
             )
         }
         argOrderId?.let { orderId -> requestOrderDetails(orderId) }
