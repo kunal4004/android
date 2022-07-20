@@ -31,7 +31,9 @@ interface IAccountProductLandingDao {
 
 class AccountProductLandingDao @Inject constructor() : IAccountProductLandingDao {
 
-    override val product: Account? get()  = SaveResponseDao.getValue(SessionDao.KEY.ACCOUNT_PRODUCT_PAYLOAD)
+    override val product: Account? get() {
+       return SaveResponseDao.getValue(SessionDao.KEY.ACCOUNT_PRODUCT_PAYLOAD)
+    }
 
     override fun getProductByProductGroupCode(): ProductLandingGroupCode {
         return when (product?.productGroupCode) {
