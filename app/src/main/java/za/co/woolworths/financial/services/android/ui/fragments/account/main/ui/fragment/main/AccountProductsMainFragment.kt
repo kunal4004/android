@@ -15,6 +15,7 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountProductLandingMainFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlanResponse
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.toolbar.AccountProductsToolbarHelper
@@ -101,7 +102,7 @@ class AccountProductsMainFragment : Fragment(R.layout.account_product_landing_ma
     }
 
     private fun callEligibility() {
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.eligibilityPlanResponse().collect { response ->
                 when (response) {
                     is ViewState.RenderSuccess -> {
@@ -114,10 +115,7 @@ class AccountProductsMainFragment : Fragment(R.layout.account_product_landing_ma
                     is ViewState.RenderFailure -> {
                         displayPopUp(DialogData.AccountInArrDialog())
                     }
-                    is ViewState.Loading -> {
-                    }
-                    ViewState.RenderEmpty -> {
-                    }
+
                     else -> Unit
                 }
             }

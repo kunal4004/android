@@ -2,6 +2,8 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 
 import android.os.Parcelable
 import android.text.TextUtils
+import android.util.Log
+import com.google.gson.Gson
 import kotlinx.android.parcel.Parcelize
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -9,6 +11,7 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsData
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.VirtualCardStaffMemberMessage
+import za.co.woolworths.financial.services.android.ui.extension.fromJson
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.SaveResponseDao
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountProductLandingDao
@@ -147,7 +150,118 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
     override fun getCardHolderNameSurname(): String? = KotlinUtils.getCardHolderNameSurname()
 
     override fun getStoreCardsResponse(): StoreCardsResponse? {
-        val response: StoreCardsResponse? = SaveResponseDao.getValue(
+        val reszzp = "{\n" +
+                "    \"oneTimePinRequired\": {\n" +
+                "        \"unblockStoreCard\": false,\n" +
+                "        \"linkVirtualStoreCard\": true\n" +
+                "    },\n" +
+                "    \"storeCardsData\": {\n" +
+                "        \"generateVirtualCard\": false,\n" +
+                "        \"maxCardsAllocated\": false,\n" +
+                "        \"virtualCard\": {\n" +
+                "            \"cardNotReceived\": true,\n" +
+                "            \"holderType\": \"Primary\",\n" +
+                "            \"type\": \"Virtual\",\n" +
+                "            \"idRequired\": true,\n" +
+                "            \"sequence\": \"1\",\n" +
+                "            \"embossedName\": \"MR M=STROEBEL\",\n" +
+                "            \"usage\": \"1\",\n" +
+                "            \"blockCode\": \"P\",\n" +
+                "            \"blockType\": \"Temporary\",\n" +
+                "            \"number\": \"6007857300001602\",\n" +
+                "            \"dateOpened\": \"2022-05-19\",\n" +
+                "            \"dateLastMaintained\": \"2022-06-08\"\n" +
+                "        },\n" +
+                "        \"isStaffMember\": false,\n" +
+                "        \"primaryCards\": [\n" +
+                "            {\n" +
+                "                \"holderType\": \"Primary\",\n" +
+                "                \"type\": \"Plastic\",\n" +
+                "                \"idRequired\": true,\n" +
+                "                \"sequence\": \"6\",\n" +
+                "                \"embossedName\": \"MR M=STROEBEL\",\n" +
+                "                \"usage\": \"1\",\n" +
+                "                \"blockCode\": \"\",\n" +
+                "                \"number\": \"6007850194823579\",\n" +
+                "                \"dateOpened\": \"2022-05-19\",\n" +
+                "                \"dateLastMaintained\": \"2022-07-14\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"holderType\": \"Primary\",\n" +
+                "                \"type\": \"Plastic\",\n" +
+                "                \"idRequired\": false,\n" +
+                "                \"sequence\": \"1\",\n" +
+                "                \"embossedName\": \"MR M=STROEBEL\",\n" +
+                "                \"usage\": \"2\",\n" +
+                "                \"blockCode\": \"L\",\n" +
+                "                \"blockType\": \"Permanent\",\n" +
+                "                \"number\": \"6007857000001605\",\n" +
+                "                \"dateOpened\": \"2019-12-31\",\n" +
+                "                \"dateLastMaintained\": \"2022-05-22\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"holderType\": \"Primary\",\n" +
+                "                \"type\": \"Plastic\",\n" +
+                "                \"idRequired\": true,\n" +
+                "                \"sequence\": \"1\",\n" +
+                "                \"embossedName\": \"MR M=STROEBEL\",\n" +
+                "                \"usage\": \"1\",\n" +
+                "                \"blockCode\": \"L\",\n" +
+                "                \"blockType\": \"Permanent\",\n" +
+                "                \"number\": \"6007857000001787\",\n" +
+                "                \"dateOpened\": \"2019-12-17\",\n" +
+                "                \"dateLastMaintained\": \"2022-05-22\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"holderType\": \"Primary\",\n" +
+                "                \"type\": \"Plastic\",\n" +
+                "                \"idRequired\": false,\n" +
+                "                \"sequence\": \"1\",\n" +
+                "                \"embossedName\": \"MR M=STROEBEL\",\n" +
+                "                \"usage\": \"2\",\n" +
+                "                \"blockCode\": \"L\",\n" +
+                "                \"blockType\": \"Permanent\",\n" +
+                "                \"number\": \"6007850194823579\",\n" +
+                "                \"dateOpened\": \"2019-11-14\",\n" +
+                "                \"dateLastMaintained\": \"2022-07-11\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"holderType\": \"Primary\",\n" +
+                "                \"type\": \"Virtual\",\n" +
+                "                \"idRequired\": true,\n" +
+                "                \"sequence\": \"1\",\n" +
+                "                \"embossedName\": \"MR M=STROEBEL\",\n" +
+                "                \"usage\": \"1\",\n" +
+                "                \"blockCode\": \"P\",\n" +
+                "                \"blockType\": \"Temporary\",\n" +
+                "                \"number\": \"6007857300001602\",\n" +
+                "                \"dateOpened\": \"2022-05-19\",\n" +
+                "                \"dateLastMaintained\": \"2022-06-08\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"holderType\": \"Primary\",\n" +
+                "                \"type\": \"Virtual\",\n" +
+                "                \"idRequired\": true,\n" +
+                "                \"sequence\": \"1\",\n" +
+                "                \"embossedName\": \"MR M=STROEBEL\",\n" +
+                "                \"usage\": \"1\",\n" +
+                "                \"blockCode\": \"L\",\n" +
+                "                \"blockType\": \"Permanent\",\n" +
+                "                \"number\": \"6007857300000307\",\n" +
+                "                \"dateOpened\": \"2019-11-15\",\n" +
+                "                \"dateLastMaintained\": \"2022-05-22\"\n" +
+                "            }\n" +
+                "        ],\n" +
+                "        \"secondaryCards\": []\n" +
+                "    },\n" +
+                "    \"response\": {\n" +
+                "        \"code\": \"-1\",\n" +
+                "        \"desc\": \"Success\"\n" +
+                "    },\n" +
+                "    \"httpCode\": 200\n" +
+                "}"
+        //var response = Gson().fromJson<StoreCardsResponse>(reszzp)
+         var response: StoreCardsResponse? = SaveResponseDao.getValue(
             SessionDao.KEY.STORE_CARD_RESPONSE_PAYLOAD,
             StoreCardsResponse::class.java
         )
@@ -243,6 +357,7 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
 
         val primaryCardIndex = 0
         val storeCardResponse = getStoreCardsResponse()
+        Log.e("listOfStoreCardFeatures", Gson().toJson(storeCardResponse))
         val virtualCard = storeCardResponse?.storeCardsData?.virtualCard
         val storeCardInPrimaryCardList = storeCardData?.primaryCards?.get(primaryCardIndex)
         val listOfStoreCardFeatures: MutableList<StoreCardFeatureType> = mutableListOf()
@@ -250,12 +365,14 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
         when (val primaryStoreCard = splitStoreCardByCardType(primaryCardIndex, storeCardInPrimaryCardList)) {
             is StoreCardFeatureType.StoreCardIsActivateVirtualTempCardAndIsFreezeCard -> {
                 val isBlockTypeTemporary = isBlockTypeTemporary(primaryCardIndex = primaryCardIndex)
-               if (isGenerateVirtualCard()){
+                Log.e("blueJoy", "action "+Gson().toJson(listOfStoreCardFeatures))
+                if (isGenerateVirtualCard()){
                    listOfStoreCardFeatures.add(StoreCardFeatureType.ActivateVirtualTempCard(storeCard = primaryStoreCard.storeCard, isBlockTypeTemporary))
                 }
                 if (isBlockTypeTemporary){
                     listOfStoreCardFeatures.add(StoreCardFeatureType.StoreCardIsTemporaryFreeze(storeCard = primaryStoreCard.storeCard, isStoreCardFrozen = true))
                 }
+                Log.e("blueJoy", "action 1 "+Gson().toJson(listOfStoreCardFeatures))
             }
             else -> when (isTemporaryCardEnabled()) {
                 true -> {
@@ -269,19 +386,27 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
                             if (primaryStoreCard.isStoreCardFrozen) {
                                 listOfStoreCardFeatures.add(virtualTempCard)
                                 listOfStoreCardFeatures.add(primaryStoreCard)
+                                Log.e("blueJoy", "action 2 "+Gson().toJson(listOfStoreCardFeatures))
                             } else {
+                                listOfStoreCardFeatures.add(virtualTempCard)
                                 listOfStoreCardFeatures.add(primaryStoreCard)
+                                Log.e("blueJoy", "action 21 "+Gson().toJson(listOfStoreCardFeatures))
                             }
                         }
                         else -> {
                             listOfStoreCardFeatures.add(virtualTempCard)
                             listOfStoreCardFeatures.add(primaryStoreCard)
+                            Log.e("blueJoy", "action 3 "+Gson().toJson(listOfStoreCardFeatures))
                         }
                     }
                 }
-                false -> listOfStoreCardFeatures.add(primaryStoreCard)
+                false -> {listOfStoreCardFeatures.add(primaryStoreCard)
+                    Log.e("blueJoy", "action 4 "+Gson().toJson(listOfStoreCardFeatures))
+                }
             }
         }
+
+        Log.e("listOfStoreCardFeatures", Gson().toJson(listOfStoreCardFeatures))
 
         return listOfStoreCardFeatures
     }
@@ -320,6 +445,7 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
     && blockType != TemporaryFreezeStoreCard.PERMANENT) {
     true -> {temporary store card unfreeze
      */
+
 
     override fun isUnFreezeTemporaryStoreCard(primaryCardIndex: Int): Boolean {
         val primaryCard = storeCardData?.primaryCards?.get(primaryCardIndex)
@@ -369,6 +495,7 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
                 storeCard,
                 false
             )
+
             // Manage your card
             else -> StoreCardFeatureType.ManageMyCard
         }

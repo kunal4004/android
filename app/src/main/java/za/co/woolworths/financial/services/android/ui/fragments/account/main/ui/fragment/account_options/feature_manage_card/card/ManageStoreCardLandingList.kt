@@ -71,6 +71,7 @@ class ManageStoreCardLandingList(
 
     private fun showManageMyCardRow() {
         includeListOptions.manageCardDivider.visibility = VISIBLE
+        showInstantReplacementCardAndInactive()
     }
 
     private fun showTemporaryCardEnabled(

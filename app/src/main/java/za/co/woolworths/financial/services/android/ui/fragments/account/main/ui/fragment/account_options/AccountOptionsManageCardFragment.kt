@@ -2,10 +2,12 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountOptionsManageCardFragmentBinding
@@ -36,7 +38,7 @@ import javax.inject.Inject
 class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manage_card_fragment) {
 
     companion object {
-        const val MANAGE_CARD_ACCOUNT_OPTIONS = "AccountOptionsManageCardFragment"
+         val AccountOptionsLandingKey  : String by lazy { AccountOptionsManageCardFragment::class.java.simpleName }
     }
 
     @Inject lateinit var router: ProductLandingRouterImpl
@@ -52,6 +54,11 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
 
     private val landingController by lazy { (requireActivity() as? StoreCardActivity)?.landingNavController() }
     private lateinit var locator: Locator
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.requestGetStoreCardCards()
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -116,7 +123,23 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
         setCardLabel()
         startLocationDiscoveryProcess()
         mItemList.setupVirtualTemporaryCardGraph()
+        setFragResultListener()
     }
+
+    private fun setFragResultListener() {
+        setFragmentResultListener(AccountOptionsLandingKey) { _, bundle ->
+            when (bundle.getString(AccountOptionsLandingKey, "")) {
+
+                AccountOptionsLandingKey -> {
+                    Log.e("listBlow", "blowerApp")
+                    lifecycleScope.launch {
+                        viewModel.requestGetStoreCardCards()
+                    }
+                }
+            }
+        }
+    }
+
 
     private fun setCardLabel() {
         mHeaderItems.setCardLabel()
@@ -140,15 +163,15 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            with(viewModel) {
-                requestGetStoreCardCards()
-                storeCardResponseResult.collectLatest { response ->
+            with(viewModel){
+            storeCardResponseResult.collectLatest { response ->
                     retryNetworkRequest.popStoreCardRequest()
                     locator.stopService()
                     with(response) {
                         renderNoConnection {
                             retryNetworkRequest.putStoreCardRequest()
-                            router.showNoConnectionToast(requireActivity()) }
+                            router.showNoConnectionToast(requireActivity())
+                        }
 
                         renderLoading { showProgress(this@subscribeObservers, this) }
 
@@ -171,14 +194,16 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
             }
         }
 
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.onViewPagerPageChangeListener.collectLatest { feature ->
+                Log.e("listBlow", "listBlow")
                 setCardLabel()
                 mHeaderItems.showHeaderItem(feature)
                 mItemList.showListItem(feature) { result ->
                     when (result) {
                         is ListCallback.CardNotReceived -> {
-                            if (result.isCardNotReceived) mItemList.showCardNotReceivedDialog(this@AccountOptionsManageCardFragment)}
+                            if (result.isCardNotReceived && feature.third) mItemList.showCardNotReceivedDialog(this@AccountOptionsManageCardFragment)}
                     }
                 }
             }

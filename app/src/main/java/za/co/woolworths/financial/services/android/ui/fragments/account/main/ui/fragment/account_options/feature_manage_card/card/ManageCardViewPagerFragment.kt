@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -11,6 +12,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ManageCardViewpagerFragmentBinding
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -49,6 +51,7 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
                 storeCardResponseResult.collectLatest { response ->
                     with(response) {
                         renderSuccess {
+                            Log.e("listOfStoreCardFeat", Gson().toJson(output))
                             val listOfStoreCardFeatures = handleStoreCardResponseResult(output)
                             manageCardAdapter?.setItem(listOfStoreCardFeatures)
                             setDotIndicatorVisibility(listOfStoreCardFeatures)
@@ -121,9 +124,8 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
 
         manageCardAdapter?.setItem(viewModel.listOfStoreCardFeatureType)
         setDotIndicatorVisibility(viewModel.listOfStoreCardFeatureType)
-        this@initCardViewPager?.cardItemViewPager?.setCurrentItem(
-            cardFreezeViewModel.currentPagePosition.value ?: 0, true
-        )
+        this@initCardViewPager?.cardItemViewPager?.postDelayed({ this@initCardViewPager.cardItemViewPager.setCurrentItem(cardFreezeViewModel.currentPagePosition.value ?: 0, true) }, 100)
+
     }
 
     private fun onPagerSelected(position: Int) {

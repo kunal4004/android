@@ -9,7 +9,7 @@ import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.databinding.TemporaryUnfreezeCartLayoutBinding
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.base.onClick
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.AccountOptionsManageCardFragment.Companion.MANAGE_CARD_ACCOUNT_OPTIONS
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.AccountOptionsManageCardFragment.Companion.AccountOptionsLandingKey
 
 class TemporaryUnFreezeCardFragment :
     ViewBindingBottomSheetDialog<TemporaryUnfreezeCartLayoutBinding>(
@@ -17,7 +17,7 @@ class TemporaryUnFreezeCardFragment :
     ) {
 
     private var mBundle0f: Bundle =
-        bundleOf(MANAGE_CARD_ACCOUNT_OPTIONS to UN_FREEZE_TEMPORARY_CARD_CANCEL_RESULT)
+        bundleOf(AccountOptionsLandingKey to UN_FREEZE_TEMPORARY_CARD_CANCEL_RESULT)
 
     companion object {
         const val UN_FREEZE_TEMPORARY_CARD_CONFIRM_RESULT =
@@ -35,20 +35,20 @@ class TemporaryUnFreezeCardFragment :
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
             onClick {
                 mBundle0f =
-                    bundleOf(MANAGE_CARD_ACCOUNT_OPTIONS to UN_FREEZE_TEMPORARY_CARD_CANCEL_RESULT)
+                    bundleOf(AccountOptionsLandingKey to UN_FREEZE_TEMPORARY_CARD_CANCEL_RESULT)
                 dismiss()
             }
         }
 
         unfreezeMyCardButton.onClick {
             mBundle0f =
-                bundleOf(MANAGE_CARD_ACCOUNT_OPTIONS to UN_FREEZE_TEMPORARY_CARD_CONFIRM_RESULT)
+                bundleOf(AccountOptionsLandingKey to UN_FREEZE_TEMPORARY_CARD_CONFIRM_RESULT)
             dismiss()
         }
     }
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        setFragmentResult(MANAGE_CARD_ACCOUNT_OPTIONS, mBundle0f)
+        setFragmentResult(AccountOptionsLandingKey, mBundle0f)
     }
 }

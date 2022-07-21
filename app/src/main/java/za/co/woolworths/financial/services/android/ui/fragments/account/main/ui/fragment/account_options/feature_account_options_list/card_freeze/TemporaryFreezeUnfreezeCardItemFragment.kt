@@ -105,8 +105,8 @@ class TemporaryFreezeUnfreezeCardItemFragment : Fragment(R.layout.temporary_free
 
     // Callbacks for Freeze/Unfreeze dialog
     private fun TemporaryFreezeUnfreezeCardItemFragmentBinding.setResultListeners() {
-        setFragmentResultListener(AccountOptionsManageCardFragment.MANAGE_CARD_ACCOUNT_OPTIONS) { _, bundle ->
-            when (bundle.getString(AccountOptionsManageCardFragment.MANAGE_CARD_ACCOUNT_OPTIONS, "")) {
+        setFragmentResultListener(AccountOptionsManageCardFragment.AccountOptionsLandingKey) { _, bundle ->
+            when (bundle.getString(AccountOptionsManageCardFragment.AccountOptionsLandingKey, "")) {
 
                 TemporaryFreezeCardFragment.TEMPORARY_FREEZE_CARD_FRAGMENT_CONFIRM_RESULT -> {
                     viewModel.queryServiceBlockCardTypeFreeze()
