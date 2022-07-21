@@ -2668,6 +2668,6 @@
     <string name="to_contact_customer_support_dial_0860_100_987">To contact Customer Support, dial 0860 100 987</string>
     <string name="delete_my_account">Delete my account</string>
     <string name="your_online_profile_has_been_successfully_deleted">Your Online Profile Has Been Successfully Deleted</string>
-    <string name="dash_order">Dash Order</string>
+    <string name="dash_order">Dash Order:</string>
     <string name="dash_email_type">plain/text</string>
 </resources>
