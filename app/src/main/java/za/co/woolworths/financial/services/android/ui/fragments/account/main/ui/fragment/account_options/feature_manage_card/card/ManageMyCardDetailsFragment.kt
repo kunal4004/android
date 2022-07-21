@@ -66,7 +66,7 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
         val isMultipleStoreCardEnabled = viewModel.dataSource.isMultipleStoreCardEnabled()
         (activity as? StoreCardActivity)?.apply {
             getToolbarHelper()?.setManageMyCardDetailsToolbar(isMultipleStoreCardEnabled) {
-                router.routeToAccountOptionsProductLanding((activity as? StoreCardActivity)?.landingNavController())
+                landingNavController()?.popBackStack()
             }
         }
     }
