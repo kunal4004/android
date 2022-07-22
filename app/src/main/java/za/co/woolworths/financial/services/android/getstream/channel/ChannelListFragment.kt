@@ -11,14 +11,14 @@ import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentGetStreamInitializerBinding
 import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.common.ClickOnDialogButton
+import za.co.woolworths.financial.services.android.common.CommonErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.getstream.chat.ChatFragment
 import za.co.woolworths.financial.services.android.getstream.common.State
-import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
-import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ChannelListFragment : Fragment(), VtoTryAgainListener {
+class ChannelListFragment : Fragment(){
 
     companion object{
         val messageType = "messaging"
@@ -28,7 +28,7 @@ class ChannelListFragment : Fragment(), VtoTryAgainListener {
     private var _binding: FragmentGetStreamInitializerBinding? = null
     private val binding get() = _binding!!
     @Inject
-    lateinit var errorBottomSheetDialog: VtoErrorBottomSheetDialog
+    lateinit var errorBottomSheetDialog: CommonErrorBottomSheetDialog
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -74,21 +74,18 @@ class ChannelListFragment : Fragment(), VtoTryAgainListener {
         findNavController().navigate(R.id.action_channelListFragment_to_chatFragment, bundle)
     }
 
-    private fun showErrorDialog(){
-        binding.oneCartChatProgressBar.visibility = View.GONE
-        requireContext().apply {
-            errorBottomSheetDialog.showErrorBottomSheetDialog(
-                this@ChannelListFragment,
-                this,
-                getString(R.string.vto_generic_error),
-                getString(R.string.one_cart_chat_error_disc),
-                getString(R.string.got_it)
-            )
-        }
-    }
-
-    override fun tryAgain() {
-        requireActivity().finish()
+    private fun showErrorDialog() {
+        errorBottomSheetDialog.showCommonErrorBottomDialog(
+            object : ClickOnDialogButton {
+                override fun onClick() {
+                    requireActivity().finish()
+                }
+            },
+            requireContext(),
+            getString(R.string.generic_error_something_wrong_newline),
+            getString(R.string.one_cart_chat_error_disc),
+            getString(R.string.got_it)
+        )
     }
 
 }
