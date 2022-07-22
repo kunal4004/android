@@ -125,7 +125,7 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
         manageCardAdapter?.setItem(viewModel.listOfStoreCardFeatureType)
         setDotIndicatorVisibility(viewModel.listOfStoreCardFeatureType)
         this@initCardViewPager?.cardItemViewPager?.setCurrentItem(
-            cardFreezeViewModel.currentPagePosition.value ?: 0, true
+            cardFreezeViewModel.currentPagePosition.value ?: 0, false
         )
     }
 
