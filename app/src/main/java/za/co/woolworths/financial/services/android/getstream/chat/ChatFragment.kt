@@ -137,9 +137,7 @@ class ChatFragment : Fragment() {
                 }
             }
             override fun afterTextChanged(s: Editable?) {
-//                if (s.toString().trim().length == 1){
-//                   viewModel.emitIsTyping()
-//                }
+             // Do Nothing
             }
         })
 
