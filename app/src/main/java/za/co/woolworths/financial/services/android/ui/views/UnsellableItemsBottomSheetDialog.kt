@@ -2,13 +2,20 @@ package za.co.woolworths.financial.services.android.ui.views
 
 import android.graphics.Paint
 import android.os.Bundle
+import android.text.Html
+import android.text.Html.FROM_HTML_MODE_LEGACY
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.checkout_address_confirmation_click_and_collect.*
 import kotlinx.android.synthetic.main.unsellable_items_bottom_sheet_dialog.*
+import kotlinx.android.synthetic.main.unsellable_items_bottom_sheet_dialog.rcvItemsList
+import kotlinx.android.synthetic.main.unsellable_items_bottom_sheet_dialog.removeItems
+import kotlinx.android.synthetic.main.unsellable_items_fragment.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
@@ -58,30 +65,38 @@ class UnsellableItemsBottomSheetDialog: WBottomSheetDialogFragment(),
     }
 
     private fun init() {
-        incSwipeCloseIndicator.visibility = View.VISIBLE
+        incSwipeCloseIndicator?.visibility = View.VISIBLE
         removeItems?.setOnClickListener(this)
         arguments?.apply {
             deliveryType = getString(KEY_ARGS_DELIVERY_TYPE, Delivery.STANDARD.type)
             commerceItems = getSerializable(KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS) as? ArrayList<UnSellableCommerceItem>
         }
+
+        val itemCount = commerceItems?.size?:0
+        unsellable_title?.text =
+            resources.getQuantityString(R.plurals.unsellable_title, itemCount, itemCount)
         when(deliveryType) {
             Delivery.STANDARD.name -> {
-                subTitle.text = getText(R.string.remove_items_standard_dialog_desc)
+                val standardDeliveryText =  resources.getQuantityText(R.plurals.remove_items_standard_dialog_desc, itemCount)
+                unsellable_subTitle?.text =  standardDeliveryText
             }
             Delivery.CNC.name -> {
-                subTitle.text = getText(R.string.remove_items_cnc_dialog_desc)
+                val clickAndCollectText =  resources.getQuantityText(R.plurals.remove_items_cnc_dialog_desc, itemCount)
+                unsellable_subTitle?.text = clickAndCollectText
             }
             Delivery.DASH.name -> {
-                subTitle.text = getText(R.string.remove_items_dash_dialog_desc)
+                val dashText =  resources.getQuantityText(R.plurals.remove_items_dash_dialog_desc, itemCount)
+                unsellable_subTitle?.text =  dashText
             }
             else -> {
-                subTitle.text = getText(R.string.remove_items_standard_dialog_desc)
+                val standardDeliveryText = resources.getQuantityText(R.plurals.remove_items_standard_dialog_desc, itemCount)
+                unsellable_subTitle?.text = standardDeliveryText
             }
         }
         if(activity is CheckoutActivity) {
             initCheckoutUnsellableItemsView()
         } else {
-            changeStore?.apply {
+            cancel_btn?.apply {
                 visibility = View.VISIBLE
                 paintFlags = Paint.UNDERLINE_TEXT_FLAG
                 setOnClickListener(this@UnsellableItemsBottomSheetDialog)
@@ -106,7 +121,7 @@ class UnsellableItemsBottomSheetDialog: WBottomSheetDialogFragment(),
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.changeStore -> {
+            R.id.cancel_btn -> {
                 UnSellableItemsLiveData.value = false
                 confirmRemoveItems()
             }
