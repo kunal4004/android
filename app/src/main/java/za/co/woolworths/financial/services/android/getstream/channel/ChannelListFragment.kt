@@ -10,14 +10,11 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentGetStreamInitializerBinding
-import dagger.hilt.android.AndroidEntryPoint
-import za.co.woolworths.financial.services.android.common.ClickOnDialogButton
-import za.co.woolworths.financial.services.android.common.CommonErrorBottomSheetDialog
+import za.co.woolworths.financial.services.android.getstream.OCChatActivity
 import za.co.woolworths.financial.services.android.getstream.chat.ChatFragment
 import za.co.woolworths.financial.services.android.getstream.common.State
-import javax.inject.Inject
 
-@AndroidEntryPoint
+
 class ChannelListFragment : Fragment(){
 
     companion object{
@@ -27,8 +24,7 @@ class ChannelListFragment : Fragment(){
     private val viewModel: ChannelListViewModel by viewModels()
     private var _binding: FragmentGetStreamInitializerBinding? = null
     private val binding get() = _binding!!
-    @Inject
-    lateinit var errorBottomSheetDialog: CommonErrorBottomSheetDialog
+
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -75,17 +71,7 @@ class ChannelListFragment : Fragment(){
     }
 
     private fun showErrorDialog() {
-        errorBottomSheetDialog.showCommonErrorBottomDialog(
-            object : ClickOnDialogButton {
-                override fun onClick() {
-                    requireActivity().finish()
-                }
-            },
-            requireContext(),
-            getString(R.string.generic_error_something_wrong_newline),
-            getString(R.string.one_cart_chat_error_disc),
-            getString(R.string.got_it)
-        )
+        (activity as? OCChatActivity)?.showErrorDialog()
     }
 
 }
