@@ -123,13 +123,14 @@ class OrderConfirmationFragment : Fragment() {
     }
 
     private fun setToolbar(orderId: String) {
-        if (activity is CartCheckoutActivity) {
-            (activity as? CartCheckoutActivity)?.apply {
-                showTitleWithCrossButton(bindString(R.string.order_details_toolbar_title, orderId))
+        orderIdText.text = bindString(R.string.order_details_toolbar_title, orderId)
+        btnClose?.setOnClickListener { requireActivity().onBackPressed() }
+
+        helpTextView?.setOnClickListener {
+            (activity as? CheckoutActivity)?.apply {
+                setResult(CheckOutFragment.RESULT_NAVIGATE_TO_HELP_AND_SUPPORT)
+                closeActivity()
             }
-        }
-        (activity as? CheckoutActivity)?.apply {
-            showTitleWithCrossButton(bindString(R.string.order_details_toolbar_title, orderId))
         }
     }
 

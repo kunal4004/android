@@ -56,23 +56,9 @@ class HelpAndSupportFragment : Fragment(R.layout.layout_help_and_support_frageme
     fun prepareHelpAndSupportList(orderDetailsResponse: OrderDetailsResponse?): ArrayList<HelpAndSupport> {
         /* prepare data list as per delivery type , currently done for standard and CNC only*/
         val dataList = arrayListOf<HelpAndSupport>()
+        dataList.add(HelpAndSupport(getString(R.string.dash_call_customer_care), getString(R.string.dash_customer_care_no_phone), R.drawable.help_phone))
+        dataList.add(HelpAndSupport(getString(R.string.dash_send_us_an_email), getString(R.string.dash_email_id), R.drawable.ic_envelope))
         orderDetailsResponse?.orderSummary?.apply {
-            val delivery: String? = fulfillmentDetails?.deliveryType
-            when (Delivery.getType(delivery)) {
-                Delivery.STANDARD -> {
-                    dataList.add(HelpAndSupport(getString(R.string.dash_call_customer_care), getString(R.string.dash_customer_care_no), R.drawable.help_phone))
-                    dataList.add(HelpAndSupport(getString(R.string.dash_send_us_an_email), getString(R.string.email_online_shop), R.drawable.ic_envelope))
-                }
-                Delivery.CNC -> {
-                    dataList.add(HelpAndSupport(getString(R.string.dash_call_customer_care), getString(R.string.dash_customer_care_no), R.drawable.help_phone))
-                    dataList.add(HelpAndSupport(getString(R.string.dash_send_us_an_email), getString(R.string.email_online_shop), R.drawable.ic_envelope))
-                }
-                Delivery.DASH -> {
-                    dataList.add(HelpAndSupport(getString(R.string.dash_call_customer_care), getString(R.string.dash_customer_care_no_phone), R.drawable.help_phone))
-                    dataList.add(HelpAndSupport(getString(R.string.dash_send_us_an_email), getString(R.string.dash_email_id), R.drawable.ic_envelope))
-                }
-            }
-
             if (orderCancellable && !requestCancellation)
                 dataList.add(HelpAndSupport(getString(R.string.cancel_order), "", R.drawable.ic_dash_cancel_order))
 
