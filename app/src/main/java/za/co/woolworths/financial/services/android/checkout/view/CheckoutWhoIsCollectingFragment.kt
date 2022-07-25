@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CNC_SELETION
+import za.co.woolworths.financial.services.android.util.Constant
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.regex.Pattern
 
@@ -169,6 +170,13 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
 
     private fun startCheckoutActivity(toJson: String) {
         val checkoutActivityIntent = Intent(activity, CheckoutActivity::class.java)
+        val bundle = arguments?.getBundle(BUNDLE)
+        bundle?.apply {
+          if (containsKey(Constant.LIQUOR_ORDER) && containsKey(Constant.NO_LIQUOR_IMAGE_URL)) {
+              checkoutActivityIntent.putExtra(Constant.LIQUOR_ORDER,getBoolean(Constant.LIQUOR_ORDER) )
+              checkoutActivityIntent.putExtra(Constant.NO_LIQUOR_IMAGE_URL, getString((Constant.NO_LIQUOR_IMAGE_URL)))
+          }
+      }
         checkoutActivityIntent.putExtra(
             KEY_COLLECTING_DETAILS,
             toJson

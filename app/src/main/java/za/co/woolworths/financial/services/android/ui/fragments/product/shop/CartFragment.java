@@ -561,7 +561,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     false,
                     response,
                     null,
-                    "");
+                    "", liquorCompliance);
         }
     }
 
@@ -672,8 +672,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     false,
                     null,
                     null,
-                    ""
-            );
+                    "",
+                    null);
         }
     }
 

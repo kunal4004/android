@@ -8,6 +8,7 @@ import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
+import android.os.Parcelable
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -39,8 +40,6 @@ import kotlinx.android.synthetic.main.search_result_fragment.*
 import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.*
 import kotlinx.android.synthetic.main.try_it_on_banner.*
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
-import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.DynamicBanner
-import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.Navigation
 import za.co.woolworths.financial.services.android.chanel.views.ChanelNavigationClickListener
 import za.co.woolworths.financial.services.android.chanel.views.adapter.BrandLandingAdapter
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -53,6 +52,8 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.DynamicBanner
+import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.Navigation
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
@@ -68,7 +69,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductLis
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment.Companion.NAVIGATION_STATE
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
@@ -102,6 +102,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection,
     IOnConfirmDeliveryLocationActionListener, ChanelNavigationClickListener {
 
+    private var state: Parcelable? = null
+    private val BUNDLE_RECYCLER_LAYOUT = "ProductListingFragment.SearchProduct"
     private var EDIT_LOCATION_LOGIN_REQUEST = 1919
     private var LOGIN_REQUEST_SUBURB_CHANGE = 1419
     private var lastVisibleItem: Int = 0
@@ -560,6 +562,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             if (visibility == View.INVISIBLE)
                 visibility = VISIBLE
             layoutManager = mRecyclerViewLayoutManager
+            if(state!=null) {
+                layoutManager?.onRestoreInstanceState(state)
+                state=null
+            }
             adapter = mProductAdapter
             clearOnScrollListeners()
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -978,6 +984,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     override fun openProductDetailView(productList: ProductList) {
         //firebase event select_item
+        state = productsRecyclerView.layoutManager?.onSaveInstanceState()
         val mFirebaseAnalytics = FirebaseManager.getInstance().getAnalytics()
         val selectItemParams = Bundle()
         selectItemParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_LIST_NAME, mSubCategoryName)
@@ -1007,6 +1014,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         bannerLabel: String?,
         bannerImage: String?
     ) {
+        state = productsRecyclerView.layoutManager?.onSaveInstanceState()
         val title = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
         (activity as? BottomNavigationActivity)?.openProductDetailFragment(
             title,
