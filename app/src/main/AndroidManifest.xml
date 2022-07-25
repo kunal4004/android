@@ -118,6 +118,12 @@
             android:name="google_analytics_automatic_screen_reporting_enabled"
             android:value="false" />
 
+        <queries>
+            <intent>
+                <action android:name="android.intent.action.SENDTO" />
+            </intent>
+        </queries>
+
         <service
             android:name="za.co.woolworths.financial.services.android.util.WFirebaseMessagingService"
             android:exported="false">
@@ -548,6 +554,10 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.loading.EmailUsLoadingActivity"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
+        <activity
+            android:name="za.co.woolworths.financial.services.android.getstream.OCChatActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
 
     </application>
 
