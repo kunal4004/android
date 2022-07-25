@@ -10,15 +10,13 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentGetStreamInitializerBinding
-import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.getstream.OCChatActivity
 import za.co.woolworths.financial.services.android.getstream.chat.ChatFragment
 import za.co.woolworths.financial.services.android.getstream.common.State
-import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
-import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
-import javax.inject.Inject
 
-@AndroidEntryPoint
-class ChannelListFragment : Fragment(), VtoTryAgainListener {
+
+
+class ChannelListFragment : Fragment() {
 
     companion object{
         val messageType = "messaging"
@@ -27,8 +25,7 @@ class ChannelListFragment : Fragment(), VtoTryAgainListener {
     private val viewModel: ChannelListViewModel by viewModels()
     private var _binding: FragmentGetStreamInitializerBinding? = null
     private val binding get() = _binding!!
-    @Inject
-    lateinit var errorBottomSheetDialog: VtoErrorBottomSheetDialog
+
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -75,20 +72,7 @@ class ChannelListFragment : Fragment(), VtoTryAgainListener {
     }
 
     private fun showErrorDialog(){
-        binding.oneCartChatProgressBar.visibility = View.GONE
-        requireContext().apply {
-            errorBottomSheetDialog.showErrorBottomSheetDialog(
-                this@ChannelListFragment,
-                this,
-                getString(R.string.vto_generic_error),
-                getString(R.string.one_cart_chat_error_disc),
-                getString(R.string.got_it)
-            )
-        }
-    }
-
-    override fun tryAgain() {
-        requireActivity().finish()
+        (activity as? OCChatActivity)?.showErrorDialog()
     }
 
 }

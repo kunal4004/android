@@ -13,19 +13,15 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentOneCartChatBinding
-import dagger.hilt.android.AndroidEntryPoint
 import io.getstream.chat.android.client.models.Message
 import za.co.woolworths.financial.services.android.getstream.OCChatActivity
 import za.co.woolworths.financial.services.android.getstream.common.ChatState
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.hideKeyboard
-import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
-import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
-import javax.inject.Inject
 
-@AndroidEntryPoint
-class ChatFragment : Fragment() , VtoTryAgainListener {
+
+class ChatFragment : Fragment() {
 
     companion object{
         const val ARG_CHANNEL_ID = "channelId"
@@ -38,8 +34,6 @@ class ChatFragment : Fragment() , VtoTryAgainListener {
     private val binding get() = _binding!!
     private lateinit var recyclerViewAdapter: ChatRecyclerViewAdapter
 
-    @Inject
-    lateinit var errorBottomSheetDialog: VtoErrorBottomSheetDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -137,9 +131,7 @@ class ChatFragment : Fragment() , VtoTryAgainListener {
                 }
             }
             override fun afterTextChanged(s: Editable?) {
-                if (s.toString().trim().length == 1){
-                    viewModel.emitIsTyping()
-                }
+              // do Nothing
             }
         })
 
@@ -179,19 +171,7 @@ class ChatFragment : Fragment() , VtoTryAgainListener {
     }
 
     private fun showErrorDialog(){
-        requireContext().apply {
-            errorBottomSheetDialog.showErrorBottomSheetDialog(
-                this@ChatFragment,
-                this,
-                getString(R.string.vto_generic_error),
-                getString(R.string.one_cart_chat_error_disc),
-                getString(R.string.got_it)
-            )
-        }
+        (activity as? OCChatActivity)?.showErrorDialog()
     }
 
-
-    override fun tryAgain() {
-        requireActivity().finish()
-    }
 }

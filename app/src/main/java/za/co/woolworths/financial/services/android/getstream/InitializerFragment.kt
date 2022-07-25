@@ -9,21 +9,17 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentGetStreamInitializerBinding
-import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.getstream.common.State
 import za.co.woolworths.financial.services.android.getstream.common.navigateSafely
-import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
-import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
-import javax.inject.Inject
 
-@AndroidEntryPoint
-class InitializerFragment : Fragment(), VtoTryAgainListener {
+
+
+class InitializerFragment : Fragment() {
+
     private val viewModel: InitializerViewModel by viewModels()
-
     private var _binding: FragmentGetStreamInitializerBinding? = null
     private val binding get() = _binding!!
-    @Inject
-    lateinit var errorBottomSheetDialog: VtoErrorBottomSheetDialog
+
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -73,20 +69,7 @@ class InitializerFragment : Fragment(), VtoTryAgainListener {
     }
 
     private fun showErrorDialog(){
-        binding.oneCartChatProgressBar.visibility = View.GONE
-        requireContext().apply {
-            errorBottomSheetDialog.showErrorBottomSheetDialog(
-                this@InitializerFragment,
-                this,
-                getString(R.string.vto_generic_error),
-                getString(R.string.one_cart_chat_error_disc),
-                getString(R.string.got_it)
-            )
-        }
+        (activity as? OCChatActivity)?.showErrorDialog()
     }
-    override fun tryAgain() {
-        requireActivity().finish()
-    }
-
 
 }
