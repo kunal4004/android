@@ -1,0 +1,30 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/orders_bg"
+    tools:context="za.co.woolworths.financial.services.android.getstream.chat.ChatFragment">
+
+    <include
+        android:id="@+id/chatToolbarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/one_cart_chat_toolbar"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/messagesRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/_140sdp"
+        app:layout_constraintTop_toBottomOf="@+id/chatToolbarLayout"/>
+
+    <include
+        android:id="@+id/messageInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/one_cart_chat_message_input"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

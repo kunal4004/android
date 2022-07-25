@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/messageBubble"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:layout_marginLeft="@dimen/sixteen_dp"
+        android:layout_marginRight="@dimen/sixteen_dp"
+        android:padding="@dimen/sixteen_dp"
+        app:layout_constraintWidth_max="@dimen/_220sdp"
+        app:layout_constraintWidth_min="@dimen/_60sdp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/senderTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/myriad_pro_semi_bold"
+            android:text="@string/placeholder"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10ssp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/messageTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/myriad_pro_regular"
+            android:text="@string/placeholder"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:lineSpacingExtra="@dimen/_2ssp"
+            android:translationY="-1.5sp"
+            android:visibility="gone"
+            android:textColor="@color/color_666666"
+            android:textSize="@dimen/_12ssp" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/oneCartChatAttachment"
+            android:layout_width="@dimen/_130sdp"
+            android:layout_height="@dimen/_140sdp"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:visibility="gone"/>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
