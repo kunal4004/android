@@ -2418,7 +2418,7 @@
     <string name="out_of_stock_item">Unfortunately this item is out of stock in %1$s. Try changing your delivery location and try again.</string>
     <string name="absa_statement_error_try_again_later">We\'re unable to retrieve your Statement. Please try again later.</string>
     <string name="confirm_your_address">Confirm Your Address</string>
-    <string name="we_use_your_location_to_give_you_the_most_naccurate_stock_availabilty_and_pricing">We use your location to give you the most \naccurate stock availabilty and pricing.</string>
+    <string name="we_use_your_location_to_give_you_the_most_naccurate_stock_availabilty_and_pricing">We use your location to give you the most \naccurate stock availability and pricing.</string>
     <string name="enter_new_location">Enter new location</string>
     <string name="my_saved_addresses">My Saved Addresses</string>
     <string name="current_location">Current Location</string>
@@ -2499,6 +2499,12 @@
     <string name="account_in_recovery_pl_desc">Your Personal Loan is currently in a payment plan. Please remember to make your next payment by its due date of %1$s.</string>
     <string name="account_in_recovery_cc_desc">Your Credit Card is currently in a payment plan. Please remember to make your next payment by its due date of %1$s.</string>
 
+    <!--FICA -->
+    <string name="fica_dialog_title">We need you to confirm your personal details.</string>
+    <string name="fica_dialog_desc">As required by law we need you to submit all FICA documentation and/or to verify information requested from you. To continue enjoying all the benefits of your Woolies card, please verify your info.</string>
+    <string name="fica_dialog_verify">Verify MY DETAILS</string>
+    <string name="fica_dialog_later"><u>maybe later</u></string>
+
     <string name="account_in_recovery_sc_payment_due_unavailable_desc">Your Store Card is currently in a payment plan. Please remember to make your next payment.</string>
     <string name="account_in_recovery_pl_payment_due_unavailable_desc">Your Personal Loan is currently in a payment plan. Please remember to make your next payment.</string>
     <string name="account_in_recovery_cc_payment_due_unavailable_desc">Your Credit Card is currently in a payment plan. Please remember to make your next payment.</string>
@@ -2533,4 +2539,12 @@
     <string name="temp_card_label">temp</string>
     <string name="virtual_temp_card_label">Virtual Temporary Card</string>
     <string name="primary_card">Primary Card</string>
+    <string name="delete_your_profile">DELETE YOUR PROFILE</string>
+    <string name="start_the_process">Start The Process</string>
+    <string name="delete_account_description">If you delete your profile, you won\'t be able to log into your account, view any account information, view history, or access any of our related apps.</string>
+    <string name="delete_online_profile">Delete Online Profile</string>
+    <string name="delete_account_description_in_dialog">If you delete your online profile, you won\'t be able to log in to your account, or access your order history. Deleting your online profile will not close any other accounts you have with Woolworths or Woolworths Financial Services.</string>
+    <string name="to_contact_customer_support_dial_0860_100_987">To contact Customer Support, dial 0860 100 987</string>
+    <string name="delete_my_account">Delete my account</string>
+    <string name="your_online_profile_has_been_successfully_deleted">Your Online Profile Has Been Successfully Deleted</string>
 </resources>
