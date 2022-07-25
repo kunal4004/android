@@ -67,6 +67,7 @@ class CreditReportTUActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onClick(view: View?) {
+        onBackPressed()
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CREDIT_REPORT_CREDITVIEW_COMPLETE, this)
         openUrlInPhoneBrowser(AppConfigSingleton.creditView?.transUnionLink, this)
     }

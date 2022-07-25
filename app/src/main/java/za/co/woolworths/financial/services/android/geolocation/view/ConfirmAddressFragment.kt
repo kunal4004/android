@@ -267,8 +267,8 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
     }
 
     private fun hideCurrentLocation() {
-        inCurrentLocation.visibility = View.GONE
-        currentLocDiv.visibility = View.GONE
+        inCurrentLocation?.visibility = View.GONE
+        currentLocDiv?.visibility = View.GONE
     }
 
     override fun onAddressSelected(address: Address, position: Int) {
