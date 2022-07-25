@@ -15,6 +15,15 @@ import za.co.woolworths.financial.services.android.getstream.common.navigateSafe
 
 
 class InitializerFragment : Fragment() {
+import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.getstream.common.State
+import za.co.woolworths.financial.services.android.getstream.common.navigateSafely
+import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
+import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
+import javax.inject.Inject
+
+@AndroidEntryPoint
+class InitializerFragment : Fragment(), VtoTryAgainListener {
     private val viewModel: InitializerViewModel by viewModels()
 
     private var _binding: FragmentGetStreamInitializerBinding? = null

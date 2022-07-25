@@ -147,9 +147,7 @@ class ChatFragment : Fragment() {
         binding.chatToolbarLayout.chatBackImg.setOnClickListener {
             requireActivity().finish()
         }
-        if (!isOnline){
-            showErrorDialog()
-        }
+
     }
 
     private fun updateRecyclerViewDataSet(){

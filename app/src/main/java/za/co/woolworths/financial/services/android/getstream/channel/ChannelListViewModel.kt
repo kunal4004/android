@@ -30,16 +30,14 @@ class ChannelListViewModel: ViewModel() {
 
         _state.postValue(State.Loading)
 
-        // 1. Get the first 30 channels to which thierry belongs
         val filter = and(
-               // eq("type", messageType),
-                `in`("members", listOf<String>(user.id))
+            `in`("members", listOf<String>(user.id))
         )
         val sort = QuerySort.desc<Channel>("created_at")
         val request = QueryChannelsRequest(
-                filter = filter,
-                querySort = sort,
-                limit = 10
+            filter = filter,
+            querySort = sort,
+            limit = 10
         )
 
         chatClient.queryChannels(request).enqueue { result ->
