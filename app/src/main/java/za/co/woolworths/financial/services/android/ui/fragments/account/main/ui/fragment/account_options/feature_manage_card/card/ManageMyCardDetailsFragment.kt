@@ -4,10 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.OnBackPressedCallback
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ManageCardDetailsFragmentBinding
@@ -17,7 +15,6 @@ import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.SystemBarCompat
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.AccountOptionsManageCardFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StoreCardCallBack
@@ -45,6 +42,7 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
         super.onViewCreated(view, savedInstanceState)
         statusBarCompat.setDarkStatusAndNavigationBar()
         setToolbar()
+        cardFreezeViewModel.isPopupEnabledOnSwipe = true
         with(ManageCardDetailsFragmentBinding.bind(view)) {
             mStoreCardMoreDetail = ManageStoreCardMoreDetail(requireContext(),incManageCardDetailsInfoLayout)
             mListOfStoreCardOptions = ManageStoreCardLandingList(cardFreezeViewModel, includeListOptions, this@ManageMyCardDetailsFragment)
@@ -66,6 +64,7 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
         val isMultipleStoreCardEnabled = viewModel.dataSource.isMultipleStoreCardEnabled()
         (activity as? StoreCardActivity)?.apply {
             getToolbarHelper()?.setManageMyCardDetailsToolbar(isMultipleStoreCardEnabled) {
+                viewModel.setRefreshRequestStoreCardCards(true)
                 landingNavController()?.popBackStack()
             }
         }
@@ -81,6 +80,7 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
         val callback: OnBackPressedCallback =
             object : OnBackPressedCallback(true /* enabled by default */) {
                 override fun handleOnBackPressed() {
+                    viewModel.setRefreshRequestStoreCardCards(true)
                     router.routeToAccountOptionsProductLanding((activity as? StoreCardActivity)?.landingNavController())
                 }
             }
@@ -142,11 +142,5 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
         }
     }
 
-    override fun onDestroy() {
-        setFragmentResult(
-            AccountOptionsManageCardFragment.AccountOptionsLandingKey,
-            bundleOf(AccountOptionsManageCardFragment.AccountOptionsLandingKey to AccountOptionsManageCardFragment.AccountOptionsLandingKey)
-        )
-        super.onDestroy()
-    }
+
 }

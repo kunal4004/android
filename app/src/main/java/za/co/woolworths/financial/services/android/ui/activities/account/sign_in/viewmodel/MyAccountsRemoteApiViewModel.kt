@@ -28,6 +28,11 @@ enum class LoaderType {
     LANDING, FREEZE_CARD
 }
 
+data class RefreshApiModel(
+    val refreshRequestStoreCardCards: Boolean = false,
+    val refreshRequestCliActiveOffer: Boolean = false
+)
+
 @HiltViewModel
 class MyAccountsRemoteApiViewModel @Inject constructor(
     private val collection: TreatmentPlanDataSource,
@@ -39,6 +44,11 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
 
     var mStoreCardFeatureType: StoreCardFeatureType? = null
     var loaderType : LoaderType = LoaderType.LANDING
+    var refreshApiModel : RefreshApiModel  = RefreshApiModel()
+
+    fun setRefreshRequestStoreCardCards(isActive : Boolean){
+        refreshApiModel =  RefreshApiModel(refreshRequestStoreCardCards = isActive)
+    }
 
     @Inject lateinit var retryNetworkRequest: RetryNetworkRequest
 

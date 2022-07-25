@@ -23,7 +23,7 @@ class StoreCardActivity : AppCompatActivity() {
 
     lateinit var binding: AccountProductLandingActivityBinding
 
-    val viewModel: AccountProductsHomeViewModel by viewModels()
+    val homeViewModel: AccountProductsHomeViewModel by viewModels()
 
     @Inject lateinit var statusBarCompat: SystemBarCompat
 
