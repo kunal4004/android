@@ -246,6 +246,7 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
         val virtualCard = storeCardResponse?.storeCardsData?.virtualCard
         val storeCardInPrimaryCardList = storeCardData?.primaryCards?.get(primaryCardIndex)
         val listOfStoreCardFeatures: MutableList<StoreCardFeatureType> = mutableListOf()
+        val primaryTemporaryCardBlock = AppConfigSingleton.virtualTempCard?.primaryCardBlockRequired
 
         when (val primaryStoreCard = splitStoreCardByCardType(primaryCardIndex, storeCardInPrimaryCardList)) {
             is StoreCardFeatureType.StoreCardIsActivateVirtualTempCardAndIsFreezeCard -> {
