@@ -16,7 +16,7 @@ android {
     def fix = "0"
     def jobNumberProduction = 186
     def jobNumberQa = 605
-    def jobNumberFeature = 759
+    def jobNumberFeature = 766
 
 //    def fix = "1"
 //    def jobNumberProduction = 189
@@ -375,6 +375,7 @@ dependencies {
     huaweiProductionImplementation 'com.huawei.hms:location:6.4.0.300'
     huaweiQaImplementation 'com.huawei.hms:maps:6.3.1.300'
     huaweiProductionImplementation 'com.huawei.hms:maps:6.3.1.300'
+
 }
 
 apply plugin: 'com.google.gms.google-services'
