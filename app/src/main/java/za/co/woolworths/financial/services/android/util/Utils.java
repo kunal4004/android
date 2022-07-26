@@ -432,10 +432,15 @@ public class Utils {
     }
 
     public static void openLinkInInternalWebView(String url) {
+        openLinkInInternalWebView(url, false);
+    }
+
+    public static void openLinkInInternalWebView(String url, boolean mustRedirectBlankTargetLinkToExternal) {
         Context context = WoolworthsApplication.getAppContext();
         Intent openInternalWebView = new Intent(context, WInternalWebPageActivity.class);
         openInternalWebView.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         openInternalWebView.putExtra("externalLink", url);
+        openInternalWebView.putExtra(WInternalWebPageActivity.ARG_REDIRECT_BLANK_TARGET_LINK_EXTERNAL, mustRedirectBlankTargetLinkToExternal);
         context.startActivity(openInternalWebView);
     }
 
