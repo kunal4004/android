@@ -2656,13 +2656,6 @@
     <string name="enquiry_failed">Failed To Send Enquiry.</string>
     <string name="enter_valid_email">Please enter valid email.</string>
     <string name="create_list_and_add">create list and add</string>
-    <string name="type_a_message">Type a message</string>
-    <string name="currently_active">Currently Active</string>
-    <string name="currently_in_active">Currently Inactive</string>
-    <string name="please_enter_a_message">Please Enter a Message</string>
-    <string name="one_cart_chat_order_id">ORDER #%s</string>
-    <string name="generic_error_something_wrong_newline">Unfortunately,\n Something Went Wrong</string>
-    <string name="one_cart_chat_error_disc">We can’t seem to reach your shopper.\n Give them a few moments, and try again.</string>
 
     <!-- Feature Walkthrough : Barcode Scanning  -->
     <string name="feature_barcode_scanning_title">BARCODE SCANNING</string>
