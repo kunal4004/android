@@ -348,7 +348,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         txtNewShoppingBagsDesc.text = newShoppingBags?.title
         txtNewShoppingBagsSubDesc.text = newShoppingBags?.description
 
-        val shoppingBagsAdapter = ShoppingBagsRadioGroupAdapter(newShoppingBags?.options, this)
+        val shoppingBagsAdapter = ShoppingBagsRadioGroupAdapter(newShoppingBags?.options, this, selectedShoppingBagType)
         shoppingBagsRecyclerView.apply {
             layoutManager = activity?.let { LinearLayoutManager(it) }
             shoppingBagsAdapter?.let { adapter = it }
