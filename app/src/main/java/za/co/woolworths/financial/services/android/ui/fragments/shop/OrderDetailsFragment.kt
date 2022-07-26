@@ -31,7 +31,6 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.adapters.OrderDetailsAdapter
-import za.co.woolworths.financial.services.android.getstream.OCChatActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.helpandsupport.HelpAndSupportFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
@@ -364,7 +363,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
 
     override fun onOpenChatScreen(orderId: String?) {
         orderId?.let {
-            startActivity(OCChatActivity.newIntent(requireActivity(), it))
+          // TODO: open one cart in app chat screen
         }
 
     }
