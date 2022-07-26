@@ -15,7 +15,7 @@ class CommonErrorBottomSheetDialogImpl @Inject constructor(
         context: Context,
         title: String,
         desc: String,
-        buttonText: String,
+        buttonText: String
     ) {
         val dialog = BottomSheetDialog(context, R.style.BottomSheetDialogTheme)
         val view = dialog.layoutInflater.inflate(R.layout.common_error_bottom_dialog_layout, null)

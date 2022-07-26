@@ -15,7 +15,8 @@ import za.co.woolworths.financial.services.android.getstream.chat.ChatFragment
 import za.co.woolworths.financial.services.android.getstream.common.State
 
 
-class ChannelListFragment : Fragment(){
+
+class ChannelListFragment : Fragment() {
 
     companion object{
         val messageType = "messaging"
@@ -70,7 +71,7 @@ class ChannelListFragment : Fragment(){
         findNavController().navigate(R.id.action_channelListFragment_to_chatFragment, bundle)
     }
 
-    private fun showErrorDialog() {
+    private fun showErrorDialog(){
         (activity as? OCChatActivity)?.showErrorDialog()
     }
 

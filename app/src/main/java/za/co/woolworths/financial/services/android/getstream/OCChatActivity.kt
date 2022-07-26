@@ -41,7 +41,7 @@ class OCChatActivity : AppCompatActivity(R.layout.activity_one_cart_chat_activit
         errorBottomSheetDialog.showCommonErrorBottomDialog(
             object : ClickOnDialogButton {
                 override fun onClick() {
-                  finish()
+                    finish()
                 }
             },
             this,
@@ -50,6 +50,7 @@ class OCChatActivity : AppCompatActivity(R.layout.activity_one_cart_chat_activit
             getString(R.string.got_it)
         )
     }
+
 
     companion object {
         private const val ORDER_ID = "key:oid"

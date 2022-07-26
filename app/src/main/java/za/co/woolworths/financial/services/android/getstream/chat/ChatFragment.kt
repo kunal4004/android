@@ -118,7 +118,7 @@ class ChatFragment : Fragment() {
         binding.messageInputLayout.messageInputEditText.addTextChangedListener(object :
             TextWatcher {
             override fun beforeTextChanged(cs: CharSequence?, p1: Int, p2: Int, p3: Int) {
-              //Do Nothing
+                //Do Nothing
             }
 
             override fun onTextChanged(cs: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -131,7 +131,7 @@ class ChatFragment : Fragment() {
                 }
             }
             override fun afterTextChanged(s: Editable?) {
-             // Do Nothing
+              // do Nothing
             }
         })
 
@@ -170,7 +170,8 @@ class ChatFragment : Fragment() {
         }
     }
 
-    private fun showErrorDialog() {
+    private fun showErrorDialog(){
         (activity as? OCChatActivity)?.showErrorDialog()
     }
+
 }
