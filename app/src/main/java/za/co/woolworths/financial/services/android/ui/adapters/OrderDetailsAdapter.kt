@@ -78,7 +78,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
     inner class OrderStatusViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
         override fun bind(position: Int) {
 
-            itemView?.apply {
+            itemView.apply {
                 orderTotalView?.visibility = View.GONE
                 orderHistoryDetailsView?.visibility = View.VISIBLE
                 orderTypeView?.visibility = View.VISIBLE
@@ -157,11 +157,10 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                                     item.orderSummary?.fulfillmentDetails?.address?.address1?.let { convertToTitleCase(it) }
                                 orderType?.text = context.getString(R.string.dash_delivery)
                                 val orderStatus = item.orderSummary.orderStatus as? String
-                                if (orderStatus?.isNullOrEmpty() == true)
+                                if (orderStatus.isNullOrEmpty())
                                     orderState?.text = item.orderSummary.state?.drop(6)
                                 else
                                     orderState?.text = orderStatus
-
                             }
 
                         }
@@ -214,7 +213,9 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
             val item = dataList[position].item as CommerceItem
 
             itemView?.apply {
-                setProductImage(imProductImage, item.commerceItemInfo.externalImageRefV2)
+                item.commerceItemInfo?.externalImageRefV2?.let {
+                    setProductImage(imProductImage, it)
+                }
                 itemName?.text = item?.commerceItemInfo?.quantity?.toString()+" x "+item?.commerceItemInfo?.productDisplayName
                 price?.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item?.priceInfo?.amount)
                 price?.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
@@ -282,10 +283,11 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                           HtmlCompat.FROM_HTML_MODE_LEGACY)
                     }
                 }
+                itemView.setOnClickListener {
+                    listner.onOpenChatScreen(item.orderSummary?.orderId.toString())
+                }
             }
-            itemView.setOnClickListener {
-                listner.onOpenChatScreen()
-            }
+
         }
 
     }
@@ -323,7 +325,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
         fun onOpenProductDetail(commerceItem: CommerceItem)
         fun onViewTaxInvoice()
         fun onCancelOrder()
-        fun onOpenChatScreen()
+        fun onOpenChatScreen(orderID: String?)
         fun onOpenTrackOrderScreen()
     }
 

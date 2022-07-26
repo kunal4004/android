@@ -118,6 +118,7 @@
             android:name="google_analytics_automatic_screen_reporting_enabled"
             android:value="false" />
 
+
         <service
             android:name="za.co.woolworths.financial.services.android.util.WFirebaseMessagingService"
             android:exported="false">
@@ -545,6 +546,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/FaqStyle"
             android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.loading.EmailUsLoadingActivity"
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
+
 
     </application>
 

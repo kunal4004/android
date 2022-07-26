@@ -298,8 +298,8 @@ class ProductCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(it
         with(productList) {
             setProductImage(this)
             setPromotionalImage(promotionImages, virtualTryOn)
-            setProductName(this)
             setBrandText(this, nextProduct, previousProduct)
+            setProductName(this)
             setPromotionalText(this)
             val priceItem = PriceItem()
             priceItem.setPrice(productList, itemView)
@@ -343,18 +343,18 @@ class ProductCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(it
     }
 
     private fun setPromotionalText(productList: ProductList?) = with(itemView) {
-        if (productList?.promotionsList?.isEmpty() == false) {
-            productList?.promotionsList?.forEachIndexed { i, it ->
+        if (productList?.promotions?.isEmpty() == false) {
+            productList.promotions?.forEachIndexed { i, it ->
                 var editedPromotionalText: String? = it.promotionalText
                 if (it.promotionalText?.contains(":") == true) {
                     val beforeColon: String? = it.promotionalText?.substringBefore(":")
                     val afterColon: String? = it.promotionalText?.substringAfter(":")
-                    editedPromotionalText = "<b>" + beforeColon + ":" + "</b>" + afterColon
+                    editedPromotionalText = "<b>$beforeColon:</b>$afterColon"
                 }
                 when (i) {
                     0 -> {
                         onlinePromotionalTextView1?.visibility = View.VISIBLE
-                        val promotionsListCount = productList?.promotionsList?.size ?: 0
+                        val promotionsListCount = productList.promotions?.size ?: 0
                         onlinePromotionalTextView1?.text = Html.fromHtml(editedPromotionalText)
                         if (promotionsListCount == 1) {
                             onlinePromotionalTextView1?.maxLines = 2
@@ -392,26 +392,8 @@ class ProductCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(it
         previousProduct: ProductList?
     ) = with(itemView) {
         brandName?.text = productList?.brandText ?: ""
-        previousProduct?.let {
-            if (productList?.brandText.isNullOrEmpty() && it.brandText.isNullOrEmpty()) {
-                brandName?.visibility = View.GONE
-            } else {
-                brandName?.visibility =
-                    if (productList?.brandText.isNullOrEmpty()) View.GONE else View.VISIBLE
-                brandNameFakeView?.visibility =
-                    if (productList?.brandText.isNullOrEmpty()) View.VISIBLE else View.GONE
-            }
-        }
-        nextProduct?.let {
-            if (productList?.brandText.isNullOrEmpty() && it.brandText.isNullOrEmpty()) {
-                brandName?.visibility = View.GONE
-            } else {
-                brandName?.visibility =
-                    if (productList?.brandText.isNullOrEmpty()) View.GONE else View.VISIBLE
-                brandNameFakeView?.visibility =
-                    if (productList?.brandText.isNullOrEmpty()) View.VISIBLE else View.GONE
-            }
-        }
+        brandName?.visibility =
+            if (productList?.brandText.isNullOrEmpty()) View.GONE else View.VISIBLE
     }
 
     private fun setPromotionalImage(imPromo: PromotionImages?, virtualTryOn: String?) {

@@ -117,7 +117,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         }
         tvSelectAll.setOnClickListener {
             (requireActivity() as? BottomNavigationActivity)?.pushFragment(
-                HelpAndSupportFragment.newInstance()
+                HelpAndSupportFragment.newInstance(orderDetailsResponse)
             )
         }
         argOrderId?.let { orderId -> requestOrderDetails(orderId) }
@@ -361,8 +361,11 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         }
     }
 
-    override fun onOpenChatScreen() {
-        //TODO: open chat screen
+    override fun onOpenChatScreen(orderId: String?) {
+        orderId?.let {
+          // TODO: open one cart in app chat screen
+        }
+
     }
 
     override fun onOpenTrackOrderScreen() {
