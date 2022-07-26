@@ -14,6 +14,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.AccountProductsMainFragmentDirections
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.loadingState
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -45,10 +46,15 @@ class MyStoreCardFragment @Inject constructor() :
 
     private fun stopPMAShimmer() {
         with(binding.incPayMyAccountButton) {
-            viewPaymentOptionImageShimmerLayout.stopShimmer()
-            viewPaymentOptionImageShimmerLayout.setShimmer(null)
-            viewPaymentOptionTextShimmerLayout.stopShimmer()
             viewPaymentOptionTextShimmerLayout.setShimmer(null)
+            viewPaymentOptionImageShimmerLayout.setShimmer(null)
+
+            viewPaymentOptionTextShimmerLayout.stopShimmer()
+            viewPaymentOptionImageShimmerLayout.stopShimmer()
+            /** TODO :: Handle independant shimmer
+            viewPaymentOptionTextShimmerLayout.loadingState(false)
+            viewPaymentOptionImageShimmerLayout.loadingState(false)
+            **/
         }
     }
 

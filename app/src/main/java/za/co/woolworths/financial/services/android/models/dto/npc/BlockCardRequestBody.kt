@@ -8,5 +8,5 @@ data class BlockCardRequestBody(
     val visionAccountNumber: String,
     val cardNumber: String,
     val sequenceNumber: Int,
-    val blockReason: Int
+    val blockReason: Int?
 ) : Parcelable

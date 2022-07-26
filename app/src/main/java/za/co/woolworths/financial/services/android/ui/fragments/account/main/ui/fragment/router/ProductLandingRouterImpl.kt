@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import com.awfs.coordination.R
@@ -38,6 +39,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.StoreCardViewType
+import java.lang.Exception
 import javax.inject.Inject
 
 interface IProductLandingRouter {
@@ -240,11 +242,15 @@ class ProductLandingRouterImpl @Inject constructor(
         storeCardsResponse: StoreCardsResponse?
     ) {
         storeCardsResponse?.let {
-            findNavController.navigate(
-                PayWithCardListFragmentDirections.actionPayWithCardListFragmentToScanBarcodeToPayDialogFragment(
-                    it
+            try {
+                findNavController.navigate(
+                    PayWithCardListFragmentDirections.actionPayWithCardListFragmentToScanBarcodeToPayDialogFragment(
+                        it
+                    )
                 )
-            )
+            }catch (e : Exception){
+                Log.e("viewModel", e.message ?: "")
+            }
         }
     }
 

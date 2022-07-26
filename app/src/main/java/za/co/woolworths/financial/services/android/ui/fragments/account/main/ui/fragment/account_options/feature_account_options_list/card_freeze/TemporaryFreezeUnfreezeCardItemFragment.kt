@@ -58,13 +58,16 @@ class TemporaryFreezeUnfreezeCardItemFragment : Fragment(R.layout.temporary_free
         lifecycleScope.launch {
             viewModel.blockMyCardResponse.collectLatest { state ->
                 with(state) {
+
                     renderNoConnection {
                         router.showNoConnectionToast(requireActivity())
                         showLoading(ViewState.Loading(false), this@subscribeObservers)
                     }
+
                     renderLoading {
                         showLoading(this, this@subscribeObservers)
                     }
+
                     renderSuccess { accountViewModel.requestGetStoreCardCards() }
 
                     renderHttpFailureFromServer {  router.routeToServerErrorDialog(requireActivity(), output.response)}

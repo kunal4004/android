@@ -24,8 +24,11 @@ class AppConstant {
         const val DELAY_3000_MS: Long = 3000
         const val DELAY_500_MS: Long = 500
 
+
         // Durations
         const val DURATION_1000_MS: Long = 1000
+        const val DURATION_120000_MS:Long=120000
+        const val DURATION_0_MS:Long=0L
 
         //API Response Code
         const val HTTP_OK: Int = 200
@@ -79,6 +82,10 @@ class AppConstant {
 
         const val RED_HEX_COLOR ="#ff0000"
         const val DEFAULT_TAG_HEX_COLOR="#b2b2b2"
+        // delete my profile
+        const val DELETE_ACCOUNT = "DELETE_ACCOUNT"
+        const val DELETE_ACCOUNT_CONFIRMATION = "DELETE_ACCOUNT_CONFIRMATION"
+        const val RESULT_CODE_DELETE_ACCOUNT = 444
     }
 
     enum class DashDetailsViewType(val value: Int) { HEADER_TITLE(0), APP_FEATURE_LIST(1), TERMS_AND_CONDITION(2) }

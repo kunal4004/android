@@ -47,7 +47,7 @@
             android:layout_centerInParent="true"
             android:layout_marginStart="@dimen/bank_spacing_width"
             android:indeterminateTint="@color/black"
-            android:visibility="gone" />
+            android:visibility="invisible" />
 
     </RelativeLayout>
 
