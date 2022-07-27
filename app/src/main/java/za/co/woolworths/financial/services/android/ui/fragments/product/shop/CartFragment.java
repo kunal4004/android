@@ -1328,6 +1328,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             LocalBroadcastManager.getInstance(activity).registerReceiver(broadcastReceiver,
                     new IntentFilter(TAG_CART_BROADCAST_RECEIVER));
         } catch (Exception e) {
+            FirebaseManager.logException(e);
         }
     }
 
@@ -1337,6 +1338,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             if (activity == null) return;
             LocalBroadcastManager.getInstance(activity).unregisterReceiver(broadcastReceiver);
         } catch (Exception e) {
+            FirebaseManager.logException(e);
         }
     }
 
