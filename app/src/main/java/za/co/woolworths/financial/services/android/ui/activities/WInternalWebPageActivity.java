@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-
 import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl.ELITE_PLAN_MODEL;
 import static za.co.woolworths.financial.services.android.util.ChromeClient.CAMERA_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.util.ChromeClient.INPUT_FILE_REQUEST_CODE;
@@ -24,6 +23,7 @@ import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.URLUtil;
+import android.webkit.ValueCallback;
 import android.webkit.WebBackForwardList;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -271,8 +271,15 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 		} else if (!privacyUrlForFica().isEmpty() && url.contains(privacyUrlForFica()) && KotlinUtils.Companion.isFicaEnabled()){
 			KotlinUtils.Companion.openUrlInPhoneBrowser(privacyUrlForFica(),WInternalWebPageActivity.this);
 		} else if (mustRedirectBlankTargetLinkToExternal) {
-			// Let the WebView handle target="_blank" scenario
-			return false;
+			// Open hyperlink on external browser if it contains target="_blank", else open on the WebView itself
+			String selector = "(function() { var elements = document.querySelectorAll('a[href*=\\'" + url.replaceAll("/$", "") + "\\']'); if (elements.length > 0) { return elements[0].target == '_blank'; } else { return false; }})();";
+			view.evaluateJavascript(selector, value -> {
+				if (value.equalsIgnoreCase("true")) {
+					KotlinUtils.Companion.openUrlInPhoneBrowser(privacyUrlForFica(),WInternalWebPageActivity.this);
+				} else {
+					view.loadUrl(url);
+				}
+			});
 		} else {
 			view.loadUrl(url);
 		}
