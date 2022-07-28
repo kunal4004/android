@@ -10,12 +10,11 @@ import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountOptionsManageCardFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.LoaderType
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
-import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.StoreCardNotReceivedDialogFragment
+import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
@@ -40,13 +39,12 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
         const val MANAGE_CARD_ACCOUNT_OPTIONS = "AccountOptionsManageCardFragment"
     }
 
+    @Inject lateinit var router: ProductLandingRouterImpl
+    @Inject lateinit var connectivityLiveData: ConnectivityLiveData
+
     private lateinit var mOnItemClickListener: ManageCardItemListener
     private lateinit var mHeaderItems: ManageCardLandingHeaderItems
     private lateinit var mItemList: ManageStoreCardLandingList
-
-    @Inject lateinit var router: ProductLandingRouterImpl
-
-    @Inject lateinit var connectivityLiveData: ConnectivityLiveData
 
     val viewModel: MyAccountsRemoteApiViewModel by activityViewModels()
     private val cardFreezeViewModel: TemporaryFreezeCardViewModel by activityViewModels()
@@ -98,9 +96,8 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
                     }
                 }
             }
-
-        manageCardText.setOnClickListener {
-
+        manageCardText.onClick {
+            viewModel.apply { emitEventOnCardTap(mStoreCardFeatureType)  }
         }
     }
 
@@ -134,14 +131,15 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
     }
 
     private fun AccountOptionsManageCardFragmentBinding.subscribeObservers() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             connectivityLiveData.observe(viewLifecycleOwner){ isConnectionAvailable ->
                 if (isConnectionAvailable && viewModel.retryNetworkRequest.isConnectionAvailableForGetStoreCard()){
                    lifecycleScope.launch { viewModel.requestGetStoreCardCards() }
                 }
             }
         }
-        lifecycleScope.launch {
+
+        viewLifecycleOwner.lifecycleScope.launch {
             with(viewModel) {
                 requestGetStoreCardCards()
                 storeCardResponseResult.collectLatest { response ->
@@ -163,27 +161,29 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
             }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.onCardTapEvent.collectLatest {
                 if (landingController?.currentDestination?.label?.equals(ManageMyCardDetailsFragment::class.java.simpleName) == true) {
                     return@collectLatest
                 }
+
                 landingController?.let { controller -> router.routeToManageMyCardDetails(controller) }
             }
         }
 
-        lifecycleScope.launch {
-            viewModel.onViewPagerPageChangeListener.collect { feature ->
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.onViewPagerPageChangeListener.collectLatest { feature ->
+                setCardLabel()
                 mHeaderItems.showHeaderItem(feature)
                 mItemList.showListItem(feature) { result ->
                     when (result) {
-                        is ListCallback.CardNotReceived -> { if (result.isCardNotReceived) mItemList.showCardNotReceivedDialog(this@AccountOptionsManageCardFragment)}
+                        is ListCallback.CardNotReceived -> {
+                            if (result.isCardNotReceived) mItemList.showCardNotReceivedDialog(this@AccountOptionsManageCardFragment)}
                     }
                 }
             }
         }
     }
-
 
     private fun showProgress(
         accountOptionsManageCardFragmentBinding: AccountOptionsManageCardFragmentBinding,

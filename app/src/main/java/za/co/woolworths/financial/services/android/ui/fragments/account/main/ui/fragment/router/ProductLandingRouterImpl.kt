@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import com.awfs.coordination.R
@@ -36,6 +35,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.StoreCardViewType
@@ -249,7 +249,7 @@ class ProductLandingRouterImpl @Inject constructor(
                     )
                 )
             }catch (e : Exception){
-                Log.e("viewModel", e.message ?: "")
+              FirebaseManager.logException(e)
             }
         }
     }

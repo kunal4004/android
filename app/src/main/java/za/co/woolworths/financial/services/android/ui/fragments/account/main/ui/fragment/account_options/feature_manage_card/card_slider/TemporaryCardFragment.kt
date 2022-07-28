@@ -31,10 +31,10 @@ class TemporaryCardFragment : Fragment(R.layout.instant_store_card_replacement_c
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val card = arguments?.getParcelable<StoreCardFeatureType?>(STORE_CARD_FEATURE_TYPE) as? StoreCardFeatureType.TemporaryCardEnabled
-            val binding = InstantStoreCardReplacementCardFragmentBinding.bind(view)
-            setupView(binding)
-            setListener(binding, card)
-        }
+        val binding = InstantStoreCardReplacementCardFragmentBinding.bind(view)
+        setupView(binding)
+        setListener(binding, card)
+    }
 
     private fun setListener(binding: InstantStoreCardReplacementCardFragmentBinding,
                             card: StoreCardFeatureType.TemporaryCardEnabled?) {
