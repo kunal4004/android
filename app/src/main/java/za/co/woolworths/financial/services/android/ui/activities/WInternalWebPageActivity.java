@@ -275,7 +275,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 			String selector = "(function() { var elements = document.querySelectorAll('a[href*=\\'" + url.replaceAll("/$", "") + "\\']'); if (elements.length > 0) { return elements[0].target == '_blank'; } else { return false; }})();";
 			view.evaluateJavascript(selector, value -> {
 				if (value.equalsIgnoreCase("true")) {
-					KotlinUtils.Companion.openUrlInPhoneBrowser(privacyUrlForFica(),WInternalWebPageActivity.this);
+					KotlinUtils.Companion.openUrlInPhoneBrowser(url, WInternalWebPageActivity.this);
 				} else {
 					view.loadUrl(url);
 				}
