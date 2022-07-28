@@ -493,13 +493,14 @@ class CheckoutDashFragment : Fragment(),
         driverTipOptionsList!!.add("R20")
         driverTipOptionsList!!.add("R30")
         driverTipOptionsList!!.add("Own Amount")
-        selectedDriverTipValue = null
+
         showDriverTipView()
     }
 
     private fun showDriverTipView() {
         if (!driverTipOptionsList.isNullOrEmpty()) {
-            layoutDriverTip.visibility = View.VISIBLE
+            layoutDriverTip?.visibility = View.VISIBLE
+            tip_options_layout?.removeAllViews()
             for ((index, options) in driverTipOptionsList!!.withIndex()) {
                 driverTipTextView =
                     View.inflate(context, R.layout.where_are_we_delivering_items, null)
@@ -519,6 +520,20 @@ class CheckoutDashFragment : Fragment(),
                         )
                     )
                     tipNoteTextView?.visibility = View.VISIBLE
+                } else if (!selectedDriverTipValue.isNullOrEmpty() && driverTipOptionsList?.contains(selectedDriverTipValue) == false
+                    && index == driverTipOptionsList?.size?.minus(1)) {
+
+                      /*this is for custom driver tip*/
+                    titleTextView?.background =
+                        bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
+                    titleTextView?.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.white
+                        )
+                    )
+                    tipNoteTextView?.visibility = View.VISIBLE
+                    titleTextView?.text = selectedDriverTipValue
                 }
                 titleTextView?.setOnClickListener {
                     var isSameSelection =
