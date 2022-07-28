@@ -104,11 +104,13 @@ import kotlin.coroutines.CoroutineContext
 class KotlinUtils {
     companion object {
 
+        var isStoreSelectedForBrowsing: Boolean = false
+        var storeId: String? = ""
         var placeId: String? = null
         var isLocationSame: Boolean? = false
-        var isDeliveryLocationTabClicked: Boolean? = false
-        var isCncTabClicked: Boolean? = false
-        var isDashTabClicked: Boolean? = false
+        var isDeliveryLocationTabCrossClicked: Boolean? = false
+        var isCncTabCrossClicked: Boolean? = false
+        var isDashTabCrossClicked: Boolean? = false
         var isComingFromCncTab: Boolean? = false
         var browsingDeliveryType: Delivery? = getPreferredDeliveryType()
         @JvmStatic

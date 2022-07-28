@@ -285,6 +285,8 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
         } else {
             /*location , fulfillment is already available so only browsing location need to be save */
             setBrowsingDataInformation()
+            KotlinUtils.isStoreSelectedForBrowsing = true
+            KotlinUtils.storeId = storeId
             parentFragment?.showClickAndCollectToolTipUi(storeId)
             showCategoryList()
         }
@@ -314,7 +316,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
                                         placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
                                 }
 
-                                KotlinUtils.isCncTabClicked =
+                                KotlinUtils.isCncTabCrossClicked =
                                     placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
 
                                 Utils.savePreferredDeliveryLocation(
@@ -332,7 +334,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
                                     KotlinUtils.isLocationSame =
                                         placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
                                 }
-                                KotlinUtils.isCncTabClicked =
+                                KotlinUtils.isCncTabCrossClicked =
                                     placeId?.equals(KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.address?.placeId)
                                 KotlinUtils.saveAnonymousUserLocationDetails(
                                     ShoppingDeliveryLocation(

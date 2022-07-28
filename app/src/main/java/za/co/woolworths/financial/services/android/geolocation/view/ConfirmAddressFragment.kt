@@ -470,7 +470,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
 
                                     if (place.onDemand != null && place.onDemand!!.deliverable == true) {
                                         // directly go back to Dash landing screen. Don't call confirm location API as user only wants to browse Dash.
-                                        KotlinUtils.isDashTabClicked =
+                                        KotlinUtils.isDashTabCrossClicked =
                                             address.placesId?.equals(getDeliveryType()?.address?.placeId) // changing black tooltip flag as user changes his browsing location.
                                         val intent = Intent()
                                         intent.putExtra(BundleKeysConstants.VALIDATE_RESPONSE,

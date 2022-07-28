@@ -1,15 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
-import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.view.View
-import android.view.WindowManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -33,6 +30,7 @@ import za.co.woolworths.financial.services.android.geolocation.network.apihelper
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
@@ -200,12 +198,14 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     fun showClickAndCollectToolTipUi(browsingStoreId: String?) {
         showClickAndCollectToolTip(true, browsingStoreId)
-        object : CountDownTimer(DELAY_4000_MS, 100) {
-            override fun onTick(millisUntilFinished: Long) {}
-            override fun onFinish() {
-                blackToolTipLayout?.visibility = View.GONE
-            }
-        }.start()
+        if (AppConfigSingleton.tooltipSettings?.isAutoDismissEnabled == true) {
+            object : CountDownTimer(100000, 100000) {
+                override fun onTick(millisUntilFinished: Long) {}
+                override fun onFinish() {
+                    blackToolTipLayout?.visibility = View.GONE
+                }
+            }.start()
+        }
     }
 
     fun hideSerachAndBarcodeUi() {
@@ -699,6 +699,17 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             return
         }
         closeWhiteBtn?.setOnClickListener {
+            when (deliveryType) {
+                Delivery.STANDARD -> {
+                    KotlinUtils.isDeliveryLocationTabCrossClicked = true
+                }
+                Delivery.CNC -> {
+                    KotlinUtils.isCncTabCrossClicked = true
+                }
+                Delivery.DASH -> {
+                    KotlinUtils.isDashTabCrossClicked = true
+                }
+            }
             blackToolTipLayout?.visibility = View.GONE
         }
         when (deliveryType) {
@@ -706,23 +717,30 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 showStandardDeliveryToolTip()
             }
             Delivery.CNC -> {
-                showClickAndCollectToolTip()
+                showClickAndCollectToolTip(KotlinUtils.isStoreSelectedForBrowsing, KotlinUtils.storeId)
             }
             Delivery.DASH -> {
                 showDashToolTip(validateLocationResponse)
             }
         }
 
-        object : CountDownTimer(DELAY_4000_MS, 100) {
-            override fun onTick(millisUntilFinished: Long) {}
-            override fun onFinish() {
-                blackToolTipLayout?.visibility = View.GONE
-            }
-        }.start()
+        if (AppConfigSingleton.tooltipSettings?.isAutoDismissEnabled == true) {
+            object : CountDownTimer(100000, 100000) {
+                override fun onTick(millisUntilFinished: Long) {}
+                override fun onFinish() {
+                    blackToolTipLayout?.visibility = View.GONE
+                }
+            }.start()
+        }
     }
 
     private fun showStandardDeliveryToolTip() {
-        if (KotlinUtils.isDeliveryLocationTabClicked == true) {
+
+        if (KotlinUtils.isLocationSame == false) {
+            blackToolTipLayout?.visibility = View.VISIBLE
+        }
+
+        if (KotlinUtils.isDeliveryLocationTabCrossClicked == true) {
             blackToolTipLayout?.visibility = View.GONE
             return
         }
@@ -735,7 +753,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
 
         blackToolTipLayout?.visibility = View.VISIBLE
-        KotlinUtils.isDeliveryLocationTabClicked = true
         validateLocationResponse?.validatePlace?.let {
             fashionItemDateText?.visibility = View.VISIBLE
             foodItemTitle?.visibility = View.VISIBLE
@@ -768,10 +785,15 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
      fun showClickAndCollectToolTip(isStoreSelectedForBrowsing:Boolean = false, browsingStoreId: String? = "") {
-        if (KotlinUtils.isCncTabClicked == true) {
+         if (KotlinUtils.isLocationSame == false) {
+             blackToolTipLayout?.visibility = View.VISIBLE
+         }
+
+        if (KotlinUtils.isCncTabCrossClicked == true) {
             blackToolTipLayout?.visibility = View.GONE
             return
         }
+
         if (browsingStoreId == null) {
             return
         }
@@ -787,7 +809,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
         }
         blackToolTipLayout?.visibility = View.VISIBLE
-        KotlinUtils.isCncTabClicked = true
+
         validateLocationResponse?.validatePlace?.let { validatePlace ->
             deliveryCollectionTitle?.text = getString(R.string.earliest_collection_Date)
             foodItemTitle?.visibility = View.GONE
@@ -811,7 +833,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             bubbleLayout?.setArrowDirection(ArrowDirection.TOP_CENTER)
         }
     }
-
 
     private fun getStoreId(isStoreSelectedForBrowsing: Boolean, browsingStoreId: String): String? {
         if (isStoreSelectedForBrowsing) {
@@ -839,7 +860,11 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     private fun showDashToolTip(validateLocationResponse: ValidateLocationResponse?) {
         val dashDeliverable = validateLocationResponse?.validatePlace?.onDemand?.deliverable
-        if (KotlinUtils.isDashTabClicked == true || dashDeliverable == null || dashDeliverable == false) {
+        if (KotlinUtils.isLocationSame == false) {
+            blackToolTipLayout?.visibility = View.VISIBLE
+        }
+
+        if (KotlinUtils.isDashTabCrossClicked == true || dashDeliverable == null || dashDeliverable == false) {
             blackToolTipLayout?.visibility = View.GONE
             return
         }
@@ -850,7 +875,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
 
         blackToolTipLayout?.visibility = View.VISIBLE
-        KotlinUtils.isDashTabClicked = true
+
         validateLocationResponse?.validatePlace?.let {
             deliveryCollectionTitle?.text = getString(R.string.next_dash_delivery_timeslot_text)
             foodItemTitle?.visibility = View.GONE
