@@ -12,10 +12,10 @@ apply plugin: 'dagger.hilt.android.plugin'
 android {
 
     def major = "9"
-    def minor = "2"
+    def minor = "3"
     def fix = "0"
-    def jobNumberProduction = 187
-    def jobNumberQa = 605
+    def jobNumberProduction = 189
+    def jobNumberQa = 606
     def jobNumberFeature = 125
 
     dataBinding {
