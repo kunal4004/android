@@ -30,20 +30,11 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideInternetConnectionCheck(@ApplicationContext context: Context) =
-        ConnectivityLiveData(context)
+    fun provideInternetConnectionCheck(@ApplicationContext context: Context) = ConnectivityLiveData(context)
 
     @Singleton
     @Provides
-    fun provideNotification(@ApplicationContext context: Context): NotificationUtils {
-        return NotificationUtils(context)
-    }
-
-    @Singleton
-    @Provides
-    fun provideAccountProductLandingDao(): AccountProductLandingDao {
-        return AccountProductLandingDao()
-    }
+    fun provideNotification(@ApplicationContext context: Context): NotificationUtils = NotificationUtils(context)
 
     @Singleton
     @Provides

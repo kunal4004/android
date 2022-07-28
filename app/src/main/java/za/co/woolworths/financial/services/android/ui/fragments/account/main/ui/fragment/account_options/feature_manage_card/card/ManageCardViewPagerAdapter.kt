@@ -32,6 +32,11 @@ class ManageCardViewPagerAdapter @Inject constructor(fragment: Fragment) :
         return when (isListOfItemsNullOrEmpty()) {
             true -> NoStoreCardFragment()
             else -> when (val card = listOfStoreCards?.get(position)) {
+
+                is StoreCardFeatureType.StoreCardIsActivateVirtualTempCardAndIsFreezeCard -> InstantStoreCardReplacementCardFragment.newInstance(
+                    card
+                )
+
                 is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive -> InstantStoreCardReplacementCardFragment.newInstance(
                     card
                 )

@@ -5,7 +5,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import retrofit2.Retrofit
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.ITreatmentPlanDataSource
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.TreatmentPlanDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.StoreCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.WfsApiService
@@ -24,9 +23,6 @@ object ViewModelModule {
         WfsApiService::class.java
     )
 
-//    @Provides
-//    fun provideCLIFirebaseEvent(): CreditLimitIncreaseFirebaseEvent = CreditLimitIncreaseFirebaseEvent()
-//
     @Provides
     fun provideStoreCardDataSource(
     wfsApiService: WfsApiService,
@@ -35,22 +31,18 @@ object ViewModelModule {
     ) = StoreCardDataSource(wfsApiService, accountProductLandingDao,manageCardFunctionalRequirementImpl)
 
     @Provides
-    fun provideRepository(remoteDataSource: StoreCardDataSource) =
-        StoreCardRepository(remoteDataSource)
-
+    fun provideRepository(remoteDataSource: StoreCardDataSource) = StoreCardRepository(remoteDataSource)
 
     @Provides
-    fun provideCreditCardRemoteService(retrofit: Retrofit): CreditCardService =
-        retrofit.create(CreditCardService::class.java)
-
+    fun provideCreditCardRemoteService(retrofit: Retrofit) = retrofit.create(CreditCardService::class.java)
 
     @Provides
-    fun provideCreditCardDataSource(creditCardService: CreditCardService): CreditCardDataSource =
-        CreditCardDataSource(creditCardService)
+    fun provideCreditCardDataSource(creditCardService: CreditCardService) = CreditCardDataSource(creditCardService)
 
     @Provides
-    fun provideTreatmentPlanDataSource(): ITreatmentPlanDataSource {
-        return TreatmentPlanDataSource()
-    }
+    fun provideTreatmentPlanDataSource() = TreatmentPlanDataSource()
+
+    @Provides
+    fun provideAccountProductLandingDao() = AccountProductLandingDao()
 
 }

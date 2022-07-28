@@ -60,7 +60,7 @@ class ManageCardLandingHeaderItems(
 
     fun getString(@StringRes id: Int, formatArgs: String = "") = fragment?.getString(id, formatArgs)
 
-    fun showHeaderItem(storeCardFeatureType: Pair<StoreCardFeatureType?, Int>) {
+    fun showHeaderItem(storeCardFeatureType: Triple<StoreCardFeatureType?, Int, Boolean>) {
         myCardLabelVisibility(false)
         manageCardLabelVisibility(isVisible = false, isLabelUnderline = false)
         when (val featureType = storeCardFeatureType.first) {

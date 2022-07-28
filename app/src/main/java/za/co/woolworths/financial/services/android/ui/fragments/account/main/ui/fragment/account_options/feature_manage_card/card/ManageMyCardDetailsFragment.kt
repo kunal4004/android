@@ -6,13 +6,11 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
+import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ManageCardDetailsFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.SystemBarCompat
@@ -76,7 +74,7 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
         val callback: OnBackPressedCallback =
             object : OnBackPressedCallback(true /* enabled by default */) {
                 override fun handleOnBackPressed() {
-                    findNavController().popBackStack()
+                    (activity as? StoreCardActivity)?.landingNavController()?.popBackStack()
                 }
             }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
@@ -116,17 +114,16 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
     private fun subscribeObservers() {
         val position = cardFreezeViewModel.currentPagePosition.value ?: -1
         mStoreCardMoreDetail?.setupView(viewModel.mStoreCardFeatureType)
-        val item  = viewModel.mStoreCardFeatureType to position
-        showItems(item)
-        CoroutineScope(Dispatchers.Main).launch {
-            viewModel.onViewPagerPageChangeListener.collect { feature ->
-                showItems(feature)
-                mStoreCardMoreDetail?.setupView(feature.first)
+        showItems(Triple(viewModel.mStoreCardFeatureType, position, false))
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.onViewPagerPageChangeListener.collectLatest { feature ->
+                    showItems(feature)
+                    mStoreCardMoreDetail?.setupView(feature.first)
             }
         }
     }
 
-    private fun showItems(feature: Pair<StoreCardFeatureType?, Int>) {
+    private fun showItems(feature: Triple<StoreCardFeatureType?, Int, Boolean>) {
         mListOfStoreCardOptions?.showListItem(feature) { result ->
             when (result) {
                 is ListCallback.CardNotReceived -> {
@@ -137,5 +134,4 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
             }
         }
     }
-
 }
