@@ -84,7 +84,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     private static ValidatePlace validatePlace;
 
-    private RatingsAndReviews ratingsAndReviews;
 
     public static String getApiId() {
         PackageInfo packageInfo = null;
@@ -424,12 +423,5 @@ public class WoolworthsApplication extends Application implements Application.Ac
             }
         });
 
-    }
-    public void setRatingsAndReviews(RatingsAndReviews ratingsAndReviews) {
-        ratingsAndReviews = ratingsAndReviews;
-    }
-
-    public RatingsAndReviews getRatingsAndReviews() {
-        return ratingsAndReviews;
     }
 }

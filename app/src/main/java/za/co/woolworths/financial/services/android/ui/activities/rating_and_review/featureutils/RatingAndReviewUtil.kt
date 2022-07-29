@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.AdditionalFields
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.SecondaryRatings
@@ -28,8 +29,7 @@ class RatingAndReviewUtil {
         var reportedReviews: MutableList<String> = mutableListOf()
 
 
-        fun isRatingAndReviewConfigavailbel () = Utils.isFeatureEnabled(WoolworthsApplication.getInstance()?.ratingsAndReviews?.minimumSupportedAppBuildNumber  )
-            ?: false
+        fun isRatingAndReviewConfigavailbel () =AppConfigSingleton.ratingsAndReviews?.isEnabled ?: false
 
 
         fun setSecondaryRatingsUI(secondaryRatings: List<SecondaryRatings>,

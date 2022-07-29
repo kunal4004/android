@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.models
 
-import com.google.gson.JsonElement
 import za.co.woolworths.financial.services.android.models.dto.ProductList
+import za.co.woolworths.financial.services.android.models.dto.RatingsAndReviews
 import za.co.woolworths.financial.services.android.models.dto.app_config.*
 import za.co.woolworths.financial.services.android.models.dto.app_config.account_options.ConfigAccountOptions
 import za.co.woolworths.financial.services.android.models.dto.app_config.balance_protection_insurance.ConfigBalanceProtectionInsurance
@@ -72,6 +72,7 @@ object AppConfigSingleton {
     var logPublicKey: String? = null
     var authenticVersionStamp: String? = ""
     var lowStock: ConfigLowStock? = null
+    var ratingsAndReviews : RatingsAndReviews? = null
 
     init {
         AppConfigRepository().getAppConfigData()?.let { appConfig ->
@@ -215,6 +216,11 @@ object AppConfigSingleton {
             appConfig.brandLandingPage?.apply {
                 minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
                 brandLandingPage = this
+            }
+
+            appConfig.ratingsAndReviews?.apply {
+                minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
+                ratingsAndReviews= this
             }
         }
     }

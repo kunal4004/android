@@ -374,6 +374,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             pinchZoomOnVtoLiveCamera(event)
             true
         }
+        scrollView.setOnTouchListener(this)
+        scrollView.viewTreeObserver.addOnScrollChangedListener(this)
+
+        hideRatingAndReview()
+        setupViewModel()
+        updateReportLikeStatus()
+        btViewMoreReview.setOnClickListener(this)
+        tvTotalReviews.setOnClickListener(this)
+        tvRatingDetails.setOnClickListener(this)
+        tvReport.setOnClickListener(this)
     }
 
 
@@ -1497,15 +1507,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
 
             private fun setSecondaryRatingsUI(secondaryRatings: List<SecondaryRatings>) {
-                rvSecondaryRatings.layoutManager = GridLayoutManager(getApplicationContext(), 2)
+                rvSecondaryRatings.layoutManager = GridLayoutManager(requireContext(), 2)
                 secondaryRatingAdapter = SecondaryRatingAdapter()
                 rvSecondaryRatings.adapter = secondaryRatingAdapter
                 secondaryRatingAdapter.setDataList(secondaryRatings)
             }
 
             private fun setReviewThumbnailUI(thumbnails: List<Thumbnails>) {
-                rvThumbnail.layoutManager = GridLayoutManager(getApplicationContext(), 3)
-                reviewThumbnailAdapter = ReviewThumbnailAdapter(getApplicationContext(), this)
+                rvThumbnail.layoutManager = GridLayoutManager(requireContext(), 3)
+                reviewThumbnailAdapter = ReviewThumbnailAdapter(requireContext(), this)
                 rvThumbnail.adapter = reviewThumbnailAdapter
                 thumbnailFullList = thumbnails
                 if (thumbnails.size > 2) {
@@ -3731,16 +3741,19 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onScrollChanged() {
-        if (!scrollView.canScrollVertically(1) && !isRnRAPICalled) {
-            if (productDetails?.isRnREnabled == true && RatingAndReviewUtil.isRatingAndReviewConfigavailbel())
-                productDetails?.productId?.let {
-                    productDetailsPresenter?.loadRatingNReview(it, 1, 0)
-                    isRnRAPICalled = true
-                    showProgressBar()
-                    RatingAndReviewUtil.reportedReviews.clear()
-                    RatingAndReviewUtil.likedReviews.clear()
-                }
+        scrollView?.let {
+            if (!it.canScrollVertically(1) && !isRnRAPICalled) {
+                if (productDetails?.isRnREnabled == true && RatingAndReviewUtil.isRatingAndReviewConfigavailbel())
+                    productDetails?.productId?.let {
+                        productDetailsPresenter?.loadRatingNReview(it, 1, 0)
+                        isRnRAPICalled = true
+                        showProgressBar()
+                        RatingAndReviewUtil.reportedReviews.clear()
+                        RatingAndReviewUtil.likedReviews.clear()
+                    }
+            }
         }
+
     }
 }
 
