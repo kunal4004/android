@@ -141,8 +141,8 @@ class ManageStoreCardLandingList(
                 linkNewCardDivider.visibility = GONE
                 linkNewCardRelativeLayout.visibility = GONE
                 // auto tap enabled on landing
-                if (isPopupEnabled)
-                    activateVirtualTempCardRelativeLayout.performClick()
+//                if (isPopupEnabled)
+//                    activateVirtualTempCardRelativeLayout.performClick()
             }else {
                 linkNewCardDivider.visibility = VISIBLE
                 linkNewCardRelativeLayout.visibility = VISIBLE

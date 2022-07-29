@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.account.main.util
+package za.co.woolworths.financial.services.android.ui.fragments.account.main.domain
 
 import android.app.Activity
 import android.content.Intent
@@ -10,11 +10,8 @@ import za.co.woolworths.financial.services.android.models.dto.account.AccountsPr
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
-import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.store_card.StoreCardFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment
-import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
-import za.co.woolworths.financial.services.android.util.ActivityIntentNavigationManager
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
@@ -40,21 +37,27 @@ class StoreCardNavigator @Inject constructor() : IStoreCardNavigator {
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }
     }
-    override fun navigateToRecentTransactionActivity(activity: Activity?, product: Account?, applyNowState:ApplyNowState ,cardType: String) {
-        transactionEvent(activity,applyNowState)
-        activity?.let {
-            product?.apply {
-                val intent = Intent(it, WTransactionsActivity::class.java)
-                intent.putExtra(BundleKeysConstants.PRODUCT_OFFERINGID, productOfferingId.toString())
-                if (cardType == AccountsProductGroupCode.CREDIT_CARD.groupCode && accountNumber?.isNotEmpty() == true) {
-                    intent.putExtra("accountNumber", accountNumber.toString())
-                }
-                intent.putExtra(ChatFragment.ACCOUNTS, Gson().toJson(Pair(applyNowState, this)))
-                intent.putExtra("cardType", cardType)
-                it.startActivityForResult(intent, 0)
-                it.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-            }
+    override fun navigateToRecentTransactionActivity(
+        activity: Activity?,
+        product: Account?,
+        applyNowState: ApplyNowState,
+        cardType: String
+    ) {
+        activity ?: return
+        product ?: return
+        transactionEvent(activity, applyNowState)
+        val intent = Intent(activity, WTransactionsActivity::class.java)
+        intent.putExtra(
+            BundleKeysConstants.PRODUCT_OFFERINGID,
+            product.productOfferingId.toString()
+        )
+        if (cardType == AccountsProductGroupCode.CREDIT_CARD.groupCode && product.accountNumber?.isNotEmpty() == true) {
+            intent.putExtra("accountNumber", product.accountNumber.toString())
         }
+        intent.putExtra(ChatFragment.ACCOUNTS, Gson().toJson(Pair(applyNowState, this)))
+        intent.putExtra("cardType", cardType)
+        activity.startActivityForResult(intent, 0)
+        activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
     }
 
     private fun transactionEvent(activity: Activity?,applyNowState: ApplyNowState){

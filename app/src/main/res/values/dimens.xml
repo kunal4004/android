@@ -240,5 +240,17 @@
     <dimen name="switch_thumb_padding">@dimen/_2sdp</dimen>
     <dimen name="switch_track_radius">@dimen/_24sdp</dimen>
     <dimen name="switch_track_height">@dimen/_24sdp</dimen>
+    <dimen name="heading1_dimens">@dimen/_19ssp</dimen>
+    <dimen name="margin_start">@dimen/_16sdp</dimen>
+    <dimen name="margin_end">@dimen/_16sdp</dimen>
+    <dimen name="lineSpacingExtra">@dimen/_8sdp</dimen>
+    <dimen name="heading5">@dimen/_14ssp</dimen>
+    <dimen name="heading6">@dimen/_12ssp</dimen>
+    <dimen name="amount_row_margin">@dimen/_16sdp</dimen>
+    <dimen name="icon_dimens">@dimen/_24sdp</dimen>
+    <dimen name="icon_medium_size_dimens">@dimen/_75sdp</dimen>
+    <dimen name="icon_medium_size_height_dimens">@dimen/_63sdp</dimen>
+    <dimen name="icon_view_height">@dimen/_77sdp</dimen>
+    <dimen name="button_height">@dimen/_39sdp</dimen>
 </resources>
 

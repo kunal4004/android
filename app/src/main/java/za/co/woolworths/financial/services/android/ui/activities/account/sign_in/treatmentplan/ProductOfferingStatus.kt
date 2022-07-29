@@ -7,6 +7,8 @@ import za.co.woolworths.financial.services.android.models.dto.app_config.account
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOfferingState
 import za.co.woolworths.financial.services.android.util.Utils
 
+
+
 interface IProductOffering {
     fun state(result: (AccountOfferingState) -> Unit)
     fun minimumViewTreatmentDelinquencyCycle(): Int?

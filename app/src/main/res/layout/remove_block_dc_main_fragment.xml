@@ -5,7 +5,7 @@
     android:id="@+id/removeBlockBackgroundConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/personal_loan_background"
+    android:background="@drawable/store_card_background"
     tools:context="za.co.woolworths.financial.services.android.ui.fragments.account.remove_dc_block.RemoveBlockOnCollectionFragment">
 
     <androidx.constraintlayout.widget.Guideline
@@ -30,12 +30,12 @@
         android:id="@+id/accountInArrearsTextview"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_40sdp"
+        android:layout_marginTop="@dimen/_37sdp"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:gravity="center"
         android:text="@string/your_account_in_arrears_title"
         android:textColor="@color/white"
-        android:textSize="@dimen/_20ssp"
+        android:textSize="@dimen/heading1_dimens"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/startGuide"
@@ -45,13 +45,13 @@
         android:id="@+id/accountInArrearsDescTextview"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_8sdp"
         android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="center"
-        android:lineSpacingExtra="@dimen/_10ssp"
+        android:lineSpacingExtra="@dimen/lineSpacingExtra"
         android:text="@string/your_account_in_arrears_desc"
         android:textColor="@color/white_desc"
-        android:textSize="@dimen/_15ssp"
+        android:textSize="@dimen/heading5"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
         app:layout_constraintStart_toStartOf="@+id/startGuide"
         app:layout_constraintTop_toBottomOf="@+id/accountInArrearsTextview" />
@@ -60,12 +60,12 @@
         android:id="@+id/currentBalanceTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_40sdp"
+        android:layout_marginTop="@dimen/_37sdp"
         android:fontFamily="@font/myriad_pro_regular"
         android:includeFontPadding="true"
         android:text="@string/info_current_balance_title"
         android:textColor="@color/white_desc"
-        android:textSize="@dimen/_15ssp"
+        android:textSize="@dimen/heading5"
         app:layout_constraintStart_toStartOf="@+id/startGuide"
         app:layout_constraintTop_toBottomOf="@+id/accountInArrearsDescTextview" />
 
@@ -76,7 +76,7 @@
         android:fontFamily="@font/myriad_pro_semi_bold_otf"
         android:text="R 15,000.00"
         android:textColor="@color/white"
-        android:textSize="@dimen/_15ssp"
+        android:textSize="@dimen/heading5"
         app:layout_constraintBottom_toBottomOf="@+id/currentBalanceTextView"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
         app:layout_constraintTop_toTopOf="@+id/currentBalanceTextView" />
@@ -85,11 +85,11 @@
         android:id="@+id/totalAmountDueLabelTextview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_25sdp"
+        android:layout_marginTop="@dimen/amount_row_margin"
         android:fontFamily="@font/myriad_pro_regular"
         android:text="@string/info_total_amount_due_title"
         android:textColor="@color/white_desc"
-        android:textSize="@dimen/_15ssp"
+        android:textSize="@dimen/heading5"
         app:layout_constraintStart_toStartOf="@+id/startGuide"
         app:layout_constraintTop_toBottomOf="@+id/currentBalanceTextView" />
 
@@ -100,22 +100,20 @@
         android:fontFamily="@font/myriad_pro_semi_bold_otf"
         android:text="R 15,000.00"
         android:textColor="@color/white"
-        android:textSize="@dimen/_15ssp"
+        android:textSize="@dimen/heading5"
         app:layout_constraintBottom_toBottomOf="@+id/totalAmountDueLabelTextview"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
         app:layout_constraintTop_toTopOf="@+id/totalAmountDueLabelTextview" />
-
 
     <TextView
         android:id="@+id/contactCallCenterNowTextview"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/_32sdp"
         android:gravity="center"
         android:text="@string/contact_the_call_centre_now"
         android:textColor="@color/white_desc"
         android:textSize="@dimen/_12ssp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottomLine"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/startGuide" />
@@ -124,7 +122,7 @@
         android:id="@+id/incRecentTransactionButton"
         layout="@layout/landing_view_transaction"
         android:layout_width="0dp"
-        android:layout_height="@dimen/_100sdp"
+        android:layout_height="@dimen/icon_view_height"
         android:layout_marginEnd="@dimen/_8sdp"
         app:layout_constraintBottom_toBottomOf="@+id/incViewStatementButton"
         app:layout_constraintEnd_toStartOf="@+id/incViewStatementButton"
@@ -136,8 +134,8 @@
         android:id="@+id/incViewStatementButton"
         layout="@layout/landing_view_statement"
         android:layout_width="0dp"
-        android:layout_height="@dimen/_100sdp"
-        android:layout_marginTop="@dimen/_30sdp"
+        android:layout_height="@dimen/icon_view_height"
+        android:layout_marginTop="@dimen/_25sdp"
         android:layout_marginEnd="@dimen/_8sdp"
         android:visibility="visible"
         app:layout_constraintEnd_toStartOf="@+id/incPayMyAccountButton"
@@ -149,7 +147,7 @@
         android:id="@+id/incPayMyAccountButton"
         layout="@layout/landing_view_pay_my_account"
         android:layout_width="0dp"
-        android:layout_height="@dimen/_100sdp"
+        android:layout_height="@dimen/icon_view_height"
         app:layout_constraintBottom_toBottomOf="@+id/incViewStatementButton"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
         app:layout_constraintHorizontal_bias="0.5"
@@ -163,6 +161,26 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.8" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/bottomLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.90" />
+
+    <TextView
+        android:id="@+id/helpWithPayment"
+        style="@style/accountPaymentOptionIconTextViewStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/_14sdp"
+        android:background="@drawable/ripple_button_background"
+        android:text="@string/get_help_repayment"
+        app:layout_constraintEnd_toStartOf="@+id/endGuide"
+        app:layout_constraintStart_toStartOf="@+id/startGuide"
+        app:layout_constraintTop_toBottomOf="@+id/incViewStatementButton" />
+
     <TextView
         android:id="@+id/needHelpWithYourAccountTextview"
         android:layout_width="0dp"
@@ -171,24 +189,23 @@
         android:gravity="center"
         android:text="@string/need_help_for_your_account"
         android:textColor="@color/white_desc"
-        android:textSize="@dimen/_12ssp"
+        android:textSize="@dimen/heading6"
         app:layout_constraintBottom_toTopOf="@+id/contactCallCenterNowTextview"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
         app:layout_constraintStart_toStartOf="@+id/startGuide" />
-
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/startGuide"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="@dimen/_24sdp" />
+        app:layout_constraintGuide_begin="@dimen/margin_start" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/endGuide"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="@dimen/_19sdp" />
+        app:layout_constraintGuide_end="@dimen/margin_end" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,10 +10,10 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountLandingDialogFragmentBinding
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingDialogFragment
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.DialogData
 
-class AccountLandingDialogFragment :
-    ViewBindingDialogFragment<AccountLandingDialogFragmentBinding>(), View.OnClickListener {
+class AccountLandingDialogFragment : ViewBindingDialogFragment<AccountLandingDialogFragmentBinding>(), View.OnClickListener {
 
     val args: AccountLandingDialogFragmentArgs by navArgs()
     val viewModel by viewModels<AccountLandingDialogViewModel>()
@@ -43,16 +43,10 @@ class AccountLandingDialogFragment :
 
     fun setDialogViews(dialogData: DialogData?) {
         dialogData?.let {
-            binding.apply {
-                accountInArrearsTitleTextView.text = bindString(it.title)
-                accountInArrearsDescriptionTextView.text = when (dialogData) {
-                    DialogData.AccountInArrDialog() -> {
-                        bindString(R.string.payment_overdue_error_desc, viewModel.amountOverdue())
-                    }
-                    else -> {
-                        bindString(it.desc)
-                    }
-                }
+            with(binding) {
+                accountInArrearsTitleTextView.text = getString(it.title)
+                accountInArrearsDescriptionTextView.text = getString(it.desc, it.formattedValue)
+
                 payNowButton.apply {
                     text = bindString(it.firstButtonTitle)
                     setOnClickListener(this@AccountLandingDialogFragment)
@@ -68,14 +62,14 @@ class AccountLandingDialogFragment :
     }
 
     override fun onClick(view: View?) {
-        when (view) {
-            binding.payNowButton -> {
+        when (view?.id) {
+            R.id.payNowButton -> {
                 viewModel.handlePayNowClick()
             }
-            binding.chatToUsButton -> {
+            R.id.chatToUsButton -> {
                 viewModel.handleCallUsClick()
             }
-            binding.closeIconImageButton -> {
+            R.id.closeIconImageButton -> {
                 dismiss()
             }
         }

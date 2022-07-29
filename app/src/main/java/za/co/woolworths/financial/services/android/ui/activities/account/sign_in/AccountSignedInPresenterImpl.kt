@@ -18,13 +18,12 @@ import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowSt
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.ProductOfferingStatus
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.extension.deviceHeight
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOfferingState
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.eliteplan.EligibilityImpl
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOfferingState
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.eliteplan.PMApiStatusImpl
-
 
 class AccountSignedInPresenterImpl(
     private var mainView: IAccountSignedInContract.MyAccountView?,
@@ -206,7 +205,7 @@ class AccountSignedInPresenterImpl(
                             )
                         }
                     } else {
-                      mainView?.showAccountInArrears(account = getAccount()) }
+                        mainView?.showAccountInArrears(account = getAccount()) }
                 }
             }
         } else {
@@ -224,6 +223,7 @@ class AccountSignedInPresenterImpl(
         mainView?.showAccountHelp(getCardProductInformation(true))
     }
 
+
     override fun showProductOfferOutstanding(
         state: ApplyNowState,
         myAccountsViewModel: MyAccountsRemoteApiViewModel,
@@ -235,7 +235,6 @@ class AccountSignedInPresenterImpl(
                 state { status ->
                     when (status) {
 
-                        //consumed
                         AccountOfferingState.AccountInGoodStanding -> {
                             //when productOfferingGoodStanding == true
                             hideAccountInArrears(account)

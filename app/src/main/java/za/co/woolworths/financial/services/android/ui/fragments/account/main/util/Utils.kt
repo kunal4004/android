@@ -89,3 +89,17 @@ fun ShimmerFrameLayout.loadingState(state: Boolean,targetedShimmerLayout:View? =
             }
     }
 }
+
+fun ShimmerFrameLayout.loadingState(state: Boolean){
+    when (state) {
+        true -> {
+            val shimmer = Shimmer.AlphaHighlightBuilder().build()
+            this.setShimmer(shimmer)
+            this.startShimmer()
+        }
+        false -> {
+            this.stopShimmer()
+            this.setShimmer(null)
+        }
+    }
+}

@@ -8,7 +8,7 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/accountToolbar"
         android:layout_width="match_parent"
-        android:paddingTop="@dimen/_10ssp"
+        android:paddingTop="@dimen/_30ssp"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:elevation="2dp"
@@ -21,13 +21,14 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical">
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/navigateBackImageButton"
                 style="@style/selectableImageButtonRippleStyle"
-                android:layout_width="@dimen/_48sdp"
-                android:layout_height="@dimen/_48sdp"
+                android:layout_width="@dimen/icon_dimens"
+                android:layout_height="@dimen/icon_dimens"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/margin_end"
                 android:background="@null"
                 app:srcCompat="@drawable/back_white"
                 tools:ignore="ContentDescription" />
@@ -48,13 +49,15 @@
 
             <ImageButton
                 android:id="@+id/infoIconImageView"
-                android:layout_width="@dimen/_48sdp"
-                android:layout_height="@dimen/_48sdp"
+                android:layout_width="@dimen/icon_dimens"
+                android:layout_height="@dimen/icon_dimens"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_gravity="end"
-                android:background="@null"
-                android:padding="@dimen/_3sdp"
+                android:layout_marginEnd="@dimen/margin_end"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:scaleType="fitCenter"
                 app:srcCompat="@drawable/info_white"
                 tools:ignore="ContentDescription" />
 

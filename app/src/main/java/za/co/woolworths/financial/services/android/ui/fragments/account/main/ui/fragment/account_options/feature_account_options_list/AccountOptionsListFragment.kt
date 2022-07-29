@@ -16,8 +16,8 @@ import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType
 import za.co.woolworths.financial.services.android.ui.base.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOptionsScreenUI
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.StoreCardAccountOptionsViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StoreCardCallBack
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants
@@ -31,7 +31,7 @@ class AccountOptionsListFragment : Fragment(R.layout.account_options_list_fragme
     @Inject
     lateinit var landingRouter: ProductLandingRouterImpl
 
-    val viewModel: StoreCardAccountOptionsViewModel by activityViewModels()
+    val viewModel: AccountProductsHomeViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

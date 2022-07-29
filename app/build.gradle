@@ -50,7 +50,7 @@ android {
         applicationId "com.awfs.coordination"
         manifestPlaceholders = [appLabel: "Woolworths", app_links_host: "www.woolworths.co.za"]
         minSdkVersion 22 //Lollipop 5.1
-        compileSdkVersion 31
+        compileSdkVersion 32
         buildToolsVersion "30.0.3"
         multiDexEnabled true
         versionName(major + "." + minor + "." + fix)

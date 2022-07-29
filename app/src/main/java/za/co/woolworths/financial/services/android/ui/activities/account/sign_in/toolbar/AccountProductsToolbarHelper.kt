@@ -36,6 +36,9 @@ class AccountProductsToolbarHelper(
         }
     }
 
+    fun setOnAccountInArrearsTapListener(onTap: (View) -> Unit) {
+        binding.accountInArrearsTextView.onClick { onTap(binding.accountInArrearsTextView) }
+    }
     fun setHomeLandingToolbar(viewModel: AccountProductsHomeViewModel, onTap: (View) -> Unit) {
         with(binding) {
             infoIconImageView.onClick { onTap(it) }
@@ -98,4 +101,11 @@ class AccountProductsToolbarHelper(
         binding.toolbarTitleTextView.setTextColor(ContextCompat.getColor(mContext, R.color.white))
     }
 
+    fun setRemoveBlockOnCollection(onTap: (View) -> Unit) {
+        getDetailToolbar(R.string.my_card_title)
+        binding.navigateBackImageButton.onClick { onTap(it) }
+        binding.accountToolbar.setBackgroundColor(Color.WHITE)
+        setNavigationIconBlack()
+        setTitleTextColorBlack()
+    }
 }
