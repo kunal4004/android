@@ -2463,7 +2463,7 @@
     <string name="search_by_store_or_location">Search by store or location</string>
     <string name="change">change</string>
     <string name="near_stores">%d Strores near me.</string>
-    <string name="where_do_you_want_to_collect">Where do you want to collect?.</string>
+    <string name="where_do_you_want_to_collect">Where do you want to collect?</string>
     <string name="product_listing_price_from">From</string>
 
     <string name="vtsc_card_not_arrived_title">Has Your Card Not\nArrived in the Post?</string>
