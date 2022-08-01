@@ -5,10 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.checkout_address_confirmation_selection_delivery_list.view.*
 import kotlinx.android.synthetic.main.shopping_bags_radio_button.view.*
-import kotlinx.android.synthetic.main.shopping_bags_radio_button.view.subTitle
-import kotlinx.android.synthetic.main.shopping_bags_radio_button.view.title
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 
@@ -17,7 +14,8 @@ import za.co.woolworths.financial.services.android.ui.extension.bindColor
  */
 class ShoppingBagsRadioGroupAdapter(
     private var shoppingBagsOptionsList: List<ConfigShoppingBagsOptions>?,
-    private val listner: EventListner
+    private val listener: EventListner,
+    private val selectedShoppingBagType: Double?,
 ) :
     RecyclerView.Adapter<ShoppingBagsRadioGroupAdapter.ShoppingBagsRadioGroupAdapterViewHolder>() {
     var checkedItemPosition = -1
@@ -27,7 +25,10 @@ class ShoppingBagsRadioGroupAdapter(
         shoppingBagsOptionsList?.forEach { shoppingBagsOptions ->
             if (shoppingBagsOptions.isDefault) {
                 checkedItemPosition = shoppingBagsOptionsList?.indexOf(shoppingBagsOptions) ?: -1
-                onItemClicked(checkedItemPosition)
+                if (selectedShoppingBagType != null)
+                    onItemClicked(selectedShoppingBagType.toInt() -1)
+                else
+                    onItemClicked(checkedItemPosition)
                 return@forEach
             }
         }
@@ -35,7 +36,7 @@ class ShoppingBagsRadioGroupAdapter(
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
-        viewType: Int
+        viewType: Int,
     ): ShoppingBagsRadioGroupAdapter.ShoppingBagsRadioGroupAdapterViewHolder {
         return ShoppingBagsRadioGroupAdapterViewHolder(
             LayoutInflater.from(parent.context)
@@ -53,7 +54,7 @@ class ShoppingBagsRadioGroupAdapter(
 
     override fun onBindViewHolder(
         holder: ShoppingBagsRadioGroupAdapter.ShoppingBagsRadioGroupAdapterViewHolder,
-        position: Int
+        position: Int,
     ) {
         holder.bindItem(position)
     }
@@ -95,7 +96,7 @@ class ShoppingBagsRadioGroupAdapter(
             return
         }
         shoppingBagsOptionsList?.get(position)?.let {
-            listner.selectedShoppingBagType(it, position)
+            listener.selectedShoppingBagType(it, position)
             notifyItemChanged(position, it)
         }
         // update last position as well
@@ -114,7 +115,7 @@ class ShoppingBagsRadioGroupAdapter(
     interface EventListner {
         fun selectedShoppingBagType(
             shoppingBagsOptionsList: ConfigShoppingBagsOptions,
-            position: Int
+            position: Int,
         )
     }
 }
