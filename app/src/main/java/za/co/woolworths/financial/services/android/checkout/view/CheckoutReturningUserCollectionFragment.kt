@@ -16,6 +16,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProviders
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
@@ -830,6 +831,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                     // Cart is empty when removed unsellable items. go to cart and refresh cart screen.
                     Activity.RESULT_CANCELED, ErrorHandlerActivity.RESULT_RETRY -> {
                         (activity as? CheckoutActivity)?.apply {
+                            //set BR to update cart fragment in CNC flow
+                            LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(CheckOutFragment.TAG_CART_BROADCAST_RECEIVER))
                             setResult(CheckOutFragment.RESULT_EMPTY_CART)
                             closeActivity()
                         }
