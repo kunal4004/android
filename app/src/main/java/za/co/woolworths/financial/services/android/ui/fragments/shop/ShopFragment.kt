@@ -199,7 +199,11 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     fun showClickAndCollectToolTipUi(browsingStoreId: String?) {
         showClickAndCollectToolTip(true, browsingStoreId)
         if (AppConfigSingleton.tooltipSettings?.isAutoDismissEnabled == true) {
-            object : CountDownTimer(100000, 100000) {
+            val timeduration = AppConfigSingleton.tooltipSettings?.autoDismissDuration?.times(1000)
+            if (timeduration == null) {
+                return
+            }
+            object : CountDownTimer(timeduration, 100) {
                 override fun onTick(millisUntilFinished: Long) {}
                 override fun onFinish() {
                     blackToolTipLayout?.visibility = View.GONE
@@ -725,7 +729,11 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
 
         if (AppConfigSingleton.tooltipSettings?.isAutoDismissEnabled == true) {
-            object : CountDownTimer(100000, 100000) {
+            val timeduration = AppConfigSingleton.tooltipSettings?.autoDismissDuration?.times(1000)
+            if (timeduration == null) {
+                return
+            }
+            object : CountDownTimer(timeduration, 100) {
                 override fun onTick(millisUntilFinished: Long) {}
                 override fun onFinish() {
                     blackToolTipLayout?.visibility = View.GONE
