@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.getstream.chat
+package za.co.woolworths.financial.services.android.onecartgetstream.chat
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,7 +10,7 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.observable.Disposable
-import za.co.woolworths.financial.services.android.getstream.common.ChatState
+import za.co.woolworths.financial.services.android.onecartgetstream.common.ChatState
 
 class ChatViewModel : ViewModel() {
 

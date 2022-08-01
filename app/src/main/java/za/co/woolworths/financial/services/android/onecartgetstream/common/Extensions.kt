@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.getstream.common
+package za.co.woolworths.financial.services.android.onecartgetstream.common
 
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment

@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.getstream.chat
+package za.co.woolworths.financial.services.android.onecartgetstream.chat
 
 import android.content.Intent
 import android.os.Bundle
@@ -14,8 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentOneCartChatBinding
 import io.getstream.chat.android.client.models.Message
-import za.co.woolworths.financial.services.android.getstream.OCChatActivity
-import za.co.woolworths.financial.services.android.getstream.common.ChatState
+import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
+import za.co.woolworths.financial.services.android.onecartgetstream.common.ChatState
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.hideKeyboard

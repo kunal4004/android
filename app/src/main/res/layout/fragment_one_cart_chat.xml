@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/orders_bg"
-    tools:context="za.co.woolworths.financial.services.android.getstream.chat.ChatFragment">
+    tools:context="za.co.woolworths.financial.services.android.onecartgetstream.chat.ChatFragment">
 
     <include
         android:id="@+id/chatToolbarLayout"

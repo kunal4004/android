@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.getstream.chat
+package za.co.woolworths.financial.services.android.onecartgetstream.chat
 
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -11,7 +11,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import com.awfs.coordination.databinding.OneCartChatMessageRowBinding
+import com.awfs.coordination.databinding.OneCartChatMessageRowItemBinding
 import io.getstream.chat.android.client.models.Message
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.util.ImageManager
@@ -21,7 +21,7 @@ class ChatRecyclerViewAdapter(private val onClickListener: OnClickListener,initi
 
     private var dataSet: MutableList<Message> = initialDataSet.toMutableList()
 
-    class ViewHolder(binding: OneCartChatMessageRowBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(binding: OneCartChatMessageRowItemBinding) : RecyclerView.ViewHolder(binding.root) {
         val messageBubble: LinearLayoutCompat by lazy { binding.messageBubble }
         val messageTextView: AppCompatTextView by lazy { binding.messageTextView }
         val senderTextView: AppCompatTextView by lazy { binding.senderTextView }
@@ -31,7 +31,7 @@ class ChatRecyclerViewAdapter(private val onClickListener: OnClickListener,initi
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
 
         val inflater = LayoutInflater.from(viewGroup.context)
-        val binding = OneCartChatMessageRowBinding.inflate(inflater, viewGroup, false)
+        val binding = OneCartChatMessageRowItemBinding.inflate(inflater, viewGroup, false)
 
         return ViewHolder(binding)
     }

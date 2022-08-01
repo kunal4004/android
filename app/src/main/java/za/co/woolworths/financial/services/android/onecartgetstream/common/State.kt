@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.getstream.common
+package za.co.woolworths.financial.services.android.onecartgetstream.common
 
 sealed class State {
     object RedirectToChannels : State()

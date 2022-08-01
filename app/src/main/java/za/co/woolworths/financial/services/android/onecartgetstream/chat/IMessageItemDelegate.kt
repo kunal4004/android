@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.getstream.chat
+package za.co.woolworths.financial.services.android.onecartgetstream.chat
 
 import io.getstream.chat.android.client.models.Message
 

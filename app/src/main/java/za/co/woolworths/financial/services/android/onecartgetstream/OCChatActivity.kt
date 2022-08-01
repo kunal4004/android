@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.getstream
+package za.co.woolworths.financial.services.android.onecartgetstream
 
 import android.content.Context
 import android.content.Intent

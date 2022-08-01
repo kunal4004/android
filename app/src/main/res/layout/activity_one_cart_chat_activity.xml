@@ -8,5 +8,5 @@
     android:layout_height="match_parent"
     app:defaultNavHost="true"
     app:navGraph="@navigation/oc_chat_nav_graph"
-    tools:context="za.co.woolworths.financial.services.android.getstream.OCChatActivity" />
+    tools:context="za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity" />
 

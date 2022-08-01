@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/initializerFragment"
-        android:name="za.co.woolworths.financial.services.android.getstream.InitializerFragment"
+        android:name="za.co.woolworths.financial.services.android.onecartgetstream.InitializerFragment"
         android:label="fragment_get_stream_initializer"
         tools:layout="@layout/fragment_get_stream_initializer" >
         <action
@@ -17,7 +17,7 @@
 
     <fragment
         android:id="@+id/channelListFragment"
-        android:name="za.co.woolworths.financial.services.android.getstream.channel.ChannelListFragment"
+        android:name="za.co.woolworths.financial.services.android.onecartgetstream.channel.ChannelListFragment"
         android:label="ChannelListFragment" >
         <action
             android:id="@+id/action_channelListFragment_to_chatFragment"
@@ -29,7 +29,7 @@
 
     <fragment
         android:id="@+id/chatFragment"
-        android:name="za.co.woolworths.financial.services.android.getstream.chat.ChatFragment"
+        android:name="za.co.woolworths.financial.services.android.onecartgetstream.chat.ChatFragment"
         android:label="ChatFragment">
     </fragment>
 </navigation>

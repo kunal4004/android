@@ -1,22 +1,28 @@
-package za.co.woolworths.financial.services.android.getstream
+package za.co.woolworths.financial.services.android.onecartgetstream.channel
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentGetStreamInitializerBinding
-import za.co.woolworths.financial.services.android.getstream.common.State
-import za.co.woolworths.financial.services.android.getstream.common.navigateSafely
+import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
+import za.co.woolworths.financial.services.android.onecartgetstream.chat.ChatFragment
+import za.co.woolworths.financial.services.android.onecartgetstream.common.State
 
 
 
-class InitializerFragment : Fragment() {
+class ChannelListFragment : Fragment() {
 
-    private val viewModel: InitializerViewModel by viewModels()
+    companion object{
+        val messageType = "messaging"
+    }
+
+    private val viewModel: ChannelListViewModel by viewModels()
     private var _binding: FragmentGetStreamInitializerBinding? = null
     private val binding get() = _binding!!
 
@@ -24,7 +30,7 @@ class InitializerFragment : Fragment() {
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
-            savedInstanceState: Bundle?
+            savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentGetStreamInitializerBinding.inflate(inflater, container, false)
         return binding.root
@@ -36,36 +42,33 @@ class InitializerFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        if (viewModel.isConnectedToInternet(requireContext()))
-        initChat()
-        else
-            binding.oneCartChatConnectionLayout.noConnectionLayout.visibility = View.VISIBLE
-
+        initViewModel()
     }
 
-    private fun initChat() {
+    private fun initViewModel() {
         viewModel.state.observe(
-            viewLifecycleOwner
-        ) {
-            when (it) {
-                is State.RedirectToChannels -> redirectToChannelsScreen()
-                is State.Loading -> showLoading()
-                is State.Error -> showErrorDialog()
+            viewLifecycleOwner,
+            {
+                when (it) {
+                    is State.RedirectToChat -> redirectToChatScreen(it.channelId)
+                    is State.Loading -> showLoading()
+                    is State.Error -> showErrorDialog()
+                }
             }
-        }
-
-        binding.oneCartChatConnectionLayout.btnRetry.setOnClickListener {
-           requireActivity().finish()
-        }
+        )
+        viewModel.fetchChannels()
     }
 
     private fun showLoading() {
         binding.oneCartChatProgressBar.visibility = View.VISIBLE
     }
 
-    private fun redirectToChannelsScreen() {
+
+
+    private fun redirectToChatScreen(channelId: String) {
         binding.oneCartChatProgressBar.visibility = View.GONE
-        findNavController().navigateSafely(R.id.action_initializerFragment_to_channelListFragment)
+        val bundle = bundleOf(ChatFragment.ARG_CHANNEL_ID to channelId)
+        findNavController().navigate(R.id.action_channelListFragment_to_chatFragment, bundle)
     }
 
     private fun showErrorDialog(){

@@ -7,6 +7,7 @@ import kotlinx.android.synthetic.main.common_error_bottom_dialog_layout.view.*
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import javax.inject.Inject
 
+
 class CommonErrorBottomSheetDialogImpl @Inject constructor(
 
 ) : CommonErrorBottomSheetDialog {

@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.getstream.channel
+package za.co.woolworths.financial.services.android.onecartgetstream.channel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,9 +9,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters.`in`
 import io.getstream.chat.android.client.models.Filters.and
-import io.getstream.chat.android.client.models.Filters.eq
-import za.co.woolworths.financial.services.android.getstream.channel.ChannelListFragment.Companion.messageType
-import za.co.woolworths.financial.services.android.getstream.common.State
+import za.co.woolworths.financial.services.android.onecartgetstream.common.State
 
 class ChannelListViewModel: ViewModel() {
 

@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.getstream.network
+package za.co.woolworths.financial.services.android.onecartgetstream.network
 
 import com.awfs.coordination.BuildConfig
 import okhttp3.OkHttpClient

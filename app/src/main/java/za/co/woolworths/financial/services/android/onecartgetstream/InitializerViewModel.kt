@@ -1,5 +1,5 @@
 
-package za.co.woolworths.financial.services.android.getstream
+package za.co.woolworths.financial.services.android.onecartgetstream
 
 import android.content.Context
 import androidx.lifecycle.LiveData
@@ -12,10 +12,10 @@ import io.getstream.chat.android.livedata.ChatDomain
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import za.co.woolworths.financial.services.android.getstream.common.State
-import za.co.woolworths.financial.services.android.getstream.network.OCAuthenticationDto
-import za.co.woolworths.financial.services.android.getstream.network.OCAuthenticationResponse
-import za.co.woolworths.financial.services.android.getstream.network.OneCartService
+import za.co.woolworths.financial.services.android.onecartgetstream.common.State
+import za.co.woolworths.financial.services.android.onecartgetstream.network.OCAuthenticationDto
+import za.co.woolworths.financial.services.android.onecartgetstream.network.OCAuthenticationResponse
+import za.co.woolworths.financial.services.android.onecartgetstream.network.OneCartService
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.util.NetworkManager

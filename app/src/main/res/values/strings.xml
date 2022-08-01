@@ -2688,6 +2688,7 @@
     <string name="your_online_profile_has_been_successfully_deleted">Your Online Profile Has Been Successfully Deleted</string>
     <string name="dash_order">Dash Order:</string>
     <string name="dash_email_type">plain/text</string>
+
          <!--one cart stream chat -->
     <string name="type_a_message">Type a message</string>
     <string name="currently_active">Currently Active</string>

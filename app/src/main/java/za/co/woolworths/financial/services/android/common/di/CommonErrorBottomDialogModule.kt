@@ -11,6 +11,7 @@ import za.co.woolworths.financial.services.android.common.CommonErrorBottomSheet
 @InstallIn(ActivityComponent::class)
 abstract class CommonErrorBottomDialogModule {
 
+
     @Binds
     abstract fun bindCommonErrorBottomSheet(commonErrorBottomSheetDialogImpl: CommonErrorBottomSheetDialogImpl): CommonErrorBottomSheetDialog
 
