@@ -557,14 +557,15 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
 
         if (requestCode == LOGIN_MY_LIST_REQUEST_CODE) {
-            (activity as? BottomNavigationActivity)?.let {
-                it.bottomNavigationById.currentItem = INDEX_ACCOUNT
-                val fragment = MyListsFragment()
-                it.pushFragment(fragment)
+            if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+                (activity as? BottomNavigationActivity)?.let {
+                    it.bottomNavigationById?.setCurrentItem(INDEX_ACCOUNT)
+                    val fragment = MyListsFragment()
+                    it.pushFragment(fragment)
+                }
             }
         }
     }
-
 
     fun refreshViewPagerFragment() {
         when (viewpager_main.currentItem) {
@@ -1033,11 +1034,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
             WMaterialShowcaseView.Feature.MY_LIST -> {
                 if (SessionUtilities.getInstance().isUserAuthenticated) {
-                    (activity as? BottomNavigationActivity)?.let {
-                        it.bottomNavigationById.setCurrentItem(INDEX_ACCOUNT)
-                        val fragment = MyListsFragment()
-                        it.pushFragment(fragment)
-                    }
+                    navigateToMyListFragment()
                 } else {
                     ScreenManager.presentSSOSignin(activity, LOGIN_MY_LIST_REQUEST_CODE)
                 }
