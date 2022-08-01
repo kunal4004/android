@@ -44,7 +44,6 @@ import android.text.TextUtils
 
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.account.FicaModel
-import za.co.woolworths.financial.services.android.models.dto.account.applynow.ApplyNowModel
 
 object OneAppService : RetrofitConfig() {
 
@@ -683,13 +682,7 @@ object OneAppService : RetrofitConfig() {
             getDeviceIdentityToken()
         )
     }
-    fun getApplyNow(contentId: String): Call<ApplyNowModel> {
-        return mApiInterface.getApplyNowData(
-            contentId,
-            getSessionToken(),
-            getDeviceIdentityToken()
-        )
-    }
+
     fun getConfirmDeliveryAddressDetails(body: ConfirmLocationRequest): Call<ConfirmDeliveryAddressResponse>{
         return mApiInterface.confirmLocation("",
             "",
