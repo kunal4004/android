@@ -93,6 +93,7 @@ class CheckoutDashFragment : Fragment(),
     private var driverTipOptionsList: ArrayList<String>? = null
     private var selectedDriverTipValue: String? = null
     private var driverTipTextView: View? = null
+    private var mainView: View? = null
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun afterTextChanged(s: Editable?) {
@@ -125,11 +126,13 @@ class CheckoutDashFragment : Fragment(),
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(
-            R.layout.fragment_checkout_returning_user_dash,
-            container,
-            false
-        )
+        if (mainView == null) {
+            mainView = inflater.inflate(
+                R.layout.fragment_checkout_returning_user_dash,
+                container,
+                false)
+        }
+        return mainView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -352,7 +355,13 @@ class CheckoutDashFragment : Fragment(),
                                     val firstAvailableDateSlot = getFirstAvailableSlot(this)
                                     initializeDatesAndTimeSlots(firstAvailableDateSlot)
                                     // Set default time slot selected
-                                    dashTimeSlotsAdapter.setSelectedItem(0)
+                                    var selectedSlotIndex = 0
+                                    ArrayList(firstAvailableDateSlot?.slots).forEachIndexed { index, slot ->
+                                        if (slot.slotId.equals(selectedTimeSlot?.slotId)) {
+                                            selectedSlotIndex = index
+                                        }
+                                    }
+                                    dashTimeSlotsAdapter.setSelectedItem(selectedSlotIndex)
                                 }
                             }
                             else -> {
@@ -683,37 +692,21 @@ class CheckoutDashFragment : Fragment(),
         edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = false
         edtTxtInputLayoutGiftInstructions?.visibility = View.GONE
         edtTxtInputLayoutGiftInstructions?.isCounterEnabled = false
+        deliveryInstructionClickListener(switchSpecialDeliveryInstruction.isChecked)
+        giftClickListener(switchGiftInstructions.isChecked)
 
         switchSpecialDeliveryInstruction?.setOnCheckedChangeListener { _, isChecked ->
             if (loadingBar.visibility == View.VISIBLE) {
                 return@setOnCheckedChangeListener
             }
-            if (isChecked)
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.CHECKOUT_SPECIAL_COLLECTION_INSTRUCTION,
-                    activity
-                )
-            edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
-                if (isChecked) View.VISIBLE else View.GONE
-            edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = isChecked
-            edtTxtSpecialDeliveryInstruction?.visibility =
-                if (isChecked) View.VISIBLE else View.GONE
+            deliveryInstructionClickListener(isChecked)
         }
 
         switchGiftInstructions?.setOnCheckedChangeListener { _, isChecked ->
             if (loadingBar?.visibility == View.VISIBLE) {
                 return@setOnCheckedChangeListener
             }
-            if (isChecked)
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.CHECKOUT_IS_THIS_GIFT,
-                    activity
-                )
-            edtTxtInputLayoutGiftInstructions?.visibility =
-                if (isChecked) View.VISIBLE else View.GONE
-            edtTxtInputLayoutGiftInstructions?.isCounterEnabled = isChecked
-            edtTxtGiftInstructions?.visibility =
-                if (isChecked) View.VISIBLE else View.GONE
+            giftClickListener(isChecked)
         }
         if (AppConfigSingleton.nativeCheckout?.currentShoppingBag?.isEnabled == true) {
             switchNeedBags?.visibility = View.VISIBLE
@@ -735,13 +728,40 @@ class CheckoutDashFragment : Fragment(),
         }
     }
 
+    private fun deliveryInstructionClickListener(isChecked: Boolean) {
+        if (isChecked)
+            Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.CHECKOUT_SPECIAL_COLLECTION_INSTRUCTION,
+                activity
+            )
+        edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
+            if (isChecked) View.VISIBLE else View.GONE
+        edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = isChecked
+        edtTxtSpecialDeliveryInstruction?.visibility =
+            if (isChecked) View.VISIBLE else View.GONE
+    }
+
+    private fun giftClickListener(isChecked: Boolean) {
+        if (isChecked)
+            Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.CHECKOUT_IS_THIS_GIFT,
+                activity
+            )
+        edtTxtInputLayoutGiftInstructions?.visibility =
+            if (isChecked) View.VISIBLE else View.GONE
+        edtTxtInputLayoutGiftInstructions?.isCounterEnabled = isChecked
+        edtTxtGiftInstructions?.visibility =
+            if (isChecked) View.VISIBLE else View.GONE
+    }
+
     private fun addShoppingBagsRadioButtons() {
         txtNewShoppingBagsSubDesc?.visibility = View.VISIBLE
         val newShoppingBags = AppConfigSingleton.nativeCheckout?.newShoppingBag
         txtNewShoppingBagsDesc?.text = newShoppingBags?.title
         txtNewShoppingBagsSubDesc?.text = newShoppingBags?.description
 
-        val shoppingBagsAdapter = ShoppingBagsRadioGroupAdapter(newShoppingBags?.options, this)
+        val shoppingBagsAdapter =
+            ShoppingBagsRadioGroupAdapter(newShoppingBags?.options, this, selectedShoppingBagType)
         shoppingBagsRecyclerView.apply {
             layoutManager = activity?.let { LinearLayoutManager(it) }
             shoppingBagsAdapter.let { adapter = it }

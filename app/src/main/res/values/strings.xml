@@ -1590,9 +1590,6 @@
     <string name="change_delivery_option">CHANGE DELIVERY OPTION</string>
     <string name="remove_items_dialog_title">These items will be removed</string>
     <string name="remove_items_dialog_desc">We always show you items available at the store closest to your location. When you change this location, the items you see may change too.</string>
-    <string name="remove_items_dash_dialog_desc">This item cannot be delivered using <b><font color='#000000'>Dash Delivery.</font></b> The following will be removed from your cart:</string>
-    <string name="remove_items_standard_dialog_desc">This item cannot be delivered using <b><font color='#000000'>Standard Delivery.</font></b> The following will be removed from your cart:</string>
-    <string name="remove_items_cnc_dialog_desc">This item cannot be collected using <b><font color='#000000'>Click &amp; Collect.</font></b> The following will be removed from your cart:</string>
     <string name="no_stores_for_province_message">Sorry, we currently do not have stores that support this feature in\u0020</string>
     <string name="no_stores_available">No Stores Available</string>
     <string name="set_your_collection_location">Set your Collection Location</string>
@@ -2003,6 +2000,7 @@
     <string name="loan_request_fund_not_available_desc">Your credit facility does not allow for a Personal Loan drawdown at this time.</string>
     <string name="cd_lnksizeguide">lnkSizeGuide</string>
     <string name="my_lists">MY LISTS</string>
+    <string name="remove_and_continue">Remove and continue</string>
 
     <!--  CLI Marital status  -->
     <string name="cli_marital_status_txt">Marital Status</string>
@@ -2551,6 +2549,26 @@
     <string name="continue_with_cnc_delivery">CONTINUE WITH Click &amp; Collect</string>
     <string name="continue_with_dash_delivery">CONTINUE WITH DASH DELIVERY</string>
 
+    <plurals name="remove_items_dash_dialog_desc">
+        <item quantity="one">This item cannot be delivered using <b><font color='#000000'>Dash Delivery.</font></b>. The following will be removed from your cart:</item>
+        <item quantity="other">These items cannot be delivered using <b><font color='#000000'>Dash Delivery.</font></b>. The following will be removed from your cart:</item>
+    </plurals>
+
+    <plurals name="remove_items_standard_dialog_desc">
+        <item quantity="one">This item cannot be delivered using <b><font color='#000000'>Standard Delivery.</font></b>. The following will be removed from your cart:</item>
+        <item quantity="other">These items cannot be delivered using <b><font color='#000000'>Standard Delivery.</font></b>. The following will be removed from your cart:</item>
+    </plurals>
+
+    <plurals name="remove_items_cnc_dialog_desc">
+        <item quantity="one">This item cannot be delivered using <b><font color="black">Click &amp; Collect.</font></b>. The following will be removed from your cart:</item>
+        <item quantity="other">These items cannot be delivered using <b><font color="black">Click &amp; Collect.</font></b>. The following will be removed from your cart:</item>
+    </plurals>
+
+    <plurals name="unsellable_title">
+        <item quantity="one">This Item Will Be Removed From Your Cart.</item>
+        <item quantity="other">@string/these_items_will_be_removed_from_your_cart</item>
+    </plurals>
+
 
     <string name="product_listing_price_from">From</string>
 
@@ -2670,4 +2688,15 @@
     <string name="your_online_profile_has_been_successfully_deleted">Your Online Profile Has Been Successfully Deleted</string>
     <string name="dash_order">Dash Order:</string>
     <string name="dash_email_type">plain/text</string>
+
+         <!--one cart stream chat -->
+    <string name="type_a_message">Type a message</string>
+    <string name="currently_active">Currently Active</string>
+    <string name="currently_in_active">Currently Inactive</string>
+    <string name="please_enter_a_message">Please Enter a Message</string>
+    <string name="one_cart_chat_order_id">ORDER #%s</string>
+    <string name="generic_error_something_wrong_newline">Unfortunately,\n Something Went Wrong</string>
+    <string name="one_cart_chat_error_disc">We can’t seem to reach your shopper.\n Give them a few moments, and try again.</string>
+
+
 </resources>

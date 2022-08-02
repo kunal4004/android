@@ -213,7 +213,9 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
             val item = dataList[position].item as CommerceItem
 
             itemView?.apply {
-                setProductImage(imProductImage, item.commerceItemInfo.externalImageRefV2)
+                item.commerceItemInfo?.externalImageRefV2?.let {
+                    setProductImage(imProductImage, it)
+                }
                 itemName?.text = item?.commerceItemInfo?.quantity?.toString()+" x "+item?.commerceItemInfo?.productDisplayName
                 price?.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item?.priceInfo?.amount)
                 price?.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
@@ -281,9 +283,9 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                           HtmlCompat.FROM_HTML_MODE_LEGACY)
                     }
                 }
-            }
-            itemView.setOnClickListener {
-                listner.onOpenChatScreen()
+                itemView.setOnClickListener {
+                    listner.onOpenChatScreen(item.orderSummary?.orderId.toString())
+                }
             }
         }
 
@@ -322,7 +324,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
         fun onOpenProductDetail(commerceItem: CommerceItem)
         fun onViewTaxInvoice()
         fun onCancelOrder()
-        fun onOpenChatScreen()
+        fun onOpenChatScreen(orderID: String?)
         fun onOpenTrackOrderScreen()
     }
 
