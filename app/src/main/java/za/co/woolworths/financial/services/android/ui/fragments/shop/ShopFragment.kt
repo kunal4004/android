@@ -75,6 +75,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     OnChildFragmentEvents,
     WMaterialShowcaseView.IWalkthroughActionListener {
 
+    private var timer: CountDownTimer? = null
     private var mTabTitle: MutableList<String>? = null
     private var permissionUtils: PermissionUtils? = null
     var permissions: ArrayList<String> = arrayListOf()
@@ -198,12 +199,13 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     fun showClickAndCollectToolTipUi(browsingStoreId: String?) {
         showClickAndCollectToolTip(true, browsingStoreId)
+        timer?.cancel()
         if (AppConfigSingleton.tooltipSettings?.isAutoDismissEnabled == true) {
             val timeduration = AppConfigSingleton.tooltipSettings?.autoDismissDuration?.times(1000)
             if (timeduration == null) {
                 return
             }
-            object : CountDownTimer(timeduration, 100) {
+         timer =  object : CountDownTimer(timeduration, 100) {
                 override fun onTick(millisUntilFinished: Long) {}
                 override fun onFinish() {
                     blackToolTipLayout?.visibility = View.GONE
@@ -716,6 +718,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
             blackToolTipLayout?.visibility = View.GONE
         }
+        timer?.cancel()
         when (deliveryType) {
             Delivery.STANDARD -> {
                 showStandardDeliveryToolTip()
@@ -733,7 +736,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             if (timeduration == null) {
                 return
             }
-            object : CountDownTimer(timeduration, 100) {
+           timer =  object : CountDownTimer(timeduration, 100) {
                 override fun onTick(millisUntilFinished: Long) {}
                 override fun onFinish() {
                     blackToolTipLayout?.visibility = View.GONE
