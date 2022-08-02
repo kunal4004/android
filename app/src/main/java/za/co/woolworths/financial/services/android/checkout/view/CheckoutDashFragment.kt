@@ -522,8 +522,7 @@ class CheckoutDashFragment : Fragment(),
                     tipNoteTextView?.visibility = View.VISIBLE
                 } else if (!selectedDriverTipValue.isNullOrEmpty() && driverTipOptionsList?.contains(selectedDriverTipValue) == false
                     && index == driverTipOptionsList?.size?.minus(1)) {
-
-                      /*this is for custom driver tip*/
+                        /*this is for custom driver tip*/
                     titleTextView?.background =
                         bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
                     titleTextView?.setTextColor(
