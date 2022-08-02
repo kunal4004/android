@@ -380,6 +380,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         hideRatingAndReview()
         setupViewModel()
         updateReportLikeStatus()
+        tvSkinProfile.setOnClickListener(this)
         btViewMoreReview.setOnClickListener(this)
         tvTotalReviews.setOnClickListener(this)
         tvRatingDetails.setOnClickListener(this)
