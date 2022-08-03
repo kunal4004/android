@@ -76,11 +76,12 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
                     is ViewState.RenderSuccess -> {
                         viewModel.applyNowResponse.value = response.output
                         binding.apply {
-                            response.output.content.size.apply {
+                            hideShimmer()
+                            response.output.content.apply {
                                 viewpagerApplyNow.adapter =
-                                    ApplyNowFragAdapter(this@ApplyNowActivity, this)
-                                handleTabLayoutVisibility(response.output.content.size)
-                                setupView(response.output.content[0])
+                                    ApplyNowFragAdapter(this@ApplyNowActivity, this.size)
+                                handleTabLayoutVisibility(this.size)
+                                setupView(this[0])
                             }
 
                         }
@@ -94,6 +95,13 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
                     else -> Unit
                 }
             }
+        }
+    }
+
+    private fun ActivityApplyNowBinding.hideShimmer() {
+        shimmerApplyNow.apply {
+            visibility = GONE
+            stopShimmer()
         }
     }
 
@@ -158,7 +166,12 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
             when (v) {
                 incAccountSalesFrontLayout.storeCardApplyNowButton, bottomApplyNowButton -> {
                     viewModel.onApplyNowButtonTapped()
-                        .let { url -> KotlinUtils.openUrlInPhoneBrowser(url, this@ApplyNowActivity) }
+                        .let { url ->
+                            KotlinUtils.openUrlInPhoneBrowser(
+                                url,
+                                this@ApplyNowActivity
+                            )
+                        }
                 }
                 navigateBackImageButton -> onBackPressed()
 
