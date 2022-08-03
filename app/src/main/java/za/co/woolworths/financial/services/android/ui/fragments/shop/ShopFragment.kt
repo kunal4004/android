@@ -934,7 +934,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun showDeliveryDetailsFeatureWalkThrough() {
-        (activity as? BottomNavigationActivity)?.let {
+        (requireActivity() as? BottomNavigationActivity)?.let {
             // Prevent dialog to display in other section when fragment is not visible
             if (it.currentFragment !is ShopFragment || !isAdded || AppInstanceObject.get().featureWalkThrough.delivery_details || !Utils.isFeatureWalkThroughTutorialsEnabled())
                 return
@@ -944,11 +944,12 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             )
             it.walkThroughPromtView =
                 WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.DELIVERY_DETAILS)
-                    .setTarget(imgToolbarStart)
+                    .setTarget(shopToolbar)
                     .setTitle(R.string.walkthrough_delivery_details_title)
                     .setDescription(R.string.walkthrough_delivery_details_desc)
                     .setActionText(R.string.walkthrough_delivery_details_action)
                     .setImage(R.drawable.ic_delivery_truck)
+                    .withRectangleShape()
                     .setShapePadding(48)
                     .setDescriptionTextColor()
                     .setHideTutorialTextColor()
