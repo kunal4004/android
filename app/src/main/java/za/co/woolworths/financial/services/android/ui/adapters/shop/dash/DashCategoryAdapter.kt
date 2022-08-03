@@ -192,7 +192,7 @@ class BannerCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
         banner: Banner,
         dashLandingNavigationListener: OnDashLandingNavigationListener?
     ) {
-        itemView.tvCategoryTitle?.text = banner.displayName
+
         itemView.dashBannerCarouselContainer?.setOnClickListener {
             dashLandingNavigationListener?.onDashLandingNavigationClicked(view = it, banner)
         }
