@@ -32,12 +32,16 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.model.MapData
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
+import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.network.model.ConfirmAddressStoreLocator
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.SavedAddressAdapter
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDeliveryFragment.Companion.DEPARTMENT_LOGIN_REQUEST
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
@@ -464,19 +468,23 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                         AppConstant.HTTP_OK -> {
                             validateLocationResponse.validatePlace?.let { place ->
 
-                                if (isFromDashTab) {
-                                    // This comes from Dash Tab. So will check if validatePlace API has onDemand Object.
-                                    // If yes then land back on Dash Tab with new ValidatePlace Object else show Not Deliverable PopUp.
-
+                                if (isFromDashTab == true) {
                                     if (place.onDemand != null && place.onDemand!!.deliverable == true) {
-                                        // directly go back to Dash landing screen. Don't call confirm location API as user only wants to browse Dash.
                                         KotlinUtils.isDashTabClicked =
-                                            address.placesId?.equals(getDeliveryType()?.address?.placeId) // changing black tooltip flag as user changes his browsing location.
-                                        val intent = Intent()
-                                        intent.putExtra(BundleKeysConstants.VALIDATE_RESPONSE,
-                                            validateLocationResponse)
-                                        activity?.setResult(Activity.RESULT_OK, intent)
-                                        activity?.finish()
+                                            address.placesId?.equals(getDeliveryType()?.address?.placeId) // changing black tooltip flag as user changes in his location.
+                                        if (getDeliveryType() == null) {
+                                            // User don't have any location (signin or signout both) that's why we are setting new location.
+                                            confirmSetAddress(validateLocationResponse,
+                                                address.placesId!!, BundleKeysConstants.DASH)
+                                        } else {
+                                            // User has location. Means only changing browsing location.
+                                            // directly go back to Dash landing screen. Don't call confirm location API as user only wants to browse Dash.
+                                            val intent = Intent()
+                                            intent.putExtra(BundleKeysConstants.VALIDATE_RESPONSE,
+                                                validateLocationResponse)
+                                            activity?.setResult(Activity.RESULT_OK, intent)
+                                            activity?.finish()
+                                        }
                                     } else {
                                         // Show not deliverable Bottom Dialog.
                                         val customBottomSheetDialogFragment =
@@ -490,16 +498,19 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                                             CustomBottomSheetDialogFragment::class.java.simpleName)
                                     }
                                 } else if (KotlinUtils.isComingFromCncTab == true) {
-                                    /*user is coming from CNC i.e. set Location flow or change button flow  */
-                                    // navigate to CNC home tab.
                                     KotlinUtils.isComingFromCncTab = false
-
                                     /* set cnc browsing data */
                                     WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
                                         validateLocationResponse?.validatePlace)
+                                    /*user is coming from CNC i.e. set Location flow or change button flow  */
+                                    // navigate to CNC home tab.
                                     activity?.finish()
                                 } else {
-
+                                    if (getDeliveryType() == null) {
+                                        // User don't have any location (signin or signout both) then move user to change fulfillment screen.
+                                        navigateToLastScreen(address)
+                                        return@let
+                                    }
                                     when (deliveryType) {
                                         // As per delivery type first we will verify if it is deliverable for that or not.
                                         Delivery.STANDARD.name -> {
@@ -536,6 +547,74 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             } catch (e: HttpException) {
                 FirebaseManager.logException(e)
                 progressBar?.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun confirmSetAddress(
+        validateLocationResponse: ValidateLocationResponse,
+        placeId: String,
+        currentDeliveryType: String,
+    ) {
+        if (placeId.isNullOrEmpty())
+            return
+
+        //make confirm Location call
+        val confirmLocationAddress = ConfirmLocationAddress(placeId)
+        val confirmLocationRequest =
+            ConfirmLocationRequest(currentDeliveryType,
+                confirmLocationAddress,
+                validateLocationResponse.validatePlace?.onDemand?.storeId)
+
+        lifecycleScope.launch {
+            progressBar?.visibility = View.VISIBLE
+            try {
+                val confirmLocationResponse =
+                    confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
+                progressBar?.visibility = View.GONE
+                if (confirmLocationResponse != null) {
+                    when (confirmLocationResponse.httpCode) {
+                        AppConstant.HTTP_OK -> {
+
+                            /*reset browsing data for cnc and dash both once fulfillment location is confirmed*/
+                            WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
+                                validateLocationResponse?.validatePlace)
+                            WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
+                                validateLocationResponse?.validatePlace)
+
+                            KotlinUtils.placeId = placeId
+                            KotlinUtils.isLocationSame =
+                                placeId?.equals(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
+
+                            WoolworthsApplication.setValidatedSuburbProducts(
+                                validateLocationResponse.validatePlace)
+
+                            // save details in cache
+                            if (SessionUtilities.getInstance().isUserAuthenticated) {
+                                Utils.savePreferredDeliveryLocation(
+                                    ShoppingDeliveryLocation(
+                                        confirmLocationResponse.orderSummary?.fulfillmentDetails
+                                    )
+                                )
+                                if (KotlinUtils.getAnonymousUserLocationDetails() != null)
+                                    KotlinUtils.clearAnonymousUserLocationDetails()
+                            } else {
+                                KotlinUtils.saveAnonymousUserLocationDetails(
+                                    ShoppingDeliveryLocation(
+                                        confirmLocationResponse.orderSummary?.fulfillmentDetails
+                                    )
+                                )
+                            }
+
+                            // navigate to Dash home tab.
+                            activity?.setResult(Activity.RESULT_OK)
+                            activity?.finish()
+                        }
+                    }
+                }
+            } catch (e: HttpException) {
+                progressBar?.visibility = View.GONE
+                FirebaseManager.logException(e)
             }
         }
     }

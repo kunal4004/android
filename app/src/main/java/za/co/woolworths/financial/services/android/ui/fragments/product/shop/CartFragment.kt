@@ -76,6 +76,7 @@ import za.co.woolworths.financial.services.android.util.CurrencyFormatter.Compan
 import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.setCrashlyticsString
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredPlaceId
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionClickAndCollect
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionDash
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity
@@ -579,20 +580,18 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
     }
 
     private fun locationSelectionClicked() {
-        Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.let {
-            presentEditDeliveryGeoLocationActivity(
-                requireActivity(),
-                REQUEST_SUBURB_CHANGE,
-                getPreferredDeliveryType(),
-                it.placeId,
-                isComingFromCheckout = false,
-                isComingFromSlotSelection = false,
-                savedAddressResponse = null,
-                defaultAddress = null,
-                whoISCollecting = "",
-                liquorCompliance = liquorCompliance
-            )
-        }
+        presentEditDeliveryGeoLocationActivity(
+            requireActivity(),
+            REQUEST_SUBURB_CHANGE,
+            getPreferredDeliveryType(),
+            getPreferredPlaceId(),
+            isComingFromCheckout = false,
+            isComingFromSlotSelection = false,
+            savedAddressResponse = null,
+            defaultAddress = null,
+            whoISCollecting = "",
+            liquorCompliance = liquorCompliance
+        )
     }
 
     fun bindCartData(cartResponse: CartResponse?) {
@@ -704,7 +703,10 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             for (cartItemGroup: CartItemGroup in emptyCartItemGroups) {
                 cartItems?.remove(cartItemGroup)
             }
-            cartProductAdapter?.notifyAdapter(cartItems, orderSummary, voucherDetails, liquorCompliance)
+            cartProductAdapter?.notifyAdapter(cartItems,
+                orderSummary,
+                voucherDetails,
+                liquorCompliance)
         } else {
             cartProductAdapter?.clear()
             resetToolBarIcons()
