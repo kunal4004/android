@@ -297,6 +297,11 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType.isNullOrEmpty() && KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.deliveryType.isNullOrEmpty()) {
             return
         }
+        if (KotlinUtils.isLocationSame == true && KotlinUtils.placeId != null) {
+            Delivery.getType(getDeliveryType()?.deliveryType)?.let {
+                showBlackToolTip(it)
+            }
+        }
         setDeliveryView()
     }
 
@@ -822,6 +827,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         blackToolTipLayout?.visibility = View.VISIBLE
 
         validateLocationResponse?.validatePlace?.let { validatePlace ->
+            deliveryCollectionTitle?.visibility = View.VISIBLE
+            foodItemDateText?.visibility = View.VISIBLE
             deliveryCollectionTitle?.text = getString(R.string.earliest_collection_Date)
             foodItemTitle?.visibility = View.GONE
             fashionItemDateText?.visibility = View.GONE
@@ -850,7 +857,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             /* select store from store list */
             return browsingStoreId
         } else {
-            return getDeliveryType()?.storeId
+            return if (getDeliveryType()?.storeId == null) browsingStoreId else getDeliveryType()?.storeId
         }
     }
 
