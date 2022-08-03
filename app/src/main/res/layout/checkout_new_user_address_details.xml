@@ -61,7 +61,6 @@
         android:id="@+id/addressNicknameEditText"
         style="@style/checkout_edittext_style"
         android:layout_width="0dp"
-        android:background="@drawable/input_box_inactive_bg"
         android:inputType="textEmailAddress"
         android:maxLength="@integer/forty"
         android:layout_marginTop="@dimen/_3sdp"
