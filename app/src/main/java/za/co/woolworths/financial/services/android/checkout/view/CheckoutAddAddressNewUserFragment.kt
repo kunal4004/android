@@ -560,8 +560,10 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
             placeName?.let {
 
-                if (!it.equals("$streetNumber $routeName", true)) {
-                    address1 = it
+                address1 = if (it.isNotEmpty() && !it.equals("$streetNumber $routeName", true)) {
+                    it
+                } else {
+                    tempAddress1
                 }
 
             } ?: run {
