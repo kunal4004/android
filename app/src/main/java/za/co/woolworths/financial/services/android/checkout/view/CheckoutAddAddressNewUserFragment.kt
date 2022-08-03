@@ -112,6 +112,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     private var isComingFromSlotSelection: Boolean = false
     private var isValidAddress: Boolean = false;
     private var placeName: String? = null
+    private var placeId: String = ""
 
     companion object {
         const val PROVINCE_SELECTION_BACK_PRESSED = "5645"
@@ -384,7 +385,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             autoCompleteTextView?.onItemClickListener =
                 AdapterView.OnItemClickListener { parent, _, position, _ ->
                     val item = parent.getItemAtPosition(position) as? PlaceAutocomplete
-                    val placeId = item?.placeId.toString()
+                    placeId = item?.placeId.toString()
                     placeName = item?.primaryText.toString()
                     val placeFields: MutableList<Place.Field> = mutableListOf(
                         Place.Field.ID,
@@ -573,7 +574,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             }
             latitude = place.latLng?.latitude
             longitude = place.latLng?.longitude
-            placesId = place.id
+            placesId = placeId
         }
 
         val setTextAndCheckIfSelectedProvinceExist = {
