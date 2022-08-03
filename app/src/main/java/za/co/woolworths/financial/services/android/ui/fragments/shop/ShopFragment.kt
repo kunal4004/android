@@ -1,15 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
-import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.view.View
-import android.view.WindowManager
+import android.view.ViewGroup
+import android.view.ViewGroup.MarginLayoutParams
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -371,27 +370,39 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         } else if (selectedTab == CLICK_AND_COLLECT_TAB.index && KotlinUtils.browsingCncStore == null  && getDeliveryType()?.deliveryType != Delivery.CNC.type) {
             hideSerachAndBarcodeUi()
         }
-        tabs_main?.let { tab ->
-            tab.getTabAt(selectedTab)?.customView?.isSelected = true
+        tabs_main?.let { tabLayout ->
+            tabLayout.getTabAt(selectedTab)?.customView?.isSelected = true
             for (i in mTabTitle?.indices!!) {
-                tab.getTabAt(i)?.customView = prepareTabView(tab, i, mTabTitle)
+                tabLayout.getTabAt(i)?.customView = prepareTabView(tabLayout, i, mTabTitle)
             }
+
+            val margin = requireContext().resources.getDimensionPixelSize(R.dimen.sixteen_dp)
+            for (i in 0 until tabLayout.tabCount) {
+                val tab = (tabLayout.getChildAt(0) as ViewGroup).getChildAt(i)
+                val p = tab.layoutParams as MarginLayoutParams
+                if(i == 0) {
+                    p.setMargins(margin, 0, 0, 0)
+                } else if(i == 2) {
+                    p.setMargins(0, 0, margin, 0)
+                }
+                tab.requestLayout()
+            }
+
         }
     }
 
-    private fun prepareTabView(tab: TabLayout, pos: Int, tabTitle: MutableList<String>?): View? {
-        val view = activity?.layoutInflater?.inflate(R.layout.shop_custom_tab, null)
+    private fun prepareTabView(tabLayout: TabLayout, pos: Int, tabTitle: MutableList<String>?): View? {
+        val view = requireActivity().layoutInflater.inflate(R.layout.shop_custom_tab, null)
         tabWidth = view?.width?.let {
             it.toFloat()
         }
+
         view?.tvTitle?.text = tabTitle?.get(pos)
-        if (tab.getTabAt(pos)?.view?.isSelected == true) {
+        view?.foodOnlyText?.visibility = if(pos == 0) View.GONE else View.VISIBLE
+        if (tabLayout.getTabAt(pos)?.view?.isSelected == true) {
             val myRiadFont =
-                Typeface.createFromAsset(activity?.assets, "fonts/MyriadPro-Semibold.otf")
+                Typeface.createFromAsset(requireActivity().assets, "fonts/MyriadPro-Semibold.otf")
             view?.tvTitle?.typeface = myRiadFont
-        }
-        if (pos == STANDARD_TAB.index) {
-            view?.foodOnlyText?.visibility = View.INVISIBLE
         }
         return view
     }
@@ -907,7 +918,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun showDashFeatureWalkThrough() {
-        (activity as? BottomNavigationActivity)?.let {
+        (requireActivity() as? BottomNavigationActivity)?.let {
             // Prevent dialog to display in other section when fragment is not visible
             if (it.currentFragment !is ShopFragment || !isAdded || AppInstanceObject.get().featureWalkThrough.dash || !Utils.isFeatureWalkThroughTutorialsEnabled())
                 return
@@ -917,12 +928,13 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             )
             it.walkThroughPromtView =
                 WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.DASH)
-                    .setTarget(tabs_main?.getTabAt(2)?.customView?.tvTitle)
+                    .setTarget(tabs_main?.getChildAt(0))
                     .setTitle(R.string.walkthrough_dash_title)
                     .setDescription(R.string.walkthrough_dash_desc)
                     .setActionText(R.string.walkthrough_dash_action)
                     .setImage(R.drawable.dash_delivery_icon)
-                    .setShapePadding(48)
+                    .withRectangleShape(true)
+                    .setShapePadding(0)
                     .setDescriptionTextColor()
                     .setHideTutorialTextColor()
                     .setAction(this@ShopFragment)
@@ -950,7 +962,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     .setActionText(R.string.walkthrough_delivery_details_action)
                     .setImage(R.drawable.ic_delivery_truck)
                     .withRectangleShape()
-                    .setShapePadding(48)
+                    .setShapePadding(0)
                     .setDescriptionTextColor()
                     .setHideTutorialTextColor()
                     .setAction(this@ShopFragment)
