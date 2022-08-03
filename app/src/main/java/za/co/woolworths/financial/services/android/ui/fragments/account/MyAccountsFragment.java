@@ -113,6 +113,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl;
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.activities.ApplyNowActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView;
@@ -1929,6 +1930,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         Activity activity = getActivity();
         if (activity == null) return;
         Intent intent = new Intent(getActivity(), AccountSalesActivity.class);
+        if(applyNowState == ApplyNowState.BLACK_CREDIT_CARD || applyNowState == ApplyNowState.GOLD_CREDIT_CARD || applyNowState ==  ApplyNowState.SILVER_CREDIT_CARD){
+            intent = new Intent(getActivity(), ApplyNowActivity.class);
+        }
         Bundle bundle = new Bundle();
         bundle.putSerializable("APPLY_NOW_STATE", applyNowState);
         HashMap<String, Account> accountHashMap = new HashMap<>();

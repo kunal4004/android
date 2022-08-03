@@ -117,7 +117,7 @@
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="label,android:name">
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.fragments.account.applynow.activities.ApplyNow"
+            android:name="za.co.woolworths.financial.services.android.ui.fragments.account.applynow.activities.ApplyNowActivity"
             android:theme="@style/salesPageMainStyle" />
 
         <meta-data

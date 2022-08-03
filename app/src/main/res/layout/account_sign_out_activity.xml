@@ -8,6 +8,7 @@
     android:orientation="vertical">
 
     <include
+        android:id="@+id/accountSalesCardHeader"
         layout="@layout/account_sales_card_header"
         android:layout_width="0dp"
         android:layout_height="0dp"
