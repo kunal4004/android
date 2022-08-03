@@ -29,6 +29,7 @@
     <!-- step indicator -->
     <color name="horizontal_line">#10000000</color>
     <color name="default_background">#ececec</color>
+    <color name="default_plp_background">#ffffff</color>
     <color name="product_search_hint">#7b7b7b</color>
     <color name="product_divider">#22000000</color>
     <color name="barcode_button">#40ffffff</color>
