@@ -111,7 +111,7 @@ class WRewardsVoucherDetailsActivity : AppCompatActivity(), View.OnClickListener
     private fun viewTermsAndConditions() {
         val terms = vouchers?.get(cardSwipeStackView?.topIndex ?: 0)?.termsAndConditions
         if (TextUtils.isEmpty(terms)) {
-            Utils.openLinkInInternalWebView(AppConfigSingleton.wrewardsTCLink)
+            Utils.openLinkInInternalWebView(AppConfigSingleton.wrewardsTCLink, true)
         } else {
             startActivity(Intent(this@WRewardsVoucherDetailsActivity, WRewardsVoucherTermAndConditions::class.java).putExtra(TERMS, terms))
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)

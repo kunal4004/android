@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-
 import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl.ELITE_PLAN_MODEL;
 import static za.co.woolworths.financial.services.android.util.ChromeClient.CAMERA_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.util.ChromeClient.INPUT_FILE_REQUEST_CODE;
@@ -24,6 +23,7 @@ import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.URLUtil;
+import android.webkit.ValueCallback;
 import android.webkit.WebBackForwardList;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -57,13 +57,14 @@ import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WInternalWebPageActivity extends AppCompatActivity implements View.OnClickListener {
+	private static final int REQUEST_CODE=123;
+	public static final String ARG_REDIRECT_BLANK_TARGET_LINK_EXTERNAL = "redirect_blank_target_link_external";
 
 	private WebView webInternalPage;
 	private ErrorHandlerView mErrorHandlerView;
 	private String mExternalLink;
 	private ProgressBar mWoolworthsProgressBar;
 	private AppBarLayout mAppbar;
-	private static final int REQUEST_CODE=123;
 	private String downLoadUrl;
 	private String downLoadMimeType;
 	private String downLoadUserAgent;
@@ -73,6 +74,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
     private ChromeClient chromeClient;
     private Boolean ficaCanceled = false;
 	private FicaRefresh fica;
+	private boolean mustRedirectBlankTargetLinkToExternal = false;
 
     @Override
 	protected void onStart() {
@@ -149,7 +151,6 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 
 			@Override
 			public void onPageFinished(WebView view, String url) {
-				// TODO Auto-generated method stub
 				super.onPageFinished(view, url);
 				hideProgressBar();
 			}
@@ -158,16 +159,14 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
 				final Uri uri = Uri.parse(url);
-				handleUri(view, uri);
-				return true;
+				return handleUri(view, uri);
 			}
 
 			@TargetApi(Build.VERSION_CODES.N)
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
 				final Uri uri = request.getUrl();
-				handleUri(view, uri);
-				return true;
+				return handleUri(view, uri);
 			}
 
 			@Override
@@ -183,7 +182,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 			@Override
 			public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
 				super.doUpdateVisitedHistory(view, url, isReload);
-                if (treatmentPlan ) {
+                if (treatmentPlan) {
 					HashMap<String,String> parameters = getQueryString(url);
 					if (parameters.containsKey("Scope") ){
 						if (parameters.get("Scope").equals("paynow")){
@@ -230,11 +229,12 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	}
 
 	public void ficaHandling(String url){
-		if (AppConfigSingleton.INSTANCE.getAccountOptions() != null ){
+		if (AppConfigSingleton.INSTANCE.getAccountOptions() != null && url != null && collectionsExitUrl != null){
 			fica = AppConfigSingleton.INSTANCE.getAccountOptions().getFicaRefresh();
 			if (url.contains(collectionsExitUrl)){
 				webInternalPage.destroy();
-				if (getQueryString(url).get("IsCompleted").equals("false")) {
+				HashMap<String,String> parameters = getQueryString(url);
+				if (parameters.containsKey("IsCompleted") && parameters.get("IsCompleted").equals("false")) {
 					ficaCanceled = true;
 				}
 				finishActivity();
@@ -246,6 +246,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	public String privacyUrlForFica() {
 		return fica!=null ? fica.getPrivacyPolicyUrl() : "";
 	}
+
 	public HashMap<String, String> getQueryString(String url) {
 		Uri uri= Uri.parse(url);
 
@@ -260,19 +261,29 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 		}
 		return map;
 	}
-	private void handleUri(WebView view, Uri uri) {String url = uri.toString();
+	private boolean handleUri(WebView view, Uri uri) {
+		String url = uri.toString();
 		if (url.contains("mailto:")) {
 			Utils.sendEmail(url, "",getApplicationContext());
-		}if (url.startsWith("tel:")) {
+		} else if (url.startsWith("tel:")) {
 			Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse(url));
 			startActivity(intent);
-		}
-		if (!privacyUrlForFica().isEmpty() && url.contains(privacyUrlForFica())&& KotlinUtils.Companion.isFicaEnabled()){
+		} else if (!privacyUrlForFica().isEmpty() && url.contains(privacyUrlForFica()) && KotlinUtils.Companion.isFicaEnabled()){
 			KotlinUtils.Companion.openUrlInPhoneBrowser(privacyUrlForFica(),WInternalWebPageActivity.this);
-		}
-		else {
+		} else if (mustRedirectBlankTargetLinkToExternal) {
+			// Open hyperlink on external browser if it contains target="_blank", else open on the WebView itself
+			String selector = "(function() { var elements = document.querySelectorAll('a[href*=\\'" + url.replaceAll("/$", "") + "\\']'); if (elements.length > 0) { return elements[0].target == '_blank'; } else { return false; }})();";
+			view.evaluateJavascript(selector, value -> {
+				if (value.equalsIgnoreCase("true")) {
+					KotlinUtils.Companion.openUrlInPhoneBrowser(url, WInternalWebPageActivity.this);
+				} else {
+					view.loadUrl(url);
+				}
+			});
+		} else {
 			view.loadUrl(url);
 		}
+		return true;
 	}
 
 	private void retryConnect() {
@@ -338,6 +349,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 			mExternalLink = bundle.getString("externalLink");
 			treatmentPlan = bundle.getBoolean(KotlinUtils.TREATMENT_PLAN);
 			collectionsExitUrl = bundle.getString(KotlinUtils.COLLECTIONS_EXIT_URL);
+			mustRedirectBlankTargetLinkToExternal = bundle.getBoolean(ARG_REDIRECT_BLANK_TARGET_LINK_EXTERNAL, false);
 		}
 	}
 
