@@ -43,4 +43,13 @@
             style="@style/my_orders_textview_style_3" />
     </RelativeLayout>
 
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:layout_marginBottom="@dimen/sixteen_dp"
+        android:text="@string/promotion_note"
+        android:textColor="@color/color_666666"
+        android:textSize="@dimen/twelve_sp" />
 </LinearLayout>
