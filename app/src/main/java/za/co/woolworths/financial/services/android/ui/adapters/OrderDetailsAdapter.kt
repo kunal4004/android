@@ -287,7 +287,6 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                     listner.onOpenChatScreen(item.orderSummary?.orderId.toString())
                 }
             }
-
         }
 
     }

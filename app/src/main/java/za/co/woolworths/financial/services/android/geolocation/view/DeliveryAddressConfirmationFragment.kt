@@ -473,7 +473,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                 }
 
 
-                                /*reset browsing data for cnc and dash both once fullfillment location is confirmed*/
+                                /*reset browsing data for cnc and dash both once fulfillment location is confirmed*/
                                 WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
                                     validateLocationResponse?.validatePlace)
                                 WoolworthsApplication.setDashBrowsingValidatePlaceDetails(

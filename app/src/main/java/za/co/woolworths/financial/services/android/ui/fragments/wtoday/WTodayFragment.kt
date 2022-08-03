@@ -75,6 +75,7 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
                 noConnectionLayoutVisibility(VISIBLE)
             }
         }
+
     }
 
     private fun setClient() {
