@@ -31,7 +31,8 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
         binding = ActivityApplyNowBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        viewModel.applyNowState = intent.extras?.get(AccountSignedInPresenterImpl.APPLY_NOW_STATE) as ApplyNowState
+        viewModel.applyNowState =
+            intent.extras?.get(AccountSignedInPresenterImpl.APPLY_NOW_STATE) as ApplyNowState
         with(binding) {
             viewModel.setupBottomSheetBehaviour(incBottomSheetLayout)
             bottomSheetListener()
@@ -40,7 +41,6 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
         callApplyNow(viewModel.contentID())
 
     }
-
 
 
     private fun ActivityApplyNowBinding.clickListeners() {
@@ -61,7 +61,7 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
                             response.output.content.size.apply {
                                 viewpagerApplyNow.adapter =
                                     ApplyNowFragAdapter(this@ApplyNowActivity, this)
-                                handleTabLayoutVisibility(response.output.content.size, binding)
+                                handleTabLayoutVisibility(response.output.content.size)
                             }
 
                         }
@@ -78,21 +78,20 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun handleTabLayoutVisibility(size: Int, binding: ActivityApplyNowBinding) {
-        binding.apply {
-            when (size > 1) {
-                true -> {
-                    setupTablayout(tabLayoutApplyNow, viewpagerApplyNow)
-                }
-                false -> {
-                    tabLayoutApplyNow.visibility = GONE
-                    viewTabLayoutApplyNowSeparator.visibility = GONE
-                }
+    private fun ActivityApplyNowBinding.handleTabLayoutVisibility(size: Int) {
+        when (size > 1) {
+            true -> {
+                setupTablayout(tabLayoutApplyNow, viewpagerApplyNow)
+            }
+            false -> {
+                tabLayoutApplyNow.visibility = GONE
+                viewTabLayoutApplyNowSeparator.visibility = GONE
             }
         }
+
     }
 
-    fun setupTablayout(tabLayoutApplyNow: TabLayout, viewpagerApplyNow: ViewPager2) {
+    private fun setupTablayout(tabLayoutApplyNow: TabLayout, viewpagerApplyNow: ViewPager2) {
         TabLayoutMediator(tabLayoutApplyNow, viewpagerApplyNow) { tab, position ->
             tab.text = viewModel.applyNowResponse.value!!.content[position].title
         }.attach()
