@@ -3,18 +3,21 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.applyno
 import android.os.Bundle
 import android.view.View
 import android.view.View.GONE
+import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.lifecycleScope
-import androidx.viewpager2.widget.ViewPager2
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ActivityApplyNowBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.models.dto.account.applynow.Content
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.adapters.ApplyNowFragAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.utils.ViewState
@@ -37,11 +40,26 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
             viewModel.setupBottomSheetBehaviour(incBottomSheetLayout)
             bottomSheetListener()
             clickListeners()
+            setupToolbarTopMargin()
         }
         callApplyNow(viewModel.contentID())
 
     }
 
+    private fun ActivityApplyNowBinding.setupToolbarTopMargin() {
+        KotlinUtils.setTransparentStatusBar(this@ApplyNowActivity)
+        val params = toolbar.layoutParams as? ViewGroup.MarginLayoutParams
+        params?.topMargin = KotlinUtils.getStatusBarHeight()
+        toolbar.layoutParams = params
+    }
+
+    private fun ActivityApplyNowBinding.setupView(content: Content) {
+        incAccountSalesFrontLayout.accountSalesCardHeader.cardFrontImageView.visibility = GONE
+        incAccountSalesFrontLayout.accountSalesCardHeader.cardBackImageView.visibility = GONE
+//        incAccountSalesFrontLayout.root.account.root.cardFrontImageView.setImageResource()
+        incAccountSalesFrontLayout.storeCardDescriptionTextView.text = content.description
+        incAccountSalesFrontLayout.storeCardTitleTextView.text = content.title
+    }
 
     private fun ActivityApplyNowBinding.clickListeners() {
         incAccountSalesFrontLayout.storeCardApplyNowButton.setOnClickListener(this@ApplyNowActivity)
@@ -62,6 +80,7 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
                                 viewpagerApplyNow.adapter =
                                     ApplyNowFragAdapter(this@ApplyNowActivity, this)
                                 handleTabLayoutVisibility(response.output.content.size)
+                                setupView(response.output.content[0])
                             }
 
                         }
@@ -81,7 +100,7 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
     private fun ActivityApplyNowBinding.handleTabLayoutVisibility(size: Int) {
         when (size > 1) {
             true -> {
-                setupTablayout(tabLayoutApplyNow, viewpagerApplyNow)
+                setupTablayout()
             }
             false -> {
                 tabLayoutApplyNow.visibility = GONE
@@ -91,10 +110,21 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
 
     }
 
-    private fun setupTablayout(tabLayoutApplyNow: TabLayout, viewpagerApplyNow: ViewPager2) {
+    private fun ActivityApplyNowBinding.setupTablayout() {
         TabLayoutMediator(tabLayoutApplyNow, viewpagerApplyNow) { tab, position ->
-            tab.text = viewModel.applyNowResponse.value!!.content[position].title
+            viewModel.applyNowResponse.value!!.content[position].apply {
+                tab.text = this.title.substringBefore(' ')
+            }
+
         }.attach()
+        tabLayoutApplyNow.addOnTabSelectedListener(object : OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                setupView(viewModel.applyNowResponse.value!!.content[tab.position])
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
+            override fun onTabReselected(tab: TabLayout.Tab) {}
+        })
     }
 
     private fun bottomSheetListener() {
@@ -111,31 +141,36 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
                         slideOffset
                     )
                     navigateBackImageButton.rotation = slideOffset * -90
-                    if (slideOffset > 0.2)
+                    if (slideOffset > 0.2) {
+                        bottomApplyNowButton.isEnabled = true
                         AnimationUtilExtension.animateButtonIn(bottomApplyNowButtonRelativeLayout)
-                    else
+                    } else {
+                        bottomApplyNowButton.isEnabled = false
                         AnimationUtilExtension.animateButtonOut(bottomApplyNowButtonRelativeLayout)
+                    }
                 }
             }
         })
     }
 
     override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.storeCardApplyNowButton, R.id.bottomApplyNowButton -> {
-                viewModel.onApplyNowButtonTapped()
-                    .let { url -> KotlinUtils.openUrlInPhoneBrowser(url, this) }
+        with(binding) {
+            when (v) {
+                incAccountSalesFrontLayout.storeCardApplyNowButton, bottomApplyNowButton -> {
+                    viewModel.onApplyNowButtonTapped()
+                        .let { url -> KotlinUtils.openUrlInPhoneBrowser(url, this@ApplyNowActivity) }
+                }
+                navigateBackImageButton -> onBackPressed()
+
+                incAccountSalesFrontLayout.viewApplicationStatusTextView -> {
+                    KotlinUtils.openUrlInPhoneBrowser(
+                        viewModel.viewApplicationStatusLinkInExternalBrowser(),
+                        this@ApplyNowActivity
+                    )
+
+                }
+
             }
-            R.id.navigateBackImageButton -> onBackPressed()
-
-            R.id.viewApplicationStatusTextView -> {
-                KotlinUtils.openUrlInPhoneBrowser(
-                    viewModel.viewApplicationStatusLinkInExternalBrowser(),
-                    this
-                )
-
-            }
-
         }
     }
 
