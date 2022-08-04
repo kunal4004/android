@@ -12,8 +12,6 @@ import androidx.navigation.findNavController
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.fragment_stores_nearby1.*
-import kotlinx.android.synthetic.main.store_locator_fragment.*
 import kotlinx.android.synthetic.main.store_locator_fragment.cardPager
 import kotlinx.android.synthetic.main.store_locator_fragment.dynamicMapView
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
