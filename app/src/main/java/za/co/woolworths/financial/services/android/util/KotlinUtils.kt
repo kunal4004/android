@@ -179,7 +179,7 @@ class KotlinUtils {
             }
         }
 
-        private fun AppCompatActivity.setWindowFlag(bits: Int, on: Boolean) {
+        fun AppCompatActivity.setWindowFlag(bits: Int, on: Boolean) {
             val winParams = window?.attributes
             winParams?.apply {
                 flags = if (on) {

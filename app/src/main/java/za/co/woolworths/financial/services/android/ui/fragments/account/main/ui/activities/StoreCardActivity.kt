@@ -55,6 +55,8 @@ class StoreCardActivity : AppCompatActivity() {
 
     fun getToolbarHelper() = getMainFragment()?.mToolbarContainer
 
+    fun getBackIcon() = getToolbarHelper()?.getBackIcon()
+
     fun showToast(@StringRes stringId : Int) {
         OneAppSnackbar.make(binding.rootContainer.rootView, bindString(stringId).toUpperCase(
             Locale.getDefault())).show()

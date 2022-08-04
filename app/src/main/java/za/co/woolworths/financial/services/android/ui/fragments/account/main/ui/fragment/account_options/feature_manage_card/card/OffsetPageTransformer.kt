@@ -34,6 +34,8 @@ class OffsetPageTransformer(
             page.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 marginStart = totalMargin
                 marginEnd = totalMargin
+                topMargin = 0
+                bottomMargin = 0
             }
 
             page.translationX =
@@ -52,8 +54,8 @@ class OffsetPageTransformer(
 
         } else {
             page.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                topMargin = totalMargin
-                bottomMargin = totalMargin
+                marginStart = totalMargin
+                marginEnd = totalMargin
             }
 
             page.translationY = offset

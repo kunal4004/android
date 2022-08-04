@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -36,7 +37,17 @@ class AccountProductsHomeViewModel @Inject constructor(
     ICollectionRepository by collectionRepository,
     IStoreCardNavigator by navigator {
 
+    var bottomSheetBehaviorState: Int? = BottomSheetBehavior.STATE_COLLAPSED
+
+    private val _isBottomSheetBehaviorExpanded = MutableSharedFlow<Boolean>()
+    val isBottomSheetBehaviorExpanded: SharedFlow<Boolean> = _isBottomSheetBehaviorExpanded
+
+    fun setIsBottomSheetBehaviorExpanded(isExpanded : Boolean){
+        viewModelScope.launch { _isBottomSheetBehaviorExpanded.emit(isExpanded) }
+    }
+
     var mViewTreatmentPlanImpl: ViewTreatmentPlanImpl? = null
+
     private val _viewState = MutableSharedFlow<List<AccountOptionsScreenUI>>()
     val viewState: SharedFlow<List<AccountOptionsScreenUI>> = _viewState
 

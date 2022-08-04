@@ -7,6 +7,7 @@ import android.view.View.VISIBLE
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ManageCardViewpagerFragmentBinding
@@ -56,8 +57,7 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
                             viewModel.onCardPagerPageSelected(
                                 listOfStoreCardFeatures?.get(
                                     currentPosition
-                                ), currentPosition, true
-                            )
+                                ), currentPosition)
                             handleBlockUnBlockStoreCardResult()
                         }
                     }
@@ -115,7 +115,6 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     onPagerSelected(position)
-                    cardFreezeViewModel.isPopupEnabledOnSwipe = false
                 }
             })
         }
@@ -131,8 +130,7 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
         val listOfPrimaryStoreCards = manageCardAdapter?.getListOfStoreCards()
         if ((listOfPrimaryStoreCards?.size ?: 0) > 0) {
             cardFreezeViewModel.currentPagePosition.value = position
-
-            viewModel.onCardPagerPageSelected(listOfPrimaryStoreCards?.get(position), position, cardFreezeViewModel.isPopupEnabledOnSwipe)
+            viewModel.onCardPagerPageSelected(listOfPrimaryStoreCards?.get(position), position)
         }
     }
 

@@ -51,6 +51,7 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
 
     val viewModel: MyAccountsRemoteApiViewModel by activityViewModels()
     private val cardFreezeViewModel: TemporaryFreezeCardViewModel by activityViewModels()
+
     private val activityLauncher = BetterActivityResult.registerActivityForResult(this)
 
     private val landingController by lazy { (requireActivity() as? StoreCardActivity)?.landingNavController() }
@@ -161,8 +162,7 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
                 }
             }
         }
-
-        viewLifecycleOwner.lifecycleScope.launch {
+            lifecycleScope.launch {
             with(viewModel) {
                 storeCardResponseResult.collectLatest { response ->
                     retryNetworkRequest.popStoreCardRequest()
@@ -194,11 +194,9 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
                 if (landingController?.currentDestination?.label?.equals(ManageMyCardDetailsFragment::class.java.simpleName) == true) {
                     return@collectLatest
                 }
-
                 landingController?.let { controller -> router.routeToManageMyCardDetails(controller) }
             }
         }
-
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.onViewPagerPageChangeListener.collectLatest { feature ->
@@ -207,7 +205,7 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
                 mItemList.showListItem(feature) { result ->
                     when (result) {
                         is ListCallback.CardNotReceived -> {
-                            if (result.isCardNotReceived && feature.third) mItemList.showCardNotReceivedDialog(
+                            if (result.isCardNotReceived) mItemList.showCardNotReceivedDialog(
                                 this@AccountOptionsManageCardFragment
                             )
                         }

@@ -13,10 +13,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.StoreCardInfo
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.SystemBarCompat
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StoreCardCallBack
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.CallBack
@@ -42,7 +42,6 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
         super.onViewCreated(view, savedInstanceState)
         statusBarCompat.setDarkStatusAndNavigationBar()
         setToolbar()
-        cardFreezeViewModel.isPopupEnabledOnSwipe = true
         with(ManageCardDetailsFragmentBinding.bind(view)) {
             mStoreCardMoreDetail = ManageStoreCardMoreDetail(requireContext(),incManageCardDetailsInfoLayout)
             mListOfStoreCardOptions = ManageStoreCardLandingList(cardFreezeViewModel, includeListOptions, this@ManageMyCardDetailsFragment)
@@ -121,16 +120,16 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
     private fun subscribeObservers() {
         val position = cardFreezeViewModel.currentPagePosition.value ?: -1
         mStoreCardMoreDetail?.setupView(viewModel.mStoreCardFeatureType)
-        showItems(Triple(viewModel.mStoreCardFeatureType, position, false))
+        showItems(StoreCardInfo(viewModel.mStoreCardFeatureType, position))
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.onViewPagerPageChangeListener.collectLatest { feature ->
                     showItems(feature)
-                    mStoreCardMoreDetail?.setupView(feature.first)
+                    mStoreCardMoreDetail?.setupView(feature.feature)
             }
         }
     }
 
-    private fun showItems(feature: Triple<StoreCardFeatureType?, Int, Boolean>) {
+    private fun showItems(feature: StoreCardInfo) {
         mListOfStoreCardOptions?.showListItem(feature) { result ->
             when (result) {
                 is ListCallback.CardNotReceived -> {
@@ -141,6 +140,5 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
             }
         }
     }
-
 
 }

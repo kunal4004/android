@@ -36,7 +36,7 @@ class TemporaryFreezeCardViewModel @Inject constructor(private val storeCardData
     val currentPagePosition: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
 
    // Filter to display one time popup on landing
-    var isPopupEnabledOnSwipe : Boolean = false
+    var isPopupEnabledOnSwipe : Pair<Boolean,Boolean> = Pair(true, true)
 
 
     init {

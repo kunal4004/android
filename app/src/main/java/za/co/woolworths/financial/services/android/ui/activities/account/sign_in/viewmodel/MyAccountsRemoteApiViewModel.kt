@@ -33,6 +33,8 @@ data class RefreshApiModel(
     val refreshRequestCliActiveOffer: Boolean = false
 )
 
+data class StoreCardInfo(val feature : StoreCardFeatureType?,val position : Int)
+
 @HiltViewModel
 class MyAccountsRemoteApiViewModel @Inject constructor(
     private val collection: TreatmentPlanDataSource,
@@ -71,8 +73,8 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
     private val _onCardTapEvent = MutableSharedFlow<StoreCardFeatureType>(0)
     val onCardTapEvent: SharedFlow<StoreCardFeatureType> get() = _onCardTapEvent
 
-    private val _onViewPagerPageChangeListener = MutableSharedFlow<Triple<StoreCardFeatureType?, Int, Boolean>>(0)
-    val onViewPagerPageChangeListener: SharedFlow<Triple<StoreCardFeatureType?,Int,Boolean>> get() = _onViewPagerPageChangeListener
+    private val _onViewPagerPageChangeListener = MutableSharedFlow<StoreCardInfo>(0)
+    val onViewPagerPageChangeListener: SharedFlow<StoreCardInfo> get() = _onViewPagerPageChangeListener
 
     fun emitEventOnCardTap(storeCardFeatureType : StoreCardFeatureType?){
         viewModelScope.launch {
@@ -125,12 +127,10 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
 
     fun onCardPagerPageSelected(
         storeCardFeatureType: StoreCardFeatureType?,
-        position: Int,
-        isPopupEnabled: Boolean
-    ) {
+        position: Int) {
         viewModelScope.launch {
             mStoreCardFeatureType = storeCardFeatureType
-            _onViewPagerPageChangeListener.emit(Triple(storeCardFeatureType, position, isPopupEnabled))
+            _onViewPagerPageChangeListener.emit(StoreCardInfo(storeCardFeatureType, position))
         }
     }
 

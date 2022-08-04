@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountProductLandingMainFragmentBinding
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.util.AppConstant
@@ -42,7 +43,13 @@ class AccountProductsToolbarHelper(
     fun setHomeLandingToolbar(viewModel: AccountProductsHomeViewModel, onTap: (View) -> Unit) {
         with(binding) {
             infoIconImageView.onClick { onTap(it) }
-            navigateBackImageButton.onClick { onTap(it) }
+            navigateBackImageButton.setOnClickListener {
+                if (viewModel.bottomSheetBehaviorState == BottomSheetBehavior.STATE_SETTLING){
+                    viewModel.setIsBottomSheetBehaviorExpanded(true)
+                    return@setOnClickListener
+                }
+                onTap(it)
+            }
             setNavigationIconWhite()
             setTitleTextColorWhite()
             binding.accountToolbar.setBackgroundColor(Color.TRANSPARENT)
@@ -66,6 +73,7 @@ class AccountProductsToolbarHelper(
 
     fun setManageMyCardDetailsToolbar(isMultipleStoreCard: Boolean, onTap: (View) -> Unit) {
         getDetailToolbar(R.string.my_card_title, if (isMultipleStoreCard) "s" else "")
+        binding.navigateBackImageButton.rotation = 0f
         binding.navigateBackImageButton.onClick { onTap(it) }
         binding.accountToolbar.setBackgroundColor(Color.WHITE)
         setNavigationIconBlack()
@@ -108,4 +116,6 @@ class AccountProductsToolbarHelper(
         setNavigationIconBlack()
         setTitleTextColorBlack()
     }
+
+    fun getBackIcon() = binding.navigateBackImageButton
 }

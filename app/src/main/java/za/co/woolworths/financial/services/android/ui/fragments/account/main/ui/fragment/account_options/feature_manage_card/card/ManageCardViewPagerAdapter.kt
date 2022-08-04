@@ -1,10 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card
 
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.adapter.FragmentViewHolder
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card_slider.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import javax.inject.Inject
+
 
 class ManageCardViewPagerAdapter @Inject constructor(fragment: Fragment) :
     FragmentStateAdapter(fragment) {
@@ -20,6 +23,17 @@ class ManageCardViewPagerAdapter @Inject constructor(fragment: Fragment) :
         this.listOfStoreCards = cardList ?: mutableListOf()
         notifyItemChanged(0, itemCount)
         notifyItemRangeChanged(0, listOfStoreCards?.size ?: 1)
+    }
+
+// Setting the automatically-generated ViewPager2's FrameLayout's clipChildren to false
+    // Uncomment this block
+    override fun onBindViewHolder(
+        holder: FragmentViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        (holder.itemView as ViewGroup).clipChildren = false
+        super.onBindViewHolder(holder, position, payloads)
     }
 
     fun getListOfStoreCards(): MutableList<StoreCardFeatureType>? = this.listOfStoreCards

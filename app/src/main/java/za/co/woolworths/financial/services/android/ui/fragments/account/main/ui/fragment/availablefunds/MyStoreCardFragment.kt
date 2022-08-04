@@ -3,33 +3,26 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentAvailableFundBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.available_funds_fragment.*
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
-import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
+import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.WBottomSheetBehaviour
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.InformationData
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.SystemBarCompat
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.feature_pay_my_account.PaymentsPayuMethodViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.AccountProductsMainFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.loadingState
-import za.co.woolworths.financial.services.android.util.AppConstant
-import za.co.woolworths.financial.services.android.util.CurrencyFormatter
-import za.co.woolworths.financial.services.android.util.SessionUtilities
-import za.co.woolworths.financial.services.android.util.Utils
-import java.net.ConnectException
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -38,8 +31,8 @@ class MyStoreCardFragment @Inject constructor() :
     View.OnClickListener {
 
     val viewModel : AvailableFundsViewModel by activityViewModels()
-    val homeViewModel by viewModels<AccountProductsHomeViewModel>()
-    val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
+    val homeViewModel : AccountProductsHomeViewModel by activityViewModels()
+    val pmaViewModel: PaymentsPayuMethodViewModel by activityViewModels()
 
     @Inject
     lateinit var bottomSheet: WBottomSheetBehaviour
@@ -51,13 +44,13 @@ class MyStoreCardFragment @Inject constructor() :
         super.onViewCreated(view, savedInstanceState)
         viewModel.availableFunds.setUpView()
         statusBarCompat.setLightStatusAndNavigationBar()
+        KotlinUtils.setTransparentStatusBar(requireActivity() as? StoreCardActivity)
         setupToolbar()
         subscribeObserver()
         setGuideline()
         setAccountInArrearsUI()
-        background()
+        setBackground()
         clickListeners()
-        queryPaymentMethod()
     }
 
     private fun showProgress(isLoading: Boolean) {
@@ -82,7 +75,7 @@ class MyStoreCardFragment @Inject constructor() :
         binding.incPayMyAccountButton.root.setOnClickListener(this)
     }
 
-    private fun background() {
+    private fun setBackground() {
         binding.availableFundBackground.setBackgroundResource(R.drawable.store_card_background)
     }
 
@@ -98,6 +91,36 @@ class MyStoreCardFragment @Inject constructor() :
                     else -> return@observe
                 }
             }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            pmaViewModel.paymentMethodsResponseResult.collect { result ->
+                with(result) {
+                    renderSuccess { showLandingScreen(output) }
+
+                    renderLoading { showProgress(isLoading) }
+
+                    renderFailure {}
+
+                    renderNoConnection {}
+
+                    renderHttpFailureFromServer { showLandingScreen(output) }
+
+                    renderEmpty {}
+
+                }
+            }
+        }
+
+        pmaViewModel.requestPaymentPayuMethod()
+
+    }
+
+    private fun showLandingScreen(response : PaymentMethodsResponse?) {
+        when (pmaViewModel.getLandingScreen(response)) {
+            PayMyAccountViewModel.PAYUMethodType.CREATE_USER -> {}
+            PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE -> {}
+            PayMyAccountViewModel.PAYUMethodType.ERROR -> {}
         }
     }
 
@@ -143,72 +166,6 @@ class MyStoreCardFragment @Inject constructor() :
                 }
 
                 else -> Unit
-            }
-        }
-    }
-
-    /****** Pay My Account work *****/
-    fun queryPaymentMethod() {
-        when (!payMyAccountViewModel.isQueryPayUPaymentMethodComplete) {
-            true -> {
-                showProgress(true)
-                val cardInfo = payMyAccountViewModel.getCardDetail()
-                val amountEntered = homeViewModel.product?.let { amountDue -> Utils.removeNegativeSymbol(
-                    CurrencyFormatter.formatAmountToRandAndCent(amountDue)) }
-                val payUMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER
-                val paymentMethodList = cardInfo?.paymentMethodList
-
-                val card = PMACardPopupModel(amountEntered, paymentMethodList, Pair(ApplyNowState.STORE_CARD, homeViewModel.product ?: Account()), payUMethodType)
-                payMyAccountViewModel.setPMACardInfo(card)
-
-                payMyAccountViewModel.queryServicePayUPaymentMethod(
-                    { // onSuccessResult
-                        if (!isAdded) return@queryServicePayUPaymentMethod
-                        showProgress(false)
-                        (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.pmaStatusImpl?.pmaSuccess()
-                        payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
-                        navigateToDeepLinkView(AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT, incPayMyAccountButton)
-                    }, { onSessionExpired ->
-                        if (!isAdded) return@queryServicePayUPaymentMethod
-                        activity?.let {
-                            showProgress(false)
-                            payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
-                            SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, onSessionExpired, it)
-
-                        }
-                    }, { // on unknown http error / general error
-                        if (!isAdded) return@queryServicePayUPaymentMethod
-                        showProgress(false)
-                        payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
-
-                    }, { throwable ->
-                        if (!isAdded) return@queryServicePayUPaymentMethod
-                        activity?.runOnUiThread {
-                           showProgress(false)
-                        }
-                        payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
-                        if (throwable is ConnectException) {
-                            payMyAccountViewModel.isQueryPayUPaymentMethodComplete = false
-                        }
-                    })
-            }
-            false -> return
-        }
-    }
-
-    private fun navigateToDeepLinkView(destination: String, view: View?) {
-        if (activity is AccountSignedInActivity) {
-           viewLifecycleOwner.lifecycleScope.launch {
-                (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.apply {
-                    val deepLinkingObject = getDeepLinkData()
-                    when (deepLinkingObject?.get("feature")?.asString) {
-                        destination -> {
-                            deleteDeepLinkData()
-                            if (isProductInGoodStanding())
-                                view?.performClick()
-                        }
-                    }
-                }
             }
         }
     }

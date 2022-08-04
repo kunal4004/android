@@ -7,6 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountOptionsManageCardListFragmentBinding
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.StoreCardInfo
 import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.StoreCardNotReceivedDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
@@ -41,15 +42,15 @@ class ManageStoreCardLandingList(
     }
 
     fun showListItem(
-        storeCardFeatureType: Triple<StoreCardFeatureType?, Int?, Boolean>,
+        storeCardFeatureType: StoreCardInfo,
         callback: (ListCallback) -> Unit
     ) {
         fragment?.viewLifecycleOwner?.lifecycleScope?.launch {
             hideAllRows()
-            when (val featureType = storeCardFeatureType.first) {
+            when (val featureType = storeCardFeatureType.feature) {
 
                 is StoreCardFeatureType.ActivateVirtualTempCard ->
-                    showActivateVirtualTempCardRow(featureType.isTemporaryCardEnabled, storeCardFeatureType.third)
+                    showActivateVirtualTempCardRow(featureType.isTemporaryCardEnabled)
 
                 is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive ->
                     showInstantReplacementCardAndInactive()
@@ -58,7 +59,7 @@ class ManageStoreCardLandingList(
                     showStoreCardIsTemporaryFreeze(featureType)
 
                 is StoreCardFeatureType.TemporaryCardEnabled ->
-                    showTemporaryCardEnabled(featureType, callback, storeCardFeatureType.third)
+                    showTemporaryCardEnabled(featureType, callback)
 
                 StoreCardFeatureType.ManageMyCard ->
                     showManageMyCardRow()
@@ -76,11 +77,8 @@ class ManageStoreCardLandingList(
 
     private fun showTemporaryCardEnabled(
         featureType: StoreCardFeatureType.TemporaryCardEnabled,
-        callback: (ListCallback) -> Unit,
-        isPopupEnabled: Boolean
-    ) {
+        callback: (ListCallback) -> Unit) {
         includeListOptions.payWithCardFragmentContainerView.visibility = VISIBLE
-        if (isPopupEnabled) {
             callback(
                 ListCallback.CardNotReceived(
                     isCardNotReceived = cardFreezeViewModel.isCardNotReceived(
@@ -88,7 +86,6 @@ class ManageStoreCardLandingList(
                     )
                 )
             )
-        }
     }
 
     fun setupVirtualTemporaryCardGraph(){
@@ -132,7 +129,7 @@ class ManageStoreCardLandingList(
         }
     }
 
-    private fun showActivateVirtualTempCardRow(isTemporaryCardEnabled: Boolean, isPopupEnabled: Boolean) {
+    private fun showActivateVirtualTempCardRow(isTemporaryCardEnabled: Boolean) {
         with(includeListOptions) {
             activateVirtualTempCardDivider.visibility = VISIBLE
             activateVirtualTempCardRelativeLayout.visibility = VISIBLE
@@ -140,9 +137,6 @@ class ManageStoreCardLandingList(
             if (isTemporaryCardEnabled){
                 linkNewCardDivider.visibility = GONE
                 linkNewCardRelativeLayout.visibility = GONE
-                // auto tap enabled on landing
-//                if (isPopupEnabled)
-//                    activateVirtualTempCardRelativeLayout.performClick()
             }else {
                 linkNewCardDivider.visibility = VISIBLE
                 linkNewCardRelativeLayout.visibility = VISIBLE

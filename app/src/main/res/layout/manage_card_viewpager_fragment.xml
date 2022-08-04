@@ -6,14 +6,6 @@
     android:background="@color/white"
     android:layout_height="wrap_content">
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/cardItemViewPager"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/cardTabLayout"
         android:layout_width="0dp"
@@ -25,12 +17,20 @@
         app:tabBackground="@drawable/tab_selector"
         app:tabGravity="center"
         app:tabIndicatorHeight="0dp"
-        app:tabPaddingBottom="@dimen/ten_dp"
         app:tabPadding="0dp"
         app:tabRippleColor="@android:color/transparent"
         app:tabSelectedTextColor="@android:color/transparent"
         app:tabTextColor="@android:color/transparent"
         tools:ignore="SpeakableTextPresentCheck" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/cardItemViewPager"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <View android:id="@+id/tabHiddenMargin"
         app:layout_constraintEnd_toEndOf="parent"

@@ -2,11 +2,16 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 
 import android.app.Activity
 import android.graphics.Color
+import android.os.Build
 import android.view.View
+import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+import android.view.WindowInsetsController
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setWindowFlag
 import javax.inject.Inject
 
 interface ISystemBarCompat {
@@ -19,10 +24,18 @@ interface ISystemBarCompat {
 class SystemBarCompat @Inject constructor(private val activity: Activity) : ISystemBarCompat {
 
     override fun setLightStatusAndNavigationBar() {
+
+        setSystemUiLightStatusBar(activity, true)
         val windowInsetsController = ViewCompat.getWindowInsetsController(activity.window.decorView)
         windowInsetsController?.isAppearanceLightNavigationBars = false
         windowInsetsController?.isAppearanceLightStatusBars = false
-        (activity as? AppCompatActivity)?.window?.statusBarColor = Color.TRANSPARENT
+        (activity as? AppCompatActivity)?.apply {
+            setWindowFlag(
+                WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
+                false
+            )
+         window?.statusBarColor = Color.TRANSPARENT
+        }
     }
 
     override fun setDarkStatusAndNavigationBar() {
@@ -55,4 +68,31 @@ class SystemBarCompat @Inject constructor(private val activity: Activity) : ISys
         }
     }
 
+    @Suppress("DEPRECATION")
+    private fun setSystemUiLightStatusBar(activity: Activity?, isLightStatusBar: Boolean) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val systemUiAppearance = if (isLightStatusBar) {
+                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                } else {
+                    0
+                }
+                activity?.window?.insetsController?.setSystemBarsAppearance(systemUiAppearance,
+                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS)
+            } else {
+                val systemUiVisibilityFlags = if (isLightStatusBar) {
+                    activity?.window?.decorView?.systemUiVisibility?.or(
+                        SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                    )
+                } else {
+                    activity?.window?.decorView?.systemUiVisibility?.and(
+                        SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+                    )
+                }
+                if (systemUiVisibilityFlags != null) {
+                    activity?.window?.decorView?.systemUiVisibility = systemUiVisibilityFlags
+                }
+            }
+        }
+    }
 }

@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountOptionsManageCardFragmentBinding
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.StoreCardInfo
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -60,10 +61,10 @@ class ManageCardLandingHeaderItems(
 
     fun getString(@StringRes id: Int, formatArgs: String = "") = fragment?.getString(id, formatArgs)
 
-    fun showHeaderItem(storeCardFeatureType: Triple<StoreCardFeatureType?, Int, Boolean>) {
+    fun showHeaderItem(storeCardFeatureType: StoreCardInfo) {
         myCardLabelVisibility(false)
         manageCardLabelVisibility(isVisible = false, isLabelUnderline = false)
-        when (val featureType = storeCardFeatureType.first) {
+        when (val featureType = storeCardFeatureType.feature) {
 
             is StoreCardFeatureType.ActivateVirtualTempCard -> {
                 myCardLabelVisibility(true)

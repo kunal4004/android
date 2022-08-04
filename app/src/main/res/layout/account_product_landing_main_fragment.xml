@@ -8,8 +8,7 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/accountToolbar"
         android:layout_width="match_parent"
-        android:paddingTop="@dimen/_30ssp"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/_60sdp"
         android:background="@android:color/transparent"
         android:elevation="2dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,7 +28,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="@dimen/margin_end"
-                android:background="@null"
+                android:background="@android:color/transparent"
                 app:srcCompat="@drawable/back_white"
                 tools:ignore="ContentDescription" />
 
@@ -38,13 +37,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:layout_centerVertical="true"
                 android:fontFamily="@font/futura_semi_bold_ttf"
-                android:gravity="center"
                 android:letterSpacing="0.2"
                 android:textAllCaps="true"
                 android:textColor="@color/white"
-                android:textSize="@dimen/_12ssp"
+                android:textSize="@dimen/_13ssp"
                 tools:ignore="UnusedAttribute" />
 
             <ImageButton

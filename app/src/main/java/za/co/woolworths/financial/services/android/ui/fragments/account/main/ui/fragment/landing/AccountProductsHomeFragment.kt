@@ -2,12 +2,15 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountProductsHomeFragmentBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.IBottomSheetBehaviour
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.WBottomSheetBehaviour
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountProductLandingDao
@@ -23,6 +26,8 @@ class AccountProductsHomeFragment : Fragment(R.layout.account_products_home_frag
 
     private lateinit var uiComponent: UIComponent
 
+    val homeViewModel  : AccountProductsHomeViewModel by activityViewModels()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = AccountProductsHomeFragmentBinding.bind(view)
@@ -32,27 +37,27 @@ class AccountProductsHomeFragment : Fragment(R.layout.account_products_home_frag
 
     private fun setupBottomSheet(binding: AccountProductsHomeFragmentBinding) {
         with(uiComponent) {
+
             with(binding) {
                 sheetBehavior = init(bottomSheetBehaviourView)
                 sheetBehavior?.addBottomSheetCallback(callback { slideOffset ->
-                    val homeIcon = (activity as? StoreCardActivity)?.findViewById<Button>(android.R.id.home)
+                    val homeIcon = (activity as? StoreCardActivity)?.getBackIcon()
+                    homeIcon?.rotation = slideOffset * -90
+                    homeViewModel.bottomSheetBehaviorState = sheetBehavior?.state
                     animateDim(slideOffset, dimView)
-                    animateDim(slideOffset, homeIcon)
-                    //animateDim(slideOffset, (activity as? StoreCardActivity)?.binding?.accountToolbar)
-                    homeIcon?.rotation = slideOffset * 90
                 })
             }
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                homeViewModel.isBottomSheetBehaviorExpanded.collectLatest { isExpanded ->
+                  if (isExpanded){
+                      sheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
+                      homeViewModel.setIsBottomSheetBehaviorExpanded(false)
+                  }
+                }
+            }
+
         }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-
-    }
-
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-
     }
 
 }
