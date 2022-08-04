@@ -1036,7 +1036,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 if (SessionUtilities.getInstance().isUserAuthenticated) {
                     navigateToMyListFragment()
                 } else {
-                    ScreenManager.presentSSOSignin(activity, LOGIN_MY_LIST_REQUEST_CODE)
+                    navigateToMyListFragment()
                 }
             }
         }

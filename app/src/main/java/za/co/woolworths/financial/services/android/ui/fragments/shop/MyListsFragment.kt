@@ -45,6 +45,10 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
 
     private var mBottomNavigator: BottomNavigator? = null
 
+    companion object {
+        private const val MY_LIST_SIGN_IN_REQUEST_CODE = 7878
+    }
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -64,6 +68,16 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
         initUI()
         authenticateUser(true)
         setListener()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            MY_LIST_SIGN_IN_REQUEST_CODE  -> {
+                setYourDeliveryLocation()
+                getShoppingList(true)
+            }
+        }
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -231,7 +245,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
             }
             R.id.btnGoToProduct -> {
                 when (btnGoToProduct.tag) {
-                    0 -> activity?.let { ScreenManager.presentSSOSignin(it) }
+                    0 -> activity?.let { ScreenManager.presentSSOSignin(it, MY_LIST_SIGN_IN_REQUEST_CODE) }
                     1 -> navigateToCreateListFragment(mutableListOf())
                 }
             }
