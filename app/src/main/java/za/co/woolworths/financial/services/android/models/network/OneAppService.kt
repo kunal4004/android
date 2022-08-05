@@ -178,6 +178,7 @@ object OneAppService : RetrofitConfig() {
     fun getRootCategory(locationEnabled: Boolean, location: Location?): Call<RootCategories> {
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
         // Pass storeId value of 01 fulfillment type
+        val fulfillmentStoreId01 = Utils.retrieveStoreId("01")
         var locationCord = location
         if (!locationEnabled) {
             locationCord = null
@@ -185,15 +186,15 @@ object OneAppService : RetrofitConfig() {
 
         return mApiInterface.getRootCategories(
             getSessionToken(),
-            getDeviceIdentityToken(), locationCord?.latitude, locationCord?.longitude, suburbId, storeId)
+            getDeviceIdentityToken(), locationCord?.latitude, locationCord?.longitude, suburbId, storeId,fulfillmentStoreId01)
     }
 
     fun getSubCategory(category_id: String, version: String): Call<SubCategories> {
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
-
+        val fulfillmentStoreId01 = Utils.retrieveStoreId("01")
         return mApiInterface.getSubCategory(
             getSessionToken(), getDeviceIdentityToken(),
-            category_id, version, suburbId, storeId)
+            category_id, version, suburbId, storeId,fulfillmentStoreId01)
     }
 
     fun getProvinces(): Call<ProvincesResponse> {
