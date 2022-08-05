@@ -112,6 +112,7 @@ class KotlinUtils {
         var isCncTabCrossClicked: Boolean? = false
         var isDashTabCrossClicked: Boolean? = false
         var isComingFromCncTab: Boolean? = false
+        var fullfillmentTypeClicked: String? = ""
         var browsingDeliveryType: Delivery? = getPreferredDeliveryType()
         @JvmStatic
         var browsingCncStore: Store? = null

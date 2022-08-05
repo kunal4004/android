@@ -208,6 +208,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
          timer =  object : CountDownTimer(timeduration, 100) {
                 override fun onTick(millisUntilFinished: Long) {}
                 override fun onFinish() {
+                    KotlinUtils.isCncTabCrossClicked = true
                     blackToolTipLayout?.visibility = View.GONE
                 }
             }.start()
@@ -584,7 +585,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     viewpager_main?.adapter?.instantiateItem(
                         viewpager_main,
                         viewpager_main.currentItem
-                    ) as? StandardDeliveryFragment
+                    ) as?  StandardDeliveryFragment
                 departmentsFragment?.initView()
             }
             CLICK_AND_COLLECT_TAB.index -> {
@@ -744,6 +745,19 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
            timer =  object : CountDownTimer(timeduration, 100) {
                 override fun onTick(millisUntilFinished: Long) {}
                 override fun onFinish() {
+                    when(KotlinUtils.fullfillmentTypeClicked) {
+                        Delivery.STANDARD.name -> {
+                            KotlinUtils.isDeliveryLocationTabCrossClicked = true
+                        }
+
+                        Delivery.CNC.name -> {
+                            KotlinUtils.isCncTabCrossClicked = true
+                        }
+
+                        Delivery.DASH.name -> {
+                            KotlinUtils.isDashTabCrossClicked = true
+                        }
+                    }
                     blackToolTipLayout?.visibility = View.GONE
                 }
             }.start()
@@ -751,6 +765,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun showStandardDeliveryToolTip() {
+
 
         if (KotlinUtils.isLocationSame == false) {
             blackToolTipLayout?.visibility = View.VISIBLE
@@ -769,6 +784,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
 
         blackToolTipLayout?.visibility = View.VISIBLE
+        KotlinUtils.fullfillmentTypeClicked = Delivery.STANDARD.name
         validateLocationResponse?.validatePlace?.let {
             fashionItemDateText?.visibility = View.VISIBLE
             foodItemTitle?.visibility = View.VISIBLE
@@ -801,6 +817,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
      fun showClickAndCollectToolTip(isStoreSelectedForBrowsing:Boolean = false, browsingStoreId: String? = "") {
+
          if (KotlinUtils.isLocationSame == false) {
              blackToolTipLayout?.visibility = View.VISIBLE
          }
@@ -825,6 +842,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
         }
         blackToolTipLayout?.visibility = View.VISIBLE
+        KotlinUtils.fullfillmentTypeClicked = Delivery.CNC.name
 
         validateLocationResponse?.validatePlace?.let { validatePlace ->
             deliveryCollectionTitle?.visibility = View.VISIBLE
@@ -893,6 +911,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
 
         blackToolTipLayout?.visibility = View.VISIBLE
+        KotlinUtils.fullfillmentTypeClicked = Delivery.DASH.name
 
         validateLocationResponse?.validatePlace?.let {
             deliveryCollectionTitle?.text = getString(R.string.next_dash_delivery_timeslot_text)
