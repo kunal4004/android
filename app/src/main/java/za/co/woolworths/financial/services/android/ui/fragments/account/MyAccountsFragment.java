@@ -1711,6 +1711,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             clearAllCookies();
             setAccountResponse(activity, null);
             onSignOut();
+            Utils.clearPreferredDeliveryLocation();
             initialize();
             deletedSuccessShowPopup();
         }
