@@ -31,18 +31,31 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/itemName"
-            style="@style/my_orders_textview_style_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/sixteen_dp"
             android:layout_marginRight="@dimen/eight_dp"
             android:layout_toLeftOf="@+id/price"
             android:layout_toRightOf="@+id/imProductImage"
             android:ellipsize="end"
+            android:fontFamily="@font/myriad_pro_regular"
             android:maxLines="2"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textSize="@dimen/fourteen_sp" />
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/price"
-            style="@style/my_orders_textview_style_order_history" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/myriad_pro_semi_bold"
+            android:textSize="@dimen/fourteen_sp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:textColor="@color/black"/>
+
+
     </RelativeLayout>
 
 </LinearLayout>
