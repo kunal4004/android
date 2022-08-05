@@ -43,10 +43,22 @@
             style="@style/my_orders_textview_style_3" />
     </RelativeLayout>
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/promotion_note"
-        style="@style/promotion_note_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:visibility="gone"
-        android:text="@string/promotion_note" />
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/bg_light_overlay" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            style="@style/promotion_note_style"
+            android:text="@string/promotion_note" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </LinearLayout>
