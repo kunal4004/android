@@ -13,7 +13,7 @@ class ApplyNowMainAdapter(var data: List<Children>) :
     RecyclerView.Adapter<ApplyNowMainAdapter.ApplyNowMainViewHolder>() {
 
     init {
-        data.sortedBy { it.order }
+        data = data.sortedBy { it.order }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ApplyNowMainViewHolder {
