@@ -41,7 +41,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
 
     companion object {
         val ARG_PARAM = "order"
-
+        val PROMO_NOTE_FOOD = "FOOD"
         fun getInstance(order: Order, isNaviagtedFromMyAccount: Boolean = false) =
             OrderDetailsFragment().withArgs {
                 putString(ARG_PARAM, Utils.toJson(order))

@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.order_details_commerce_item.view.*
 import kotlinx.android.synthetic.main.order_details_gift_commerce_item.view.*
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
@@ -24,7 +25,7 @@ import za.co.woolworths.financial.services.android.util.WFormatter
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var dataList: ArrayList<OrderDetailsItem>) :  RecyclerView.Adapter<OrdersBaseViewHolder>() {
-
+    private var isContainsFood : Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrdersBaseViewHolder {
         when (viewType) {
@@ -207,6 +208,10 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                 price?.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item?.priceInfo?.amount)
                 price?.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                 setOnClickListener { listner.onOpenProductDetail(item) }
+                if(isContainsFood && position == dataList.size - 1)
+                    promotion_note.visibility = View.VISIBLE
+                else
+                    promotion_note.visibility = View.GONE
             }
 
         }
@@ -230,6 +235,9 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
             val orderItemDetail = dataList[position] as? OrderDetailsItem
             val headerText = "${orderItemDetail?.item}${if (orderItemDetail?.orderItemLength!! > 1) "S" else ""}"
             itemView.header?.text = headerText
+            if(headerText.contains(OrderDetailsFragment.PROMO_NOTE_FOOD)) {
+                isContainsFood = true
+            } else { isContainsFood = false }
         }
     }
 

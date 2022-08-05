@@ -685,7 +685,7 @@
     <string name="purchase_date">Purchase Date:</string>
     <string name="past_orders">PAST ORDERS</string>
     <string name="order_items">order items</string>
-    <string name="promotion_note">Note: Promotions in store and online may vary.</string>
+    <string name="promotion_note"><b>Note:</b> Promotions in store and online may vary.</string>
     <string name="order_page_title_prefix">ORDER:\u0020</string>
     <string name="empty_order_view_title">No order history</string>
     <string name="empty_order_view_desc">We see that you have no order history. Would you like to start shopping?</string>
