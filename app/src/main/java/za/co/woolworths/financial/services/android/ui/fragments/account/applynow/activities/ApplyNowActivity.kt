@@ -6,9 +6,8 @@ import android.view.View.GONE
 import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.lifecycleScope
-import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ActivityApplyNowBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
@@ -17,6 +16,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.models.dto.account.applynow.ApplyNowSectionReference
 import za.co.woolworths.financial.services.android.models.dto.account.applynow.Content
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.adapters.ApplyNowFragAdapter
@@ -32,10 +32,8 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityApplyNowBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
-        viewModel.applyNowState =
-            intent.extras?.get(AccountSignedInPresenterImpl.APPLY_NOW_STATE) as ApplyNowState
+        setContentView(binding.root)
+        viewModel.applyNowState = intent.extras?.get(AccountSignedInPresenterImpl.APPLY_NOW_STATE) as ApplyNowState
         with(binding) {
             viewModel.setupBottomSheetBehaviour(incBottomSheetLayout)
             bottomSheetListener()
@@ -53,10 +51,20 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
         toolbar.layoutParams = params
     }
 
+    private fun ActivityApplyNowBinding.setHeader(){
+        viewModel.getApplyNowResourcesData().apply{
+            incAccountSalesFrontLayout.constraintLayoutSignOut.background = AppCompatResources.getDrawable(this@ApplyNowActivity,this.cardHeader.drawables[0])
+            incAccountSalesFrontLayout.accountSalesCardHeader.cardFrontImageView.let {
+                AnimationUtilExtension.animateViewPushDown(it)
+                it.setImageResource(this.cardHeader.drawables[1])
+            }
+            incAccountSalesFrontLayout.accountSalesCardHeader.cardBackImageView.let {
+                AnimationUtilExtension.animateViewPushDown(it)
+                it.setImageResource(this.cardHeader.drawables[2])
+            }
+        }
+    }
     private fun ActivityApplyNowBinding.setupView(content: Content) {
-        incAccountSalesFrontLayout.accountSalesCardHeader.cardFrontImageView.visibility = GONE
-        incAccountSalesFrontLayout.accountSalesCardHeader.cardBackImageView.visibility = GONE
-//        incAccountSalesFrontLayout.root.account.root.cardFrontImageView.setImageResource()
         incAccountSalesFrontLayout.storeCardDescriptionTextView.text = content.description
         incAccountSalesFrontLayout.storeCardTitleTextView.text = content.title
     }
@@ -68,7 +76,6 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
         navigateBackImageButton.setOnClickListener(this@ApplyNowActivity)
     }
 
-
     private fun callApplyNow(contentId: String) {
         lifecycleScope.launchWhenStarted {
             viewModel.applyNowResponse(contentId = contentId).collect { response ->
@@ -78,10 +85,11 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
                         binding.apply {
                             hideShimmer()
                             response.output.content.apply {
-                                viewpagerApplyNow.adapter =
-                                    ApplyNowFragAdapter(this@ApplyNowActivity, this.size)
+                                viewpagerApplyNow.adapter = ApplyNowFragAdapter(this@ApplyNowActivity, this.size)
                                 handleTabLayoutVisibility(this.size)
                                 setupView(this[0])
+                                viewModel.setApplyNowStateForCC(ApplyNowSectionReference.valueOf(this[0].reference))
+                                setHeader()
                             }
 
                         }
@@ -115,7 +123,6 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
                 viewTabLayoutApplyNowSeparator.visibility = GONE
             }
         }
-
     }
 
     private fun ActivityApplyNowBinding.setupTablayout() {
@@ -123,13 +130,15 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
             viewModel.applyNowResponse.value!!.content[position].apply {
                 tab.text = this.title.substringBefore(' ')
             }
-
         }.attach()
         tabLayoutApplyNow.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
-                setupView(viewModel.applyNowResponse.value!!.content[tab.position])
+                viewModel.applyNowResponse.value!!.content[tab.position].apply {
+                    viewModel.setApplyNowStateForCC(ApplyNowSectionReference.valueOf(this.reference))
+                    setupView(this)
+                }
+                setHeader()
             }
-
             override fun onTabUnselected(tab: TabLayout.Tab) {}
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
@@ -138,10 +147,7 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
     private fun bottomSheetListener() {
         viewModel.sheetBehavior?.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-
-            }
-
+            override fun onStateChanged(bottomSheet: View, newState: Int) {}
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 binding.apply {
                     AnimationUtilExtension.transitionBottomSheetBackgroundColor(
@@ -180,13 +186,10 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
                         viewModel.viewApplicationStatusLinkInExternalBrowser(),
                         this@ApplyNowActivity
                     )
-
                 }
-
             }
         }
     }
-
     override fun onBackPressed() {
         // Collapse overlay view if view is opened, else navigate to previous screen
         viewModel.sheetBehavior?.apply {

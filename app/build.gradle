@@ -300,6 +300,7 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0'
     implementation 'com.daasuu:BubbleLayout:1.2.0'
+    implementation 'com.github.corouteam:GlideToVectorYou:v2.0.0'
 
     // Import the Firebase BoM
     implementation platform('com.google.firebase:firebase-bom:28.4.0')

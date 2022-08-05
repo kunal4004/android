@@ -44,10 +44,9 @@ class ApplyNowExpandableAdapter(parentItemList: List<ParentListItem?>?) : Expand
         fun bind(subCategoryModel: ChildrenItems, holder: ApplyNowBenefitsParentViewHolder) {
             with(MoreBenefitParentItemBinding.bind(itemView)){
                 moreBenefitsTitleTextView.text = subCategoryModel.title
+                moreBenefitsIconImageView.loadSvg(subCategoryModel.imageUrl)
                 holder.itemView.setOnClickListener {
                     if (holder.isExpanded) holder.collapseView() else holder.expandView()
-                    moreBenefitsIconImageView.loadSvg(subCategoryModel.imageUrl)
-
                 }
             }
         }
