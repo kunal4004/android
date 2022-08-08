@@ -6,6 +6,7 @@
 
     <com.daasuu.bl.BubbleLayout
         android:id="@+id/bubbleLayout"
+        android:layout_marginTop="@dimen/eight_dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/sixteen_dp"
@@ -13,7 +14,7 @@
         app:bl_arrowDirection="top"
         app:bl_arrowHeight="@dimen/ten_dp"
         app:bl_arrowWidth="@dimen/twenty_dp"
-        app:bl_bubbleColor="@color/black"
+        app:bl_bubbleColor="@color/color_222222"
         app:bl_cornersRadius="@dimen/_8sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

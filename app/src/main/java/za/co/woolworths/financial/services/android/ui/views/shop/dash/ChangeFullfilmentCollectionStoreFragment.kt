@@ -207,7 +207,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
     private fun showSetLocationUi() {
         layoutClickAndCollectStore?.visibility = View.GONE
         layoutEdgeCaseScreen?.visibility = View.VISIBLE
-        img_view?.setImageResource(R.drawable.location_disabled)
+        img_view?.setImageResource(R.drawable.ic_cnc_set_location)
         txt_dash_title?.text = bindString(R.string.set_location_title)
         txt_dash_sub_title?.text = bindString(R.string.device_location_service_disabled_subTitle)
         btn_dash_set_address?.text = bindString(R.string.set_location)
@@ -219,7 +219,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
     private fun showNoCollectionStoresUi() {
         layoutClickAndCollectStore?.visibility = View.GONE
         layoutEdgeCaseScreen?.visibility = View.VISIBLE
-        img_view?.setImageResource(R.drawable.location_disabled)
+        img_view?.setImageResource(R.drawable.ic_cnc_set_location)
         txt_dash_title?.text = bindString(R.string.collection_store_title)
         txt_dash_sub_title?.text = bindString(R.string.suburb_not_deliverable_description)
         btn_dash_set_address?.text = bindString(R.string.change_location)
