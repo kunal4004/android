@@ -274,7 +274,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         KotlinUtils.presentEditDeliveryGeoLocationActivity(
             requireActivity(),
             REQUEST_CODE,
-            Delivery.getType(getDeliveryType()?.deliveryType),
+            Delivery.getType(getDeliveryType()?.deliveryType) ?: KotlinUtils.browsingDeliveryType,
             getDeliveryType()?.address?.placeId ?: ""
         )
     }
@@ -517,10 +517,25 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             || requestCode == DEPARTMENT_LOGIN_REQUEST && viewpager_main.currentItem == STANDARD_TAB.index
         ) {
             updateCurrentTab(getDeliveryType()?.deliveryType)
-            val fragment = viewpager_main?.adapter?.instantiateItem(
+            var fragment = viewpager_main?.adapter?.instantiateItem(
                 viewpager_main,
                 viewpager_main.currentItem
-            ) as? StandardDeliveryFragment
+            )
+            fragment = when(viewpager_main.currentItem) {
+                STANDARD_TAB.index -> {
+                    fragment as? StandardDeliveryFragment
+                }
+                CLICK_AND_COLLECT_TAB.index -> {
+                    fragment as? ChangeFullfilmentCollectionStoreFragment
+                }
+                DASH_TAB.index -> {
+                    fragment as? DashDeliveryAddressFragment
+                }
+                else -> {
+                    fragment as? StandardDeliveryFragment
+                }
+            }
+
             fragment?.onActivityResult(requestCode, resultCode, data)
         }
         if (requestCode == DASH_SET_ADDRESS_REQUEST_CODE) {
