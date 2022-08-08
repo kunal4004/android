@@ -74,9 +74,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
         android:background="@color/shimmer_view_background"
-        app:layout_constraintBottom_toBottomOf="@id/instructionTxtShimmerFrameLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/instructionTxtShimmerFrameLayout">
+        app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator1"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <Switch
             android:id="@+id/switchSpecialDeliveryInstruction"
@@ -150,9 +149,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
         android:background="@color/shimmer_view_background"
-        app:layout_constraintBottom_toBottomOf="@id/giftInstructionTxtShimmerFrameLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/giftInstructionTxtShimmerFrameLayout">
+        app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator2"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <Switch
             android:id="@+id/switchGiftInstructions"
