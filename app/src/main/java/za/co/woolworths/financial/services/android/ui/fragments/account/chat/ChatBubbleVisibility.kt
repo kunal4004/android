@@ -128,13 +128,12 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
                         }
 
                         ApplyNowState.STORE_CARD -> isChatVisibleForAccountProductsLanding(applyNowState) &&
-                        when (activity) {
+                                when (activity) {
                                     is AccountSignedInActivity -> false
                                     is PayMyAccountActivity -> !storeCard.paymentOptions && isAccountNotChargeOff(AccountsProductGroupCode.STORE_CARD)
                                     is WTransactionsActivity -> !storeCard.transactions && isAccountNotChargeOff(AccountsProductGroupCode.STORE_CARD)
                                     is AbsaStatementsActivity, is StatementActivity -> !storeCard.statements && isAccountNotChargeOff(AccountsProductGroupCode.STORE_CARD)
                                     else -> false
-
                                 }
                         ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD -> isChatVisibleForAccountProductsLanding(applyNowState) &&
                                 when (activity) {
@@ -169,8 +168,6 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
                             is WTransactionsActivity -> storeCard.transactions = true  && isAccountNotChargeOff(AccountsProductGroupCode.STORE_CARD)
                             is AbsaStatementsActivity, is StatementActivity -> storeCard.statements = true && isAccountNotChargeOff(AccountsProductGroupCode.STORE_CARD)
                         }
-
-
                         ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD -> when (activity) {
                             is AccountSignedInActivity -> isChatVisibleForAccountProductsLanding(applyNowState) && creditCard.landing
                             is PayMyAccountActivity -> creditCard.paymentOptions = true && isAccountNotChargeOff(AccountsProductGroupCode.CREDIT_CARD)

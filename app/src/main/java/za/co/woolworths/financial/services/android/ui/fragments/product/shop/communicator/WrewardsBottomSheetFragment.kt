@@ -68,7 +68,7 @@ class WrewardsBottomSheetFragment(activity: FragmentActivity?) : WBottomSheetDia
                 ), activity)
                 dismissAllowingStateLoss()
                 AnimationUtilExtension.animateViewPushDown(v)
-                Utils.openLinkInInternalWebView(AppConfigSingleton.wrewardsLink)
+                Utils.openLinkInInternalWebView(AppConfigSingleton.wrewardsLink, true)
             }
             R.id.addItNowButton -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_ALREADY_HAVE_WREWARD, hashMapOf(
