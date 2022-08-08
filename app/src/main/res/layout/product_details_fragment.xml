@@ -14,7 +14,6 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-
         <za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollView
             android:id="@+id/scrollView"
             android:layout_width="match_parent"
@@ -122,29 +121,29 @@
 
                 </RelativeLayout>
 
-                <Space
+               <!-- <Space
                     android:id="@+id/space"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/twenty_four_dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/relViewPager" />
-
+-->
                 <TextView
                     android:id="@+id/styleBy"
                     style="@style/futura_semi_bold_black_12_text_style"
                     android:textAllCaps="true"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:layout_constraintEnd_toEndOf="@id/right_guideline"
                     app:layout_constraintStart_toStartOf="@id/left_guideline"
-                    app:layout_constraintTop_toBottomOf="@id/space" />
+                    app:layout_constraintTop_toBottomOf="@id/relViewPager" />
 
                 <TextView
                     android:id="@+id/brandName"
                     style="@style/futura_semi_bold_black_12_text_style"
                     android:layout_marginTop="@dimen/twelve_dp"
                     android:textAllCaps="true"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@id/right_guideline"
                     app:layout_constraintStart_toStartOf="@id/left_guideline"
                     app:layout_constraintTop_toBottomOf="@id/styleBy" />

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/five_dp"
-    android:background="@color/unavailable_color">
+    android:background="@color/white">
 
     <FrameLayout
         android:id="@+id/mainImgLayout"
