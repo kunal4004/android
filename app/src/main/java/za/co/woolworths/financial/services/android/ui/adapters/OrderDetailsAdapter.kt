@@ -208,10 +208,8 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                 price?.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item?.priceInfo?.amount)
                 price?.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                 setOnClickListener { listner.onOpenProductDetail(item) }
-                if(isContainsFood && position == dataList.size - 1)
-                    promotion_note.visibility = View.VISIBLE
-                else
-                    promotion_note.visibility = View.GONE
+
+                promotion_note.visibility = if(isContainsFood && position == dataList.size - 1) View.VISIBLE else View.GONE
             }
 
         }
