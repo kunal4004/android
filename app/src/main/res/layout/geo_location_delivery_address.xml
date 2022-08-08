@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/white">
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -30,8 +30,8 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/deliveryBagIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/hundred_and_thirty_six_dp"
+        android:layout_height="@dimen/hundred_and_thirty_six_dp"
         android:layout_marginBottom="@dimen/ten_dp"
         app:layout_constraintBottom_toTopOf="@id/changeFulfillmentTitleTextView"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
@@ -46,7 +46,7 @@
         android:layout_marginTop="@dimen/ten_dp"
         android:layout_marginBottom="@dimen/ten_dp"
         android:text="@string/standard_delivery"
-        android:textSize="@dimen/twenty_sp"
+        android:textSize="@dimen/twenty_four_sp"
         app:layout_constraintBottom_toTopOf="@id/changeFulfillmentSubTitleTextView"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart" />
@@ -79,7 +79,7 @@
         android:text="@string/geoloc_delivery"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:textSize="@dimen/_10ssp"
+        android:textSize="@dimen/twelve_sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/geoCollectTab"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
@@ -98,8 +98,8 @@
         android:paddingEnd="@dimen/_4sdp"
         android:text="@string/click_collect"
         android:textAllCaps="false"
-        android:textColor="@color/color_444444"
-        android:textSize="@dimen/_10ssp"
+        android:textColor="@color/color_222222"
+        android:textSize="@dimen/twelve_sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/geoDashTab"
         app:layout_constraintStart_toEndOf="@+id/geoDeliveryTab"
@@ -118,8 +118,8 @@
         android:paddingEnd="@dimen/_4sdp"
         android:text="@string/dash_delivery"
         android:textAllCaps="false"
-        android:textColor="@color/color_444444"
-        android:textSize="@dimen/_10ssp"
+        android:textColor="@color/color_222222"
+        android:textSize="@dimen/twelve_sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toEndOf="@+id/geoCollectTab"
@@ -130,7 +130,7 @@
         style="@style/futura_semi_bold"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/sixteen_dp"
-        android:layout_marginTop="@dimen/_24sdp"
+        android:layout_marginTop="@dimen/thirty_two_dp"
         android:background="@color/color_yellow_FEE600"
         android:gravity="center"
         android:paddingStart="@dimen/five_dp"
@@ -148,7 +148,7 @@
         style="@style/futura_semi_bold"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/sixteen_dp"
-        android:layout_marginTop="@dimen/_24sdp"
+        android:layout_marginTop="@dimen/thirty_two_dp"
         android:background="@color/color_yellow_FEE600"
         android:gravity="center"
         android:paddingStart="@dimen/five_dp"
@@ -165,7 +165,7 @@
         android:id="@+id/tabsDivider"
         android:layout_width="0dp"
         android:layout_height="@dimen/_1sdp"
-        android:layout_marginBottom="@dimen/_24sdp"
+        android:layout_marginBottom="@dimen/twenty_four_dp"
         android:background="@color/swatch_border_color"
         app:layout_constraintBottom_toTopOf="@id/earliestDeliveryDateLabel"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
@@ -181,7 +181,7 @@
         android:minWidth="@dimen/_55sdp"
         android:text="@string/earliest_food_delivery_date"
         android:textColor="@color/color_666666"
-        android:textSize="@dimen/_13ssp"
+        android:textSize="@dimen/fifteen_sp"
         app:layout_constraintBottom_toTopOf="@+id/earliestFashionDeliveryDateLabel"
         app:layout_constraintEnd_toStartOf="@+id/earliestDeliveryDateValue"
         app:layout_constraintStart_toStartOf="@id/guidelineStart" />
@@ -211,7 +211,7 @@
         android:minWidth="@dimen/_55sdp"
         android:text="@string/earliest_fashion_delivery_date"
         android:textColor="@color/color_666666"
-        android:textSize="@dimen/_13ssp"
+        android:textSize="@dimen/fifteen_sp"
         app:layout_constraintBottom_toTopOf="@+id/geoDivider"
         app:layout_constraintEnd_toStartOf="@+id/earliestFashionDeliveryDateValue"
         app:layout_constraintStart_toStartOf="@id/guidelineStart" />
@@ -242,7 +242,7 @@
         android:minWidth="@dimen/_55sdp"
         android:text="@string/earliest_dash_delivery_timeslot"
         android:textColor="@color/color_666666"
-        android:textSize="@dimen/_13ssp"
+        android:textSize="@dimen/fifteen_sp"
         app:layout_constraintBottom_toTopOf="@+id/geoDivider"
         app:layout_constraintEnd_toStartOf="@+id/earliestDeliveryDashValue"
         app:layout_constraintStart_toStartOf="@id/guidelineStart" />
@@ -280,6 +280,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
+        tools:visibility="visible"
         app:constraint_referenced_ids="btnConfirmAddress,earliestDeliveryDateValue,
         earliestDeliveryDateLabel,earliestFashionDeliveryDateValue,earliestDeliveryDashLabel,
         earliestDeliveryDashValue, imgDelIcon,tabsDivider,geoDivider,
@@ -297,8 +298,8 @@
         android:id="@+id/geoDivider"
         android:layout_width="0dp"
         android:layout_height="@dimen/_1sdp"
-        android:layout_marginTop="@dimen/_24sdp"
-        android:layout_marginBottom="@dimen/_24sdp"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/twenty_four_dp"
         android:background="@color/swatch_border_color"
         app:layout_constraintBottom_toTopOf="@id/imgDelIcon"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
@@ -341,6 +342,7 @@
         android:paddingStart="@dimen/_8sdp"
         android:paddingEnd="@dimen/_8sdp"
         android:text="@string/edit"
+        android:letterSpacing="0.1"
         android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="@dimen/_10ssp"

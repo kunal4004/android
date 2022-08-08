@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:paddingBottom="@dimen/thirty_two_dp">
+    android:background="@color/white">
 
     <include
         android:id="@+id/incSwipeCloseIndicator"
@@ -38,6 +37,7 @@
         style="@style/dialog_title_text_style"
         android:layout_marginHorizontal="@dimen/sixty_dp"
         android:layout_marginBottom="@dimen/fifteen_dp"
+        android:lineHeight="@dimen/twenty_four_dp"
         android:text="@string/suburb_not_deliverable_msg"
         app:layout_constraintBottom_toTopOf="@+id/tvDescription"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
@@ -47,7 +47,8 @@
         android:id="@+id/tvDescription"
         style="@style/dialog_description_text_style"
         android:layout_marginHorizontal="@dimen/sixty_dp"
-        android:layout_marginBottom="@dimen/thirty_two_dp"
+        android:layout_marginBottom="@dimen/fourty_dp"
+        android:lineHeight="@dimen/twenty_one_dp"
         android:text="@string/suburb_not_deliverable_description"
         app:layout_constraintBottom_toTopOf="@+id/buttonAction"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
