@@ -24,12 +24,16 @@ public class AppInstanceObject {
     public static final int MAX_USERS = 1;
     public boolean biometric;
     public FeatureWalkThrough featureWalkThrough;
-    private final InAppChatTipAcknowledgements inAppChatTipAcknowledgements;
+    private InAppChatTipAcknowledgements inAppChatTipAcknowledgements;
 
 
     public AppInstanceObject() {
         users = new ArrayList<>();
-        featureWalkThrough = new FeatureWalkThrough();
+        featureWalkThrough =  new FeatureWalkThrough();
+        setDefaultInAppChatTipAcknowledgements();
+    }
+
+    public void setDefaultInAppChatTipAcknowledgements() {
         inAppChatTipAcknowledgements = new InAppChatTipAcknowledgements(false, new ConfigChatEnabledForProductFeatures(false, false, false, false), new ConfigChatEnabledForProductFeatures(false, false, false, false), new ConfigChatEnabledForProductFeatures(false, false, false, false), false);
     }
 
@@ -40,7 +44,7 @@ public class AppInstanceObject {
                 return new Gson().fromJson(sessionDao.value, AppInstanceObject.class);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+
         }
 
         return new AppInstanceObject();
@@ -71,7 +75,7 @@ public class AppInstanceObject {
         }
     }
 
-    public static class User {
+    public class User {
         public String id;
         public ShoppingDeliveryLocation preferredShoppingDeliveryLocation;
         public ArrayList<ShoppingDeliveryLocation> shoppingDeliveryLocationHistory;
@@ -129,21 +133,21 @@ public class AppInstanceObject {
         this.biometric = biometric;
     }
 
-    public static class FeatureWalkThrough {
+    public class FeatureWalkThrough {
         //Show Tutorials
         public boolean showTutorials = true; // Default to show
 
         //features
         public boolean barcodeScan;
         public boolean findInStore;
-        public boolean deliveryLocation;
-        public boolean vouchers;
-        public boolean refineProducts;
-        public boolean account;
-        public boolean shoppingList;
-        public boolean statements;
-        public boolean cartRedeemVoucher;
-        public boolean creditScore;
+		public boolean deliveryLocation;
+		public boolean vouchers;
+		public boolean refineProducts;
+		public boolean account;
+		public boolean shoppingList;
+		public boolean statements;
+		public boolean cartRedeemVoucher;
+		public boolean creditScore;
         public boolean isTryItOn;
         public boolean shopping;
         public boolean dash;

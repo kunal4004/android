@@ -730,4 +730,28 @@ open class FirebaseManagerAnalyticsProperties {
     enum class EntryPoint(val value: String) {
         DEEP_LINK("Deep_Link"), MANUAL_SEARCH("Manual_Search"), QR_CODE("QR_Codes")
     }
+
+    class CrashlyticsKeys {
+        companion object {
+            const val PRODUCT_ID: String = "Product ID"
+            const val PRODUCT_NAME: String = "Product Name"
+            const val DELIVERY_LOCATION: String = "Delivery Location"
+            const val HAS_COLOR: String = "Has Color"
+            const val HAS_SIZE: String = "Has Size"
+            const val STORE_ID: String = "Store ID"
+            const val DELIVERY_TYPE: String = "Delivery Type"
+            const val IS_USER_AUTHENTICATED: String = "Is User Authenticated"
+            const val FULFILLMENT_ID: String = "Fulfillment ID"
+            const val PRODUCT_SKU: String = "Product SKU"
+            const val SELECTED_SKU_QUANTITY: String = "Selected SKU Quantity"
+            const val LAST_KNOWN_LOCATION: String = "Last Known Location"
+        }
+    }
+
+    class CrashlyticsExceptionName {
+        companion object {
+            const val PRODUCT_DETAILS_FIND_IN_STORE: String = "Find In-Store Product Details"
+            const val PRODUCT_LIST_FIND_IN_STORE: String = "Find In-Store Product List"
+        }
+    }
 }
