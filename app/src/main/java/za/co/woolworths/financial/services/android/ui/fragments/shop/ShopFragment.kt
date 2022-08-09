@@ -714,6 +714,23 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         closeWhiteBtn?.setOnClickListener {
             blackToolTipLayout?.visibility = View.GONE
         }
+        changeLocationButton?.setOnClickListener {
+
+            val browsingPlaceId = when (KotlinUtils.browsingDeliveryType) {
+                Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId
+                Delivery.CNC -> WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.placeDetails?.placeId
+                Delivery.DASH -> WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.placeDetails?.placeId
+                else -> getDeliveryType()?.address?.placeId ?: ""
+
+            }
+
+            KotlinUtils.presentEditDeliveryGeoLocationActivity(
+                requireActivity(),
+                REQUEST_CODE,
+                KotlinUtils.browsingDeliveryType,
+                browsingPlaceId
+            )
+        }
         when (deliveryType) {
             Delivery.STANDARD -> {
                 showStandardDeliveryToolTip()
