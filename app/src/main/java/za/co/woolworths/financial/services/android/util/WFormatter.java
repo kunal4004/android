@@ -14,6 +14,8 @@ import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import org.w3c.dom.Text;
+
 public class WFormatter {
 
     public static final String DATE_FORMAT_EEEE_COMMA_dd_MMMM  = "EEEE, dd MMMM";
@@ -180,6 +182,7 @@ public class WFormatter {
     }
 
     public static String convertDayShortToLong(String day) throws ParseException {
+        if (TextUtils.isEmpty(day)) return "";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date date = simpleDateFormat.parse(day);
         return new SimpleDateFormat("EEEE").format(date);
@@ -187,19 +190,18 @@ public class WFormatter {
 
     public static String convertDayToShortDay(String day) throws ParseException {
         if (TextUtils.isEmpty(day)) return "";
-
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date date = simpleDateFormat.parse(day);
         return new SimpleDateFormat("EEE dd MMM").format(date);
     }
 
     public static String convertMonthShortToLong(String date) throws ParseException {
-        return (new SimpleDateFormat("LLLL", Locale.getDefault())).format(convertStringToDate(date));
+        if (TextUtils.isEmpty(date)) return "";
+            return (new SimpleDateFormat("LLLL", Locale.getDefault())).format(convertStringToDate(date));
     }
 
     public static String getDayAndFullDate(String date) throws ParseException {
-        if (date == null)
-            return "";
+        if (TextUtils.isEmpty(date)) return "";
         return new SimpleDateFormat("EEEE dd MMMM, yyyy")
                 .format((new SimpleDateFormat("yyyy-MM-dd"))
                         .parse(date));
