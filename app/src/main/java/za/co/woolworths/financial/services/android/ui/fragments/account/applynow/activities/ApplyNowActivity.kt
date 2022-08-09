@@ -2,7 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.applyno
 
 import android.os.Bundle
 import android.view.View
-import android.view.View.GONE
+import android.view.View.*
 import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -41,7 +41,6 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
             setupToolbarTopMargin()
         }
         callApplyNow(viewModel.contentID())
-
     }
 
     private fun ActivityApplyNowBinding.setupToolbarTopMargin() {
@@ -52,10 +51,16 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun ActivityApplyNowBinding.setHeader(){
+
         viewModel.getApplyNowResourcesData().apply{
             incAccountSalesFrontLayout.constraintLayoutSignOut.background = AppCompatResources.getDrawable(this@ApplyNowActivity,this.cardHeader.drawables[0])
             incAccountSalesFrontLayout.accountSalesCardHeader.cardFrontImageView.let {
+                it.visibility = if(viewModel.isBlackCreditCard())  INVISIBLE else VISIBLE
                 AnimationUtilExtension.animateViewPushDown(it)
+                it.setImageResource(this.cardHeader.drawables[1])
+            }
+            incAccountSalesFrontLayout.accountSalesCardHeader.cardFrontBlackImageView.let {
+                it.visibility = if(viewModel.isBlackCreditCard())  VISIBLE else GONE
                 it.setImageResource(this.cardHeader.drawables[1])
             }
             incAccountSalesFrontLayout.accountSalesCardHeader.cardBackImageView.let {
@@ -91,15 +96,11 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
                                 viewModel.setApplyNowStateForCC(ApplyNowSectionReference.valueOf(this[0].reference))
                                 setHeader()
                             }
-
                         }
                     }
-                    is ViewState.RenderFailure -> {
-                    }
-                    is ViewState.Loading -> {
-                    }
-                    ViewState.RenderEmpty -> {
-                    }
+                    is ViewState.RenderFailure -> {}
+                    is ViewState.Loading -> {}
+                    is ViewState.RenderEmpty -> {}
                     else -> Unit
                 }
             }
@@ -112,19 +113,15 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
             stopShimmer()
         }
     }
-
     private fun ActivityApplyNowBinding.handleTabLayoutVisibility(size: Int) {
         when (size > 1) {
-            true -> {
-                setupTablayout()
-            }
+            true -> { setupTablayout() }
             false -> {
                 tabLayoutApplyNow.visibility = GONE
                 viewTabLayoutApplyNowSeparator.visibility = GONE
             }
         }
     }
-
     private fun ActivityApplyNowBinding.setupTablayout() {
         TabLayoutMediator(tabLayoutApplyNow, viewpagerApplyNow) { tab, position ->
             viewModel.applyNowResponse.value!!.content[position].apply {
@@ -143,7 +140,6 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
     }
-
     private fun bottomSheetListener() {
         viewModel.sheetBehavior?.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {

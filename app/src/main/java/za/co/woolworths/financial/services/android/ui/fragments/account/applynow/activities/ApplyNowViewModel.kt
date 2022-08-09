@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.applynow.activities
 
-import android.app.Activity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,13 +10,11 @@ import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowSt
 import za.co.woolworths.financial.services.android.models.dto.account.applynow.ApplyNowModel
 import za.co.woolworths.financial.services.android.models.dto.account.applynow.ApplyNowSectionReference
 import za.co.woolworths.financial.services.android.ui.activities.account.apply_now.AccountSalesModelImpl
-import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountSection
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.ApplyNowBottomSheetImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.IApplyNowBottomSheetImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.data.ApplyNowRepo
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.data.IApplyNowRepo
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.utils.getViewStateFlowForNetworkCall
-import za.co.woolworths.financial.services.android.util.KotlinUtils
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,7 +25,6 @@ class ApplyNowViewModel @Inject constructor(val bottomSheet: ApplyNowBottomSheet
 
     var applyNowResponse: MutableStateFlow<ApplyNowModel?> = MutableStateFlow(null)
     var applyNowState = ApplyNowState.GOLD_CREDIT_CARD
-
 
     fun contentID():String {
         return when(applyNowState){
@@ -76,5 +72,9 @@ class ApplyNowViewModel @Inject constructor(val bottomSheet: ApplyNowBottomSheet
                 ApplyNowState.BLACK_CREDIT_CARD
             }
         }
+    }
+
+    fun isBlackCreditCard():Boolean{
+        return applyNowState == ApplyNowState.BLACK_CREDIT_CARD
     }
 }
