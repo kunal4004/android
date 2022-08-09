@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
@@ -21,6 +24,7 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+import java.util.List;
 
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -37,6 +41,8 @@ public class PopWindowValidationMessage {
 	private String mName;
 	private double mLatitude;
 	private double mLongiude;
+	final String HUAWEI_MAP_PACKAGE = "com.huawei.maps.app";
+	final String GOOGLE_MAP_PACKAGE = "com.google.android.apps.maps";
 
 	public enum OVERLAY_TYPE {
 		CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
@@ -153,8 +159,9 @@ public class PopWindowValidationMessage {
 			case STORE_LOCATOR_DIRECTION:
 				mView = mLayoutInflater.inflate(R.layout.popup_view, null);
 				popupWindowSetting(mView);
-				WTextView nativeMap = (WTextView) mView.findViewById(R.id.nativeGoogleMap);
-				WTextView cancel = (WTextView) mView.findViewById(R.id.cancel);
+				WTextView googleNativeMap =  mView.findViewById(R.id.nativeGoogleMap);
+				WTextView petalNativeMap =  mView.findViewById(R.id.nativePetalMap);
+				WTextView cancel =  mView.findViewById(R.id.cancel);
 				setAnimation();
 				mRelPopContainer.setAnimation(mFadeInAnimation);
 				mRelRootContainer.setAnimation(mPopEnterAnimation);
@@ -171,23 +178,60 @@ public class PopWindowValidationMessage {
 						startExitAnimation(overlay_type);
 					}
 				});
-				nativeMap.setOnClickListener(new View.OnClickListener() {
+
+				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q="));
+				List<ResolveInfo> list = mContext.getPackageManager().queryIntentActivities(intent,
+						PackageManager.MATCH_DEFAULT_ONLY);
+
+				for(ResolveInfo resolveInfo:list){
+					ActivityInfo activityInfo=resolveInfo.activityInfo;
+				switch (activityInfo.packageName){
+					case HUAWEI_MAP_PACKAGE:
+						petalNativeMap.setVisibility(View.VISIBLE);
+						mView.findViewById(R.id.nativePetalMapDivider).setVisibility(View.VISIBLE);
+						break;
+					case GOOGLE_MAP_PACKAGE:
+						googleNativeMap.setVisibility(View.VISIBLE);
+						mView.findViewById(R.id.nativeGoogleMapDivider).setVisibility(View.VISIBLE);
+					break;
+				}
+				}
+
+
+				View.OnClickListener onClickListener=new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
 						Location location = Utils.getLastSavedLocation();
 						String uri = null;
-						if (location != null) {
-							uri = "http://maps.google.com/maps?f=d&saddr=" + location.getLatitude() + "," + location.getLongitude() + "&daddr=" + getmLatitude() + "," + getmLongiude();
-						} else {
-							uri = "http://maps.google.com/maps?q=loc:" + getmLatitude() + "," + getmLongiude();
+						switch (v.getId()){
+							case R.id.nativeGoogleMap:
+								if (location != null) {
+									uri = "http://maps.google.com/maps?f=d&saddr=" + location.getLatitude() + "," + location.getLongitude() + "&daddr=" + getmLatitude() + "," + getmLongiude();
+								} else {
+									uri = "http://maps.google.com/maps?q=loc:" + getmLatitude() + "," + getmLongiude();
+								}
+								Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+								intent.setComponent(new ComponentName("com.google.android.apps.maps",
+										"com.google.android.maps.MapsActivity"));
+								mContext.startActivity(intent);
+								dismissLayout();
+								break;
+
+							case R.id.nativePetalMap:
+								if(location!=null) {
+									uri = "mapapp://navigation?saddr=" + location.getLatitude() + "," + location.getLongitude() + "&daddr=" + getmLatitude() + "," + getmLongiude();
+									Intent intent1 = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+									if (intent1.resolveActivity(mContext.getPackageManager()) != null) {
+									mContext.startActivity(intent1);
+									}
+									dismissLayout();
+								}
+								break;
 						}
-						Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-						intent.setComponent(new ComponentName("com.google.android.apps.maps",
-								"com.google.android.maps.MapsActivity"));
-						mContext.startActivity(intent);
-						dismissLayout();
 					}
-				});
+				};
+				googleNativeMap.setOnClickListener(onClickListener);
+				petalNativeMap.setOnClickListener(onClickListener);
 				break;
 			case HIGH_LOAN_AMOUNT:
 				mView = mLayoutInflater.inflate(R.layout.error_title_desc_layout, null);
