@@ -1,29 +1,27 @@
 package za.co.woolworths.financial.services.android.ui.fragments.mypreferences
 
-import android.Manifest
+import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Intent
-import android.content.IntentSender
-import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.*
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import com.awfs.coordination.R
-import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.location.*
-import com.google.android.gms.tasks.Task
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_my_preferences.*
 import kotlinx.android.synthetic.main.link_card_fragment.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.DeleteAccountResponse
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAllLinkedDeviceResponse
@@ -34,79 +32,33 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
+import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
+import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELETE_ACCOUNT
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELETE_ACCOUNT_CONFIRMATION
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RESULT_CODE_DELETE_ACCOUNT
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
-import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAddressView
+import za.co.woolworths.financial.services.android.util.location.Event
+import za.co.woolworths.financial.services.android.util.location.EventType
+import za.co.woolworths.financial.services.android.util.location.Locator
+import javax.inject.Inject
 
+@AndroidEntryPoint
+class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchListener ,
+    VtoTryAgainListener {
 
-class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchListener {
-
+    private lateinit var locator: Locator
     private var isNonWFSUser: Boolean = true
     private var mViewAllLinkedDevices: Call<ViewAllLinkedDeviceResponse>? = null
     private var deviceList: ArrayList<UserDevice>? = ArrayList(0)
     private var isUpdateAccountCache: Boolean = false
-
-    // Register the permissions callback, which handles the user's response to the
-    // system permissions dialog. Save the return value, an instance of
-    // ActivityResultLauncher. You can use either a val, as shown in this snippet,
-    // or a lateinit var in your onAttach() or onCreate() method.
-    val requestPermissionLauncher =
-        registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { isGranted: Boolean ->
-            if (isGranted) {
-                // Permission is granted. Continue the action or workflow in your
-                // app.
-                askToEnableLocationSettings()
-            } else {
-                // Explain to the user that the feature is unavailable because the
-                // features requires a permission that the user has denied. At the
-                // same time, respect the user's decision. Don't link to system
-                // settings in an effort to convince the user to change their
-                // decision.
-                navigateToLinkDeviceFragment()
-            }
-        }
-
-    private fun askToEnableLocationSettings() {
-        activity?.apply {
-            val locationRequest = LocationRequest.create()?.apply {
-                interval = 100
-                fastestInterval = 500
-                priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            }
-            val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
-            val client: SettingsClient = LocationServices.getSettingsClient(this)
-            val task: Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
-            task.addOnSuccessListener { locationSettingsResponse ->
-                // All location settings are satisfied. The client can initialize
-                // location requests here.
-                navigateToLinkDeviceFragment()
-            }
-
-            task.addOnFailureListener { exception ->
-                if (exception is ResolvableApiException) {
-                    // Location settings are not satisfied, but this can be fixed
-                    // by showing the user a dialog.
-                    try {
-                        // Show the dialog by calling startResolutionForResult(),
-                        // and check the result in onActivityResult().
-                        exception.startResolutionForResult(
-                            this,
-                            REQUEST_CHECK_SETTINGS
-                        )
-                    } catch (sendEx: IntentSender.SendIntentException) {
-                        // Ignore the error.
-                    }
-                }
-                //Even if fails to enable location settings navigate to link device
-                navigateToLinkDeviceFragment()
-            }
-
-        }
-
-    }
+    @Inject
+    lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
+    private var deleteAccountApi: Call<DeleteAccountResponse>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -146,12 +98,14 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
 
 
     private fun init() {
+        locator = Locator(activity as AppCompatActivity)
         auSwitch.setOnClickListener(this)
         locationSelectedLayout.setOnClickListener(this)
         auSwitch.setOnTouchListener(this)
         linkDeviceSwitch.setOnClickListener(this)
         retryLinkDeviceLinearLayout?.setOnClickListener(this)
         viewAllLinkedDevicesRelativeLayout?.setOnClickListener(this)
+        deleteAccountLayout?.setOnClickListener(this)
 
         activity?.apply {
             if (this is MyPreferencesInterface) {
@@ -159,13 +113,56 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                 setToolbarTitleGravity(Gravity.START)
             }
         }
+        setFragmentResultListener(DELETE_ACCOUNT_CONFIRMATION) { _, bundle ->
+            if (bundle.getString(DELETE_ACCOUNT) == DELETE_ACCOUNT) {
+                callDeleteAccountApi()
+            }
+        }
+    }
+
+    private fun callDeleteAccountApi() {
+        showProgress()
+        deleteAccountApi = OneAppService.deleteAccount()
+        deleteAccountApi?.enqueue(CompletionHandler(object :
+            IResponseListener<DeleteAccountResponse> {
+
+            override fun onSuccess(response: DeleteAccountResponse?) {
+                if (response?.httpCode == HTTP_OK) {
+                    hideProgress()
+                    activity?.setResult(RESULT_CODE_DELETE_ACCOUNT)
+                    activity?.finish()
+                } else {
+                    hideProgress()
+                    showErrorDialog()
+                }
+            }
+
+            override fun onFailure(error: Throwable?) {
+                hideProgress()
+                showErrorDialog()
+            }
+
+        }, DeleteAccountResponse::class.java))
+    }
+
+    private fun hideProgress() {
+        incCenteredProgress?.visibility = View.GONE
+        myPreProgressLayout?.isClickable = false
+        myPreProgressLayout?.isFocusable = false
+    }
+
+    private fun showProgress() {
+        incCenteredProgress?.visibility = View.VISIBLE
+        myPreProgressLayout?.isClickable = true
+        myPreProgressLayout?.isFocusable = true
     }
 
     fun bindDataWithUI() {
         if (AuthenticateUtils.getInstance(activity).isAppSupportsAuthentication) {
             if (AuthenticateUtils.getInstance(activity).isDeviceSecure) auSwitch.isChecked =
                 AuthenticateUtils.getInstance(activity).isAuthenticationEnabled else setUserAuthentication(
-                false)
+                false
+            )
         } else {
             biometricsLayout.setVerticalGravity(View.GONE)
         }
@@ -204,8 +201,10 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                         AppStateRepository().saveLinkedDevices(deviceList)
                         updateLinkedDeviceView(isDeviceIdentityIdPresent)
                         tvMyPrefManageDevicesTitle.text =
-                            bindString(R.string.my_preferences_linked_devices,
-                                (deviceList?.size ?: 0).toString())
+                            bindString(
+                                R.string.my_preferences_linked_devices,
+                                (deviceList?.size ?: 0).toString()
+                            )
                     }
                     else -> {
                         spinningAnimation.cancel()
@@ -295,8 +294,9 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                 }
             } else openDeviceSecuritySettings()
             R.id.locationSelectedLayout -> locationSelectionClicked()
+            R.id.deleteAccountLayout -> deleteAccountShowPopup()
             R.id.linkDeviceSwitch -> {
-                askLocationPermission()
+                checkForLocationPermissionAndNavigateToLinkDevice()
             }
             R.id.retryLinkDeviceLinearLayout -> {
                 callLinkedDevicesAPI()
@@ -326,33 +326,51 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         }
     }
 
-    private fun askLocationPermission() {
-        context?.let { context ->
-            when {
-                ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED -> {
-                    // You can use the API that requires the permission.
-                    askToEnableLocationSettings()
-                }
-                shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
-                    // In an educational UI, explain to the user why your app requires this
-                    // permission for a specific feature to behave as expected. In this UI,
-                    // include a "cancel" or "no thanks" button that allows the user to
-                    // continue using your app without granting the permission.
-                    requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-                }
-                else -> {
-                    // You can directly ask for the permission.
-                    // The registered ActivityResultCallback gets the result of this request.
-                    requestPermissionLauncher.launch(
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    )
-                }
+    private fun deleteAccountShowPopup() {
+        view?.findNavController()?.navigate(
+            R.id.action_myPreferencesFragment_to_deleteAccountBottomSheetDialog
+        )
+    }
+
+
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private fun checkForLocationPermissionAndNavigateToLinkDevice() {
+        activity?.apply {
+            //Check if user has location services enabled. If not, notify user as per current store locator functionality.
+            if (!Utils.isLocationEnabled(this)) {
+                val enableLocationSettingsFragment = EnableLocationSettingsFragment()
+                enableLocationSettingsFragment?.show(
+                    supportFragmentManager,
+                    EnableLocationSettingsFragment::class.java.simpleName
+                )
+                return@apply
+            }
+
+            // If location services enabled, extract latitude and longitude
+            startLocationDiscoveryProcess()
+        }
+    }
+
+    private fun startLocationDiscoveryProcess() {
+        locator.getCurrentLocation { locationEvent ->
+            when (locationEvent) {
+                is Event.Location -> handleLocationEvent(locationEvent)
+                is Event.Permission -> handlePermissionEvent(locationEvent)
             }
         }
+    }
 
+    private fun handlePermissionEvent(permissionEvent: Event.Permission) {
+        if (permissionEvent.event == EventType.LOCATION_PERMISSION_NOT_GRANTED) {
+            Utils.saveLastLocation(null, activity)
+            handleLocationEvent(null)
+        }
+    }
+
+    private fun handleLocationEvent(locationEvent: Event.Location?) {
+        Utils.saveLastLocation(locationEvent?.locationData, context)
+        navigateToLinkDeviceFragment()
     }
 
     private fun navigateToLinkDeviceFragment() {
@@ -408,7 +426,8 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                 setUserAuthentication(false)
             }
             SECURITY_INFO_REQUEST_DIALOG -> startBiometricAuthentication(
-                LOCK_REQUEST_CODE_TO_DISABLE)
+                LOCK_REQUEST_CODE_TO_DISABLE
+            )
             else -> {
             }
         }
@@ -429,10 +448,12 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
     }
 
     fun openDeviceSecuritySettings() {
-        Utils.displayValidationMessageForResult(activity,
+        Utils.displayValidationMessageForResult(
+            activity,
             CustomPopUpWindow.MODAL_LAYOUT.SET_UP_BIOMETRICS_ON_DEVICE,
             "",
-            SECURITY_SETTING_REQUEST_DIALOG)
+            SECURITY_SETTING_REQUEST_DIALOG
+        )
     }
 
     override fun onResume() {
@@ -477,11 +498,13 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         editLocation.visibility = View.VISIBLE
         deliverLocationIcon.setBackgroundResource(R.drawable.tick_cli_active)
         shoppingDeliveryLocation?.let {
-            setDeliveryAddressView(activity,
+            setDeliveryAddressView(
+                activity,
                 shoppingDeliveryLocation,
                 tvDeliveringTo,
                 tvDeliveryLocation,
-                null)
+                null
+            )
         }
     }
 
@@ -503,5 +526,20 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
     override fun onDestroy() {
         activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN) }
         super.onDestroy()
+    }
+
+    override fun tryAgain() {
+        callDeleteAccountApi()
+    }
+    private fun showErrorDialog() {
+        requireActivity().resources?.apply {
+            vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
+                this@MyPreferencesFragment,
+                requireActivity(),
+                getString(R.string.vto_generic_error),
+                "",
+                getString(R.string.retry_label)
+            )
+        }
     }
 }

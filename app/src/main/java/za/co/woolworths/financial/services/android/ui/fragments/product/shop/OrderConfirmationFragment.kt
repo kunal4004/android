@@ -7,17 +7,20 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StyleSpan
 import android.view.*
-import android.view.View.*
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.android.synthetic.main.delivering_to_collection_from.*
 import kotlinx.android.synthetic.main.fragment_order_confirmation.*
 import kotlinx.android.synthetic.main.order_details_bottom_sheet.*
 import kotlinx.android.synthetic.main.other_order_details.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
+import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
@@ -32,9 +35,8 @@ import za.co.woolworths.financial.services.android.ui.adapters.ItemsOrderListAda
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.WrewardsBottomSheetFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
-import za.co.woolworths.financial.services.android.util.AppConstant
-import za.co.woolworths.financial.services.android.util.CurrencyFormatter
-import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 
@@ -72,6 +74,8 @@ class OrderConfirmationFragment : Fragment() {
                                     setupDeliveryOrCollectionDetails(response)
                                     setupOrderTotalDetails(response)
                                     setupOrderDetailsBottomSheet(response)
+                                    displayVocifNeeded(response)
+
                                 }
                                 else -> {
                                     showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
@@ -88,6 +92,35 @@ class OrderConfirmationFragment : Fragment() {
                     showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
                 }
             }, SubmittedOrderResponse::class.java))
+    }
+
+    private fun displayVocifNeeded(response: SubmittedOrderResponse) {
+        var deliveryType = response.orderSummary?.fulfillmentDetails?.deliveryType
+        VoiceOfCustomerManager.showVocSurveyIfNeeded(
+            activity,
+            KotlinUtils.vocShoppingHandling(deliveryType)
+        )
+        if ( Delivery.getType(deliveryType) == Delivery.CNC){
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_CConfirm, activity)
+        }
+
+        val mFirebaseAnalytics = FirebaseManager.getInstance().getAnalytics()
+        val purchaseItemParams = Bundle()
+        purchaseItemParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
+        purchaseItemParams.putString(FirebaseAnalytics.Param.AFFILIATION, FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
+        purchaseItemParams.putString(FirebaseAnalytics.Param.TRANSACTION_ID,response.orderSummary?.orderId)
+        purchaseItemParams.putString(FirebaseAnalytics.Param.VALUE, response.orderSummary?.total?.toString())
+        purchaseItemParams.putString(FirebaseAnalytics.Param.SHIPPING, response.deliveryDetails?.shippingAmount.toString())
+
+        val purchaseItem = Bundle()
+        purchaseItem.putString(FirebaseAnalytics.Param.ITEM_ID, response.items?.other?.get(0)?.productId)
+        purchaseItem.putString(FirebaseAnalytics.Param.ITEM_NAME, response.items?.other?.get(0)?.productDisplayName)
+        purchaseItem.putString(FirebaseAnalytics.Param.QUANTITY, response.items?.other?.get(0)?.commerceItemInfo?.quantity.toString())
+        purchaseItem.putDouble(FirebaseAnalytics.Param.PRICE, response.items?.other?.get(0)?.priceInfo?.amount!!)
+        purchaseItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT, response.items?.other?.get(0)?.color)
+        purchaseItemParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(purchaseItem))
+
+        mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.PURCHASE, purchaseItemParams)
     }
 
     private fun showErrorScreen(errorType: Int) {
@@ -119,7 +152,11 @@ class OrderConfirmationFragment : Fragment() {
                     optionTitle?.text = it.getText(R.string.collecting_from)
                     deliveryTextView?.text = it.getText(R.string.collection_semicolon)
                     optionLocation?.text =
-                        response?.orderSummary?.fulfillmentDetails?.storeName ?: ""
+                        response?.orderSummary?.fulfillmentDetails?.storeName?.let {
+                            convertToTitleCase(
+                                it
+                            )
+                        } ?: ""
                 }
                 Delivery.STANDARD -> {
                     optionImage?.background =
@@ -127,7 +164,11 @@ class OrderConfirmationFragment : Fragment() {
                     optionTitle?.text = it.getText(R.string.delivering_to)
                     deliveryTextView?.text = it.getText(R.string.delivery_semicolon)
                     optionLocation?.text =
-                        response?.orderSummary?.fulfillmentDetails?.address?.address1 ?: ""
+                        response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
+                            convertToTitleCase(
+                                it
+                            )
+                        } ?: ""
                 }
                 else -> {
                 }
@@ -235,7 +276,8 @@ class OrderConfirmationFragment : Fragment() {
 
         bottomSheetScrollView?.visibility = VISIBLE
         orderStatusTextView?.text = response?.orderSummary?.state
-        deliveryLocationTextView?.text = optionLocation.text
+        deliveryLocationTextView?.text =
+            optionLocation.text?.let { convertToTitleCase(it as String) }
 
         if (response?.deliveryDetails?.deliveryInfos?.size == 2) {
             oneDeliveryBottomSheetLinearLayout?.visibility = GONE
@@ -325,12 +367,14 @@ class OrderConfirmationFragment : Fragment() {
             .formatAmountToRandAndCentWithSpace(amount)
 
         wrewardsIconImageView?.setOnClickListener {
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_MISSED_WREWARD_SAVINGS,
+            Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.CHECKOUT_MISSED_WREWARD_SAVINGS,
                 hashMapOf(
                     FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
                             FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_WREWARDS_SAVING
                 ),
-                activity)
+                activity
+            )
             val bottomSheetFragment = WrewardsBottomSheetFragment(activity)
 
             val bundle = Bundle()

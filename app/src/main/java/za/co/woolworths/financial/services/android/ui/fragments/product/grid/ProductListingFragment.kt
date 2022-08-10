@@ -8,6 +8,7 @@ import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
+import android.os.Parcelable
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -39,8 +40,6 @@ import kotlinx.android.synthetic.main.search_result_fragment.*
 import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.*
 import kotlinx.android.synthetic.main.try_it_on_banner.*
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
-import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.DynamicBanner
-import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.Navigation
 import za.co.woolworths.financial.services.android.chanel.views.ChanelNavigationClickListener
 import za.co.woolworths.financial.services.android.chanel.views.adapter.BrandLandingAdapter
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -53,6 +52,8 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.DynamicBanner
+import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.Navigation
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
@@ -68,7 +69,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductLis
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment.Companion.NAVIGATION_STATE
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
@@ -87,6 +87,8 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
+import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.logException
+import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.setCrashlyticsString
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.net.ConnectException
 import java.net.UnknownHostException
@@ -102,6 +104,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection,
     IOnConfirmDeliveryLocationActionListener, ChanelNavigationClickListener {
 
+    private var state: Parcelable? = null
+    private val BUNDLE_RECYCLER_LAYOUT = "ProductListingFragment.SearchProduct"
     private var EDIT_LOCATION_LOGIN_REQUEST = 1919
     private var LOGIN_REQUEST_SUBURB_CHANGE = 1419
     private var lastVisibleItem: Int = 0
@@ -560,6 +564,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             if (visibility == View.INVISIBLE)
                 visibility = VISIBLE
             layoutManager = mRecyclerViewLayoutManager
+            if(state!=null) {
+                layoutManager?.onRestoreInstanceState(state)
+                state=null
+            }
             adapter = mProductAdapter
             clearOnScrollListeners()
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -978,6 +986,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     override fun openProductDetailView(productList: ProductList) {
         //firebase event select_item
+        state = productsRecyclerView.layoutManager?.onSaveInstanceState()
         val mFirebaseAnalytics = FirebaseManager.getInstance().getAnalytics()
         val selectItemParams = Bundle()
         selectItemParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_LIST_NAME, mSubCategoryName)
@@ -1007,6 +1016,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         bannerLabel: String?,
         bannerImage: String?
     ) {
+        state = productsRecyclerView.layoutManager?.onSaveInstanceState()
         val title = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
         (activity as? BottomNavigationActivity)?.openProductDetailFragment(
             title,
@@ -1064,6 +1074,20 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                             val skuInventoryList = skusInventoryForStoreResponse.skuInventory
                             if (skuInventoryList.size == 0 || skuInventoryList[0].quantity == 0) {
                                 addItemToCart?.catalogRefId?.let { skuId ->
+                                    // TODO: Remove non-fatal exception below once APP2-65 is closed
+                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_ID, mSelectedProductList?.productId)
+                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_NAME, mSelectedProductList?.productName)
+                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.DELIVERY_LOCATION, KotlinUtils.getPreferredDeliveryAddressOrStoreName())
+                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_SKU, mSelectedProductList?.sku)
+                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.FULFILLMENT_ID, mFulfilmentTypeId)
+                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.STORE_ID, mStoreId)
+                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.DELIVERY_TYPE, KotlinUtils.getPreferredDeliveryType().toString())
+                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.IS_USER_AUTHENTICATED, SessionUtilities.getInstance().isUserAuthenticated.toString())
+                                    Utils.getLastSavedLocation()?.let {
+                                        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.LAST_KNOWN_LOCATION, "${it.latitude}, ${it.longitude}")
+                                    }
+                                    logException(Exception(FirebaseManagerAnalyticsProperties.CrashlyticsExceptionName.PRODUCT_LIST_FIND_IN_STORE))
+
                                     productOutOfStockErrorMessage(
                                         skuId
                                     )

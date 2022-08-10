@@ -102,6 +102,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val WHATSAPP_PAYMENT_OPTION = "whatsapp_payment_option"
         const val WHATSAPP_CONTACT_US = "whatsapp_contact_us"
         const val WHATSAPP_CHAT_WITH_US = "whattsapp_chat_with_us"
+        const val VTSC_CARD_NOT_DELIVERED = "cardnotdelivered"
 
         const val SHOP_SEARCH = "SHOP_Search"
 
@@ -364,6 +365,9 @@ open class FirebaseManagerAnalyticsProperties {
         const val CC_BPI_OPT_IN_CONFIRM: String = "cc_bpi_optin_confirm"
         const val CC_BPI_OPT_IN_SEND_EMAIL: String = "cc_bpi_send_email"
 
+        const val FICA_VERIFY_START: String = "fica_verify_start"
+        const val FICA_VERIFY_SKIP: String = "fica_verify_skip"
+
         const val VIEW_ITEM_LIST: String = "view_item_list"
         const val VIEW_ITEM_EVENT: String = "view_item"
         const val SELECT_ITEM_EVENT: String = "select_item"
@@ -379,6 +383,8 @@ open class FirebaseManagerAnalyticsProperties {
         const val SIGN_UP: String = "sign_up"
         const val ADD_SHIPPING_INFO: String = "add_shipping_info"
         const val SCREEN_VIEW_PLP: String = "screen_view"
+        const val ADD_PAYMENT_INFO: String = "add_payment_info"
+        const val PURCHASE: String = "purchase"
 
 
         //Geolocation
@@ -412,7 +418,6 @@ open class FirebaseManagerAnalyticsProperties {
         const val ADDRESS_OFFICE = "Office"
         const val ADDRESS_COMPLEX_ESTATE = "Complex / Estate"
         const val ADDRESS_APARTMENT = "Apartment"
-
 
 
     }
@@ -634,6 +639,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val STARTUP: String = "startup"
             const val STARTUP_API_ERROR: String = "startup_api_error"
             const val DEVICE_ROOTED_AT_STARTUP: String = "startup_jailbreak_error"
+            const val DEVICE_SIDELOADED_AT_STARTUP: String = "startup_sideloaded_error"
             const val SPLASH_WITHOUT_CTA: String = "splash_without_cta"
             const val SPLASH_WITH_CTA: String = "splash_with_cta"
             const val ONBOARDING_ONE: String = "onboarding_one"
@@ -725,5 +731,29 @@ open class FirebaseManagerAnalyticsProperties {
 
     enum class EntryPoint(val value: String) {
         DEEP_LINK("Deep_Link"), MANUAL_SEARCH("Manual_Search"), QR_CODE("QR_Codes")
+    }
+
+    class CrashlyticsKeys {
+        companion object {
+            const val PRODUCT_ID: String = "Product ID"
+            const val PRODUCT_NAME: String = "Product Name"
+            const val DELIVERY_LOCATION: String = "Delivery Location"
+            const val HAS_COLOR: String = "Has Color"
+            const val HAS_SIZE: String = "Has Size"
+            const val STORE_ID: String = "Store ID"
+            const val DELIVERY_TYPE: String = "Delivery Type"
+            const val IS_USER_AUTHENTICATED: String = "Is User Authenticated"
+            const val FULFILLMENT_ID: String = "Fulfillment ID"
+            const val PRODUCT_SKU: String = "Product SKU"
+            const val SELECTED_SKU_QUANTITY: String = "Selected SKU Quantity"
+            const val LAST_KNOWN_LOCATION: String = "Last Known Location"
+        }
+    }
+
+    class CrashlyticsExceptionName {
+        companion object {
+            const val PRODUCT_DETAILS_FIND_IN_STORE: String = "Find In-Store Product Details"
+            const val PRODUCT_LIST_FIND_IN_STORE: String = "Find In-Store Product List"
+        }
     }
 }

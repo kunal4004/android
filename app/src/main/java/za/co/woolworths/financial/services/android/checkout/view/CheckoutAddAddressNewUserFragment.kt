@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.checkout.view
 
 import android.animation.ObjectAnimator
 import android.content.Intent
-import android.location.Geocoder
 import android.os.Bundle
 import android.view.*
 import android.widget.*
@@ -83,8 +82,8 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
+import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
 import java.net.HttpURLConnection.HTTP_OK
-import java.util.*
 import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 import kotlin.coroutines.CoroutineContext
@@ -112,6 +111,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     private var isComingFromCheckout: Boolean = false
     private var isComingFromSlotSelection: Boolean = false
     private var isValidAddress: Boolean = false;
+    private var placeName: String? = null
+    private var placeId: String = ""
 
     companion object {
         const val PROVINCE_SELECTION_BACK_PRESSED = "5645"
@@ -167,15 +168,23 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     selectedDeliveryAddressType = savedAddress?.addressType
                     if (savedAddress != null) {
                         selectedAddress.savedAddress = savedAddress
-                        var provinceName: String? = ""
-                        provinceName = getProvinceName(savedAddress.region)
-                        if (!provinceName.isNullOrEmpty()) {
-                            selectedAddress?.provinceName = provinceName
-                        } else {
-                            savedAddress?.region?.let {
-                                selectedAddress?.provinceName = it
-                            }
+                        if (!savedAddress?.city.isNullOrEmpty()) {
+                            selectedAddress?.provinceName = savedAddress.city!!
                         }
+                        else {
+                            var provinceName: String? = ""
+                            provinceName = getProvinceName(savedAddress.region)
+                            if (!provinceName.isNullOrEmpty()) {
+                                selectedAddress?.provinceName = provinceName
+                            }
+                            else {
+                                savedAddress?.region?.let {
+                                    selectedAddress?.provinceName = it
+                                }
+                            }
+
+                        }
+
                     }
                     setHasOptionsMenu(true)
                 }
@@ -366,7 +375,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         deliveringOptionsList = AppConfigSingleton.nativeCheckout?.addressTypes
         showWhereAreWeDeliveringView()
         activity?.applicationContext?.let { context ->
-            Places.initialize(context, getString(R.string.maps_api_key))
+            Places.initialize(context, getString(R.string.maps_google_api_key))
             val placesClient = Places.createClient(context)
             val placesAdapter =
                 GooglePlacesAdapter(requireActivity(), placesClient)
@@ -376,7 +385,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             autoCompleteTextView?.onItemClickListener =
                 AdapterView.OnItemClickListener { parent, _, position, _ ->
                     val item = parent.getItemAtPosition(position) as? PlaceAutocomplete
-                    val placeId = item?.placeId.toString()
+                    placeId = item?.placeId.toString()
+                    placeName = item?.primaryText.toString()
                     val placeFields: MutableList<Place.Field> = mutableListOf(
                         Place.Field.ID,
                         Place.Field.NAME,
@@ -385,7 +395,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                         Place.Field.ADDRESS_COMPONENTS
                     )
                     val request =
-                        placeFields.let { FetchPlaceRequest.builder(placeId, it).build() }
+                        placeFields.let { FetchPlaceRequest.builder(placeId, it).setSessionToken(item?.token).build() }
                     request.let { placeRequest ->
                         placesClient.fetchPlace(placeRequest)
                             .addOnSuccessListener { response ->
@@ -494,13 +504,13 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             isErrorScreen = false
         )
         provinceSuburbEnableType = null
-        var addressText1 = ""
-        var addressText2 = ""
+        var streetNumber = ""
+        var routeName = ""
         for (address in place.addressComponents?.asList()!!) {
             when (address.types[0]) {
-                STREET_NUMBER.value -> addressText1 = address.name
-                ROUTE.value -> addressText2 =
-                    if (!address.name.isNullOrEmpty()) address.name else addressText2
+                STREET_NUMBER.value -> streetNumber = address.name
+                ROUTE.value -> routeName =
+                    if (!address.name.isNullOrEmpty()) address.name else routeName
                 ADMINISTRATIVE_AREA_LEVEL_1.value -> {
                     selectedAddress.provinceName = address.name
                 }
@@ -517,12 +527,12 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                 LOCALITY.value -> selectedAddress.provinceName = address.name
 
                 PREMISE.value -> {
-                    if (addressText2.isNullOrEmpty()) addressText2 = address.name
+                    if (routeName.isNullOrEmpty()) routeName = address.name
                 }
             }
         }
 
-        if (addressText1.isNullOrEmpty() && addressText2.isNullOrEmpty()) {
+        if (streetNumber.isNullOrEmpty() && routeName.isNullOrEmpty()) {
             isValidAddress = false
             launch(Dispatchers.Main) {
                 autocompletePlaceErrorMsg?.text =
@@ -535,43 +545,69 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         }
         if (!selectedAddress.provinceName.isNullOrEmpty() && !selectedAddress.savedAddress.suburb.isNullOrEmpty())
             selectedAddress.savedAddress.region = ""
+        if (streetNumber.isNullOrEmpty()) {
+            streetNumber = ""
+        }
+        if (routeName.isNullOrEmpty()) {
+            routeName = ""
+        }
         selectedAddress.savedAddress.apply {
             val tempAddress1 =
-                if (addressText1.isNullOrEmpty()) addressText2 else addressText1.plus(" ")
-                    .plus(addressText2)
-            val googlePlacesName = place.name
-            address1 =
-                if (googlePlacesName.isNullOrEmpty()) tempAddress1 else if (googlePlacesName.length > 50) tempAddress1 else googlePlacesName
+                if (streetNumber.isNullOrEmpty())
+                    routeName
+                else
+                    streetNumber.plus(" ").plus(routeName)
+
+            placeName?.let {
+
+                address1 = if (it.isNotEmpty() && !it.equals("$streetNumber $routeName", true)) {
+                    it
+                } else {
+                    tempAddress1
+                }
+
+            } ?: run {
+                val googlePlacesName = place.name
+                address1 =
+                    if (googlePlacesName.isNullOrEmpty())
+                        tempAddress1
+                    else if (googlePlacesName.length > 50) tempAddress1
+                    else googlePlacesName
+            }
             latitude = place.latLng?.latitude
             longitude = place.latLng?.longitude
-            placesId = place.id
+            placesId = placeId
+        }
+
+        val setTextAndCheckIfSelectedProvinceExist = {
+            autoCompleteTextView.apply {
+                setText(selectedAddress.savedAddress.address1)
+
+                if (selectedAddress.savedAddress.address1.isNullOrEmpty())
+                    showErrorDialog()
+                setSelection(autoCompleteTextView.length())
+                autoCompleteTextView.dismissDropDown()
+            }
+            checkIfSelectedProvinceExist(AppConfigSingleton.nativeCheckout?.regions as MutableList<Province>)
         }
 
         if (!selectedAddress.savedAddress.suburb.isNullOrEmpty())
             selectedAddress.savedAddress.suburbId = ""
         if (selectedAddress.savedAddress.postalCode.isNullOrEmpty()) {
             //If Google places failed to give postal code.
-            val geocoder = Geocoder(context, Locale.getDefault())
-            val addresses =
-                geocoder.getFromLocation(
-                    selectedAddress.savedAddress.latitude!!,
-                    selectedAddress.savedAddress.longitude!!,
-                    1
-                )
-            if (!addresses[0]?.postalCode.isNullOrEmpty())
-                selectedAddress.savedAddress.postalCode = addresses[0]?.postalCode.toString()
+            DynamicGeocoder.getAddressFromLocation(
+                context,
+                selectedAddress.savedAddress.latitude,
+                selectedAddress.savedAddress.longitude
+            ) { address ->
+                address?.postcode?.let {
+                    selectedAddress.savedAddress.postalCode = it
+                }
+                setTextAndCheckIfSelectedProvinceExist.invoke()
+            }
+        } else {
+            setTextAndCheckIfSelectedProvinceExist.invoke()
         }
-
-        autoCompleteTextView.apply {
-            setText(
-                if (place.name.isNullOrEmpty()) selectedAddress.savedAddress.address1 else place.name
-            )
-            if (selectedAddress.savedAddress.address1.isNullOrEmpty())
-                showErrorDialog()
-            setSelection(autoCompleteTextView.length())
-            autoCompleteTextView.dismissDropDown()
-        }
-        checkIfSelectedProvinceExist(AppConfigSingleton.nativeCheckout?.regions as MutableList<Province>)
     }
 
     fun checkIfSelectedProvinceExist(provinceList: MutableList<Province>) {

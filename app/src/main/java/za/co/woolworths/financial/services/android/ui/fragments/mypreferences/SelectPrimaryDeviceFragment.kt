@@ -67,7 +67,6 @@ class SelectPrimaryDeviceFragment : Fragment(), View.OnClickListener {
         context?.let {
             resetDevicesIfBackPressed()
             selectPrimaryDeviceRecyclerView.layoutManager = LinearLayoutManager(it, RecyclerView.VERTICAL, false)
-            selectPrimaryDeviceRecyclerView.setDivider(R.drawable.recycler_view_divider_light_gray_1dp)
             selectPrimaryDeviceAdapter = SelectPrimaryDeviceAdapter(
                 deviceList,
                 this)

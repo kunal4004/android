@@ -34,6 +34,7 @@ import za.co.woolworths.financial.services.android.ui.activities.store_card.Requ
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.HowToUseTemporaryStoreCardActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.StoreCardNotReceivedDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard.Companion.ACTIVATE_UNBLOCK_CARD_ON_LANDING
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard.Companion.NOW
@@ -84,6 +85,25 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupCard()
+        setupCardReceived()
+        autoConnectDetector()
+    }
+
+    private fun setupCardReceived() {
+        mStoreCard?.apply {
+            val shouldNotifyUserByEmail = Utils.getSessionDaoValue(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN).isNullOrEmpty()
+            if (cardNotReceived && shouldNotifyUserByEmail) {
+                val dialog = StoreCardNotReceivedDialogFragment.newInstance()
+                dialog.show(
+                    childFragmentManager,
+                    StoreCardNotReceivedDialogFragment::class.java.simpleName
+                )
+            }
+        }
+    }
+
+    private fun setupCard() {
         arguments?.apply {
             mStoreCardDetail = getString(STORE_CARD_DETAIL, "")
             mShouldActivateBlockCardOnLanding = getBoolean(ACTIVATE_UNBLOCK_CARD_ON_LANDING, false)
@@ -93,13 +113,13 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                 mStoreCardDetail?.let { cardValue ->
                     mStoreCardsResponse = Gson().fromJson(cardValue, StoreCardsResponse::class.java)
                     mStoreCard = mStoreCardsResponse?.storeCardsData?.let { it ->
-                        if (isUserGotVirtualCard(it)) it.virtualCard else it.primaryCards?.get(PRIMARY_CARD_POSITION)
+                        if (isUserGotVirtualCard(it)) it.virtualCard else it.primaryCards?.get(
+                            PRIMARY_CARD_POSITION
+                        )
                     }
                 }
             }
         }
-
-        autoConnectDetector()
     }
 
     private fun autoConnectDetector() {
@@ -156,19 +176,21 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
     override fun onResume() {
         super.onResume()
-        if(SHOW_TEMPORARY_FREEZE_DIALOG){
-            SHOW_TEMPORARY_FREEZE_DIALOG = false
-            temporaryCardFreezeSwitch?.isChecked = true
-            temporaryFreezeCard?.showFreezeStoreCardDialog(childFragmentManager)
-        }
-        else if(SHOW_BLOCK_CARD_SCREEN){
-            SHOW_BLOCK_CARD_SCREEN = false
-            activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail) }
-        }
-        else if(SHOW_PAY_WITH_CARD_SCREEN){
-            SHOW_PAY_WITH_CARD_SCREEN = false
-            activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_PAY, this) }
-            initPayWithCard()
+        when {
+            SHOW_TEMPORARY_FREEZE_DIALOG -> {
+                SHOW_TEMPORARY_FREEZE_DIALOG = false
+                temporaryCardFreezeSwitch?.isChecked = true
+                temporaryFreezeCard?.showFreezeStoreCardDialog(childFragmentManager)
+            }
+            SHOW_BLOCK_CARD_SCREEN -> {
+                SHOW_BLOCK_CARD_SCREEN = false
+                activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail) }
+            }
+            SHOW_PAY_WITH_CARD_SCREEN -> {
+                SHOW_PAY_WITH_CARD_SCREEN = false
+                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_PAY, this) }
+                initPayWithCard()
+            }
         }
     }
 
@@ -196,7 +218,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                 when (response?.httpCode) {
                     200 -> {
                         activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SC_FREEZE_CARD, this) }
-                        OneAppSnackbar.make(cardNestedScrollView, bindString(R.string.card_temporarily_frozen_label).toUpperCase(Locale.getDefault())).show()
+                        OneAppSnackbar.make(cardNestedScrollView, bindString(R.string.card_temporarily_frozen_label).uppercase()).show()
                         temporaryFreezeCard?.setBlockType(TEMPORARY)
                         temporaryFreezeCard?.showActiveTemporaryFreezeCard(
                             temporaryCardFreezeSwitch,

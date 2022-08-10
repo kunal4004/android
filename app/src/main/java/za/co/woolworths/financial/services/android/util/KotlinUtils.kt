@@ -44,8 +44,11 @@ import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_COLLECTING_DETAILS
+import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton.accountOptions
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton.liquor
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -68,6 +71,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.integration.util
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.CLIErrorMessageButtonDialog
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ErrorMessageDialog
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DEFAULT_ADDRESS
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
@@ -75,13 +80,18 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
+import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
+import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.io.*
 import java.net.SocketException
 import java.text.NumberFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
@@ -379,11 +389,16 @@ class KotlinUtils {
             savedAddressResposne: SavedAddressResponse? = null,
             defaultAddress: Address? = null,
             whoISCollecting: String? = null,
+            liquorCompliance: LiquorCompliance? = null
         ) {
 
             activity?.apply {
                 val mIntent = Intent(this, EditDeliveryLocationActivity::class.java)
                 val mBundle = Bundle()
+                if (liquorCompliance != null && liquorCompliance.isLiquorOrder && liquor!=null && liquor!!.noLiquorImgUrl != null && !liquor!!.noLiquorImgUrl.isEmpty()) {
+                    mBundle.putBoolean(Constant.LIQUOR_ORDER, liquorCompliance.isLiquorOrder)
+                    mBundle.putString(Constant.NO_LIQUOR_IMAGE_URL, liquor!!.noLiquorImgUrl)
+                }
                 mBundle.putString(DELIVERY_TYPE, delivery.toString())
                 mBundle.putString(PLACE_ID, placeId)
                 mBundle.putBoolean(IS_COMING_FROM_CHECKOUT, isComingFromCheckout)
@@ -411,7 +426,7 @@ class KotlinUtils {
                         tvDeliveringTo?.text =
                             context?.resources?.getString(R.string.collecting_from)
                         tvDeliveryLocation?.text =
-                            context?.resources?.getString(R.string.store) + storeName ?: ""
+                            context?.resources?.getString(R.string.store) + storeName?.let { convertToTitleCase(it) } ?: ""
 
                         tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setBackgroundResource(R.drawable.icon_basket)
@@ -419,12 +434,13 @@ class KotlinUtils {
                     Delivery.STANDARD -> {
                         tvDeliveringTo.text = context?.resources?.getString(R.string.delivering_to)
                         tvDeliveryLocation.text =
-                            address?.address1 ?: ""
+                            address?.address1?.let { convertToTitleCase(it) } ?: ""
 
                         tvDeliveryLocation.visibility = View.VISIBLE
                         deliverLocationIcon?.setBackgroundResource(R.drawable.icon_delivery)
                     }
-                    else -> {}
+                    else -> {
+                    }
                 }
             }
         }
@@ -863,24 +879,28 @@ class KotlinUtils {
                 }
             }
         }
-        fun openTreatmentPlanUrl(activity: Activity?, eligibilityPlan: EligibilityPlan?){
+
+        fun openTreatmentPlanUrl(activity: Activity?, eligibilityPlan: EligibilityPlan?) {
             var collectionUrlFromConfig: Pair<String?, String?>? = null
             var exitUrl: String? = ""
             val accountOptions = AppConfigSingleton.accountOptions
 
             when (eligibilityPlan?.productGroupCode) {
                 ProductGroupCode.SC -> {
-                    collectionUrlFromConfig =accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.storeCard?.collectionsDynamicUrl
+                    collectionUrlFromConfig =
+                        accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.storeCard?.collectionsDynamicUrl
                     exitUrl = accountOptions?.showTreatmentPlanJourney?.storeCard?.exitUrl
                 }
 
                 ProductGroupCode.PL -> {
-                    collectionUrlFromConfig = accountOptions?.collectionsStartNewPlanJourney?.personalLoan?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.personalLoan?.collectionsDynamicUrl
+                    collectionUrlFromConfig =
+                        accountOptions?.collectionsStartNewPlanJourney?.personalLoan?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.personalLoan?.collectionsDynamicUrl
                     exitUrl = accountOptions?.showTreatmentPlanJourney?.personalLoan?.exitUrl
                 }
 
                 ProductGroupCode.CC -> {
-                    collectionUrlFromConfig = accountOptions?.collectionsStartNewPlanJourney?.creditCard?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.creditCard?.collectionsDynamicUrl
+                    collectionUrlFromConfig =
+                        accountOptions?.collectionsStartNewPlanJourney?.creditCard?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.creditCard?.collectionsDynamicUrl
                     exitUrl = accountOptions?.collectionsStartNewPlanJourney?.creditCard?.exitUrl
                 }
             }
@@ -896,7 +916,7 @@ class KotlinUtils {
                     false -> collectionUrlFromConfig?.first
                 }
 
-            val url =  finalCollectionUrlFromConfig + eligibilityPlan?.appGuid
+            val url = finalCollectionUrlFromConfig + eligibilityPlan?.appGuid
 
             openLinkInInternalWebView(
                 activity,
@@ -1006,17 +1026,60 @@ class KotlinUtils {
             )
         }
 
+        fun hasADayPassed(dateString: String?): Boolean {
+            // when dateString = null it means it's the first time to call api
+            if (dateString == null) return true
+            val from = LocalDateTime.parse(
+                dateString,
+                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
+            )
+            val today = LocalDateTime.now()
+            var period = ChronoUnit.DAYS.between(from, today)
+            return if (period >= 1) {
+                Utils.sessionDaoSave(KEY.FICA_LAST_REQUEST_TIME, null)
+                true
+            } else {
+                false
+            }
+        }
+
+        fun ficaVerifyRedirect(
+            activity: Activity?,
+            url: String?,
+            isWebView: Boolean,
+            collectionsExitUrl: String?
+        ) {
+            activity?.apply {
+                val openInternalWebView = Intent(this, WInternalWebPageActivity::class.java)
+                openInternalWebView.putExtra("externalLink", url)
+                if (isWebView) {
+                    openInternalWebView.putExtra(COLLECTIONS_EXIT_URL, collectionsExitUrl)
+                    startActivityForResult(openInternalWebView, RESULT_CODE_CLOSE_VIEW)
+                } else {
+                    openUrlInPhoneBrowser(url, activity)
+                    activity.finish()
+                }
+            }
+        }
+        fun isFicaEnabled(): Boolean {
+            return Utils.isFeatureEnabled(accountOptions?.ficaRefresh?.minimumSupportedAppBuildNumber)
+        }
+
         fun saveAnonymousUserLocationDetails(shoppingDeliveryLocation: ShoppingDeliveryLocation) {
-            Utils.sessionDaoSave(KEY.ANONYMOUS_USER_LOCATION_DETAILS,
-                Utils.objectToJson(shoppingDeliveryLocation))
+            Utils.sessionDaoSave(
+                KEY.ANONYMOUS_USER_LOCATION_DETAILS,
+                Utils.objectToJson(shoppingDeliveryLocation)
+            )
         }
 
         fun getAnonymousUserLocationDetails(): ShoppingDeliveryLocation? {
             var location: ShoppingDeliveryLocation? = null
             try {
                 SessionDao.getByKey(KEY.ANONYMOUS_USER_LOCATION_DETAILS).value?.let {
-                    location = Utils.strToJson(it,
-                        ShoppingDeliveryLocation::class.java) as ShoppingDeliveryLocation?
+                    location = Utils.strToJson(
+                        it,
+                        ShoppingDeliveryLocation::class.java
+                    ) as ShoppingDeliveryLocation?
                 }
             } catch (e: Exception) {
                 FirebaseManager.logException(e)
@@ -1027,17 +1090,46 @@ class KotlinUtils {
         fun clearAnonymousUserLocationDetails() {
             Utils.removeFromDb(KEY.ANONYMOUS_USER_LOCATION_DETAILS)
         }
+
         fun coroutineContextWithExceptionHandler(errorHandler: (AbsaApiFailureHandler) -> Unit): CoroutineContext {
             return (Dispatchers.IO + CoroutineExceptionHandler { _, throwable ->
                 when (throwable) {
                     is SocketException -> errorHandler(AbsaApiFailureHandler.NoInternetApiFailure)
-                    is HttpException -> errorHandler(AbsaApiFailureHandler.HttpException(throwable.message(),
-                        throwable.code()))
-                    is Exception -> errorHandler(AbsaApiFailureHandler.Exception(throwable.message,
-                        throwable.hashCode()))
+                    is HttpException -> errorHandler(
+                        AbsaApiFailureHandler.HttpException(
+                            throwable.message(),
+                            throwable.code()
+                        )
+                    )
+                    is Exception -> errorHandler(
+                        AbsaApiFailureHandler.Exception(
+                            throwable.message,
+                            throwable.hashCode()
+                        )
+                    )
                     else -> errorHandler(AbsaApiFailureHandler.NoInternetApiFailure)
                 }
             })
+        }
+
+
+        fun cliErrorMessageDialog(appCompatActivity: AppCompatActivity?, data: ErrorMessageDialog) {
+            appCompatActivity?.apply {
+                val fragmentInstance = CLIErrorMessageButtonDialog.newInstance(data)
+                fragmentInstance.show(
+                    supportFragmentManager,
+                    CLIErrorMessageButtonDialog::class.java.simpleName
+                )
+            }
+        }
+        fun vocShoppingHandling(deliveryType: String?): VocTriggerEvent? {
+            var event:VocTriggerEvent? = null
+            when(Delivery.getType(deliveryType)){
+                Delivery.CNC->{
+                    event = VocTriggerEvent.SHOP_CLICK_COLLECT_CONFIRM
+                }
+            }
+            return event
         }
     }
 }

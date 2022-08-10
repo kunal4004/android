@@ -49,7 +49,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.MyView
 			rowTypeBorder(holder, position);
 			onItemClick(holder);
 			setText(holder, deaBank);
-			onItemSelected(holder, position);
+			onItemSelected(holder, position,deaBank);
 			setBankImage(holder, deaBank);
 		}
 
@@ -61,18 +61,26 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.MyView
 				DrawImage drawImage = new DrawImage(imBankLogo.getContext());
 				drawImage.displaySmallImage(imBankLogo, bank.bankImage);
 			}
+			String contentDescriptionId = (bank.bankName+"ImageView").replace(" ","");
+			imBankLogo.setContentDescription(contentDescriptionId);
 		}
 
-		private void onItemSelected(final MyViewHolder holder, int position) {
+		private void onItemSelected(final MyViewHolder holder, int position, Bank bank) {
 			AssetManager asset = holder.imgSelectBank.getContext().getAssets();
 			if (selectedPosition == position) {
 				holder.imgSelectBank.setBackgroundResource(R.drawable.tick_cli_active);
 				holder.tvBankName.setTypeface(Typeface.createFromAsset(asset, "fonts/WFutura-SemiBold.ttf"));
 				textViewColor(holder, R.color.black);
+				String contentDescription = "Checkbox"+bank.bankName+position+"Checked";
+				holder.imgSelectBank.setContentDescription(contentDescription.replace(" ",""));
+				holder.tvBankName.setContentDescription(bank.bankName.replace(" ", ""));
 			} else {
 				holder.imgSelectBank.setBackgroundResource(R.drawable.tick_cli_inactive);
 				holder.tvBankName.setTypeface(Typeface.createFromAsset(asset, "fonts/WFutura-Medium.ttf"));
 				textViewColor(holder, R.color.black_50);
+				String contentDescription = "Checkbox"+bank.bankName;
+				holder.imgSelectBank.setContentDescription(contentDescription.replace(" ",""));
+				holder.tvBankName.setContentDescription(bank.bankName.replace(" ", ""));
 			}
 		}
 

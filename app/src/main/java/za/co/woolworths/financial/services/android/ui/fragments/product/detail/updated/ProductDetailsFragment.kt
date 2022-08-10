@@ -123,6 +123,9 @@ import za.co.woolworths.financial.services.android.util.pickimagecontract.PickIm
 import java.io.File
 import android.graphics.Bitmap
 import com.google.firebase.analytics.FirebaseAnalytics
+import za.co.woolworths.financial.services.android.common.convertToTitleCase
+import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.logException
+import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.setCrashlyticsString
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
 import kotlin.collections.set
@@ -1937,6 +1940,22 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         activity?.apply {
             Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "")
         }
+
+        // TODO: Remove non-fatal exception below once APP2-65 is closed
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_ID, productDetails?.productId)
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_NAME, productDetails?.productName)
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.DELIVERY_LOCATION, KotlinUtils.getPreferredDeliveryAddressOrStoreName())
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.HAS_COLOR, hasColor.toString())
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.HAS_SIZE, hasSize.toString())
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.STORE_ID, Utils.retrieveStoreId(productDetails?.fulfillmentType) ?: "")
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.DELIVERY_TYPE, KotlinUtils.getPreferredDeliveryType().toString())
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.IS_USER_AUTHENTICATED, SessionUtilities.getInstance().isUserAuthenticated.toString())
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_SKU, productDetails?.sku)
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.SELECTED_SKU_QUANTITY, getSelectedSku()?.quantity.toString())
+        Utils.getLastSavedLocation()?.let {
+            setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.LAST_KNOWN_LOCATION, "${it.latitude}, ${it.longitude}")
+        }
+        logException(Exception(FirebaseManagerAnalyticsProperties.CrashlyticsExceptionName.PRODUCT_DETAILS_FIND_IN_STORE))
     }
 
     override fun showProductDetailsLoading() {
@@ -2088,13 +2107,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 when (Delivery.getType(it.deliveryType)) {
                     Delivery.CNC -> {
                         currentDeliveryLocation.text =
-                            resources?.getString(R.string.store) + it.storeName ?: ""
+                            resources?.getString(R.string.store) + it.storeName?.let { convertToTitleCase(it) } ?: ""
                         defaultLocationPlaceholder.text =
                             getString(R.string.collecting_from) + " "
                     }
                     Delivery.STANDARD -> {
                         currentDeliveryLocation.text =
-                            it.address?.address1 ?: ""
+                            it.address?.address1?.let { convertToTitleCase(it) } ?: ""
                         defaultLocationPlaceholder.text =
                             getString(R.string.delivering_to_pdp)
                     }
@@ -2255,6 +2274,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         this@ProductDetailsFragment.childFragmentManager,
                         OutOfStockMessageDialogFragment::class.java.simpleName
                     )
+
                     updateAddToCartButtonForSelectedSKU()
                 }
             }

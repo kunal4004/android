@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:contentDescription="@string/stepIndicatorContainer"
     android:orientation="vertical"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
@@ -13,8 +14,8 @@
         android:layout_height="48dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:orientation="horizontal"
-        android:baselineAligned="false">
+        android:baselineAligned="false"
+        android:orientation="horizontal">
 
         <RelativeLayout
             android:layout_width="0dp"
@@ -23,7 +24,8 @@
 
             <FrameLayout
                 android:id="@+id/incomeIndicatorRelativeLayout"
-                style="@style/cli_step_indicator_circle">
+                style="@style/cli_step_indicator_circle"
+                android:contentDescription="@string/imageViewIncome">
 
                 <TextView
                     android:id="@+id/incomeIndicatorTextView"
@@ -48,7 +50,8 @@
 
             <FrameLayout
                 android:id="@+id/expenseIndicatorRelativeLayout"
-                style="@style/cli_step_indicator_circle">
+                style="@style/cli_step_indicator_circle"
+                android:contentDescription="@string/imageViewExpenses">
 
                 <TextView
                     android:id="@+id/expenseIndicatorTextView"
@@ -72,7 +75,8 @@
 
             <FrameLayout
                 android:id="@+id/offerIndicatorRelativeLayout"
-                style="@style/cli_step_indicator_circle">
+                style="@style/cli_step_indicator_circle"
+                android:contentDescription="@string/imageViewOffer">
 
                 <TextView
                     android:id="@+id/otherIndicatorTextView"
@@ -96,7 +100,8 @@
 
             <FrameLayout
                 android:id="@+id/completeIndicatorRelativeLayout"
-                style="@style/cli_step_indicator_circle">
+                style="@style/cli_step_indicator_circle"
+                android:contentDescription="@string/imageViewComplete">
 
                 <TextView
                     android:id="@+id/completeIndicatorTextView"
@@ -116,6 +121,7 @@
         <TextView
             android:id="@+id/incomeTitleTextView"
             style="@style/cli_steps_title_style"
+            android:contentDescription="@string/incomeLabel"
             android:paddingStart="5dp"
             android:paddingEnd="0dp"
             android:text="@string/cli_step_indicator_income" />
@@ -123,6 +129,7 @@
         <TextView
             android:id="@+id/expenseTitleTextView"
             style="@style/cli_steps_title_style"
+            android:contentDescription="@string/expenseLabel"
             android:gravity="start"
             android:paddingStart="10dp"
             android:paddingEnd="0dp"
@@ -131,12 +138,14 @@
         <TextView
             android:id="@+id/offerTitleTextView"
             style="@style/cli_steps_title_style"
+            android:contentDescription="@string/offerLabel"
             android:gravity="center_horizontal"
             android:text="@string/cli_step_indicator_offer" />
 
         <TextView
             android:id="@+id/completeTitleTextView"
             style="@style/cli_steps_title_style"
+            android:contentDescription="@string/completeLabel"
             android:gravity="end"
             android:text="@string/cli_step_indicator_complete" />
     </LinearLayout>

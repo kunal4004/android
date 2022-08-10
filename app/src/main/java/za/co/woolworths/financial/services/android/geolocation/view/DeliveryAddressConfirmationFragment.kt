@@ -29,6 +29,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Addr
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.*
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
+import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
@@ -235,9 +236,17 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     private fun sendConfirmLocation() {
         var unSellableCommerceItems: MutableList<UnSellableCommerceItem>? = null
-        validateLocationResponse?.validatePlace?.stores?.forEach {
-            if (it.storeName.equals(mStoreName)) {
-                unSellableCommerceItems = it.unSellableCommerceItems
+        when (deliveryType) {
+            Delivery.STANDARD.name -> {
+                unSellableCommerceItems =
+                        validateLocationResponse?.validatePlace?.unSellableCommerceItems
+            }
+            Delivery.CNC.name -> {
+                validateLocationResponse?.validatePlace?.stores?.forEach {
+                    if (it.storeId.equals(mStoreId)) {
+                        unSellableCommerceItems = it.unSellableCommerceItems
+                    }
+                }
             }
         }
         if (unSellableCommerceItems?.isNullOrEmpty() == false && isUnSellableItemsRemoved == false) {
@@ -428,16 +437,20 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         StoreLiveData.observe(viewLifecycleOwner,{
             if (it?.storeName != null) {
                 geoDeliveryText?.text =
-                    HtmlCompat.fromHtml(getString(R.string.collecting_from_geo, it?.storeName),
+                    HtmlCompat.fromHtml(getString(R.string.collecting_from_geo, it?.storeName?.let { convertToTitleCase(it) }),
                         HtmlCompat.FROM_HTML_MODE_LEGACY)
                 itemLimitValue?.text  = it?.quantityLimit?.foodMaximumQuantity.toString()
+                editDelivery?.text = bindString(R.string.choose)
+                btnConfirmAddress?.isEnabled = true
+                btnConfirmAddress?.setBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.black
+                    )
+                )
+                mStoreName = it?.storeName.toString()
+                mStoreId = it?.storeId.toString()
             }
-            editDelivery?.text = bindString(R.string.edit)
-            btnConfirmAddress?.isEnabled = true
-            btnConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
-            mStoreName = it?.storeName.toString()
-            mStoreId = it?.storeId.toString()
-
         })
         isUnSellableItemsRemoved()
         placeId?.let {
@@ -652,10 +665,10 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     private fun setGeoDeliveryTextForCnc() {
         if (!StoreLiveData.value?.storeName.isNullOrEmpty()) {
             geoDeliveryText?.text = HtmlCompat.fromHtml(
-                getString(R.string.collecting_from_geo, mStoreName),
+                getString(R.string.collecting_from_geo, mStoreName?.let { convertToTitleCase(it) }),
                 HtmlCompat.FROM_HTML_MODE_LEGACY
             )
-            editDelivery?.text = bindString(R.string.edit)
+            editDelivery?.text = bindString(R.string.choose)
             btnConfirmAddress?.isEnabled = true
             btnConfirmAddress?.setBackgroundColor(
                 ContextCompat.getColor(
@@ -672,10 +685,10 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     mStoreName=it.storeName
                     mStoreId=it.storeId
                     geoDeliveryText?.text = HtmlCompat.fromHtml(
-                        getString(R.string.collecting_from_geo, it.storeName),
+                        getString(R.string.collecting_from_geo, it.storeName?.let { convertToTitleCase(it) }),
                         HtmlCompat.FROM_HTML_MODE_LEGACY
                     )
-                    editDelivery?.text = bindString(R.string.edit)
+                    editDelivery?.text = bindString(R.string.choose)
                     btnConfirmAddress?.isEnabled = true
                     btnConfirmAddress?.setBackgroundColor(
                         ContextCompat.getColor(
@@ -692,16 +705,16 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
 
     private fun whereToCollect() {
         geoDeliveryText?.text = HtmlCompat.fromHtml(
-            getString(R.string.collecting_from_geo, getNearestStore(validateLocationResponse?.validatePlace?.stores)),
+            getString(R.string.where_do_you_want_to_collect, ""),
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
-        mStoreId = getNearestStoreId(validateLocationResponse?.validatePlace?.stores)
-        editDelivery?.text = bindString(R.string.edit)
-        btnConfirmAddress?.isEnabled = true
+        mStoreId = ""
+        editDelivery?.text = bindString(R.string.choose)
+        btnConfirmAddress?.isEnabled = false
         btnConfirmAddress?.setBackgroundColor(
             ContextCompat.getColor(
-                requireContext(),
-                R.color.black
+                requireActivity(),
+                R.color.color_A9A9A9
             )
         )
 

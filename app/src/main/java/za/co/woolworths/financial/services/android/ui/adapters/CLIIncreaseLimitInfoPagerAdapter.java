@@ -51,17 +51,15 @@ public class CLIIncreaseLimitInfoPagerAdapter extends PagerAdapter {
 		WTextView videoText = (WTextView) cView.findViewById(R.id.cli_ifo_video);
 		ImageView image=(ImageView)cView.findViewById(R.id.cli_info_image);
 		image.setImageResource(images.getResourceId(position,-1));
+		image.setContentDescription("pagerImage"+position);
 		title.setText(titles[position]);
+		title.setContentDescription("pagerTitle"+position);
 		description.setText(descriptions[position]);
+		description.setContentDescription("pagerDescription"+position);
 		container.addView(cView);
 
-		videoText.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				selectedItemCallback.onItemClick(v, position);
-			}
-		});
-
+		videoText.setOnClickListener(v -> selectedItemCallback.onItemClick(v, position));
+		videoText.setContentDescription("pagerVideoText"+position);
 		return cView;
 	}
 

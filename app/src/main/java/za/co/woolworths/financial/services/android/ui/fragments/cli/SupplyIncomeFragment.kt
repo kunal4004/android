@@ -7,19 +7,16 @@ import android.view.*
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.cli_next_button.*
 import kotlinx.android.synthetic.main.supply_income_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.extension.bindStringArray
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.SupplyInfoDetailFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.controller.CLIFragment
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController
 import java.util.HashMap
-import java.util.LinkedHashMap
 
 class SupplyIncomeFragment : CLIFragment(), View.OnClickListener {
 
@@ -80,6 +77,7 @@ class SupplyIncomeFragment : CLIFragment(), View.OnClickListener {
         llNextButtonLayout?.setOnClickListener(this)
         btnContinue?.setOnClickListener(this)
         btnContinue?.text = bindString(R.string.next)
+        btnContinue?.contentDescription = getString(R.string.incomeNextButton)
     }
 
     private inner class GenericTextWatcher(private val view: View) : TextWatcher {
@@ -134,7 +132,6 @@ class SupplyIncomeFragment : CLIFragment(), View.OnClickListener {
         llNetMonthlyIncomeLayout?.requestFocus()
     }
 
-
     override fun onResume() {
         super.onResume()
         activity?.let { activity -> Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.CLI_INCOME) }
@@ -148,19 +145,11 @@ class SupplyIncomeFragment : CLIFragment(), View.OnClickListener {
         MultiClickPreventer.preventMultiClick(v)
         when (v.id) {
             R.id.imInfo -> {
-                val arrTitle = bindStringArray(R.array.supply_info_income_title)
-                val arrDescription = resources.getStringArray(R.array.supply_info_income_desc)
-                val incomeMap = LinkedHashMap<String, String>()
-                var position = 0
-                val sizeOfArray = arrTitle?.size ?: 0
-                while (position < sizeOfArray) {
-                    val itemPosition = arrTitle?.get(position) ?: ""
-                    incomeMap[itemPosition] = arrDescription[position]
-                    position++
+                requireActivity().apply {
+                    val supplyIncomeInfoFragment = SupplyInfoDetailFragment.newInstance(SupplyInfoDetailFragment.SupplyDetailViewType.INCOME)
+                    supplyIncomeInfoFragment.show(supportFragmentManager, SupplyInfoDetailFragment::class.java.simpleName
+                    )
                 }
-                mIncreaseLimitController?.hideSoftKeyboard(activity)
-                Utils.displayValidationMessage(activity,
-                        CustomPopUpWindow.MODAL_LAYOUT.SUPPLY_DETAIL_INFO, Gson().toJson(incomeMap, LinkedHashMap::class.java))
             }
             R.id.llGrossMonthlyIncomeLayout -> mIncreaseLimitController?.populateExpenseField(etGrossMonthlyIncome, tvGrossMonthlyIncome, activity)
             R.id.llNetMonthlyIncomeLayout -> mIncreaseLimitController?.populateExpenseField(etNetMonthlyIncome, tvNetMonthlyIncome, activity)
