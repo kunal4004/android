@@ -11,19 +11,23 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.*
+import android.webkit.CookieManager
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
+import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.android.synthetic.main.fragment_checkout_payment_web.*
 import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsResponse
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.util.AdvancedWebView
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.Utils
 import java.net.URI
 
 
@@ -33,6 +37,7 @@ class CheckoutPaymentWebFragment : Fragment(), AdvancedWebView.Listener {
         const val KEY_ARGS_WEB_TOKEN = "web_tokens"
         const val KEY_STATUS = "status"
         const val REQUEST_KEY_PAYMENT_STATUS = "payment_status"
+        const val PAYMENT_TYPE = "payment_type"
     }
 
     enum class PaymentStatus(val type: String) {
@@ -123,8 +128,14 @@ class CheckoutPaymentWebFragment : Fragment(), AdvancedWebView.Listener {
     }
 
     private fun onStatusChanged(url: String) {
-        when (Uri.parse(url).getQueryParameter(KEY_STATUS)) {
+        val uri = Uri.parse(url)
+        when (uri.getQueryParameter(KEY_STATUS)) {
             PaymentStatus.PAYMENT_SUCCESS.type -> {
+                val paymentType = uri.getQueryParameter(PAYMENT_TYPE)
+                val arguments = HashMap<String, String>()
+                arguments[FirebaseAnalytics.Param.CURRENCY] = FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+                arguments[FirebaseAnalytics.Param.PAYMENT_TYPE] = paymentType.toString()
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ADD_PAYMENT_INFO, arguments, activity)
                 navigateToOrderConfirmation()
             }
             PaymentStatus.PAYMENT_ABANDON.type -> {
