@@ -281,7 +281,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         KotlinUtils.presentEditDeliveryGeoLocationActivity(
             requireActivity(),
             REQUEST_CODE,
-            Delivery.getType(getDeliveryType()?.deliveryType),
+            Delivery.getType(getDeliveryType()?.deliveryType) ?: KotlinUtils.browsingDeliveryType,
             getDeliveryType()?.address?.placeId ?: ""
         )
     }
@@ -529,10 +529,25 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             || requestCode == DEPARTMENT_LOGIN_REQUEST && viewpager_main.currentItem == STANDARD_TAB.index
         ) {
             updateCurrentTab(getDeliveryType()?.deliveryType)
-            val fragment = viewpager_main?.adapter?.instantiateItem(
+            var fragment = viewpager_main?.adapter?.instantiateItem(
                 viewpager_main,
                 viewpager_main.currentItem
-            ) as? StandardDeliveryFragment
+            )
+            fragment = when(viewpager_main.currentItem) {
+                STANDARD_TAB.index -> {
+                    fragment as? StandardDeliveryFragment
+                }
+                CLICK_AND_COLLECT_TAB.index -> {
+                    fragment as? ChangeFullfilmentCollectionStoreFragment
+                }
+                DASH_TAB.index -> {
+                    fragment as? DashDeliveryAddressFragment
+                }
+                else -> {
+                    fragment as? StandardDeliveryFragment
+                }
+            }
+
             fragment?.onActivityResult(requestCode, resultCode, data)
         }
         if (requestCode == DASH_SET_ADDRESS_REQUEST_CODE) {
@@ -569,14 +584,15 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
 
         if (requestCode == LOGIN_MY_LIST_REQUEST_CODE) {
-            (activity as? BottomNavigationActivity)?.let {
-                it.bottomNavigationById.currentItem = INDEX_ACCOUNT
-                val fragment = MyListsFragment()
-                it.pushFragment(fragment)
+            if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+                (activity as? BottomNavigationActivity)?.let {
+                    it.bottomNavigationById?.setCurrentItem(INDEX_ACCOUNT)
+                    val fragment = MyListsFragment()
+                    it.pushFragment(fragment)
+                }
             }
         }
     }
-
 
     fun refreshViewPagerFragment() {
         when (viewpager_main.currentItem) {
@@ -1095,13 +1111,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
             WMaterialShowcaseView.Feature.MY_LIST -> {
                 if (SessionUtilities.getInstance().isUserAuthenticated) {
-                    (activity as? BottomNavigationActivity)?.let {
-                        it.bottomNavigationById.setCurrentItem(INDEX_ACCOUNT)
-                        val fragment = MyListsFragment()
-                        it.pushFragment(fragment)
-                    }
+                    navigateToMyListFragment()
                 } else {
-                    ScreenManager.presentSSOSignin(activity, LOGIN_MY_LIST_REQUEST_CODE)
+                    navigateToMyListFragment()
                 }
             }
         }

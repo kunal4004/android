@@ -29,7 +29,7 @@ class WRewardsLoggedInAndNotLinkedFragment : WRewardOnBoardingFragment() {
         hideToolbar()
         underlineText(tvRewardLinkAccount)
         setUpPager(vpJoinRewardInfo, tabIndicator)
-        applyForWRewards?.setOnClickListener {  Utils.openLinkInInternalWebView(AppConfigSingleton.wrewardsLink) }
+        applyForWRewards?.setOnClickListener {  Utils.openLinkInInternalWebView(AppConfigSingleton.wrewardsLink, true) }
         tvRewardLinkAccount?.setOnClickListener { activity?.let { activity -> ScreenManager.presentSSOLinkAccounts(activity) }; }
         uniqueIdsForWRewardsLoggedInNotLinkAutomation()
     }
