@@ -370,7 +370,11 @@ public class Utils {
         args.putString("description", description);
         openMsg.putExtras(args);
         context.startActivity(openMsg);
-        ((AppCompatActivity) context).overridePendingTransition(0, 0);
+        if (context instanceof AppCompatActivity) {
+            ((AppCompatActivity) context).overridePendingTransition(0, 0);
+        } else if (context instanceof Activity){
+            ((Activity) context).overridePendingTransition(0, 0);
+        }
     }
 
     public static void displayDialog(Context context, CustomPopUpWindow.MODAL_LAYOUT key, String description, int requestCode) {
