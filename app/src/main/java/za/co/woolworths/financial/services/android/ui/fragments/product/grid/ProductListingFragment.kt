@@ -346,12 +346,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                                 this.placeId = confirmLocationRequest.address.placeId
                                 isLocationSame =
                                     confirmLocationRequest.address.placeId?.equals(savedPlaceId)
-                                isDeliveryLocationTabClicked =
-                                    confirmLocationRequest.address.placeId?.equals(savedPlaceId)
-                                isCncTabClicked =
-                                    confirmLocationRequest.address.placeId?.equals(savedPlaceId)
-                                isDashTabClicked =
-                                    confirmLocationRequest.address.placeId?.equals(savedPlaceId)
                             }
 
                             setBrowsingData()
