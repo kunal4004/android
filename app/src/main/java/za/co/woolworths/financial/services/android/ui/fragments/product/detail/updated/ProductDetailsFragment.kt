@@ -775,15 +775,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                                 isLocationSame =
                                     confirmLocationRequest.address.placeId?.equals(
                                         savedPlaceId)
-                                isDeliveryLocationTabClicked =
-                                    confirmLocationRequest.address.placeId?.equals(
-                                        savedPlaceId)
-                                isCncTabClicked =
-                                    confirmLocationRequest.address.placeId?.equals(
-                                        savedPlaceId)
-                                isDashTabClicked =
-                                    confirmLocationRequest.address.placeId?.equals(
-                                        savedPlaceId)
                             }
 
                             setBrowsingData()
