@@ -379,11 +379,11 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             val margin = requireContext().resources.getDimensionPixelSize(R.dimen.sixteen_dp)
             for (i in 0 until tabLayout.tabCount) {
                 val tab = (tabLayout.getChildAt(0) as ViewGroup).getChildAt(i)
-                val p = tab.layoutParams as MarginLayoutParams
+                val layoutParams = tab.layoutParams as MarginLayoutParams
                 if(i == 0) {
-                    p.setMargins(margin, 0, 0, 0)
+                    layoutParams.setMargins(margin, 0, 0, 0)
                 } else if(i == 2) {
-                    p.setMargins(0, 0, margin, 0)
+                    layoutParams.setMargins(0, 0, margin, 0)
                 }
                 tab.requestLayout()
             }
