@@ -59,8 +59,7 @@
             android:gravity="center"
             android:letterSpacing="0.1"
             android:text="@string/enter"
-            android:paddingLeft="@dimen/five_dp"
-            android:paddingRight="@dimen/five_dp"
+            android:paddingHorizontal="@dimen/eight_dp"
             android:textAllCaps="true" />
 
         <TextView
@@ -85,7 +84,7 @@
         android:id="@+id/space"
         android:layout_width="0dp"
         android:layout_height="@dimen/eight_dp"
-        android:background="@color/recent_search_bg"
+        android:background="@color/color_F5F5F5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

@@ -22,7 +22,7 @@
             android:fontFamily="@font/futura_semi_bold"
             android:text="@string/delivery_instructions_shopping_bags_title"
             android:textColor="@color/black"
-            android:textSize="@dimen/twenty_sp" />
+            android:textSize="@dimen/eighteen_sp" />
     </com.facebook.shimmer.ShimmerFrameLayout>
 
     <com.facebook.shimmer.ShimmerFrameLayout
@@ -44,7 +44,7 @@
             android:background="@color/white"
             android:fontFamily="@font/myriad_pro_semi_bold"
             android:text="@string/delivery_instructions_shopping_bags_desc"
-            android:textColor="@color/color_444444" />
+            android:textColor="@color/black" />
     </com.facebook.shimmer.ShimmerFrameLayout>
 
     <TextView
@@ -57,7 +57,7 @@
         android:background="@color/white"
         android:fontFamily="@font/myriad_pro_regular"
         android:text="@string/delivery_instructions_shopping_bags_sub_desc"
-        android:textColor="@color/color_444444"
+        android:textColor="@color/black"
         android:visibility="gone"
         app:layout_constrainedWidth="true"
         app:layout_constraintStart_toStartOf="parent"

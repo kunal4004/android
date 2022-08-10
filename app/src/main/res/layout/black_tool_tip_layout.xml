@@ -172,52 +172,6 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/changeButtonLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone">
-
-                <View
-                    android:id="@+id/dividerChangeBtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/line_dp"
-                    android:layout_marginTop="@dimen/sixteen_dp"
-                    android:background="@color/color_666666"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/changeText"
-                    style="@style/myriad_pro_regular"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sixteen_dp"
-                    android:padding="@dimen/_2sdp"
-                    android:text="@string/shop_using_standard_delivery"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/twelve_sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/dividerChangeBtn" />
-
-                <TextView
-                    android:id="@+id/changeLocationButton"
-                    style="@style/futura_semi_bold_black"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sixteen_dp"
-                    android:background="@drawable/rounded_grid_border_text_view"
-                    android:padding="@dimen/_6sdp"
-                    android:text="@string/change_label"
-                    android:textAllCaps="true"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/dividerChangeBtn" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
         </LinearLayout>
     </com.daasuu.bl.BubbleLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

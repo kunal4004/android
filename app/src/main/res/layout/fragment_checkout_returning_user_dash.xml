@@ -10,7 +10,7 @@
         android:id="@+id/deliverySummaryScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/sign_in_register_button_border"
+        android:background="@color/color_F5F5F5"
         android:nestedScrollingEnabled="true"
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toTopOf="@+id/continueToPaymentButtonBackgroundView"

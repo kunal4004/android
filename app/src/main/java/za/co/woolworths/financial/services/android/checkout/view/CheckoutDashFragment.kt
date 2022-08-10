@@ -652,9 +652,9 @@ class CheckoutDashFragment : Fragment(),
                 // default address nickname
                 val defaultAddressNickname =
                     SpannableString(
-                        savedAddresses.defaultAddressNickname + " " + context.getString(
+                        savedAddresses.defaultAddressNickname + "  " + context.getString(
                             R.string.bullet
-                        ) + " "
+                        ) + "  "
                     )
                 val typeface = ResourcesCompat.getFont(context, R.font.myriad_pro_semi_bold)
                 defaultAddressNickname.setSpan(

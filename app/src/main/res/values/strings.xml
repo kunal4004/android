@@ -1903,9 +1903,6 @@
     <!-- Dash Details -->
     <string name="dash_banner_text_open_app">Same Day Delivery. Open Our App.</string>
     <string name="dash_banner_text_download_app">Same Day Delivery. Download Our App.</string>
-    <string name="shop_using_standard_delivery">Shop now using <b>Standard Delivery.</b></string>
-    <string name="shop_using_cnc"><b>Shop now using Click &amp; Collect.</b></string>
-    <string name="shop_using_dash_delivery">Shop now using <b>Dash Delivery.</b></string>
 
     <string name="dash_details_food_order">FOOD ORDERS</string>
     <string name="dash_details_woolies_app_available">Now Available in\nYour Area: Woolies Dash</string>
@@ -2291,7 +2288,7 @@
 
     <!-- Native Checkout : delivery Instructions -->
     <string name="native_checkout_delivery_instructions_need_bags">Need shopping bags? 62c per bag</string>
-    <string name="delivery_instructions_shopping_bags_title">Shopping Bags</string>
+    <string name="delivery_instructions_shopping_bags_title">Choose Your Shopping Bags</string>
     <string name="delivery_instructions_shopping_bags_desc">We’re going plastic bag free!.</string>
     <string name="delivery_instructions_shopping_bags_sub_desc">To be part of the solution, please choose an option</string>
     <string name="native_checkout_delivery_special_instructions">Special Delivery Instructions</string>
@@ -2325,7 +2322,7 @@
     <string name="delivery_timeslot_title_food_items">Delivery 1 - Food Items</string>
     <string name="delivery_timeslot_title_other_items">Delivery 2 - Other Items</string>
     <string name="slot_delivery_title">How Would You Like It Delivered?</string>
-    <string name="slot_delivery_title_when">When would you like it delivered?</string>
+    <string name="slot_delivery_title_when">Set Delivery Timeslot</string>
     <string name="select_your_preferred_delivery_time">Select your preferred delivery time</string>
     <string name="select_your_preferred_delivery_time_other">Select your preferred delivery method</string>
     <string name="previous_week_text">Previous Week</string>
@@ -2334,7 +2331,7 @@
     <string name="currency">R</string>
     <string name="dummy_currency">R50</string>
     <string name="title_text">ShowTitle</string>
-    <string name="subtitle_text">Show SubTitle Text</string>
+    <string name="subtitle_text">Your order will arrive in a sanitised bag. \n You will need to return this to the driver.</string>
     <string name="working_days_text">%1$s - %2$s Working Days</string>
     <plurals name="stores_near_me">
         <item quantity="zero">%d Stores near me</item>

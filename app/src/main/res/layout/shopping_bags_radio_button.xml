@@ -11,14 +11,13 @@
 
     <RadioButton
         android:id="@+id/radioSelector"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/twenty_four_dp"
+        android:layout_height="@dimen/twenty_four_dp"
         android:layout_marginStart="@dimen/ten_dp"
         android:button="@drawable/shopping_list_item_selector"
         android:clickable="false"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top_guideline"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintTop_toBottomOf="@+id/top_guideline" />
 
     <TextView
         android:id="@+id/title"
@@ -29,6 +28,7 @@
         android:layout_marginEnd="@dimen/twenty_eight_dp"
         android:ellipsize="end"
         android:maxLines="1"
+        android:lineHeight="@dimen/twenty_four_dp"
         android:orientation="vertical"
         android:singleLine="true"
         android:text="@string/title_text"
@@ -41,6 +41,7 @@
     <TextView
         android:id="@+id/subTitle"
         style="@style/myriad_pro_regular"
+        android:lineHeight="@dimen/twenty_four_dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twelve_dp"
@@ -49,7 +50,7 @@
         android:orientation="vertical"
         android:paddingEnd="@dimen/twenty_eight_dp"
         android:paddingBottom="@dimen/five_dp"
-        android:text="@string/subtitle_text"
+        tools:text="@string/subtitle_text"
         android:textColor="@color/checkout_delivering_title"
         android:textSize="@dimen/fourteen_sp"
         app:layout_constraintHorizontal_bias="0.0"

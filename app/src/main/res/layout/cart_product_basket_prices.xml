@@ -15,7 +15,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/eight_dp"
-        android:background="@color/recent_search_bg"/>
+        android:background="@color/color_F5F5F5"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -262,11 +262,39 @@
             android:layout_marginRight="@dimen/one_dp"
             android:background="@color/color_separator_light_grey"/>
 
+        <RelativeLayout
+            android:id="@+id/orderTotalLayout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fourty_nine_dp">
+
+            <TextView
+                style="@style/futura_semi_bold_black_12_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:letterSpacing="0.1"
+                android:text="@string/order_total"
+                android:textAllCaps="true" />
+
+            <TextView
+                android:id="@+id/orderTotal"
+                style="@style/futura_semi_bold_black_12_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:letterSpacing="0.1"
+                android:textAllCaps="true"
+                android:textColor="@color/offer_title" />
+
+        </RelativeLayout>
+
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             style="@style/style_cart_basket_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/eighteen_dp"
+
             android:text="@string/cart_item_not_preserved_until_checkout_info"
             android:textSize="@dimen/twelve_sp"
             android:lineSpacingMultiplier="1.2"

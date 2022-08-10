@@ -22,7 +22,8 @@
             android:fontFamily="@font/futura_semi_bold"
             android:text="@string/native_checkout_delivery_food_substitution_title"
             android:textColor="@color/black"
-            android:textSize="@dimen/twenty_sp" />
+            android:lineHeight="@dimen/twenty_four_dp"
+            android:textSize="@dimen/eighteen_sp" />
     </com.facebook.shimmer.ShimmerFrameLayout>
 
     <com.facebook.shimmer.ShimmerFrameLayout

@@ -87,6 +87,7 @@
     <TextView
         android:id="@+id/freeGiftTextView"
         android:text="@string/free_gift"
+        android:paddingHorizontal="@dimen/eight_dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
         app:layout_constraintTop_toBottomOf="@+id/giftItemImageView"
