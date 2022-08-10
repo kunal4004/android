@@ -470,7 +470,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
 
                                 if (isFromDashTab == true) {
                                     if (place.onDemand != null && place.onDemand!!.deliverable == true) {
-                                        KotlinUtils.isDashTabClicked =
+                                        KotlinUtils.isDashTabCrossClicked =
                                             address.placesId?.equals(getDeliveryType()?.address?.placeId) // changing black tooltip flag as user changes in his location.
                                         if (getDeliveryType() == null) {
                                             // User don't have any location (signin or signout both) that's why we are setting new location.

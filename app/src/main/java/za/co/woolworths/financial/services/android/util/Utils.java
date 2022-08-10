@@ -370,7 +370,11 @@ public class Utils {
         args.putString("description", description);
         openMsg.putExtras(args);
         context.startActivity(openMsg);
-        ((AppCompatActivity) context).overridePendingTransition(0, 0);
+        if (context instanceof AppCompatActivity) {
+            ((AppCompatActivity) context).overridePendingTransition(0, 0);
+        } else if (context instanceof Activity){
+            ((Activity) context).overridePendingTransition(0, 0);
+        }
     }
 
     public static void displayDialog(Context context, CustomPopUpWindow.MODAL_LAYOUT key, String description, int requestCode) {
@@ -432,10 +436,15 @@ public class Utils {
     }
 
     public static void openLinkInInternalWebView(String url) {
+        openLinkInInternalWebView(url, false);
+    }
+
+    public static void openLinkInInternalWebView(String url, boolean mustRedirectBlankTargetLinkToExternal) {
         Context context = WoolworthsApplication.getAppContext();
         Intent openInternalWebView = new Intent(context, WInternalWebPageActivity.class);
         openInternalWebView.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         openInternalWebView.putExtra("externalLink", url);
+        openInternalWebView.putExtra(WInternalWebPageActivity.ARG_REDIRECT_BLANK_TARGET_LINK_EXTERNAL, mustRedirectBlankTargetLinkToExternal);
         context.startActivity(openInternalWebView);
     }
 
@@ -960,6 +969,10 @@ public class Utils {
         Utils.removeFromDb(SessionDao.KEY.STORES_USER_SEARCH);
         Utils.removeFromDb(SessionDao.KEY.STORES_USER_LAST_LOCATION);
         Utils.removeFromDb(SessionDao.KEY.LIVE_CHAT_EXTRAS);
+
+        AppInstanceObject appInstanceObject = AppInstanceObject.get();
+        appInstanceObject.setDefaultInAppChatTipAcknowledgements();
+        appInstanceObject.save();
     }
 
     public static void truncateMaxLine(final TextView tv) {
