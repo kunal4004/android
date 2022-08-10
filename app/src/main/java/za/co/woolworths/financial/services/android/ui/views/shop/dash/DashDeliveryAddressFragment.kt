@@ -713,6 +713,11 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     queryStoreFinderProductByFusedLocation(null)
                 }
             }
+            BundleKeysConstants.REQUEST_CODE -> {
+             if (resultCode == Activity.RESULT_OK) {
+                 initViews()
+               }
+            }
         }
     }
 

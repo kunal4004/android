@@ -85,6 +85,8 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO
+import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.logException
+import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.setCrashlyticsString
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.net.ConnectException
@@ -1311,6 +1313,20 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                             val skuInventoryList = skusInventoryForStoreResponse.skuInventory
                             if (skuInventoryList.size == 0 || skuInventoryList[0].quantity == 0) {
                                 addItemToCart?.catalogRefId?.let { skuId ->
+                                    // TODO: Remove non-fatal exception below once APP2-65 is closed
+                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_ID, mSelectedProductList?.productId)
+                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_NAME, mSelectedProductList?.productName)
+                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.DELIVERY_LOCATION, KotlinUtils.getPreferredDeliveryAddressOrStoreName())
+                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_SKU, mSelectedProductList?.sku)
+                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.FULFILLMENT_ID, mFulfilmentTypeId)
+                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.STORE_ID, mStoreId)
+                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.DELIVERY_TYPE, KotlinUtils.getPreferredDeliveryType().toString())
+                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.IS_USER_AUTHENTICATED, SessionUtilities.getInstance().isUserAuthenticated.toString())
+                                    Utils.getLastSavedLocation()?.let {
+                                        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.LAST_KNOWN_LOCATION, "${it.latitude}, ${it.longitude}")
+                                    }
+                                    logException(Exception(FirebaseManagerAnalyticsProperties.CrashlyticsExceptionName.PRODUCT_LIST_FIND_IN_STORE))
+
                                     productOutOfStockErrorMessage(
                                         skuId
                                     )

@@ -33,7 +33,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.perfectcorp.perfectlib.CameraView
@@ -56,7 +55,6 @@ import kotlinx.coroutines.*
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
-import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
@@ -128,6 +126,11 @@ import za.co.woolworths.financial.services.android.util.pickimagecontract.PickIm
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageGalleryContract
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.io.File
+import android.graphics.Bitmap
+import com.google.firebase.analytics.FirebaseAnalytics
+import za.co.woolworths.financial.services.android.common.convertToTitleCase
+import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.logException
+import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.setCrashlyticsString
 import javax.inject.Inject
 import kotlin.collections.get
 import kotlin.collections.set
@@ -836,7 +839,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     fun addItemToCart() {
         isUnSellableItemsRemoved()
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            ScreenManager.presentSSOSigninActivity(activity, SSO_REQUEST_ADD_TO_CART, isUserBrowsing)
+            ScreenManager.presentSSOSigninActivity(activity,
+                SSO_REQUEST_ADD_TO_CART,
+                isUserBrowsing)
             return
         }
 
@@ -1760,7 +1765,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
 
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            ScreenManager.presentSSOSigninActivity(activity, SSO_REQUEST_ADD_TO_SHOPPING_LIST, isUserBrowsing)
+            ScreenManager.presentSSOSigninActivity(activity,
+                SSO_REQUEST_ADD_TO_SHOPPING_LIST,
+                isUserBrowsing)
         } else if (getSelectedSku() != null) {
             activity?.apply {
                 val item = AddToListRequest()
@@ -2156,6 +2163,33 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         activity?.apply {
             Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "")
         }
+
+        // TODO: Remove non-fatal exception below once APP2-65 is closed
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_ID,
+            productDetails?.productId)
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_NAME,
+            productDetails?.productName)
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.DELIVERY_LOCATION,
+            KotlinUtils.getPreferredDeliveryAddressOrStoreName())
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.HAS_COLOR,
+            hasColor.toString())
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.HAS_SIZE,
+            hasSize.toString())
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.STORE_ID,
+            Utils.retrieveStoreId(productDetails?.fulfillmentType) ?: "")
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.DELIVERY_TYPE,
+            KotlinUtils.getPreferredDeliveryType().toString())
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.IS_USER_AUTHENTICATED,
+            SessionUtilities.getInstance().isUserAuthenticated.toString())
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_SKU,
+            productDetails?.sku)
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.SELECTED_SKU_QUANTITY,
+            getSelectedSku()?.quantity.toString())
+        Utils.getLastSavedLocation()?.let {
+            setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.LAST_KNOWN_LOCATION,
+                "${it.latitude}, ${it.longitude}")
+        }
+        logException(Exception(FirebaseManagerAnalyticsProperties.CrashlyticsExceptionName.PRODUCT_DETAILS_FIND_IN_STORE))
     }
 
     override fun showProductDetailsLoading() {
@@ -2484,6 +2518,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         this@ProductDetailsFragment.childFragmentManager,
                         OutOfStockMessageDialogFragment::class.java.simpleName
                     )
+
                     updateAddToCartButtonForSelectedSKU()
                 }
             }
@@ -2666,7 +2701,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             setSuburb?.setOnClickListener {
                 dismiss()
                 if (!SessionUtilities.getInstance().isUserAuthenticated) {
-                    ScreenManager.presentSSOSigninActivity(activity, LOGIN_REQUEST_SUBURB_CHANGE, isUserBrowsing)
+                    ScreenManager.presentSSOSigninActivity(activity,
+                        LOGIN_REQUEST_SUBURB_CHANGE,
+                        isUserBrowsing)
                 } else {
                     activity?.apply {
                         KotlinUtils.presentEditDeliveryGeoLocationActivity(

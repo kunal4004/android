@@ -35,7 +35,7 @@ public class WRewardsVoucherTermAndConditions extends AppCompatActivity {
 		viewGeneralTermsAndCondtions.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Utils.openLinkInInternalWebView(AppConfigSingleton.INSTANCE.getWrewardsTCLink());
+				Utils.openLinkInInternalWebView(AppConfigSingleton.INSTANCE.getWrewardsTCLink(), true);
 			}
 		});
 	}
