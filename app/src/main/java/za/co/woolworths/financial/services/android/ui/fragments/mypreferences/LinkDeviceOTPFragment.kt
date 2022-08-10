@@ -586,7 +586,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                                             }
 
                                                             else -> goToProduct()
-                                                      
                                                         }
                                                     }
 
