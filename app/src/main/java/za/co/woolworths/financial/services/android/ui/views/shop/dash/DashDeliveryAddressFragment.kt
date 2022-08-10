@@ -374,9 +374,9 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                             response.orderSummary?.fulfillmentDetails?.address?.placeId.let { responsePlaceId ->
                                 this.placeId = responsePlaceId
                                 isLocationSame = responsePlaceId.equals(savedPlaceId)
-                                isDeliveryLocationTabClicked = responsePlaceId.equals(savedPlaceId)
-                                isCncTabClicked = responsePlaceId.equals(savedPlaceId)
-                                isDashTabClicked = responsePlaceId.equals(savedPlaceId)
+                                isDeliveryLocationTabCrossClicked = responsePlaceId.equals(savedPlaceId)
+                                isCncTabCrossClicked = responsePlaceId.equals(savedPlaceId)
+                                isDashTabCrossClicked = responsePlaceId.equals(savedPlaceId)
                             }
                         }
 
