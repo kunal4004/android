@@ -39,6 +39,7 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
             bottomSheetListener()
             clickListeners()
             setupToolbarTopMargin()
+            setHeader()
         }
         callApplyNow(viewModel.contentID())
     }
@@ -51,7 +52,6 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun ActivityApplyNowBinding.setHeader(){
-
         viewModel.getApplyNowResourcesData().apply{
             incAccountSalesFrontLayout.constraintLayoutSignOut.background = AppCompatResources.getDrawable(this@ApplyNowActivity,this.cardHeader.drawables[0])
             incAccountSalesFrontLayout.accountSalesCardHeader.cardFrontImageView.let {
