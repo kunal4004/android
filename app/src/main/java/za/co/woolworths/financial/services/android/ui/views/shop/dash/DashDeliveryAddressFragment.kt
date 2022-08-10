@@ -20,7 +20,6 @@ import com.google.gson.Gson
 import com.skydoves.balloon.balloon
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_dash_delivery.*
-import kotlinx.android.synthetic.main.grid_layout.*
 import kotlinx.android.synthetic.main.layout_dash_set_address_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -692,6 +691,11 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
                     queryStoreFinderProductByFusedLocation(null)
                 }
+            }
+            BundleKeysConstants.REQUEST_CODE -> {
+             if (resultCode == Activity.RESULT_OK) {
+                 initViews()
+               }
             }
         }
     }
