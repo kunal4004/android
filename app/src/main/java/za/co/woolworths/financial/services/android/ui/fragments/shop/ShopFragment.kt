@@ -719,7 +719,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             val browsingPlaceId = when (KotlinUtils.browsingDeliveryType) {
                 Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId
                 Delivery.CNC -> WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.placeDetails?.placeId
+                    ?: WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId
                 Delivery.DASH -> WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.placeDetails?.placeId
+                    ?: WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId
                 else -> getDeliveryType()?.address?.placeId ?: ""
 
             }
