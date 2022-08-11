@@ -2,6 +2,8 @@ package za.co.woolworths.financial.services.android.ui.activities.account.sign_i
 
 import android.graphics.Color
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
@@ -32,8 +34,8 @@ class AccountProductsToolbarHelper(
                     colorId ?: R.color.white
                 )
             )
-            toolbarTitleTextView.visibility = View.VISIBLE
-            accountInArrearsTextView.visibility = View.GONE
+            toolbarTitleTextView.visibility = VISIBLE
+            accountInArrearsTextView.visibility = GONE
         }
     }
 
@@ -43,6 +45,8 @@ class AccountProductsToolbarHelper(
     fun setHomeLandingToolbar(viewModel: AccountProductsHomeViewModel, onTap: (View) -> Unit) {
         with(binding) {
             infoIconImageView.onClick { onTap(it) }
+            binding.infoIconImageView.setImageResource(R.drawable.info_white)
+            binding.navigateBackImageButton.visibility = VISIBLE
             navigateBackImageButton.setOnClickListener {
                 if (viewModel.bottomSheetBehaviorState == BottomSheetBehavior.STATE_SETTLING){
                     viewModel.setIsBottomSheetBehaviorExpanded(true)
@@ -55,17 +59,17 @@ class AccountProductsToolbarHelper(
             binding.accountToolbar.setBackgroundColor(Color.TRANSPARENT)
             when (viewModel.isProductInGoodStanding()) {
                 true -> {
-                    toolbarTitleTextView.visibility = View.VISIBLE
+                    toolbarTitleTextView.visibility = VISIBLE
                     toolbarTitleTextView.text = getString(viewModel.getTitleId())
-                    accountInArrearsTextView.visibility = View.GONE
+                    accountInArrearsTextView.visibility = GONE
                 }
                 false -> {
-                    toolbarTitleTextView.visibility = View.GONE
+                    toolbarTitleTextView.visibility = GONE
                     KotlinUtils.roundCornerDrawable(
                         accountInArrearsTextView,
                         AppConstant.RED_HEX_COLOR
                     )
-                    accountInArrearsTextView.visibility = View.VISIBLE
+                    accountInArrearsTextView.visibility = VISIBLE
                 }
             }
         }
@@ -75,6 +79,7 @@ class AccountProductsToolbarHelper(
         getDetailToolbar(R.string.my_card_title, if (isMultipleStoreCard) "s" else "")
         binding.navigateBackImageButton.rotation = 0f
         binding.navigateBackImageButton.onClick { onTap(it) }
+        binding.navigateBackImageButton.visibility = VISIBLE
         binding.accountToolbar.setBackgroundColor(Color.WHITE)
         setNavigationIconBlack()
         setTitleTextColorBlack()
@@ -83,8 +88,8 @@ class AccountProductsToolbarHelper(
     private fun getDetailToolbar(@StringRes id: Int, formatArgs: String = "") {
         with(binding) {
             toolbarTitleTextView.text = getString(id, formatArgs)
-            toolbarTitleTextView.visibility = View.VISIBLE
-            accountInArrearsTextView.visibility = View.GONE
+            toolbarTitleTextView.visibility = VISIBLE
+            accountInArrearsTextView.visibility = GONE
         }
     }
 
@@ -118,4 +123,15 @@ class AccountProductsToolbarHelper(
     }
 
     fun getBackIcon() = binding.navigateBackImageButton
+
+    fun setInformationToolbar(onTap: (View) -> Unit) {
+        getDetailToolbar(R.string.information)
+        binding.navigateBackImageButton.rotation = 0f
+        binding.infoIconImageView.onClick { onTap(it) }
+        binding.navigateBackImageButton.visibility = GONE
+        binding.infoIconImageView.setImageResource(R.drawable.close_24)
+        binding.accountToolbar.setBackgroundColor(Color.WHITE)
+        setNavigationIconBlack()
+        setTitleTextColorBlack()
+    }
 }

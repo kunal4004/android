@@ -42,7 +42,7 @@ class AccountOptionsListFragment : Fragment(R.layout.account_options_list_fragme
     }
 
     private fun AccountOptionsListFragmentBinding.subscribeObservers() {
-        accountOptionsSkeleton.loadingState(true, targetedShimmerLayout = accountOptionsLayout)
+        accountOptionsSkeleton.loadingState(false, targetedShimmerLayout = accountOptionsLayout)
         lifecycleScope.launch {
             viewModel.viewState.collect { items ->
                 items.forEach { item ->
@@ -62,13 +62,9 @@ class AccountOptionsListFragment : Fragment(R.layout.account_options_list_fragme
                             is AccountOptionsScreenUI.DebitOrder -> showDebitOrder(isActive)
                         }
                     }
-                }.apply {
-                    accountOptionsSkeleton.loadingState(
-                        false,
-                        targetedShimmerLayout = accountOptionsLayout
-                    )
                 }
             }
+            viewModel.init()
         }
     }
 

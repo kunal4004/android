@@ -200,6 +200,7 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.onViewPagerPageChangeListener.collectLatest { feature ->
+                if (!feature.isPopupVisibleInCardDetailLanding) return@collectLatest
                 setCardLabel()
                 mHeaderItems.showHeaderItem(feature)
                 mItemList.showListItem(feature) { result ->

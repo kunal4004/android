@@ -57,7 +57,7 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
                             viewModel.onCardPagerPageSelected(
                                 listOfStoreCardFeatures?.get(
                                     currentPosition
-                                ), currentPosition)
+                                ), currentPosition, isPopupVisibleInAccountLanding = false, isPopupVisibleInCardDetailLanding = false)
                             handleBlockUnBlockStoreCardResult()
                         }
                     }
@@ -121,6 +121,8 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
 
         manageCardAdapter?.setItem(viewModel.listOfStoreCardFeatureType)
         setDotIndicatorVisibility(viewModel.listOfStoreCardFeatureType)
+
+        onPagerSelected(cardFreezeViewModel.currentPagePosition.value ?: 0)
         this@initCardViewPager?.cardItemViewPager?.setCurrentItem(
             cardFreezeViewModel.currentPagePosition.value ?: 0, false
         )
@@ -130,7 +132,12 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
         val listOfPrimaryStoreCards = manageCardAdapter?.getListOfStoreCards()
         if ((listOfPrimaryStoreCards?.size ?: 0) > 0) {
             cardFreezeViewModel.currentPagePosition.value = position
-            viewModel.onCardPagerPageSelected(listOfPrimaryStoreCards?.get(position), position)
+            viewModel.onCardPagerPageSelected(
+                listOfPrimaryStoreCards?.get(position),
+                position,
+                isPopupVisibleInAccountLanding = true,
+                isPopupVisibleInCardDetailLanding = true
+            )
         }
     }
 

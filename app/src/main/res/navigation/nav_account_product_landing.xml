@@ -44,6 +44,9 @@
         <action
             android:id="@+id/action_accountProductsHomeFragment_to_accountLandingDialogFragment"
             app:destination="@id/accountLandingDialogFragment" />
+        <action
+            android:id="@+id/action_accountProductsHomeFragment_to_accountInfoFragment"
+            app:destination="@id/accountInfoFragment" />
     </fragment>
 
     <dialog

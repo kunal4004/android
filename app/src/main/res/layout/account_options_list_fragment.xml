@@ -137,7 +137,8 @@
 
         <RelativeLayout
             android:id="@+id/withdrawCashView"
-            style="@style/accountOptionItemsStyle">
+            style="@style/accountOptionItemsStyle"
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/withdrawCashImageView"
@@ -193,6 +194,7 @@
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/accountOptionsSkeleton"
         style="@style/accountOptionItemsStyle"
+        android:visibility="gone"
         android:layout_alignTop="@+id/accountOptionsLayout"
         android:layout_alignBottom="@+id/accountOptionsLayout">
 

@@ -59,12 +59,13 @@ class AccountProductsHomeViewModel @Inject constructor(
         )
     }
 
-    init {
+    fun init() {
         with(_viewState) {
             viewModelScope.launch {
                 emit(balanceProtectionInsurance())
                 emit(isDebitOrderActive())
                 emit(paymentOptions())
+                emit(withdrawCashNow())
             }
         }
     }

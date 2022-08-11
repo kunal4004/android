@@ -11,6 +11,7 @@ interface IAccountOptions {
     suspend fun balanceProtectionInsurance(): MutableList<AccountOptionsScreenUI>
     suspend fun isDebitOrderActive(): MutableList<AccountOptionsScreenUI>
     suspend fun paymentOptions(): MutableList<AccountOptionsScreenUI>
+    suspend fun withdrawCashNow(): MutableList<AccountOptionsScreenUI>
     fun getItems(): MutableList<AccountOptionsScreenUI>
 }
 
@@ -75,6 +76,12 @@ class AccountOptionsImpl @Inject constructor(
     override suspend fun paymentOptions(): MutableList<AccountOptionsScreenUI> {
         listOfAccountOptionsItem[ListOptionsIndex.INDEX_PAYMENT_OPTIONS.number]=
             AccountOptionsScreenUI.PaymentOptionsScreenUI()
+        return listOfAccountOptionsItem
+    }
+
+    override suspend fun withdrawCashNow(): MutableList<AccountOptionsScreenUI> {
+        listOfAccountOptionsItem[ListOptionsIndex.INDEX_PAYMENT_OPTIONS.number]=
+            AccountOptionsScreenUI.WithdrawCashNow(false)
         return listOfAccountOptionsItem
     }
 

@@ -4,25 +4,35 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentAvailableFundBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
+import kotlinx.android.synthetic.main.available_funds_fragment.*
+import kotlinx.android.synthetic.main.view_pay_my_account_button.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
+import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
+import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.store_card.StoreCardFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.WBottomSheetBehaviour
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.InformationData
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.SystemBarCompat
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.feature_pay_my_account.PaymentsPayuMethodViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.AccountProductsMainFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.loadingState
-import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.*
+import java.net.ConnectException
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -30,9 +40,9 @@ class MyStoreCardFragment @Inject constructor() :
     ViewBindingFragment<FragmentAvailableFundBinding>(FragmentAvailableFundBinding::inflate),
     View.OnClickListener {
 
-    val viewModel : AvailableFundsViewModel by activityViewModels()
-    val homeViewModel : AccountProductsHomeViewModel by activityViewModels()
-    val pmaViewModel: PaymentsPayuMethodViewModel by activityViewModels()
+    val viewModel: AvailableFundsViewModel by activityViewModels()
+    val homeViewModel: AccountProductsHomeViewModel by activityViewModels()
+    val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
     @Inject
     lateinit var bottomSheet: WBottomSheetBehaviour
@@ -51,6 +61,8 @@ class MyStoreCardFragment @Inject constructor() :
         setAccountInArrearsUI()
         setBackground()
         clickListeners()
+        autoConnectPMA()
+        navigateToDeepLinkView()
     }
 
     private fun showProgress(isLoading: Boolean) {
@@ -93,36 +105,13 @@ class MyStoreCardFragment @Inject constructor() :
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            pmaViewModel.paymentMethodsResponseResult.collect { result ->
-                with(result) {
-                    renderSuccess { showLandingScreen(output) }
-
-                    renderLoading { showProgress(isLoading) }
-
-                    renderFailure {}
-
-                    renderNoConnection {}
-
-                    renderHttpFailureFromServer { showLandingScreen(output) }
-
-                    renderEmpty {}
-
-                }
-            }
+        payMyAccountViewModel.queryPaymentMethod.observe(viewLifecycleOwner) {
+            payMyAccountViewModel.isQueryPayUPaymentMethodComplete = false
+            queryPaymentMethod()
         }
-
-        pmaViewModel.requestPaymentPayuMethod()
 
     }
 
-    private fun showLandingScreen(response : PaymentMethodsResponse?) {
-        when (pmaViewModel.getLandingScreen(response)) {
-            PayMyAccountViewModel.PAYUMethodType.CREATE_USER -> {}
-            PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE -> {}
-            PayMyAccountViewModel.PAYUMethodType.ERROR -> {}
-        }
-    }
 
     /**
      * Set dynamic guideline when overdue amount, payable now is visible
@@ -136,8 +125,8 @@ class MyStoreCardFragment @Inject constructor() :
 
     private fun navigateToInformation() {
         with(homeViewModel) {
-            findNavController().navigate(
-                AccountProductsMainFragmentDirections.actionAccountProductsMainFragmentToAccountInformationFragment(
+            (activity as? StoreCardActivity)?.landingNavController()?.navigate(
+                AccountProductsHomeFragmentDirections.actionAccountProductsHomeFragmentToAccountInfoFragment(
                     if (isProductInGoodStanding()) InformationData.GoodStanding() else InformationData.Arrears()
                 )
             )
@@ -162,12 +151,188 @@ class MyStoreCardFragment @Inject constructor() :
                     navigateToStatementActivity(activity, product)
                 }
                 binding.incRecentTransactionButton.root -> {
-                    product?.let { navigateToRecentTransactionActivity(activity, product,cardType =  it.productGroupCode) }
+                    product?.let {
+                        navigateToRecentTransactionActivity(
+                            activity,
+                            product,
+                            cardType = it.productGroupCode
+                        )
+                    }
+                }
+
+                binding.incPayMyAccountButton.root -> {
+                    onPayMyAccountButtonTap()
                 }
 
                 else -> Unit
             }
         }
     }
+
+    private fun onPayMyAccountButtonTap() {
+        onPayMyAccountButtonTap(
+            FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC,
+            StoreCardFragmentDirections.storeCardFragmentToDisplayVendorDetailFragmentAction()
+        )
+    }
+
+    private fun onPayMyAccountButtonTap(eventName: String?, directions: NavDirections?) {
+        if (viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
+
+        payMyAccountViewModel.apply {
+            //Redirect to payment options when  ABSA cards array is empty for credit card products
+            if (getProductGroupCode().equals(
+                    AccountsProductGroupCode.CREDIT_CARD.groupCode,
+                    ignoreCase = true
+                )
+            ) {
+                if (getAccount()?.cards?.isEmpty() == true) {
+                    ActivityIntentNavigationManager.presentPayMyAccountActivity(
+                        activity,
+                        payMyAccountViewModel.getCardDetail()
+                    )
+                    return
+                }
+            }
+
+            payMyAccountPresenter.apply {
+                triggerFirebaseEvent(eventName, activity)
+                resetAmountEnteredToDefault()
+                when (isPaymentMethodOfTypeError()) {
+                    true -> {
+                        try {
+                            findNavController().navigate(R.id.payMyAccountRetryErrorFragment)
+                        } catch (ex: IllegalStateException) {
+                            FirebaseManager.logException(ex)
+                        }
+                    }
+                    false -> {
+                        openPayMyAccountOptionOrEnterPaymentAmountDialogFragment(activity)
+                        {
+                            try {
+                                directions?.let { navigateSafelyWithNavController(it) }
+                            } catch (ex: IllegalStateException) {
+                                FirebaseManager.logException(ex)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    private fun queryPaymentMethod() {
+        when (!payMyAccountViewModel.isQueryPayUPaymentMethodComplete) {
+            true -> {
+                showProgress(true)
+                val cardInfo = payMyAccountViewModel.getCardDetail()
+                val account: Pair<ApplyNowState, Account>? =
+                    Pair(ApplyNowState.STORE_CARD, homeViewModel.product ?: Account())
+                val amountEntered = account?.second?.amountOverdue?.let { amountDue ->
+                    Utils.removeNegativeSymbol(
+                        CurrencyFormatter.formatAmountToRandAndCent(amountDue)
+                    )
+                }
+                val payUMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER
+                val paymentMethodList = cardInfo?.paymentMethodList
+
+                val card =
+                    PMACardPopupModel(amountEntered, paymentMethodList, account, payUMethodType)
+                payMyAccountViewModel.setPMACardInfo(card)
+
+                payMyAccountViewModel.queryServicePayUPaymentMethod(
+                    { // onSuccessResult
+                        if (!isAdded) return@queryServicePayUPaymentMethod
+                        showProgress(false)
+                        (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.pmaStatusImpl?.pmaSuccess()
+                        payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
+                        navigateToDeepLinkView(
+                            AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT,
+                            incPayMyAccountButton
+                        )
+                    }, { onSessionExpired ->
+                        if (!isAdded) return@queryServicePayUPaymentMethod
+                        activity?.let {
+                            showProgress(false)
+                            payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
+                            SessionUtilities.getInstance().setSessionState(
+                                SessionDao.SESSION_STATE.INACTIVE,
+                                onSessionExpired,
+                                it
+                            )
+
+                        }
+                    }, { // on unknown http error / general error
+                        if (!isAdded) return@queryServicePayUPaymentMethod
+                        showProgress(false)
+                        payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
+
+                    }, { throwable ->
+                        if (!isAdded) return@queryServicePayUPaymentMethod
+                        activity?.runOnUiThread {
+                            showProgress(false)
+                        }
+                        payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
+                        if (throwable is ConnectException) {
+                            payMyAccountViewModel.isQueryPayUPaymentMethodComplete = false
+                        }
+                    })
+            }
+            false -> return
+        }
+    }
+
+    private fun navigateToDeepLinkView(destination: String, view: View?) {
+        if (activity is AccountSignedInActivity) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(AppConstant.DELAY_100_MS)
+                (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.apply {
+                    val deepLinkingObject = getDeepLinkData()
+                    when (deepLinkingObject?.get("feature")?.asString) {
+                        destination -> {
+                            deleteDeepLinkData()
+                            if (isProductInGoodStanding())
+                                view?.performClick()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun navigateToDeepLinkView() {
+        if (activity is AccountSignedInActivity) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(AppConstant.DELAY_100_MS)
+                (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.apply {
+                    val deepLinkingObject = getDeepLinkData()
+                    when (deepLinkingObject?.get("feature")?.asString) {
+                        AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT -> {
+                            deleteDeepLinkData()
+                            incViewStatementButton?.performClick()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun autoConnectPMA() {
+            ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(
+                requireActivity(),
+                this,
+                object : ConnectionBroadcastReceiver() {
+                    override fun onConnectionChanged(hasConnection: Boolean) {
+                        when (hasConnection || !payMyAccountViewModel.isQueryPayUPaymentMethodComplete) {
+                            true -> queryPaymentMethod()
+                            else -> ErrorHandlerView(requireActivity()).showToast()
+                        }
+
+                    }
+                })
+
+    }
+
 }
 
