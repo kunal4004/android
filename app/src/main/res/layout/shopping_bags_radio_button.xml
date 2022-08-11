@@ -5,20 +5,22 @@
     android:id="@+id/shoppingBagsSelectionLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_gravity="center"
     android:background="@color/white"
     android:minHeight="@dimen/fifty_five_dp"
+    android:padding="@dimen/ten_dp"
     app:layout_constraintTop_toTopOf="parent">
 
     <RadioButton
         android:id="@+id/radioSelector"
         android:layout_width="@dimen/twenty_four_dp"
         android:layout_height="@dimen/twenty_four_dp"
-        android:layout_marginStart="@dimen/ten_dp"
-        android:gravity="center"
         android:button="@drawable/shopping_list_item_selector"
         android:clickable="false"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top_guideline" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/title"
@@ -26,38 +28,38 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twelve_dp"
-        android:layout_marginEnd="@dimen/twenty_eight_dp"
         android:ellipsize="end"
-        android:maxLines="1"
         android:lineHeight="@dimen/twenty_four_dp"
+        android:maxLines="1"
         android:orientation="vertical"
         android:singleLine="true"
         android:text="@string/title_text"
         android:textColor="@color/black"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constrainedHeight="true"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@+id/subTitle"
         app:layout_constraintStart_toEndOf="@+id/radioSelector"
-        app:layout_constraintTop_toBottomOf="@+id/top__title_guideline"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
         android:id="@+id/subTitle"
         style="@style/myriad_pro_regular"
-        android:lineHeight="@dimen/twenty_four_dp"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/twelve_dp"
         android:layout_marginTop="@dimen/two_dp"
-        android:background="@color/white"
+        android:lineHeight="@dimen/twenty_four_dp"
         android:orientation="vertical"
-        android:paddingEnd="@dimen/twenty_eight_dp"
-        android:paddingBottom="@dimen/five_dp"
-        tools:text="@string/subtitle_text"
         android:textColor="@color/checkout_delivering_title"
         android:textSize="@dimen/fourteen_sp"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/radioSelector"
-        app:layout_constraintTop_toBottomOf="@+id/title" />
-
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/title"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        tools:text="@string/subtitle_text" />
 
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/slotPriceButtonShimmerFrameLayout"
@@ -65,7 +67,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/slot_price_button_shimmer"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top_guideline">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/slotPriceButton"
@@ -81,20 +83,6 @@
             android:textColor="@color/white"
             android:textSize="@dimen/eleven_sp"
             android:visibility="gone" />
+
     </com.facebook.shimmer.ShimmerFrameLayout>
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/top_guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="@dimen/eighteen_dp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/top__title_guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="@dimen/ten_dp" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -20,9 +20,9 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:fontFamily="@font/futura_semi_bold"
+            android:lineHeight="@dimen/twenty_four_dp"
             android:text="@string/native_checkout_delivery_food_substitution_title"
             android:textColor="@color/black"
-            android:lineHeight="@dimen/twenty_four_dp"
             android:textSize="@dimen/eighteen_sp" />
     </com.facebook.shimmer.ShimmerFrameLayout>
 
@@ -52,7 +52,6 @@
         android:id="@+id/radioGroupFoodSubstitutionShimmerFrameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/twenty_four_dp"
         android:layout_marginTop="@dimen/ten_dp"
         android:layout_marginBottom="@dimen/ten_dp"
         android:background="@color/shimmer_view_background"
@@ -65,12 +64,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:paddingHorizontal="@dimen/twenty_four_dp"
+            android:paddingVertical="@dimen/three_dp"
             app:layout_constrainedWidth="true">
 
             <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/radioBtnPhoneConfirmation"
                 style="@style/FoodSubstRadioButtonStyle"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/seven_dp"
                 android:fontFamily="@font/myriad_pro_regular"
@@ -82,7 +85,7 @@
             <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/radioBtnSimilarSubst"
                 style="@style/FoodSubstRadioButtonStyle"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/seven_dp"
                 android:checked="true"
@@ -95,7 +98,7 @@
             <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/radioBtnNoThanks"
                 style="@style/FoodSubstRadioButtonStyle"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/seven_dp"
                 android:fontFamily="@font/myriad_pro_regular"

@@ -67,7 +67,7 @@
         android:id="@+id/radioGroupShoppingBagsShimmerFrameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/eighteen_dp"
+        android:layout_marginHorizontal="@dimen/twelve_dp"
         android:layout_marginTop="@dimen/ten_dp"
         android:background="@color/shimmer_view_background"
         app:layout_constraintEnd_toEndOf="parent"
