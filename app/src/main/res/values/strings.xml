@@ -1582,7 +1582,6 @@
     <string name="select_a_store">Select a Store</string>
     <string name="delivery_or_collection">Delivery or Collection?</string>
     <string name="collecting_from">Collecting from</string>
-    <string name="collecting_from_geo"> <![CDATA[Collecting from <font color=\'#000000\'><b>%s</b></font>]]></string>
     <string name="select_your_collection_store">Select your collection store:</string>
     <string name="select_your_delivery_location">Select your delivery location:</string>
     <string name="remove_these_items_continue">remove these items &amp; continue</string>
@@ -2301,7 +2300,7 @@
     <string name="special_char_name_error_text">Only letters, numbers, or punctuation can be used here.</string>
     <string name="vehicle_details_title">Vehicle Details</string>
     <string name="my_vehicle_text">My Vehicle</string>
-    <string name="e_hailing_text">E-Hailing</string>
+    <string name="e_hailing_text">Taxi (Uber, Bolt etc.)</string>
     <string name="e_hailing_description">Select this option if you will be arriving to collect your order in an e-hailing vehicle (e.g. Uber, Bolt, Lyft).</string>
     <string name="vehicle_colour">Vehicle Colour: *</string>
     <string name="vehicle_model">Vehicle Model: *</string>
@@ -2339,7 +2338,7 @@
     </plurals>
 
     <!--Native Checkout-->
-    <string name="name_colon_text_view">Recipient Name: *</string>
+    <string name="name_colon_text_view">Name: *</string>
     <string name="mobile_number_text_view">Mobile Number: *</string>
     <string name="my_address_details">My Address Details</string>
     <string name="address_nickname_text_view">Address Nickname: *</string>

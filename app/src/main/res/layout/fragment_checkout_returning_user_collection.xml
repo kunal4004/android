@@ -10,7 +10,9 @@
         android:id="@+id/checkoutReturningCollectionScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/sign_in_register_button_border"
+        android:background="@color/color_F3F3F3"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toTopOf="@+id/continueToPaymentButtonBackgroundView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -24,7 +26,7 @@
                 layout="@layout/layout_delivering_to_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/ten_dp"
+                android:layout_marginTop="@dimen/eight_dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -34,7 +36,7 @@
                 layout="@layout/layout_collection_user_information"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/ten_dp"
+                android:layout_marginTop="@dimen/eight_dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/checkoutCollectingFromLayout" />
@@ -44,7 +46,7 @@
                 layout="@layout/layout_collection_time_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/ten_dp"
+                android:layout_marginTop="@dimen/eight_dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/checkoutCollectingUserInfoLayout" />
@@ -54,26 +56,26 @@
                 layout="@layout/layout_native_checkout_delivery_food_substitution"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/ten_dp"
+                android:layout_marginTop="@dimen/eight_dp"
                 app:layout_constraintTop_toBottomOf="@id/checkoutCollectingTimeDetailsLayout" />
 
             <include
                 android:id="@+id/ageConfirmationLayoutCollection"
+                layout="@layout/layout_native_checkout_age_confirmation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/ten_dp"
+                android:layout_marginTop="@dimen/eight_dp"
                 android:visibility="gone"
-                tools:visibility="visible"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/nativeCheckoutFoodSubstitutionLayout"
-                layout="@layout/layout_native_checkout_age_confirmation"/>
+                tools:visibility="visible" />
 
             <include
                 android:id="@+id/layoutCollectionInstructions"
                 layout="@layout/layout_native_checkout_delivery_instructions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/ten_dp"
+                android:layout_marginTop="@dimen/eight_dp"
                 app:layout_constraintTop_toBottomOf="@+id/ageConfirmationLayoutCollection" />
 
             <include
@@ -81,7 +83,7 @@
                 layout="@layout/layout_native_checkout_driver_tip"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/ten_dp"
+                android:layout_marginTop="@dimen/eight_dp"
                 android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@+id/layoutCollectionInstructions" />
 
@@ -90,7 +92,7 @@
                 layout="@layout/layout_native_checkout_delivery_order_summary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/ten_dp"
+                android:layout_marginTop="@dimen/eight_dp"
                 app:layout_constraintTop_toBottomOf="@+id/layoutDriverTip" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -103,65 +105,13 @@
         android:background="@color/white"
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="@id/txtOrderTotalCollectionShimmerFrameLayout" />
-
-    <View
-        android:id="@+id/viewHorizontalSeparator1"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/one_dp"
-        android:background="@color/color_12000000"
-        android:translationZ="@dimen/ninety_dp"
-        app:layout_constraintTop_toTopOf="@id/txtOrderTotalCollectionShimmerFrameLayout" />
-
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/txtOrderTotalCollectionShimmerFrameLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/shimmer_view_background"
-        app:layout_constraintBottom_toTopOf="@id/continuePaymentTxtCollectionShimmerFrameLayout"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <TextView
-            android:id="@+id/txtOrderTotalTitleCollection"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:fontFamily="@font/futura_semi_bold"
-            android:letterSpacing="0.1"
-            android:padding="@dimen/twenty_four_dp"
-            android:text="@string/native_checkout_order_total_title"
-            android:textAllCaps="true"
-            android:textColor="@color/black"
-            android:textSize="@dimen/twelve_sp" />
-    </com.facebook.shimmer.ShimmerFrameLayout>
-
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/orderTotalValueCollectionShimmerFrameLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/twenty_four_dp"
-        android:background="@color/shimmer_view_background"
-        app:layout_constraintBottom_toBottomOf="@id/txtOrderTotalCollectionShimmerFrameLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/txtOrderTotalCollectionShimmerFrameLayout">
-
-        <TextView
-            android:id="@+id/txtOrderTotalValueCollection"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:fontFamily="@font/futura_semi_bold"
-            android:textColor="@color/black"
-            android:textSize="@dimen/fourteen_sp"
-            tools:text="R 690.0" />
-    </com.facebook.shimmer.ShimmerFrameLayout>
+        app:layout_constraintTop_toTopOf="@id/continuePaymentTxtCollectionShimmerFrameLayout" />
 
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/continuePaymentTxtCollectionShimmerFrameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/twenty_four_dp"
-        android:layout_marginBottom="@dimen/twenty_four_dp"
+        android:layout_margin="@dimen/twenty_four_dp"
         android:background="@color/shimmer_view_background"
         android:minHeight="@dimen/fifty_dp"
         app:layout_constraintBottom_toBottomOf="parent">
