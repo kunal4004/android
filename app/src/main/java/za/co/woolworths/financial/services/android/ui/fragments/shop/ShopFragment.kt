@@ -324,7 +324,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                         R.drawable.ic_collection_circle
                     )
                 )
-                tvToolbarTitle?.text = requireContext().getString(R.string.collecting_from)
+                tvToolbarTitle?.text = requireContext().getString(R.string.click_and_collect)
                 tvToolbarSubtitle?.text =
                     requireContext().getString(R.string.select_your_preferred_store)
             }
@@ -408,7 +408,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     fun setDeliveryView() {
         activity?.let {
             getDeliveryType()?.let { fulfillmentDetails ->
-                KotlinUtils.setDeliveryAddressView(
+                KotlinUtils.setDeliveryAddressViewFoShop(
                     it,
                     fulfillmentDetails,
                     tvToolbarTitle,

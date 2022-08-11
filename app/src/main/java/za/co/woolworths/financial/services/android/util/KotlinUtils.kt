@@ -493,6 +493,62 @@ class KotlinUtils {
             }
         }
 
+        fun setDeliveryAddressViewFoShop(
+            context: Activity?,
+            fulfillmentDetails: FulfillmentDetails,
+            tvDeliveringTo: TextView,
+            tvDeliveryLocation: TextView,
+            deliverLocationIcon: ImageView?,
+        ) {
+            with(fulfillmentDetails) {
+                when (Delivery?.getType(deliveryType)) {
+                    Delivery.CNC -> {
+                        tvDeliveringTo?.text =
+                            context?.resources?.getString(R.string.click_collect)
+                        tvDeliveryLocation?.text =
+                            capitaliseFirstLetter(context?.resources?.getString(R.string.store) + storeName)
+
+                        tvDeliveryLocation?.visibility = View.VISIBLE
+                        deliverLocationIcon?.setImageResource(R.drawable.ic_collection_circle)
+                    }
+                    Delivery.STANDARD -> {
+                        tvDeliveringTo.text =
+                            context?.resources?.getString(R.string.standard_delivery)
+                        tvDeliveryLocation?.text = capitaliseFirstLetter(address?.address1 ?: "")
+
+                        tvDeliveryLocation?.visibility = View.VISIBLE
+                        deliverLocationIcon?.setImageResource(R.drawable.ic_delivery_circle)
+                    }
+                    Delivery.DASH -> {
+                        val timeSlot: String? =
+                            WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.firstAvailableFoodDeliveryTime
+                        tvDeliveringTo?.text =
+                            context?.resources?.getString(R.string.dash_delivery_bold)
+                        if (timeSlot == null) {
+                            tvDeliveryLocation?.text =
+                                capitaliseFirstLetter(WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
+                                    ?: address?.address1 ?: "")
+                        } else {
+                            tvDeliveryLocation?.text = timeSlot.plus("\t\u2022\t").plus(
+                                capitaliseFirstLetter(WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
+                                    ?: address?.address1 ?: ""))
+                        }
+                        tvDeliveryLocation?.visibility = View.VISIBLE
+                        deliverLocationIcon?.setImageResource(R.drawable.ic_dash_delivery_circle)
+                    }
+                    else -> {
+                        tvDeliveringTo.text =
+                            context?.resources?.getString(R.string.standard_delivery)
+                        tvDeliveryLocation?.text =
+                            context?.resources?.getString(R.string.default_location)
+
+                        tvDeliveryLocation?.visibility = View.VISIBLE
+                        deliverLocationIcon?.setImageResource(R.drawable.ic_delivery_circle)
+                    }
+                }
+            }
+        }
+
         fun showChangeDeliveryTypeDialog(context: Context, requireFragmentManager: FragmentManager, deliveryType: Delivery?) {
             var dialogTitle = ""
             var dialogSubTitle: CharSequence = ""
