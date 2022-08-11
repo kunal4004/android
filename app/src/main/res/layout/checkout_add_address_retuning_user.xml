@@ -99,7 +99,7 @@
         android:id="@+id/continuePaymentTxtShimmerFrameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/shimmer_view_background"
+        android:background="@color/white"
         android:minHeight="@dimen/fifty_dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
