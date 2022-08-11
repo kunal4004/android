@@ -9,6 +9,7 @@ import android.os.Handler
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
+import android.view.ViewGroup.VISIBLE
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -202,12 +203,10 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     fun showClickAndCollectToolTipUi(browsingStoreId: String?) {
         showClickAndCollectToolTip(true, browsingStoreId)
         timer?.cancel()
-        if (AppConfigSingleton.tooltipSettings?.isAutoDismissEnabled == true) {
-            val timeduration = AppConfigSingleton.tooltipSettings?.autoDismissDuration?.times(1000)
-            if (timeduration == null) {
-                return
-            }
-         timer =  object : CountDownTimer(timeduration, 100) {
+        if (AppConfigSingleton.tooltipSettings?.isAutoDismissEnabled == true && blackToolTipLayout?.visibility == VISIBLE) {
+            val timeDuration =
+                AppConfigSingleton.tooltipSettings?.autoDismissDuration?.times(1000) ?: return
+            timer =  object : CountDownTimer(timeDuration, 100) {
                 override fun onTick(millisUntilFinished: Long) {}
                 override fun onFinish() {
                     KotlinUtils.isCncTabCrossClicked = true
@@ -736,7 +735,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun showBlackToolTip(deliveryType: Delivery) {
-        if (validateLocationResponse == null) {
+        if (validateLocationResponse == null || getDeliveryType() == null) {
             blackToolTipLayout?.visibility = View.GONE
             return
         }
@@ -786,7 +785,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
         }
 
-        if (AppConfigSingleton.tooltipSettings?.isAutoDismissEnabled == true) {
+        if (AppConfigSingleton.tooltipSettings?.isAutoDismissEnabled == true && blackToolTipLayout?.visibility == VISIBLE) {
             val timeDuration =
                 AppConfigSingleton.tooltipSettings?.autoDismissDuration?.times(1000) ?: return
             timer =  object : CountDownTimer(timeDuration, 100) {

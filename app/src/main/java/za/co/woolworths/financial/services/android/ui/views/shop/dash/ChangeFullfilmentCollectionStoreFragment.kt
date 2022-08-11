@@ -286,7 +286,6 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
             /*location , fulfillment is already available so only browsing location need to be save */
             setBrowsingDataInformation()
             KotlinUtils.isStoreSelectedForBrowsing = true
-            KotlinUtils.storeId = storeId
             parentFragment?.showClickAndCollectToolTipUi(storeId)
             showCategoryList()
         }
