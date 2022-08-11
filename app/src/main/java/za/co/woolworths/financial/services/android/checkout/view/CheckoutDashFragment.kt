@@ -725,6 +725,7 @@ class CheckoutDashFragment : Fragment(),
         if (AppConfigSingleton.nativeCheckout?.currentShoppingBag?.isEnabled == true) {
             switchNeedBags?.visibility = View.VISIBLE
             txtNeedBags?.visibility = View.VISIBLE
+            viewHorizontalSeparator?.visibility = View.GONE
             newShoppingBagsLayout?.visibility = View.GONE
             switchNeedBags?.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
@@ -736,6 +737,7 @@ class CheckoutDashFragment : Fragment(),
             }
         } else if (AppConfigSingleton.nativeCheckout?.newShoppingBag?.isEnabled == true) {
             switchNeedBags?.visibility = View.GONE
+            viewHorizontalSeparator?.visibility = View.VISIBLE
             txtNeedBags?.visibility = View.GONE
             newShoppingBagsLayout?.visibility = View.VISIBLE
             addShoppingBagsRadioButtons()

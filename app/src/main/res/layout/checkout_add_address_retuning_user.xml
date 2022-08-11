@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/color_F3F3F3"
     tools:context="za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity">
 
     <ScrollView
         android:id="@+id/deliverySummaryScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/color_F5F5F5"
         android:nestedScrollingEnabled="true"
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toTopOf="@+id/continueToPaymentButtonBackgroundView"
@@ -49,14 +49,14 @@
 
             <include
                 android:id="@+id/ageConfirmationLayout"
+                layout="@layout/layout_native_checkout_age_confirmation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/ten_dp"
                 android:visibility="gone"
-                tools:visibility="visible"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/nativeCheckoutFoodSubstitutionLayout"
-                layout="@layout/layout_native_checkout_age_confirmation"/>
+                tools:visibility="visible" />
 
             <include
                 android:id="@+id/checkoutHowWouldYouDeliveredLayout"
@@ -79,7 +79,8 @@
                 layout="@layout/layout_native_checkout_delivery_order_summary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/ten_dp"
+                android:layout_marginVertical="@dimen/eight_dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/layoutDeliveryInstructions" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -98,7 +99,6 @@
         android:id="@+id/continuePaymentTxtShimmerFrameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/twenty_four_dp"
         android:background="@color/shimmer_view_background"
         android:minHeight="@dimen/fifty_dp"
         app:layout_constraintBottom_toBottomOf="parent">
@@ -107,6 +107,7 @@
             android:id="@+id/txtContinueToPayment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/twenty_four_dp"
             android:background="@color/black"
             android:fontFamily="@font/futura_semi_bold"
             android:gravity="center"

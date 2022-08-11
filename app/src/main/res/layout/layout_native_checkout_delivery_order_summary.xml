@@ -367,13 +367,4 @@
             android:textColor="@color/color_666666"
             android:textSize="@dimen/twelve_sp" />
     </com.facebook.shimmer.ShimmerFrameLayout>
-
-    <View
-        android:id="@+id/viewHorizontalSeparator8"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/one_dp"
-        android:layout_marginTop="@dimen/fifteen_dp"
-        android:background="@color/color_12000000"
-        app:layout_constraintTop_toBottomOf="@id/summaryNoteShimmerFrameLayout" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

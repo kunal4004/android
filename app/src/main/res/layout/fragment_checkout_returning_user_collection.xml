@@ -3,14 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/transparent"
+    android:background="@color/color_F3F3F3"
     tools:context="za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment">
 
     <ScrollView
         android:id="@+id/checkoutReturningCollectionScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/color_F3F3F3"
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toTopOf="@+id/continueToPaymentButtonBackgroundView"
         app:layout_constraintEnd_toEndOf="parent"
@@ -92,7 +91,8 @@
                 layout="@layout/layout_native_checkout_delivery_order_summary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/eight_dp"
+                android:layout_marginVertical="@dimen/eight_dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/layoutDriverTip" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -108,15 +108,16 @@
         app:layout_constraintTop_toTopOf="@id/continuePaymentTxtCollectionShimmerFrameLayout" />
 
     <com.facebook.shimmer.ShimmerFrameLayout
+        android:translationZ="@dimen/twenty_four_dp"
         android:id="@+id/continuePaymentTxtCollectionShimmerFrameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/twenty_four_dp"
         android:background="@color/shimmer_view_background"
         android:minHeight="@dimen/fifty_dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <TextView
+            android:layout_margin="@dimen/twenty_four_dp"
             android:id="@+id/txtContinueToPaymentCollection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
