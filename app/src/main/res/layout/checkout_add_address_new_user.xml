@@ -62,7 +62,7 @@
             <AutoCompleteTextView
                 android:id="@+id/autoCompleteTextView"
                 style="@style/credi_card_delivery_edittext_style"
-                android:layout_marginTop="@dimen/fifteen_dp"
+                android:layout_marginTop="@dimen/four_dp"
                 android:drawableStart="@drawable/mapview"
                 android:drawablePadding="@dimen/eight_dp"
                 android:hint="@string/places_autocomplete_tv_hint"
@@ -87,9 +87,9 @@
             <View
                 android:id="@+id/deliveringPartition"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/six_dp"
+                android:layout_height="@dimen/eight_dp"
                 android:layout_marginTop="@dimen/fifteen_dp"
-                android:background="@color/color_D8D8D8"
+                android:background="@color/color_F3F3F3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/autocompletePlaceErrorMsg" />
@@ -107,9 +107,9 @@
             <View
                 android:id="@+id/addressDetailsPartition"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/six_dp"
+                android:layout_height="@dimen/eight_dp"
                 android:layout_marginTop="@dimen/six_dp"
-                android:background="@color/color_D8D8D8"
+                android:background="@color/color_F3F3F3"
                 app:layout_constraintTop_toBottomOf="@+id/recipientAddressLayout" />
 
             <include
@@ -117,15 +117,15 @@
                 layout="@layout/checkout_new_user_recipient_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="@+id/recipientDetailsPartition"
+                app:layout_constraintBottom_toTopOf="@+id/recipientDetailsPartition"
                 app:layout_constraintTop_toBottomOf="@+id/addressDetailsPartition" />
 
             <View
                 android:id="@+id/recipientDetailsPartition"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/six_dp"
+                android:layout_height="@dimen/eight_dp"
                 android:layout_marginTop="@dimen/six_dp"
-                android:background="@color/color_D8D8D8"
+                android:background="@color/color_F3F3F3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/recipientDetailsLayout" />
