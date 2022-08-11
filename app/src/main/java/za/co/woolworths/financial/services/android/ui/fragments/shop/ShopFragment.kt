@@ -194,7 +194,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         showShopFeatureWalkThrough()
     }
 
-    fun showSerachAndBarcodeUi() {
+    fun showSearchAndBarcodeUi() {
         tvSearchProduct?.visibility = View.VISIBLE
         imBarcodeScanner?.visibility = View.VISIBLE
     }
@@ -381,7 +381,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     private fun updateTabIconUI(selectedTab: Int) {
         if (selectedTab == STANDARD_TAB.index) {
-            showSerachAndBarcodeUi()
+            showSearchAndBarcodeUi()
         } else if (selectedTab == CLICK_AND_COLLECT_TAB.index && KotlinUtils.browsingCncStore == null && getDeliveryType()?.deliveryType != Delivery.CNC.type) {
             hideSerachAndBarcodeUi()
         }
@@ -779,7 +779,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 showStandardDeliveryToolTip()
             }
             Delivery.CNC -> {
-                showClickAndCollectToolTip(KotlinUtils.isStoreSelectedForBrowsing, KotlinUtils.storeId)
+                showClickAndCollectToolTip(KotlinUtils.isStoreSelectedForBrowsing, KotlinUtils.browsingCncStore?.storeId)
             }
             Delivery.DASH -> {
                 showDashToolTip(validateLocationResponse)
@@ -787,11 +787,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
 
         if (AppConfigSingleton.tooltipSettings?.isAutoDismissEnabled == true) {
-            val timeduration = AppConfigSingleton.tooltipSettings?.autoDismissDuration?.times(1000)
-            if (timeduration == null) {
-                return
-            }
-           timer =  object : CountDownTimer(timeduration, 100) {
+            val timeDuration =
+                AppConfigSingleton.tooltipSettings?.autoDismissDuration?.times(1000) ?: return
+            timer =  object : CountDownTimer(timeDuration, 100) {
                 override fun onTick(millisUntilFinished: Long) {}
                 override fun onFinish() {
                     when(KotlinUtils.fullfillmentTypeClicked) {
@@ -833,7 +831,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
 
         blackToolTipLayout?.visibility = View.VISIBLE
-        if (KotlinUtils.getPreferredDeliveryType()?.equals(Delivery.STANDARD.type) == true) {
+        if (getDeliveryType() == null || Delivery.getType(getDeliveryType()?.deliveryType)?.type == Delivery.STANDARD.type) {
             changeButtonLayout?.visibility = View.GONE
         } else {
             changeButtonLayout?.visibility = View.VISIBLE
@@ -874,17 +872,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         isStoreSelectedForBrowsing: Boolean = false,
         browsingStoreId: String? = "",
     ) {
-
-         if (KotlinUtils.isLocationSame == false) {
-             blackToolTipLayout?.visibility = View.VISIBLE
-         }
-
-        if (KotlinUtils.isCncTabCrossClicked == true) {
+        if (KotlinUtils.isCncTabCrossClicked == true || browsingStoreId == null) {
             blackToolTipLayout?.visibility = View.GONE
-            return
-        }
-
-        if (browsingStoreId == null) {
             return
         }
         if (isUserAuthenticated() && getFirstAvailableFoodDeliveryDate(isStoreSelectedForBrowsing,
@@ -901,7 +890,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
         }
         blackToolTipLayout?.visibility = View.VISIBLE
-        if (KotlinUtils.getPreferredDeliveryType()?.equals(Delivery.CNC.type) == true) {
+        if (getDeliveryType() == null || Delivery.getType(getDeliveryType()?.deliveryType)?.type == Delivery.CNC.type) {
             changeButtonLayout?.visibility = View.GONE
         } else {
             changeButtonLayout?.visibility = View.VISIBLE
@@ -975,7 +964,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
 
         blackToolTipLayout?.visibility = View.VISIBLE
-        if (KotlinUtils.getPreferredDeliveryType()?.equals(Delivery.DASH.type) == true) {
+        if (getDeliveryType() == null || Delivery.getType(getDeliveryType()?.deliveryType)?.type == Delivery.DASH.type) {
             changeButtonLayout?.visibility = View.GONE
         } else {
             changeButtonLayout?.visibility = View.VISIBLE

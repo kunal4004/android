@@ -401,7 +401,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
     }
 
     private fun showCategoryList() {
-        parentFragment?.showSerachAndBarcodeUi()
+        parentFragment?.showSearchAndBarcodeUi()
         layoutClickAndCollectStore?.visibility = View.GONE
         layoutEdgeCaseScreen?.visibility = View.GONE
         rv_category_layout?.visibility = View.VISIBLE
