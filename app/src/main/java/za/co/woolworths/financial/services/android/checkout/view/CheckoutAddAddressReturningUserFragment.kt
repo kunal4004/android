@@ -97,7 +97,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     private var nickName: String? = ""
 
     private var liquorImageUrl: String? = ""
-    private var liquorOrder:Boolean? = false
+    private var liquorOrder: Boolean? = false
 
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -206,35 +206,36 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             }
         }
     }
+
     //LiquorCompliance
     private fun getLiquorComplianceDetails() {
         baseFragBundle?.apply {
-       if(containsKey(LIQUOR_ORDER)){
-           liquorOrder=getBoolean(LIQUOR_ORDER)
-          if(liquorOrder==true&&containsKey(NO_LIQUOR_IMAGE_URL)){
-              liquorImageUrl=getString(NO_LIQUOR_IMAGE_URL)
-              ageConfirmationLayout?.visibility=View.VISIBLE
-              liquorComplianceBannerLayout?.visibility=View.VISIBLE
-              setPicture(imgLiquorBanner, liquorImageUrl)
+            if (containsKey(LIQUOR_ORDER)) {
+                liquorOrder = getBoolean(LIQUOR_ORDER)
+                if (liquorOrder == true && containsKey(NO_LIQUOR_IMAGE_URL)) {
+                    liquorImageUrl = getString(NO_LIQUOR_IMAGE_URL)
+                    ageConfirmationLayout?.visibility = View.VISIBLE
+                    liquorComplianceBannerLayout?.visibility = View.VISIBLE
+                    setPicture(imgLiquorBanner, liquorImageUrl)
 
-              ageConfirmationLayout.visibility = VISIBLE
-              liquorComplianceBannerSeparator.visibility = VISIBLE
-              liquorComplianceBannerLayout.visibility = VISIBLE
+                    ageConfirmationLayout.visibility = VISIBLE
+                    liquorComplianceBannerSeparator.visibility = VISIBLE
+                    liquorComplianceBannerLayout.visibility = VISIBLE
 
-              if(!radioBtnAgeConfirmation.isChecked) {
-                  Utils.fadeInFadeOutAnimation(txtContinueToPayment, true)
-                  radioBtnAgeConfirmation?.isChecked = false
-                  txtContinueToPayment?.isClickable = false
-              } else {
-                  Utils.fadeInFadeOutAnimation(txtContinueToPayment, false)
-                  txtContinueToPayment?.isClickable = true
-                  radioBtnAgeConfirmation?.isChecked = true
-              }
-          }
-       }else{
-           ageConfirmationLayout?.visibility=View.GONE
-           liquorComplianceBannerLayout?.visibility=View.GONE
-       }
+                    if (!radioBtnAgeConfirmation.isChecked) {
+                        Utils.fadeInFadeOutAnimation(txtContinueToPayment, true)
+                        radioBtnAgeConfirmation?.isChecked = false
+                        txtContinueToPayment?.isClickable = false
+                    } else {
+                        Utils.fadeInFadeOutAnimation(txtContinueToPayment, false)
+                        txtContinueToPayment?.isClickable = true
+                        radioBtnAgeConfirmation?.isChecked = true
+                    }
+                }
+            } else {
+                ageConfirmationLayout?.visibility = View.GONE
+                liquorComplianceBannerLayout?.visibility = View.GONE
+            }
         }
     }
 
@@ -290,12 +291,14 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 return@setOnCheckedChangeListener
             }
             if (isChecked)
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_SPECIAL_COLLECTION_INSTRUCTION,
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.CHECKOUT_SPECIAL_COLLECTION_INSTRUCTION,
                     hashMapOf(
                         FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
                                 FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_SPECIAL_INSTRUCTION
                     ),
-                    activity)
+                    activity
+                )
             edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
                 if (isChecked) VISIBLE else GONE
             edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = isChecked
@@ -308,12 +311,14 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 return@setOnCheckedChangeListener
             }
             if (isChecked)
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_IS_THIS_GIFT,
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.CHECKOUT_IS_THIS_GIFT,
                     hashMapOf(
                         FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
                                 FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_IS_THIS_GIFT
                     ),
-                    activity)
+                    activity
+                )
             edtTxtInputLayoutGiftInstructions?.visibility =
                 if (isChecked) VISIBLE else GONE
             edtTxtInputLayoutGiftInstructions?.isCounterEnabled = isChecked
@@ -323,21 +328,25 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         if (AppConfigSingleton.nativeCheckout?.currentShoppingBag?.isEnabled == true) {
             switchNeedBags.visibility = VISIBLE
             txtNeedBags.visibility = VISIBLE
+            viewHorizontalSeparator?.visibility = View.GONE
             newShoppingBagsLayout.visibility = GONE
             switchNeedBags?.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_SHOPPING_BAGS_INFO,
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.CHECKOUT_SHOPPING_BAGS_INFO,
                         hashMapOf(
                             FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
                                     FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_BAGS_INFO
                         ),
-                        activity)
+                        activity
+                    )
                 }
             }
         } else if (AppConfigSingleton.nativeCheckout?.newShoppingBag?.isEnabled == true) {
-            switchNeedBags.visibility = GONE
-            txtNeedBags.visibility = GONE
-            newShoppingBagsLayout.visibility = VISIBLE
+            switchNeedBags?.visibility = GONE
+            shoppingBagSeparator?.visibility = GONE
+            txtNeedBags?.visibility = GONE
+            newShoppingBagsLayout?.visibility = VISIBLE
             addShoppingBagsRadioButtons()
         }
     }
@@ -348,7 +357,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         txtNewShoppingBagsDesc.text = newShoppingBags?.title
         txtNewShoppingBagsSubDesc.text = newShoppingBags?.description
 
-        val shoppingBagsAdapter = ShoppingBagsRadioGroupAdapter(newShoppingBags?.options, this, selectedShoppingBagType)
+        val shoppingBagsAdapter =
+            ShoppingBagsRadioGroupAdapter(newShoppingBags?.options, this, selectedShoppingBagType)
         shoppingBagsRecyclerView.apply {
             layoutManager = activity?.let { LinearLayoutManager(it) }
             shoppingBagsAdapter?.let { adapter = it }
@@ -418,9 +428,9 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         checkoutDeliveryDetailsLayout.visibility = GONE
                     }
                 }
+                tvNativeCheckoutDeliveringTitle.text = requireContext().getString(R.string.standard_delivery)
                 tvNativeCheckoutDeliveringValue?.text = deliveringToAddress
                 checkoutDeliveryDetailsLayout?.setOnClickListener(this@CheckoutAddAddressReturningUserFragment)
-
             }
         }
     }
@@ -435,12 +445,14 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         radioGroupFoodSubstitution?.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.radioBtnPhoneConfirmation -> {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_FOOD_SUBSTITUTE_PHONE_ME,
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.CHECKOUT_FOOD_SUBSTITUTE_PHONE_ME,
                         hashMapOf(
                             FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
                                     FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_SUBSTITUTION_PHONE
                         ),
-                        activity)
+                        activity
+                    )
 
                     selectedFoodSubstitution = FoodSubstitution.PHONE_CONFIRM
                 }
@@ -448,12 +460,14 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
                 }
                 R.id.radioBtnNoThanks -> {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_FOOD_SUBSTITUTE_NO_THANKS,
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.CHECKOUT_FOOD_SUBSTITUTE_NO_THANKS,
                         hashMapOf(
                             FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
                                     FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_SUBSTITUTION_NO_THANKS
                         ),
-                        activity)
+                        activity
+                    )
                     selectedFoodSubstitution = FoodSubstitution.NO_THANKS
                 }
             }
@@ -598,15 +612,18 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationDescShimmerFrameLayout,
-                txtAgeConfirmationDesc),
+                txtAgeConfirmationDesc
+            ),
 
             Pair<ShimmerFrameLayout, View>(
-            ageConfirmationDescNoteShimmerFrameLayout,
-            txtAgeConfirmationDescNote),
+                ageConfirmationDescNoteShimmerFrameLayout,
+                txtAgeConfirmationDescNote
+            ),
 
             Pair<ShimmerFrameLayout, View>(
-            radioGroupAgeConfirmationShimmerFrameLayout,
-                    radioBtnAgeConfirmation),
+                radioGroupAgeConfirmationShimmerFrameLayout,
+                radioBtnAgeConfirmation
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationTitleShimmerFrameLayout,
@@ -615,15 +632,18 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationDescShimmerFrameLayout,
-                txtAgeConfirmationDesc),
+                txtAgeConfirmationDesc
+            ),
 
             Pair<ShimmerFrameLayout, View>(
-            ageConfirmationDescNoteShimmerFrameLayout,
-            txtAgeConfirmationDescNote),
+                ageConfirmationDescNoteShimmerFrameLayout,
+                txtAgeConfirmationDescNote
+            ),
 
             Pair<ShimmerFrameLayout, View>(
-            radioGroupAgeConfirmationShimmerFrameLayout,
-                    radioBtnAgeConfirmation),
+                radioGroupAgeConfirmationShimmerFrameLayout,
+                radioBtnAgeConfirmation
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 instructionTxtShimmerFrameLayout,
@@ -708,9 +728,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         deliverySummaryScrollView?.fullScroll(FOCUS_UP)
         startShimmerView()
 
-        val  confirmLocationAddress = ConfirmLocationAddress(defaultAddress?.placesId, defaultAddress?.nickname)
+        val confirmLocationAddress =
+            ConfirmLocationAddress(defaultAddress?.placesId, defaultAddress?.nickname)
 
-        var body = ConfirmLocationRequest(Delivery.STANDARD.name, confirmLocationAddress, "", "checkout")
+        var body =
+            ConfirmLocationRequest(Delivery.STANDARD.name, confirmLocationAddress, "", "checkout")
 
         checkoutAddAddressNewUserViewModel.getConfirmLocationDetails(body)
             .observe(viewLifecycleOwner, { response ->
@@ -783,13 +805,22 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 FIRST.week,
                 ONLY_FOOD
             )
-            val foodItemDate = confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.food
+            val foodItemDate =
+                confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.food
             val arguments = HashMap<String, String>()
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CURRENCY] = FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ORDER_TOTAL_VALUE] = selectedSlotResponseFood?.orderSummary?.total.toString()
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_DATE] = foodItemDate.toString()
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SHIPPING_TIER] = FirebaseManagerAnalyticsProperties.PropertyValues.SHIPPING_TIER_VALUE_FOOD
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ADD_SHIPPING_INFO, arguments,activity)
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CURRENCY] =
+                FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ORDER_TOTAL_VALUE] =
+                selectedSlotResponseFood?.orderSummary?.total.toString()
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_DATE] =
+                foodItemDate.toString()
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SHIPPING_TIER] =
+                FirebaseManagerAnalyticsProperties.PropertyValues.SHIPPING_TIER_VALUE_FOOD
+            Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.ADD_SHIPPING_INFO,
+                arguments,
+                activity
+            )
 
         } else if (OTHER.type == selectedSlotResponseFood?.fulfillmentTypes?.join && OTHER.type == selectedSlotResponseFood?.fulfillmentTypes?.other) {
             // For mix basket
@@ -808,13 +839,22 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     MIXED_OTHER
                 ) // Sending params MIXED_OTHER here to get mixed_other grid while click on timeslot radiobutton.
             }
-            val foodItemDate = confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.food
+            val foodItemDate =
+                confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.food
             val arguments = HashMap<String, String>()
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CURRENCY] = FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ORDER_TOTAL_VALUE] = selectedSlotResponseFood?.orderSummary?.total.toString()
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_DATE] = foodItemDate.toString()
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SHIPPING_TIER] = FirebaseManagerAnalyticsProperties.PropertyValues.SHIPPING_TIER_VALUE_MIXED
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ADD_SHIPPING_INFO, arguments,activity)
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CURRENCY] =
+                FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ORDER_TOTAL_VALUE] =
+                selectedSlotResponseFood?.orderSummary?.total.toString()
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_DATE] =
+                foodItemDate.toString()
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SHIPPING_TIER] =
+                FirebaseManagerAnalyticsProperties.PropertyValues.SHIPPING_TIER_VALUE_MIXED
+            Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.ADD_SHIPPING_INFO,
+                arguments,
+                activity
+            )
         } else {
             // for Other
             if (selectedSlotResponseFood?.requiredToDisplayODD == true) {
@@ -832,11 +872,19 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         }
         val foodItemDate = confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.food
         val arguments = HashMap<String, String>()
-        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CURRENCY] = FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
-        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ORDER_TOTAL_VALUE] = selectedSlotResponseFood?.orderSummary?.total.toString()
-        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_DATE] = foodItemDate.toString()
-        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SHIPPING_TIER] = FirebaseManagerAnalyticsProperties.PropertyValues.SHIPPING_TIER_VALUE_OTHER
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ADD_SHIPPING_INFO, arguments,activity)
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CURRENCY] =
+            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ORDER_TOTAL_VALUE] =
+            selectedSlotResponseFood?.orderSummary?.total.toString()
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_DATE] =
+            foodItemDate.toString()
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SHIPPING_TIER] =
+            FirebaseManagerAnalyticsProperties.PropertyValues.SHIPPING_TIER_VALUE_OTHER
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.ADD_SHIPPING_INFO,
+            arguments,
+            activity
+        )
     }
 
     private fun showDeliverySubTypeShimmerView() {
@@ -920,12 +968,14 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 activity?.finish()
             }
             R.id.txtContinueToPayment -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_CONTINUE_TO_PAYMENT,
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.CHECKOUT_CONTINUE_TO_PAYMENT,
                     hashMapOf(
                         FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
                                 FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_CONTINUE_TO_PAYMENT
                     ),
-                    activity)
+                    activity
+                )
                 onCheckoutPaymentClick()
             }
         }
@@ -935,7 +985,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         if ((isRequiredFieldsMissing() || isInstructionsMissing() || isGiftMessage())) {
             return
         }
-        if(isAgeConfirmationLiquorCompliance()) {
+        if (isAgeConfirmationLiquorCompliance()) {
             return
         }
         val body = getShipmentDetailsBody()
@@ -971,7 +1021,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 }
             })
         //liquor compliance: age confirmation
-        if(liquorOrder == true && !radioBtnAgeConfirmation.isChecked) {
+        if (liquorOrder == true && !radioBtnAgeConfirmation.isChecked) {
             ageConfirmationLayout.visibility = VISIBLE
             liquorComplianceBannerSeparator.visibility = VISIBLE
             liquorComplianceBannerLayout.visibility = VISIBLE
@@ -1013,9 +1063,16 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             else -> false
         }
     }
-    private fun isAgeConfirmationLiquorCompliance() : Boolean {
-        txtAgeConfirmationTitle.parent.requestChildFocus(txtAgeConfirmationTitle, txtAgeConfirmationTitle)
-        radioBtnAgeConfirmation.parent.requestChildFocus(radioBtnAgeConfirmation, radioBtnAgeConfirmation)
+
+    private fun isAgeConfirmationLiquorCompliance(): Boolean {
+        txtAgeConfirmationTitle.parent.requestChildFocus(
+            txtAgeConfirmationTitle,
+            txtAgeConfirmationTitle
+        )
+        radioBtnAgeConfirmation.parent.requestChildFocus(
+            radioBtnAgeConfirmation,
+            radioBtnAgeConfirmation
+        )
         return liquorOrder == true && !radioBtnAgeConfirmation.isChecked
     }
 
@@ -1146,7 +1203,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 body.apply {
                     requestFrom = "express"
                     joinBasket = true
-                    if(liquorOrder == true) {
+                    if (liquorOrder == true) {
                         ageConsentConfirmed = true
                     }
                     foodShipOnDate = selectedFoodSlot?.stringShipOnDate
@@ -1183,7 +1240,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             foodType == MIXED_FOOD || otherType == MIXED_OTHER -> {
                 body.apply {
                     joinBasket = false
-                    if(liquorOrder == true) {
+                    if (liquorOrder == true) {
                         ageConsentConfirmed = true
                     }
                     if (selectedOpenDayDeliverySlot.deliveryType != null && selectedOpenDayDeliverySlot.deliveryType == DELIVERY_TYPE_TIMESLOT) {
@@ -1276,12 +1333,14 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         shoppingBagsOptionsList: ConfigShoppingBagsOptions,
         position: Int,
     ) {
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_SHOPPING_BAGS_INFO,
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.CHECKOUT_SHOPPING_BAGS_INFO,
             hashMapOf(
                 FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
                         FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_BAGS_INFO
             ),
-            activity)
+            activity
+        )
         selectedShoppingBagType = shoppingBagsOptionsList.shoppingBagType
     }
 
@@ -1326,7 +1385,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
     override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
         //single checkbox age confirmation
-        if(!isChecked) {
+        if (!isChecked) {
             Utils.fadeInFadeOutAnimation(txtContinueToPayment, true)
             radioBtnAgeConfirmation?.isChecked = false
         } else {

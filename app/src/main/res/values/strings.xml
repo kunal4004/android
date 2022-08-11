@@ -2275,7 +2275,6 @@
     <string name="dismiss">Dismiss</string>
     <string name="suburb_not_deliverable_msg">We Can’t Deliver To This Suburb Yet</string>
     <string name="suburb_not_deliverable_description">However, we’re growing quickly, so please check back soon.</string>
-    <string name="native_checkout_delivering_to_title">Delivering to</string>
 
     <!-- Native Checkout : Error Screens  -->
     <string name="save_address_error">We can’t save your address right now. Please try again.</string>

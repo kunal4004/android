@@ -303,15 +303,58 @@
         android:background="@color/color_12000000"
         app:layout_constraintTop_toBottomOf="@id/deliveryFeeTxtShimmerFrameLayout" />
 
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/txtOrderTotalShimmerFrameLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:background="@color/shimmer_view_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator7">
+
+        <TextView
+            android:id="@+id/txtOrderTotalTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fontFamily="@font/futura_semi_bold"
+            android:letterSpacing="0.1"
+            android:text="@string/native_checkout_order_total_title"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/twelve_sp" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/orderTotalValueShimmerFrameLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/shimmer_view_background"
+        app:layout_constraintBottom_toBottomOf="@+id/txtOrderTotalShimmerFrameLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/txtOrderTotalShimmerFrameLayout">
+
+        <TextView
+            android:id="@+id/txtOrderTotalValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fontFamily="@font/futura_semi_bold"
+            android:textColor="@color/black"
+            android:textSize="@dimen/fourteen_sp"
+            tools:text="R 690.0" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/summaryNoteShimmerFrameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/fifteen_dp"
+        android:layout_marginTop="@dimen/eight_dp"
         android:background="@color/shimmer_view_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator7">
+        app:layout_constraintTop_toBottomOf="@id/txtOrderTotalShimmerFrameLayout">
 
         <TextView
             android:id="@+id/txtOrderSummaryNote"
