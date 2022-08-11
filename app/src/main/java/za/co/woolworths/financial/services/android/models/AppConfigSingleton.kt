@@ -72,6 +72,7 @@ object AppConfigSingleton {
     var logPublicKey: String? = null
     var authenticVersionStamp: String? = ""
     var lowStock: ConfigLowStock? = null
+    var tooltipSettings: TooltipSettings? = null
 
     init {
         AppConfigRepository().getAppConfigData()?.let { appConfig ->
@@ -216,6 +217,8 @@ object AppConfigSingleton {
                 minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
                 brandLandingPage = this
             }
+
+            this.tooltipSettings = appConfig.toolTipSettings
         }
     }
 }

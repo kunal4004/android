@@ -445,10 +445,14 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                     KotlinUtils.let {
                                         it.placeId = placeId
                                         it.isLocationSame = placeId?.equals(savedPlaceId)
-                                        it.isDeliveryLocationTabClicked =
-                                            placeId?.equals(savedPlaceId)
-                                        it.isCncTabClicked = placeId?.equals(savedPlaceId)
-                                        it.isDashTabClicked = placeId?.equals(savedPlaceId)
+
+                                        if (it.isLocationSame == false) {
+                                            KotlinUtils.isDeliveryLocationTabCrossClicked = false
+                                            KotlinUtils.isCncTabCrossClicked = false
+                                            KotlinUtils.isDashTabCrossClicked = false
+                                            KotlinUtils.storeId = mStoreId
+                                            KotlinUtils.isStoreSelectedForBrowsing = false
+                                        }
                                     }
                                     Utils.savePreferredDeliveryLocation(
                                         ShoppingDeliveryLocation(
@@ -463,10 +467,13 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                     KotlinUtils.let {
                                         it.placeId = placeId
                                         it.isLocationSame = placeId?.equals(anonymousUserPlaceId)
-                                        it.isDeliveryLocationTabClicked =
-                                            placeId?.equals(anonymousUserPlaceId)
-                                        it.isCncTabClicked = placeId?.equals(anonymousUserPlaceId)
-                                        it.isDashTabClicked = placeId?.equals(anonymousUserPlaceId)
+                                        if (it.isLocationSame == false) {
+                                            KotlinUtils.isDeliveryLocationTabCrossClicked = false
+                                            KotlinUtils.isCncTabCrossClicked = false
+                                            KotlinUtils.isDashTabCrossClicked = false
+                                            KotlinUtils.storeId = mStoreId
+                                            KotlinUtils.isStoreSelectedForBrowsing = false
+                                        }
                                         saveAnonymousUserLocationDetails(ShoppingDeliveryLocation(
                                             confirmLocationResponse.orderSummary?.fulfillmentDetails))
                                     }
@@ -487,6 +494,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                     KotlinUtils.browsingCncStore =
                                         GeoUtils.getStoreDetails(mStoreId,
                                             validateLocationResponse?.validatePlace?.stores)
+                                    KotlinUtils.storeId = mStoreId
+                                    KotlinUtils.isStoreSelectedForBrowsing = false
                                 }
 
                                 WoolworthsApplication.setValidatedSuburbProducts(
