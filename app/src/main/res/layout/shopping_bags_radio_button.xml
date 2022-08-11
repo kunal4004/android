@@ -14,6 +14,7 @@
         android:layout_width="@dimen/twenty_four_dp"
         android:layout_height="@dimen/twenty_four_dp"
         android:layout_marginStart="@dimen/ten_dp"
+        android:gravity="center"
         android:button="@drawable/shopping_list_item_selector"
         android:clickable="false"
         app:layout_constraintStart_toStartOf="parent"
