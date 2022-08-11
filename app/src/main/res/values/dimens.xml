@@ -242,5 +242,6 @@
     <dimen name="two_hundred_ten_dp">210dp</dimen>
     <dimen name="two_hundred_eight_dp">208dp</dimen>
     <dimen name="nine_sp">9sp</dimen>
+    <dimen name="hundred_and_thirty_six_dp">136dp</dimen>
 </resources>
 

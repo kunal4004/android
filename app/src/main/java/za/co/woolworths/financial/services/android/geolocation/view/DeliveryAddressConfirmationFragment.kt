@@ -665,7 +665,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     private fun showCollectionTabView() {
         selectATab(geoCollectTab)
         deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
-            R.drawable.img_collection_bag))
+            R.drawable.ic_cnc_set_location))
         changeFulfillmentTitleTextView?.text = bindString(R.string.click_and_collect)
         val collectionQuantity =
             validateLocationResponse?.validatePlace?.stores?.getOrNull(0)?.quantityLimit?.foodMaximumQuantity
@@ -727,7 +727,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             activity)
         selectATab(geoCollectTab)
         deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
-            R.drawable.img_collection_bag))
+            R.drawable.ic_cnc_set_location))
         changeFulfillmentTitleTextView?.text = bindString(R.string.click_and_collect)
         val collectionQuantity =
             validateLocationResponse?.validatePlace?.stores?.getOrNull(0)?.quantityLimit?.foodMaximumQuantity
@@ -740,7 +740,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 showNotDeliverablePopUp(R.string.no_location_collection,
                     R.string.no_location_desc,
                     R.string.change_location,
-                    R.drawable.img_collection_bag,
+                    R.drawable.ic_cnc_set_location,
                     null)
             } else {
                 if (customBottomSheetDialogFragment != null && customBottomSheetDialogFragment!!.isVisible) {

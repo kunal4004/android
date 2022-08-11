@@ -2512,9 +2512,9 @@
     <string name="select_your_preferred_store">Select your preferred store</string>
     <string name="set_address">SET ADDRESS</string>
     <string name="dash_delivery_title">To view and shop with Woolies Dash,\n we need your address.</string>
-    <string name="dash_delivery_msg">Set your address to \n start shopping.</string>
+    <string name="dash_delivery_msg">Set Your Address \n To Start Shopping.</string>
     <string name="device_location_service_disabled">Your Device’s Location Services Are Disabled.</string>
-    <string name="device_location_service_disabled_subTitle">We use your location to show available Click &amp; Collect stores near you.</string>
+    <string name="device_location_service_disabled_subTitle">To view and shop using Click &amp; Collect, we need your location.</string>
     <string name="btn_turn_on_location_text">Turn location on</string>
     <string name="all_products_available">All Products Available</string>
     <string name="next_dash_delivery_timeslot_text">Next Dash Delivery timeslot</string>
