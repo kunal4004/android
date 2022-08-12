@@ -139,7 +139,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
             case HEADER:
                 CartHeaderViewHolder headerHolder = ((CartHeaderViewHolder) holder);
                 ArrayList<CommerceItem> commerceItems = itemRow.commerceItems;
-                headerHolder.tvHeaderTitle.setText(commerceItems.size() > 1 ? commerceItems.size() + " " + itemRow.category.toUpperCase() + " ITEMS" : commerceItems.size() + " " + itemRow.category.toUpperCase() + " ITEM");
+                headerHolder.tvHeaderTitle.setText(commerceItems.size() > 1 ? commerceItems.size() + " " + itemRow.category + " Items" : commerceItems.size() + " " + itemRow.category + " Item");
                 headerHolder.addToListListener(commerceItems);
                 if (itemRow.category.toUpperCase().equalsIgnoreCase(GIFT_ITEM)) {
                     headerHolder.tvAddToList.setVisibility(View.GONE);
