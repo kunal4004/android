@@ -133,6 +133,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var placeId: String? = null
     private var isUnSellableItemsRemoved: Boolean? = false
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
+    private var localDeliveryType: String? = null
+    private var localDeliveryTypeForHiddenChange: String? = null
 
     @OpenTermAndLighting
     @Inject
@@ -168,7 +170,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             }
             localProductBody.add(localBody)
             setProductBody()
-            isReloadNeeded = true
             isBackPressed = false
         }
     }
@@ -194,7 +195,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 setDisplayShowHomeEnabled(false)
             }
             showBottomNavigationMenu()
-
+            localDeliveryTypeForHiddenChange = Delivery.STANDARD.name
             mErrorHandlerView = ErrorHandlerView(this, no_connection_layout)
             mErrorHandlerView?.setMargin(no_connection_layout, 0, 0, 0, 0)
 
@@ -214,6 +215,16 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     true
                 )
             }
+            if (SessionUtilities.getInstance().isUserAuthenticated) {
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
+                    localDeliveryType = it.deliveryType
+                }
+            } else {
+                KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let {
+                    localDeliveryType = it.deliveryType
+                }
+            }
+
         }
 
         toolbarPLPAddress?.setOnClickListener(this)
@@ -400,11 +411,16 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             arguments,
             activity)
 
-        if (activity is BottomNavigationActivity && (activity as BottomNavigationActivity).currentFragment is ProductListingFragment) {
+        if (activity is BottomNavigationActivity
+            && (activity as BottomNavigationActivity).currentFragment is ProductListingFragment
+        ) {
             val currentPlaceId = KotlinUtils.getPreferredPlaceId()
-            if (currentPlaceId == null && !(currentPlaceId?.equals(localPlaceId))!!) {
+            if (currentPlaceId != null && !(currentPlaceId?.equals(localPlaceId))!!) {
                 localPlaceId = currentPlaceId
-                isReloadNeeded = false
+                updateRequestForReload()
+                pushFragment()
+            } else if (!localDeliveryType?.equals(deliveryType.type)!!) {
+                localDeliveryType = deliveryType.type
                 updateRequestForReload()
                 pushFragment()
             }
@@ -997,11 +1013,31 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                         localProductBody.removeLast()
                         isBackPressed = false
                     }
-                    if (isReloadNeeded) {
-                        updateRequestForReload()
-                        reloadProductsWithSortAndFilter()
+
+                    if (SessionUtilities.getInstance().isUserAuthenticated) {
+                        Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
+                            localDeliveryTypeForHiddenChange = it.deliveryType
+                        }
+                    } else {
+                        KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let {
+                            localDeliveryTypeForHiddenChange = it.deliveryType
+                        }
                     }
-                    isReloadNeeded = true
+
+                    if (activity is BottomNavigationActivity && (activity as BottomNavigationActivity).currentFragment is ProductListingFragment) {
+                        val currentPlaceId = KotlinUtils.getPreferredPlaceId()
+                        if (currentPlaceId != null
+                            && !(currentPlaceId?.equals(localPlaceId))!!
+                        ) {
+                            localPlaceId = currentPlaceId
+                            updateRequestForReload()
+                            pushFragment()
+                        } else if (!localDeliveryTypeForHiddenChange?.equals(localDeliveryType)!!) {
+                            localDeliveryTypeForHiddenChange = localDeliveryType
+                            updateRequestForReload()
+                            pushFragment()
+                        }
+                    }
                     if (productView?.navigation?.isNullOrEmpty() != true)
                         unLockDrawerFragment()
                 }
@@ -1649,7 +1685,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     companion object {
-        private var isReloadNeeded = true
         private var localProductBody: ArrayList<Any> = ArrayList()
         private var localPlaceId: String? = null
         private var isBackPressed: Boolean = false
