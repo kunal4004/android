@@ -46,10 +46,11 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         setActionBar()
         intent?.extras?.apply {
             savedAddressResponse = getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
-            geoSlotSelection = getBoolean(GEO_SLOT_SELECTION , false)
-            dashSlotSelection = getBoolean(DASH_SLOT_SELECTION , false)
-            whoIsCollectingString = getString(CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS, "")
-            isComingFromCnc = getBoolean(IS_COMING_FROM_CNC_SELETION , false)
+            geoSlotSelection = getBoolean(GEO_SLOT_SELECTION, false)
+            dashSlotSelection = getBoolean(DASH_SLOT_SELECTION, false)
+            whoIsCollectingString =
+                getString(CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS, "")
+            isComingFromCnc = getBoolean(IS_COMING_FROM_CNC_SELETION, false)
             baseFragBundle = Bundle()
             baseFragBundle?.putString(
                 SAVED_ADDRESS_KEY,
@@ -59,10 +60,11 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                 CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS,
                 whoIsCollectingString
             )
-            baseFragBundle?.putBoolean(IS_DELIVERY, if (containsKey(IS_DELIVERY)) getBoolean(IS_DELIVERY) else true)
-            if(containsKey(LIQUOR_ORDER)&&containsKey(NO_LIQUOR_IMAGE_URL)){
-                baseFragBundle?.putBoolean(LIQUOR_ORDER , getBoolean(LIQUOR_ORDER))
-                baseFragBundle?.putString(NO_LIQUOR_IMAGE_URL,getString(NO_LIQUOR_IMAGE_URL))
+            baseFragBundle?.putBoolean(IS_DELIVERY,
+                if (containsKey(IS_DELIVERY)) getBoolean(IS_DELIVERY) else true)
+            if (containsKey(LIQUOR_ORDER) && containsKey(NO_LIQUOR_IMAGE_URL)) {
+                baseFragBundle?.putBoolean(LIQUOR_ORDER, getBoolean(LIQUOR_ORDER))
+                baseFragBundle?.putString(NO_LIQUOR_IMAGE_URL, getString(NO_LIQUOR_IMAGE_URL))
             }
 
         }
@@ -136,10 +138,9 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         val graph =
             navHostFrag.navController.navInflater.inflate(R.navigation.nav_graph_checkout)
 
-        graph.setStartDestination(when {
+        graph.startDestination = when {
 
-
-            whoIsCollectingString.isNullOrEmpty() == false || isComingFromCnc==true -> {
+            whoIsCollectingString.isNullOrEmpty() == false || isComingFromCnc == true -> {
                 R.id.checkoutReturningUserCollectionFragment
             }
 
@@ -151,7 +152,8 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                 R.id.checkoutDashFragment
             }
 
-            baseFragBundle?.containsKey(IS_DELIVERY) == true && baseFragBundle?.getBoolean(IS_DELIVERY) == false -> {
+            baseFragBundle?.containsKey(IS_DELIVERY) == true && baseFragBundle?.getBoolean(
+                IS_DELIVERY) == false -> {
                 R.id.checkoutWhoIsCollectingFragment
             }
 
@@ -162,7 +164,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                 R.id.checkoutAddressConfirmationFragment
             }
             else -> R.id.CheckoutAddAddressReturningUserFragment
-        })
+        }
         findNavController(R.id.navHostFragment).setGraph(graph, baseFragBundle)
     }
 
@@ -197,10 +199,12 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         when (fragmentList[0]) {
 
             is UnsellableItemsFragment -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_CANCEL_REMOVE_UNSELLABLE_ITEMS, hashMapOf(
-                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                            FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_CANCEL_REMOVE_ITEMS
-                ), this)
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_CANCEL_REMOVE_UNSELLABLE_ITEMS,
+                    hashMapOf(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_CANCEL_REMOVE_ITEMS
+                    ),
+                    this)
                 setReloadResultAndFinish()
             }
             is CheckoutAddAddressReturningUserFragment, is CheckoutReturningUserCollectionFragment -> {

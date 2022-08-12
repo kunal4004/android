@@ -463,6 +463,16 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                 CheckoutAddressManagementBaseFragment.DASH_SLOT_SELECTION,
                 true
             )
+            if ((liquorCompliance != null) && liquorCompliance!!.isLiquorOrder && (AppConfigSingleton.liquor!!.noLiquorImgUrl != null) && !AppConfigSingleton.liquor!!.noLiquorImgUrl.isEmpty()) {
+                checkoutActivityIntent.putExtra(
+                    Constant.LIQUOR_ORDER,
+                    liquorCompliance!!.isLiquorOrder
+                )
+                checkoutActivityIntent.putExtra(
+                    Constant.NO_LIQUOR_IMAGE_URL,
+                    AppConfigSingleton.liquor!!.noLiquorImgUrl
+                )
+            }
             activity.startActivityForResult(
                 checkoutActivityIntent,
                 REQUEST_PAYMENT_STATUS
