@@ -105,7 +105,6 @@ class KotlinUtils {
     companion object {
 
         var isStoreSelectedForBrowsing: Boolean = false
-        var storeId: String? = ""
         var placeId: String? = null
         var isLocationSame: Boolean? = false
         var isDeliveryLocationTabCrossClicked: Boolean? = false
