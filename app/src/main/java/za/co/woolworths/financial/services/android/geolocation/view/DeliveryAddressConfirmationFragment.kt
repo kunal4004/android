@@ -450,7 +450,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                             KotlinUtils.isDeliveryLocationTabCrossClicked = false
                                             KotlinUtils.isCncTabCrossClicked = false
                                             KotlinUtils.isDashTabCrossClicked = false
-                                            KotlinUtils.storeId = mStoreId
                                             KotlinUtils.isStoreSelectedForBrowsing = false
                                         }
                                     }
@@ -471,7 +470,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                             KotlinUtils.isDeliveryLocationTabCrossClicked = false
                                             KotlinUtils.isCncTabCrossClicked = false
                                             KotlinUtils.isDashTabCrossClicked = false
-                                            KotlinUtils.storeId = mStoreId
                                             KotlinUtils.isStoreSelectedForBrowsing = false
                                         }
                                         saveAnonymousUserLocationDetails(ShoppingDeliveryLocation(
@@ -494,7 +492,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                     KotlinUtils.browsingCncStore =
                                         GeoUtils.getStoreDetails(mStoreId,
                                             validateLocationResponse?.validatePlace?.stores)
-                                    KotlinUtils.storeId = mStoreId
                                     KotlinUtils.isStoreSelectedForBrowsing = false
                                 }
 

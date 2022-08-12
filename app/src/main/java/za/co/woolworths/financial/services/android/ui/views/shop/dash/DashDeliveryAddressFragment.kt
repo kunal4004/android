@@ -155,7 +155,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
     private fun showSearchBar() {
         if (this.parentFragment is ShopFragment && KotlinUtils.browsingDeliveryType == Delivery.DASH)
-            (this.parentFragment as ShopFragment).showSerachAndBarcodeUi() // show search bar.
+            (this.parentFragment as ShopFragment).showSearchAndBarcodeUi() // show search bar.
     }
 
     private fun hideSearchBar() {
