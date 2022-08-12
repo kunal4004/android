@@ -1902,6 +1902,9 @@
     <!-- Dash Details -->
     <string name="dash_banner_text_open_app">Same Day Delivery. Open Our App.</string>
     <string name="dash_banner_text_download_app">Same Day Delivery. Download Our App.</string>
+    <string name="shop_using_standard_delivery">Shop now using <b>Standard Delivery.</b></string>
+    <string name="shop_using_cnc"><b>Shop now using Click &amp; Collect.</b></string>
+    <string name="shop_using_dash_delivery">Shop now using <b>Dash Delivery.</b></string>
 
     <string name="dash_details_food_order">FOOD ORDERS</string>
     <string name="dash_details_woolies_app_available">Now Available in\nYour Area: Woolies Dash</string>
@@ -2696,6 +2699,5 @@
     <string name="one_cart_chat_order_id">ORDER #%s</string>
     <string name="generic_error_something_wrong_newline">Unfortunately,\n Something Went Wrong</string>
     <string name="one_cart_chat_error_disc">We can’t seem to reach your shopper.\n Give them a few moments, and try again.</string>
-
 
 </resources>
