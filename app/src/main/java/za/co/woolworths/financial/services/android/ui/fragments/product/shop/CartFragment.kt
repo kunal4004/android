@@ -1136,6 +1136,8 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             cartResponse.orderSummary = data.orderSummary
             cartResponse.voucherDetails = data.voucherDetails
             cartResponse.productCountMap = data.productCountMap // set delivery location
+            cartResponse.liquorOrder = data.liquorOrder
+            cartResponse.noLiquorImageUrl = data.noLiquorImageUrl
             if (cartResponse.orderSummary.fulfillmentDetails?.address?.placeId != null) {
                 Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(cartResponse.orderSummary.fulfillmentDetails))
             }
