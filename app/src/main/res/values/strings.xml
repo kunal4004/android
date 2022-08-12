@@ -2314,6 +2314,7 @@
     <string name="native_checkout_delivery_age_confirmation_desc">For your alcohol purchase, please confirm that you are 18 years or older.</string>
     <string name="native_checkout_delivery_age_confirmation_desc_note"><b>Note:</b> To verify their age, the recipient may be required to present an ID or passport on delivery. If not, the order may be returned to the store.</string>
     <string name="native_checkout_delivery_food_substitution_phone_confirm">Phone me to confirm any substitutions</string>
+    <string name="native_checkout_delivery_food_substitution_chat">Chat with shopper to confirm substitutions</string>
     <string name="native_checkout_delivery_age_confirm">I confirm that I am 18 years or older.</string>
     <string name="native_checkout_delivery_food_substitution_similar_subst">Substitute for similar items if one is available</string>
     <string name="native_checkout_delivery_food_substitution_no_thanks">No thanks, don’t substitute</string>
