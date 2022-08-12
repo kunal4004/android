@@ -12,6 +12,7 @@ import android.view.ViewGroup.MarginLayoutParams
 import android.view.ViewGroup.VISIBLE
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -448,6 +449,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         super.onHiddenChanged(hidden)
         if (!hidden) {
             //do when hidden
+            timer?.start()
             (activity as? BottomNavigationActivity)?.apply {
                 fadeOutToolbar(R.color.recent_search_bg)
                 showBackNavigationIcon(false)
@@ -456,6 +458,10 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 Handler().postDelayed({
                     hideToolbar()
                 }, AppConstant.DELAY_1000_MS)
+            }
+        } else {
+            if (blackToolTipLayout?.isVisible == true) {
+                timer?.cancel()
             }
         }
 
