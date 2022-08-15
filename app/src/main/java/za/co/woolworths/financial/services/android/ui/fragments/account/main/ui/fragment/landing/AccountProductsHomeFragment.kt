@@ -43,20 +43,19 @@ class AccountProductsHomeFragment : Fragment(R.layout.account_products_home_frag
                 sheetBehavior?.addBottomSheetCallback(callback { slideOffset ->
                     val homeIcon = (activity as? StoreCardActivity)?.getBackIcon()
                     homeIcon?.rotation = slideOffset * -90
-                    homeViewModel.bottomSheetBehaviorState = sheetBehavior?.state
+                    homeViewModel.bottomSheetBehaviorState = if (slideOffset == 1.0f)  BottomSheetBehavior.STATE_EXPANDED else BottomSheetBehavior.STATE_COLLAPSED
                     animateDim(slideOffset, dimView)
                 })
             }
 
-            viewLifecycleOwner.lifecycleScope.launch {
+            lifecycleScope.launch {
                 homeViewModel.isBottomSheetBehaviorExpanded.collectLatest { isExpanded ->
                   if (isExpanded){
-                      sheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
                       homeViewModel.setIsBottomSheetBehaviorExpanded(false)
+                      sheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
                   }
                 }
             }
-
         }
     }
 

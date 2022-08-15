@@ -130,7 +130,7 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
         }
     }
 
-    fun onCardPagerPageSelected(
+    fun onManageCardPagerFragmentSelected(
         storeCardFeatureType: StoreCardFeatureType?,
         position: Int,
         isPopupVisibleInAccountLanding: Boolean,

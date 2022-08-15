@@ -48,7 +48,7 @@ class AccountProductsToolbarHelper(
             binding.infoIconImageView.setImageResource(R.drawable.info_white)
             binding.navigateBackImageButton.visibility = VISIBLE
             navigateBackImageButton.setOnClickListener {
-                if (viewModel.bottomSheetBehaviorState == BottomSheetBehavior.STATE_SETTLING){
+                if (viewModel.bottomSheetBehaviorState == BottomSheetBehavior.STATE_EXPANDED){
                     viewModel.setIsBottomSheetBehaviorExpanded(true)
                     return@setOnClickListener
                 }
