@@ -873,11 +873,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if (getSupportActionBar() != null && mNavController != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(!mNavController.isRootFragment());
         }
-        if (isNewSession && fragment instanceof ShopFragment) {
-            isNewSession = false;
-            ShopFragment shopFragment = (ShopFragment) fragment;
-            shopFragment.setDefaultTab();
-        }
     }
 
     @Override
