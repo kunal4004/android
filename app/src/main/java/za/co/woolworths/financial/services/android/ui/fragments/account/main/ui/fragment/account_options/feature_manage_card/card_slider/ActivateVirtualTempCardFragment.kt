@@ -46,11 +46,12 @@ class ActivateVirtualTempCardFragment :
         binding: InstantStoreCardReplacementCardFragmentBinding,
         activateVTC: StoreCardFeatureType.ActivateVirtualTempCard?
     ) {
-        binding.accountHolderNameTextView.text = KotlinUtils.getCardHolderNameSurname()
         if (activateVTC?.isTemporaryCardEnabled == true) {
             binding.storeCardImageView.setImageResource(R.drawable.ic_sc_temporary_store_card)
             binding.tempCardLabel.visibility = View.GONE
             binding.cardLabel.visibility = View.GONE
+            binding.accountHolderNameTextView.text = KotlinUtils.getCardHolderNameSurname()
+            binding.accountHolderNameTextView.visibility = View.VISIBLE
         } else {
             binding.storeCardImageView.setImageResource(R.drawable.ic_sc_inactive)
             binding.tempCardLabel.visibility = View.VISIBLE
@@ -58,6 +59,7 @@ class ActivateVirtualTempCardFragment :
             binding.tempCardLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.inactive_label_color))
             binding.cardLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.inactive_label_color))
             binding.tempCardLabel.text = getString(R.string.inactive)
+            binding.accountHolderNameTextView.visibility = View.GONE
         }
     }
 
