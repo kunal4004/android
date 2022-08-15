@@ -92,6 +92,8 @@ public interface BottomNavigator {
 
 	void clearStack();
 
+	void clearStackSignOut();
+
 	void cartSummaryAPI();
 
 	void updateCartSummaryCount(CartSummary cartSummary);

@@ -119,6 +119,10 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         }
     }
 
+    fun setDefaultTab() {
+        viewpager_main.currentItem = 0
+    }
+
     private fun prepareTabView(pos: Int, tabTitle: MutableList<String>?): View? {
         val view = activity?.layoutInflater?.inflate(R.layout.shop_custom_tab, null)
         view?.tvTitle?.text = tabTitle?.get(pos)

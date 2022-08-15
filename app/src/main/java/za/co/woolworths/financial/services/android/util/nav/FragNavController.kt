@@ -9,7 +9,9 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import kotlinx.android.synthetic.main.stock_finder_activity.*
 import org.json.JSONArray
+import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment
 import za.co.woolworths.financial.services.android.util.nav.tabhistory.*
 import java.util.*
 
@@ -370,6 +372,30 @@ class FragNavController internal constructor(builder: Builder, savedInstanceStat
     @Throws(UnsupportedOperationException::class)
     fun popFragments(popDepth: Int) {
         popFragments(popDepth, null)
+    }
+
+    /**
+     * Clears the previous tab's stack to get to just the bottom Fragment. This will reveal the root fragment
+     *
+     * @param transactionOptions Transaction options to be displayed
+     * @param previousTabIndex previous tab index
+     */
+    @JvmOverloads
+    fun clearStackSignOut(transactionOptions: FragNavTransactionOptions? = null, previousTabIndex : Int) {
+        //Grab Current stack
+        val fragmentStack = fragmentStacks[previousTabIndex]
+        if (fragmentStack.size > 1) {
+            var fragment: Fragment?
+            val ft = createTransactionWithOptions(transactionOptions, true)
+
+            //Pop all of the fragments on the stack and remove them from the FragmentManager
+            while (fragmentStack.size > 1) {
+                fragment = fragmentManger.findFragmentByTag(fragmentStack.pop().tag)
+                if (fragment != null) {
+                    ft.remove(fragment)
+                }
+            }
+        }
     }
 
     /**

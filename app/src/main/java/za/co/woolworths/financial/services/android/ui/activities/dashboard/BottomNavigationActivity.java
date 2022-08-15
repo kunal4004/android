@@ -186,6 +186,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     private View notificationBadgeOne;
     private ImageView onlineIconImageView;
     private Boolean isDeeplinkAction = false;
+    private Boolean isNewSession = false;
     private int currentTabIndex = INDEX_TODAY;
     private int previousTabIndex = INDEX_TODAY;
 
@@ -724,6 +725,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         setCurrentSection(R.id.navigate_to_shop);
         switchTab(INDEX_PRODUCT);
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMENU, BottomNavigationActivity.this);
+
+        Fragment fragment = mNavController.getCurrentFrag();
+        if (isNewSession &&  fragment instanceof ShopFragment) {
+            isNewSession = false;
+            ShopFragment shopFragment = (ShopFragment) fragment;
+            shopFragment.setDefaultTab();
+        }
     }
 
     private void replaceAccountIcon(@NonNull MenuItem item) {
@@ -865,6 +873,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if (getSupportActionBar() != null && mNavController != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(!mNavController.isRootFragment());
         }
+        if (isNewSession && fragment instanceof ShopFragment) {
+            isNewSession = false;
+            ShopFragment shopFragment = (ShopFragment) fragment;
+            shopFragment.setDefaultTab();
+        }
     }
 
     @Override
@@ -968,6 +981,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     public void clearStack() {
         if (mNavController != null)
             mNavController.clearStack(new FragNavTransactionOptions.Builder().customAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right).build());
+    }
+
+    @Override
+    public void clearStackSignOut() {
+        if (mNavController != null)
+            mNavController.clearStackSignOut(new FragNavTransactionOptions.Builder().customAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right).build(), previousTabIndex);
+        isNewSession = true;
     }
 
     @Override
@@ -1550,6 +1570,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
     public void onSignedOut() {
         clearBadgeCount();
+        clearStackSignOut();
         ScreenManager.presentSSOLogout(BottomNavigationActivity.this);
     }
 
