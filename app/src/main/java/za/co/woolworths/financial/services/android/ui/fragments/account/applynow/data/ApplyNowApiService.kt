@@ -10,7 +10,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.applynow.A
 
 interface ApplyNowApiService {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:10800")
-    @GET("/wfs/app/v4/content")
+    @GET("/wfs/app/v4/mobileconfigs/content")
     suspend fun applyNowService(
         @Query("contentId") contentId: String
     ): Response<ApplyNowModel>

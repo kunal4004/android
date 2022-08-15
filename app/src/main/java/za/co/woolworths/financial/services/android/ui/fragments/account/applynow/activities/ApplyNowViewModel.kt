@@ -31,7 +31,7 @@ class ApplyNowViewModel @Inject constructor(val bottomSheet: ApplyNowBottomSheet
             //TODO:future usage for SC&PL
             ApplyNowState.STORE_CARD -> ""
             ApplyNowState.PERSONAL_LOAN -> ""
-            else -> "creditCardcApplyNow"
+            else -> "creditCardApplyNow"
         }
     }
 
