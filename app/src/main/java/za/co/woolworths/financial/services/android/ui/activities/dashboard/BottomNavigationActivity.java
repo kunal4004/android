@@ -984,7 +984,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             mNavController.clearStackSignOut(new FragNavTransactionOptions.Builder().customAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right).build(), previousTabIndex);
         isNewSession = true;
     }
-
     @Override
     public void cartSummaryAPI() {
     }

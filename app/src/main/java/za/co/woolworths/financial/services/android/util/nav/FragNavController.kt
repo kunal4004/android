@@ -9,9 +9,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
-import kotlinx.android.synthetic.main.stock_finder_activity.*
 import org.json.JSONArray
-import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment
 import za.co.woolworths.financial.services.android.util.nav.tabhistory.*
 import java.util.*
 
