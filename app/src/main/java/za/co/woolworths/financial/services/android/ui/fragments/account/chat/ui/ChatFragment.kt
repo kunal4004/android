@@ -24,6 +24,7 @@ import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatViewModel
@@ -188,6 +189,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                 }
                 SessionStateType.ONLINE -> {
                     chatBoxEditText?.isEnabled = true
+                    chatBoxEditText?.setHint(R.string.start_typing)
                     isAgentDisconnected(false)
                     toggleSendMessageButton(true)
                     displayEndSessionButton(true)

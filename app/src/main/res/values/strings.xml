@@ -791,6 +791,7 @@
     <string name="credit_limit_decrease_max_button">proceed with the maximum</string>
     <string name="chat_button_text">Chat With Us</string>
     <string name="start_typing">Start typing...</string>
+    <string name="chat_hold_message">Please hold while we connect you</string>
     <string name="chat_end_session">END</string>
     <string name="chat_end_session_dialog_title">End Session</string>
     <string name="chat_end_session_dialog_desc">Are you sure you want to end the conversation?</string>
@@ -2463,7 +2464,7 @@
     <string name="search_by_store_or_location">Search by store or location</string>
     <string name="change">change</string>
     <string name="near_stores">%d Strores near me.</string>
-    <string name="where_do_you_want_to_collect">Where do you want to collect?.</string>
+    <string name="where_do_you_want_to_collect">Where do you want to collect?</string>
     <string name="product_listing_price_from">From</string>
 
     <string name="vtsc_card_not_arrived_title">Has Your Card Not\nArrived in the Post?</string>
