@@ -8,6 +8,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.util.DisplayMetrics;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -138,7 +139,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
             case HEADER:
                 CartHeaderViewHolder headerHolder = ((CartHeaderViewHolder) holder);
                 ArrayList<CommerceItem> commerceItems = itemRow.commerceItems;
-                headerHolder.tvHeaderTitle.setText(commerceItems.size() > 1 ? commerceItems.size() + " " + itemRow.category.toUpperCase() + " ITEMS" : commerceItems.size() + " " + itemRow.category.toUpperCase() + " ITEM");
+                headerHolder.tvHeaderTitle.setText(commerceItems.size() > 1 ? commerceItems.size() + " " + itemRow.category + " Items" : commerceItems.size() + " " + itemRow.category + " Item");
                 headerHolder.addToListListener(commerceItems);
                 if (itemRow.category.toUpperCase().equalsIgnoreCase(GIFT_ITEM)) {
                     headerHolder.tvAddToList.setVisibility(View.GONE);
@@ -274,6 +275,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                 if (orderSummary != null) {
                     priceHolder.orderSummeryLayout.setVisibility(View.VISIBLE);
                     setPriceValue(priceHolder.txtYourCartPrice, orderSummary.getBasketTotal());
+
+                    priceHolder.orderTotal.setText(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(orderSummary.getTotal()));
 
                     if (orderSummary.discountDetails != null) {
                         DiscountDetails discountDetails = orderSummary.discountDetails;
@@ -635,7 +638,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
         private WTextView txtYourCartPrice, txtDiscount, txtCompanyDiscount, txtWrewardsDiscount, txtTotalDiscount, txtPromoCodeDiscount;
         private LinearLayout orderSummeryLayout;
         private RelativeLayout rlDiscount, rlCompanyDiscount, rlWrewardsDiscount, rlTotalDiscount, rlPromoCodeDiscount;
-        private TextView availableVouchersCount, viewVouchers, promoCodeAction, promoCodeLabel;
+        private TextView availableVouchersCount, viewVouchers, promoCodeAction, promoCodeLabel, orderTotal;
         private ImageView promoDiscountInfo;
         private ConstraintLayout liquorBannerRootConstraintLayout;
         private ImageView imgLiBanner;
@@ -663,6 +666,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
             promoDiscountInfo = view.findViewById(R.id.promoDiscountInfo);
             liquorBannerRootConstraintLayout = view.findViewById(R.id.liquorBannerRootConstraintLayout);
             imgLiBanner = view.findViewById(R.id.imgLiquorBanner);
+            orderTotal = view.findViewById(R.id.orderTotal);
 
         }
     }

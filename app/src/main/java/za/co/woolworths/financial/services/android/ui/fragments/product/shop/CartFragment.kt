@@ -72,7 +72,6 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.CartUtils.Companion.filterCommerceItemFromCartResponse
 import za.co.woolworths.financial.services.android.util.CartUtils.Companion.getAppliedVouchersCount
 import za.co.woolworths.financial.services.android.util.CartUtils.Companion.updateItemLimitsBanner
-import za.co.woolworths.financial.services.android.util.CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace
 import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.setCrashlyticsString
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
@@ -168,7 +167,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                                         cartText =
                                             if ((mNumberOfListSelected > 1)) shoppingList + "s"
                                             else shoppingList
-                                        pixel = btnCheckOut?.height ?: 0 * 2
+                                        pixel = btnCheckOut?.height ?: (0 * 2)
                                         this.view = btnCheckOut
                                         message = requireContext().getString(R.string.added_to)
                                         viewState = true
@@ -203,7 +202,6 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         mErrorHandlerView = ErrorHandlerView(activity, no_connection_layout)
         mErrorHandlerView?.setMargin(no_connection_layout, 0, 0, 0, 0)
         btnCheckOut?.setOnClickListener(this)
-        orderTotalLayout.setOnClickListener(this)
         deliveryLocationConstLayout.setOnClickListener(this)
 
         btn_dash_set_address.text = getString(R.string.start_shopping)
@@ -356,7 +354,6 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                     }
                 }
             }
-            R.id.orderTotalLayout -> nestedScrollView?.post { nestedScrollView?.fullScroll(View.FOCUS_DOWN) }
             else -> {}
         }
     }
@@ -1840,7 +1837,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
     }
 
     override fun updateOrderTotal() {
-        orderSummary?.total?.let { orderTotal?.text = formatAmountToRandAndCentWithSpace(it) }
+//        orderSummary?.total?.let { orderTotal?.text = formatAmountToRandAndCentWithSpace(it) }
     }
 
     override fun onEnterPromoCode() {

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_F3F3F3">
+    android:background="@color/color_F5F5F5">
 
     <include
         android:id="@+id/layoutDashSetAddress"

@@ -46,17 +46,15 @@
 
     <TextView
         android:id="@+id/giftItemTextView"
+        style="@style/my_orders_textview_style_2"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:contentDescription="@string/gwp_product_name"
         android:ellipsize="end"
-        android:fontFamily="@font/myriad_pro_regular"
         android:singleLine="true"
         android:text="@string/placeholder"
         android:textColor="@color/black"
-        android:textSize="@dimen/fourteen_sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/freeGiftTextView"
         app:layout_constraintStart_toEndOf="@+id/freeGiftImageView"

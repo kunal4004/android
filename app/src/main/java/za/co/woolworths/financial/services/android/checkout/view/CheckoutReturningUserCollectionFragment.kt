@@ -266,12 +266,12 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             ),
             Pair<ShimmerFrameLayout, View>(summaryNoteShimmerFrameLayout, txtOrderSummaryNote),
             Pair<ShimmerFrameLayout, View>(
-                txtOrderTotalCollectionShimmerFrameLayout,
-                txtOrderTotalTitleCollection
+                txtOrderTotalShimmerFrameLayout,
+                txtOrderTotalTitle
             ),
             Pair<ShimmerFrameLayout, View>(
-                orderTotalValueCollectionShimmerFrameLayout,
-                txtOrderTotalValueCollection
+                orderTotalValueShimmerFrameLayout,
+                txtOrderTotalValue
             ),
             Pair<ShimmerFrameLayout, View>(
                 continuePaymentTxtCollectionShimmerFrameLayout,
@@ -654,6 +654,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         if (AppConfigSingleton.nativeCheckout?.currentShoppingBag?.isEnabled == true) {
             switchNeedBags?.visibility = View.VISIBLE
             txtNeedBags?.visibility = View.VISIBLE
+            viewHorizontalSeparator?.visibility = View.GONE
             newShoppingBagsLayout?.visibility = View.GONE
             switchNeedBags?.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
@@ -666,6 +667,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         } else if (AppConfigSingleton.nativeCheckout?.newShoppingBag?.isEnabled == true) {
             switchNeedBags?.visibility = View.GONE
             txtNeedBags?.visibility = View.GONE
+            viewHorizontalSeparator?.visibility = View.VISIBLE
             newShoppingBagsLayout?.visibility = View.VISIBLE
             addShoppingBagsRadioButtons()
         }
@@ -771,7 +773,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 txtOrderSummaryPromoCodeDiscountValue?.text =
                     "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.promoCodeDiscount)
 
-                txtOrderTotalValueCollection?.text =
+                txtOrderTotalValue?.text =
                     CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.total)
             }
         }

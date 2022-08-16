@@ -5,6 +5,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DecodeFormat
+import com.bumptech.glide.load.resource.bitmap.FitCenter
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import kotlinx.android.synthetic.main.department_dash_banner.view.*
 import kotlinx.android.synthetic.main.department_row.view.*
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
@@ -49,7 +55,17 @@ class DepartmentAdapter(var mlRootCategories: MutableList<RootCategory>?,
         }
 
         private fun loadImage(rootCategory: RootCategory) {
-            ImageManager.setPictureWithoutPlaceHolder(itemView.imProductCategory, rootCategory.imgUrl)
+            itemView.imProductCategory.visibility = if (rootCategory.imgUrl.isEmpty()) View.GONE else View.VISIBLE
+            itemView.imProductCategory.context?.apply {
+                Glide.with(this)
+                    .load(rootCategory.imgUrl)
+                    .format(DecodeFormat.PREFER_ARGB_8888)
+                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                    .fitCenter()
+                    .apply(RequestOptions.bitmapTransform(RoundedCorners(6)))
+                    .dontAnimate()
+                    .into(itemView.imProductCategory)
+            }
         }
     }
 

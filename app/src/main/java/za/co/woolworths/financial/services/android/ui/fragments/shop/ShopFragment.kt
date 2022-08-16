@@ -938,7 +938,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     private fun getFirstAvailableFoodDeliveryDate(
         isStoreSelectedForBrowsing: Boolean,
-        browsingStoreId: String,
+        browsingStoreId: String
     ): String? {
         var storeId: String? = getStoreId(isStoreSelectedForBrowsing, browsingStoreId)
         validateLocationResponse?.validatePlace?.let { validatePlace ->
