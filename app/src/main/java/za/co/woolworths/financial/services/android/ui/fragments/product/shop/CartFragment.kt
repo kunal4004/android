@@ -72,7 +72,6 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.CartUtils.Companion.filterCommerceItemFromCartResponse
 import za.co.woolworths.financial.services.android.util.CartUtils.Companion.getAppliedVouchersCount
 import za.co.woolworths.financial.services.android.util.CartUtils.Companion.updateItemLimitsBanner
-import za.co.woolworths.financial.services.android.util.CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace
 import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.setCrashlyticsString
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
@@ -168,7 +167,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                                         cartText =
                                             if ((mNumberOfListSelected > 1)) shoppingList + "s"
                                             else shoppingList
-                                        pixel = btnCheckOut?.height ?: 0 * 2
+                                        pixel = btnCheckOut?.height ?: (0 * 2)
                                         this.view = btnCheckOut
                                         message = requireContext().getString(R.string.added_to)
                                         viewState = true
@@ -203,7 +202,6 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         mErrorHandlerView = ErrorHandlerView(activity, no_connection_layout)
         mErrorHandlerView?.setMargin(no_connection_layout, 0, 0, 0, 0)
         btnCheckOut?.setOnClickListener(this)
-        orderTotalLayout.setOnClickListener(this)
         deliveryLocationConstLayout.setOnClickListener(this)
 
         btn_dash_set_address.text = getString(R.string.start_shopping)
@@ -356,7 +354,6 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                     }
                 }
             }
-            R.id.orderTotalLayout -> nestedScrollView?.post { nestedScrollView?.fullScroll(View.FOCUS_DOWN) }
             else -> {}
         }
     }
@@ -455,18 +452,21 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             !TextUtils.isEmpty(response?.defaultAddressNickname)
         ) {
             val checkoutActivityIntent = Intent(activity, CheckoutActivity::class.java)
-            checkoutActivityIntent.putExtra(
-                CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
-                response
-            )
-            checkoutActivityIntent.putExtra(
-                CheckoutAddressManagementBaseFragment.DASH_SLOT_SELECTION,
-                true
-            )
-            activity.startActivityForResult(
-                checkoutActivityIntent,
-                REQUEST_PAYMENT_STATUS
-            )
+            checkoutActivityIntent.apply {
+                putExtra(CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY, response)
+                putExtra(CheckoutAddressManagementBaseFragment.DASH_SLOT_SELECTION, true)
+                liquorCompliance.let {
+                    if ((it != null) && it.isLiquorOrder && (AppConfigSingleton.liquor!!.noLiquorImgUrl != null) && !AppConfigSingleton.liquor!!.noLiquorImgUrl.isEmpty()) {
+                        putExtra(Constant.LIQUOR_ORDER, it.isLiquorOrder)
+                        putExtra(Constant.NO_LIQUOR_IMAGE_URL,
+                            AppConfigSingleton.liquor!!.noLiquorImgUrl)
+                    }
+                }
+                activity.startActivityForResult(
+                    checkoutActivityIntent,
+                    REQUEST_PAYMENT_STATUS
+                )
+            }
             activity.overridePendingTransition(
                 R.anim.slide_from_right,
                 R.anim.slide_out_to_left
@@ -1136,6 +1136,8 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             cartResponse.orderSummary = data.orderSummary
             cartResponse.voucherDetails = data.voucherDetails
             cartResponse.productCountMap = data.productCountMap // set delivery location
+            cartResponse.liquorOrder = data.liquorOrder
+            cartResponse.noLiquorImageUrl = data.noLiquorImageUrl
             if (cartResponse.orderSummary.fulfillmentDetails?.address?.placeId != null) {
                 Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(cartResponse.orderSummary.fulfillmentDetails))
             }
@@ -1828,7 +1830,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
     }
 
     override fun updateOrderTotal() {
-        orderSummary?.total?.let { orderTotal?.text = formatAmountToRandAndCentWithSpace(it) }
+//        orderSummary?.total?.let { orderTotal?.text = formatAmountToRandAndCentWithSpace(it) }
     }
 
     override fun onEnterPromoCode() {

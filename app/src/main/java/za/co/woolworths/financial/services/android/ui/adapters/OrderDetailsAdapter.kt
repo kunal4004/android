@@ -218,6 +218,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                 }
                 itemName?.text = item?.commerceItemInfo?.quantity?.toString()+" x "+item?.commerceItemInfo?.productDisplayName
                 price?.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item?.priceInfo?.amount)
+                price?.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                 setOnClickListener { listner.onOpenProductDetail(item) }
             }
 

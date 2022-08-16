@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.checkout.view.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.shopping_bags_radio_button.view.*
@@ -26,7 +27,7 @@ class ShoppingBagsRadioGroupAdapter(
             if (shoppingBagsOptions.isDefault) {
                 checkedItemPosition = shoppingBagsOptionsList?.indexOf(shoppingBagsOptions) ?: -1
                 if (selectedShoppingBagType != null)
-                    onItemClicked(selectedShoppingBagType.toInt() -1)
+                    onItemClicked(selectedShoppingBagType.toInt() - 1)
                 else
                     onItemClicked(checkedItemPosition)
                 return@forEach
@@ -64,25 +65,18 @@ class ShoppingBagsRadioGroupAdapter(
         fun bindItem(position: Int) {
             itemView.apply {
                 shoppingBagsOptionsList?.get(position)?.let { it ->
-                    title.text = it?.title
-                    subTitle.text = it?.description
-                    radioSelector.isChecked = checkedItemPosition == position
+                    title?.text = it.title
+                    subTitle?.text = it.description
+                    radioSelector?.isChecked = checkedItemPosition == position
 
-                    shoppingBagsSelectionLayout.setBackgroundColor(
-                        if (radioSelector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
-                            R.color.white
-                        )
+                    shoppingBagsSelectionLayout?.background = ContextCompat.getDrawable(
+                        context,
+                        if (radioSelector?.isChecked == true)
+                            R.drawable.bg_shopping_bags_selected
+                        else
+                            R.drawable.bg_shopping_bags_unselected
                     )
-                    title.setBackgroundColor(
-                        if (radioSelector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
-                            R.color.white
-                        )
-                    )
-                    subTitle.setBackgroundColor(
-                        if (radioSelector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
-                            R.color.white
-                        )
-                    )
+                    subTitle?.visibility = if (radioSelector.isChecked) View.VISIBLE else View.GONE
                 }
                 setOnClickListener {
                     onItemClicked(position)

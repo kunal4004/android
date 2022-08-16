@@ -12,6 +12,7 @@ import android.view.ViewGroup.MarginLayoutParams
 import android.view.ViewGroup.VISIBLE
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -58,7 +59,6 @@ import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFull
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashDeliveryAddressFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_3000_MS
-import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_4000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_BARCODE_ACTIVITY
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_ORDER_DETAILS_PAGE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.CNC_SET_ADDRESS_REQUEST_CODE
@@ -337,7 +337,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                         R.drawable.ic_collection_circle
                     )
                 )
-                tvToolbarTitle?.text = requireContext().getString(R.string.collecting_from)
+                tvToolbarTitle?.text = requireContext().getString(R.string.click_and_collect)
                 tvToolbarSubtitle?.text =
                     requireContext().getString(R.string.select_your_preferred_store)
             }
@@ -433,7 +433,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     fun setDeliveryView() {
         activity?.let {
             getDeliveryType()?.let { fulfillmentDetails ->
-                KotlinUtils.setDeliveryAddressView(
+                KotlinUtils.setDeliveryAddressViewFoShop(
                     it,
                     fulfillmentDetails,
                     tvToolbarTitle,
@@ -448,6 +448,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         super.onHiddenChanged(hidden)
         if (!hidden) {
             //do when hidden
+            timer?.start()
             (activity as? BottomNavigationActivity)?.apply {
                 fadeOutToolbar(R.color.recent_search_bg)
                 showBackNavigationIcon(false)
@@ -456,6 +457,10 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 Handler().postDelayed({
                     hideToolbar()
                 }, AppConstant.DELAY_1000_MS)
+            }
+        } else {
+            if (blackToolTipLayout?.isVisible == true) {
+                timer?.cancel()
             }
         }
 
@@ -933,7 +938,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     private fun getFirstAvailableFoodDeliveryDate(
         isStoreSelectedForBrowsing: Boolean,
-        browsingStoreId: String,
+        browsingStoreId: String
     ): String? {
         var storeId: String? = getStoreId(isStoreSelectedForBrowsing, browsingStoreId)
         validateLocationResponse?.validatePlace?.let { validatePlace ->
