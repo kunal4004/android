@@ -875,7 +875,9 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         if (earliestFoodDate.isNullOrEmpty())
             earliestFoodDate = getString(R.string.earliest_delivery_no_date_available)
         geoDeliveryView?.visibility = View.VISIBLE
-        setVisibilityDeliveryDates(earliestFoodDate, null, null)
+        // Use dash labels
+        earliestDeliveryDashLabel?.text = requireContext().getString(R.string.earliest_collection_Date)
+        setVisibilityDeliveryDates(null, null, earliestFoodDate)
     }
 
     private fun updateDashDetails() {
@@ -887,6 +889,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         if (earliestDashDate.isNullOrEmpty())
             earliestDashDate = getString(R.string.earliest_delivery_no_date_available)
         geoDeliveryView?.visibility = View.VISIBLE
+        earliestDeliveryDashLabel?.text = requireContext().getString(R.string.earliest_dash_delivery_timeslot)
         setVisibilityDeliveryDates(null, null, earliestDashDate)
     }
 

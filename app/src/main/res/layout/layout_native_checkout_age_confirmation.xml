@@ -23,7 +23,7 @@
             android:fontFamily="@font/futura_semi_bold"
             android:text="@string/native_checkout_delivery_age_confirmation_title"
             android:textColor="@color/black"
-            android:textSize="@dimen/twenty_sp" />
+            android:textSize="@dimen/eighteen_sp" />
 
     </com.facebook.shimmer.ShimmerFrameLayout>
 

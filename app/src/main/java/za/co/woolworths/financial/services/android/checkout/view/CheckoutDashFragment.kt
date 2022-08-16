@@ -130,7 +130,8 @@ class CheckoutDashFragment : Fragment(),
             mainView = inflater.inflate(
                 R.layout.fragment_checkout_returning_user_dash,
                 container,
-                false)
+                false
+            )
         }
         return mainView
     }
@@ -350,6 +351,7 @@ class CheckoutDashFragment : Fragment(),
                                         )
                                     }
                                 }
+                                initializeFoodSubstitution()
                                 initializeOrderSummary(response.orderSummary)
                                 response.sortedJoinDeliverySlots?.apply {
                                     val firstAvailableDateSlot = getFirstAvailableSlot(this)
@@ -520,9 +522,12 @@ class CheckoutDashFragment : Fragment(),
                         )
                     )
                     tipNoteTextView?.visibility = View.VISIBLE
-                } else if (!selectedDriverTipValue.isNullOrEmpty() && driverTipOptionsList?.contains(selectedDriverTipValue) == false
-                    && index == driverTipOptionsList?.size?.minus(1)) {
-                        /*this is for custom driver tip*/
+                } else if (!selectedDriverTipValue.isNullOrEmpty() && driverTipOptionsList?.contains(
+                        selectedDriverTipValue
+                    ) == false
+                    && index == driverTipOptionsList?.size?.minus(1)
+                ) {
+                    /*this is for custom driver tip*/
                     titleTextView?.background =
                         bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
                     titleTextView?.setTextColor(
@@ -652,9 +657,9 @@ class CheckoutDashFragment : Fragment(),
                 // default address nickname
                 val defaultAddressNickname =
                     SpannableString(
-                        savedAddresses.defaultAddressNickname + " " + context.getString(
+                        savedAddresses.defaultAddressNickname + "  " + context.getString(
                             R.string.bullet
-                        ) + " "
+                        ) + "  "
                     )
                 val typeface = ResourcesCompat.getFont(context, R.font.myriad_pro_semi_bold)
                 defaultAddressNickname.setSpan(
@@ -725,6 +730,7 @@ class CheckoutDashFragment : Fragment(),
         if (AppConfigSingleton.nativeCheckout?.currentShoppingBag?.isEnabled == true) {
             switchNeedBags?.visibility = View.VISIBLE
             txtNeedBags?.visibility = View.VISIBLE
+            viewHorizontalSeparator?.visibility = View.GONE
             newShoppingBagsLayout?.visibility = View.GONE
             switchNeedBags?.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
@@ -736,6 +742,7 @@ class CheckoutDashFragment : Fragment(),
             }
         } else if (AppConfigSingleton.nativeCheckout?.newShoppingBag?.isEnabled == true) {
             switchNeedBags?.visibility = View.GONE
+            viewHorizontalSeparator?.visibility = View.VISIBLE
             txtNeedBags?.visibility = View.GONE
             newShoppingBagsLayout?.visibility = View.VISIBLE
             addShoppingBagsRadioButtons()
@@ -779,6 +786,48 @@ class CheckoutDashFragment : Fragment(),
         shoppingBagsRecyclerView.apply {
             layoutManager = activity?.let { LinearLayoutManager(it) }
             shoppingBagsAdapter.let { adapter = it }
+        }
+    }
+
+    /**
+     * Initializes food substitution view and Set by default selection to [FoodSubstitution.SIMILAR_SUBSTITUTION]
+     *
+     * @see [FoodSubstitution]
+     */
+    private fun initializeFoodSubstitution() {
+        radioBtnPhoneConfirmation?.text =
+            requireContext().getString(R.string.native_checkout_delivery_food_substitution_chat)
+
+        selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
+        radioGroupFoodSubstitution?.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.radioBtnPhoneConfirmation -> {
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.CHECKOUT_FOOD_SUBSTITUTE_PHONE_ME,
+                        hashMapOf(
+                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_SUBSTITUTION_PHONE
+                        ),
+                        activity
+                    )
+
+                    selectedFoodSubstitution = FoodSubstitution.PHONE_CONFIRM
+                }
+                R.id.radioBtnSimilarSubst -> {
+                    selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
+                }
+                R.id.radioBtnNoThanks -> {
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.CHECKOUT_FOOD_SUBSTITUTE_NO_THANKS,
+                        hashMapOf(
+                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_SUBSTITUTION_NO_THANKS
+                        ),
+                        activity
+                    )
+                    selectedFoodSubstitution = FoodSubstitution.NO_THANKS
+                }
+            }
         }
     }
 
