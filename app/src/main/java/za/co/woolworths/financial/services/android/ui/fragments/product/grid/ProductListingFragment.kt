@@ -215,15 +215,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     true
                 )
             }
-            if (SessionUtilities.getInstance().isUserAuthenticated) {
-                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
-                    localDeliveryType = it.deliveryType
-                }
-            } else {
-                KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let {
-                    localDeliveryType = it.deliveryType
-                }
-            }
+            localDeliveryType = KotlinUtils.getDeliveryType()?.deliveryType
 
         }
 
@@ -1014,15 +1006,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                         isBackPressed = false
                     }
 
-                    if (SessionUtilities.getInstance().isUserAuthenticated) {
-                        Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
-                            localDeliveryTypeForHiddenChange = it.deliveryType
-                        }
-                    } else {
-                        KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let {
-                            localDeliveryTypeForHiddenChange = it.deliveryType
-                        }
-                    }
+                    localDeliveryTypeForHiddenChange = KotlinUtils.getDeliveryType()?.deliveryType
 
                     if (activity is BottomNavigationActivity && (activity as BottomNavigationActivity).currentFragment is ProductListingFragment) {
                         val currentPlaceId = KotlinUtils.getPreferredPlaceId()
