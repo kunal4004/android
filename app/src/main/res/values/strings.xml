@@ -1582,7 +1582,6 @@
     <string name="select_a_store">Select a Store</string>
     <string name="delivery_or_collection">Delivery or Collection?</string>
     <string name="collecting_from">Collecting from</string>
-    <string name="collecting_from_geo"> <![CDATA[Collecting from <font color=\'#000000\'><b>%s</b></font>]]></string>
     <string name="select_your_collection_store">Select your collection store:</string>
     <string name="select_your_delivery_location">Select your delivery location:</string>
     <string name="remove_these_items_continue">remove these items &amp; continue</string>
@@ -2278,7 +2277,6 @@
     <string name="dismiss">Dismiss</string>
     <string name="suburb_not_deliverable_msg">We Can’t Deliver To This Suburb Yet</string>
     <string name="suburb_not_deliverable_description">However, we’re growing quickly, so please check back soon.</string>
-    <string name="native_checkout_delivering_to_title">Delivering to</string>
 
     <!-- Native Checkout : Error Screens  -->
     <string name="save_address_error">We can’t save your address right now. Please try again.</string>
@@ -2291,7 +2289,7 @@
 
     <!-- Native Checkout : delivery Instructions -->
     <string name="native_checkout_delivery_instructions_need_bags">Need shopping bags? 62c per bag</string>
-    <string name="delivery_instructions_shopping_bags_title">Shopping Bags</string>
+    <string name="delivery_instructions_shopping_bags_title">Choose Your Shopping Bags</string>
     <string name="delivery_instructions_shopping_bags_desc">We’re going plastic bag free!.</string>
     <string name="delivery_instructions_shopping_bags_sub_desc">To be part of the solution, please choose an option</string>
     <string name="native_checkout_delivery_special_instructions">Special Delivery Instructions</string>
@@ -2305,7 +2303,7 @@
     <string name="special_char_name_error_text">Only letters, numbers, or punctuation can be used here.</string>
     <string name="vehicle_details_title">Vehicle Details</string>
     <string name="my_vehicle_text">My Vehicle</string>
-    <string name="e_hailing_text">E-Hailing</string>
+    <string name="e_hailing_text">Taxi (Uber, Bolt etc.)</string>
     <string name="e_hailing_description">Select this option if you will be arriving to collect your order in an e-hailing vehicle (e.g. Uber, Bolt, Lyft).</string>
     <string name="vehicle_colour">Vehicle Colour: *</string>
     <string name="vehicle_model">Vehicle Model: *</string>
@@ -2319,13 +2317,14 @@
     <string name="native_checkout_delivery_age_confirmation_desc">For your alcohol purchase, please confirm that you are 18 years or older.</string>
     <string name="native_checkout_delivery_age_confirmation_desc_note"><b>Note:</b> To verify their age, the recipient may be required to present an ID or passport on delivery. If not, the order may be returned to the store.</string>
     <string name="native_checkout_delivery_food_substitution_phone_confirm">Phone me to confirm any substitutions</string>
+    <string name="native_checkout_delivery_food_substitution_chat">Chat with shopper to confirm substitutions</string>
     <string name="native_checkout_delivery_age_confirm">I confirm that I am 18 years or older.</string>
     <string name="native_checkout_delivery_food_substitution_similar_subst">Substitute for similar items if one is available</string>
     <string name="native_checkout_delivery_food_substitution_no_thanks">No thanks, don’t substitute</string>
     <string name="delivery_timeslot_title_food_items">Delivery 1 - Food Items</string>
     <string name="delivery_timeslot_title_other_items">Delivery 2 - Other Items</string>
     <string name="slot_delivery_title">How Would You Like It Delivered?</string>
-    <string name="slot_delivery_title_when">When would you like it delivered?</string>
+    <string name="slot_delivery_title_when">Set Delivery Timeslot</string>
     <string name="select_your_preferred_delivery_time">Select your preferred delivery time</string>
     <string name="select_your_preferred_delivery_time_other">Select your preferred delivery method</string>
     <string name="previous_week_text">Previous Week</string>
@@ -2334,7 +2333,7 @@
     <string name="currency">R</string>
     <string name="dummy_currency">R50</string>
     <string name="title_text">ShowTitle</string>
-    <string name="subtitle_text">Show SubTitle Text</string>
+    <string name="subtitle_text">Your order will arrive in a sanitised bag. \n You will need to return this to the driver.</string>
     <string name="working_days_text">%1$s - %2$s Working Days</string>
     <plurals name="stores_near_me">
         <item quantity="zero">%d Stores near me</item>
@@ -2343,7 +2342,7 @@
     </plurals>
 
     <!--Native Checkout-->
-    <string name="name_colon_text_view">Recipient Name: *</string>
+    <string name="name_colon_text_view">Name: *</string>
     <string name="mobile_number_text_view">Mobile Number: *</string>
     <string name="my_address_details">My Address Details</string>
     <string name="address_nickname_text_view">Address Nickname: *</string>
@@ -2515,9 +2514,9 @@
     <string name="select_your_preferred_store">Select your preferred store</string>
     <string name="set_address">SET ADDRESS</string>
     <string name="dash_delivery_title">To view and shop with Woolies Dash,\n we need your address.</string>
-    <string name="dash_delivery_msg">Set your address to \n start shopping.</string>
+    <string name="dash_delivery_msg">Set Your Address \n To Start Shopping.</string>
     <string name="device_location_service_disabled">Your Device’s Location Services Are Disabled.</string>
-    <string name="device_location_service_disabled_subTitle">We use your location to show available Click &amp; Collect stores near you.</string>
+    <string name="device_location_service_disabled_subTitle">To view and shop using Click &amp; Collect, we need your location.</string>
     <string name="btn_turn_on_location_text">Turn location on</string>
     <string name="all_products_available">All Products Available</string>
     <string name="next_dash_delivery_timeslot_text">Next Dash Delivery timeslot</string>
@@ -2700,6 +2699,5 @@
     <string name="one_cart_chat_order_id">ORDER #%s</string>
     <string name="generic_error_something_wrong_newline">Unfortunately,\n Something Went Wrong</string>
     <string name="one_cart_chat_error_disc">We can’t seem to reach your shopper.\n Give them a few moments, and try again.</string>
-
 
 </resources>

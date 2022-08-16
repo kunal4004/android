@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_gravity="center"
     android:background="@color/white">
 
@@ -21,15 +22,17 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:fontFamily="@font/futura_semi_bold"
-            android:text="@string/native_checkout_delivering_to_title"
+            android:lineHeight="@dimen/twenty_four_dp"
+            tools:text="Standard Delivery"
             android:textColor="@color/black"
-            android:textSize="@dimen/twenty_sp" />
+            android:textSize="@dimen/eighteen_sp" />
     </com.facebook.shimmer.ShimmerFrameLayout>
 
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/deliveringTitleValueShimmerFrameLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/two_dp"
         android:layout_marginEnd="@dimen/twenty_dp"
         android:layout_marginBottom="@dimen/twenty_four_dp"
         android:background="@color/shimmer_view_background"

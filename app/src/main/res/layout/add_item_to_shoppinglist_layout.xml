@@ -8,15 +8,12 @@
     android:paddingEnd="@dimen/twenty_four_dp">
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/my_orders_textview_style_2"
         android:drawableLeft="@drawable/ic_add_item_group"
         android:drawablePadding="@dimen/sixteen_dp"
-        android:fontFamily="@font/myriad_pro_regular"
         android:gravity="center_vertical"
-        android:text="@string/add_items_to_shopping_list"
         android:textColor="@color/black"
-        android:textSize="@dimen/fourteen_sp"
+        android:text="@string/add_items_to_shopping_list"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
