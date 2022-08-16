@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -126,38 +127,26 @@
         app:layout_constraintStart_toEndOf="@+id/geoCollectTab"
         app:layout_constraintTop_toBottomOf="@id/imgDelBack" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/txtNewFeatureCnC"
         style="@style/futura_semi_bold"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/sixteen_dp"
-        android:layout_marginTop="@dimen/thirty_two_dp"
-        android:background="@color/color_yellow_FEE600"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_22sdp"
+        android:src="@drawable/ic_title_tag"
         android:gravity="center"
-        android:paddingStart="@dimen/five_dp"
-        android:paddingEnd="@dimen/five_dp"
-        android:text="@string/food_only"
-        android:textAllCaps="true"
-        android:textColor="@color/black"
-        android:textSize="@dimen/_6ssp"
         app:layout_constraintEnd_toEndOf="@id/geoCollectTab"
         app:layout_constraintStart_toStartOf="@id/geoCollectTab"
         app:layout_constraintTop_toBottomOf="@+id/changeFulfillmentSubTitleTextView" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/txtNewFeature"
         style="@style/futura_semi_bold"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/sixteen_dp"
-        android:layout_marginTop="@dimen/thirty_two_dp"
-        android:background="@color/color_yellow_FEE600"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_22sdp"
+        android:src="@drawable/ic_title_tag"
         android:gravity="center"
-        android:paddingStart="@dimen/five_dp"
-        android:paddingEnd="@dimen/five_dp"
-        android:text="@string/food_only"
-        android:textAllCaps="true"
-        android:textColor="@color/black"
-        android:textSize="@dimen/_6ssp"
         app:layout_constraintEnd_toEndOf="@id/geoDashTab"
         app:layout_constraintStart_toStartOf="@id/geoDashTab"
         app:layout_constraintTop_toBottomOf="@+id/changeFulfillmentSubTitleTextView" />
