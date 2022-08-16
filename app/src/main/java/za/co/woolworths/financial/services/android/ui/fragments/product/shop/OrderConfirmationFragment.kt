@@ -116,7 +116,11 @@ class OrderConfirmationFragment : Fragment() {
         purchaseItem.putString(FirebaseAnalytics.Param.ITEM_ID, response.items?.other?.get(0)?.productId)
         purchaseItem.putString(FirebaseAnalytics.Param.ITEM_NAME, response.items?.other?.get(0)?.productDisplayName)
         purchaseItem.putString(FirebaseAnalytics.Param.QUANTITY, response.items?.other?.get(0)?.commerceItemInfo?.quantity.toString())
-        purchaseItem.putDouble(FirebaseAnalytics.Param.PRICE, response.items?.other?.get(0)?.priceInfo?.amount!!)
+        response.items?.other?.get(0)?.priceInfo?.amount?.let {
+            purchaseItem.putDouble(FirebaseAnalytics.Param.PRICE,
+                it
+            )
+        }
         purchaseItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT, response.items?.other?.get(0)?.color)
         purchaseItemParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(purchaseItem))
 
