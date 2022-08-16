@@ -383,6 +383,8 @@ open class FirebaseManagerAnalyticsProperties {
         const val SIGN_UP: String = "sign_up"
         const val ADD_SHIPPING_INFO: String = "add_shipping_info"
         const val SCREEN_VIEW_PLP: String = "screen_view"
+        const val ADD_PAYMENT_INFO: String = "add_payment_info"
+        const val PURCHASE: String = "purchase"
 
 
         //Geolocation
