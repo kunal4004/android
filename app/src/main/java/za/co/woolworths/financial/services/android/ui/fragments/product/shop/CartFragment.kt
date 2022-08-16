@@ -452,18 +452,21 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             !TextUtils.isEmpty(response?.defaultAddressNickname)
         ) {
             val checkoutActivityIntent = Intent(activity, CheckoutActivity::class.java)
-            checkoutActivityIntent.putExtra(
-                CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
-                response
-            )
-            checkoutActivityIntent.putExtra(
-                CheckoutAddressManagementBaseFragment.DASH_SLOT_SELECTION,
-                true
-            )
-            activity.startActivityForResult(
-                checkoutActivityIntent,
-                REQUEST_PAYMENT_STATUS
-            )
+            checkoutActivityIntent.apply {
+                putExtra(CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY, response)
+                putExtra(CheckoutAddressManagementBaseFragment.DASH_SLOT_SELECTION, true)
+                liquorCompliance.let {
+                    if ((it != null) && it.isLiquorOrder && (AppConfigSingleton.liquor!!.noLiquorImgUrl != null) && !AppConfigSingleton.liquor!!.noLiquorImgUrl.isEmpty()) {
+                        putExtra(Constant.LIQUOR_ORDER, it.isLiquorOrder)
+                        putExtra(Constant.NO_LIQUOR_IMAGE_URL,
+                            AppConfigSingleton.liquor!!.noLiquorImgUrl)
+                    }
+                }
+                activity.startActivityForResult(
+                    checkoutActivityIntent,
+                    REQUEST_PAYMENT_STATUS
+                )
+            }
             activity.overridePendingTransition(
                 R.anim.slide_from_right,
                 R.anim.slide_out_to_left
@@ -1133,6 +1136,8 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             cartResponse.orderSummary = data.orderSummary
             cartResponse.voucherDetails = data.voucherDetails
             cartResponse.productCountMap = data.productCountMap // set delivery location
+            cartResponse.liquorOrder = data.liquorOrder
+            cartResponse.noLiquorImageUrl = data.noLiquorImageUrl
             if (cartResponse.orderSummary.fulfillmentDetails?.address?.placeId != null) {
                 Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(cartResponse.orderSummary.fulfillmentDetails))
             }

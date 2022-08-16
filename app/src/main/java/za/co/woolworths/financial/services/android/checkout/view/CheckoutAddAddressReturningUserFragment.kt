@@ -646,6 +646,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             ),
 
             Pair<ShimmerFrameLayout, View>(
+                liquorComplianceBannerShimmerFrameLayout,
+                liquorComplianceBannerLayout),
+
+            Pair<ShimmerFrameLayout, View>(
                 instructionTxtShimmerFrameLayout,
                 txtSpecialDeliveryInstruction
             ),

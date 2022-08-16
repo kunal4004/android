@@ -10,6 +10,7 @@ import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CompoundButton
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
@@ -32,10 +33,12 @@ import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collectio
 import kotlinx.android.synthetic.main.layout_collection_time_details.*
 import kotlinx.android.synthetic.main.layout_collection_time_details.view.*
 import kotlinx.android.synthetic.main.layout_delivering_to_details.*
+import kotlinx.android.synthetic.main.layout_native_checkout_age_confirmation.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_order_summary.*
 import kotlinx.android.synthetic.main.layout_native_checkout_driver_tip.*
+import kotlinx.android.synthetic.main.liquor_compliance_banner.*
 import kotlinx.android.synthetic.main.new_shopping_bags_layout.*
 import kotlinx.android.synthetic.main.where_are_we_delivering_items.view.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
@@ -72,7 +75,7 @@ import java.util.regex.Pattern
 
 class CheckoutDashFragment : Fragment(),
     ShoppingBagsRadioGroupAdapter.EventListner, View.OnClickListener, CollectionTimeSlotsListener,
-    CustomDriverTipBottomSheetDialog.ClickListner {
+    CustomDriverTipBottomSheetDialog.ClickListner, CompoundButton.OnCheckedChangeListener {
 
     private var suburbId: String = ""
     private var placesId: String? = ""
@@ -94,6 +97,10 @@ class CheckoutDashFragment : Fragment(),
     private var selectedDriverTipValue: String? = null
     private var driverTipTextView: View? = null
     private var mainView: View? = null
+
+    private var liquorImageUrl: String? = ""
+    private var liquorOrder: Boolean? = false
+
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun afterTextChanged(s: Editable?) {
@@ -146,6 +153,7 @@ class CheckoutDashFragment : Fragment(),
         setupViewModel()
         initializeDashingToView()
         initializeDashTimeSlots()
+        getLiquorComplianceDetails()
         hideInstructionLayout()
         callConfirmLocationAPI()
         setFragmentResults()
@@ -168,6 +176,39 @@ class CheckoutDashFragment : Fragment(),
                 ERROR_TYPE_SHIPPING_DETAILS_COLLECTION -> {
                     onCheckoutPaymentClick()
                 }
+            }
+        }
+    }
+
+    //LiquorCompliance
+    private fun getLiquorComplianceDetails() {
+        radioBtnAgeConfirmation.setOnCheckedChangeListener(this)
+        CheckoutAddressManagementBaseFragment.baseFragBundle?.apply {
+            if (containsKey(Constant.LIQUOR_ORDER)) {
+                liquorOrder = getBoolean(Constant.LIQUOR_ORDER)
+                if (liquorOrder == true && containsKey(Constant.NO_LIQUOR_IMAGE_URL)) {
+                    liquorImageUrl = getString(Constant.NO_LIQUOR_IMAGE_URL)
+                    ageConfirmationLayout?.visibility = View.VISIBLE
+                    liquorComplianceBannerLayout?.visibility = View.VISIBLE
+                    ImageManager.setPicture(imgLiquorBanner, liquorImageUrl)
+
+                    ageConfirmationLayout.visibility = View.VISIBLE
+                    liquorComplianceBannerSeparator.visibility = View.VISIBLE
+                    liquorComplianceBannerLayout.visibility = View.VISIBLE
+
+                    if (!radioBtnAgeConfirmation.isChecked) {
+                        Utils.fadeInFadeOutAnimation(txtContinueToPayment, true)
+                        radioBtnAgeConfirmation?.isChecked = false
+                        txtContinueToPayment?.isClickable = false
+                    } else {
+                        Utils.fadeInFadeOutAnimation(txtContinueToPayment, false)
+                        txtContinueToPayment?.isClickable = true
+                        radioBtnAgeConfirmation?.isChecked = true
+                    }
+                }
+            } else {
+                ageConfirmationLayout?.visibility = View.GONE
+                liquorComplianceBannerLayout?.visibility = View.GONE
             }
         }
     }
@@ -200,6 +241,44 @@ class CheckoutDashFragment : Fragment(),
                 radioGroupFoodSubstitutionShimmerFrameLayout,
                 radioGroupFoodSubstitution
             ),
+            Pair<ShimmerFrameLayout, View>(
+                ageConfirmationTitleShimmerFrameLayout,
+                txtAgeConfirmationTitle
+            ),
+
+            Pair<ShimmerFrameLayout, View>(
+                ageConfirmationDescShimmerFrameLayout,
+                txtAgeConfirmationDesc),
+
+            Pair<ShimmerFrameLayout, View>(
+                ageConfirmationDescNoteShimmerFrameLayout,
+                txtAgeConfirmationDescNote),
+
+            Pair<ShimmerFrameLayout, View>(
+                radioGroupAgeConfirmationShimmerFrameLayout,
+                radioBtnAgeConfirmation),
+
+            Pair<ShimmerFrameLayout, View>(
+                ageConfirmationTitleShimmerFrameLayout,
+                txtAgeConfirmationTitle
+            ),
+
+            Pair<ShimmerFrameLayout, View>(
+                ageConfirmationDescShimmerFrameLayout,
+                txtAgeConfirmationDesc),
+
+            Pair<ShimmerFrameLayout, View>(
+                ageConfirmationDescNoteShimmerFrameLayout,
+                txtAgeConfirmationDescNote),
+
+            Pair<ShimmerFrameLayout, View>(
+                radioGroupAgeConfirmationShimmerFrameLayout,
+                radioBtnAgeConfirmation),
+
+            Pair<ShimmerFrameLayout, View>(
+                liquorComplianceBannerShimmerFrameLayout,
+                liquorComplianceBannerLayout),
+
             Pair<ShimmerFrameLayout, View>(
                 instructionTxtShimmerFrameLayout,
                 txtSpecialDeliveryInstruction
@@ -963,7 +1042,7 @@ class CheckoutDashFragment : Fragment(),
     }
 
     private fun onCheckoutPaymentClick() {
-        if (isRequiredFieldsMissing() || isInstructionsMissing() || isGiftMessage()) {
+        if (isRequiredFieldsMissing() || isInstructionsMissing() || isGiftMessage() || isAgeConfirmationLiquorCompliance()) {
             return
         }
 
@@ -1000,6 +1079,16 @@ class CheckoutDashFragment : Fragment(),
                     }
                 }
             }
+        //liquor compliance: age confirmation
+        if (liquorOrder == true && !radioBtnAgeConfirmation.isChecked) {
+            ageConfirmationLayout.visibility = View.VISIBLE
+            liquorComplianceBannerSeparator.visibility = View.VISIBLE
+            liquorComplianceBannerLayout.visibility = View.VISIBLE
+
+            Utils.fadeInFadeOutAnimation(txtContinueToPayment, false)
+        } else {
+            Utils.fadeInFadeOutAnimation(txtContinueToPayment, true)
+        }
     }
 
     private fun presentErrorDialog(title: String, subTitle: String, errorType: Int) {
@@ -1057,6 +1146,9 @@ class CheckoutDashFragment : Fragment(),
         address =
             ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
         driverTip = removeRandFromAmount(selectedDriverTipValue ?: "0.0").toDouble()
+        if (liquorOrder == true) {
+            ageConsentConfirmed = true
+        }
         KotlinUtils.getUniqueDeviceID {
             pushNotificationToken = Utils.getToken()
             appInstanceId = it
@@ -1093,6 +1185,14 @@ class CheckoutDashFragment : Fragment(),
             }
             else -> false
         }
+    }
+
+    private fun isAgeConfirmationLiquorCompliance(): Boolean {
+        txtAgeConfirmationTitle.parent.requestChildFocus(txtAgeConfirmationTitle,
+            txtAgeConfirmationTitle)
+        radioBtnAgeConfirmation.parent.requestChildFocus(radioBtnAgeConfirmation,
+            radioBtnAgeConfirmation)
+        return liquorOrder == true && !radioBtnAgeConfirmation.isChecked
     }
 
     private fun isRequiredFieldsMissing(): Boolean {
@@ -1135,5 +1235,16 @@ class CheckoutDashFragment : Fragment(),
         )
         tipNoteTextView?.visibility = View.VISIBLE
         selectedDriverTipValue = tipValue
+    }
+
+    override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
+        //single checkbox age confirmation
+        if (!isChecked) {
+            Utils.fadeInFadeOutAnimation(txtContinueToPayment, true)
+            radioBtnAgeConfirmation?.isChecked = false
+        } else {
+            Utils.fadeInFadeOutAnimation(txtContinueToPayment, false)
+            radioBtnAgeConfirmation?.isChecked = true
+        }
     }
 }

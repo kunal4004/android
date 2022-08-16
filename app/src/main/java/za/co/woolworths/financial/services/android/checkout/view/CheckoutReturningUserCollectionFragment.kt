@@ -232,6 +232,10 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 radioGroupFoodSubstitution
             ),
             Pair<ShimmerFrameLayout, View>(
+                liquorComplianceBannerShimmerFrameLayout,
+                liquorComplianceBannerLayout),
+
+            Pair<ShimmerFrameLayout, View>(
                 instructionTxtShimmerFrameLayout,
                 txtSpecialDeliveryInstruction
             ),
