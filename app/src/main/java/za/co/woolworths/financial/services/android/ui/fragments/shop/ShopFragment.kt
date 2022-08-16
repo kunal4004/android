@@ -119,7 +119,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         }
     }
 
-    fun setDefaultTab() {
+    fun setShopDefaultTab() {
         viewpager_main.currentItem = 0
     }
 

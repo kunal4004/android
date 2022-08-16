@@ -729,8 +729,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         Fragment fragment = mNavController.getCurrentFrag();
         if (isNewSession &&  fragment instanceof ShopFragment) {
             isNewSession = false;
-            ShopFragment shopFragment = (ShopFragment) fragment;
-            shopFragment.setDefaultTab();
+            ((ShopFragment) fragment).setShopDefaultTab();
         }
     }
 
