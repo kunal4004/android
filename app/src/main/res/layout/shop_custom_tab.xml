@@ -10,7 +10,7 @@
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/six_dp"
+        android:layout_marginTop="@dimen/eleven_dp"
         android:background="@drawable/shop_tab_color_selector"
         android:fontFamily="@font/myriad_pro_regular"
         android:gravity="center"
