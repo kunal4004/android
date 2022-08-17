@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -13,9 +13,9 @@
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/cartToolbar"
-            android:layout_alignParentTop="true"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:layout_alignParentTop="true"
             android:background="@color/white"
             app:popupTheme="@style/Cart"
             app:theme="@style/Cart">
@@ -37,7 +37,7 @@
                     android:textAllCaps="true"
                     android:textColor="@color/black_tv_color_toolbar"
                     android:textSize="12sp"
-                    app:WTextView_font="medium"/>
+                    app:WTextView_font="medium" />
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     android:id="@+id/toolbarText"
@@ -49,7 +49,7 @@
                     android:textAllCaps="true"
                     android:textColor="@color/black"
                     android:textSize="12sp"
-                    app:WTextView_font="medium_bold"/>
+                    app:WTextView_font="medium_bold" />
 
                 <ProgressBar
                     android:id="@+id/pbRemoveAllItem"
@@ -57,9 +57,9 @@
                     android:layout_height="24dp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerInParent="true"
-                    android:layout_marginRight="@dimen/sixteen_dp"
+                    android:layout_marginEnd="@dimen/sixteen_dp"
                     android:indeterminateTint="@color/black"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     android:id="@+id/btnClearCart"
@@ -67,29 +67,29 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginRight="16dp"
+                    android:layout_marginEnd="16dp"
                     android:letterSpacing="0.2"
                     android:text="@string/remove_all"
                     android:textAllCaps="true"
                     android:textColor="@color/black_tv_color_toolbar"
                     android:textSize="12sp"
                     android:visibility="gone"
-                    app:WTextView_font="medium"/>
+                    app:WTextView_font="medium" />
             </RelativeLayout>
         </androidx.appcompat.widget.Toolbar>
 
         <View
             android:id="@+id/toolbarSeparator"
-            android:layout_below="@id/cartToolbar"
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:background="#1a000000"/>
+            android:layout_below="@id/cartToolbar"
+            android:background="#1a000000" />
 
         <androidx.core.widget.NestedScrollView
-            android:layout_below="@id/toolbarSeparator"
             android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_below="@id/toolbarSeparator"
             android:fillViewport="true">
 
             <LinearLayout
@@ -97,7 +97,74 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <include layout="@layout/delivery_location_layout" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/deliveryLocationConstLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/eight_dp"
+                    android:layout_marginStart="@dimen/seven_dp">
+
+                    <ImageView
+                        android:id="@+id/imgCartDelivery"
+                        android:layout_width="@dimen/thirty_two_dp"
+                        android:layout_height="@dimen/thirty_two_dp"
+                        android:layout_margin="@dimen/five_dp"
+                        android:layout_marginStart="26dp"
+                        android:layout_marginTop="26dp"
+                        android:layout_marginBottom="26dp"
+                        android:src="@drawable/ic_delivery_circle"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvDeliveryTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ten_dp"
+                        android:fontFamily="@font/myriad_pro_regular"
+                        android:gravity="top"
+                        android:text="@string/standard_delivery"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/twelve_sp"
+                        app:layout_constraintBottom_toTopOf="@+id/tvDeliverySubtitle"
+                        app:layout_constraintStart_toEndOf="@id/imgCartDelivery"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_chainStyle="packed" />
+
+                    <TextView
+                        android:id="@+id/tvDeliverySubtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ten_dp"
+                        android:layout_marginTop="@dimen/two_dp"
+                        android:fontFamily="@font/myriad_pro_semi_bold"
+                        android:gravity="center"
+                        android:lineHeight="@dimen/sixteen_dp"
+                        android:text="@string/cart_default_location"
+                        android:textAlignment="center"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/fourteen_sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/imgCartDelivery"
+                        app:layout_constraintTop_toBottomOf="@+id/tvDeliveryTitle" />
+
+                    <ImageView
+                        android:id="@+id/iconLocationRight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginTop="@dimen/twenty_six_dp"
+                        android:layout_marginEnd="@dimen/twenty_six_dp"
+                        android:layout_marginBottom="@dimen/twenty_six_dp"
+                        android:src="@drawable/ic_caret_black"
+                        app:layout_constraintBottom_toBottomOf="@id/tvDeliveryTitle"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/tvDeliverySubtitle" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
                 <include layout="@layout/cart_item_limits_banner" />
 
                 <TextView
@@ -107,8 +174,9 @@
                     android:visibility="gone"
                     tools:ignore="HardcodedText" />
 
+
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/cartList"
+                    android:id="@+id/rvCartList"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginBottom="@dimen/one_thirty_four"
@@ -116,10 +184,11 @@
                     android:scrollbars="none" />
 
                 <include
-                    layout="@layout/empty_state_template"/>
+                    android:id="@+id/empty_state_template"
+                    layout="@layout/layout_dash_set_address_fragment"
+                    android:visibility="gone" />
 
-                <include
-                    layout="@layout/no_connection_handler"/>
+                <include layout="@layout/no_connection_handler" />
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
@@ -136,39 +205,6 @@
             android:paddingBottom="@dimen/twenty_four_dp">
 
             <RelativeLayout
-                android:id="@+id/orderTotalLayout"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/sixty_dp">
-
-                <TextView
-                    style="@style/futura_semi_bold_black_12_text_style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:letterSpacing="0.1"
-                    android:text="@string/order_total"
-                    android:textAllCaps="true" />
-
-                <TextView
-                    android:id="@+id/orderTotal"
-                    style="@style/futura_semi_bold_black_12_text_style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:letterSpacing="0.1"
-                    android:textAllCaps="true"
-                    android:textColor="@color/offer_title" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/one_dp"
-                    android:layout_alignParentTop="true"
-                    android:background="@color/outside_border" />
-            </RelativeLayout>
-
-            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/fifty_dp"
                 android:background="@color/white"
@@ -177,7 +213,6 @@
                 <za.co.woolworths.financial.services.android.ui.views.WButton
                     android:id="@+id/btnCheckOut"
                     style="@style/blackButtonStyle"
-                    android:layout_weight="1"
                     android:background="@drawable/black_button_drawable_state"
                     android:letterSpacing="0.2"
                     android:text="@string/checkout"
@@ -188,13 +223,13 @@
     </RelativeLayout>
 
     <ProgressBar
-        android:id="@+id/loadingBar"
+        android:id="@+id/cartProgressBar"
         style="?android:attr/progressBarStyle"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_gravity="center_vertical|center_horizontal"
         android:indeterminateTint="@color/black"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
-    <include layout="@layout/no_connection_handler"/>
+    <include layout="@layout/no_connection_handler" />
 </FrameLayout>
