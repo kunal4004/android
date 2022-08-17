@@ -15,7 +15,7 @@ android {
     def minor = "4"
     def fix = "0"
     def jobNumberProduction = 190
-    def jobNumberQa = 615
+    def jobNumberQa = 607
     def jobNumberFeature = 125
 
     dataBinding {
@@ -365,12 +365,14 @@ dependencies {
     kapt "com.google.dagger:hilt-android-compiler:2.37"
     implementation 'com.google.maps:google-maps-services:2.0.0'
 
-
     // Huawei
     huaweiQaImplementation 'com.huawei.hms:location:6.4.0.300'
     huaweiProductionImplementation 'com.huawei.hms:location:6.4.0.300'
     huaweiQaImplementation 'com.huawei.hms:maps:6.3.1.300'
     huaweiProductionImplementation 'com.huawei.hms:maps:6.3.1.300'
+
+    // get stream chat Client + offline
+    implementation "io.getstream:stream-chat-android-offline:$stream_version"
 }
 
 apply plugin: 'com.google.gms.google-services'

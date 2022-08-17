@@ -34,6 +34,8 @@ class SlotsTimeGridViewAdapter(
             mHolder = convrtView.tag as GridViewHolder
         }
         mHolder.gridTitle?.text = deliveryGridTitleList[position].slot
+        mHolder.gridTitle?.textAlignment = TextView.TEXT_ALIGNMENT_CENTER
+
         return convrtView!!
     }
 

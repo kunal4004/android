@@ -24,15 +24,12 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.*
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
@@ -41,11 +38,10 @@ import com.google.gson.reflect.TypeToken
 import com.perfectcorp.perfectlib.CameraView
 import com.perfectcorp.perfectlib.MakeupCam
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.chanel_logo_view.view.*
+import kotlinx.android.synthetic.main.layout_product_details_chanel.view.*
 import kotlinx.android.synthetic.main.low_stock_product_details.*
 import kotlinx.android.synthetic.main.low_stock_product_details.view.*
-import kotlinx.android.synthetic.main.chanel_logo_view.view.*
-import kotlinx.android.synthetic.main.item_found_layout.view.*
-import kotlinx.android.synthetic.main.layout_product_details_chanel.view.*
 import kotlinx.android.synthetic.main.product_details_add_to_cart_and_find_in_store_button_layout.*
 import kotlinx.android.synthetic.main.product_details_delivery_location_layout.*
 import kotlinx.android.synthetic.main.product_details_fragment.*
@@ -56,11 +52,15 @@ import kotlinx.android.synthetic.main.product_details_size_and_color_layout.*
 import kotlinx.android.synthetic.main.promotional_image.view.*
 import kotlinx.android.synthetic.main.vto_layout.*
 import kotlinx.coroutines.*
+import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
-import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment
+import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.BrandNavigationDetails
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -82,9 +82,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerA
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.extension.underline
-import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.ProductNotAvailableForCollectionDialog
@@ -92,11 +90,16 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.utils.Ba
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT
+import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
 import za.co.woolworths.financial.services.android.ui.vto.di.qualifier.OpenSelectOption
 import za.co.woolworths.financial.services.android.ui.vto.di.qualifier.OpenTermAndLighting
-import za.co.woolworths.financial.services.android.ui.vto.presentation.*
+import za.co.woolworths.financial.services.android.ui.vto.presentation.DataPrefViewModel
+import za.co.woolworths.financial.services.android.ui.vto.presentation.LiveCameraViewModel
+import za.co.woolworths.financial.services.android.ui.vto.presentation.PermissionViewModel
+import za.co.woolworths.financial.services.android.ui.vto.presentation.VtoApplyEffectOnImageViewModel
 import za.co.woolworths.financial.services.android.ui.vto.ui.PermissionAction
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoBottomSheetDialog
@@ -111,23 +114,25 @@ import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1500_MS
-import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_300_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_500_MS
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.SDK_INIT_FAIL
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_LIVE_CAMERA
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_NOT_MATCH
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FACE_NOT_DETECT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FAIL_IMAGE_LOAD
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageFileContract
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageGalleryContract
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.io.File
 import android.graphics.Bitmap
 import com.google.firebase.analytics.FirebaseAnalytics
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.setCrashlyticsString
-import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
+import kotlin.collections.get
 import kotlin.collections.set
 
 @AndroidEntryPoint
@@ -135,7 +140,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback,
     ILocationProvider, View.OnClickListener,
     OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener,
-    DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection,
     ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
     VtoSelectOptionListener, WMaterialShowcaseView.IWalkthroughActionListener, VtoTryAgainListener {
 
@@ -189,6 +193,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private val vtoApplyEffectOnImageViewModel: VtoApplyEffectOnImageViewModel? by activityViewModels()
     private val liveCameraViewModel: LiveCameraViewModel? by activityViewModels()
     private val dataPrefViewModel: DataPrefViewModel? by activityViewModels()
+    private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     private var makeupCamera: MakeupCam? = null
     private var isObserveImageData: Boolean = false
     private var isRefreshImageEffectLiveCamera: Boolean = false
@@ -206,6 +211,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var isVtoSdkInitFail: Boolean = false
     private var bannerLabel: String? = null
     private var bannerImage: String? = null
+    private var isUnSellableItemsRemoved: Boolean? = false
+    private var isUserBrowsing: Boolean = false
 
     @OpenTermAndLighting
     @Inject
@@ -234,6 +241,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         const val STR_PRODUCT_CATEGORY = "strProductCategory"
         const val STR_PRODUCT_LIST = "strProductList"
         const val STR_BRAND_HEADER = "strBandHeaderDesc"
+        const val IS_BROWSING = "isBrowsing"
         const val BRAND_NAVIGATION_DETAILS = "BRAND_NAVIGATION_DETAILS"
     }
 
@@ -255,6 +263,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             brandHeaderText = getString(STR_BRAND_HEADER, AppConstant.EMPTY_STRING)
             defaultProductResponse = getString("productResponse")
             mFetchFromJson = getBoolean("fetchFromJson")
+            isUserBrowsing = getBoolean(IS_BROWSING, false)
         }
         productDetailsPresenter = ProductDetailsPresenterImpl(this, ProductDetailsInteractorImpl())
     }
@@ -263,32 +272,52 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         super.onViewCreated(view, savedInstanceState)
         mFuseLocationAPISingleton = FuseLocationAPISingleton
         initViews()
+        setUpConfirmAddressViewModel()
+        addFragmentListner()
         setUniqueIds()
         productDetails?.let { addViewItemEvent(it) }
+    }
+
+    private fun addFragmentListner() {
+        setFragmentResultListener(CustomBottomSheetDialogFragment.DIALOG_BUTTON_CLICK_RESULT) { _, _ ->
+            // As User selects to change the delivery location. So we will call confirm place API and will change the users location.
+            getUpdatedValidateResponse()
+        }
     }
 
     //firebase event view_item
     private fun addViewItemEvent(productDetails: ProductDetails) {
         val mFirebaseAnalytics = FirebaseManager.getInstance().getAnalytics()
         val viewItemListParams = Bundle()
-        viewItemListParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
+        viewItemListParams.putString(FirebaseAnalytics.Param.CURRENCY,
+            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
         for (products in 0..(productDetails.otherSkus?.size ?: 0)) {
             val viewItem = Bundle()
             viewItem.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
             viewItem.putString(FirebaseAnalytics.Param.ITEM_NAME, productDetails?.productName)
             viewItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, productDetails?.categoryName)
             viewItem.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
-            viewItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT, productDetails?.colourSizeVariants)
+            viewItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT,
+                productDetails?.colourSizeVariants)
             viewItem.putString(FirebaseAnalytics.Param.PRICE, productDetails?.price?.toString())
-            viewItemListParams.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, productDetails?.categoryName)
+            viewItemListParams.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
+                productDetails?.categoryName)
             viewItemListParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(viewItem))
         }
-        mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.VIEW_ITEM_EVENT, viewItemListParams)
+        mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.VIEW_ITEM_EVENT,
+            viewItemListParams)
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         setUpToolBar()
+    }
+
+    private fun setUpConfirmAddressViewModel() {
+        confirmAddressViewModel = ViewModelProvider(
+            this,
+            GeoLocationViewModelFactory(GeoLocationApiHelper())
+        ).get(ConfirmAddressViewModel::class.java)
     }
 
     private fun initViews() {
@@ -333,6 +362,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         if (!hidden) {
             updateAddToCartButtonForSelectedSKU()
             setUpToolBar()
+            isUnSellableItemsRemoved()
         }
     }
 
@@ -614,7 +644,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             productDetailsPresenter?.loadProductDetails(
                 ProductRequest(
                     productDetails?.productId,
-                    productDetails?.sku
+                    productDetails?.sku,
+                    isUserBrowsing
                 )
             )
         }
@@ -669,10 +700,139 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    fun addItemToCart() {
+    private fun getUpdatedValidateResponse() {
+        val placeId = when (KotlinUtils.browsingDeliveryType) {
+            Delivery.STANDARD ->
+                WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId
+                    ?: KotlinUtils.getPreferredPlaceId()
+            Delivery.CNC ->
+                if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() != null)
+                    WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.placeDetails?.placeId
+                else WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId
+            Delivery.DASH ->
+                if (WoolworthsApplication.getDashBrowsingValidatePlaceDetails() != null)
+                    WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.placeDetails?.placeId
+                else WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId
+            else ->
+                WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId
+        }
 
+        progressBar?.visibility = View.VISIBLE
+        lifecycleScope.launch {
+            try {
+                val validateLocationResponse =
+                    placeId?.let { confirmAddressViewModel.getValidateLocation(it) }
+                progressBar?.visibility = View.GONE
+                if (validateLocationResponse != null) {
+                    when (validateLocationResponse?.httpCode) {
+                        HTTP_OK -> {
+                            val unsellableList =
+                                KotlinUtils.getUnsellableList(validateLocationResponse.validatePlace,
+                                    KotlinUtils.browsingDeliveryType)
+                            if (unsellableList?.isNullOrEmpty() == false && isUnSellableItemsRemoved == false) {
+                                // show unsellable items
+                                unsellableList?.let {
+                                    navigateToUnsellableItemsFragment(it as java.util.ArrayList<UnSellableCommerceItem>,
+                                        KotlinUtils.browsingDeliveryType?.name)
+                                }
+                            } else
+                                callConfirmPlace()
+                        }
+                    }
+                }
+            } catch (e: HttpException) {
+                FirebaseManager.logException(e)
+                progressBar?.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun callConfirmPlace() {
+        // Confirm the location
+        lifecycleScope.launch {
+            progressBar?.visibility = View.VISIBLE
+            try {
+                val confirmLocationRequest =
+                    KotlinUtils.getConfirmLocationRequest(KotlinUtils.browsingDeliveryType)
+                val confirmLocationResponse =
+                    confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
+                progressBar?.visibility = View.GONE
+                if (confirmLocationResponse != null) {
+                    when (confirmLocationResponse.httpCode) {
+                        HTTP_OK -> {
+                            if (SessionUtilities.getInstance().isUserAuthenticated) {
+                                Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(
+                                    confirmLocationResponse.orderSummary?.fulfillmentDetails))
+                                if (KotlinUtils.getAnonymousUserLocationDetails() != null)
+                                    KotlinUtils.clearAnonymousUserLocationDetails()
+                            } else {
+                                saveAnonymousUserLocationDetails(ShoppingDeliveryLocation(
+                                    confirmLocationResponse.orderSummary?.fulfillmentDetails))
+                            }
+                            val savedPlaceId = KotlinUtils.getDeliveryType()?.address?.placeId
+                            KotlinUtils.apply {
+                                this.placeId = confirmLocationRequest.address.placeId
+                                isLocationSame =
+                                    confirmLocationRequest.address.placeId?.equals(
+                                        savedPlaceId)
+                            }
+
+                            setBrowsingData()
+                            updateStockAvailabilityLocation() // update pdp location.
+                            addItemToCart()
+                        }
+                    }
+                }
+            } catch (e: HttpException) {
+                e.printStackTrace()
+                progressBar?.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun setBrowsingData() {
+        val browsingPlaceDetails = when (KotlinUtils.browsingDeliveryType) {
+            Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails()
+            Delivery.CNC -> WoolworthsApplication.getCncBrowsingValidatePlaceDetails()
+            Delivery.DASH -> WoolworthsApplication.getDashBrowsingValidatePlaceDetails()
+            else -> WoolworthsApplication.getValidatePlaceDetails()
+        }
+        WoolworthsApplication.setValidatedSuburbProducts(
+            browsingPlaceDetails)
+        // set latest response to browsing data.
+        WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
+            browsingPlaceDetails)
+        WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
+            browsingPlaceDetails)
+    }
+
+    private fun isUnSellableItemsRemoved() {
+        UnSellableItemsLiveData.observe(viewLifecycleOwner) {
+            isUnSellableItemsRemoved = it
+            if (isUnSellableItemsRemoved == true && (activity as? BottomNavigationActivity)?.mNavController?.currentFrag is ProductDetailsFragment) {
+                callConfirmPlace()
+                UnSellableItemsLiveData.value = false
+            }
+        }
+    }
+
+    private fun navigateToUnsellableItemsFragment(
+        unSellableCommerceItems: ArrayList<UnSellableCommerceItem>, deliveryType: String?,
+    ) {
+        deliveryType?.let {
+            val unsellableItemsBottomSheetDialog =
+                UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, it)
+            unsellableItemsBottomSheetDialog.show(requireFragmentManager(),
+                UnsellableItemsBottomSheetDialog::class.java.simpleName)
+        }
+    }
+
+    fun addItemToCart() {
+        isUnSellableItemsRemoved()
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            ScreenManager.presentSSOSignin(activity, SSO_REQUEST_ADD_TO_CART)
+            ScreenManager.presentSSOSigninActivity(activity,
+                SSO_REQUEST_ADD_TO_CART,
+                isUserBrowsing)
             return
         }
 
@@ -688,16 +848,19 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             return
         }
 
+        // Now first check for if delivery location and browsing location is same.
+        // if same no issues. If not then show changing delivery location popup.
+        if (!KotlinUtils.getDeliveryType()?.deliveryType.equals(KotlinUtils.browsingDeliveryType?.type) && isUserBrowsing) {
+            KotlinUtils.showChangeDeliveryTypeDialog(requireContext(), requireFragmentManager(),
+                KotlinUtils.browsingDeliveryType)
+            return
+        }
+
         if (getSelectedSku() == null) {
             if (getSelectedGroupKey().isNullOrEmpty())
                 requestSelectColor()
             else
                 requestSelectSize()
-            return
-        }
-
-        if (!Utils.isDeliverySelectionModalShown()) {
-            showDeliveryOptionDialog()
             return
         }
 
@@ -717,9 +880,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 true -> {
                     title = getString(R.string.product_unavailable)
                     message = getString(
-                            R.string.unavailable_item,
-                            KotlinUtils.getPreferredDeliveryAddressOrStoreName()
-                        )
+                        R.string.unavailable_item,
+                        KotlinUtils.getPreferredDeliveryAddressOrStoreName()
+                    )
                 }
                 else -> {
                     title = getString(R.string.out_of_stock)
@@ -771,7 +934,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onSessionTokenExpired() {
         SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
-        activity?.let { activity -> activity.runOnUiThread { ScreenManager.presentSSOSignin(activity) } }
+        activity?.let { activity ->
+            activity.runOnUiThread {
+                ScreenManager.presentSSOSignin(activity)
+            }
+        }
         updateStockAvailabilityLocation()
     }
 
@@ -779,7 +946,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         if (!isAdded || productDetails == null) return
 
         this.productDetails = productDetails
-        otherSKUsByGroupKey = this.productDetails?.otherSkus?.let { groupOtherSKUsByColor(it) }!!
+        otherSKUsByGroupKey = this.productDetails?.otherSkus.let { groupOtherSKUsByColor(it) }
         this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
 
         if (productDetails?.isLiquor && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()) {
@@ -811,9 +978,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
 
         if (!this.productDetails?.otherSkus.isNullOrEmpty()) {
-            //If user is not signed in or User dosen't have any location set then don't make inventory
-            if(!SessionUtilities.getInstance().isUserAuthenticated || Utils.getPreferredDeliveryLocation() == null)
-            {
+            //If user is not signed in or User doesn't have any location set then don't make inventory
+            if (!SessionUtilities.getInstance().isUserAuthenticated || Utils.getPreferredDeliveryLocation() == null) {
                 updateDefaultUI(false)
                 hideProductDetailsLoading()
                 return
@@ -827,11 +993,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 false -> {
                     showProductDetailsLoading()
                     val multiSKUs =
-                        productDetails?.otherSkus.joinToString(separator = "-") { it.sku }
+                        productDetails?.otherSkus.joinToString(separator = "-") { it.sku.toString() }
                     productDetailsPresenter?.loadStockAvailability(
                         storeIdForInventory!!,
                         multiSKUs,
-                        true
+                        true,
+                        isUserBrowsing
                     )
                 }
             }
@@ -955,7 +1122,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         otherSKUsByGroupKey.size.let {
             if (it > spanCount) {
                 val moreColorCount = otherSKUsByGroupKey.size - spanCount
-                moreColor?.text = requireContext().getString(R.string.product_details_color_count, moreColorCount)
+                moreColor?.text =
+                    requireContext().getString(R.string.product_details_color_count,
+                        moreColorCount)
                 moreColor?.visibility = View.VISIBLE
             }
         }
@@ -966,11 +1135,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun showSize() {
         productSizeSelectorAdapter = ProductSizeSelectorAdapter(
 
-                requireActivity(),
-                otherSKUsByGroupKey[getSelectedGroupKey()]!!,
-                productDetails?.lowStockIndicator ?: 0,
-                this
-            )
+            requireActivity(),
+            otherSKUsByGroupKey[getSelectedGroupKey()]!!,
+            productDetails?.lowStockIndicator ?: 0,
+            this
+        )
         sizeSelectorRecycleView?.apply {
             adapter = productSizeSelectorAdapter
             layoutManager = GridLayoutManager(activity, 4)
@@ -986,7 +1155,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         sizeSelectorLayout?.visibility = View.VISIBLE
     }
 
-    private fun groupOtherSKUsByColor(otherSKUsList: ArrayList<OtherSkus>): HashMap<String, ArrayList<OtherSkus>> {
+    private fun groupOtherSKUsByColor(otherSKUsList: ArrayList<OtherSkus>?): HashMap<String, ArrayList<OtherSkus>> {
 
         val variant = ColourSizeVariants.find(productDetails?.colourSizeVariants ?: "")
         when (variant) {
@@ -1008,27 +1177,31 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
         }
 
-        for (otherSkuObj in otherSKUsList) {
-            var groupKey =
-                if (TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(otherSkuObj.size)) {
-                    otherSkuObj.size.trim()
-                } else if (!TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(otherSkuObj.size)) {
-                    otherSkuObj.colour.trim()
-                } else {
-                    otherSkuObj.colour.trim()
+        if (otherSKUsList != null) {
+            for (otherSkuObj in otherSKUsList) {
+                var groupKey =
+                    if (TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(otherSkuObj.size)) {
+                        otherSkuObj.size?.trim()
+                    } else if (!TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(
+                            otherSkuObj.size)
+                    ) {
+                        otherSkuObj.colour?.trim()
+                    } else {
+                        otherSkuObj.colour?.trim()
+                    }
+
+                if (variant == ColourSizeVariants.NO_COLOUR_SIZE_VARIANT) {
+                    otherSkuObj.apply { size = colour }
+                    groupKey = "N/A"
                 }
 
-            if (variant == ColourSizeVariants.NO_COLOUR_SIZE_VARIANT) {
-                otherSkuObj.apply { size = colour }
-                groupKey = "N/A"
+                if (!otherSKUsByGroupKey.containsKey(groupKey) && !groupKey.isNullOrEmpty()) {
+                    this.otherSKUsByGroupKey[groupKey] = ArrayList()
+                }
+                if (!otherSKUsByGroupKey[groupKey]!!.any { it.sku == otherSkuObj.sku }) this.otherSKUsByGroupKey[groupKey]!!.add(
+                    otherSkuObj
+                )
             }
-
-            if (!otherSKUsByGroupKey.containsKey(groupKey)) {
-                this.otherSKUsByGroupKey[groupKey] = ArrayList()
-            }
-            if (!otherSKUsByGroupKey[groupKey]!!.any { it.sku == otherSkuObj.sku }) this.otherSKUsByGroupKey[groupKey]!!.add(
-                otherSkuObj
-            )
         }
         return otherSKUsByGroupKey
     }
@@ -1078,28 +1251,39 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     when (i) {
                         0 -> {
                             onlinePromotionalTextView1?.visibility = View.VISIBLE
-                            onlinePromotionalTextView1?.text = Html.fromHtml(editedPromotionalText)
+                            onlinePromotionalTextView1?.text =
+                                Html.fromHtml(editedPromotionalText)
                         }
                         1 -> {
                             onlinePromotionalTextView2?.visibility = View.VISIBLE
-                            onlinePromotionalTextView2?.text = Html.fromHtml(editedPromotionalText)
+                            onlinePromotionalTextView2?.text =
+                                Html.fromHtml(editedPromotionalText)
                         }
                         2 -> {
                             onlinePromotionalTextView3?.visibility = View.VISIBLE
-                            onlinePromotionalTextView3?.text = Html.fromHtml(editedPromotionalText)
+                            onlinePromotionalTextView3?.text =
+                                Html.fromHtml(editedPromotionalText)
                         }
                     }
                     val arguments = HashMap<String, String>()
-                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_ID] = productDetails?.productId
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_ID] =
+                        productDetails?.productId
                             ?: ""
-                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_NAME] = productDetails?.productName
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_NAME] =
+                        productDetails?.productName
                             ?: ""
-                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_PRICE] = productDetails?.price
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_PRICE] =
+                        productDetails?.price
                             ?: ""
-                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CREATIVE_NAME] = FirebaseManagerAnalyticsProperties.PropertyValues.CREATIVE_NAME_VALUE
-                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.PROMOTION_NAME] = Html.fromHtml(editedPromotionalText).toString()
-                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.INDEX] = FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SELECT_PROMOTION, arguments, activity)
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CREATIVE_NAME] =
+                        FirebaseManagerAnalyticsProperties.PropertyValues.CREATIVE_NAME_VALUE
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.PROMOTION_NAME] =
+                        Html.fromHtml(editedPromotionalText).toString()
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.INDEX] =
+                        FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SELECT_PROMOTION,
+                        arguments,
+                        activity)
                 }
             } else {
                 onlinePromotionalTextView1?.text = ""
@@ -1434,8 +1618,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onCartSummarySuccess(cartSummaryResponse: CartSummaryResponse) {
-
-
         if (Utils.getPreferredDeliveryLocation() == null) {
             activity?.apply {
                 KotlinUtils.presentEditDeliveryGeoLocationActivity(
@@ -1443,12 +1625,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     REQUEST_SUBURB_CHANGE
                 )
             }
-        } else confirmDeliveryLocation()
+        } else {
+            updateStockAvailabilityLocation() // update pdp location.
+            addItemToCart()
+        }
     }
 
     override fun responseFailureHandler(response: Response) {
         if (response.code.equals(HTTP_EXPECTATION_FAILED_417)) {
-            confirmDeliveryLocation()
+            getUpdatedValidateResponse()
             return
         }
         activity?.apply {
@@ -1457,15 +1642,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 CustomPopUpWindow.MODAL_LAYOUT.ERROR,
                 response.desc
             )
-        }
-    }
-
-    private fun confirmDeliveryLocation() {
-        this.childFragmentManager.apply {
-            ConfirmDeliveryLocationFragment.newInstance()?.let {
-                it.isCancelable = false
-                it.show(this, ConfirmDeliveryLocationFragment::class.java.simpleName)
-            }
         }
     }
 
@@ -1492,11 +1668,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             false -> {
                 productDetails?.apply {
                     otherSkus?.let { list ->
-                        val multiSKUs = list.joinToString(separator = "-") { it.sku }
+                        val multiSKUs = list.joinToString(separator = "-") { it.sku.toString() }
                         productDetailsPresenter?.loadStockAvailability(
                             storeIdForInventory!!,
                             multiSKUs,
-                            isDefaultRequest
+                            isDefaultRequest,
+                            isUserBrowsing
                         )
                     }
                 }
@@ -1527,26 +1704,39 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
         }
     }
+
     //firebase event add_to_cart
     private fun addToCartEvent(productDetails: ProductDetails?) {
         val mFirebaseAnalytics = FirebaseManager.getInstance().getAnalytics()
         val addToCartParams = Bundle()
-        addToCartParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
-        addToCartParams.putString(FirebaseAnalytics.Param.VALUE, productDetails?.price.toString())
+        addToCartParams.putString(FirebaseAnalytics.Param.CURRENCY,
+            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
+        addToCartParams.putString(FirebaseAnalytics.Param.VALUE,
+            productDetails?.price.toString())
         for (products in 0..(productDetails?.otherSkus?.size ?: 0)) {
             val addToCartItem = Bundle()
             addToCartItem.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
-            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_NAME, productDetails?.productName)
-            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, productDetails?.categoryName)
-            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
-            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, productDetails?.categoryName)
-            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT, productDetails?.colourSizeVariants)
-            addToCartItem.putString(FirebaseAnalytics.Param.PRICE, productDetails?.price.toString())
-            addToCartItem.putString(FirebaseAnalytics.Param.AFFILIATION, FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
-            addToCartItem.putString(FirebaseAnalytics.Param.INDEX, FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE)
-            addToCartParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(addToCartItem))
+            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_NAME,
+                productDetails?.productName)
+            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY,
+                productDetails?.categoryName)
+            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_BRAND,
+                productDetails?.brandText)
+            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
+                productDetails?.categoryName)
+            addToCartItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT,
+                productDetails?.colourSizeVariants)
+            addToCartItem.putString(FirebaseAnalytics.Param.PRICE,
+                productDetails?.price.toString())
+            addToCartItem.putString(FirebaseAnalytics.Param.AFFILIATION,
+                FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
+            addToCartItem.putString(FirebaseAnalytics.Param.INDEX,
+                FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE)
+            addToCartParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS,
+                arrayOf(addToCartItem))
         }
-        mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.ADD_TO_CART_PDP, addToCartParams)
+        mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.ADD_TO_CART_PDP,
+            addToCartParams)
     }
 
     private fun addItemToShoppingList() {
@@ -1566,7 +1756,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
 
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            ScreenManager.presentSSOSignin(activity, SSO_REQUEST_ADD_TO_SHOPPING_LIST)
+            ScreenManager.presentSSOSigninActivity(activity,
+                SSO_REQUEST_ADD_TO_SHOPPING_LIST,
+                isUserBrowsing)
         } else if (getSelectedSku() != null) {
             activity?.apply {
                 val item = AddToListRequest()
@@ -1595,15 +1787,24 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun addToWishlistItemEvent(productDetails: ProductDetails) {
         val mFirebaseAnalytics = FirebaseManager.getInstance().getAnalytics()
         val addToWishlistParams = Bundle()
-        addToWishlistParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
-        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
-        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_NAME, productDetails?.productName)
-        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, productDetails?.categoryName)
-        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
-        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_VARIANT, productDetails?.colourSizeVariants)
-        addToWishlistParams.putString(FirebaseAnalytics.Param.PRICE, productDetails?.price.toString())
-        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, productDetails?.categoryName)
-        mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.ADD_TO_WISHLIST, addToWishlistParams)
+        addToWishlistParams.putString(FirebaseAnalytics.Param.CURRENCY,
+            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
+        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_ID,
+            productDetails?.productId)
+        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_NAME,
+            productDetails?.productName)
+        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_CATEGORY,
+            productDetails?.categoryName)
+        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_BRAND,
+            productDetails?.brandText)
+        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_VARIANT,
+            productDetails?.colourSizeVariants)
+        addToWishlistParams.putString(FirebaseAnalytics.Param.PRICE,
+            productDetails?.price.toString())
+        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
+            productDetails?.categoryName)
+        mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.ADD_TO_WISHLIST,
+            addToWishlistParams)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -1717,7 +1918,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 updateStockAvailabilityLocation()
                 when (requestCode) {
                     SSO_REQUEST_ADD_TO_CART, EDIT_LOCATION_LOGIN_REQUEST -> {
-                        productDetailsPresenter?.loadCartSummary()
+                        // check if user has any location.
+                        if (Utils.getPreferredDeliveryLocation() != null) {
+                            // Continue with addTo cart flow
+                            setBrowsingData()
+                            updateStockAvailabilityLocation() // update pdp location.
+                            addItemToCart()
+                        } else {
+                            // request cart summary to get the user's location.
+                            productDetailsPresenter?.loadCartSummary()
+                        }
                     }
                     SSO_REQUEST_ADD_TO_SHOPPING_LIST -> {
                         addItemToShoppingList()
@@ -1789,11 +1999,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             startLocationUpdates()
         }
         val arguments = HashMap<String, String>()
-        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_ID] = productDetails?.productId
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_ID] =
+            productDetails?.productId
                 ?: ""
-        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_NAME] = productDetails?.productName
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_NAME] =
+            productDetails?.productName
                 ?: ""
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.IN_STORE_AVAILABILITY, arguments, activity)
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.IN_STORE_AVAILABILITY,
+            arguments,
+            activity)
     }
 
 
@@ -1942,18 +2156,29 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
 
         // TODO: Remove non-fatal exception below once APP2-65 is closed
-        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_ID, productDetails?.productId)
-        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_NAME, productDetails?.productName)
-        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.DELIVERY_LOCATION, KotlinUtils.getPreferredDeliveryAddressOrStoreName())
-        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.HAS_COLOR, hasColor.toString())
-        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.HAS_SIZE, hasSize.toString())
-        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.STORE_ID, Utils.retrieveStoreId(productDetails?.fulfillmentType) ?: "")
-        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.DELIVERY_TYPE, KotlinUtils.getPreferredDeliveryType().toString())
-        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.IS_USER_AUTHENTICATED, SessionUtilities.getInstance().isUserAuthenticated.toString())
-        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_SKU, productDetails?.sku)
-        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.SELECTED_SKU_QUANTITY, getSelectedSku()?.quantity.toString())
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_ID,
+            productDetails?.productId)
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_NAME,
+            productDetails?.productName)
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.DELIVERY_LOCATION,
+            KotlinUtils.getPreferredDeliveryAddressOrStoreName())
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.HAS_COLOR,
+            hasColor.toString())
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.HAS_SIZE,
+            hasSize.toString())
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.STORE_ID,
+            Utils.retrieveStoreId(productDetails?.fulfillmentType) ?: "")
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.DELIVERY_TYPE,
+            KotlinUtils.getPreferredDeliveryType().toString())
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.IS_USER_AUTHENTICATED,
+            SessionUtilities.getInstance().isUserAuthenticated.toString())
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_SKU,
+            productDetails?.sku)
+        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.SELECTED_SKU_QUANTITY,
+            getSelectedSku()?.quantity.toString())
         Utils.getLastSavedLocation()?.let {
-            setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.LAST_KNOWN_LOCATION, "${it.latitude}, ${it.longitude}")
+            setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.LAST_KNOWN_LOCATION,
+                "${it.latitude}, ${it.longitude}")
         }
         logException(Exception(FirebaseManagerAnalyticsProperties.CrashlyticsExceptionName.PRODUCT_DETAILS_FIND_IN_STORE))
     }
@@ -2017,7 +2242,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         //Do Nothing
     }
 
-    override fun onPromptDismiss() {
+    override fun onPromptDismiss(feature: WMaterialShowcaseView.Feature) {
         imgVTOOpen?.setImageResource(R.drawable.ic_camera_vto)
     }
 
@@ -2088,7 +2313,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     KotlinUtils.getPreferredDeliveryType(),
                     Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                 )
-                false -> ScreenManager.presentSSOSignin(this, SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK)
+                false -> ScreenManager.presentSSOSigninActivity(this,
+                    SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK, isUserBrowsing)
             }
 
         }
@@ -2107,7 +2333,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 when (Delivery.getType(it.deliveryType)) {
                     Delivery.CNC -> {
                         currentDeliveryLocation.text =
-                            resources?.getString(R.string.store) + it.storeName?.let { convertToTitleCase(it) } ?: ""
+                            resources?.getString(R.string.store) + it.storeName?.let {
+                                convertToTitleCase(it)
+                            } ?: ""
                         defaultLocationPlaceholder.text =
                             getString(R.string.collecting_from) + " "
                     }
@@ -2116,6 +2344,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             it.address?.address1?.let { convertToTitleCase(it) } ?: ""
                         defaultLocationPlaceholder.text =
                             getString(R.string.delivering_to_pdp)
+                    }
+                    Delivery.DASH -> {
+                        currentDeliveryLocation.text =
+                            it.address?.address1 ?: ""
+                        defaultLocationPlaceholder.text =
+                            getString(R.string.dashing_to_space)
                     }
                     else -> {
                     }
@@ -2162,11 +2396,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         val images = ArrayList<String>()
         activity?.apply {
             productDetails?.promotionImages?.let {
-                if (!it.save.isNullOrEmpty()) images.add(it.save)
-                if (!it.wRewards.isNullOrEmpty()) images.add(it.wRewards)
-                if (!it.vitality.isNullOrEmpty()) images.add(it.vitality)
-                if (!it.newImage.isNullOrEmpty()) images.add(it.newImage)
-                if (!it.reduced.isNullOrEmpty()) images.add(it.reduced)
+                if (!it.save.isNullOrEmpty()) images.add(it.save ?: "")
+                if (!it.wRewards.isNullOrEmpty()) images.add(it.wRewards ?: "")
+                if (!it.vitality.isNullOrEmpty()) images.add(it.vitality ?: "")
+                if (!it.newImage.isNullOrEmpty()) images.add(it.newImage ?: "")
+                if (!it.reduced.isNullOrEmpty()) images.add(it.reduced ?: "")
 
             }
 
@@ -2245,7 +2479,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
         }
         activity?.apply {
-            Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL)
+            Utils.setScreenName(this,
+                FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL)
         }
     }
 
@@ -2307,7 +2542,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             openCart?.contentDescription = getString(R.string.pdp_layout)
             productName?.contentDescription = getString(R.string.pdp_textViewProductName)
             priceLayout?.contentDescription = getString(R.string.pdp_textViewPrice)
-            colorPlaceholder?.contentDescription = getString(R.string.pdp_textViewColourPlaceHolder)
+            colorPlaceholder?.contentDescription =
+                getString(R.string.pdp_textViewColourPlaceHolder)
             selectedColor?.contentDescription = getString(R.string.pdp_textSelectedColour)
             colorSelectorRecycleView?.contentDescription =
                 getString(R.string.pdp_colorSelectorRecycleView)
@@ -2338,7 +2574,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             checkInStoreAvailability?.contentDescription =
                 getString(R.string.pdp_checkInStoreAvailabilityLayout)
             buttonView?.contentDescription = getString(R.string.pdp_buttonView)
-            addToShoppingList?.contentDescription = getString(R.string.pdp_addToShoppingListLayout)
+            addToShoppingList?.contentDescription =
+                getString(R.string.pdp_addToShoppingListLayout)
             headerProductInformation?.contentDescription =
                 getString(R.string.pdp_headerProductInformationLayout)
             productDetailsInformation?.contentDescription =
@@ -2362,27 +2599,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 fragmentTransaction.detach(this).attach(this).commit()
         }
     }
-
-    private fun showDeliveryOptionDialog() {
-        (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()
-            ?.let { fragmentTransaction ->
-                DeliveryOrClickAndCollectSelectorDialogFragment.newInstance(this).show(
-                    fragmentTransaction,
-                    DeliveryOrClickAndCollectSelectorDialogFragment::class.java.simpleName
-                )
-            }
-    }
-
-        override fun onDeliveryOptionSelected(deliveryType: Delivery) {
-            activity?.apply {
-                KotlinUtils.presentEditDeliveryGeoLocationActivity(
-                    this,
-                    REQUEST_SUBURB_CHANGE,
-                    deliveryType,
-                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
-                )
-            }
-        }
 
     override fun clearSelectedOnLocationChange() {
         if (!(!hasColor && !hasSize)) {
@@ -2444,11 +2660,14 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
             startActivity(shareIntent)
             val arguments = HashMap<String, String>()
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_ID] =  productDetails?.productId
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_ID] =
+                productDetails?.productId
                     ?: ""
             arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CONTENT_TYPE] = message
 
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHARE, arguments, activity)
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHARE,
+                arguments,
+                activity)
         }
     }
 
@@ -2473,7 +2692,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             setSuburb?.setOnClickListener {
                 dismiss()
                 if (!SessionUtilities.getInstance().isUserAuthenticated) {
-                    ScreenManager.presentSSOSignin(activity, LOGIN_REQUEST_SUBURB_CHANGE)
+                    ScreenManager.presentSSOSigninActivity(activity,
+                        LOGIN_REQUEST_SUBURB_CHANGE,
+                        isUserBrowsing)
                 } else {
                     activity?.apply {
                         KotlinUtils.presentEditDeliveryGeoLocationActivity(
@@ -2523,11 +2744,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    private val pickPhotoLauncher = registerForActivityResult(PickImageGalleryContract()) { uri ->
-        uri?.let {
-            checkUriType(uri)
+    private val pickPhotoLauncher =
+        registerForActivityResult(PickImageGalleryContract()) { uri ->
+            uri?.let {
+                checkUriType(uri)
+            }
         }
-    }
     private val pickPhotoFromFile = registerForActivityResult(PickImageFileContract()) { uri ->
         uri?.let {
             getPickedImageFile.launch(uri)
