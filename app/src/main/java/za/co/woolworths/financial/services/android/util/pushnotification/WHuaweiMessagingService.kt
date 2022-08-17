@@ -9,10 +9,9 @@ import za.co.woolworths.financial.services.android.util.NotificationUtils
 class WHuaweiMessagingService: HmsMessageService() {
 
     override fun onNewToken(token: String?) {
-        // TODO: Send token to server once API parameter is confirmed
-//        token?.let {
-//            NotificationUtils.getInstance().sendRegistrationToServer(it)
-//        }
+        token?.let {
+            NotificationUtils.sendRegistrationToServer(it)
+        }
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage?) {
