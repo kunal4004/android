@@ -131,7 +131,7 @@
             android:value="true"/>
 
         <service
-            android:name="za.co.woolworths.financial.services.android.util.pushnotification.HuaweiMessagingService"
+            android:name="za.co.woolworths.financial.services.android.util.pushnotification.WHuaweiMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.huawei.push.action.MESSAGING_EVENT" />
