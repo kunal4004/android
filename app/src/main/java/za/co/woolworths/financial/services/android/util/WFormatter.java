@@ -6,6 +6,14 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -244,18 +252,50 @@ public class WFormatter {
                         .parse(date));
     }
 
-    public static String getFullMonthWithDate(String date) throws ParseException {
+    public static String getFullMonthWithDate(String date) {
         if (date == null)
             return "";
-        return new SimpleDateFormat("dd MMMM")
-                .format(new SimpleDateFormat("EE, dd MMMM").parse(date));
+        try {
+            DateTimeFormatter dateTimeFormatter = new DateTimeFormatterBuilder()
+                    .parseCaseInsensitive()
+                    .appendOptional(DateTimeFormatter.ofPattern("EE, dd MMMM"))
+                    .appendOptional(DateTimeFormatter.ofPattern("EEEE, dd MMMM"))
+                    .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
+                    .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
+                    .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
+                    .parseDefaulting(ChronoField.MILLI_OF_SECOND, 0)
+                    .parseDefaulting(ChronoField.YEAR_OF_ERA, ZonedDateTime.now().getYear())
+                    .toFormatter();
+            Date dateObject = Date.from(LocalDateTime.parse(date, dateTimeFormatter).toInstant(ZoneOffset.UTC));
+            return new SimpleDateFormat("dd MMMM").format(dateObject);
+        } catch(Exception e) {
+            FirebaseManager.Companion.logException(e);
+            return "";
+        }
     }
 
-    public static String convertToFormatedDate(String date) throws ParseException {
+    public static String convertToFormatedDate(String date) {
         if (date == null)
             return "";
-        return new SimpleDateFormat("EEE dd MMM")
-                .format((new SimpleDateFormat("yyyy-MM-dd"))
-                        .parse(date));
+        try {
+            DateTimeFormatter dateTimeFormatter = new DateTimeFormatterBuilder()
+                    .parseCaseInsensitive()
+                    .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                    .appendOptional(DateTimeFormatter.ofPattern("EE, d'st' MMMM"))
+                    .appendOptional(DateTimeFormatter.ofPattern("EE, d'nd' MMMM"))
+                    .appendOptional(DateTimeFormatter.ofPattern("EE, d'rd' MMMM"))
+                    .appendOptional(DateTimeFormatter.ofPattern("EE, d'th' MMMM"))
+                    .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
+                    .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
+                    .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
+                    .parseDefaulting(ChronoField.MILLI_OF_SECOND, 0)
+                    .parseDefaulting(ChronoField.YEAR_OF_ERA, ZonedDateTime.now().getYear())
+                    .toFormatter();
+            Date dateObject = Date.from(LocalDateTime.parse(date, dateTimeFormatter).toInstant(ZoneOffset.UTC));
+            return new SimpleDateFormat("EEE dd MMM").format(dateObject);
+        } catch(Exception e) {
+            FirebaseManager.Companion.logException(e);
+            return "";
+        }
     }
 }
