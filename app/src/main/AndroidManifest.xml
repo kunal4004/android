@@ -119,12 +119,25 @@
             android:value="false" />
 
         <service
-            android:name="za.co.woolworths.financial.services.android.util.WFirebaseMessagingService"
+            android:name="za.co.woolworths.financial.services.android.util.pushnotification.WFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service> <!-- ./Firebase Notifications -->
+
+        <meta-data
+            android:name="push_kit_auto_init_enabled"
+            android:value="true"/>
+
+        <service
+            android:name="za.co.woolworths.financial.services.android.util.pushnotification.HuaweiMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.huawei.push.action.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <activity
             android:name="za.co.woolworths.financial.services.android.startup.view.StartupActivity"
             android:screenOrientation="portrait"
@@ -570,6 +583,10 @@
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.BROWSABLE" />
             <data android:scheme="https" />
+        </intent>
+
+        <intent>
+            <action android:name="com.huawei.hms.core.aidlservice" />
         </intent>
     </queries>
 

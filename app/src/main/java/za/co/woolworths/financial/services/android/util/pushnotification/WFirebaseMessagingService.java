@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.util;
+package za.co.woolworths.financial.services.android.util.pushnotification;
 
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.DEEP_LINK_REQUEST_CODE;
 
@@ -25,8 +25,10 @@ import com.google.gson.JsonObject;
 import java.util.Map;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.fcm.FCMMessageType;
+import za.co.woolworths.financial.services.android.models.fcm.PushNotificationMessageType;
 import za.co.woolworths.financial.services.android.startup.view.StartupActivity;
+import za.co.woolworths.financial.services.android.util.NotificationUtils;
+import za.co.woolworths.financial.services.android.util.PersistenceLayer;
 
 public class WFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -62,7 +64,7 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
         if(data != null && data.containsKey("type")){
             String type = data.get("type");
             switch (type){
-                case FCMMessageType
+                case PushNotificationMessageType
                         .mcConfigClear:{
                     mcConfigClear();
                 }
