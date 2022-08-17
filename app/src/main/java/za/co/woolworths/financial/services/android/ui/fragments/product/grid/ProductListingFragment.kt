@@ -407,11 +407,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             && (activity as BottomNavigationActivity).currentFragment is ProductListingFragment
         ) {
             val currentPlaceId = KotlinUtils.getPreferredPlaceId()
-            if (currentPlaceId != null && !(currentPlaceId?.equals(localPlaceId))!!) {
+            if (currentPlaceId != null && !(localPlaceId.let { it.equals(currentPlaceId) })) {
                 localPlaceId = currentPlaceId
                 updateRequestForReload()
                 pushFragment()
-            } else if (!localDeliveryType?.equals(deliveryType.type)!!) {
+            } else if (!(localDeliveryType.let { it.equals(deliveryType.type) })) {
                 localDeliveryType = deliveryType.type
                 updateRequestForReload()
                 pushFragment()
@@ -782,9 +782,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             if (visibility == View.INVISIBLE)
                 visibility = VISIBLE
             layoutManager = mRecyclerViewLayoutManager
-            if(state!=null) {
+            if (state != null) {
                 layoutManager?.onRestoreInstanceState(state)
-                state=null
+                state = null
             }
             adapter = mProductAdapter
             clearOnScrollListeners()
@@ -1011,12 +1011,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     if (activity is BottomNavigationActivity && (activity as BottomNavigationActivity).currentFragment is ProductListingFragment) {
                         val currentPlaceId = KotlinUtils.getPreferredPlaceId()
                         if (currentPlaceId != null
-                            && !(currentPlaceId?.equals(localPlaceId))!!
+                            && !(localPlaceId.let { it.equals(currentPlaceId) })
                         ) {
                             localPlaceId = currentPlaceId
                             updateRequestForReload()
                             pushFragment()
-                        } else if (!localDeliveryTypeForHiddenChange?.equals(localDeliveryType)!!) {
+                        } else if (!localDeliveryType.let {
+                                it.equals(localDeliveryTypeForHiddenChange)
+                            }) {
                             localDeliveryTypeForHiddenChange = localDeliveryType
                             updateRequestForReload()
                             pushFragment()
@@ -1328,16 +1330,25 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                             if (skuInventoryList.size == 0 || skuInventoryList[0].quantity == 0) {
                                 addItemToCart?.catalogRefId?.let { skuId ->
                                     // TODO: Remove non-fatal exception below once APP2-65 is closed
-                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_ID, mSelectedProductList?.productId)
-                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_NAME, mSelectedProductList?.productName)
-                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.DELIVERY_LOCATION, KotlinUtils.getPreferredDeliveryAddressOrStoreName())
-                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_SKU, mSelectedProductList?.sku)
-                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.FULFILLMENT_ID, mFulfilmentTypeId)
-                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.STORE_ID, mStoreId)
-                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.DELIVERY_TYPE, KotlinUtils.getPreferredDeliveryType().toString())
-                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.IS_USER_AUTHENTICATED, SessionUtilities.getInstance().isUserAuthenticated.toString())
+                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_ID,
+                                        mSelectedProductList?.productId)
+                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_NAME,
+                                        mSelectedProductList?.productName)
+                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.DELIVERY_LOCATION,
+                                        KotlinUtils.getPreferredDeliveryAddressOrStoreName())
+                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_SKU,
+                                        mSelectedProductList?.sku)
+                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.FULFILLMENT_ID,
+                                        mFulfilmentTypeId)
+                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.STORE_ID,
+                                        mStoreId)
+                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.DELIVERY_TYPE,
+                                        KotlinUtils.getPreferredDeliveryType().toString())
+                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.IS_USER_AUTHENTICATED,
+                                        SessionUtilities.getInstance().isUserAuthenticated.toString())
                                     Utils.getLastSavedLocation()?.let {
-                                        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.LAST_KNOWN_LOCATION, "${it.latitude}, ${it.longitude}")
+                                        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.LAST_KNOWN_LOCATION,
+                                            "${it.latitude}, ${it.longitude}")
                                     }
                                     logException(Exception(FirebaseManagerAnalyticsProperties.CrashlyticsExceptionName.PRODUCT_LIST_FIND_IN_STORE))
 
@@ -1460,8 +1471,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                                     return
                                 }
                             }
-                            if ((KotlinUtils.isDeliveryOptionClickAndCollect() || KotlinUtils.isDeliveryOptionDash() )
-                                && addItemToCartResponse.data[0]?.productCountMap?.quantityLimit?.foodLayoutColour != null) {
+                            if ((KotlinUtils.isDeliveryOptionClickAndCollect() || KotlinUtils.isDeliveryOptionDash())
+                                && addItemToCartResponse.data[0]?.productCountMap?.quantityLimit?.foodLayoutColour != null
+                            ) {
                                 addItemToCartResponse.data[0]?.productCountMap?.let {
                                     addItemToCart?.quantity?.let { it1 ->
                                         ToastFactory.showItemsLimitToastOnAddToCart(
