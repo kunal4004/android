@@ -130,6 +130,11 @@
             android:name="push_kit_auto_init_enabled"
             android:value="true"/>
 
+        <meta-data
+            android:name="install_channel"
+            android:value="@string/install_channel">
+        </meta-data>
+
         <service
             android:name="za.co.woolworths.financial.services.android.util.pushnotification.WHuaweiMessagingService"
             android:exported="false">
