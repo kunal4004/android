@@ -371,6 +371,8 @@ dependencies {
     huaweiProductionImplementation 'com.huawei.hms:location:6.4.0.300'
     huaweiQaImplementation 'com.huawei.hms:maps:6.3.1.300'
     huaweiProductionImplementation 'com.huawei.hms:maps:6.3.1.300'
+    huaweiQaImplementation 'com.huawei.hms:push:6.5.0.300'
+    huaweiProductionImplementation 'com.huawei.hms:push:6.5.0.300'
 }
 
 apply plugin: 'com.google.gms.google-services'

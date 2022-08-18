@@ -91,9 +91,8 @@ public class NotificationUtils {
 	}
 
     public void sendRegistrationToServer(String token) {
-
-        Log.d("FCM", token);
-        // sending gcm token to server
+        Log.d("FCM/HMS", token);
+        // sending FCM/HMS token to server
         final CreateUpdateDevice device = new CreateUpdateDevice();
         KotlinUtils.Companion.getUniqueDeviceID( deviceId -> {
             device.appInstanceId = deviceId;
@@ -126,10 +125,7 @@ public class NotificationUtils {
     }
 
     private Boolean isGooglePlayServicesAvailable() {
-        // 1
         int status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(appContext);
-        // 2
-
         if (status != ConnectionResult.SUCCESS) {
             // ask user to update google play services and manage the error.
             return false;
