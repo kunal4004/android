@@ -407,11 +407,15 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             && (activity as BottomNavigationActivity).currentFragment is ProductListingFragment
         ) {
             val currentPlaceId = KotlinUtils.getPreferredPlaceId()
-            if (currentPlaceId != null && !(localPlaceId.let { it.equals(currentPlaceId) })) {
+            if (currentPlaceId != null && !localPlaceId.isNullOrEmpty() && !(localPlaceId.let {
+                    it.equals(currentPlaceId)
+                })) {
                 localPlaceId = currentPlaceId
                 updateRequestForReload()
                 pushFragment()
-            } else if (!(localDeliveryType.let { it.equals(deliveryType.type) })) {
+            } else if (!localDeliveryType.isNullOrEmpty() && !(localDeliveryType.let {
+                    it.equals(deliveryType.type)
+                })) {
                 localDeliveryType = deliveryType.type
                 updateRequestForReload()
                 pushFragment()
@@ -1010,13 +1014,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
                     if (activity is BottomNavigationActivity && (activity as BottomNavigationActivity).currentFragment is ProductListingFragment) {
                         val currentPlaceId = KotlinUtils.getPreferredPlaceId()
-                        if (currentPlaceId != null
-                            && !(localPlaceId.let { it.equals(currentPlaceId) })
+                        if (currentPlaceId != null && !localPlaceId.isNullOrEmpty() && !(localPlaceId.let {
+                                it.equals(currentPlaceId)
+                            })
                         ) {
                             localPlaceId = currentPlaceId
                             updateRequestForReload()
                             pushFragment()
-                        } else if (!localDeliveryType.let {
+                        } else if (!localDeliveryType.isNullOrEmpty() && !localDeliveryType.let {
                                 it.equals(localDeliveryTypeForHiddenChange)
                             }) {
                             localDeliveryTypeForHiddenChange = localDeliveryType
