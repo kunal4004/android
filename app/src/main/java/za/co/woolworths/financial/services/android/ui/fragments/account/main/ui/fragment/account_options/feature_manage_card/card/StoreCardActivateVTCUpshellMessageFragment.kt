@@ -14,7 +14,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 
-class StoreCardFreezeCardUpshellMessage : Fragment(R.layout.store_card_upshell_message_fragment) {
+class StoreCardActivateVTCUpshellMessageFragment : Fragment(R.layout.store_card_upshell_message_fragment) {
 
     val viewModel: TemporaryFreezeCardViewModel by activityViewModels()
     val accountViewModel: MyAccountsRemoteApiViewModel by activityViewModels()
@@ -22,7 +22,7 @@ class StoreCardFreezeCardUpshellMessage : Fragment(R.layout.store_card_upshell_m
     companion object {
         private const val STORE_CARD_FEATURE_TYPE = "STORE_CARD_FEATURE_TYPE"
         fun newInstance(storeCard: StoreCardFeatureType?) =
-            StoreCardFreezeCardUpshellMessage().withArgs {
+            StoreCardActivateVTCUpshellMessageFragment().withArgs {
                 putParcelable(STORE_CARD_FEATURE_TYPE, storeCard)
             }
     }
@@ -30,9 +30,8 @@ class StoreCardFreezeCardUpshellMessage : Fragment(R.layout.store_card_upshell_m
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = StoreCardUpshellMessageFragmentBinding.bind(view)
-        binding.storeCardImageView.setImageResource(R.drawable.virtual_temp_freeze)
-        val card = arguments?.getParcelable<StoreCardFeatureType?>(STORE_CARD_FEATURE_TYPE
-        ) as? StoreCardFeatureType.StoreCardIsTemporaryFreeze
+        binding.storeCardImageView.setImageResource(R.drawable.virtual_temp_activate)
+        val card = arguments?.getParcelable<StoreCardFeatureType?>(STORE_CARD_FEATURE_TYPE) as? StoreCardFeatureType.ActivateVirtualTempCard
         binding.storeCardImageView.onClick {
             (requireActivity() as? StoreCardActivity)?.apply {
                 accountViewModel.emitEventOnCardTap(card)

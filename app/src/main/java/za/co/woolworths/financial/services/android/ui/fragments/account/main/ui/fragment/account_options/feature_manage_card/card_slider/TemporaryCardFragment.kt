@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card_slider
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.view.View.VISIBLE
@@ -48,6 +49,8 @@ class TemporaryCardFragment : Fragment(R.layout.instant_store_card_replacement_c
     private fun setupView(binding: InstantStoreCardReplacementCardFragmentBinding) {
         binding.storeCardImageView.setImageResource(R.drawable.ic_sc_temporary_store_card)
         binding.accountHolderNameTextView.text = KotlinUtils.getCardHolderNameSurname()
+        binding.accountHolderNameTextView.visibility = VISIBLE
+        binding.accountHolderNameTextView.setTextColor(Color.BLACK)
         binding.tempCardLabel.visibility = VISIBLE
         binding.cardLabel.visibility = VISIBLE
     }

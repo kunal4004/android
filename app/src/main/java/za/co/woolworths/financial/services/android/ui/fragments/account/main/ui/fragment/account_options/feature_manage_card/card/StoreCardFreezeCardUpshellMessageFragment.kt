@@ -14,7 +14,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 
-class StoreCardActivateVTCUpshellMessage : Fragment(R.layout.store_card_upshell_message_fragment) {
+class StoreCardFreezeCardUpshellMessage : Fragment(R.layout.store_card_upshell_message_fragment) {
 
     val viewModel: TemporaryFreezeCardViewModel by activityViewModels()
     val accountViewModel: MyAccountsRemoteApiViewModel by activityViewModels()
@@ -22,7 +22,7 @@ class StoreCardActivateVTCUpshellMessage : Fragment(R.layout.store_card_upshell_
     companion object {
         private const val STORE_CARD_FEATURE_TYPE = "STORE_CARD_FEATURE_TYPE"
         fun newInstance(storeCard: StoreCardFeatureType?) =
-            StoreCardActivateVTCUpshellMessage().withArgs {
+            StoreCardFreezeCardUpshellMessage().withArgs {
                 putParcelable(STORE_CARD_FEATURE_TYPE, storeCard)
             }
     }
@@ -30,9 +30,10 @@ class StoreCardActivateVTCUpshellMessage : Fragment(R.layout.store_card_upshell_
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = StoreCardUpshellMessageFragmentBinding.bind(view)
-        binding.storeCardImageView.setImageResource(R.drawable.virtual_temp_activate)
+        binding.storeCardImageView.setImageResource(R.drawable.virtual_temp_freeze)
         val card = arguments?.getParcelable<StoreCardFeatureType?>(STORE_CARD_FEATURE_TYPE) as? StoreCardFeatureType.StoreCardIsTemporaryFreeze
         binding.storeCardImageView.onClick {
+            viewModel.onUpshellMessageFreezeCardTap.value = true
             (requireActivity() as? StoreCardActivity)?.apply {
                 accountViewModel.emitEventOnCardTap(card)
             }

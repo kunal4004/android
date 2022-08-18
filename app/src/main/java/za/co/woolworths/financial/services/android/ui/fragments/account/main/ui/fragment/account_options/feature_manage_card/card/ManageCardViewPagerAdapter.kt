@@ -49,7 +49,7 @@ class ManageCardViewPagerAdapter @Inject constructor(fragment: Fragment) :
 
                 is StoreCardFeatureType.StoreCardFreezeCardUpShellMessage ->  StoreCardFreezeCardUpshellMessage.newInstance(storeCard = card)
 
-                is StoreCardFeatureType.StoreCardActivateVirtualTempCardUpShellMessage ->  StoreCardActivateVTCUpshellMessage.newInstance(storeCard = card)
+                is StoreCardFeatureType.StoreCardActivateVirtualTempCardUpShellMessage ->  StoreCardActivateVTCUpshellMessageFragment.newInstance(storeCard = card)
 
                 is StoreCardFeatureType.StoreCardIsActivateVirtualTempCardAndIsFreezeCard -> InstantStoreCardReplacementCardFragment.newInstance(
                     card

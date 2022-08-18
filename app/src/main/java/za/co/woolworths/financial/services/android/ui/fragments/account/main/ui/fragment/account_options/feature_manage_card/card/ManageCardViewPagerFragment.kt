@@ -64,6 +64,13 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
                 }
             }
         }
+
+        lifecycleScope.launch {
+            cardFreezeViewModel.onUpshellMessageFreezeCardTap.observe(viewLifecycleOwner){ isActive ->
+                if (isActive)
+                    this@subscribeObservers?.cardItemViewPager?.setCurrentItem(0, true)
+            }
+        }
     }
 
     private fun getCardPosition(listOfStoreCardFeatures: MutableList<StoreCardFeatureType>?): Int =
@@ -78,7 +85,7 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
         when (val type = cardFreezeViewModel.mStoreCardType) {
             is StoreCardType.PrimaryCard -> {
                 (activity as? StoreCardActivity)?.showToast(
-                    if (type.block == BlockStoreCardType.BLOCK) {
+                    if (type.block == BlockStoreCardType.FREEZE) {
                         R.string.card_temporarily_frozen_label
                     } else R.string.card_temporarily_unfrozen_label
                 )
