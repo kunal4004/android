@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constProductContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/five_dp"
@@ -32,6 +33,7 @@
         style="@style/futura_semi_bold_black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/eight_dp"
         android:background="@drawable/transperant_options_button"
         android:gravity="center"
         android:includeFontPadding="false"
@@ -39,47 +41,53 @@
         android:padding="@dimen/five_dp"
         android:textSize="@dimen/eleven_sp"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/marginTextView"
-        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
-        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline" />
-
-    <TextView
-        android:id="@+id/marginTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/eight_dp"
-        android:textSize="@dimen/six_dp"
         app:layout_constraintBottom_toBottomOf="@+id/mainImgLayout"
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
-        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline" />
+        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
+        tools:text="Product variant"
+        tools:visibility="visible" />
+
+    <View
+        android:id="@+id/horizontalProductSeparator"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/one_dp"
+        android:background="@color/recent_search_bg"
+        app:layout_constraintBottom_toBottomOf="@id/mainImgLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/brandName"
         style="@style/futura_semi_bold_black"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/eight_dp"
         android:includeFontPadding="false"
         android:lineSpacingMultiplier="1.09"
         android:maxLines="2"
         android:textAllCaps="true"
         android:textSize="@dimen/eleven_sp"
+        android:visibility="gone"
+        app:layout_constrainedHeight="true"
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/brandMarginTopView"
-        tools:text="@string/brands" />
+        app:layout_constraintTop_toBottomOf="@+id/mainImgLayout"
+        tools:text="@string/brands"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/tvRangeName"
+        style="@style/futura_semi_bold_black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="2"
-        android:visibility="gone"
         android:textSize="@dimen/eleven_sp"
-        style="@style/futura_semi_bold_black"
-        tools:text="Healthy Glow Natural Eyeshadow Palette"
+        android:visibility="gone"
+        app:layout_constrainedHeight="true"
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
         app:layout_constraintTop_toBottomOf="@+id/brandName"
+        tools:text="Healthy Glow Natural Eyeshadow Palette"
         tools:visibility="visible" />
 
     <TextView
@@ -94,13 +102,16 @@
         android:includeFontPadding="false"
         android:lineSpacingExtra="0dp"
         android:lineSpacingMultiplier="1.29"
+        android:maxLines="2"
+        android:minHeight="@dimen/thirty_three_dp"
         android:textColor="@color/black"
         android:textSize="@dimen/fourteen_sp"
+        app:layout_constrainedHeight="true"
+        app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
         app:layout_constraintTop_toBottomOf="@+id/tvRangeName"
-        tools:ignore="HardcodedText"
-        tools:targetApi="lollipop"
+        app:layout_goneMarginTop="@dimen/eight_dp"
         tools:text="Original Free Range Venison Droëwors Nibbles 25g" />
 
     <TextView
@@ -117,9 +128,12 @@
         android:textColor="@color/two_line_promo_text_color_plp"
         android:textSize="@dimen/eleven_sp"
         android:visibility="gone"
+        app:layout_constrainedHeight="true"
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/tvProductName" />
+        app:layout_constraintTop_toBottomOf="@+id/tvProductName"
+        tools:text="Buy one get one free"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/onlinePromotionalTextView2"
@@ -135,21 +149,12 @@
         android:textColor="@color/two_line_promo_text_color_plp"
         android:textSize="@dimen/eleven_sp"
         android:visibility="gone"
+        app:layout_constrainedHeight="true"
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/onlinePromotionalTextView1" />
-
-    <TextView
-        android:id="@+id/brandNameFakeView"
-        style="@style/futura_semi_bold_black_12_text_style"
-        android:layout_height="wrap_content"
-        android:includeFontPadding="false"
-        android:maxLines="2"
-        android:textAllCaps="true"
-        android:visibility="gone"
-        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
-        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/onlinePromotionalTextView2" />
+        app:layout_constraintTop_toBottomOf="@+id/onlinePromotionalTextView1"
+        tools:text="R15.00"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/tvSaveText"
@@ -162,35 +167,13 @@
         android:textColor="@color/promo_text_color"
         android:textSize="@dimen/ten_sp"
         android:visibility="gone"
+        app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toTopOf="@+id/includeProductListingPriceLayout"
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/brandNameFakeView"
-        tools:ignore="HardcodedText,UnusedAttribute" />
-
-    <androidx.constraintlayout.widget.Barrier
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="brandNameFakeView,tvSaveText" />
-
-    <View
-        android:id="@+id/horizontalProductSeparator"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/one_dp"
-        android:background="@color/recent_search_bg"
-        app:layout_constraintBottom_toBottomOf="@id/mainImgLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <View
-        android:id="@+id/brandMarginTopView"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/eight_dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/horizontalProductSeparator" />
+        app:layout_constraintTop_toBottomOf="@+id/onlinePromotionalTextView2"
+        tools:text="Save R2000.00"
+        tools:visibility="visible" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/startMarginGuideline"
@@ -228,13 +211,16 @@
         android:layout_marginTop="@dimen/eight_dp"
         android:layout_marginEnd="@dimen/sixteen_dp"
         android:layout_marginBottom="@dimen/five_dp"
+        app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline" />
+        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
+        app:layout_constraintTop_toBottomOf="@id/tvSaveText" />
 
     <include
         android:id="@+id/productListingPromotionalImage"
         layout="@layout/product_listing_promotional_images"
+        app:layout_constrainedHeight="true"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
         app:layout_constraintTop_toTopOf="@+id/promotionalImageTopGuideline" />
 </androidx.constraintlayout.widget.ConstraintLayout>

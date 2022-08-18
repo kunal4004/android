@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:text="@string/slot_delivery_title"
-            android:textSize="@dimen/twenty_sp" />
+            android:textSize="@dimen/eighteen_sp" />
     </com.facebook.shimmer.ShimmerFrameLayout>
 
     <com.facebook.shimmer.ShimmerFrameLayout

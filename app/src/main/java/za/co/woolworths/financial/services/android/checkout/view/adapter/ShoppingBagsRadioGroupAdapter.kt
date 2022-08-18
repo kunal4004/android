@@ -3,12 +3,10 @@ package za.co.woolworths.financial.services.android.checkout.view.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.checkout_address_confirmation_selection_delivery_list.view.*
 import kotlinx.android.synthetic.main.shopping_bags_radio_button.view.*
-import kotlinx.android.synthetic.main.shopping_bags_radio_button.view.subTitle
-import kotlinx.android.synthetic.main.shopping_bags_radio_button.view.title
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 
@@ -17,7 +15,8 @@ import za.co.woolworths.financial.services.android.ui.extension.bindColor
  */
 class ShoppingBagsRadioGroupAdapter(
     private var shoppingBagsOptionsList: List<ConfigShoppingBagsOptions>?,
-    private val listner: EventListner
+    private val listener: EventListner,
+    private val selectedShoppingBagType: Double?,
 ) :
     RecyclerView.Adapter<ShoppingBagsRadioGroupAdapter.ShoppingBagsRadioGroupAdapterViewHolder>() {
     var checkedItemPosition = -1
@@ -27,7 +26,10 @@ class ShoppingBagsRadioGroupAdapter(
         shoppingBagsOptionsList?.forEach { shoppingBagsOptions ->
             if (shoppingBagsOptions.isDefault) {
                 checkedItemPosition = shoppingBagsOptionsList?.indexOf(shoppingBagsOptions) ?: -1
-                onItemClicked(checkedItemPosition)
+                if (selectedShoppingBagType != null)
+                    onItemClicked(selectedShoppingBagType.toInt() - 1)
+                else
+                    onItemClicked(checkedItemPosition)
                 return@forEach
             }
         }
@@ -35,7 +37,7 @@ class ShoppingBagsRadioGroupAdapter(
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
-        viewType: Int
+        viewType: Int,
     ): ShoppingBagsRadioGroupAdapter.ShoppingBagsRadioGroupAdapterViewHolder {
         return ShoppingBagsRadioGroupAdapterViewHolder(
             LayoutInflater.from(parent.context)
@@ -53,7 +55,7 @@ class ShoppingBagsRadioGroupAdapter(
 
     override fun onBindViewHolder(
         holder: ShoppingBagsRadioGroupAdapter.ShoppingBagsRadioGroupAdapterViewHolder,
-        position: Int
+        position: Int,
     ) {
         holder.bindItem(position)
     }
@@ -63,25 +65,18 @@ class ShoppingBagsRadioGroupAdapter(
         fun bindItem(position: Int) {
             itemView.apply {
                 shoppingBagsOptionsList?.get(position)?.let { it ->
-                    title.text = it?.title
-                    subTitle.text = it?.description
-                    radioSelector.isChecked = checkedItemPosition == position
+                    title?.text = it.title
+                    subTitle?.text = it.description
+                    radioSelector?.isChecked = checkedItemPosition == position
 
-                    shoppingBagsSelectionLayout.setBackgroundColor(
-                        if (radioSelector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
-                            R.color.white
-                        )
+                    shoppingBagsSelectionLayout?.background = ContextCompat.getDrawable(
+                        context,
+                        if (radioSelector?.isChecked == true)
+                            R.drawable.bg_shopping_bags_selected
+                        else
+                            R.drawable.bg_shopping_bags_unselected
                     )
-                    title.setBackgroundColor(
-                        if (radioSelector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
-                            R.color.white
-                        )
-                    )
-                    subTitle.setBackgroundColor(
-                        if (radioSelector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
-                            R.color.white
-                        )
-                    )
+                    subTitle?.visibility = if (radioSelector.isChecked) View.VISIBLE else View.GONE
                 }
                 setOnClickListener {
                     onItemClicked(position)
@@ -95,7 +90,7 @@ class ShoppingBagsRadioGroupAdapter(
             return
         }
         shoppingBagsOptionsList?.get(position)?.let {
-            listner.selectedShoppingBagType(it, position)
+            listener.selectedShoppingBagType(it, position)
             notifyItemChanged(position, it)
         }
         // update last position as well
@@ -114,7 +109,7 @@ class ShoppingBagsRadioGroupAdapter(
     interface EventListner {
         fun selectedShoppingBagType(
             shoppingBagsOptionsList: ConfigShoppingBagsOptions,
-            position: Int
+            position: Int,
         )
     }
 }

@@ -41,7 +41,7 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.edit_delivery_location_activity)
         Utils.updateStatusBarBackground(this)
-        bundle = intent.getBundleExtra("bundle")
+        bundle = intent.getBundleExtra(BUNDLE)
         bundle?.apply {
             deliveryType = Delivery.getType(this.getString(DELIVERY_TYPE, ""))
             placeId =  this.getString(PLACE_ID, "")
