@@ -54,6 +54,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
@@ -967,7 +968,16 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     true,
                     true,
                     savedAddress,
-                    defaultAddress
+                    defaultAddress,
+                        "",
+                        (if (liquorImageUrl != null) liquorImageUrl else "")?.let {
+                            liquorOrder?.let { it1 ->
+                                LiquorCompliance(
+                                        it1,
+                                        it
+                                )
+                            }
+                        }
                 )
                 activity?.finish()
             }
