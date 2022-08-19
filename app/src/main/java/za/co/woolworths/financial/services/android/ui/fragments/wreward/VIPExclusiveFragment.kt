@@ -33,7 +33,7 @@ class VIPExclusiveFragment : Fragment() {
             activity?.apply {
                 text = WRewardBenefitActivity.convertWRewardCharacter(bindString(R.string.benefits_term_and_condition_link))
                 setOnClickListener {
-                    Utils.openLinkInInternalWebView(AppConfigSingleton.wrewardsTCLink)
+                    Utils.openLinkInInternalWebView(AppConfigSingleton.wrewardsTCLink, true)
                 }
             }
         }

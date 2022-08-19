@@ -71,7 +71,7 @@
             android:layout_weight="1"
             android:enabled="false"
             android:background="@android:color/transparent"
-            android:hint="@string/start_typing"
+            android:hint="@string/chat_hold_message"
             android:imeOptions="actionDone"
             android:inputType="textMultiLine"
             android:maxLines="4"

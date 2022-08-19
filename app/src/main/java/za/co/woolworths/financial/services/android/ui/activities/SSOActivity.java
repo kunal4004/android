@@ -44,14 +44,11 @@ import java.util.Map;
 import java.util.UUID;
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest;
-import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -102,6 +99,7 @@ public class SSOActivity extends WebViewActivity {
 	public static final String TAG_PASSWORD = "TAG_PASSWORD";
 	public static final String FORGOT_PASSWORD = "FORGOT_PASSWORD";
 	public static final String FORGOT_PASSWORD_VALUE = "PASSWORD";
+	public static final String IS_USER_BROWSING = "IS_USER_BROWSING";
 	private String forgotPasswordLogin = "login=true&source=oneapp";
 	private String TNC_TITLE = "Woolworths.co.za";
 
@@ -109,6 +107,7 @@ public class SSOActivity extends WebViewActivity {
 	//Default redirect url used by LOGIN AND LINK CARDS
 	private static String redirectURIString = AppConfigSingleton.INSTANCE.getSsoRedirectURI();
 	private Protocol protocol;
+	private Boolean isUserBrowsing = false;
 	private Host host;
 	public Path path;
 	private Map<String, String> extraQueryStringParams;
@@ -222,6 +221,7 @@ public class SSOActivity extends WebViewActivity {
 		this.protocol = Protocol.getProtocolByRawValue(bundle.getString(SSOActivity.TAG_PROTOCOL));
 		this.host = Host.getHostByRawValue(bundle.getString(SSOActivity.TAG_HOST));
 		this.path = Path.getPathByRawValue(bundle.getString(SSOActivity.TAG_PATH));
+		this.isUserBrowsing = bundle.getBoolean(IS_USER_BROWSING, false);
 		this.extraQueryStringParams = (Map<String, String>) intent.getSerializableExtra(SSOActivity.TAG_EXTRA_QUERYSTRING_PARAMS);
 
 		String scope = bundle.getString(SSOActivity.TAG_SCOPE);
@@ -649,32 +649,42 @@ public class SSOActivity extends WebViewActivity {
 
 					NotificationUtils.getInstance().sendRegistrationToServer();
 					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.ACTIVE);
-					if (KotlinUtils.Companion.getAnonymousUserLocationDetails() != null) {
-						new ConfirmLocation().postRequest(KotlinUtils.Companion.getAnonymousUserLocationDetails());
-					}
 					QueryBadgeCounter.getInstance().queryBadgeCount();
-
 					setUserATGId(jwtDecodedModel);
-
-					setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
-
 					Utils.setUserKMSIState(isKMSIChecked);
+					if (KotlinUtils.Companion.getAnonymousUserLocationDetails() != null) {
+						new ConfirmLocation().postRequest(KotlinUtils.Companion.getAnonymousUserLocationDetails(), isUserBrowsing, SSOActivity.this, intent);
+						try {
+							if (!TextUtils.isEmpty(stsParams)) {
+								SessionUtilities.getInstance().setSTSParameters(null);
+							}
+						} catch (NullPointerException ex) {
+							closeActivity();
+						}
+					}
+					else {
+						setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
+						setStSParameters();
+					}
 
 				} else {
 					setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);
-				}
-
-				try {
-					if (!TextUtils.isEmpty(stsParams)) {
-						SessionUtilities.getInstance().setSTSParameters(null);
-					}
-					closeActivity();
-
-				} catch (NullPointerException ex) {
-					closeActivity();
+					setStSParameters();
 				}
 			}
 		});
+	}
+
+	private void setStSParameters() {
+		try {
+			if (!TextUtils.isEmpty(stsParams)) {
+				SessionUtilities.getInstance().setSTSParameters(null);
+			}
+			closeActivity();
+
+		} catch (NullPointerException ex) {
+			closeActivity();
+		}
 	}
 
 	private void setUserATGId(JWTDecodedModel jwtDecodedModel) {
@@ -771,6 +781,15 @@ public class SSOActivity extends WebViewActivity {
 			this.webView.destroy();
 		}
 		super.onDestroy();
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()){
+			setResult(SSOActivityResult.SUCCESS.rawValue(), data);
+			setStSParameters();
+		}
 	}
 
 	private void clearAllCookies() {

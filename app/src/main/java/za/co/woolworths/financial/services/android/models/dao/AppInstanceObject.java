@@ -30,6 +30,10 @@ public class AppInstanceObject {
     public AppInstanceObject() {
         users = new ArrayList<>();
         featureWalkThrough =  new FeatureWalkThrough();
+        setDefaultInAppChatTipAcknowledgements();
+    }
+
+    public void setDefaultInAppChatTipAcknowledgements() {
         inAppChatTipAcknowledgements = new InAppChatTipAcknowledgements(false, new ConfigChatEnabledForProductFeatures(false, false, false, false), new ConfigChatEnabledForProductFeatures(false, false, false, false), new ConfigChatEnabledForProductFeatures(false, false, false, false), false);
     }
 
@@ -145,8 +149,13 @@ public class AppInstanceObject {
 		public boolean cartRedeemVoucher;
 		public boolean creditScore;
         public boolean isTryItOn;
+        public boolean shopping;
+        public boolean dash;
+        public boolean delivery_details;
+        public boolean my_lists;
 
     }
+
     /***
      * Check to determine if biometric custom popup should be displayed
      */

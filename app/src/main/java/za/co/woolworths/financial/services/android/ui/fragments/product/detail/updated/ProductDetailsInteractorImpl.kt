@@ -12,11 +12,16 @@ import za.co.woolworths.financial.services.android.util.PostItemToCart
 class ProductDetailsInteractorImpl() : ProductDetailsContract.ProductDetailsInteractor {
 
     override fun getProductDetails(productRequest: ProductRequest, onFinishListener: ProductDetailsContract.ProductDetailsInteractor.OnFinishListener) {
-        request(OneAppService.productDetail(productRequest.productId, productRequest.skuId), onFinishListener)
+        request(OneAppService.productDetail(productRequest.productId, productRequest.skuId, productRequest.isUserBrowsing), onFinishListener)
     }
 
-    override fun getStockAvailability(storeID: String, multiSKU: String, onFinishListener: ProductDetailsContract.ProductDetailsInteractor.OnFinishListener) {
-        request(OneAppService.getInventorySkuForStore(storeID, multiSKU), onFinishListener)
+    override fun getStockAvailability(
+        storeID: String,
+        multiSKU: String,
+        onFinishListener: ProductDetailsContract.ProductDetailsInteractor.OnFinishListener,
+        isUserBrowsing: Boolean
+    ) {
+        request(OneAppService.getInventorySkuForStore(storeID, multiSKU, isUserBrowsing), onFinishListener)
     }
 
     override fun postAddItemToCart(addItemToCart: List<AddItemToCart>, onFinishListener: ProductDetailsContract.ProductDetailsInteractor.OnFinishListener) {
@@ -33,7 +38,7 @@ class ProductDetailsInteractorImpl() : ProductDetailsContract.ProductDetailsInte
 
     override fun getLocationItems(otherSkus: OtherSkus?, onFinishListener: ProductDetailsContract.ProductDetailsInteractor.OnFinishListener) {
         WoolworthsApplication.getInstance().wGlobalState?.let {mWGlobalState->
-            otherSkus?.let { OneAppService.getLocationsItem(it.sku, mWGlobalState.startRadius.toString(), mWGlobalState.endRadius.toString()) }?.let { request(it,onFinishListener) }
+            otherSkus?.let { it.sku?.let { it1 -> OneAppService.getLocationsItem(it1, mWGlobalState.startRadius.toString(), mWGlobalState.endRadius.toString()) } }?.let { request(it,onFinishListener) }
         }
     }
 
