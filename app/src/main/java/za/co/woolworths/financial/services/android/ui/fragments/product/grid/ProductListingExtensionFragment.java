@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.grid;
 
+import static za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.IS_BROWSING;
+
 import android.app.Activity;
 import android.util.Log;
 
@@ -15,6 +17,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
+import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class ProductListingExtensionFragment extends Fragment {
@@ -30,6 +33,7 @@ public class ProductListingExtensionFragment extends Fragment {
     private Call<ProductView> retrieveProduct;
 
     private GridNavigator mNavigator;
+    private Boolean isUserBrowsing;
 
     public void setNavigator(GridNavigator navigator) {
         this.mNavigator = navigator;
@@ -57,6 +61,8 @@ public class ProductListingExtensionFragment extends Fragment {
         this.productsRequestParams.setRefinement(navigationState);
         this.productsRequestParams.setSortOption(sortOption);
         this.productsRequestParams.setFilterContent(filterContent);
+        this.isUserBrowsing = getArguments() != null && getArguments().getBoolean(IS_BROWSING, false);
+        this.productsRequestParams.isUserBrowsing = isUserBrowsing;
     }
 
     public ProductsRequestParams getProductRequestBody() {
@@ -72,7 +78,7 @@ public class ProductListingExtensionFragment extends Fragment {
             public void onSuccess(ProductView productView) {
                 if (productView.httpCode == 200) {
                     List<ProductList> productLists = productView.products;
-                    if (productLists != null || productView.isBanners) {
+                    if (productLists != null || (productView != null && productView.isBanners)) {
                         numItemsInTotal(productView);
                         calculatePageOffset();
                         getNavigator().onLoadProductSuccess(productView, getLoadMoreData());
@@ -158,6 +164,7 @@ public class ProductListingExtensionFragment extends Fragment {
         this.productIsLoading = false;
         getProductRequestBody().setPageOffset(pageOffset);
         getProductRequestBody().setRefinement(navigationState);
+        getProductRequestBody().isUserBrowsing = isUserBrowsing;
 
     }
 
@@ -169,6 +176,7 @@ public class ProductListingExtensionFragment extends Fragment {
         this.productIsLoading = false;
         getProductRequestBody().setPageOffset(pageOffset);
         getProductRequestBody().setSortOption(sortOption);
+        getProductRequestBody().isUserBrowsing = isUserBrowsing;
 
     }
 }

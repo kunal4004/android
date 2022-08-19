@@ -57,14 +57,11 @@ class UnlinkPrimaryDeviceBottomSheetFragment : WBottomSheetDialogFragment(), Vie
 
     private fun hasNoOtherDevices(): Boolean? {
         val defaultPrimaryDeviceList = deviceList?.filter { userDevice -> userDevice.primarydDevice == true }
-        if (defaultPrimaryDeviceList != null) {
-            if(defaultPrimaryDeviceList.isNotEmpty()){
+        if (!defaultPrimaryDeviceList.isNullOrEmpty()) {
                 (activity as? MyPreferencesActivity)?.setDefaultPrimaryDevice(
                     defaultPrimaryDeviceList[0]
                 )
-            }
         }
-
         return deviceList?.none { userDevice -> userDevice.primarydDevice == false }
     }
 }
