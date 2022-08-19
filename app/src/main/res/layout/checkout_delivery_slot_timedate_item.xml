@@ -16,19 +16,25 @@
         <TextView
             android:id="@+id/gridTextView"
             style="@style/myriad_pro_semi_bold_black_15_text_style"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:textAlignment="viewStart"
             android:textColor="@color/black"
-            android:textSize="@dimen/eleven_sp" />
+            android:textSize="@dimen/eleven_sp"
+            tools:text="Mon" />
 
         <TextView
             android:id="@+id/gridSubTextView"
             style="@style/myriad_pro_regular"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="start"
             android:layout_marginTop="@dimen/two_dp"
+            android:textAlignment="viewStart"
             android:textColor="@color/black"
-            android:textSize="@dimen/eleven_sp" />
+            android:textSize="@dimen/eleven_sp"
+            tools:text="18 Mar" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
