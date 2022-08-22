@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/_15sdp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/_8sdp" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/_18sdp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/_15sdp" />
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/chatBackImg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_10sdp"
+        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toTopOf="@id/guidelineTop"
+        app:srcCompat="@drawable/ic_one_cart_back_arrow" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/chatWithPersonName"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/futura_semi_bold"
+        android:letterSpacing="@integer/point_eleven"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_10ssp"
+        android:textAllCaps="true"
+        android:gravity="center_vertical"
+        android:layout_marginTop="@dimen/_10sdp"
+        app:layout_constraintStart_toEndOf="@+id/chatBackImg"
+        app:layout_constraintTop_toTopOf="@id/guidelineTop"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/oneCartChatOrderID"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/futura_light"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_10ssp"
+        android:textAllCaps="true"
+        android:ellipsize="end"
+        android:letterSpacing="@integer/point_eleven"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginStart="@dimen/_5sdp"
+        app:layout_constraintEnd_toStartOf="@+id/woolIcon"
+        app:layout_constraintStart_toEndOf="@+id/chatWithPersonName"
+        app:layout_constraintTop_toTopOf="@id/guidelineTop"/>
+
+
+    <View
+        android:id="@+id/activeInactiveStatus"
+        android:layout_width="@dimen/_5sdp"
+        android:layout_height="@dimen/_5sdp"
+
+        app:layout_constraintEnd_toEndOf="@+id/activeStateTextView"
+        android:layout_marginTop="@dimen/_10sdp"
+        app:layout_constraintStart_toStartOf="@+id/chatBackImg"
+        app:layout_constraintTop_toBottomOf="@id/chatWithPersonName"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/activeStateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:textColor="@color/color_666666"
+        android:textSize="@dimen/_10ssp"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:paddingEnd="@dimen/_10sdp"
+        app:layout_constraintEnd_toEndOf="@+id/woolIcon"
+        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@id/chatWithPersonName"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/typingIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/_10ssp"
+        android:textColor="@color/color_666666"
+        app:layout_constraintEnd_toEndOf="@+id/woolIcon"
+        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@id/activeStateTextView"/>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/woolIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintTop_toTopOf="@id/guidelineTop"
+        app:srcCompat="@drawable/ic_app_logo_24" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

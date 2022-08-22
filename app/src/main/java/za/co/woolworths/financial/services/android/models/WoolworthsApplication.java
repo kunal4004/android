@@ -80,6 +80,8 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private Activity mCurrentActivity = null;
 
     private static ValidatePlace validatePlace;
+    private static ValidatePlace dashValidatePlace;
+    private static ValidatePlace cncValidatePlace;
 
 
     public static String getApiId() {
@@ -333,6 +335,21 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     public static void setValidatedSuburbProducts(ValidatePlace validatePlace) {
         WoolworthsApplication.validatePlace = validatePlace;
+    }
+    public static ValidatePlace getDashBrowsingValidatePlaceDetails() {
+        return dashValidatePlace;
+    }
+
+    public static void setDashBrowsingValidatePlaceDetails(ValidatePlace validatePlace) {
+        WoolworthsApplication.dashValidatePlace = validatePlace;
+    }
+
+    public static ValidatePlace getCncBrowsingValidatePlaceDetails() {
+        return cncValidatePlace;
+    }
+
+    public static void setCncBrowsingValidatePlaceDetails(ValidatePlace validatePlace) {
+        WoolworthsApplication.cncValidatePlace = validatePlace;
     }
 
     public boolean isAnyActivityVisible() {

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -27,7 +28,6 @@ import za.co.woolworths.financial.services.android.geolocation.network.model.Val
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.StoreListAdapter
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
-import za.co.woolworths.financial.services.android.geolocation.viewmodel.StoreLiveData
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate
 import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
@@ -40,6 +40,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.VALIDATE_RESPONSE
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
@@ -51,16 +52,16 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     private var dataStore: Store? = null
     private var bundle: Bundle? = null
-    private  var validateLocationResponse: ValidateLocationResponse? = null
+    private var validateLocationResponse: ValidateLocationResponse? = null
     private var placeId: String? = null
     private var isComingFromConfirmAddress: Boolean? = false
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
 
     companion object {
-        fun newInstance(validateLocationResponse: ValidateLocationResponse?) =
+        fun newInstance(bundle: Bundle?) =
             ClickAndCollectStoresFragment().withArgs {
-                putSerializable(VALIDATE_RESPONSE, validateLocationResponse)
+                this.putBundle(BUNDLE, bundle)
             }
     }
 
@@ -114,11 +115,6 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
         }
     }
 
-    override fun onMapReady() {
-        dynamicMapView?.setAllGesturesEnabled(false)
-        showFirstFourLocationInMap(mValidateLocationResponse?.validatePlace?.stores)
-    }
-
     private fun showFirstFourLocationInMap(addressStoreList: List<Store>?) {
         addressStoreList?.let {
             for (i in 0..3) {
@@ -146,7 +142,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
         mValidateLocationResponse: ValidateLocationResponse?
     ) {
         tvStoresNearMe?.text = resources.getString(R.string.near_stores, address?.size)
-        tvAddress?.text = mValidateLocationResponse?.validatePlace?.placeDetails?.address1
+        tvAddress?.text = KotlinUtils.capitaliseFirstLetter(mValidateLocationResponse?.validatePlace?.placeDetails?.address1)
         setStoreList(address)
     }
 
@@ -195,16 +191,25 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
 
     private fun navigateToFulfillmentScreen() {
         if (IS_FROM_STORE_LOCATOR) {
-            dataStore?.let { StoreLiveData.value = it }
-            bundle?.putString(
-               KEY_PLACE_ID, placeId)
-            IS_FROM_STORE_LOCATOR = false
+            dataStore?.let {
+                bundle?.putString(
+                    KEY_PLACE_ID, placeId
+                )
+                IS_FROM_STORE_LOCATOR = false
+                setFragmentResult(
+                    DeliveryAddressConfirmationFragment.STORE_LOCATOR_REQUEST_CODE,
+                    bundleOf(BUNDLE to it))
+            }
             findNavController().navigate(
                 R.id.action_clickAndCollectStoresFragment_to_deliveryAddressConfirmationFragment,
                 bundleOf(BUNDLE to bundle)
             )
         } else {
-            dataStore?.let { StoreLiveData.value = it }
+            dataStore?.let {
+                setFragmentResult(
+                    DeliveryAddressConfirmationFragment.STORE_LOCATOR_REQUEST_CODE,
+                    bundleOf(BUNDLE to it))
+            }
             dismiss()
         }
     }
@@ -278,6 +283,11 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
     override fun tryAgain() {
         if(confirmAddressViewModel.isConnectedToInternet(requireActivity()))
         placeId?.let { getDeliveryDetailsFromValidateLocation(it) }
+    }
+
+    override fun onMapReady() {
+        dynamicMapView?.setAllGesturesEnabled(false)
+        showFirstFourLocationInMap(mValidateLocationResponse?.validatePlace?.stores)
     }
 
     override fun onMarkerClicked(marker: DynamicMapMarker) { }

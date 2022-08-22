@@ -30,7 +30,7 @@ import za.co.woolworths.financial.services.android.models.repository.AppStateRep
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDeliveryFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
@@ -479,7 +479,8 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                 )
             }
         } else {
-            ScreenManager.presentSSOSignin(activity, DepartmentsFragment.DEPARTMENT_LOGIN_REQUEST)
+            ScreenManager.presentSSOSignin(activity,
+                StandardDeliveryFragment.DEPARTMENT_LOGIN_REQUEST)
         }
 
     }
@@ -500,7 +501,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         shoppingDeliveryLocation?.let {
             setDeliveryAddressView(
                 activity,
-                shoppingDeliveryLocation,
+                shoppingDeliveryLocation.fulfillmentDetails,
                 tvDeliveringTo,
                 tvDeliveryLocation,
                 null
