@@ -31,7 +31,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import com.awfs.coordination.R;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -44,25 +43,23 @@ import java.util.Map;
 import java.util.UUID;
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest;
-import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
-import za.co.woolworths.financial.services.android.util.NotificationUtils;
+import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
 import za.co.woolworths.financial.services.android.util.ServiceTools;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager;
 import za.co.woolworths.financial.services.android.util.wenum.ConfirmLocation;
 
 public class SSOActivity extends WebViewActivity {
@@ -678,12 +675,10 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	private void setUserATGId(JWTDecodedModel jwtDecodedModel) {
-		FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(SSOActivity.this);
-
 		String atgId = (jwtDecodedModel.AtgId.isJsonArray() ? jwtDecodedModel.AtgId.getAsJsonArray().get(0).getAsString() : jwtDecodedModel.AtgId.getAsString());
-		firebaseAnalytics.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, atgId);
-		firebaseAnalytics.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, jwtDecodedModel.C2Id);
-		firebaseAnalytics.setUserId(atgId);
+		AnalyticsManager.Companion.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, atgId);
+		AnalyticsManager.Companion.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, jwtDecodedModel.C2Id);
+		AnalyticsManager.Companion.setUserId(atgId);
 	}
 
 	private void unknownNetworkFailure(WebView webView, String description) {

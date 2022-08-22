@@ -44,7 +44,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.low_stock_product_details.*
 import kotlinx.android.synthetic.main.low_stock_product_details.view.*
 import kotlinx.android.synthetic.main.chanel_logo_view.view.*
-import kotlinx.android.synthetic.main.item_found_layout.view.*
 import kotlinx.android.synthetic.main.layout_product_details_chanel.view.*
 import kotlinx.android.synthetic.main.product_details_add_to_cart_and_find_in_store_button_layout.*
 import kotlinx.android.synthetic.main.product_details_delivery_location_layout.*
@@ -60,7 +59,6 @@ import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
-import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.BrandNavigationDetails
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -111,7 +109,6 @@ import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1500_MS
-import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_300_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_500_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.SDK_INIT_FAIL
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_LIVE_CAMERA
@@ -124,8 +121,10 @@ import java.io.File
 import android.graphics.Bitmap
 import com.google.firebase.analytics.FirebaseAnalytics
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
-import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.logException
-import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.setCrashlyticsString
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
 import kotlin.collections.set
@@ -269,7 +268,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     //firebase event view_item
     private fun addViewItemEvent(productDetails: ProductDetails) {
-        val mFirebaseAnalytics = FirebaseManager.getInstance().getAnalytics()
         val viewItemListParams = Bundle()
         viewItemListParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
         for (products in 0..(productDetails.otherSkus?.size ?: 0)) {
@@ -283,7 +281,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             viewItemListParams.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, productDetails?.categoryName)
             viewItemListParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(viewItem))
         }
-        mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.VIEW_ITEM_EVENT, viewItemListParams)
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.VIEW_ITEM_EVENT, viewItemListParams)
     }
 
     override fun onAttach(context: Context) {
@@ -1529,7 +1527,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
     //firebase event add_to_cart
     private fun addToCartEvent(productDetails: ProductDetails?) {
-        val mFirebaseAnalytics = FirebaseManager.getInstance().getAnalytics()
         val addToCartParams = Bundle()
         addToCartParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
         addToCartParams.putString(FirebaseAnalytics.Param.VALUE, productDetails?.price.toString())
@@ -1546,7 +1543,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             addToCartItem.putString(FirebaseAnalytics.Param.INDEX, FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE)
             addToCartParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(addToCartItem))
         }
-        mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.ADD_TO_CART_PDP, addToCartParams)
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.ADD_TO_CART_PDP, addToCartParams)
     }
 
     private fun addItemToShoppingList() {
@@ -1593,7 +1590,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun addToWishlistItemEvent(productDetails: ProductDetails) {
-        val mFirebaseAnalytics = FirebaseManager.getInstance().getAnalytics()
         val addToWishlistParams = Bundle()
         addToWishlistParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
         addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
@@ -1603,7 +1599,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_VARIANT, productDetails?.colourSizeVariants)
         addToWishlistParams.putString(FirebaseAnalytics.Param.PRICE, productDetails?.price.toString())
         addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, productDetails?.categoryName)
-        mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.ADD_TO_WISHLIST, addToWishlistParams)
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.ADD_TO_WISHLIST, addToWishlistParams)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

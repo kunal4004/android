@@ -1,15 +1,12 @@
-package za.co.woolworths.financial.services.android.util
+package za.co.woolworths.financial.services.android.util.pushnotification
 
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getUniqueDeviceID
 import za.co.woolworths.financial.services.android.models.network.OneAppService.getResponseOnCreateUpdateDevice
 import com.google.firebase.messaging.FirebaseMessaging
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice
-import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse
-import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
-import za.co.woolworths.financial.services.android.util.NotificationUtils
 import androidx.annotation.RequiresApi
 import android.app.NotificationManager
 import android.app.NotificationChannel
@@ -23,6 +20,8 @@ import com.google.android.gms.tasks.Task
 import com.huawei.hms.aaid.HmsInstanceId
 import com.huawei.hms.common.ApiException
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.util.function.Consumer
 
 class NotificationUtils {

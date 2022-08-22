@@ -41,7 +41,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LONGITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
-import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
 import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LATITUDE
 import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LONGITUDE

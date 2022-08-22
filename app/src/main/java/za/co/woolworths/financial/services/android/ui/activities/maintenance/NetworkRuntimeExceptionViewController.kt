@@ -7,7 +7,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorMessageDialogWithTitleFragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
-import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.lang.IllegalStateException
 
 open class NetworkRuntimeExceptionViewController : HandlerThread(NetworkRuntimeExceptionViewController::class.java.simpleName) {

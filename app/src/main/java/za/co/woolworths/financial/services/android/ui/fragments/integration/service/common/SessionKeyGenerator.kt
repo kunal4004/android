@@ -4,7 +4,7 @@ import za.co.absa.openbankingapi.AsymmetricCryptoHelper
 import za.co.absa.openbankingapi.KeyGenerationFailureException
 import za.co.absa.openbankingapi.SessionKey
 import za.co.absa.openbankingapi.SymmetricCipher
-import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
 class SessionKeyGenerator : ISessionKeyGenerator {
 

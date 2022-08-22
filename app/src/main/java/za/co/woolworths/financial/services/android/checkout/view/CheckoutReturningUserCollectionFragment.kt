@@ -28,8 +28,6 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.loadingBar
-import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
-import kotlinx.android.synthetic.main.checkout_how_would_you_delivered.*
 import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.*
 import kotlinx.android.synthetic.main.layout_collection_time_details.*
 import kotlinx.android.synthetic.main.layout_collection_user_information.*
@@ -69,8 +67,8 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
-import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.regex.Pattern
 

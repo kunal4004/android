@@ -32,8 +32,7 @@ import za.co.absa.openbankingapi.SymmetricCipher;
 import za.co.absa.openbankingapi.woolworths.integration.AbsaContentEncryptionRequest;
 import za.co.absa.openbankingapi.woolworths.integration.dto.CEKDResponse;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.util.FirebaseManager;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 
 public class AbsaBankingOpenApiRequest<T> extends Request<T> {
 
