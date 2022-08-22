@@ -8,6 +8,7 @@ import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.common.ClickOnDialogButton
 import za.co.woolworths.financial.services.android.common.CommonErrorBottomSheetDialog
+import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -20,7 +21,7 @@ class OCChatActivity : AppCompatActivity(R.layout.activity_one_cart_chat_activit
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        Utils.updateStatusBarBackground(this)
         orderID = checkNotNull(intent.getStringExtra(ORDER_ID))
 
         if (savedInstanceState != null && lastNonConfigurationInstance == null) {
