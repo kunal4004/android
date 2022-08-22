@@ -292,8 +292,11 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
     }
     inner class TrackOrderViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
         override fun bind(position: Int) {
+            val item = dataList[position].item as OrderDetailsResponse
             itemView.setOnClickListener {
-                listner.onOpenTrackOrderScreen()
+                item.orderSummary?.driverTrackingURL?.let {
+                    listner.onOpenTrackOrderScreen(it)
+                }
             }
         }
     }
@@ -325,7 +328,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
         fun onViewTaxInvoice()
         fun onCancelOrder()
         fun onOpenChatScreen(orderID: String?)
-        fun onOpenTrackOrderScreen()
+        fun onOpenTrackOrderScreen(orderTrackingURL:String)
     }
 
     fun getCommerceItemList(): MutableList<AddToListRequest> {
