@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="@dimen/_18sdp" />
+        app:layout_constraintGuide_end="@dimen/_15sdp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineStart"
@@ -33,7 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="@dimen/_18sdp" />
+        app:layout_constraintGuide_begin="@dimen/_15sdp" />
 
 
     <androidx.appcompat.widget.AppCompatImageView
