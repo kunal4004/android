@@ -647,7 +647,7 @@ public class SSOActivity extends WebViewActivity {
 					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
 					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.LOGIN, arguments, SSOActivity.this);
 
-					NotificationUtils.getInstance().sendRegistrationToServer();
+					NotificationUtils.Companion.sendRegistrationToServer(SSOActivity.this);
 					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.ACTIVE);
 					if (KotlinUtils.Companion.getAnonymousUserLocationDetails() != null) {
 						new ConfirmLocation().postRequest(KotlinUtils.Companion.getAnonymousUserLocationDetails());
