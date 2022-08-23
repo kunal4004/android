@@ -9,6 +9,7 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import android.widget.TextView
@@ -154,6 +155,7 @@ class CheckoutDashFragment : Fragment(),
         initializeDashingToView()
         initializeDashTimeSlots()
         getLiquorComplianceDetails()
+        hideGiftOption()
         hideInstructionLayout()
         callConfirmLocationAPI()
         setFragmentResults()
@@ -286,14 +288,6 @@ class CheckoutDashFragment : Fragment(),
             Pair<ShimmerFrameLayout, View>(
                 specialInstructionSwitchShimmerFrameLayout,
                 switchSpecialDeliveryInstruction
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                giftInstructionTxtShimmerFrameLayout,
-                txtGiftInstructions
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                giftInstructionSwitchShimmerFrameLayout,
-                switchGiftInstructions
             ),
             Pair<ShimmerFrameLayout, View>(txtYourCartShimmerFrameLayout, txtOrderSummaryYourCart),
             Pair<ShimmerFrameLayout, View>(
@@ -785,26 +779,15 @@ class CheckoutDashFragment : Fragment(),
 
     private fun initializeDeliveryInstructions() {
         edtTxtSpecialDeliveryInstruction?.addTextChangedListener(deliveryInstructionsTextWatcher)
-        edtTxtGiftInstructions?.addTextChangedListener(deliveryInstructionsTextWatcher)
         edtTxtInputLayoutSpecialDeliveryInstruction?.visibility = View.GONE
         edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = false
-        edtTxtInputLayoutGiftInstructions?.visibility = View.GONE
-        edtTxtInputLayoutGiftInstructions?.isCounterEnabled = false
         deliveryInstructionClickListener(switchSpecialDeliveryInstruction.isChecked)
-        giftClickListener(switchGiftInstructions.isChecked)
 
         switchSpecialDeliveryInstruction?.setOnCheckedChangeListener { _, isChecked ->
             if (loadingBar.visibility == View.VISIBLE) {
                 return@setOnCheckedChangeListener
             }
             deliveryInstructionClickListener(isChecked)
-        }
-
-        switchGiftInstructions?.setOnCheckedChangeListener { _, isChecked ->
-            if (loadingBar?.visibility == View.VISIBLE) {
-                return@setOnCheckedChangeListener
-            }
-            giftClickListener(isChecked)
         }
         if (AppConfigSingleton.nativeCheckout?.currentShoppingBag?.isEnabled == true) {
             switchNeedBags?.visibility = View.VISIBLE
@@ -838,19 +821,6 @@ class CheckoutDashFragment : Fragment(),
             if (isChecked) View.VISIBLE else View.GONE
         edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = isChecked
         edtTxtSpecialDeliveryInstruction?.visibility =
-            if (isChecked) View.VISIBLE else View.GONE
-    }
-
-    private fun giftClickListener(isChecked: Boolean) {
-        if (isChecked)
-            Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.CHECKOUT_IS_THIS_GIFT,
-                activity
-            )
-        edtTxtInputLayoutGiftInstructions?.visibility =
-            if (isChecked) View.VISIBLE else View.GONE
-        edtTxtInputLayoutGiftInstructions?.isCounterEnabled = isChecked
-        edtTxtGiftInstructions?.visibility =
             if (isChecked) View.VISIBLE else View.GONE
     }
 
@@ -1042,7 +1012,7 @@ class CheckoutDashFragment : Fragment(),
     }
 
     private fun onCheckoutPaymentClick() {
-        if (isRequiredFieldsMissing() || isInstructionsMissing() || isGiftMessage() || isAgeConfirmationLiquorCompliance()) {
+        if (isRequiredFieldsMissing() || isInstructionsMissing() || isAgeConfirmationLiquorCompliance()) {
             return
         }
 
@@ -1115,7 +1085,6 @@ class CheckoutDashFragment : Fragment(),
         radioGroupFoodSubstitution?.isClickable = isClickable
         checkoutDeliveryDetailsLayout?.isClickable = isClickable
         switchNeedBags?.isClickable = isClickable
-        switchGiftInstructions?.isClickable = isClickable
         switchSpecialDeliveryInstruction?.isClickable = isClickable
     }
 
@@ -1133,11 +1102,9 @@ class CheckoutDashFragment : Fragment(),
         substituesAllowed = selectedFoodSubstitution.rgb
         plasticBags = switchNeedBags?.isChecked ?: false
         shoppingBagType = selectedShoppingBagType
-        giftNoteSelected = switchGiftInstructions?.isChecked ?: false
         deliverySpecialInstructions =
             if (switchSpecialDeliveryInstruction?.isChecked == true) edtTxtSpecialDeliveryInstruction?.text.toString() else ""
-        giftMessage =
-            if (switchGiftInstructions?.isChecked == true) edtTxtGiftInstructions?.text.toString() else ""
+        giftMessage = ""
         suburbId = ""
         storeId = Utils.getPreferredDeliveryLocation()?.let {
             it.fulfillmentDetails.storeId
@@ -1155,20 +1122,11 @@ class CheckoutDashFragment : Fragment(),
         }
     }
 
-    private fun isGiftMessage(): Boolean {
-        return when (switchGiftInstructions?.isChecked) {
-            true -> {
-                if (TextUtils.isEmpty(edtTxtGiftInstructions?.text?.toString())) {
-
-                    deliverySummaryScrollView?.smoothScrollTo(
-                        0,
-                        layoutDeliveryInstructions?.top ?: 0
-                    )
-                    true
-                } else false
-            }
-            else -> false
-        }
+    private fun hideGiftOption() {
+        viewGiftHorizontalSeparator?.visibility = GONE
+        giftInstructionTxtShimmerFrameLayout.visibility = GONE
+        giftInstructionSwitchShimmerFrameLayout.visibility = GONE
+        edtTxtInputLayoutGiftInstructions.visibility = GONE
     }
 
     private fun isInstructionsMissing(): Boolean {
