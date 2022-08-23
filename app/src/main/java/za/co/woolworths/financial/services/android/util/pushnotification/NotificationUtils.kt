@@ -26,8 +26,8 @@ import java.util.function.Consumer
 
 class NotificationUtils {
     companion object {
-        private const val TOKEN_PROVIDER_FIREBASE = "firebase"
-        private const val TOKEN_PROVIDER_HMS = "hms"
+        const val TOKEN_PROVIDER_FIREBASE = "firebase"
+        const val TOKEN_PROVIDER_HMS = "hms"
 
         fun sendRegistrationToServer(context: Context) {
             if (Utils.isGooglePlayServicesAvailable()) {
