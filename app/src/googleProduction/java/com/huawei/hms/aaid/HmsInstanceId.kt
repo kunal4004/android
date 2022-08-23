@@ -8,12 +8,8 @@ import android.content.Context
  */
 class HmsInstanceId {
     companion object {
-        fun getInstance(context: Context): HmsInstanceId {
-            return HmsInstanceId()
-        }
+        fun getInstance(context: Context): HmsInstanceId = HmsInstanceId()
     }
 
-    fun getToken(appId: String, scope: String): String? {
-        return null
-    }
+    fun getToken(appId: String, scope: String): String? = null
 }

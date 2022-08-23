@@ -11,7 +11,7 @@ import androidx.navigation.Navigation
 import com.awfs.coordination.R
 
 import kotlinx.android.synthetic.main.secure_3d_webview_fragment.*
-import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
 class Secure3DPMAFragment : PMAFragment() {
 

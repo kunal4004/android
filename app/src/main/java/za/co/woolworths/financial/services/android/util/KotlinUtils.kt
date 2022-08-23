@@ -33,7 +33,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import com.awfs.coordination.R
 import com.google.common.reflect.TypeToken
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.installations.FirebaseInstallations
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -80,7 +79,8 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
-import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
@@ -737,9 +737,7 @@ class KotlinUtils {
         @SuppressLint("MissingPermission")
         @JvmStatic
         fun setUserPropertiesToNull() {
-            val firebaseInstance =
-                FirebaseAnalytics.getInstance(WoolworthsApplication.getAppContext())
-            firebaseInstance?.apply {
+            AnalyticsManager.apply {
                 setUserProperty(
                     FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_OFFERING,
                     FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE

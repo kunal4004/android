@@ -4,7 +4,6 @@ import android.os.Build
 import com.huawei.hms.push.HmsMessageService
 import com.huawei.hms.push.RemoteMessage
 import za.co.woolworths.financial.services.android.models.fcm.PushNotificationMessageType
-import za.co.woolworths.financial.services.android.util.NotificationUtils
 
 class WHuaweiMessagingService: HmsMessageService() {
 

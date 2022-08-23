@@ -5,7 +5,6 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.fcm.PushNotificationMessageType
-import za.co.woolworths.financial.services.android.util.NotificationUtils
 
 class WFirebaseMessagingService : FirebaseMessagingService() {
 

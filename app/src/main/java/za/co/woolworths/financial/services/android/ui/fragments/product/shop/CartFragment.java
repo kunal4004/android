@@ -117,7 +117,8 @@ import za.co.woolworths.financial.services.android.util.CartUtils;
 import za.co.woolworths.financial.services.android.util.Constant;
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.util.FirebaseManager;
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.MultiMap;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
@@ -525,11 +526,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
            //   - CNAV : Checkout  activity
 
             //firebase event begin_checkout
-            FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
             Bundle beginCheckoutParams = new Bundle();
             beginCheckoutParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE);
             beginCheckoutParams.putString(FirebaseAnalytics.Param.VALUE, String.valueOf(orderSummary.total));
-            mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT, beginCheckoutParams);
+            AnalyticsManager.Companion.logEvent(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT, beginCheckoutParams);
 
             Intent checkoutActivityIntent = new Intent(getActivity(), CheckoutActivity.class);
             checkoutActivityIntent.putExtra(SAVED_ADDRESS_KEY, response);
@@ -1095,8 +1095,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             }
 
             void removeItemFromCart(){
-                FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
-
                 Bundle removeFromCartParams = new Bundle();
                 removeFromCartParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE);
                 removeFromCartParams.putString(FirebaseAnalytics.Param.VALUE,  String.valueOf(commerceItem.getPriceInfo().amount));
@@ -1108,7 +1106,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 removeFromCartItem.putString(FirebaseAnalytics.Param.QUANTITY, String.valueOf(mCommerceItem.commerceItemInfo.quantity));
                 removeFromCartParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS,  new Parcelable[]{ removeFromCartItem });
 
-                mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.REMOVE_FROM_CART, removeFromCartParams);
+                AnalyticsManager.Companion.logEvent(FirebaseManagerAnalyticsProperties.REMOVE_FROM_CART, removeFromCartParams);
             }
 
             @Override
@@ -1290,11 +1288,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             setDeliveryLocation(lastDeliveryLocation);
         }
 
-        FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
         Bundle removeFromCartParams = new Bundle();
         removeFromCartParams.putString(FirebaseAnalytics.Param.CURRENCY,FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE);
         removeFromCartParams.putString(FirebaseAnalytics.Param.VALUE, " ");
-        mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.VIEW_CART, removeFromCartParams);
+        AnalyticsManager.Companion.logEvent(FirebaseManagerAnalyticsProperties.VIEW_CART, removeFromCartParams);
     }
 
     @Override
