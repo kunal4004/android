@@ -1262,7 +1262,6 @@ interface ApiInterface {
     ): EligibilityPlanResponse
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-
     @POST("wfs/app/v4/user/email/{emailId}")
     suspend fun queryServiceNotifyCardNotYetReceived(
         @Header("userAgent") userAgent: String,

@@ -30,6 +30,10 @@ public class AppInstanceObject {
     public AppInstanceObject() {
         users = new ArrayList<>();
         featureWalkThrough =  new FeatureWalkThrough();
+        setDefaultInAppChatTipAcknowledgements();
+    }
+
+    public void setDefaultInAppChatTipAcknowledgements() {
         inAppChatTipAcknowledgements = new InAppChatTipAcknowledgements(false, new ConfigChatEnabledForProductFeatures(false, false, false, false), new ConfigChatEnabledForProductFeatures(false, false, false, false), new ConfigChatEnabledForProductFeatures(false, false, false, false), false);
     }
 
