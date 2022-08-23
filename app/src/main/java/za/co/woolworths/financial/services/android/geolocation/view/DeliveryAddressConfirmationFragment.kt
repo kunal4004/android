@@ -529,7 +529,13 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                             }
 
                                             checkoutActivityIntent.putExtra(result, true)
-
+                                            bundle?.apply {
+                                                val liquorOrder = getBoolean(Constant.LIQUOR_ORDER)
+                                                val liquorImageUrl = getString(Constant.NO_LIQUOR_IMAGE_URL)
+                                                checkoutActivityIntent.putExtra(Constant.LIQUOR_ORDER, liquorOrder)
+                                                if(liquorImageUrl != null && !liquorImageUrl.isEmpty())
+                                                    checkoutActivityIntent.putExtra(Constant.NO_LIQUOR_IMAGE_URL,liquorImageUrl)
+                                            }
                                             activity?.apply {
                                                 startActivityForResult(
                                                     checkoutActivityIntent,
@@ -596,6 +602,13 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS,
             toJson
         )
+        bundle?.apply {
+            val liquorOrder = getBoolean(Constant.LIQUOR_ORDER)
+            val liquorImageUrl = getString(Constant.NO_LIQUOR_IMAGE_URL)
+            checkoutActivityIntent.putExtra(Constant.LIQUOR_ORDER, liquorOrder)
+            if(liquorImageUrl != null && !liquorImageUrl.isEmpty())
+                 checkoutActivityIntent.putExtra(Constant.NO_LIQUOR_IMAGE_URL,liquorImageUrl)
+        }
         activity?.let {
             startActivityForResult(
                 checkoutActivityIntent,
