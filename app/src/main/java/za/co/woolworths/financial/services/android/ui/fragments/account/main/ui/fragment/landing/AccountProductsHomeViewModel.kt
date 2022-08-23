@@ -1,24 +1,104 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlanResponse
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.getViewStateFlowForNetworkCall
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.repository.storecard.CollectionRepository
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.repository.storecard.ICollectionRepository
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.*
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.EligibilityImpl
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.IEligibilityImpl
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.IStoreCardNavigator
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.StoreCardNavigator
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOptionsScreenUI
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.IStoreCardNavigator
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.StoreCardNavigator
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanImpl
 import javax.inject.Inject
 
 @HiltViewModel
-class AccountProductsHomeViewModel @Inject constructor(screen: AccountProductLandingScreenStatus, account: AccountProductLandingDao, eligibilityImpl: EligibilityImpl, private val collectionRepository: CollectionRepository, val storeCardNavigator: StoreCardNavigator) : ViewModel(), IAccountProductLandingDao by account, IAccountProductLandingScreen by screen, IEligibilityImpl by eligibilityImpl,
-    ICollectionRepository by collectionRepository, IStoreCardNavigator by storeCardNavigator {
+class AccountProductsHomeViewModel @Inject constructor(
+    screen: AccountProductLandingScreenStatus,
+    account: AccountProductLandingDao,
+    private val collectionRepository: CollectionRepository,
+    val navigator: StoreCardNavigator,
+    val accountOptions: AccountOptionsImpl
+) : ViewModel(),
+    IAccountProductLandingDao by account,
+    IAccountOptions by accountOptions,
+    IAccountProductLandingScreen by screen,
+    ICollectionRepository by collectionRepository,
+    IStoreCardNavigator by navigator {
 
+    var bottomSheetBehaviorState: Int? = BottomSheetBehavior.STATE_COLLAPSED
 
-    suspend fun eligibilityPlanResponse() = getViewStateFlowForNetworkCall { queryServiceCheckCustomerEligibilityPlan() }
+    private val _isBottomSheetBehaviorExpanded = MutableSharedFlow<Boolean>()
+    val isBottomSheetBehaviorExpanded: SharedFlow<Boolean> = _isBottomSheetBehaviorExpanded
+
+    fun setIsBottomSheetBehaviorExpanded(isExpanded : Boolean){
+        viewModelScope.launch { _isBottomSheetBehaviorExpanded.emit(isExpanded) }
+    }
+
+    var mViewTreatmentPlanImpl: ViewTreatmentPlanImpl? = null
+
+    private val _viewState = MutableSharedFlow<List<AccountOptionsScreenUI>>()
+    val viewState: SharedFlow<List<AccountOptionsScreenUI>> = _viewState
+
+    fun setUpViewTreatmentPlan(eligibilityPlan: EligibilityPlan?) {
+         mViewTreatmentPlanImpl = ViewTreatmentPlanImpl(
+            account = product,
+            applyNowState = ApplyNowState.STORE_CARD,
+            eligibilityPlan = eligibilityPlan
+        )
+    }
+
+    fun init() {
+        with(_viewState) {
+            viewModelScope.launch {
+                emit(balanceProtectionInsurance())
+                emit(isDebitOrderActive())
+                emit(paymentOptions())
+                emit(withdrawCashNow())
+            }
+        }
+    }
+
+    fun updateBPI(account: Account) {
+        viewModelScope.launch {
+            product?.bpiInsuranceApplication = account.bpiInsuranceApplication
+            _viewState.emit(balanceProtectionInsurance())
+        }
+    }
+
+    fun emitEligibilityPlan(eligibilityPlan: EligibilityPlan?){
+        viewModelScope.launch {
+            eligibilityPlan?.let { plan ->
+                if (!plan.actionText.isNullOrEmpty() && !plan.displayText.isNullOrEmpty()) {
+                    _viewState.emit(collectionTreatmentPlanItem(plan))
+                }
+            }
+        }
+    }
+
+    /**
+     * _accountsCollectionsCheckEligibility will determine the visibility of collection journey
+     * (view treatment plan elite plan etc)
+     */
+    private val _accountsCollectionsCheckEligibility =
+        MutableSharedFlow<ViewState<EligibilityPlanResponse>>(0)
+    val accountsCollectionsCheckEligibility: SharedFlow<ViewState<EligibilityPlanResponse>> =
+        _accountsCollectionsCheckEligibility
+
+    fun requestAccountsCollectionsCheckEligibility() = viewModelScope.launch {
+        getViewStateFlowForNetworkCall { queryServiceCheckCustomerEligibilityPlan() }.collect {
+            _accountsCollectionsCheckEligibility.emit(it)
+        }
+    }
 }

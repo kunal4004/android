@@ -16,11 +16,16 @@ class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDe
         mainView = null
     }
 
-    override fun loadStockAvailability(storeID: String, multiSKU: String, isDefaultRequest: Boolean) {
+    override fun loadStockAvailability(
+        storeID: String,
+        multiSKU: String,
+        isDefaultRequest: Boolean,
+        isUserBrowsing: Boolean
+    ) {
         this.isDefaultRequest = isDefaultRequest;
         mainView?.apply {
             showProgressBar()
-            getInteractor.getStockAvailability(storeID, multiSKU, this@ProductDetailsPresenterImpl)
+            getInteractor.getStockAvailability(storeID, multiSKU, this@ProductDetailsPresenterImpl, isUserBrowsing)
         }
     }
 

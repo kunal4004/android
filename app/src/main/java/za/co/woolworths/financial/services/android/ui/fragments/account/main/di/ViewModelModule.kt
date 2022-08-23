@@ -13,6 +13,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dom
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.ManageCardFunctionalRequirementImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.creditcard.CreditCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.creditcard.CreditCardService
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.feature_pay_my_account.PaymentsPayuMethodsDataSource
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -44,5 +45,9 @@ object ViewModelModule {
 
     @Provides
     fun provideAccountProductLandingDao() = AccountProductLandingDao()
+
+    @Provides
+    fun providePaymentsPayuMethodsDataSource(remoteDataSource: WfsApiService) = PaymentsPayuMethodsDataSource(remoteDataSource)
+
 
 }

@@ -27,7 +27,14 @@
         android:id="@+id/manageCardViewPagerFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.ManageCardViewPagerFragment"
         android:label="ManageCardViewPagerFragment"
-        tools:layout="@layout/manage_card_viewpager_fragment" />
+        tools:layout="@layout/manage_card_viewpager_fragment" >
+        <action
+            android:id="@+id/action_manageCardViewPagerFragment_to_accountOptionsManageCardFragment2"
+            app:destination="@id/accountOptionsManageCardFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/accountOptionsManageCardFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
     <dialog
         android:id="@+id/generalErrorDialogPopupFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.error_handler.GeneralErrorDialogPopupFragment"

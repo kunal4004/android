@@ -14,7 +14,13 @@ class ManageStoreCardMoreDetail(
 ) {
 
     fun setupView(storeCardFeatureType: StoreCardFeatureType?) {
+        isManageCardSubcategoryLabelVisible(true)
         when (storeCardFeatureType) {
+
+            is StoreCardFeatureType.StoreCardFreezeCardUpShellMessage,
+            is StoreCardFeatureType.StoreCardActivateVirtualTempCardUpShellMessage -> {
+                isManageCardSubcategoryLabelVisible(false)
+            }
 
             is StoreCardFeatureType.ActivateVirtualTempCard -> {
                 setPrimaryCardLabel()
@@ -46,7 +52,7 @@ class ManageStoreCardMoreDetail(
         }
     }
 
-    private fun setSubTitleLabel(@StringRes id : Int? = null) {
+    private fun setSubTitleLabel(@StringRes id: Int? = null) {
         with(binding) {
             when (id == null) {
                 true -> {
@@ -61,6 +67,21 @@ class ManageStoreCardMoreDetail(
                 }
             }
         }
+    }
+
+    private fun isManageCardSubcategoryLabelVisible(isVisible: Boolean) {
+        with(binding) {
+            if (isVisible) {
+                headerTextView.visibility =  View.VISIBLE
+                cardDetailDivider.visibility = View.VISIBLE
+                cardDetailLinearLayout.visibility = View.VISIBLE
+            }else {
+                headerTextView.visibility =  View.INVISIBLE
+                cardDetailDivider.visibility =  View.INVISIBLE
+                cardDetailLinearLayout.visibility =  View.INVISIBLE
+            }
+        }
+
     }
 
     private fun setPrimaryCardLabel() {

@@ -18,8 +18,8 @@
         <ImageView
             android:id="@+id/viewPaymentOptionImageView"
             style="@style/accountPaymentOptionIconImageViewStyle"
-            android:layout_width="@dimen/_32sdp"
-            android:layout_height="@dimen/_32sdp"
+            android:layout_width="@dimen/icon_dimens"
+            android:layout_height="@dimen/icon_dimens"
             android:contentDescription="@string/label_payment_options"
             app:layout_constraintBottom_toTopOf="@+id/paymentOptionTextView"
             app:srcCompat="@drawable/icon_money"

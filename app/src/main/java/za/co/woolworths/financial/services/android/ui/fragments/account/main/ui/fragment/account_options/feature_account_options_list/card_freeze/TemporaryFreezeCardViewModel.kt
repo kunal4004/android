@@ -23,11 +23,20 @@ import javax.inject.Inject
 @HiltViewModel
 class TemporaryFreezeCardViewModel @Inject constructor(private val storeCardDataSource: StoreCardDataSource) : ViewModel(), IStoreCardDataSource by storeCardDataSource {
 
+    // Store card type visible to user
     var mStoreCardType  : StoreCardType = StoreCardType.None
 
+    val onUpshellMessageFreezeCardTap : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+
+    // Loader for temporary freeze UnFreeze api
     val isTempFreezeUnFreezeLoading: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+
+    // Temporary freeze or unfreeze store card switcher listener value
     val isSwitcherEnabled: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+
+    // ViewPager current position value
     val currentPagePosition: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+
 
     init {
         currentPagePosition.value = 0
@@ -78,4 +87,5 @@ class TemporaryFreezeCardViewModel @Inject constructor(private val storeCardData
     fun resetCardPosition() {
         currentPagePosition.value = 0
     }
+
 }

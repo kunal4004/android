@@ -22,6 +22,7 @@
         android:paddingEnd="@dimen/_10sdp">
 
         <LinearLayout
+            android:id="@+id/contentLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"

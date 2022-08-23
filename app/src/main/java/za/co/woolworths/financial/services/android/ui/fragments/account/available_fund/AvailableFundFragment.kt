@@ -48,6 +48,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorMessageDialogWithTitleFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_CHAT_TO_US_BUTTON
@@ -58,6 +59,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DP
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import java.net.ConnectException
+
 
 open class AvailableFundFragment : Fragment(), IAvailableFundsContract.AvailableFundsView {
     private lateinit var mAvailableFundPresenter: AvailableFundsPresenterImpl
@@ -173,35 +175,35 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                 payMyAccountViewModel.setPMACardInfo(card)
 
                 payMyAccountViewModel.queryServicePayUPaymentMethod(
-                        { // onSuccessResult
-                            if (!isAdded) return@queryServicePayUPaymentMethod
+                    { // onSuccessResult
+                        if (!isAdded) return@queryServicePayUPaymentMethod
+                        stopProgress()
+                        (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.pmaStatusImpl?.pmaSuccess()
+                        payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
+                        navigateToDeepLinkView(DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT, incPayMyAccountButton)
+                    }, { onSessionExpired ->
+                        if (!isAdded) return@queryServicePayUPaymentMethod
+                        activity?.let {
                             stopProgress()
-                            (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.pmaStatusImpl?.pmaSuccess()
                             payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
-                            navigateToDeepLinkView(DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT, incPayMyAccountButton)
-                        }, { onSessionExpired ->
-                    if (!isAdded) return@queryServicePayUPaymentMethod
-                    activity?.let {
+                            SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, onSessionExpired, it)
+
+                        }
+                    }, { // on unknown http error / general error
+                        if (!isAdded) return@queryServicePayUPaymentMethod
                         stopProgress()
                         payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
-                        SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, onSessionExpired, it)
 
-                    }
-                }, { // on unknown http error / general error
-                    if (!isAdded) return@queryServicePayUPaymentMethod
-                    stopProgress()
-                    payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
-
-                }, { throwable ->
-                    if (!isAdded) return@queryServicePayUPaymentMethod
-                    activity?.runOnUiThread {
-                        stopProgress()
-                    }
-                    payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
-                    if (throwable is ConnectException) {
-                        payMyAccountViewModel.isQueryPayUPaymentMethodComplete = false
-                    }
-                })
+                    }, { throwable ->
+                        if (!isAdded) return@queryServicePayUPaymentMethod
+                        activity?.runOnUiThread {
+                            stopProgress()
+                        }
+                        payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
+                        if (throwable is ConnectException) {
+                            payMyAccountViewModel.isQueryPayUPaymentMethodComplete = false
+                        }
+                    })
             }
             false -> return
         }
@@ -229,7 +231,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                 val currentBalance = Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCentWithSpace(currentBalance))
                 val creditLimit = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.formatAmountToRandAndCentWithSpace(creditLimit), 1))
                 val paymentDueDate = paymentDueDate?.let { paymentDueDate -> WFormatter.addSpaceToDate(WFormatter.newDateFormat(paymentDueDate)) }
-                        ?: "N/A"
+                    ?: "N/A"
                 val amountOverdue = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.formatAmountToRandAndCentWithSpace(amountOverdue), 1))
 
                 val totalAmountDueAmount = Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCentWithSpace(totalAmountDue))
@@ -304,7 +306,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     override fun handleSessionTimeOut(stsParams: String) {
         if (fragmentAlreadyAdded()) return
         (activity as? AccountSignedInActivity)?.let {
-            accountSignedInActivity ->
+                accountSignedInActivity ->
             FirebaseEventDetailManager.timeout(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, accountSignedInActivity)
             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, stsParams, accountSignedInActivity)
         }

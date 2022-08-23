@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.models.dto.app_config
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
+import za.co.woolworths.financial.services.android.models.dto.npc.PrimaryCard
 
 @Parcelize
 data class ConfigVirtualTempCard(
@@ -10,6 +11,7 @@ data class ConfigVirtualTempCard(
         val cardDisplayTitle: String? = null,
         val barcodeDisplayTitle: String? = null,
         val barcodeDisplaySubtitle: String? = null,
+        val primaryCardBlockRequired: Boolean = true,
         val replacementCardSuccessfullyOrderedTitle: String? = null,
         val replacementCardSuccessfullyOrderedDescription: String? = null,
         var isEnabled: Boolean = false

@@ -8,8 +8,8 @@
     <ImageView
         android:id="@+id/viewStatementImageView"
         style="@style/accountPaymentOptionIconImageViewStyle"
-        android:layout_width="@dimen/_32sdp"
-        android:layout_height="@dimen/_32sdp"
+        android:layout_width="@dimen/icon_dimens"
+        android:layout_height="@dimen/icon_dimens"
         android:contentDescription="@string/view_statements"
         android:src="@drawable/calendar_white"
         app:layout_constraintBottom_toTopOf="@+id/viewStatementTextView"

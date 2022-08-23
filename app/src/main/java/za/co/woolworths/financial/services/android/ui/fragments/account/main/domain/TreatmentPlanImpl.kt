@@ -34,13 +34,15 @@ class TreatmentPlanImpl @Inject constructor(private val accountProductLandingDao
     }
 
     override fun isViewTreatmentPlanSupported(): Boolean {
-        return (getAccountsDelinquencyCycle()!! >= minimumViewTreatmentDelinquencyCycle() ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT) && isTreatmentPlanSupported(
+        return (getAccountsDelinquencyCycle()!! >= (minimumViewTreatmentDelinquencyCycle()
+            ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT)) && isTreatmentPlanSupported(
             configAccountOptions?.showTreatmentPlanJourney
         )
     }
 
     override fun isTakeUpTreatmentPlanJourneyEnabled(): Boolean {
-        return (getAccountsDelinquencyCycle()!! >= minimumTakeUpTreatmentDelinquencyCycle() ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT) && isTreatmentPlanSupported(
+        return (getAccountsDelinquencyCycle()!! >= (minimumTakeUpTreatmentDelinquencyCycle()
+            ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT)) && isTreatmentPlanSupported(
             configAccountOptions?.collectionsStartNewPlanJourney
         )
     }

@@ -9,13 +9,10 @@ import androidx.navigation.NavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountProductLandingActivityBinding
 import dagger.hilt.android.AndroidEntryPoint
-import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.AccountProductsMainFragment
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.ACCOUNT_PRODUCT_PAYLOAD
-import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.ui.views.snackbar.OneAppSnackbar
 import java.util.*
 import javax.inject.Inject
@@ -26,7 +23,7 @@ class StoreCardActivity : AppCompatActivity() {
 
     lateinit var binding: AccountProductLandingActivityBinding
 
-    val viewModel: AccountProductsHomeViewModel by viewModels()
+    val homeViewModel: AccountProductsHomeViewModel by viewModels()
 
     @Inject lateinit var statusBarCompat: SystemBarCompat
 
@@ -34,7 +31,6 @@ class StoreCardActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         binding = AccountProductLandingActivityBinding.inflate(layoutInflater)
-        viewModel.product = Utils.jsonStringToObject(intent.extras?.getString(ACCOUNT_PRODUCT_PAYLOAD),Account::class.java) as Account
         setContentView(binding.root)
         statusBarCompat.setLightStatusAndNavigationBar()
         setupView()
@@ -58,6 +54,8 @@ class StoreCardActivity : AppCompatActivity() {
     }
 
     fun getToolbarHelper() = getMainFragment()?.mToolbarContainer
+
+    fun getBackIcon() = getToolbarHelper()?.getBackIcon()
 
     fun showToast(@StringRes stringId : Int) {
         OneAppSnackbar.make(binding.rootContainer.rootView, bindString(stringId).toUpperCase(

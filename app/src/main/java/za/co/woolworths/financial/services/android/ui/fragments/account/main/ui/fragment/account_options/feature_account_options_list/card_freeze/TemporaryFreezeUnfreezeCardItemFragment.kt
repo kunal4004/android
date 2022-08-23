@@ -54,6 +54,11 @@ class TemporaryFreezeUnfreezeCardItemFragment : Fragment(R.layout.temporary_free
             switchTemporaryFreezeCard.isChecked = isSwitcherEnabled
         }
 
+        viewModel.onUpshellMessageFreezeCardTap.observe(viewLifecycleOwner){ isActive ->
+            if (isActive)
+                switchTemporaryFreezeCard.performClick()
+        }
+
         // Collects api/view results from freeze/unfreeze store card
         lifecycleScope.launch {
             viewModel.blockMyCardResponse.collectLatest { state ->
@@ -105,8 +110,8 @@ class TemporaryFreezeUnfreezeCardItemFragment : Fragment(R.layout.temporary_free
 
     // Callbacks for Freeze/Unfreeze dialog
     private fun TemporaryFreezeUnfreezeCardItemFragmentBinding.setResultListeners() {
-        setFragmentResultListener(AccountOptionsManageCardFragment.MANAGE_CARD_ACCOUNT_OPTIONS) { _, bundle ->
-            when (bundle.getString(AccountOptionsManageCardFragment.MANAGE_CARD_ACCOUNT_OPTIONS, "")) {
+        setFragmentResultListener(AccountOptionsManageCardFragment.AccountOptionsLandingKey) { _, bundle ->
+            when (bundle.getString(AccountOptionsManageCardFragment.AccountOptionsLandingKey, "")) {
 
                 TemporaryFreezeCardFragment.TEMPORARY_FREEZE_CARD_FRAGMENT_CONFIRM_RESULT -> {
                     viewModel.queryServiceBlockCardTypeFreeze()
@@ -134,7 +139,8 @@ class TemporaryFreezeUnfreezeCardItemFragment : Fragment(R.layout.temporary_free
 
     private fun TemporaryFreezeUnfreezeCardItemFragmentBinding.setupTemporaryFreezeCardSwipe() {
         switchTemporaryFreezeCard.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (buttonView.isPressed) { // block is active for user interaction only
+            if (buttonView.isPressed || viewModel.onUpshellMessageFreezeCardTap.value == true) { // b
+                viewModel.onUpshellMessageFreezeCardTap.value = false// lock is active for user interaction only
                 when (isChecked) {
                     true -> findNavController().navigate(
                         TemporaryFreezeUnfreezeCardItemFragmentDirections.actionTemporaryFreezeUnfreezeCardItemFragmentToTemporaryFreezeCardFragment()

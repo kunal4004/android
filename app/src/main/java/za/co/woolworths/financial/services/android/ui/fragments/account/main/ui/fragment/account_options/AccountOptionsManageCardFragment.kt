@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountOptionsManageCardFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.LoaderType
@@ -36,11 +37,14 @@ import javax.inject.Inject
 class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manage_card_fragment) {
 
     companion object {
-        const val MANAGE_CARD_ACCOUNT_OPTIONS = "AccountOptionsManageCardFragment"
+        val AccountOptionsLandingKey: String by lazy { AccountOptionsManageCardFragment::class.java.simpleName }
     }
 
-    @Inject lateinit var router: ProductLandingRouterImpl
-    @Inject lateinit var connectivityLiveData: ConnectivityLiveData
+    @Inject
+    lateinit var router: ProductLandingRouterImpl
+
+    @Inject
+    lateinit var connectivityLiveData: ConnectivityLiveData
 
     private lateinit var mOnItemClickListener: ManageCardItemListener
     private lateinit var mHeaderItems: ManageCardLandingHeaderItems
@@ -48,15 +52,22 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
 
     val viewModel: MyAccountsRemoteApiViewModel by activityViewModels()
     private val cardFreezeViewModel: TemporaryFreezeCardViewModel by activityViewModels()
+
     private val activityLauncher = BetterActivityResult.registerActivityForResult(this)
 
     private val landingController by lazy { (requireActivity() as? StoreCardActivity)?.landingNavController() }
     private lateinit var locator: Locator
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.requestGetStoreCardCards()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(AccountOptionsManageCardFragmentBinding.bind(view)) {
-            mHeaderItems = ManageCardLandingHeaderItems(viewModel, this, this@AccountOptionsManageCardFragment)
+            mHeaderItems =
+                ManageCardLandingHeaderItems(viewModel, this, this@AccountOptionsManageCardFragment)
             mItemList = ManageStoreCardLandingList(
                 cardFreezeViewModel,
                 includeListOptions,
@@ -84,7 +95,8 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
     }
 
     private fun AccountOptionsManageCardFragmentBinding.setOnClickListener() {
-        mOnItemClickListener = ManageCardItemListener(requireActivity(), router, includeListOptions).apply {
+        mOnItemClickListener =
+            ManageCardItemListener(requireActivity(), router, includeListOptions).apply {
                 onClickIntentObserver.observe(viewLifecycleOwner) {
                     when (it) {
                         is CallBack.IntentCallBack -> {
@@ -92,12 +104,12 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
                                 launchStoreCard(intent)
                             }
                         }
-                        else->Unit
+                        else -> Unit
                     }
                 }
             }
         manageCardText.onClick {
-            viewModel.apply { emitEventOnCardTap(mStoreCardFeatureType)  }
+            viewModel.apply { emitEventOnCardTap(mStoreCardFeatureType) }
         }
     }
 
@@ -116,7 +128,20 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
         setCardLabel()
         startLocationDiscoveryProcess()
         mItemList.setupVirtualTemporaryCardGraph()
+        setFragResultListener()
     }
+
+    // The fragment will reload when user navigates back to account options,
+    // then refreshRequestStoreCardCards can be consumed if output true
+    private fun setFragResultListener() {
+        with(viewModel) {
+            if (refreshApiModel.refreshRequestStoreCardCards) {
+                requestGetStoreCardCards()
+                setRefreshRequestStoreCardCards(false)
+            }
+        }
+    }
+
 
     private fun setCardLabel() {
         mHeaderItems.setCardLabel()
@@ -132,27 +157,31 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
 
     private fun AccountOptionsManageCardFragmentBinding.subscribeObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
-            connectivityLiveData.observe(viewLifecycleOwner){ isConnectionAvailable ->
-                if (isConnectionAvailable && viewModel.retryNetworkRequest.isConnectionAvailableForGetStoreCard()){
-                   lifecycleScope.launch { viewModel.requestGetStoreCardCards() }
+            connectivityLiveData.observe(viewLifecycleOwner) { isConnectionAvailable ->
+                if (isConnectionAvailable && viewModel.retryNetworkRequest.isConnectionAvailableForGetStoreCard()) {
+                    lifecycleScope.launch { viewModel.requestGetStoreCardCards() }
                 }
             }
         }
-
-        viewLifecycleOwner.lifecycleScope.launch {
+            lifecycleScope.launch {
             with(viewModel) {
-                requestGetStoreCardCards()
                 storeCardResponseResult.collectLatest { response ->
                     retryNetworkRequest.popStoreCardRequest()
                     locator.stopService()
                     with(response) {
                         renderNoConnection {
                             retryNetworkRequest.putStoreCardRequest()
-                            router.showNoConnectionToast(requireActivity()) }
+                            router.showNoConnectionToast(requireActivity())
+                        }
 
                         renderLoading { showProgress(this@subscribeObservers, this) }
 
-                        renderHttpFailureFromServer { router.routeToServerErrorDialog(requireActivity(), output.response) }
+                        renderHttpFailureFromServer {
+                            router.routeToServerErrorDialog(
+                                requireActivity(),
+                                output.response
+                            )
+                        }
 
                         renderFailure { router.routeToDefaultErrorMessageDialog(requireActivity()) }
 
@@ -166,19 +195,21 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
                 if (landingController?.currentDestination?.label?.equals(ManageMyCardDetailsFragment::class.java.simpleName) == true) {
                     return@collectLatest
                 }
-
                 landingController?.let { controller -> router.routeToManageMyCardDetails(controller) }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.onViewPagerPageChangeListener.collectLatest { feature ->
+            viewModel.onViewPagerPageChangeListener.collect { feature ->
                 setCardLabel()
                 mHeaderItems.showHeaderItem(feature)
                 mItemList.showListItem(feature) { result ->
                     when (result) {
                         is ListCallback.CardNotReceived -> {
-                            if (result.isCardNotReceived) mItemList.showCardNotReceivedDialog(this@AccountOptionsManageCardFragment)}
+                            if (result.isCardNotReceived && feature.isPopupVisibleInCardDetailLanding) mItemList.showCardNotReceivedDialog(
+                                this@AccountOptionsManageCardFragment
+                            )
+                        }
                     }
                 }
             }

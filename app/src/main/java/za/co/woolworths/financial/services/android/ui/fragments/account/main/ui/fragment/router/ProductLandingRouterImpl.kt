@@ -29,6 +29,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.T
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ToastFactory
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountOptionsImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_credit_limit_increase.CreditLimitIncreaseLanding
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.ManageMyCardDetailsFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.PayWithCardListFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.ManageCardFunctionalRequirementImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.showErrorDialog
@@ -72,6 +73,7 @@ interface IProductLandingRouter {
     fun routeToManageMyCardDetails(findNavController: NavController)
     fun routeToDefaultErrorMessageDialog(activity: Activity?)
     fun showNoConnectionToast(activity: Activity?)
+    fun routeToAccountOptionsProductLanding(findNavController: NavController?)
 }
 
 sealed class CallBack{
@@ -316,6 +318,10 @@ class ProductLandingRouterImpl @Inject constructor(
 
     override fun showNoConnectionToast(activity: Activity?) {
         ToastFactory.showNoConnectionFound(activity)
+    }
+
+    override fun routeToAccountOptionsProductLanding(findNavController: NavController?) {
+        findNavController?.navigate(ManageMyCardDetailsFragmentDirections.actionManageMyCardDetailsFragmentToAccountProductsHomeFragment())
     }
 
     companion object {

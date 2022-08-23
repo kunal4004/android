@@ -12,8 +12,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dom
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.BalanceProtectionInsuranceImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.IAccountProductLandingDao
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.IBalanceProtectionInsurance
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.IStoreCardNavigator
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.StoreCardNavigator
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.IStoreCardNavigator
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.StoreCardNavigator
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.ManageCardFunctionalRequirementImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.IProductLandingRouter

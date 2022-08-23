@@ -27,10 +27,12 @@ import javax.inject.Inject
 @HiltViewModel
 class AvailableFundsViewModel @Inject constructor(
     repository: StoreCardRepository,
+    removeBlockOnCollectionImpl: RemoveBlockOnCollectionImpl,
     val availableFunds: AvailableFundsImpl,
     private val creditCardDataSource: CreditCardDataSource
     ) : PayMyAccountViewModel(), IAvailableFundsImpl by availableFunds,
-    ICreditCardDataSource by creditCardDataSource {
+    ICreditCardDataSource by creditCardDataSource,
+    IRemoveBlockOnCollection by removeBlockOnCollectionImpl{
 
     /**
      * [MutableLiveData] to notify the Popular photos list view with the list of photos
@@ -144,5 +146,6 @@ class AvailableFundsViewModel @Inject constructor(
             }
         }
     }
+
 }
 

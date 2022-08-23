@@ -38,6 +38,11 @@ interface WfsApiService {
         @Header("deviceIdentityToken") deviceIdentityToken: String
     ): Response<PaymentMethodsResponse>
 
+    @GET("wfs/app/v4/payments/payu/methods")
+    suspend fun getPaymentsPayUMethods(
+        @Header("deviceIdentityToken") deviceIdentityToken: String
+    ): Response<PaymentMethodsResponse>
+
 
     @Headers(
         "Content-Type: application/json",
