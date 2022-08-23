@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountOptionsManageCardFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.LoaderType
@@ -199,13 +200,13 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.onViewPagerPageChangeListener.collectLatest { feature ->
+            viewModel.onViewPagerPageChangeListener.collect { feature ->
                 setCardLabel()
                 mHeaderItems.showHeaderItem(feature)
                 mItemList.showListItem(feature) { result ->
                     when (result) {
                         is ListCallback.CardNotReceived -> {
-                            if (result.isCardNotReceived) mItemList.showCardNotReceivedDialog(
+                            if (result.isCardNotReceived && feature.isPopupVisibleInCardDetailLanding) mItemList.showCardNotReceivedDialog(
                                 this@AccountOptionsManageCardFragment
                             )
                         }

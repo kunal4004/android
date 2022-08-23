@@ -1,4 +1,5 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:color="@color/black" android:state_selected="true" />
-    <item android:color="@color/drawer_color"/>
+    <item android:color="@color/white" android:state_selected="true" />
+    <item android:color="@color/color_222222" android:state_selected="false"/>
+    <item android:color="@color/color_222222" />
 </selector>

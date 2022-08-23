@@ -66,12 +66,16 @@ class ManageCardLandingHeaderItems(
         manageCardLabelVisibility(isVisible = false, isLabelUnderline = false)
         when (val featureType = storeCardFeatureType.feature) {
 
-            is StoreCardFeatureType.ActivateVirtualTempCard -> {
+            is StoreCardFeatureType.StoreCardActivateVirtualTempCardUpShellMessage
+                ,is StoreCardFeatureType.StoreCardFreezeCardUpShellMessage -> {
                 myCardLabelVisibility(true)
                 manageCardLabelVisibility(isVisible = true, isLabelUnderline = true)
             }
 
-            is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive ->{
+            is StoreCardFeatureType.ManageMyCard,
+            is StoreCardFeatureType.TemporaryCardEnabled,
+            is StoreCardFeatureType.ActivateVirtualTempCard,
+            is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive -> {
                 myCardLabelVisibility(true)
                 manageCardLabelVisibility(isVisible = true, isLabelUnderline = true)
             }
@@ -89,18 +93,6 @@ class ManageCardLandingHeaderItems(
                         myCardLabelVisibility(true)
                     }
                 }
-            }
-
-            is StoreCardFeatureType.TemporaryCardEnabled -> {
-             //   setBadge(R.string.temp_card, R.string.orange_tag, false)
-                manageCardLabelVisibility(isVisible = true, isLabelUnderline = true)
-                myCardLabelVisibility(true)
-            }
-
-            is StoreCardFeatureType.ManageMyCard -> {
-//                setBadge(R.string.inactive, R.string.red_tag, false)
-                manageCardLabelVisibility(isVisible = true, isLabelUnderline = true)
-                myCardLabelVisibility(true)
             }
 
             else -> Unit

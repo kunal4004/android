@@ -33,7 +33,12 @@ data class RefreshApiModel(
     val refreshRequestCliActiveOffer: Boolean = false
 )
 
-data class StoreCardInfo(val feature : StoreCardFeatureType?,val position : Int)
+data class StoreCardInfo(
+    val feature: StoreCardFeatureType?,
+    val position: Int,
+    var isPopupVisibleInAccountLanding: Boolean,
+    var isPopupVisibleInCardDetailLanding: Boolean
+)
 
 @HiltViewModel
 class MyAccountsRemoteApiViewModel @Inject constructor(
@@ -125,12 +130,14 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
         }
     }
 
-    fun onCardPagerPageSelected(
+    fun onManageCardPagerFragmentSelected(
         storeCardFeatureType: StoreCardFeatureType?,
-        position: Int) {
+        position: Int,
+        isPopupVisibleInAccountLanding: Boolean,
+        isPopupVisibleInCardDetailLanding: Boolean) {
         viewModelScope.launch {
             mStoreCardFeatureType = storeCardFeatureType
-            _onViewPagerPageChangeListener.emit(StoreCardInfo(storeCardFeatureType, position))
+            _onViewPagerPageChangeListener.emit(StoreCardInfo(storeCardFeatureType, position, isPopupVisibleInAccountLanding, isPopupVisibleInCardDetailLanding))
         }
     }
 

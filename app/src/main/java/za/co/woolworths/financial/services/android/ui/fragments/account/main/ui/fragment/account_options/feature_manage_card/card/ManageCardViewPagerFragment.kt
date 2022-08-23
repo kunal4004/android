@@ -7,7 +7,6 @@ import android.view.View.VISIBLE
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ManageCardViewpagerFragmentBinding
@@ -45,7 +44,7 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
     }
 
     private fun ManageCardViewpagerFragmentBinding?.subscribeObservers() {
-        viewLifecycleOwner.lifecycleScope.launch {
+        lifecycleScope.launch {
             with(viewModel) {
                 storeCardResponseResult.collectLatest { response ->
                     with(response) {
@@ -54,14 +53,22 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
                             manageCardAdapter?.setItem(listOfStoreCardFeatures)
                             setDotIndicatorVisibility(listOfStoreCardFeatures)
                             val currentPosition = getCardPosition(listOfStoreCardFeatures)
-                            viewModel.onCardPagerPageSelected(
-                                listOfStoreCardFeatures?.get(
-                                    currentPosition
-                                ), currentPosition)
+                            viewModel.onManageCardPagerFragmentSelected(
+                                listOfStoreCardFeatures?.get(currentPosition), currentPosition,
+                                isPopupVisibleInAccountLanding = false,
+                                isPopupVisibleInCardDetailLanding = false
+                            )
                             handleBlockUnBlockStoreCardResult()
                         }
                     }
                 }
+            }
+        }
+
+        lifecycleScope.launch {
+            cardFreezeViewModel.onUpshellMessageFreezeCardTap.observe(viewLifecycleOwner){ isActive ->
+                if (isActive)
+                    this@subscribeObservers?.cardItemViewPager?.setCurrentItem(0, true)
             }
         }
     }
@@ -78,7 +85,7 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
         when (val type = cardFreezeViewModel.mStoreCardType) {
             is StoreCardType.PrimaryCard -> {
                 (activity as? StoreCardActivity)?.showToast(
-                    if (type.block == BlockStoreCardType.BLOCK) {
+                    if (type.block == BlockStoreCardType.FREEZE) {
                         R.string.card_temporarily_frozen_label
                     } else R.string.card_temporarily_unfrozen_label
                 )
@@ -112,26 +119,41 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
             TabLayoutMediator(cardTabLayout, this) { _, _ -> }.attach()
 
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
-                    onPagerSelected(position)
+                    onPagerSelected(position,
+                        isPopupVisibleInAccountLanding = true,
+                        isPopupVisibleInCardDetailLanding = true
+                    )
                 }
             })
         }
 
         manageCardAdapter?.setItem(viewModel.listOfStoreCardFeatureType)
         setDotIndicatorVisibility(viewModel.listOfStoreCardFeatureType)
+
+        onPagerSelected(cardFreezeViewModel.currentPagePosition.value ?: 0,
+            isPopupVisibleInAccountLanding = false,
+            isPopupVisibleInCardDetailLanding = false
+        )
+
         this@initCardViewPager?.cardItemViewPager?.setCurrentItem(
             cardFreezeViewModel.currentPagePosition.value ?: 0, false
         )
+
     }
 
-    private fun onPagerSelected(position: Int) {
+    private fun onPagerSelected(position: Int, isPopupVisibleInAccountLanding : Boolean ,  isPopupVisibleInCardDetailLanding: Boolean) {
         val listOfPrimaryStoreCards = manageCardAdapter?.getListOfStoreCards()
-        if ((listOfPrimaryStoreCards?.size ?: 0) > 0) {
+        if ((listOfPrimaryStoreCards?.size ?: 0) <= 0)  return
             cardFreezeViewModel.currentPagePosition.value = position
-            viewModel.onCardPagerPageSelected(listOfPrimaryStoreCards?.get(position), position)
-        }
+            viewModel.onManageCardPagerFragmentSelected(
+                listOfPrimaryStoreCards?.get(position),
+                position,
+                isPopupVisibleInAccountLanding = isPopupVisibleInAccountLanding,
+                isPopupVisibleInCardDetailLanding = isPopupVisibleInCardDetailLanding
+            )
     }
 
     override fun onDestroy() {

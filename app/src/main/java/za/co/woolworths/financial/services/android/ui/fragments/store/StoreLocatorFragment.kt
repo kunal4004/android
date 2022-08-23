@@ -12,7 +12,8 @@ import androidx.navigation.findNavController
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.store_locator_fragment.*
+import kotlinx.android.synthetic.main.store_locator_fragment.cardPager
+import kotlinx.android.synthetic.main.store_locator_fragment.dynamicMapView
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter
@@ -62,6 +63,14 @@ class StoreLocatorFragment : Fragment(), DynamicMapDelegate, ViewPager.OnPageCha
     private fun initViews(savedInstanceState: Bundle?) {
         initCardPager()
         initMap(savedInstanceState)
+    }
+
+    private fun initMap(savedInstanceState: Bundle?) {
+        if (isAdded) {
+            dynamicMapView?.initializeMap(savedInstanceState, this)
+            mMarkers = HashMap()
+            markers = ArrayList()
+        }
     }
 
     private fun initCardPager() {
@@ -137,26 +146,17 @@ class StoreLocatorFragment : Fragment(), DynamicMapDelegate, ViewPager.OnPageCha
         }
     }
 
-    private fun initMap(savedInstanceState: Bundle?) {
-        if (isAdded) {
-            dynamicMapView?.initializeMap(savedInstanceState, this)
-            mMarkers = HashMap()
-            markers = ArrayList()
-        }
-    }
-
     private fun bindDataWithUI(storeDetailsList: MutableList<StoreDetails>) {
-        dynamicMapView?.let {
-            if (storeDetailsList.size >= 0) {
-                updateMyCurrentLocationOnMap(Utils.getLastSavedLocation())
-                for (i in storeDetailsList.indices) {
-                    if (i == 0) {
-                        selectedIcon?.let { selectedIcon -> drawMarker(storeDetailsList[i].latitude, storeDetailsList[i].longitude, selectedIcon, i) }
-                    } else
-                        unSelectedIcon?.let { unselectedIcon -> drawMarker(storeDetailsList[i].latitude, storeDetailsList[i].longitude, unselectedIcon, i) }
+        if (storeDetailsList.size >= 0) {
+            updateMyCurrentLocationOnMap(Utils.getLastSavedLocation())
+            for (i in storeDetailsList.indices) {
+                if (i == 0) {
+                    selectedIcon?.let { selectedIcon -> drawMarker(storeDetailsList[i].latitude, storeDetailsList[i].longitude, selectedIcon, i) }
+                } else {
+                    unSelectedIcon?.let { unselectedIcon -> drawMarker(storeDetailsList[i].latitude, storeDetailsList[i].longitude, unselectedIcon, i) }
                 }
-                activity?.let { activity -> cardPager?.adapter = CardsOnMapAdapter(activity, storeDetailsList) }
             }
+            activity?.let { activity -> cardPager?.adapter = CardsOnMapAdapter(activity, storeDetailsList) }
         }
     }
 
@@ -182,5 +182,30 @@ class StoreLocatorFragment : Fragment(), DynamicMapDelegate, ViewPager.OnPageCha
                 "FromStockLocator" to false,
                 "SHOULD_DISPLAY_BACK_ICON" to true
         ))
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        dynamicMapView?.onSaveInstanceState(outState)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        dynamicMapView?.onResume()
+    }
+
+    override fun onPause() {
+        dynamicMapView?.onPause()
+        super.onPause()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        dynamicMapView?.onLowMemory()
+    }
+
+    override fun onDestroyView() {
+        dynamicMapView?.onDestroy()
+        super.onDestroyView()
     }
 }

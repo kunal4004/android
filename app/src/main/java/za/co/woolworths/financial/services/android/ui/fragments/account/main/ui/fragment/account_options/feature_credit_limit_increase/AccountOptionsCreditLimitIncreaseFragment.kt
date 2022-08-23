@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_credit_limit_increase
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -72,10 +73,13 @@ class AccountOptionsCreditLimitIncreaseFragment : Fragment(R.layout.account_opti
             }
         }
 
-        lifecycleScope.launchWhenStarted {
+        lifecycleScope.launch {
             viewModel.offerActive.collect { result ->
                 viewModel.retryNetworkRequest.popOfferActiveRequest()
                 with(result) {
+
+                    renderLoading { binding.showProgress(isLoading) }
+
                     renderSuccess {
                         val response =  output as? OfferActive
                         viewModel.mOfferActive = response
@@ -96,8 +100,7 @@ class AccountOptionsCreditLimitIncreaseFragment : Fragment(R.layout.account_opti
                         router.showNoConnectionToast(requireActivity())
                     }
 
-                    renderLoading { binding.showProgress(isLoading) }
-                   
+
                     renderNoConnection { router.showNoConnectionToast(requireActivity()) }
                 }
             }
@@ -135,7 +138,7 @@ class AccountOptionsCreditLimitIncreaseFragment : Fragment(R.layout.account_opti
     }
 
     private fun AccountOptionsCreditLimitIncreaseFragmentBinding.showProgress(isLoading: Boolean = false) {
-        cliSkeleton.loadingState(isLoading)
+        cliSkeleton.loadingState(isLoading, targetedShimmerLayout = contentLinearLayout, shimmerContainer = cliSkeleton)
     }
 
     override fun onClick(view: View?) {

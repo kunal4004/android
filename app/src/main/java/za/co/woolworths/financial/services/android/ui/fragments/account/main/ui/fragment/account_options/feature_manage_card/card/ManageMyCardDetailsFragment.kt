@@ -120,7 +120,9 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
     private fun subscribeObservers() {
         val position = cardFreezeViewModel.currentPagePosition.value ?: -1
         mStoreCardMoreDetail?.setupView(viewModel.mStoreCardFeatureType)
-        showItems(StoreCardInfo(viewModel.mStoreCardFeatureType, position))
+        showItems(StoreCardInfo(viewModel.mStoreCardFeatureType, position,
+            isPopupVisibleInAccountLanding = false,
+            isPopupVisibleInCardDetailLanding = false))
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.onViewPagerPageChangeListener.collectLatest { feature ->
                     showItems(feature)
@@ -133,6 +135,7 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
         mListOfStoreCardOptions?.showListItem(feature) { result ->
             when (result) {
                 is ListCallback.CardNotReceived -> {
+                    if (!feature.isPopupVisibleInCardDetailLanding) return@showListItem
                     if (result.isCardNotReceived) mListOfStoreCardOptions?.showCardNotReceivedDialog(
                         this@ManageMyCardDetailsFragment
                     )

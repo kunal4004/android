@@ -54,6 +54,11 @@ class TemporaryFreezeUnfreezeCardItemFragment : Fragment(R.layout.temporary_free
             switchTemporaryFreezeCard.isChecked = isSwitcherEnabled
         }
 
+        viewModel.onUpshellMessageFreezeCardTap.observe(viewLifecycleOwner){ isActive ->
+            if (isActive)
+                switchTemporaryFreezeCard.performClick()
+        }
+
         // Collects api/view results from freeze/unfreeze store card
         lifecycleScope.launch {
             viewModel.blockMyCardResponse.collectLatest { state ->
@@ -134,7 +139,8 @@ class TemporaryFreezeUnfreezeCardItemFragment : Fragment(R.layout.temporary_free
 
     private fun TemporaryFreezeUnfreezeCardItemFragmentBinding.setupTemporaryFreezeCardSwipe() {
         switchTemporaryFreezeCard.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (buttonView.isPressed) { // block is active for user interaction only
+            if (buttonView.isPressed || viewModel.onUpshellMessageFreezeCardTap.value == true) { // b
+                viewModel.onUpshellMessageFreezeCardTap.value = false// lock is active for user interaction only
                 when (isChecked) {
                     true -> findNavController().navigate(
                         TemporaryFreezeUnfreezeCardItemFragmentDirections.actionTemporaryFreezeUnfreezeCardItemFragmentToTemporaryFreezeCardFragment()

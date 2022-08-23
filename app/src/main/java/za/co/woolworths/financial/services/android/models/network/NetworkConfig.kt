@@ -6,6 +6,7 @@ import android.os.Build
 import com.awfs.coordination.BuildConfig
 import za.co.wigroup.androidutils.Util
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.util.LocalConstant
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 

@@ -47,6 +47,10 @@ class ManageCardViewPagerAdapter @Inject constructor(fragment: Fragment) :
             true -> NoStoreCardFragment()
             else -> when (val card = listOfStoreCards?.get(position)) {
 
+                is StoreCardFeatureType.StoreCardFreezeCardUpShellMessage ->  StoreCardFreezeCardUpshellMessage.newInstance(storeCard = card)
+
+                is StoreCardFeatureType.StoreCardActivateVirtualTempCardUpShellMessage ->  StoreCardActivateVTCUpshellMessageFragment.newInstance(storeCard = card)
+
                 is StoreCardFeatureType.StoreCardIsActivateVirtualTempCardAndIsFreezeCard -> InstantStoreCardReplacementCardFragment.newInstance(
                     card
                 )

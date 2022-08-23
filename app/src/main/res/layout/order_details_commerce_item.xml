@@ -9,6 +9,8 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
         android:background="@color/bg_light_overlay" />
 
     <RelativeLayout
@@ -27,7 +29,7 @@
             fresco:fadeDuration="10"
             fresco:failureImage="@drawable/woolworth_logo_icon" />
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/itemName"
             style="@style/my_orders_textview_style_2"
             android:layout_marginLeft="@dimen/sixteen_dp"
@@ -35,21 +37,12 @@
             android:layout_toLeftOf="@+id/price"
             android:layout_toRightOf="@+id/imProductImage"
             android:ellipsize="end"
-            android:singleLine="true"
+            android:maxLines="2"
             android:textColor="@color/black" />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/price"
-            style="@style/my_orders_textview_style_3" />
+            style="@style/my_orders_textview_style_order_history" />
     </RelativeLayout>
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/twenty_four_dp"
-        android:layout_marginTop="@dimen/sixteen_dp"
-        android:layout_marginBottom="@dimen/sixteen_dp"
-        android:text="@string/promotion_note"
-        android:textColor="@color/color_666666"
-        android:textSize="@dimen/twelve_sp" />
 </LinearLayout>

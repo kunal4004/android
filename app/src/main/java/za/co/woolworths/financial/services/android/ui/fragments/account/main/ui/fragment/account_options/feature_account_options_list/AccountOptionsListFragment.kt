@@ -11,7 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountOptionsListFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType
 import za.co.woolworths.financial.services.android.ui.base.onClick
@@ -42,9 +42,9 @@ class AccountOptionsListFragment : Fragment(R.layout.account_options_list_fragme
     }
 
     private fun AccountOptionsListFragmentBinding.subscribeObservers() {
-        accountOptionsSkeleton.loadingState(true, targetedShimmerLayout = accountOptionsLayout)
-        lifecycleScope.launch {
-            viewModel.viewState.collect { items ->
+        accountOptionsSkeleton.loadingState(false, targetedShimmerLayout = accountOptionsLayout)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.viewState.collectLatest { items ->
                 items.forEach { item ->
                     with(item) {
                         when (this) {
@@ -62,14 +62,10 @@ class AccountOptionsListFragment : Fragment(R.layout.account_options_list_fragme
                             is AccountOptionsScreenUI.DebitOrder -> showDebitOrder(isActive)
                         }
                     }
-                }.apply {
-                    accountOptionsSkeleton.loadingState(
-                        false,
-                        targetedShimmerLayout = accountOptionsLayout
-                    )
                 }
             }
         }
+        viewModel.init()
     }
 
     private fun AccountOptionsListFragmentBinding.hideLoanWithdrawal() {

@@ -438,7 +438,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	}
 
 	@Override
-	public void onPromptDismiss() {
+	public void onPromptDismiss(WMaterialShowcaseView.Feature feature) {
 
 	}
 

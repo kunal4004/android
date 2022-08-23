@@ -49,6 +49,11 @@ class ManageStoreCardLandingList(
             hideAllRows()
             when (val featureType = storeCardFeatureType.feature) {
 
+                is StoreCardFeatureType.StoreCardFreezeCardUpShellMessage,
+                    is StoreCardFeatureType.StoreCardActivateVirtualTempCardUpShellMessage -> {
+
+                    hideAllRows() }
+
                 is StoreCardFeatureType.ActivateVirtualTempCard ->
                     showActivateVirtualTempCardRow(featureType.isTemporaryCardEnabled)
 
@@ -107,9 +112,7 @@ class ManageStoreCardLandingList(
         with(includeListOptions) {
             temporaryFreezeCardFragmentContainerView.visibility = VISIBLE
             when (featureType.isStoreCardFrozen) {
-                true -> {
-                    cardFreezeViewModel.isSwitcherEnabled.value = true
-                }
+                true -> cardFreezeViewModel.isSwitcherEnabled.value = true
                 else -> {
                     cardFreezeViewModel.isSwitcherEnabled.value = false
                     blockCardDivider.visibility = VISIBLE
