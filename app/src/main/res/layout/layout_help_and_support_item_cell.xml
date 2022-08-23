@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dash_item_cell"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context="za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgHelpIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/help_phone"
+        app:layout_constraintBottom_toTopOf="@id/view9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtHelpTitle"
+        style="@style/myriad_pro_semi_bold_black_15_text_style"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:ellipsize="end"
+        android:lineSpacingExtra="@dimen/_2sdp"
+        android:maxWidth="@dimen/_150sdp"
+        android:maxLines="1"
+        android:textColor="@color/account_amount_color"
+        app:layout_constraintEnd_toStartOf="@id/imgNext"
+        app:layout_constraintStart_toEndOf="@+id/imgHelpIcon"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtHelpSubTitle"
+        style="@style/myriad_pro_regular_black_14_text_style"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:layout_marginTop="@dimen/four_dp"
+        android:ellipsize="end"
+        android:lineSpacingExtra="@dimen/_2sdp"
+        android:maxLines="1"
+        android:textColor="@color/color_666666"
+        app:layout_constraintBottom_toTopOf="@+id/view9"
+        app:layout_constraintEnd_toStartOf="@id/imgNext"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/imgHelpIcon"
+        app:layout_constraintTop_toBottomOf="@+id/txtHelpTitle" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgNext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/view9"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_right" />
+
+    <View
+        android:id="@+id/view9"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/twenty_six_dp"
+        android:background="@color/color_E5E5E5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtHelpSubTitle" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

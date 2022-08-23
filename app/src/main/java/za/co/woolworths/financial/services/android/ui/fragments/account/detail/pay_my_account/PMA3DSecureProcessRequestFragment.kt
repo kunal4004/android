@@ -156,7 +156,9 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
                             if (paymentSuccessful) {
                                 activity?.let { payMyAccountViewModel.triggerFirebaseEventForPaymentComplete(it) }
                                 stopSpinning(true)
-                                paymentValueTextView?.text = Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(amount))
+                                val randAmount =  Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(amount))
+                                val randAmountWithCurrency = if (randAmount.contains("R")) randAmount else "R $randAmount"
+                                paymentValueTextView?.text = randAmountWithCurrency
                                 updateUIOnSuccess()
                             } else {
                                 stopSpinning(false)

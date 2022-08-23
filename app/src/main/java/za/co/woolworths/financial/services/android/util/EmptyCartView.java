@@ -2,80 +2,80 @@ package za.co.woolworths.financial.services.android.util;
 
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.ui.views.WButton;
-import za.co.woolworths.financial.services.android.ui.views.WTextView;
-
 public class EmptyCartView implements View.OnClickListener {
 
-	public interface EmptyCartInterface {
-		void onEmptyCartRetry();
-	}
+    public interface EmptyCartInterface {
+        void onEmptyCartRetry();
+    }
 
-	private EmptyCartInterface emptyCartInterface;
-	private WTextView tvDescription;
-	private WTextView tvTitle;
-	private ImageView imImage;
-	private WButton btnGoToProduct;
-	private String description;
-	private String title;
-	private int imageDrawable;
+    private EmptyCartInterface emptyCartInterface;
+    private ImageView img_view;
+    private Button btn_dash_set_address;
+    private TextView txt_dash_sub_title;
+    private TextView txt_dash_title;
+    private int imageDrawable;
+    private String description;
+    private String title;
 
-	public EmptyCartView(View view, EmptyCartInterface emptyCartInterface) {
-		this.tvTitle = view.findViewById(R.id.txtEmptyStateTitle);
-		this.tvDescription = view.findViewById(R.id.txtEmptyStateDesc);
-		this.imImage = view.findViewById(R.id.imgEmpyStateIcon);
-		this.btnGoToProduct = view.findViewById(R.id.btnGoToProduct);
-		this.btnGoToProduct.setOnClickListener(this);
-		this.emptyCartInterface = emptyCartInterface;
-	}
 
-	public void setTitle(String title) {
-		this.title = title;
-		tvTitle.setText(TextUtils.isEmpty(this.title) ? "" : this.title);
-	}
+    public EmptyCartView(View view, EmptyCartInterface emptyCartInterface) {
+        this.txt_dash_title = view.findViewById(R.id.txt_dash_title);
+        this.txt_dash_sub_title = view.findViewById(R.id.txt_dash_sub_title);
+        this.img_view = view.findViewById(R.id.img_view);
+        this.btn_dash_set_address = view.findViewById(R.id.btn_dash_set_address);
+        this.btn_dash_set_address.setOnClickListener(this);
+        this.emptyCartInterface = emptyCartInterface;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-		tvDescription.setText(TextUtils.isEmpty(this.description) ? "" : this.description);
-	}
+    public void setTitle(String title) {
+        this.title = title;
+        txt_dash_title.setText(TextUtils.isEmpty(this.title) ? "" : this.title);
+    }
 
-	public void setImageUrl(int drawable) {
-		this.imageDrawable = drawable;
-		this.imImage.setImageResource(imageDrawable);
-	}
+    public void setDescription(String description) {
+        this.description = description;
+        txt_dash_sub_title.setText(TextUtils.isEmpty(this.description) ? "" : this.description);
+    }
 
-	public void buttonVisibility(String text) {
-		btnGoToProduct.setText(text);
-		btnGoToProduct.setVisibility(View.VISIBLE);
-	}
+    public void setImageUrl(int drawable) {
+        this.imageDrawable = drawable;
+        this.img_view.setImageResource(imageDrawable);
+    }
 
-	@Override
-	public void onClick(View view) {
-		MultiClickPreventer.preventMultiClick(view);
-		switch (view.getId()) {
-			case R.id.btnGoToProduct:
-				emptyCartInterface.onEmptyCartRetry();
-				break;
+    public void buttonVisibility(String text) {
+        btn_dash_set_address.setText(text);
+        btn_dash_set_address.setVisibility(View.VISIBLE);
+    }
 
-			default:
-				break;
-		}
-	}
+    @Override
+    public void onClick(View view) {
+        MultiClickPreventer.preventMultiClick(view);
+        switch (view.getId()) {
+            case R.id.btnGoToProduct:
+                emptyCartInterface.onEmptyCartRetry();
+                break;
 
-	public void setView(String title, String description, int drawable) {
-		setTitle(title);
-		setDescription(description);
-		setImageUrl(drawable);
-	}
+            default:
+                break;
+        }
+    }
 
-	public void setView(String title, String description, String buttonText, int drawable) {
-		setTitle(title);
-		setDescription(description);
-		buttonVisibility(buttonText);
-		setImageUrl(drawable);
-	}
+    public void setView(String title, String description, int drawable) {
+        setTitle(title);
+        setDescription(description);
+        setImageUrl(drawable);
+    }
+
+    public void setView(String title, String description, String buttonText, int drawable) {
+        setTitle(title);
+        setDescription(description);
+        buttonVisibility(buttonText);
+        setImageUrl(drawable);
+    }
 }

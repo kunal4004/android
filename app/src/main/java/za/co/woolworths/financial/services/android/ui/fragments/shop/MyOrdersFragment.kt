@@ -242,13 +242,9 @@ class MyOrdersFragment : Fragment(), OrderHistoryErrorDialogFragment.IOrderHisto
     }
 
     override fun presentOrderDetailsPage(item: Order) {
-
-         val orderItenm = Utils.toJson(item)
-         val order = Utils.jsonStringToObject(orderItenm, Order::class.java) as? Order
-
-        order?.let {
-            (activity as? BottomNavigationActivity)?.pushFragment(
-                    OrderDetailsFragment.getInstance(order)
+        item?.let {
+            (requireActivity() as? BottomNavigationActivity)?.pushFragment(
+                    OrderDetailsFragment.getInstance(it.orderId)
             )
         }
     }

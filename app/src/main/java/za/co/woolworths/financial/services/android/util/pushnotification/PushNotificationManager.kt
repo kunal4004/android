@@ -16,11 +16,18 @@ import com.google.gson.JsonObject
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.startup.view.StartupActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.PersistenceLayer
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
 class PushNotificationManager {
     companion object {
+        private const val PAYLOAD_PARAMETERS = "parameters"
+        private const val PAYLOAD_FEATURE = "feature"
+        private const val PAYLOAD_TITLE = "title"
+        private const val PAYLOAD_BODY = "body"
+        private const val FEATURE_ORDER_DETAILS = "Order Details"
+        private const val FEATURE_PRODUCT_LISTING = "Product Listing"
+
         fun sendNotification(
             context: Context,
             notificationTitle: String?,
@@ -32,37 +39,54 @@ class PushNotificationManager {
             val channelId = context.getString(R.string.default_notification_channel_id)
             val notificationBuilder =
                 NotificationCompat.Builder(WoolworthsApplication.getAppContext(), channelId)
-            val intent = Intent(context, StartupActivity::class.java)
+            var intent = Intent(context, StartupActivity::class.java)
+            var pendingIntent: PendingIntent
 
-            val payloadParameters = payload["parameters"]
-            val payloadFeature = payload["feature"]
-            if (payloadFeature != null && payloadFeature == "Product Listing" && payloadParameters != null) {
-                val json = payloadParameters.replace("\\\\".toRegex(), "")
-                val parameters = Gson().fromJson(
-                    json,
-                    JsonObject::class.java
+            val payloadParameters = payload[PAYLOAD_PARAMETERS]
+            val payloadFeature = payload[PAYLOAD_FEATURE]
+
+            // This function will get called only when app is in Foreground
+            // else it will send data to activity extras.
+            if (payloadFeature != null && payloadFeature == FEATURE_ORDER_DETAILS && payloadParameters != null) {
+                intent = Intent(context, BottomNavigationActivity::class.java)
+                for (item in payload.entries) {
+                    intent.putExtra(item.key, item.value)
+                }
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                pendingIntent = PendingIntent.getActivity(
+                    context, BottomNavigationActivity.DEEP_LINK_REQUEST_CODE, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
                 )
-                intent.data = Uri.parse(parameters["url"].asString)
-                intent.action = Intent.ACTION_VIEW
-            }
+            } else {
+                if (payloadFeature != null && payloadFeature == FEATURE_PRODUCT_LISTING && payloadParameters != null) {
+                    val json = payloadParameters.replace("\\\\".toRegex(), "")
+                    val parameters = Gson().fromJson(
+                        json,
+                        JsonObject::class.java
+                    )
+                    intent.data = Uri.parse(parameters["url"].asString)
+                    intent.action = Intent.ACTION_VIEW
+                }
 
-            /*Deep link to PDP disabled*/
-            /*else if (payload.get("feature").equals("Product Detail")){
+                /*Deep link to PDP disabled*/
+                /*else if (payload.get("feature").equals("Product Detail")){
                 String json = payload.get("parameters").replaceAll("\\\\", "");
                 JsonObject parameters = new Gson().fromJson(json, JsonObject.class);
 
                 intent = new Intent(this, ProductDetailsDeepLinkActivity.class);
                 intent.setData(Uri.parse(parameters.get("url").getAsString()));
                 intent.setAction(Intent.ACTION_VIEW);
-            }*/
+                }*/
 
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            val pendingIntent = PendingIntent.getActivity(
-                context, BottomNavigationActivity.DEEP_LINK_REQUEST_CODE, intent,
-                PendingIntent.FLAG_ONE_SHOT
-            )
-            var contentTitle: String? = notificationTitle ?: payload["title"]
-            var contentText: String? = notificationBody ?: payload["body"]
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                pendingIntent = PendingIntent.getActivity(
+                    context, BottomNavigationActivity.DEEP_LINK_REQUEST_CODE, intent,
+                    PendingIntent.FLAG_ONE_SHOT
+                )
+            }
+
+            var contentTitle: String? = notificationTitle ?: payload[PAYLOAD_TITLE]
+            var contentText: String? = notificationBody ?: payload[PAYLOAD_BODY]
             notificationBuilder.setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
