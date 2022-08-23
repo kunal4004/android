@@ -484,7 +484,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                 if (!TextUtils.isEmpty(token)) {
                                     Utils.setToken(token)
                                     Handler(Looper.getMainLooper()).post {
-                                        sendTokenToLinkDevice(token)
+                                        sendTokenToLinkDevice(token!!)
                                     }
                                     return
                                 }
