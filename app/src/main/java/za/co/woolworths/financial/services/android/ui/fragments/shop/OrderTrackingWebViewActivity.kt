@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.net.http.SslError
 import android.os.Bundle
 import android.view.View
 import android.webkit.*
@@ -108,17 +107,6 @@ class OrderTrackingWebViewActivity : AppCompatActivity() {
                     showErrorDialog()
                 }
 
-                override fun onReceivedSslError(
-                    view: WebView?,
-                    handler: SslErrorHandler?,
-                    error: SslError?,
-                ) {
-                    if (handler != null) {
-                        handler.proceed()
-                    } else {
-                        super.onReceivedSslError(view, null, error)
-                    }
-                }
             }
 
             trackingOrderWebView.apply {
