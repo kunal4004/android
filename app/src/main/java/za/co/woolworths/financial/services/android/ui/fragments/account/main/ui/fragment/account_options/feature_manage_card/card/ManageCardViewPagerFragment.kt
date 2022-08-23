@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.disableNestedScrolling
+import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 
 @AndroidEntryPoint
 class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_fragment) {
@@ -58,6 +59,7 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
                                 isPopupVisibleInAccountLanding = false,
                                 isPopupVisibleInCardDetailLanding = false
                             )
+                            VoiceOfCustomerManager.showPendingSurveyIfNeeded(requireContext())
                             handleBlockUnBlockStoreCardResult()
                         }
                     }
