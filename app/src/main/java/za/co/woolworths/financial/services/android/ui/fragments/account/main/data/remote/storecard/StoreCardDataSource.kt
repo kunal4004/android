@@ -5,6 +5,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
+import za.co.woolworths.financial.services.android.models.dto.npc.UnblockStoreCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
@@ -90,13 +91,21 @@ class StoreCardDataSource @Inject constructor(
             val blockCardReason = blockReason ?: BLOCK_REASON
             val sequenceNumber =  getSequenceNumber(0)
             val cardNumber : String? = getCardNumber(0)
-
-            val blockStoreCardRequestBody = BlockCardRequestBody(
-                visionAccountNumber,
-                cardNumber ?: "",
-                sequenceNumber ?: -1,
-                blockCardReason
-            )
+            val virtualTempCard = getVirtualCard()
+            val blockStoreCardRequestBody =   when (storeCardType){
+                is StoreCardType.VirtualTempCard -> BlockCardRequestBody(
+                    visionAccountNumber,
+                    virtualTempCard?.number ?: "",
+                    virtualTempCard?.sequence ?: -1,
+                    blockCardReason
+                )
+                else -> BlockCardRequestBody(
+                    visionAccountNumber,
+                    cardNumber ?: "",
+                    sequenceNumber ?: -1,
+                    blockCardReason
+                )
+            }
 
             queryServiceBlockStoreCard(
                 deviceIdentityToken = deviceIdentityToken,
@@ -105,6 +114,7 @@ class StoreCardDataSource @Inject constructor(
             )
 
         }
+
 
     override suspend fun queryServiceUnBlockStoreCard(
         blockReason: Int?,
@@ -115,18 +125,24 @@ class StoreCardDataSource @Inject constructor(
         val deviceIdentityToken = super.getDeviceIdentityToken()
         val cardNumber =  getCardNumber(0)
         val sequenceNumber =  getSequenceNumber(0)
+        val virtualCard = getVirtualCard()
 
-        val blockStoreCardRequestBody = BlockCardRequestBody(
-            visionAccountNumber,
-            cardNumber ?: "",
-            sequenceNumber ?: -1,
-            null
-        )
+        val unblockStoreCardRequest : UnblockStoreCardRequestBody = when(storeCardType){
+            is StoreCardType.VirtualTempCard -> UnblockStoreCardRequestBody(
+                visionAccountNumber = visionAccountNumber ,
+                cardNumber = virtualCard?.number ?: "" ,
+                sequenceNumber  = virtualCard?.sequence?.toString() ?: "")
+
+            else -> UnblockStoreCardRequestBody(
+                visionAccountNumber,
+                cardNumber ?: "",
+                (sequenceNumber ?: -1).toString())
+        }
 
         queryServiceUnBlockStoreCard(
             deviceIdentityToken = deviceIdentityToken,
             productOfferingId = productOfferingId.toString(),
-            blockStoreCardRequestBody
+            unblockStoreCardRequest
         )
     }
 

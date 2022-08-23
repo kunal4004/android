@@ -145,6 +145,7 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
         mStoreCardType = StoreCardType.VirtualTempCard(block = BlockStoreCardType.BLOCK)
         getViewStateFlowForNetworkCall {
             queryServiceBlockStoreCard(storeCardType = mStoreCardType)
+        }.collect {
         }
     }
 
