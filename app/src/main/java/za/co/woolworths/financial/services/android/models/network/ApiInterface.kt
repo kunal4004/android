@@ -356,7 +356,8 @@ interface ApiInterface {
         @Header("longitude") long: Double?,
         @Query("suburbId") suburbId: String?,
         @Query("storeId") storeId: String?,
-        @Query("deliveryType") deliveryType: String?
+        @Query("deliveryType") deliveryType: String?,
+        @Query("fulFillmentStoreId01") fulFillmentStoreId01: String?
     ): Call<RootCategories>
 
     // Same as fun getRootCategories()
@@ -390,7 +391,8 @@ interface ApiInterface {
             @Query("version") version: String,
             //Optional params
             @Query("suburbId") suburbId: String?,
-            @Query("storeId") storeId: String?
+            @Query("storeId") storeId: String?,
+            @Query("fulFillmentStoreId01") fulFillmentStoreId01: String?
     ): Call<SubCategories>
 
 

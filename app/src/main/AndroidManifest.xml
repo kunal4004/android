@@ -565,6 +565,10 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.loading.EmailUsLoadingActivity"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.fragments.shop.OrderTrackingWebViewActivity"
+            android:theme="@style/FaqStyle"
+            android:screenOrientation="portrait"/>
 
     </application>
 

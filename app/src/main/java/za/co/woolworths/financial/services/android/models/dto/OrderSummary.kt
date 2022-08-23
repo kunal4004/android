@@ -45,6 +45,6 @@ data class OrderSummary(
     var wrewardsDiscount: Double = 0.0,
     var storeDetails: StoreDetails? = null,
     var deliveryStatus: @RawValue Any? = null,
-    var totalOrderCount: Double = 0.0
-
+    var totalOrderCount: Double = 0.0,
+    var driverTrackingURL : String? = ""
 ) : Parcelable
