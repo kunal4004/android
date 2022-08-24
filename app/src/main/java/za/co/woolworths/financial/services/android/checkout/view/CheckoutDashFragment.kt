@@ -353,6 +353,10 @@ class CheckoutDashFragment : Fragment(),
     private fun startShimmerView() {
         txtNeedBags?.visibility = View.GONE
         switchNeedBags?.visibility = View.GONE
+        edtTxtSpecialDeliveryInstruction?.visibility = GONE
+        edtTxtGiftInstructions?.visibility = GONE
+        switchSpecialDeliveryInstruction?.isChecked = false
+        switchGiftInstructions?.isChecked = false
 
         val shimmer = Shimmer.AlphaHighlightBuilder().build()
         shimmerComponentArray.forEach {

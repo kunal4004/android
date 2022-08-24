@@ -581,6 +581,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         expandableGrid.setUpShimmerView()
         expandableGrid.showDeliveryTypeShimmerView()
         showDeliverySubTypeShimmerView()
+        edtTxtSpecialDeliveryInstruction?.visibility = GONE
+        edtTxtGiftInstructions?.visibility = GONE
+        switchSpecialDeliveryInstruction?.isChecked = false
+        switchGiftInstructions?.isChecked = false
 
         shimmerComponentArray = listOf(
             Pair<ShimmerFrameLayout, View>(
