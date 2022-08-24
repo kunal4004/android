@@ -19,6 +19,7 @@ import com.awfs.coordination.R
 import com.google.android.gms.tasks.Task
 import com.huawei.hms.aaid.HmsInstanceId
 import com.huawei.hms.common.ApiException
+import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
@@ -26,32 +27,51 @@ import java.util.function.Consumer
 
 class NotificationUtils {
     companion object {
-        private const val TOKEN_PROVIDER_FIREBASE = "firebase"
-        private const val TOKEN_PROVIDER_HMS = "hms"
+        const val TOKEN_PROVIDER_FIREBASE = "firebase"
+        const val TOKEN_PROVIDER_HMS = "hms"
 
-        fun sendRegistrationToServer(context: Context) {
+        fun getTokenFromMessagingService(context: Context, onSuccessCallback: (String) -> Unit, onFailureCallback: (() -> Unit)? = null) {
             if (Utils.isGooglePlayServicesAvailable()) {
                 FirebaseMessaging.getInstance().token.addOnCompleteListener { task: Task<String?> ->
                     if (task.isSuccessful) {
-                        sendRegistrationToServer(task.result)
+                        task.result?.let { token ->
+                            onSuccessCallback(token)
+                        } ?: kotlin.run {
+                            onFailureCallback?.invoke()
+                        }
+                    } else {
+                        onFailureCallback?.invoke()
                     }
                 }
             } else if (Utils.isHuaweiMobileServicesAvailable()) {
-                object : Thread() {
-                    override fun run() {
-                        try {
-                            val token = HmsInstanceId
-                                .getInstance(context)
-                                .getToken(context.getString(R.string.huawei_app_id).replace("appid=", ""), "HCM")
-                            if (!TextUtils.isEmpty(token)) {
-                                sendRegistrationToServer(token)
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        val token = HmsInstanceId
+                            .getInstance(context)
+                            .getToken(context.getString(R.string.huawei_app_id).replace("appid=", ""), "HCM")
+                        if (!TextUtils.isEmpty(token)) {
+                            withContext(Dispatchers.Main) {
+                                onSuccessCallback(token)
                             }
-                        } catch (e: ApiException) {
-                            FirebaseManager.logException(e)
+                            return@launch
                         }
+                    } catch (e: ApiException) {
+                        FirebaseManager.logException(e)
                     }
-                }.start()
+                    withContext(Dispatchers.Main) {
+                        onFailureCallback?.invoke()
+                    }
+                }
             }
+        }
+
+        fun sendRegistrationToServer(context: Context) {
+            getTokenFromMessagingService(
+                context,
+                onSuccessCallback = { token ->
+                    sendRegistrationToServer(token)
+                }
+            )
         }
 
         fun sendRegistrationToServer(token: String?) {
