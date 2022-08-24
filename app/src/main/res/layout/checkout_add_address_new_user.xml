@@ -89,8 +89,7 @@
             <EditText
                 android:id="@+id/addressStreetNameEditText"
                 android:layout_width="0dp"
-                style="@style/credi_card_delivery_edittext_style"
-                android:inputType="textEmailAddress"
+                style="@style/checkout_edittext_style"
                 android:maxLength="@integer/forty"
                 android:visibility="gone"
                 android:layout_marginTop="@dimen/_3sdp"

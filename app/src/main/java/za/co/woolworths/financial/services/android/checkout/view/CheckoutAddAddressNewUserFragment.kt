@@ -1511,8 +1511,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     private fun enablePOIAddressTextFields() {
         //for enabling the StreetName place holder and EditText
         addressStreetNamePlaceHolder?.visibility=View.VISIBLE
+        addressStreetNameEditText?.setText("")
         addressStreetNameEditText?.visibility=View.VISIBLE
-        addressStreetNameEditText?.setBackgroundResource(R.drawable.recipient_details_input_edittext_bg)
 
 
         //for disabling the unitComplex place holder and EditText
