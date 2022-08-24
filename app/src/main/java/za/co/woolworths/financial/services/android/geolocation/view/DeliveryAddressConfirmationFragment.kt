@@ -80,6 +80,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_ADDRESS2
 
 /**
  * Created by Kunal Uttarwar on 24/02/22.
@@ -105,6 +106,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     private var whoIsCollecting: WhoIsCollectingDetails? = null
     private var customBottomSheetDialogFragment: CustomBottomSheetDialogFragment? = null
     var store: Store? = null
+    private  var address2:String?=null
 
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
@@ -155,6 +157,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             latitude = getString(KEY_LATITUDE, "")
             longitude = this.getString(KEY_LONGITUDE, "")
             placeId = this.getString(KEY_PLACE_ID, "")
+            address2=this.getString(KEY_ADDRESS2,"")
             isComingFromSlotSelection = this.getBoolean(IS_COMING_FROM_SLOT_SELECTION, false)
             isComingFromCheckout = this.getBoolean(IS_COMING_FROM_CHECKOUT, false)
             lastDeliveryType = this.getString(DELIVERY_TYPE, Delivery.STANDARD.name)
@@ -353,6 +356,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 latitude = this?.getString(KEY_LATITUDE, "")
                 longitude = this?.getString(KEY_LONGITUDE, "")
                 placeId = this?.getString(KEY_PLACE_ID, "")
+                address2=this?.getString(KEY_ADDRESS2,"")
             }
             placeId?.let { getDeliveryDetailsFromValidateLocation(it, true) }
         }
@@ -411,7 +415,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             if (placeId == null) {
                 return
             }
-            val confirmLocationAddress = ConfirmLocationAddress(placeId)
+            val confirmLocationAddress = ConfirmLocationAddress(placeId,"",address2)
             val confirmLocationRequest = when (deliveryType) {
                 Delivery.STANDARD.name -> {
                     mStoreId = ""

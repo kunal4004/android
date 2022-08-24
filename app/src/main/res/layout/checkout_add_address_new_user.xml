@@ -25,51 +25,39 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/imgDelBack"
+            <ImageView
+                android:id="@+id/backButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_14sdp"
-                android:layout_marginStart="@dimen/twelve_dp"
-                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginEnd="@dimen/sixteen_dp"
+                android:src="@drawable/back24"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_back_black" />
-
+                app:layout_constraintStart_toStartOf="@id/left_guideline" />
             <TextView
                 android:id="@+id/whereWeDeliveringTitle"
                 style="@style/futura_semi_bold_black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/fourty_five_dp"
-                android:textStyle="normal"
+                android:paddingTop="@dimen/two_dp"
+                android:paddingBottom="@dimen/two_dp"
+                android:layout_marginTop="@dimen/twenty_four_dp"
                 android:text="@string/where_are_we_delivering"
-                android:textSize="@dimen/eighteen_sp"
-                app:layout_constraintStart_toStartOf="@+id/left_guideline"
-                app:layout_constraintTop_toBottomOf="@+id/imgDelBack" />
-
-            <TextView
-                app:layout_constraintTop_toBottomOf="@+id/whereWeDeliveringTitle"
-                android:id="@+id/txtStreetAddressLabel"
-                style="@style/myriad_pro_regular"
-                android:textColor="@color/black"
-                android:textSize="@dimen/fourteen_sp"
-                android:layout_marginTop="@dimen/thirty_dp"
-                android:text="@string/add_street_address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="@+id/left_guideline"/>
+                android:textSize="@dimen/twenty_sp"
+                app:layout_constraintRight_toRightOf="@id/right_guideline"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/backButton"/>
 
             <AutoCompleteTextView
                 android:id="@+id/autoCompleteTextView"
                 style="@style/credi_card_delivery_edittext_style"
-                android:layout_marginTop="@dimen/four_dp"
+                android:layout_marginTop="@dimen/nineteen_dp"
                 android:drawableStart="@drawable/mapview"
                 android:drawablePadding="@dimen/eight_dp"
                 android:hint="@string/places_autocomplete_tv_hint"
                 android:maxLines="1"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
-                app:layout_constraintTop_toBottomOf="@id/txtStreetAddressLabel" />
+                app:layout_constraintTop_toBottomOf="@id/whereWeDeliveringTitle" />
 
             <TextView
                 android:id="@+id/autocompletePlaceErrorMsg"
@@ -84,6 +72,47 @@
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/autoCompleteTextView" />
 
+
+            <TextView
+                android:id="@+id/addressStreetNamePlaceHolder"
+                style="@style/myriad_pro_regular_black"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="@dimen/twenty_four_dp"
+                android:background="@color/white"
+                android:contentDescription="@string/cd_ccd_labelsuburb"
+                android:text="@string/address_street_name_text_view"
+                android:textSize="@dimen/fourteen_sp"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/autocompletePlaceErrorMsg" />
+
+            <EditText
+                android:id="@+id/addressStreetNameEditText"
+                android:layout_width="0dp"
+                style="@style/credi_card_delivery_edittext_style"
+                android:inputType="textEmailAddress"
+                android:maxLength="@integer/forty"
+                android:visibility="gone"
+                android:layout_marginTop="@dimen/_3sdp"
+                app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/addressStreetNamePlaceHolder" />
+
+
+            <TextView
+                android:id="@+id/addressStreetNameEditTextErrorMsg"
+                style="@style/myriad_pro_regular"
+                android:layout_marginTop="@dimen/fifteen_dp"
+                android:lineSpacingMultiplier="1.40"
+                android:text="@string/places_address_error_msg"
+                android:textColor="@color/input_error_color_code"
+                android:textSize="@dimen/fourteen_sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/addressStreetNameEditText" />
+
+
             <View
                 android:id="@+id/deliveringPartition"
                 android:layout_width="match_parent"
@@ -92,7 +121,7 @@
                 android:background="@color/color_F3F3F3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/autocompletePlaceErrorMsg" />
+                app:layout_constraintTop_toBottomOf="@+id/addressStreetNameEditTextErrorMsg" />
 
             <include
                 android:id="@+id/recipientAddressLayout"
