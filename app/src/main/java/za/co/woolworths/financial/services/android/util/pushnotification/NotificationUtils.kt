@@ -19,10 +19,7 @@ import com.awfs.coordination.R
 import com.google.android.gms.tasks.Task
 import com.huawei.hms.aaid.HmsInstanceId
 import com.huawei.hms.common.ApiException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
@@ -47,7 +44,7 @@ class NotificationUtils {
                     }
                 }
             } else if (Utils.isHuaweiMobileServicesAvailable()) {
-                GlobalScope.launch {
+                CoroutineScope(Dispatchers.IO).launch {
                     try {
                         val token = HmsInstanceId
                             .getInstance(context)
