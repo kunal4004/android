@@ -460,46 +460,18 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
 
     private fun retrieveTokenAndCallLinkDevice() {
         if (TextUtils.isEmpty(Utils.getToken())) {
-            if (Utils.isGooglePlayServicesAvailable()) {
-                FirebaseInstallations.getInstance().getToken(true).addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        task.result.token.let {
-                            // Save fb token in DB.
-                            Utils.setToken(it)
-                            sendTokenToLinkDevice(it)
-                            return@addOnCompleteListener
-                        }
+            context?.let { context ->
+                NotificationUtils.getTokenFromMessagingService(
+                    context,
+                    onSuccessCallback = { token ->
+                        Utils.setToken(token)
+                        sendTokenToLinkDevice(token)
+                    },
+                    onFailureCallback = {
+                        showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
                     }
-                    // token is null show error message to user
-                    showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
-                }
-            } else if (Utils.isHuaweiMobileServicesAvailable()) {
-                object : Thread() {
-                    override fun run() {
-                        try {
-                            context?.let { context ->
-                                val token = HmsInstanceId
-                                    .getInstance(context)
-                                    .getToken(context.getString(R.string.huawei_app_id).replace("appid=", ""), "HCM")
-                                if (!TextUtils.isEmpty(token)) {
-                                    Utils.setToken(token)
-                                    Handler(Looper.getMainLooper()).post {
-                                        sendTokenToLinkDevice(token!!)
-                                    }
-                                    return
-                                }
-                            }
-                        } catch (e: ApiException) {
-                            FirebaseManager.logException(e)
-                        }
-                        // token is null show error message to user
-                        Handler(Looper.getMainLooper()).post {
-                            showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
-                        }
-                    }
-                }.start()
-            } else {
-                // token is null show error message to user
+                )
+            } ?: kotlin.run {
                 showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
             }
         } else {
