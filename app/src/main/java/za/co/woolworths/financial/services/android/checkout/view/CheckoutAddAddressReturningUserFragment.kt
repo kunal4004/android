@@ -136,7 +136,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     enum class FoodSubstitution(val rgb: String) {
         PHONE_CONFIRM("YES_CALL_CONFIRM"),
         SIMILAR_SUBSTITUTION("YES"),
-        NO_THANKS("NO")
+        NO_THANKS("NO"),
+        CHAT("CHAT")
     }
 
     enum class DeliveryType(val type: String) {
