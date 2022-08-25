@@ -20,7 +20,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.cor
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.*
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StoreCardCallBack
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StoreCardActivityResultCallback
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.CallBack
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
@@ -45,6 +45,9 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
 
     @Inject
     lateinit var connectivityLiveData: ConnectivityLiveData
+
+    @Inject
+    lateinit var storeCardActivityResultCallback : StoreCardActivityResultCallback
 
     private lateinit var mOnItemClickListener: ManageCardItemListener
     private lateinit var mHeaderItems: ManageCardLandingHeaderItems
@@ -115,7 +118,7 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
 
     private fun launchStoreCard(intent: Intent) {
         activityLauncher.launch(intent, onActivityResult = { result ->
-            if (StoreCardCallBack().linkNewCardCallBack(result)) {
+            if (storeCardActivityResultCallback.linkNewCardCallback(result)) {
                 viewModel.requestGetStoreCardCards()
             }
         })

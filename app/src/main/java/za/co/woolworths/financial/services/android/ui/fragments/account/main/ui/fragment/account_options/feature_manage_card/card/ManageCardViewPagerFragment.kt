@@ -12,6 +12,8 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ManageCardViewpagerFragmentBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.LoaderType
@@ -45,7 +47,7 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
     }
 
     private fun ManageCardViewpagerFragmentBinding?.subscribeObservers() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             with(viewModel) {
                 storeCardResponseResult.collectLatest { response ->
                     with(response) {
@@ -59,7 +61,10 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
                                 isPopupVisibleInAccountLanding = false,
                                 isPopupVisibleInCardDetailLanding = false
                             )
-                            VoiceOfCustomerManager.showPendingSurveyIfNeeded(requireContext())
+                            CoroutineScope(Dispatchers.Main).launch {
+                                VoiceOfCustomerManager.showPendingSurveyIfNeeded(requireContext())
+                            }
+
                             handleBlockUnBlockStoreCardResult()
                         }
                     }

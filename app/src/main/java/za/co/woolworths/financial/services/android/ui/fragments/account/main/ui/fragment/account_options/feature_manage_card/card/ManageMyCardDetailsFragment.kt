@@ -17,7 +17,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.SystemBarCompat
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StoreCardCallBack
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StoreCardActivityResultCallback
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.CallBack
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
@@ -36,6 +36,9 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
     @Inject lateinit var statusBarCompat: SystemBarCompat
 
     @Inject lateinit var router: ProductLandingRouterImpl
+
+    @Inject lateinit var storeCardActivityResultCallback : StoreCardActivityResultCallback
+
     private val activityLauncher = BetterActivityResult.registerActivityForResult(this)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -104,7 +107,7 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
 
     private fun launchStoreCard(intent: Intent) {
         activityLauncher.launch(intent, onActivityResult = { result ->
-            if (StoreCardCallBack().linkNewCardCallBack(result)) {
+            if (storeCardActivityResultCallback.linkNewCardCallback(result)) {
                 viewModel.requestGetStoreCardCards()
             }
         })
