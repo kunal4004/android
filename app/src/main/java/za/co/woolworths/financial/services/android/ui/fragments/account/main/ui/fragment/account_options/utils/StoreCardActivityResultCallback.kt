@@ -9,9 +9,16 @@ import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
+import javax.inject.Inject
 
-class StoreCardCallBack {
-    fun bpiCallBack(result: ActivityResult): Account? {
+interface StoreCardActivityResult {
+    fun balanceProtectionInsuranceCallback(result: ActivityResult) : Account?
+    fun linkNewCardCallback(result: ActivityResult): Boolean
+}
+
+class StoreCardActivityResultCallback @Inject constructor() : StoreCardActivityResult {
+
+    override fun balanceProtectionInsuranceCallback(result: ActivityResult): Account? {
        return when (result.resultCode) {
             AppConstant.BALANCE_PROTECTION_INSURANCE_OPT_IN_SUCCESS_RESULT_CODE -> {
                 val extras = result.data?.extras
@@ -22,9 +29,8 @@ class StoreCardCallBack {
            else -> null
        }
     }
-    fun linkNewCardCallBack(
-        result: ActivityResult,
-    ): Boolean {
+
+   override fun linkNewCardCallback(result: ActivityResult): Boolean {
         return when (result.resultCode) {
             MyCardDetailActivity.TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE -> {
                 with(result) {

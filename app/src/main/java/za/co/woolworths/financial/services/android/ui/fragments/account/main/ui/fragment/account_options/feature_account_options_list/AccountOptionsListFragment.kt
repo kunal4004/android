@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType
 import za.co.woolworths.financial.services.android.ui.base.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOptionsScreenUI
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StoreCardCallBack
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StoreCardActivityResultCallback
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
@@ -148,7 +148,7 @@ class AccountOptionsListFragment : Fragment(R.layout.account_options_list_fragme
 
     private fun launchStoreCard(intent: Intent) {
         activityLauncher.launch(intent, onActivityResult = { result ->
-            StoreCardCallBack().bpiCallBack(result).apply {
+            StoreCardActivityResultCallback().balanceProtectionInsuranceCallback(result).apply {
                 this?.let { viewModel.updateBPI(it) }
 
             }
