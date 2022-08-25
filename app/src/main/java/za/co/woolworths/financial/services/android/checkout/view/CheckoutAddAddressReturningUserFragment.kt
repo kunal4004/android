@@ -72,6 +72,7 @@ import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import za.co.woolworths.financial.services.android.viewmodels.ShoppingCartLiveData
 import java.util.regex.Pattern
 
 
@@ -182,6 +183,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         addFragmentListner()
         initializeDeliveringToView()
         initializeDeliveryFoodOtherItems()
+        isUnSellableLiquorItemRemoved()
         getLiquorComplianceDetails()
         expandableGrid.apply {
             disablePreviousBtnFood()
@@ -204,6 +206,16 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         activity?.apply {
             view?.setOnClickListener {
                 Utils.hideSoftKeyboard(this)
+            }
+        }
+    }
+
+    private fun isUnSellableLiquorItemRemoved() {
+        ShoppingCartLiveData.observe(viewLifecycleOwner) {
+            if (it == false) {
+                ageConfirmationLayout?.visibility = View.GONE
+                liquorComplianceBannerLayout?.visibility = View.GONE
+                ShoppingCartLiveData.value = true
             }
         }
     }

@@ -72,6 +72,7 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import za.co.woolworths.financial.services.android.viewmodels.ShoppingCartLiveData
 import java.util.regex.Pattern
 
 class CheckoutReturningUserCollectionFragment : Fragment(),
@@ -144,6 +145,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         initializeCollectingFromView()
         initializeCollectingDetailsView()
         initializeCollectionTimeSlots()
+        isUnSellableLiquorItemRemoved()
         getLiquorComplianceDetails()
         callStorePickupInfoAPI()
         txtContinueToPaymentCollection?.setOnClickListener(this)
@@ -151,6 +153,15 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         setFragmentResults()
     }
 
+    private fun isUnSellableLiquorItemRemoved() {
+        ShoppingCartLiveData.observe(viewLifecycleOwner) {
+            if (it == false) {
+                ageConfirmationLayout?.visibility = View.GONE
+                liquorComplianceBannerLayout?.visibility = View.GONE
+                ShoppingCartLiveData.value = true
+            }
+        }
+    }
     private fun setFragmentResults() {
 
         setFragmentResultListener(ErrorHandlerBottomSheetDialog.RESULT_ERROR_CODE_RETRY) { _, args ->

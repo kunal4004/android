@@ -73,6 +73,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.removeRandFromAmount
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import za.co.woolworths.financial.services.android.viewmodels.ShoppingCartLiveData
 import java.util.regex.Pattern
 
 class CheckoutDashFragment : Fragment(),
@@ -155,6 +156,7 @@ class CheckoutDashFragment : Fragment(),
         setupViewModel()
         initializeDashingToView()
         initializeDashTimeSlots()
+        isUnSellableLiquorItemRemoved()
         getLiquorComplianceDetails()
         hideGiftOption()
         hideInstructionLayout()
@@ -162,6 +164,16 @@ class CheckoutDashFragment : Fragment(),
         setFragmentResults()
         txtContinueToPayment?.setOnClickListener(this)
         checkoutCollectingFromLayout?.setOnClickListener(this)
+    }
+
+    private fun isUnSellableLiquorItemRemoved() {
+        ShoppingCartLiveData.observe(viewLifecycleOwner) {
+            if (it == false) {
+                ageConfirmationLayout?.visibility = View.GONE
+                liquorComplianceBannerLayout?.visibility = View.GONE
+                ShoppingCartLiveData.value = true
+            }
+        }
     }
 
     private fun hideInstructionLayout() {
