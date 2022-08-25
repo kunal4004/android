@@ -129,6 +129,10 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
         val storeCardInPrimaryCardList = storeCardData?.primaryCards?.get(primaryCardIndex)
         val listOfStoreCardFeatures: MutableList<StoreCardFeatureType> = mutableListOf()
         //val primaryCardBlockRequired = AppConfigSingleton.virtualTempCard?.primaryCardBlockRequired
+        val virtualTempCard = StoreCardFeatureType.TemporaryCardEnabled(
+            isBlockTypeNullInVirtualCardObject(),
+            virtualCard
+        )
 
         when (val primaryStoreCard = splitStoreCardByCardType(primaryCardIndex, storeCardInPrimaryCardList)) {
             is StoreCardFeatureType.StoreCardIsActivateVirtualTempCardAndIsFreezeCard -> {
@@ -142,10 +146,7 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
             }
             else -> when (isTemporaryCardEnabled()) {
                 true -> {
-                    val virtualTempCard = StoreCardFeatureType.TemporaryCardEnabled(
-                        isBlockTypeNullInVirtualCardObject(),
-                        virtualCard
-                    )
+
                     listOfStoreCardFeatures.clear()
                     when (primaryStoreCard) {
                         is StoreCardFeatureType.StoreCardIsTemporaryFreeze -> {
@@ -171,7 +172,11 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
                                    listOfStoreCardFeatures.add(primaryStoreCard)
                                    listOfStoreCardFeatures.add(StoreCardFeatureType.StoreCardFreezeCardUpShellMessage(primaryStoreCard.storeCard))
                                }
-                               else -> listOfStoreCardFeatures.add(primaryStoreCard)
+                               else -> {
+                                   if (virtualCard != null)
+                                       listOfStoreCardFeatures.add(virtualTempCard)
+                                   listOfStoreCardFeatures.add(primaryStoreCard)
+                               }
                            }
                         }
                         is StoreCardFeatureType.ActivateVirtualTempCard -> {

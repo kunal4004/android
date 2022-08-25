@@ -47,9 +47,8 @@ class PayWithCardListFragment : Fragment(R.layout.pay_with_card_list_fragment) {
     private fun setResultListener() {
         setFragmentResultListener(PAY_WITH_CARD_REQUEST_LISTENER) { _, bundle ->
             when (bundle.getString(PAY_WITH_CARD_REQUEST_LISTENER, "")) {
-
                 PAY_WITH_CARD_ON_DISMISS_RESULT_LISTENER -> {
-                    lifecycleScope.launch {
+                    viewLifecycleOwner.lifecycleScope.launch {
                         viewModel.queryServiceBlockPayWithCardStoreCard()
                     }
                 }
