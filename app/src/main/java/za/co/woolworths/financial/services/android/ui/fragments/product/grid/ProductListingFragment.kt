@@ -1243,8 +1243,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             selectItem.putString(FirebaseAnalytics.Param.ITEM_ID, productList.productId)
             selectItem.putString(FirebaseAnalytics.Param.ITEM_NAME, productList.productName)
             selectItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, mSubCategoryName)
+            selectItem.putString(FirebaseAnalytics.Param.ITEM_BRAND, productList.brandText)
             selectItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT, productList.productVariants)
-            selectItem.putString(FirebaseAnalytics.Param.PRICE, productList.price.toString())
+            productList.price?.let { selectItem.putDouble(FirebaseAnalytics.Param.PRICE, it.toDouble())
+            }
             selectItemParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(selectItem))
         }
         mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.SELECT_ITEM_EVENT,
