@@ -34,11 +34,10 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
 
     val viewModel: MyAccountsRemoteApiViewModel by activityViewModels()
     val cardFreezeViewModel: TemporaryFreezeCardViewModel by activityViewModels()
-    var binding: ManageCardViewpagerFragmentBinding? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding = ManageCardViewpagerFragmentBinding.bind(view)
+        val binding = ManageCardViewpagerFragmentBinding.bind(view)
         with(binding) {
             manageCardAdapter = ManageCardViewPagerAdapter(this@ManageCardViewPagerFragment)
             initCardViewPager()
@@ -106,35 +105,39 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
     }
 
     private fun ManageCardViewpagerFragmentBinding?.setDotIndicatorVisibility(items: MutableList<StoreCardFeatureType>?) {
-        if ((items?.size ?: 0) <= 1) {
-            this?.cardTabLayout?.visibility = GONE
-            this?.tabHiddenMargin?.visibility = VISIBLE
-        } else {
-            this?.cardTabLayout?.visibility = VISIBLE
-            this?.tabHiddenMargin?.visibility = GONE
-        }
+            this?.dotIndicatorRelativeLayout?.visibility =  if ((items?.size ?: 0) <= 1) GONE else VISIBLE
     }
 
-    private fun ManageCardViewpagerFragmentBinding?.initCardViewPager() {
+    private fun ManageCardViewpagerFragmentBinding.initCardViewPager() {
         val dimens = resources.getDimension(R.dimen._15sdp).toInt()
-        this?.cardItemViewPager?.apply {
+        with(cardItemViewPager) {
             disableNestedScrolling()
             offscreenPageLimit = 3
             setPageTransformer(OffsetPageTransformer(dimens, dimens))
             adapter = manageCardAdapter
 
-            TabLayoutMediator(cardTabLayout, this) { _, _ -> }.attach()
-
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
+                    when(position){
+                        0 -> {
+                            dotAtPosition0Img.setImageResource(R.drawable.dot_selected)
+                            dotAtPosition1Img.setImageResource(R.drawable.default_dot)
+                        }
+                        1 -> {
+                            dotAtPosition0Img.setImageResource(R.drawable.default_dot)
+                            dotAtPosition1Img.setImageResource(R.drawable.dot_selected)
+                        }
+                    }
                     onPagerSelected(position,
                         isPopupVisibleInAccountLanding = true,
                         isPopupVisibleInCardDetailLanding = true
                     )
                 }
             })
+
+            dotAtPosition0Img.setOnClickListener { cardItemViewPager.setCurrentItem(0, true) }
+            dotAtPosition1Img.setOnClickListener { cardItemViewPager.setCurrentItem(1, true) }
         }
 
         manageCardAdapter?.setItem(viewModel.listOfStoreCardFeatureType)
@@ -145,10 +148,9 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
             isPopupVisibleInCardDetailLanding = false
         )
 
-        this@initCardViewPager?.cardItemViewPager?.setCurrentItem(
+        cardItemViewPager.setCurrentItem(
             cardFreezeViewModel.currentPagePosition.value ?: 0, false
         )
-
     }
 
     private fun onPagerSelected(position: Int, isPopupVisibleInAccountLanding : Boolean ,  isPopupVisibleInCardDetailLanding: Boolean) {
@@ -162,10 +164,4 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
                 isPopupVisibleInCardDetailLanding = isPopupVisibleInCardDetailLanding
             )
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        binding = null
-    }
-
 }

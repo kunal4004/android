@@ -2978,4 +2978,10 @@
         <item name="tabBackground">@drawable/shop_tab_color_selector</item>
         <item name="tabTextAppearance">@style/ShopCustomTabTextAppearance</item>
     </style>
+
+    <style name="dotIndicatorStyle">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:background">@drawable/tab_selector</item>
+    </style>
 </resources>

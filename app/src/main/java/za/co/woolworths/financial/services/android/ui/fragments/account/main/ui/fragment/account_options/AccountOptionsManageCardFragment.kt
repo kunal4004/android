@@ -98,8 +98,7 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
     }
 
     private fun AccountOptionsManageCardFragmentBinding.setOnClickListener() {
-        mOnItemClickListener =
-            ManageCardItemListener(requireActivity(), router, includeListOptions).apply {
+        mOnItemClickListener = ManageCardItemListener(requireActivity(), router, includeListOptions).apply {
                 onClickIntentObserver.observe(viewLifecycleOwner) {
                     when (it) {
                         is CallBack.IntentCallBack -> {
@@ -111,8 +110,17 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
                     }
                 }
             }
+
+
         manageCardText.onClick {
-            viewModel.apply { emitEventOnCardTap(mStoreCardFeatureType) }
+            viewModel.emitEventOnCardTap(viewModel.mStoreCardFeatureType)
+        }
+
+        cardFreezeViewModel.onUpshellMessageActivateTempCardTap.observe(viewLifecycleOwner){ wasTapped ->
+            if (wasTapped){
+                mOnItemClickListener.navigateToActivateVirtualTempCard()
+                cardFreezeViewModel.onUpshellMessageActivateTempCardTap.value = false
+            }
         }
     }
 

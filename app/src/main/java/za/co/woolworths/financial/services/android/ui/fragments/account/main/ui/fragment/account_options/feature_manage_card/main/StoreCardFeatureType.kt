@@ -54,6 +54,7 @@ sealed class StoreCardFeatureType : Parcelable {
         var storeCard: StoreCard?,
         var isStoreCardFrozen: Boolean = true,
         var isAnimationEnabled: Boolean = false,
+        var upShellMessage : StoreCardUpShellMessage,
         var cardHolderName: String? = KotlinUtils.getCardHolderNameSurname()
     ) : StoreCardFeatureType()
 
