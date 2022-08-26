@@ -11,6 +11,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.StoreCardNotReceivedDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardUpShellMessage
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 
@@ -117,6 +118,17 @@ class ManageStoreCardLandingList(
                     cardFreezeViewModel.isSwitcherEnabled.value = false
                     blockCardDivider.visibility = VISIBLE
                     blockCardRelativeLayout.visibility = VISIBLE
+                }
+            }
+
+            when (featureType.upShellMessage){
+                is StoreCardUpShellMessage.ActivateVirtualTempCard -> {
+                    activateVirtualTempCardDivider.visibility = VISIBLE
+                    activateVirtualTempCardRelativeLayout.visibility = VISIBLE
+                }
+                else -> {
+                    activateVirtualTempCardDivider.visibility = GONE
+                    activateVirtualTempCardRelativeLayout.visibility = GONE
                 }
             }
         }

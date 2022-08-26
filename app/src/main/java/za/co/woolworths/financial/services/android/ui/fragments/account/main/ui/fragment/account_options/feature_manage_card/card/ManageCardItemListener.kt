@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card
 
 import android.app.Activity
-import android.content.Intent
 import android.view.View
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountOptionsManageCardListFragmentBinding
@@ -41,5 +40,9 @@ class ManageCardItemListener(
             R.id.blockCardRelativeLayout ->{  router.routeToBlockCard(activity) }
             else -> null
         }
+    }
+
+    fun navigateToActivateVirtualTempCard() {
+        includeListOptions.activateVirtualTempCardRelativeLayout.performClick()
     }
 }

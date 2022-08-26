@@ -28,6 +28,8 @@ class TemporaryFreezeCardViewModel @Inject constructor(private val storeCardData
 
     val onUpshellMessageFreezeCardTap : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
 
+    val onUpshellMessageActivateTempCardTap : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+
     // Loader for temporary freeze UnFreeze api
     val isTempFreezeUnFreezeLoading: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
 
