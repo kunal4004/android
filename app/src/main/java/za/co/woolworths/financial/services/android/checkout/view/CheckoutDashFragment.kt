@@ -871,7 +871,7 @@ class CheckoutDashFragment : Fragment(),
                         activity
                     )
 
-                    selectedFoodSubstitution = FoodSubstitution.PHONE_CONFIRM
+                    selectedFoodSubstitution = FoodSubstitution.CHAT
                 }
                 R.id.radioBtnSimilarSubst -> {
                     selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
