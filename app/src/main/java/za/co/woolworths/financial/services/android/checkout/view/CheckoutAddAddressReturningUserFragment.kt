@@ -581,6 +581,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         expandableGrid.setUpShimmerView()
         expandableGrid.showDeliveryTypeShimmerView()
         showDeliverySubTypeShimmerView()
+        edtTxtSpecialDeliveryInstruction?.visibility = GONE
+        edtTxtGiftInstructions?.visibility = GONE
+        switchSpecialDeliveryInstruction?.isChecked = false
+        switchGiftInstructions?.isChecked = false
 
         shimmerComponentArray = listOf(
             Pair<ShimmerFrameLayout, View>(
@@ -986,7 +990,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     private fun onCheckoutPaymentClick() {
-        if ((isRequiredFieldsMissing() || isInstructionsMissing() || isGiftMessage())) {
+        if ((isRequiredFieldsMissing() || isGiftMessage())) {
             return
         }
         if (isAgeConfirmationLiquorCompliance()) {
@@ -1061,7 +1065,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         0,
                         layoutDeliveryInstructions?.top ?: 0
                     )
-                    true
+                    /**
+                     * New requirement to have instructions optional
+                     */
+//                    true
+                    false
                 } else false
             }
             else -> false
