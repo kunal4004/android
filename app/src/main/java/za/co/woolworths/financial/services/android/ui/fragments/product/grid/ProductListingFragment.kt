@@ -899,6 +899,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
 
         mProductAdapter?.notifyItemChanged(actualSize, sizeOfList)
+
+
+
         canLoadMore(numItemsInTotal, sizeOfList)
     }
 
@@ -924,6 +927,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         if (!isLoadMore) {
             incCenteredProgress?.visibility = GONE
         }
+
+
     }
 
 

@@ -32,6 +32,7 @@ import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPRes
 import za.co.woolworths.financial.services.android.models.dto.pma.DeleteResponse
 import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
 import za.co.woolworths.financial.services.android.models.dto.shop.DashCategories
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.models.dto.size_guide.SizeGuideResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.*
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
@@ -404,6 +405,10 @@ object OneAppService : RetrofitConfig() {
                     productId, skuId, suburbId, storeId, deliveryType = deliveryType,
                 deliveryDetails = KotlinUtils.getDeliveryDetails(isUserBrowsing))
         }
+    }
+
+    fun getRatingNReview(productId: String,limit: Int, offset: Int): Call<RatingAndReviewData> {
+        return mApiInterface.getRatingNReview(getSessionToken(), getDeviceIdentityToken(),productId, limit, offset)
     }
 
     fun getShoppingLists(): Call<ShoppingListsResponse> {

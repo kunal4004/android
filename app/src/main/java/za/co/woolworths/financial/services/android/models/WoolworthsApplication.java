@@ -12,6 +12,7 @@ import android.os.StrictMode;
 import android.util.Base64;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -20,10 +21,9 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
+
 import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -43,6 +43,7 @@ import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace;
+import za.co.woolworths.financial.services.android.models.dto.RatingsAndReviews;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.RxBus;

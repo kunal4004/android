@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.models.dto.app_config
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
+import za.co.woolworths.financial.services.android.models.dto.RatingsAndReviews
 import za.co.woolworths.financial.services.android.models.dto.app_config.account_options.ConfigAccountOptions
 import za.co.woolworths.financial.services.android.models.dto.app_config.balance_protection_insurance.ConfigBalanceProtectionInsurance
 import za.co.woolworths.financial.services.android.models.dto.app_config.chat.ConfigInAppChat
@@ -48,4 +49,6 @@ data class AppConfig(
     var lowStockIndicator: ConfigLowStock?,
     var brandLandingPage: BrandLandingPage?,
     var toolTipSettings: TooltipSettings?
+    var brandLandingPage: BrandLandingPage?,
+    var ratingsAndReviews: RatingsAndReviews?
 ) : Parcelable
