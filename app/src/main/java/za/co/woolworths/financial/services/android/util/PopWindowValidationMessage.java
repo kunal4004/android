@@ -197,9 +197,6 @@ public class PopWindowValidationMessage {
 						}
 					}
 				}
-
-
-
 			}catch (Exception e){
 				Toast.makeText(mContext, "Map app’s not installed", Toast.LENGTH_LONG).show();
 			}
