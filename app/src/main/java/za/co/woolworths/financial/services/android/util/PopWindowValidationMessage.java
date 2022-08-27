@@ -198,7 +198,7 @@ public class PopWindowValidationMessage {
 					}
 				}
 			}catch (Exception e){
-				Toast.makeText(mContext, "Map app’s not installed", Toast.LENGTH_LONG).show();
+				Toast.makeText(mContext, R.string.map_not_available, Toast.LENGTH_LONG).show();
 			}
 				View.OnClickListener onClickListener= v -> {
 					Location location = Utils.getLastSavedLocation();
