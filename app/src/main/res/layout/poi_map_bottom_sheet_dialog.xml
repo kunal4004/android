@@ -56,7 +56,7 @@
         android:layout_marginEnd="@dimen/twenty_four_dp"
         android:layout_marginTop="@dimen/_3sdp"
         android:inputType="textNoSuggestions"
-        android:maxLength="@integer/forty"
+        android:maxLength="@integer/fifty"
         android:autofillHints="name"
         />
 

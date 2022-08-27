@@ -90,7 +90,7 @@
                 android:id="@+id/addressStreetNameEditText"
                 android:layout_width="0dp"
                 style="@style/checkout_edittext_style"
-                android:maxLength="@integer/forty"
+                android:maxLength="@integer/fifty"
                 android:visibility="gone"
                 android:layout_marginTop="@dimen/_3sdp"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
