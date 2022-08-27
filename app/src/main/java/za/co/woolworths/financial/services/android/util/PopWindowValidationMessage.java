@@ -22,6 +22,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.awfs.coordination.R;
 import java.util.List;
@@ -166,68 +167,69 @@ public class PopWindowValidationMessage {
 				mRelPopContainer.setAnimation(mFadeInAnimation);
 				mRelRootContainer.setAnimation(mPopEnterAnimation);
 				//touchToDismiss();
-				mRelPopContainer.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						startExitAnimation(overlay_type);
-					}
-				});
-				cancel.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						startExitAnimation(overlay_type);
-					}
-				});
+				mRelPopContainer.setOnClickListener(v -> startExitAnimation(overlay_type));
+				cancel.setOnClickListener(v -> startExitAnimation(overlay_type));
 
 				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q="));
 				List<ResolveInfo> list = mContext.getPackageManager().queryIntentActivities(intent,
 						PackageManager.MATCH_DEFAULT_ONLY);
-
-				for(ResolveInfo resolveInfo:list){
-					ActivityInfo activityInfo=resolveInfo.activityInfo;
-				switch (activityInfo.packageName){
-					case HUAWEI_MAP_PACKAGE:
-						petalNativeMap.setVisibility(View.VISIBLE);
-						mView.findViewById(R.id.nativePetalMapDivider).setVisibility(View.VISIBLE);
-						break;
-					case GOOGLE_MAP_PACKAGE:
+			try {
+				if(list!=null){
+					if (list.size() == 0 && !Utils.isHuaweiMobileServicesAvailable()) {
 						googleNativeMap.setVisibility(View.VISIBLE);
 						mView.findViewById(R.id.nativeGoogleMapDivider).setVisibility(View.VISIBLE);
-					break;
-				}
-				}
-
-
-				View.OnClickListener onClickListener=new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						Location location = Utils.getLastSavedLocation();
-						String uri = null;
-						switch (v.getId()){
-							case R.id.nativeGoogleMap:
-								if (location != null) {
-									uri = "http://maps.google.com/maps?f=d&saddr=" + location.getLatitude() + "," + location.getLongitude() + "&daddr=" + getmLatitude() + "," + getmLongiude();
-								} else {
-									uri = "http://maps.google.com/maps?q=loc:" + getmLatitude() + "," + getmLongiude();
-								}
-								Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-								intent.setComponent(new ComponentName("com.google.android.apps.maps",
-										"com.google.android.maps.MapsActivity"));
-								mContext.startActivity(intent);
-								dismissLayout();
-								break;
-
-							case R.id.nativePetalMap:
-								if(location!=null) {
-									uri = "mapapp://navigation?saddr=" + location.getLatitude() + "," + location.getLongitude() + "&daddr=" + getmLatitude() + "," + getmLongiude();
-									Intent intent1 = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-									if (intent1.resolveActivity(mContext.getPackageManager()) != null) {
-									mContext.startActivity(intent1);
-									}
-									dismissLayout();
-								}
-								break;
+					} else {
+						for (ResolveInfo resolveInfo : list) {
+							ActivityInfo activityInfo = resolveInfo.activityInfo;
+							switch (activityInfo.packageName) {
+								case HUAWEI_MAP_PACKAGE:
+									petalNativeMap.setVisibility(View.VISIBLE);
+									mView.findViewById(R.id.nativePetalMapDivider).setVisibility(View.VISIBLE);
+									break;
+								case GOOGLE_MAP_PACKAGE:
+									googleNativeMap.setVisibility(View.VISIBLE);
+									mView.findViewById(R.id.nativeGoogleMapDivider).setVisibility(View.VISIBLE);
+									break;
+								default:
+									Toast.makeText(mContext, R.string.map_not_available, Toast.LENGTH_LONG).show();
+									break;
+							}
 						}
+					}
+				}
+
+
+
+			}catch (Exception e){
+				Toast.makeText(mContext, "Map app’s not installed", Toast.LENGTH_LONG).show();
+			}
+				View.OnClickListener onClickListener= v -> {
+					Location location = Utils.getLastSavedLocation();
+					String uri = null;
+					switch (v.getId()){
+						case R.id.nativeGoogleMap:
+							if (location != null) {
+								uri = "http://maps.google.com/maps?f=d&saddr=" + location.getLatitude() + "," + location.getLongitude() + "&daddr=" + getmLatitude() + "," + getmLongiude();
+							} else {
+								uri = "http://maps.google.com/maps?q=loc:" + getmLatitude() + "," + getmLongiude();
+							}
+							Intent intent12 = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+							intent12.setComponent(new ComponentName("com.google.android.apps.maps",
+									"com.google.android.maps.MapsActivity"));
+							mContext.startActivity(intent12);
+							dismissLayout();
+							break;
+
+						case R.id.nativePetalMap:
+							if(location!=null) {
+								uri = "mapapp://navigation?saddr=" + location.getLatitude() + "," + location.getLongitude() + "&daddr=" + getmLatitude() + "," + getmLongiude();
+								Intent intent1 = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+								if (intent1.resolveActivity(mContext.getPackageManager()) != null) {
+								mContext.startActivity(intent1);
+								}
+								dismissLayout();
+							}
+							break;
 					}
 				};
 				googleNativeMap.setOnClickListener(onClickListener);
