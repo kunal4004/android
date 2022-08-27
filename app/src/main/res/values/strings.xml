@@ -2699,5 +2699,6 @@
     <string name="one_cart_chat_order_id">ORDER #%s</string>
     <string name="generic_error_something_wrong_newline">Unfortunately,\n Something Went Wrong</string>
     <string name="one_cart_chat_error_disc">We can’t seem to reach your shopper.\n Give them a few moments, and try again.</string>
-
+    <string name="map_not_available">Map app’s not installed</string>
+    <string name="petal_maps">PETAL MAPS</string>
 </resources>
