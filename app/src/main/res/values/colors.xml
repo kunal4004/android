@@ -50,6 +50,7 @@
     <color name="black30">#4D000000</color>
     <color name="black10">#10000000</color>
     <color name="black60">#99000000</color>
+    <color name="black90">#CC000000</color>
     <color name="status_red">#e41f1f</color>
     <color name="status_green">#bad110</color>
     <color name="status_amber">#f4b421</color>
@@ -105,6 +106,7 @@
     <color name="block_card_color" >#424244</color>
     <color name="gray_35">#35D8D8D8</color>
     <color name="color_yellow_FDE353">#FDE353</color>
+    <color name="color_yellow_FEE600">#FEE600</color>
     <color name="color_7f7f7f">#7f7f7f</color>
     <color name="layout_background_gray">#1A000000</color>
     <color name="colorPrimary">@color/white</color>
@@ -167,9 +169,15 @@
     <color name="color_A9A9A9">#A9A9A9</color>
 
     <color name="low_stock_indicator">#FCA933</color>
+    <color name="color_9D9D9D">#9D9D9D</color>
+    <color name="color_f9f9f9">#F9F9F9</color>
     <color name="color_4A9521">#4A9521</color>
+    <color name="color_4ABB77">#4ABB77</color>
     <color name="color_B3000000">#B3000000</color>
+    <color name="color_F5F5F5">#F5F5F5</color>
     <color name="grey">#9D9D9D</color>
 
     <color name="color_363636">#363636</color>
+    <color name="color_EEEEEE">#EEEEEE</color>
+    <color name="color_EDF4FB">#EDF4FB</color>
 </resources>

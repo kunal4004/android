@@ -17,6 +17,14 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible" />
 
+    <View
+        android:id="@+id/viewHorizontalSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/eight_dp"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:background="@color/color_F3F3F3"
+        app:layout_constraintTop_toBottomOf="@id/newShoppingBagsLayout" />
+
     <TextView
         android:id="@+id/txtNeedBags"
         android:layout_width="wrap_content"
@@ -28,7 +36,7 @@
         android:textColor="@color/black"
         android:textSize="@dimen/fifteen_sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newShoppingBagsLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/viewHorizontalSeparator" />
 
     <Switch
         android:id="@+id/switchNeedBags"
@@ -41,10 +49,11 @@
         app:layout_constraintTop_toTopOf="@id/txtNeedBags" />
 
     <View
-        android:id="@+id/viewHorizontalSeparator1"
+        android:id="@+id/shoppingBagSeparator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/one_dp"
         android:layout_marginTop="@dimen/twenty_four_dp"
+        app:layout_goneMarginTop="@dimen/_minus2sdp"
         android:background="@color/color_12000000"
         app:layout_constraintTop_toBottomOf="@id/txtNeedBags" />
 
@@ -55,7 +64,7 @@
         android:layout_margin="@dimen/twenty_four_dp"
         android:background="@color/shimmer_view_background"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator1">
+        app:layout_constraintTop_toBottomOf="@id/shoppingBagSeparator">
 
         <TextView
             android:id="@+id/txtSpecialDeliveryInstruction"
@@ -74,9 +83,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
         android:background="@color/shimmer_view_background"
-        app:layout_constraintBottom_toBottomOf="@id/instructionTxtShimmerFrameLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/instructionTxtShimmerFrameLayout">
+        app:layout_constraintTop_toBottomOf="@id/shoppingBagSeparator"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <Switch
             android:id="@+id/switchSpecialDeliveryInstruction"
@@ -117,7 +125,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <View
-        android:id="@+id/viewHorizontalSeparator2"
+        android:id="@+id/viewGiftHorizontalSeparator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/one_dp"
         android:layout_marginTop="@dimen/twenty_four_dp"
@@ -131,7 +139,7 @@
         android:layout_margin="@dimen/twenty_four_dp"
         android:background="@color/shimmer_view_background"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator2">
+        app:layout_constraintTop_toBottomOf="@id/viewGiftHorizontalSeparator">
 
         <TextView
             android:id="@+id/txtGiftInstructions"
@@ -150,9 +158,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
         android:background="@color/shimmer_view_background"
-        app:layout_constraintBottom_toBottomOf="@id/giftInstructionTxtShimmerFrameLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/giftInstructionTxtShimmerFrameLayout">
+        app:layout_constraintTop_toBottomOf="@id/viewGiftHorizontalSeparator"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <Switch
             android:id="@+id/switchGiftInstructions"

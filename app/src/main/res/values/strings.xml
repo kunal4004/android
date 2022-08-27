@@ -28,7 +28,6 @@
     <string name="wrewards">WREWARDS</string>
     <string name="recent_search">RECENT SEARCHES</string>
     <string name="google_maps">GOOGLE MAPS</string>
-    <string name="petal_maps">PETAL MAPS</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="km">km</string>
     <string name="contact_us">Contact Us</string>
@@ -490,12 +489,12 @@
     <string name="enter_list_name">Enter list name</string>
     <string name="select_all">SELECT ALL</string>
     <string name="deselect_all">DESELECT ALL</string>
-    <string name="title_empty_shopping_list">Shopping list is empty</string>
-    <string name="description_empty_shopping_list">Search for products to start adding \n items to this list.</string>
-    <string name="button_empty_shopping_list">Search Products</string>
-    <string name="title_no_shopping_lists">You have no lists</string>
-    <string name="description_no_shopping_lists">Shopping lists makes it easier and faster to get your favourite Woolworths products.</string>
-    <string name="button_no_shopping_lists">create a list</string>
+    <string name="title_empty_shopping_list">Your Shopping List Is Empty.</string>
+    <string name="description_empty_shopping_list">Search for your favourite Woolies products \n to add to your shopping lists.</string>
+    <string name="button_empty_shopping_list">ADD ITEMS</string>
+    <string name="title_no_shopping_lists">You Don’t Have Any Shopping Lists Yet.</string>
+    <string name="description_no_shopping_lists">Shopping lists make it quick and easy to get your favourite Woolies products.</string>
+    <string name="button_no_shopping_lists">create list</string>
     <string name="shopping_list">shopping list</string>
     <string name="select">select</string>
     <string name="product_unavailable">product unavailable</string>
@@ -684,7 +683,7 @@
     <string name="add_items_to_shopping_list">Add Items to Shopping List</string>
     <string name="number_of_items">Number of items:</string>
     <string name="purchase_date">Purchase Date:</string>
-    <string name="past_orders">PAST ORDERS</string>
+    <string name="past_orders">Past Orders</string>
     <string name="order_items">order items</string>
     <string name="order_page_title_prefix">ORDER:\u0020</string>
     <string name="empty_order_view_title">No order history</string>
@@ -696,6 +695,7 @@
     <string name="invoice_number">invoice number</string>
     <string name="tax_invoices">TAX INVOICES</string>
     <string name="shop_create_a_list">Create A New List</string>
+    <string name="shop_create_list">Create New List</string>
     <string name="shop_sign_out_order_title">sign in to view\nand create lists</string>
     <string name="shop_sign_out_order_desc">Search for products to start adding items to this list.</string>
     <string name="order_invoice_title_prefix">PDF:\u0020</string>
@@ -713,7 +713,7 @@
     <string name="kmsi_session_expired_desc">Would you like to stay signed in?</string>
     <string name="kmsi_session_expired_title">keep me signed in</string>
     <string name="cancel_no_thanks">NO THANKS</string>
-    <string name="please_wait">Please wait...</string>
+    <string name="please_wait">Please wait…</string>
     <string name="update_title">Update Available</string>
     <string name="update_desc">Please update to the latest version of the App.</string>
     <string name="my_card_title">My Card</string>
@@ -791,7 +791,7 @@
     <string name="credit_limit_decrease_desc_part_2">Do you still want to reduce your limit to %1$s, or would you like to proceed with the maximum credit limit you have qualified for?</string>
     <string name="credit_limit_decrease_max_button">proceed with the maximum</string>
     <string name="chat_button_text">Chat With Us</string>
-    <string name="start_typing">Start typing...</string>
+    <string name="start_typing">Start typing…</string>
     <string name="chat_hold_message">Please hold while we connect you</string>
     <string name="chat_end_session">END</string>
     <string name="chat_end_session_dialog_title">End Session</string>
@@ -974,6 +974,7 @@
     <string name="selected_colour">Selected Colour</string>
     <string name="set_to_default">Set to default \u0020</string>
     <string name="delivering_to_pdp">Delivering to \u0020</string>
+    <string name="dashing_to_space">Dashing to \u0020</string>
     <string name="select_colour">Select Colour</string>
     <string name="icr_otp_phone_desc">Your One Time Pin (OTP) has been sent to  %1$s. Once you have received it, please enter the OTP below.</string>
     <string name="icr_otp_email_desc">Your One Time Pin (OTP) has been sent to  %1$s. Once you have received it, please enter the OTP below.</string>
@@ -1463,7 +1464,7 @@
     <string name="free_gift_with_purchase_availabilty">Free Gift Available While Stocks Last</string>
 
     <string name="retry_label">Retry</string>
-    <string name="error_occured">Error Occured</string>
+    <string name="error_occured">Error Occurred</string>
     <string name="gift_with_purchase_dialog_layout">Gift with purchase dialog</string>
     <string name="gift_item_title">This item is a Free Gift</string>
     <string name="gift_item_description">To remove this item from your cart, you need to remove the qualifying product.</string>
@@ -1528,7 +1529,7 @@
     <string name="confirm_address">Confirm Address</string>
     <string name="edit_address"><u>Edit Address</u></string>
     <string name="time_slots_page_title">When Would Like Your \nCard Delivered?</string>
-    <string name="time_slots_page_desc">Choose a date and select a prefered timeslot for when you would like your card delivered.</string>
+    <string name="time_slots_page_desc">Choose a date and select a preferred timeslot for when you would like your card delivered.</string>
     <string name="processing_error">Processing Error</string>
     <string name="time_slots_error_desc">We were unable to find available time slots.</string>
     <string name="validate_address_error_desc">We were unable to confirm your \nrequest at this time.</string>
@@ -1561,8 +1562,8 @@
 
     <!-- OnBoarding screen items -->
     <string name="on_boarding_screen_title_1">Welcome to the world of Woolies. It’s the next level in shopping, rewards and financial services.</string>
-    <string name="on_boarding_screen_title_2">Get inspired with the newest products and trends, find items in store and shop your favourites anytime, anywhere.</string>
-    <string name="on_boarding_screen_title_3">Instantly save more. Sign up for WRewards on your phone, and access your virtual card, vouchers and promotions on the go.</string>
+    <string name="on_boarding_screen_title_2">Shop same day delivery with Woolies Dash, choose a timeslot with standard delivery, or use our Click &amp; Collect and visit one of our stores.</string>
+    <string name="on_boarding_screen_title_3">Instantly save more. Sign up for WRewards on your phone, and access your virtual card, vouchers, and promotions on the go.</string>
     <string name="on_boarding_screen_title_4">Access all your Woolworths financial products right here. View your balances, check your transaction history or apply for something new.</string>
     <string name="on_boarding_lets_go">let\'s go</string>
     <string name="credit_limit_label">Credit Limit</string>
@@ -1581,7 +1582,6 @@
     <string name="select_a_store">Select a Store</string>
     <string name="delivery_or_collection">Delivery or Collection?</string>
     <string name="collecting_from">Collecting from</string>
-    <string name="collecting_from_geo"> <![CDATA[Collecting from <font color=\'#000000\'><b>%s</b></font>]]></string>
     <string name="select_your_collection_store">Select your collection store:</string>
     <string name="select_your_delivery_location">Select your delivery location:</string>
     <string name="remove_these_items_continue">remove these items &amp; continue</string>
@@ -1759,7 +1759,7 @@
 
     <string name="store_closed_message">Sorry, we aren’t accepting food orders in your chosen area as the store is temporarily closed</string>
     <string name="change_store">Change Store</string>
-    <string name="these_items_will_be_removed_from_your_cart">These items will be removed from your cart</string>
+    <string name="these_items_will_be_removed_from_your_cart">These Items Will Be Removed From Your Cart.</string>
     <string name="first_available_food_delivery_date_store">The earliest collection slot we have available for %1$s is &lt;b>%2$s&lt;/b></string>
     <string name="confirm_store">Confirm Store</string>
     <string name="confirm_suburb">Confirm Suburb</string>
@@ -1854,6 +1854,7 @@
     <string name="chat_to_us_label">CHAT TO US</string>
 
     <string name="earliest_delivery_date">Earliest Delivery date:</string>
+    <string name="earliest_delivery_dates">Earliest Delivery Dates:</string>
     <string name="food_items">Food Items</string>
     <string name="fashion_beauty_home">Fashion, Beauty &amp; Home</string>
     <string name="get_your_free_credit_report">View Free Credit Report &amp; More</string>
@@ -1895,16 +1896,31 @@
     <string name="promo_discount_dialog_title">Promo Code Applied</string>
     <string name="promo_discount_dialog_desc">If more than one Promo Code is applied, we select the code with the highest priority for you.</string>
     <string name="earliest_collection_date">Earliest Collection date:</string>
+    <string name="earliest_collection_Date">Earliest Collection Date:</string>
+    <string name="driver_tip">Driver Tip</string>
 
     <!-- Dash Details -->
     <string name="dash_banner_text_open_app">Same Day Delivery. Open Our App.</string>
     <string name="dash_banner_text_download_app">Same Day Delivery. Download Our App.</string>
+    <string name="shop_using_standard_delivery">Shop now using <b>Standard Delivery.</b></string>
+    <string name="shop_using_cnc"><b>Shop now using Click &amp; Collect.</b></string>
+    <string name="shop_using_dash_delivery">Shop now using <b>Dash Delivery.</b></string>
 
     <string name="dash_details_food_order">FOOD ORDERS</string>
     <string name="dash_details_woolies_app_available">Now Available in\nYour Area: Woolies Dash</string>
     <string name="dash_details_woolies_app_available_desc">With this new trial app, get ready for fast, fresh delivery of all your favourite Woolworths food items.</string>
     <string name="dash_details_please_note">Please note</string>
     <string name="dash_details_what_you_ll_love">WHAT YOU’LL LOVE</string>
+    <string name="dash_help_and_support">Help and Support</string>
+    <string name="dash_experiencing_issue">Experiencing an issue? Get in touch.</string>
+    <string name="dash_call_customer_care">Call Our Call Centre</string>
+    <string name="dash_customer_care_no">+27 860 100 987</string>
+    <string name="dash_help">HELP</string>
+    <string name="dash_send_us_an_email">Send Us An Email</string>
+    <string name="dash_Chat_to_your_shopper">Chat To Your Shopper, </string>
+    <string name="dash_track_your_order">Track Your Order</string>
+    <string name="dash_email_id">shop@wooliesdash.co.za</string>
+    <string name="dash_customer_care_no_phone">087 210 0305</string>
 
     <string name="app_feature_title"></string>
     <string name="app_feature_get_delivered">Same-day delivery</string>
@@ -1959,8 +1975,11 @@
     <string name="will_do_later"><u>i’ll do this later</u></string>
     <string name="unable_process_checkout_title">Unable to proceed to Checkout</string>
     <string name="unable_process_checkout_desc">Please remove items from your cart in order to proceed with your checkout.</string>
-    <string name="toast_single_item_added_to_cart_message">%1$s item added to cart</string>
-    <string name="toast_multiple_item_added_to_cart_message">%1$s items added to cart</string>
+    <plurals name="toast_item_added_to_cart_message">
+        <item quantity="one">%d item added to cart.</item>
+        <item quantity="other">%d items added to cart.</item>
+    </plurals>
+
     <string name="cd_labelitemlimit">labelItemLimit</string>
     <string name="cd_totalitemlimit">totalItemLimit</string>
     <string name="cd_layouttoastmessage">layoutToastMessage</string>
@@ -1983,6 +2002,8 @@
     <string name="loan_request_fund_not_available_title">Funds Not Available</string>
     <string name="loan_request_fund_not_available_desc">Your credit facility does not allow for a Personal Loan drawdown at this time.</string>
     <string name="cd_lnksizeguide">lnkSizeGuide</string>
+    <string name="my_lists">MY LISTS</string>
+    <string name="remove_and_continue">Remove and continue</string>
 
     <!--  CLI Marital status  -->
     <string name="cli_marital_status_txt">Marital Status</string>
@@ -2196,6 +2217,7 @@
     <string name="pma_amount_overdue_popup_desc">The amount that is outstanding from the previous billing due date</string>
     <string name="collection_remove_block_current_balance_popup_desc">Balance as at the current date.</string>
     <string name="empty_cart_title">Your Cart Is Empty</string>
+    <string name="empty_cart_text">Your Cart Is Empty.</string>
     <string name="removed_items_empty_cart_desc">When you made changes to your location, your cart was updated, and all items were removed.</string>
 
 
@@ -2215,6 +2237,8 @@
     <string name="number_item">%1$s Item</string>
     <string name="order_again">ORDER AGAIN</string>
     <string name="you_could_have_saved">You could have saved</string>
+    <string name="food_number_items">%1$s Food Items</string>
+    <string name="food_number_item">%1$s Food Item</string>
 
     <string name="common_error_unfortunately_something_went_wrong">Unfortunately, something went wrong.</string>
     <string name="common_error_message_without_contact_info">We are unable to process your request at the moment. Please try again later.</string>
@@ -2227,7 +2251,7 @@
     <string name="mobile_number_error_msg">Please enter a 10-digit South African mobile number.</string>
     <string name="nick_name_exist_error_msg">This nickname already exists. Please choose another.</string>
 
-    <string name="where_are_we_delivering">Where Are We Delivering?</string>
+    <string name="where_are_we_delivering">Where Are We Delivering To?</string>
     <string name="where_should_we_deliver">Where Should We Deliver?</string>
     <string name="save_address">SAVE ADDRESS</string>
     <string name="change_details">change details</string>
@@ -2253,7 +2277,6 @@
     <string name="dismiss">Dismiss</string>
     <string name="suburb_not_deliverable_msg">We Can’t Deliver To This Suburb Yet</string>
     <string name="suburb_not_deliverable_description">However, we’re growing quickly, so please check back soon.</string>
-    <string name="native_checkout_delivering_to_title">Delivering to</string>
 
     <!-- Native Checkout : Error Screens  -->
     <string name="save_address_error">We can’t save your address right now. Please try again.</string>
@@ -2266,7 +2289,7 @@
 
     <!-- Native Checkout : delivery Instructions -->
     <string name="native_checkout_delivery_instructions_need_bags">Need shopping bags? 62c per bag</string>
-    <string name="delivery_instructions_shopping_bags_title">Shopping Bags</string>
+    <string name="delivery_instructions_shopping_bags_title">Choose Your Shopping Bags</string>
     <string name="delivery_instructions_shopping_bags_desc">We’re going plastic bag free!.</string>
     <string name="delivery_instructions_shopping_bags_sub_desc">To be part of the solution, please choose an option</string>
     <string name="native_checkout_delivery_special_instructions">Special Delivery Instructions</string>
@@ -2280,7 +2303,7 @@
     <string name="special_char_name_error_text">Only letters, numbers, or punctuation can be used here.</string>
     <string name="vehicle_details_title">Vehicle Details</string>
     <string name="my_vehicle_text">My Vehicle</string>
-    <string name="e_hailing_text">E-Hailing</string>
+    <string name="e_hailing_text">Taxi (Uber, Bolt etc.)</string>
     <string name="e_hailing_description">Select this option if you will be arriving to collect your order in an e-hailing vehicle (e.g. Uber, Bolt, Lyft).</string>
     <string name="vehicle_colour">Vehicle Colour: *</string>
     <string name="vehicle_model">Vehicle Model: *</string>
@@ -2294,13 +2317,14 @@
     <string name="native_checkout_delivery_age_confirmation_desc">For your alcohol purchase, please confirm that you are 18 years or older.</string>
     <string name="native_checkout_delivery_age_confirmation_desc_note"><b>Note:</b> To verify their age, the recipient may be required to present an ID or passport on delivery. If not, the order may be returned to the store.</string>
     <string name="native_checkout_delivery_food_substitution_phone_confirm">Phone me to confirm any substitutions</string>
+    <string name="native_checkout_delivery_food_substitution_chat">Chat with shopper to confirm substitutions</string>
     <string name="native_checkout_delivery_age_confirm">I confirm that I am 18 years or older.</string>
     <string name="native_checkout_delivery_food_substitution_similar_subst">Substitute for similar items if one is available</string>
     <string name="native_checkout_delivery_food_substitution_no_thanks">No thanks, don’t substitute</string>
     <string name="delivery_timeslot_title_food_items">Delivery 1 - Food Items</string>
     <string name="delivery_timeslot_title_other_items">Delivery 2 - Other Items</string>
     <string name="slot_delivery_title">How Would You Like It Delivered?</string>
-    <string name="slot_delivery_title_when">When would you like it delivered?</string>
+    <string name="slot_delivery_title_when">Set Delivery Timeslot</string>
     <string name="select_your_preferred_delivery_time">Select your preferred delivery time</string>
     <string name="select_your_preferred_delivery_time_other">Select your preferred delivery method</string>
     <string name="previous_week_text">Previous Week</string>
@@ -2309,7 +2333,7 @@
     <string name="currency">R</string>
     <string name="dummy_currency">R50</string>
     <string name="title_text">ShowTitle</string>
-    <string name="subtitle_text">Show SubTitle Text</string>
+    <string name="subtitle_text">Your order will arrive in a sanitised bag. \n You will need to return this to the driver.</string>
     <string name="working_days_text">%1$s - %2$s Working Days</string>
     <plurals name="stores_near_me">
         <item quantity="zero">%d Stores near me</item>
@@ -2444,6 +2468,8 @@
     <string name="geo_delivery_fee">Delivery fee:</string>
     <string name="earliest_food_delivery_date">Earliest Food Delivery Date:</string>
     <string name="earliest_fashion_delivery_date">Earliest Fashion Delivery Date:</string>
+    <string name="earliest_dash_delivery_timeslot">Dash Delivery Timeslot:</string>
+    <string name="earliest_delivery_no_date_available">No Date Available</string>
     <string name="all">All</string>
     <string name="unlimited">Unlimited</string>
     <string name="food">Food</string>
@@ -2465,6 +2491,87 @@
     <string name="change">change</string>
     <string name="near_stores">%d Strores near me.</string>
     <string name="where_do_you_want_to_collect">Where do you want to collect?</string>
+
+    <!--Dash-->
+    <string name="walkthrough_shop_title">SHOPPING AT YOUR FINGERTIPS</string>
+    <string name="walkthrough_shop_desc">We’ve made shopping even easier to access than before.</string>
+    <string name="walkthrough_shop_action">Start shopping</string>
+    <string name="walkthrough_dash_title">NEW DELIVERY METHODS</string>
+    <string name="walkthrough_dash_desc">Give Woolworths Dash a try, with the ability to change delivery methods with ease.</string>
+    <string name="walkthrough_dash_action">try dash</string>
+    <string name="walkthrough_delivery_details_title">CUSTOMIZE DELIVERY DETAILS</string>
+    <string name="walkthrough_delivery_details_desc">View and edit your delivery details, no matter where you are in the App.</string>
+    <string name="walkthrough_delivery_details_action">set your delivery address</string>
+    <string name="standard_delivery">Standard Delivery</string>
+    <string name="click_and_collect">Click &amp; Collect</string>
+    <string name="click_and_collect_title_text">Free Collection. \n Limited shop of %1$s Items.</string>
+    <string name="dash_title_text">R%1$s Delivery Fee. \n Limited shop of %2$s Items.</string>
+    <string name="dash_delivery">Dash Delivery</string>
+    <string name="dash_delivery_bold"><b>Dash Delivery</b></string>
+    <string name="dash_product_search">Search name, product code or brand</string>
+    <string name="default_location">Default Location</string>
+    <string name="set_your_address">Set your address</string>
+    <string name="select_your_preferred_store">Select your preferred store</string>
+    <string name="set_address">SET ADDRESS</string>
+    <string name="dash_delivery_title">To view and shop with Woolies Dash,\n we need your address.</string>
+    <string name="dash_delivery_msg">Set Your Address \n To Start Shopping.</string>
+    <string name="device_location_service_disabled">Your Device’s Location Services Are Disabled.</string>
+    <string name="device_location_service_disabled_subTitle">To view and shop using Click &amp; Collect, we need your location.</string>
+    <string name="btn_turn_on_location_text">Turn location on</string>
+    <string name="all_products_available">All Products Available</string>
+    <string name="next_dash_delivery_timeslot_text">Next Dash Delivery timeslot</string>
+    <string name="my_shopping_lists">My Shopping Lists</string>
+    <string name="hi">HI&#160;</string>
+    <string name="tip_your_dash_driver">Tip Your Dash Driver</string>
+    <string name="enter_your_own_amount">Enter your own amount between R%1d - R%2d</string>
+    <string name="driver_tip_note">* Your tip will reflect in the order total value before payment.</string>
+    <string name="amt_tip_added">R%,.2f Tip Added</string>
+    <string name="rand_text">R</string>
+    <string name="driver_minimum_tip_amt_error">A minimum amount of R%,.2f is required.</string>
+    <string name="driver_maximum_tip_amt_error">A maximum amount of R%,.2f is allowed.</string>
+    <string name="address_type">Address Type:</string>
+    <string name="add_street_address">Street Address:</string>
+    <string name="dash_free_collection">"Free Collection"</string>
+    <string name="dash_item_limit">%d Item Limit</string>
+    <string name="dash_delivery_fee">R%d Delivery Fee</string>
+    <string name="select_delivery_timeslot">Select Delivery Timeslot</string>
+    <string name="dash_delivery_date">Delivery Date</string>
+    <string name="dash_delivery_timeslot">Delivery Timeslot</string>
+    <string name="dashing_to">Dashing to</string>
+    <string name="set_location_title">Set Your Location</string>
+    <string name="set_location_msg">To view and shop using Click &amp; Collect, we need your location.</string>
+    <string name="set_location">SET LOCATION</string>
+    <string name="hint_street_address_dash">Home • 28 Eastlake Island Drive</string>
+    <string name="continue_browsing">CONTINUE BROWSING</string>
+
+    <string name="change_your_delivery_method_title">You’re About To Change Your Delivery Method</string>
+    <string name="change_your_delivery_method_standard">By adding this item to your cart, you will checkout using <b><font color='#000000'>Standard Delivery</font></b> instead.</string>
+    <string name="change_your_delivery_method_dash">By adding this item to your cart, you will checkout using <b><font color='#000000'>Dash Delivery</font></b> instead.</string>
+    <string name="change_your_delivery_method_cnc">By adding this item to your cart, you will checkout using <b><font color='#000000'>Click &amp; Collect.</font></b> instead.</string>
+    <string name="continue_with_standard_delivery">CONTINUE WITH STANDARD DELIVERY</string>
+    <string name="continue_with_cnc_delivery">CONTINUE WITH Click &amp; Collect</string>
+    <string name="continue_with_dash_delivery">CONTINUE WITH DASH DELIVERY</string>
+
+    <plurals name="remove_items_dash_dialog_desc">
+        <item quantity="one">This item cannot be delivered using <b><font color='#000000'>Dash Delivery.</font></b>. The following will be removed from your cart:</item>
+        <item quantity="other">These items cannot be delivered using <b><font color='#000000'>Dash Delivery.</font></b>. The following will be removed from your cart:</item>
+    </plurals>
+
+    <plurals name="remove_items_standard_dialog_desc">
+        <item quantity="one">This item cannot be delivered using <b><font color='#000000'>Standard Delivery.</font></b>. The following will be removed from your cart:</item>
+        <item quantity="other">These items cannot be delivered using <b><font color='#000000'>Standard Delivery.</font></b>. The following will be removed from your cart:</item>
+    </plurals>
+
+    <plurals name="remove_items_cnc_dialog_desc">
+        <item quantity="one">This item cannot be delivered using <b><font color="black">Click &amp; Collect.</font></b>. The following will be removed from your cart:</item>
+        <item quantity="other">These items cannot be delivered using <b><font color="black">Click &amp; Collect.</font></b>. The following will be removed from your cart:</item>
+    </plurals>
+
+    <plurals name="unsellable_title">
+        <item quantity="one">This Item Will Be Removed From Your Cart.</item>
+        <item quantity="other">@string/these_items_will_be_removed_from_your_cart</item>
+    </plurals>
+
     <string name="product_listing_price_from">From</string>
 
     <string name="vtsc_card_not_arrived_title">Has Your Card Not\nArrived in the Post?</string>
@@ -2480,7 +2587,6 @@
         your exact location.</string>
     <string name="fashion_beauty_geo">Fashion,Beauty,Home</string>
     <string name="no_location_collection">There Are No Collection Stores \n Available Near You.</string>
-    <string name="no_location_delivery">We Can’t Deliver To This Location Yet.</string>
     <string name="geo_map_address">%s %s %s</string>
     <string name="max_characters_allowed">Max 40 characters allowed</string>
 
@@ -2508,7 +2614,24 @@
     <string name="account_in_recovery_sc_payment_due_unavailable_desc">Your Store Card is currently in a payment plan. Please remember to make your next payment.</string>
     <string name="account_in_recovery_pl_payment_due_unavailable_desc">Your Personal Loan is currently in a payment plan. Please remember to make your next payment.</string>
     <string name="account_in_recovery_cc_payment_due_unavailable_desc">Your Credit Card is currently in a payment plan. Please remember to make your next payment.</string>
+
+    <!--order history-->
+    <string name="order_type">Order Type:</string>
     <string name="delivery_address">Delivery Address:</string>
+    <string name="timeslot">Timeslot:</string>
+    <string name="order_id">Order #%s</string>
+    <string name="time_slot_value">%s:</string>
+    <string name="collection_store">Collection Store:</string>
+    <string name="order_total_history">Order Total</string>
+    <string name="track_your_order">Track Your Order</string>
+    <string name="chat_to_your_shopper"> <![CDATA[Chat to Your Shopper, <font color=\'#000000\'><b>%s</b></font>]]></string>
+    <!-- My Cart   -->
+    <string name="cart_default_location">Default Location</string>
+    <!-- Common Errors -->
+    <string name="error_unknown">An unknown error occurred</string>
+    <string name="error_internet_connection">Couldn\'t reach the server. Check your internet connection.</string>
+
+
     <string name="title_text_has_your_card_not_arrived_in_the_post">title_text_has_your_card_not_arrived_in_the_post</string>
     <string name="copy_text_has_your_card_not_arrived_in_the_post">"copy_text_has_your_card_not_arrived_in_the_post "</string>
     <string name="button_my_card_hasnt_arrived">"button_my_card_hasnt_arrived "</string>
@@ -2536,6 +2659,27 @@
     <string name="enter_valid_email">Please enter valid email.</string>
     <string name="create_list_and_add">create list and add</string>
 
+    <!-- Feature Walkthrough : Barcode Scanning  -->
+    <string name="feature_barcode_scanning_title">BARCODE SCANNING</string>
+    <string name="feature_barcode_scanning_desc">Scan a product\'s barcode to view it\'s information or add it straight to your shopping list.</string>
+    <string name="feature_barcode_scanning_action_text">SCAN A PRODUCT</string>
+
+    <!-- Feature Walkthrough : MY List  -->
+    <string name="new_location_list">NEW LOCATION FOR LISTS</string>
+    <string name="early_access_shopping">Easily access your shopping lists in My Accounts.</string>
+    <string name="view_shopping_list_action">VIEW SHOPPING LISTS</string>
+
+    <string name="please_select_a_reason_for_cancellation">Please select a reason for cancellation:</string>
+    <string name="i_don_t_need_the_item_s_anymore">I don’t need the item(s) anymore.</string>
+    <string name="i_forgot_to_add_something_to_my_order">I forgot to add something to my order.</string>
+    <string name="i_need_to_place_this_order_for_a_different_time">I need to place this order for a different time.</string>
+    <string name="other">Other.</string>
+    <string name="dash_status_confirmed">Confirmed</string>
+    <string name="dash_status_packaging">Packing</string>
+    <string name="dash_status_en_route">En-route</string>
+    <string name="dash_status_delivered">Delivered</string>
+    <string name="empty" />
+    <string name="dash_item_limit_message">Dash orders allow %d items max</string>
     <string name="delete_your_profile">DELETE YOUR PROFILE</string>
     <string name="start_the_process">Start The Process</string>
     <string name="delete_account_description">If you delete your profile, you won\'t be able to log into your account, view any account information, view history, or access any of our related apps.</string>
@@ -2544,7 +2688,16 @@
     <string name="to_contact_customer_support_dial_0860_100_987">To contact Customer Support, dial 0860 100 987</string>
     <string name="delete_my_account">Delete my account</string>
     <string name="your_online_profile_has_been_successfully_deleted">Your Online Profile Has Been Successfully Deleted</string>
-    <string name="map_not_available">Map app’s not installed</string>
+    <string name="dash_order">Dash Order:</string>
+    <string name="dash_email_type">plain/text</string>
 
+         <!--one cart stream chat -->
+    <string name="type_a_message">Type a message</string>
+    <string name="currently_active">Currently Active</string>
+    <string name="currently_in_active">Currently Inactive</string>
+    <string name="please_enter_a_message">Please Enter a Message</string>
+    <string name="one_cart_chat_order_id">ORDER #%s</string>
+    <string name="generic_error_something_wrong_newline">Unfortunately,\n Something Went Wrong</string>
+    <string name="one_cart_chat_error_disc">We can’t seem to reach your shopper.\n Give them a few moments, and try again.</string>
 
 </resources>
