@@ -46,8 +46,9 @@ class DeleteAccountBottomSheetDialog : WBottomSheetDialogFragment() ,
         setMessageWithClickableLink(deleteDescription_2)
     }
     private fun setMessageWithClickableLink(textView: TextView?) {
-        val content = getString(R.string.to_contact_customer_support_dial_0860_100_987)
-        val phone = "0860 100 987"
+        val content =
+            getString(R.string.to_contact_customer_support_dial_0860_100_987) + " " + getString(R.string.online_local_caller_number)
+        val phone = getString(R.string.online_local_caller_number)
         //Clickable Span will help us to make clickable a text
         val clickableSpan = object : ClickableSpan() {
             override fun onClick(textView: View) {
