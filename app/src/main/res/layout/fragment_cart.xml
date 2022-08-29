@@ -219,7 +219,20 @@
                     app:WButton_font="medium_bold" />
 
             </RelativeLayout>
+            <TextView
+                android:id="@+id/txt_min_spend_error_msg"
+                android:fontFamily="@font/myriad_pro_semi_bold"
+                android:textSize="@dimen/_12sdp"
+                android:visibility="gone"
+                android:lineHeight="@dimen/fourteen_sp"
+                android:layout_marginTop="@dimen/sixteen_dp"
+                android:textColor="@color/red"
+                tools:text="A minimum spend of R150 is required to checkout."
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
         </LinearLayout>
+
+
     </RelativeLayout>
 
     <ProgressBar

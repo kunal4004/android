@@ -1587,6 +1587,11 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             }
         }
         updateItemQuantityToMatchStock()
+        if(orderSummary?.hasMinimumBasketAmount == false) {
+            txt_min_spend_error_msg?.visibility = View.VISIBLE
+            txt_min_spend_error_msg?.text = String.format(getString(R.string.minspend_error_msg_cart, orderSummary?.minimumBasketAmount))
+            btnCheckOut?.isEnabled = false
+        }
         cartProductAdapter?.updateStockAvailability(cartItems)
     }
 
