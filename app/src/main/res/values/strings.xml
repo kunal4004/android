@@ -2675,7 +2675,7 @@
     <string name="i_need_to_place_this_order_for_a_different_time">I need to place this order for a different time.</string>
     <string name="other">Other.</string>
     <string name="dash_status_confirmed">Confirmed</string>
-    <string name="dash_status_packaging">Packaging</string>
+    <string name="dash_status_packaging">Packing</string>
     <string name="dash_status_en_route">En-route</string>
     <string name="dash_status_delivered">Delivered</string>
     <string name="empty" />
