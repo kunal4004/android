@@ -758,9 +758,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         initializeOrderSummary(response.orderSummary)
 
                         if(response.orderSummary?.hasMinimumBasketAmount == false) {
-                            txtContinueToPayment?.isEnabled = false
-                            txt_min_spend_error_del_msg?.visibility = View.VISIBLE
-                            KotlinUtils.showMinCartValueError(requireActivity() as AppCompatActivity, response.orderSummary?.minimumBasketAmount)
+                            KotlinUtils.showMinCartValueError(requireActivity() as AppCompatActivity,
+                                response.orderSummary?.minimumBasketAmount)
                         }
                     }
                     is Throwable -> {
