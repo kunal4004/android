@@ -50,9 +50,12 @@ android {
     defaultConfig {
         applicationId "com.awfs.coordination"
         manifestPlaceholders = [appLabel: "Woolworths", app_links_host: "www.woolworths.co.za"]
+        configurations.all {
+            resolutionStrategy { force 'androidx.core:core-ktx:1.6.0' }
+        }
         minSdkVersion 22 //Lollipop 5.1
         targetSdkVersion 30
-        compileSdkVersion 30
+        compileSdkVersion 31
         multiDexEnabled true
         versionName(major + "." + minor + "." + fix)
         vectorDrawables.useSupportLibrary = true
@@ -69,6 +72,7 @@ android {
         buildConfigField("String", "ENV", '"' + System.env.Environment + '"')
         resValue "string", "maps_google_api_key", '"' + System.env.MAPS_GOOGLE_API_KEY + '"'
         resValue "string", "maps_huawei_api_key", '"' + System.env.MAPS_HUAWEI_API_KEY + '"'
+
     }
 
     def secureProps = new Properties()
@@ -286,6 +290,7 @@ dependencies {
     api 'com.google.zxing:android-core:3.3.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0'
     implementation 'androidx.paging:paging-common-ktx:3.0.1'
+    implementation 'androidx.paging:paging-runtime-ktx:3.1.1'
     //noinspection LifecycleAnnotationProcessorWithJava8
     annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.3.1'
     implementation 'me.relex:circleindicator:2.1.0@aar'
@@ -338,6 +343,8 @@ dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
     implementation 'com.google.android.play:core:1.10.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.0'
+    implementation 'androidx.paging:paging-common-ktx:3.1.1'
 
     // Power Mockito
     testImplementation "org.powermock:powermock-api-mockito2:2.0.2"

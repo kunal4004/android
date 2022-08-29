@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.models.dto
 
 import android.os.Parcelable
+import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType
@@ -72,5 +73,13 @@ data class ProductList(
     @JvmField
     var displayColorSizeText: String? = null,
     var fulfillmentType: String? = null,
-    var quickShopButtonWasTapped: Boolean = false
+    var quickShopButtonWasTapped: Boolean = false,
+    @SerializedName("isRnREnabled")
+    var isRnREnabled: Boolean? = null,
+    @SerializedName("averageRating")
+    @Expose
+    var averageRating: String? = null,
+    @SerializedName("reviewCount")
+    @Expose
+    var reviewCount: String? = null
 ) : Parcelable

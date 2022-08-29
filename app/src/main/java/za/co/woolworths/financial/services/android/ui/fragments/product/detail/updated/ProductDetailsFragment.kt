@@ -29,7 +29,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.*
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
@@ -38,7 +37,6 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.pdp_rating_layout.*
 import com.perfectcorp.perfectlib.CameraView
 import com.perfectcorp.perfectlib.MakeupCam
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.chanel_logo_view.view.*
 import kotlinx.android.synthetic.main.layout_product_details_chanel.view.*
 import kotlinx.android.synthetic.main.low_stock_product_details.*
@@ -54,7 +52,6 @@ import kotlinx.android.synthetic.main.product_details_size_and_color_layout.*
 import kotlinx.android.synthetic.main.promotional_image.view.*
 import kotlinx.android.synthetic.main.vto_layout.*
 import kotlinx.coroutines.*
-import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
 import kotlinx.android.synthetic.main.ratings_ratingdetails.*
@@ -145,11 +142,11 @@ import android.util.Log
 import android.widget.*
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
+import retrofit2.HttpException
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_select_store_details.*
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.view.*
 import kotlinx.coroutines.*
-import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.*
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.apihelper.RatingAndReviewApiHelper
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModel
@@ -165,7 +162,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback,
     ILocationProvider, View.OnClickListener,
     OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener,
-    DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection,
     ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
     VtoSelectOptionListener, WMaterialShowcaseView.IWalkthroughActionListener, VtoTryAgainListener,View.OnTouchListener,ReviewThumbnailAdapter.ThumbnailClickListener, ViewTreeObserver.OnScrollChangedListener {
 
@@ -425,13 +421,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
             }
         }
-            override fun onHiddenChanged(hidden: Boolean) {
-                super.onHiddenChanged(hidden)
-                if (!hidden) {
-                    updateAddToCartButtonForSelectedSKU()
-                    setUpToolBar()
-                }
-            }
+
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
@@ -2939,6 +2929,23 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
+    override fun onGetRatingNReviewSuccess(ratingNReview: RatingAndReviewData) {
+        hideProgressBar()
+        if(ratingNReview.data.isNotEmpty()) {
+            showRatingAndReview()
+            setReviewUI(ratingNReview.data[0])
+            ratingReviewResponse = ratingNReview.data[0]
+            scrollView.post {
+                scrollView.fullScroll(View.FOCUS_DOWN)
+            }
+        } else
+            hideRatingAndReview()
+    }
+
+    override fun onGetRatingNReviewFailed(response: Response, httpCode: Int) {
+        hideRatingAndReview()
+    }
+
     /**
      * Conditions to show liquor popup
      * This should be checked before inventory call
@@ -3711,5 +3718,85 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
 
     }
+
+    private fun showRatingDetailsDailog() {
+        val dialog = ratingReviewResponse?.let { RatingDetailDialog(it) }
+        activity?.apply {
+            this@ProductDetailsFragment.childFragmentManager.beginTransaction()
+                .let { fragmentTransaction ->
+                    dialog?.show(
+                        fragmentTransaction,
+                        RatingDetailDialog::class.java.simpleName
+                    )
+                }
+        }
+    }
+    private fun viewSkinProfileDialog() {
+        val dialog = ratingReviewResponse?.reviews?.get(0)?.let { SkinProfileDialog(it) }
+        activity?.apply {
+            this@ProductDetailsFragment.childFragmentManager.beginTransaction()
+                .let { fragmentTransaction ->
+                    dialog?.show(
+                        fragmentTransaction,
+                        SkinProfileDialog::class.java.simpleName
+                    )
+                }
+        }
+    }
+    private fun navigateToMoreReviewsScreen() {
+        ScreenManager.presentRatingAndReviewDetail(activity, prodId)
+        RatingAndReviewUtil.likedReviews.clear()
+        RatingAndReviewUtil.reportedReviews.clear()
+    }
+    private fun likeButtonClicked() {
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSignin(activity)
+        } else {
+            lifecycleScope.launch {
+                showProgressBar()
+                try {
+                    val response = moreReviewViewModel.reviewFeedback(
+                        ReviewFeedback(
+                            ratingReviewResponse?.reviews?.get(0)?.id.toString(),
+                            SessionUtilities.getInstance().jwt.AtgId.asString,
+                            KotlinUtils.REWIEW,
+                            KotlinUtils.HELPFULNESS,
+                            KotlinUtils.POSITIVE,
+                            null
+                        )
+                    )
+                    hideProgressBar()
+                    if (response.httpCode == 200) {
+                        iv_like.setImageResource(R.drawable.iv_like_selected)
+                        RatingAndReviewUtil.likedReviews.add(ratingReviewResponse?.reviews?.get(0)?.id.toString())
+                    }
+                } catch (e: HttpException) {
+                    e.printStackTrace()
+                    hideProgressBar()
+                    if (e.code() != 502) {
+                        activity?.supportFragmentManager?.let { fragmentManager ->
+                            Utils.showGeneralErrorDialog(
+                                fragmentManager,
+                                getString(R.string.statement_send_email_false_desc)
+                            )
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+    private fun navigateToReportReviewScreen() {
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSignin(activity)
+        } else {
+            ScreenManager.presentReportReview(activity,
+                ratingReviewResponse?.reportReviewOptions as ArrayList<String>?,
+                ratingReviewResponse?.reviews?.get(0)
+            )
+        }
+    }
+
+
 }
 

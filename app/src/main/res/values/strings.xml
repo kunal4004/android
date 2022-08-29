@@ -2691,22 +2691,6 @@
     <string name="generic_error_something_wrong_newline">Unfortunately,\n Something Went Wrong</string>
     <string name="one_cart_chat_error_disc">We can’t seem to reach your shopper.\n Give them a few moments, and try again.</string>
 
-    <!--order details-->
-    <string name="order_details_toolbar_title">ORDER #%1$s</string>
-    <string name="order_details">Order Details</string>
-    <string name="collection_from">Collection from</string>
-    <string name="delivery_semicolon">Delivery:</string>
-    <string name="collection_semicolon">Collection:</string>
-    <string name="food_items_semicolon">Food Items:</string>
-    <string name="other_items_semicolon">Other Items:</string>
-    <string name="order_total_semicolon">Order Total:</string>
-    <string name="missed_wrewards_savings">Missed WRewards Savings</string>
-    <string name="delivery_location_semicolon">Delivery location:</string>
-    <string name="collection_location_semicolon">Collection location:</string>
-    <string name="number_items">%1$s Items</string>
-    <string name="number_item">%1$s Item</string>
-    <string name="order_again">ORDER AGAIN</string>
-    <string name="you_could_have_saved">You could have saved</string>
     <string name="already_have_a_wrewards_card">Already have a wrewards card?</string>
     <string name="add_it_now">Add it now</string>
     <string name="sign_up">SIGN UP</string>

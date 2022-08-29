@@ -48,7 +48,6 @@ data class AppConfig(
     var virtualTryOn: ConfigVirtualTryOn?,
     var lowStockIndicator: ConfigLowStock?,
     var brandLandingPage: BrandLandingPage?,
-    var toolTipSettings: TooltipSettings?
-    var brandLandingPage: BrandLandingPage?,
+    var toolTipSettings: TooltipSettings?,
     var ratingsAndReviews: RatingsAndReviews?
 ) : Parcelable

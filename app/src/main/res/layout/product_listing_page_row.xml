@@ -156,7 +156,7 @@
         app:layout_constrainedHeight="true"
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/tvProductName"
+        app:layout_constraintTop_toBottomOf="@+id/rating_bar"
         tools:text="Buy one get one free"
         tools:visibility="visible" />
         app:layout_constraintTop_toBottomOf="@+id/txt_rating_count" />
