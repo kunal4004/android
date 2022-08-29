@@ -154,8 +154,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     private fun isUnSellableLiquorItemRemoved() {
-        ShoppingCartLiveData.observe(viewLifecycleOwner) {
-            if (it == false) {
+        ShoppingCartLiveData.observe(viewLifecycleOwner) { isLiquorOrder ->
+            if (isLiquorOrder == false) {
                 ageConfirmationLayout?.visibility = View.GONE
                 liquorComplianceBannerLayout?.visibility = View.GONE
                 ShoppingCartLiveData.value = true
@@ -818,22 +818,19 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 }
 
                 KotlinUtils.presentEditDeliveryGeoLocationActivity(
-                    requireActivity(),
-                    COLLECTION_SLOT_SLECTION_REQUEST_CODE,
-                    GeoUtils.getDelivertyType(),
-                    GeoUtils.getPlaceId(),
-                    false,
-                    true,
-                    true,
-                    savedAddressResponse,
-                    defaultAddress,
-                    Utils.toJson(whoIsCollectingDetails),
-                        (if (liquorImageUrl != null) liquorImageUrl else "")?.let {
-                            liquorOrder?.let { it1 ->
-                                LiquorCompliance(
-                                        it1,
-                                        it
-                                )
+                        requireActivity(),
+                        COLLECTION_SLOT_SLECTION_REQUEST_CODE,
+                        GeoUtils.getDelivertyType(),
+                        GeoUtils.getPlaceId(),
+                        false,
+                        true,
+                        true,
+                        savedAddressResponse,
+                        defaultAddress,
+                        Utils.toJson(whoIsCollectingDetails),
+                        liquorOrder?.let { liquorOrder ->
+                            liquorImageUrl?.let { liquorImageUrl ->
+                                LiquorCompliance(liquorOrder, liquorImageUrl)
                             }
                         }
                 )

@@ -167,8 +167,8 @@ class CheckoutDashFragment : Fragment(),
     }
 
     private fun isUnSellableLiquorItemRemoved() {
-        ShoppingCartLiveData.observe(viewLifecycleOwner) {
-            if (it == false) {
+        ShoppingCartLiveData.observe(viewLifecycleOwner) { isLiquorOrder ->
+            if (isLiquorOrder == false) {
                 ageConfirmationLayout?.visibility = View.GONE
                 liquorComplianceBannerLayout?.visibility = View.GONE
                 ShoppingCartLiveData.value = true
@@ -950,22 +950,19 @@ class CheckoutDashFragment : Fragment(),
                 )
 
                 KotlinUtils.presentEditDeliveryGeoLocationActivity(
-                    requireActivity(),
-                    CheckoutAddAddressReturningUserFragment.SLOT_SELECTION_REQUEST_CODE,
-                    KotlinUtils.getPreferredDeliveryType(),
-                    placesId,
-                    false,
-                    true,
-                    true,
-                    savedAddress,
-                    defaultAddress,
+                        requireActivity(),
+                        CheckoutAddAddressReturningUserFragment.SLOT_SELECTION_REQUEST_CODE,
+                        KotlinUtils.getPreferredDeliveryType(),
+                        placesId,
+                        false,
+                        true,
+                        true,
+                        savedAddress,
+                        defaultAddress,
                         "",
-                        (if (liquorImageUrl != null) liquorImageUrl else "")?.let {
-                            liquorOrder?.let { it1 ->
-                                LiquorCompliance(
-                                        it1,
-                                        it
-                                )
+                        liquorOrder?.let { liquorOrder ->
+                            liquorImageUrl?.let { liquorImageUrl ->
+                                LiquorCompliance(liquorOrder, liquorImageUrl)
                             }
                         }
                 )

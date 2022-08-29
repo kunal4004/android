@@ -62,6 +62,7 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErro
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.CNC
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DASH
@@ -1034,12 +1035,12 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                             override fun onSuccess(response: ShoppingCartResponse?) {
                                 try {
                                     when (response?.httpCode) {
-                                        200 -> {
+                                        HTTP_OK -> {
                                             val isNoLiquorOrder = response.data[0].liquorOrder
                                             if(isNoLiquorOrder == false)
                                                 ShoppingCartLiveData.value = isNoLiquorOrder
                                         }
-                                        440 -> {
+                                        HTTP_SESSION_TIMEOUT_440 -> {
                                             SessionUtilities.getInstance()
                                                     .setSessionState(SessionDao.SESSION_STATE.INACTIVE)
                                             SessionExpiredUtilities.getInstance().showSessionExpireDialog(
