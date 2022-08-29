@@ -1382,6 +1382,9 @@ class KotlinUtils {
                 Delivery.CNC->{
                     event = VocTriggerEvent.SHOP_CLICK_COLLECT_CONFIRM
                 }
+                Delivery.STANDARD->{
+                    event = VocTriggerEvent.CHCKOUT_CNT_TO_PMNT
+                }
             }
             return event
         }
