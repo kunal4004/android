@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card
 
+import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.fragment.app.Fragment
@@ -7,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountOptionsManageCardListFragmentBinding
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.StoreCardInfo
 import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.StoreCardNotReceivedDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
@@ -14,6 +16,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardUpShellMessage
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.util.FirebaseManager
+
 
 sealed class ListCallback {
     data class CardNotReceived (val isCardNotReceived: Boolean) : ListCallback()
@@ -160,7 +163,9 @@ class ManageStoreCardLandingList(
         }
     }
 
-    fun showCardNotReceivedDialog(fragment: Fragment?) {
+    fun showCardNotReceivedDialog(fragment: Fragment?, viewModel : MyAccountsRemoteApiViewModel) {
+        Log.e("isStoreCardNot", "$viewModel.isStoreCardNotReceivedDialogFragmentVisible")
+        if (viewModel.isStoreCardNotReceivedDialogFragmentVisible) return
         val dialog = StoreCardNotReceivedDialogFragment.newInstance()
         try {
             fragment?.childFragmentManager?.let {

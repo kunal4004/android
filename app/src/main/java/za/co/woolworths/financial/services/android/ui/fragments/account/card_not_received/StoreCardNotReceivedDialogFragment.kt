@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +8,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
@@ -33,6 +35,11 @@ class StoreCardNotReceivedDialogFragment : ViewBindingBottomSheetFragment<StoreC
 
     companion object {
         fun newInstance() = StoreCardNotReceivedDialogFragment()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.isStoreCardNotReceivedDialogFragmentVisible = true
     }
 
     override fun inflateViewBinding(
@@ -152,5 +159,10 @@ class StoreCardNotReceivedDialogFragment : ViewBindingBottomSheetFragment<StoreC
 
     private fun queryAPIServiceGetCardNotReceived() {
         viewModel.queryServiceCardNotYetReceived()
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        viewModel.isStoreCardNotReceivedDialogFragmentVisible = false
     }
 }

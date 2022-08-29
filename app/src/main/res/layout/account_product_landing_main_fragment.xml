@@ -8,11 +8,11 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/accountToolbar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_60sdp"
+        android:layout_height="@dimen/_70sdp"
         android:background="@android:color/transparent"
         android:elevation="2dp"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <RelativeLayout
@@ -71,6 +71,7 @@
                 android:visibility="visible"
                 tools:ignore="UnusedAttribute" />
         </RelativeLayout>
+
     </androidx.appcompat.widget.Toolbar>
 
     <View

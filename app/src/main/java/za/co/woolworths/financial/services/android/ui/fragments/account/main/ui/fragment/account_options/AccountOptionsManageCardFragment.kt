@@ -218,7 +218,8 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
                     when (result) {
                         is ListCallback.CardNotReceived -> {
                             if (result.isCardNotReceived && feature.isPopupVisibleInCardDetailLanding) mItemList.showCardNotReceivedDialog(
-                                this@AccountOptionsManageCardFragment
+                                this@AccountOptionsManageCardFragment,
+                                viewModel
                             )
                         }
                     }

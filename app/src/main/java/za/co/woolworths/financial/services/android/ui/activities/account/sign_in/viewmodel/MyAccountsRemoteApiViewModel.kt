@@ -47,7 +47,8 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
     private val cardNotReceived: CardNotReceivedDataSource
 ) : ViewModel(), IStoreCardDataSource by dataSource,ICardNotReceivedService by cardNotReceived {
 
-     var mStoreCardType: StoreCardType = StoreCardType.None
+    var isStoreCardNotReceivedDialogFragmentVisible: Boolean  = false
+    var mStoreCardType: StoreCardType = StoreCardType.None
 
     var mStoreCardFeatureType: StoreCardFeatureType? = null
     var loaderType : LoaderType = LoaderType.LANDING
