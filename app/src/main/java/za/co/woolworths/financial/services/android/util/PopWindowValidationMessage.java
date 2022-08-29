@@ -173,33 +173,38 @@ public class PopWindowValidationMessage {
 				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q="));
 				List<ResolveInfo> list = mContext.getPackageManager().queryIntentActivities(intent,
 						PackageManager.MATCH_DEFAULT_ONLY);
-			try {
-				if(list!=null){
-					if (list.size() == 0 && !Utils.isHuaweiMobileServicesAvailable()) {
-						googleNativeMap.setVisibility(View.VISIBLE);
-						mView.findViewById(R.id.nativeGoogleMapDivider).setVisibility(View.VISIBLE);
-					} else {
-						for (ResolveInfo resolveInfo : list) {
-							ActivityInfo activityInfo = resolveInfo.activityInfo;
-							switch (activityInfo.packageName) {
-								case HUAWEI_MAP_PACKAGE:
-									petalNativeMap.setVisibility(View.VISIBLE);
-									mView.findViewById(R.id.nativePetalMapDivider).setVisibility(View.VISIBLE);
-									break;
-								case GOOGLE_MAP_PACKAGE:
-									googleNativeMap.setVisibility(View.VISIBLE);
-									mView.findViewById(R.id.nativeGoogleMapDivider).setVisibility(View.VISIBLE);
-									break;
-								default:
-									Toast.makeText(mContext, R.string.map_not_available, Toast.LENGTH_LONG).show();
-									break;
+				try {
+					if (list != null) {
+						if (list.size() == 0 && Utils.isGooglePlayServicesAvailable() && !Utils.isHuaweiMobileServicesAvailable()) {
+							googleNativeMap.setVisibility(View.VISIBLE);
+							mView.findViewById(R.id.nativeGoogleMapDivider).setVisibility(View.VISIBLE);
+						} else if (list.size() == 0 && !Utils.isGooglePlayServicesAvailable() && Utils.isHuaweiMobileServicesAvailable()) {
+
+							petalNativeMap.setVisibility(View.VISIBLE);
+							mView.findViewById(R.id.nativePetalMapDivider).setVisibility(View.VISIBLE);
+
+						} else {
+							for (ResolveInfo resolveInfo : list) {
+								ActivityInfo activityInfo = resolveInfo.activityInfo;
+								switch (activityInfo.packageName) {
+									case HUAWEI_MAP_PACKAGE:
+										petalNativeMap.setVisibility(View.VISIBLE);
+										mView.findViewById(R.id.nativePetalMapDivider).setVisibility(View.VISIBLE);
+										break;
+									case GOOGLE_MAP_PACKAGE:
+										googleNativeMap.setVisibility(View.VISIBLE);
+										mView.findViewById(R.id.nativeGoogleMapDivider).setVisibility(View.VISIBLE);
+										break;
+									default:
+										Toast.makeText(mContext, R.string.map_not_available, Toast.LENGTH_LONG).show();
+										break;
+								}
 							}
 						}
 					}
+				} catch (Exception e) {
+					Toast.makeText(mContext, R.string.map_not_available, Toast.LENGTH_LONG).show();
 				}
-			}catch (Exception e){
-				Toast.makeText(mContext, R.string.map_not_available, Toast.LENGTH_LONG).show();
-			}
 				View.OnClickListener onClickListener= v -> {
 					Location location = Utils.getLastSavedLocation();
 					String uri = null;
