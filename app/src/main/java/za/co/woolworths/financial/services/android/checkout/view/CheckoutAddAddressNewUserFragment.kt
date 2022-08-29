@@ -565,12 +565,12 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             }
         }
 
-        if(isPoiAddress==true&&streetNumber.isEmpty()&&routeName.isEmpty()){
+        if (isPoiAddress == true && streetNumber.isEmpty() && routeName.isEmpty()) {
             type= Constant.POI
         } else{
             isPoiAddress=false
         }
-        if (isPoiAddress == true&&type==Constant.POI) {
+        if (isPoiAddress == true && type == Constant.POI) {
             isValidAddress=true
             enablePOIAddressTextFields()
         } else if (streetNumber.isEmpty() && routeName.isEmpty() && isPoiAddress == false) {
