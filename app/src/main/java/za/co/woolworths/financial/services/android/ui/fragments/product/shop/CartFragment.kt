@@ -994,7 +994,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         cartProductAdapter?.onChangeQuantityLoad()
         fadeCheckoutButton(true)
         val shoppingCartResponseCall = getChangeQuantity(
-            (changeQuantity)!!
+            changeQuantity
         )
         shoppingCartResponseCall.enqueue(
             CompletionHandler(
