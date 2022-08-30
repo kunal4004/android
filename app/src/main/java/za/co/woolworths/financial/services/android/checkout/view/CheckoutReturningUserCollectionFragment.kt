@@ -60,6 +60,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
@@ -192,15 +193,18 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationDescShimmerFrameLayout,
-                txtAgeConfirmationDesc),
+                txtAgeConfirmationDesc
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationDescNoteShimmerFrameLayout,
-                txtAgeConfirmationDescNote),
+                txtAgeConfirmationDescNote
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 radioGroupAgeConfirmationShimmerFrameLayout,
-                radioBtnAgeConfirmation),
+                radioBtnAgeConfirmation
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationTitleShimmerFrameLayout,
@@ -209,15 +213,18 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationDescShimmerFrameLayout,
-                txtAgeConfirmationDesc),
+                txtAgeConfirmationDesc
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationDescNoteShimmerFrameLayout,
-                txtAgeConfirmationDescNote),
+                txtAgeConfirmationDescNote
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 radioGroupAgeConfirmationShimmerFrameLayout,
-                radioBtnAgeConfirmation),
+                radioBtnAgeConfirmation
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 collectionTimeDetailsShimmerLayout,
@@ -233,7 +240,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             ),
             Pair<ShimmerFrameLayout, View>(
                 liquorComplianceBannerShimmerFrameLayout,
-                liquorComplianceBannerLayout),
+                liquorComplianceBannerLayout
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 instructionTxtShimmerFrameLayout,
@@ -320,6 +328,10 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     fun startShimmerView() {
         txtNeedBags?.visibility = View.GONE
         switchNeedBags?.visibility = View.GONE
+        edtTxtSpecialDeliveryInstruction?.visibility = View.GONE
+        edtTxtGiftInstructions?.visibility = View.GONE
+        switchSpecialDeliveryInstruction?.isChecked = false
+        switchGiftInstructions?.isChecked = false
 
         val shimmer = Shimmer.AlphaHighlightBuilder().build()
         shimmerComponentArray.forEach {
@@ -386,8 +398,11 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                 }
                                 response.orderSummary?.fulfillmentDetails?.let {
                                     if (!it.deliveryType.isNullOrEmpty()) {
-                                        Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(
-                                            it))
+                                        Utils.savePreferredDeliveryLocation(
+                                            ShoppingDeliveryLocation(
+                                                it
+                                            )
+                                        )
                                     }
                                 }
                                 initializeOrderSummary(response.orderSummary)
@@ -607,9 +622,12 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 whoIsCollectingDetails =
                     Gson().fromJson(it, object : TypeToken<WhoIsCollectingDetails>() {}.type)
             }
-            savedAddressResponse = Utils.jsonStringToObject(getString(SAVED_ADDRESS_KEY),
-                SavedAddressResponse::class.java) as? SavedAddressResponse ?: getSerializable(
-                SAVED_ADDRESS_KEY) as? SavedAddressResponse ?: SavedAddressResponse()
+            savedAddressResponse = Utils.jsonStringToObject(
+                getString(SAVED_ADDRESS_KEY),
+                SavedAddressResponse::class.java
+            ) as? SavedAddressResponse ?: getSerializable(
+                SAVED_ADDRESS_KEY
+            ) as? SavedAddressResponse ?: SavedAddressResponse()
         }
         if (whoIsCollectingDetails != null) {
             tvCollectionUserName.text = whoIsCollectingDetails?.recipientName
@@ -806,16 +824,21 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 }
 
                 KotlinUtils.presentEditDeliveryGeoLocationActivity(
-                    requireActivity(),
-                    COLLECTION_SLOT_SLECTION_REQUEST_CODE,
-                    GeoUtils.getDelivertyType(),
-                    GeoUtils.getPlaceId(),
-                    false,
-                    true,
-                    true,
-                    savedAddressResponse,
-                    defaultAddress,
-                    Utils.toJson(whoIsCollectingDetails)
+                        requireActivity(),
+                        COLLECTION_SLOT_SLECTION_REQUEST_CODE,
+                        GeoUtils.getDelivertyType(),
+                        GeoUtils.getPlaceId(),
+                        false,
+                        true,
+                        true,
+                        savedAddressResponse,
+                        defaultAddress,
+                        Utils.toJson(whoIsCollectingDetails),
+                        liquorOrder?.let { liquorOrder ->
+                            liquorImageUrl?.let { liquorImageUrl ->
+                                LiquorCompliance(liquorOrder, liquorImageUrl)
+                            }
+                        }
                 )
                 activity?.finish()
             }
@@ -895,13 +918,15 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     private fun isAgeConfirmationLiquorCompliance(): Boolean {
-        layoutCollectionInstructions.parent.requestChildFocus(layoutCollectionInstructions,
-            layoutCollectionInstructions)
+        layoutCollectionInstructions.parent.requestChildFocus(
+            layoutCollectionInstructions,
+            layoutCollectionInstructions
+        )
         return liquorOrder == true && !radioBtnAgeConfirmation.isChecked
     }
 
     private fun onCheckoutPaymentClick() {
-        if (isRequiredFieldsMissing() || isInstructionsMissing() || isGiftMessage()) {
+        if (isRequiredFieldsMissing() || isGiftMessage()) {
             return
         }
         if (isAgeConfirmationLiquorCompliance()) {
@@ -1040,7 +1065,11 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                         0,
                         layoutCollectionInstructions?.top ?: 0
                     )
-                    true
+                    /**
+                     * New requirement to have instructions optional
+                     */
+//                    true
+                    false
                 } else false
             }
             else -> false

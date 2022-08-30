@@ -685,6 +685,7 @@
     <string name="purchase_date">Purchase Date:</string>
     <string name="past_orders">Past Orders</string>
     <string name="order_items">order items</string>
+    <string name="promotion_note"><b>Note:</b> Promotions in store and online may vary.</string>
     <string name="order_page_title_prefix">ORDER:\u0020</string>
     <string name="empty_order_view_title">No order history</string>
     <string name="empty_order_view_desc">We see that you have no order history. Would you like to start shopping?</string>
@@ -2675,7 +2676,7 @@
     <string name="i_need_to_place_this_order_for_a_different_time">I need to place this order for a different time.</string>
     <string name="other">Other.</string>
     <string name="dash_status_confirmed">Confirmed</string>
-    <string name="dash_status_packaging">Packaging</string>
+    <string name="dash_status_packaging">Packing</string>
     <string name="dash_status_en_route">En-route</string>
     <string name="dash_status_delivered">Delivered</string>
     <string name="empty" />
@@ -2685,7 +2686,7 @@
     <string name="delete_account_description">If you delete your profile, you won\'t be able to log into your account, view any account information, view history, or access any of our related apps.</string>
     <string name="delete_online_profile">Delete Online Profile</string>
     <string name="delete_account_description_in_dialog">If you delete your online profile, you won\'t be able to log in to your account, or access your order history. Deleting your online profile will not close any other accounts you have with Woolworths or Woolworths Financial Services.</string>
-    <string name="to_contact_customer_support_dial_0860_100_987">To contact Customer Support, dial 0860 100 987</string>
+    <string name="to_contact_customer_support_dial_0860_100_987">To contact Customer Support, dial</string>
     <string name="delete_my_account">Delete my account</string>
     <string name="your_online_profile_has_been_successfully_deleted">Your Online Profile Has Been Successfully Deleted</string>
     <string name="dash_order">Dash Order:</string>

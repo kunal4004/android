@@ -1,11 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
+import android.net.http.SslError
 import android.os.Bundle
 import android.view.View
 import android.webkit.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
@@ -105,6 +108,27 @@ class OrderTrackingWebViewActivity : AppCompatActivity() {
                 ) {
                     super.onReceivedError(view, request, error)
                     showErrorDialog()
+                }
+
+                override fun onReceivedSslError(
+                    view: WebView?,
+                    handler: SslErrorHandler?,
+                    error: SslError?,
+                ) {
+                    val builder = AlertDialog.Builder(this@OrderTrackingWebViewActivity)
+                    builder.setMessage(R.string.ssl_error)
+                    builder.setPositiveButton(
+                        getString(R.string.continueLabel),
+                    ) { _: DialogInterface?, _: Int ->
+                        handler?.proceed()
+                    }
+                    builder.setNegativeButton(getString(R.string.link_cancel)
+                    ) { _: DialogInterface?, _: Int ->
+                        handler?.cancel()
+                    }
+                    val dialog = builder.create()
+                    dialog.show()
+
                 }
 
             }
