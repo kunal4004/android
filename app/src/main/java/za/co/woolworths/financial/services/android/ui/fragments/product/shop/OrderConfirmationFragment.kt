@@ -229,14 +229,17 @@ class OrderConfirmationFragment : Fragment() {
                     response
                         .deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
                 )
-                otherDeliveryDateTimeTextView?.text =
+                otherDeliveryDateTimeTextView?.text = applyBoldBeforeComma(
                     response.deliveryDetails?.deliveryInfos?.get(1)?.deliveryDateAndTime
+                )
             } else if (response?.deliveryDetails?.deliveryInfos?.size == 1) {
                 oneDeliveryLinearLayout?.visibility = VISIBLE
                 foodDeliveryLinearLayout?.visibility = GONE
                 otherDeliveryLinearLayout?.visibility = GONE
-                deliveryDateTimeTextView?.text =
-                    response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
+                deliveryDateTimeTextView?.text = applyBoldBeforeComma(
+                    response
+                        .deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
+                )
             }
         }
     }
