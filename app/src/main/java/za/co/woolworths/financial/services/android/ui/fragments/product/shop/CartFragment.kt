@@ -420,30 +420,16 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             //   - CNAV : Checkout  activity
 
             val mFirebaseAnalytics = FirebaseManager.getInstance().getAnalytics()
-           /* val beginCheckoutParams = Bundle()
-            beginCheckoutParams.putString(FirebaseAnalytics.Param.CURRENCY, "ZAR")
-            beginCheckoutParams.putString(FirebaseAnalytics.Param.VALUE, " ")
-           // for (products in 0..(mProductList?.size ?: 0)) {
+            val beginCheckoutParams = Bundle()
+            beginCheckoutParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
+
             val beginCheckoutItem = Bundle()
-            beginCheckoutItem.putString(FirebaseAnalytics.Param.ITEM_ID, "5051")
-            beginCheckoutItem.putString(FirebaseAnalytics.Param.ITEM_NAME, " ")
-            beginCheckoutItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, " ")
-            beginCheckoutItem.putString(FirebaseAnalytics.Param.ITEM_BRAND," ")
-            beginCheckoutItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT, " ")
-            beginCheckoutItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT, "")
+            beginCheckoutItem.putString(FirebaseAnalytics.Param.QUANTITY, FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE)
+            beginCheckoutItem.putString(FirebaseAnalytics.Param.ITEM_BRAND,FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
 
             beginCheckoutParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(beginCheckoutItem))
-            //}
-            mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT,
-                beginCheckoutParams)*/
+            mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT, beginCheckoutParams)
 
-
-
-
-            Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT,
-                activity
-            )
             val checkoutActivityIntent = Intent(activity, CheckoutActivity::class.java)
             checkoutActivityIntent.putExtra(
                 CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,

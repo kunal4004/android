@@ -1725,6 +1725,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 productDetails?.categoryName)
             addToCartItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT,
                 productDetails?.colourSizeVariants)
+            addToCartItem.putString(FirebaseAnalytics.Param.QUANTITY,
+                FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE)
             productDetails?.price?.let {
                 addToCartItem.putDouble(FirebaseAnalytics.Param.PRICE,
                     it.toDouble())
