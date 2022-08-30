@@ -60,6 +60,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
@@ -823,16 +824,21 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 }
 
                 KotlinUtils.presentEditDeliveryGeoLocationActivity(
-                    requireActivity(),
-                    COLLECTION_SLOT_SLECTION_REQUEST_CODE,
-                    GeoUtils.getDelivertyType(),
-                    GeoUtils.getPlaceId(),
-                    false,
-                    true,
-                    true,
-                    savedAddressResponse,
-                    defaultAddress,
-                    Utils.toJson(whoIsCollectingDetails)
+                        requireActivity(),
+                        COLLECTION_SLOT_SLECTION_REQUEST_CODE,
+                        GeoUtils.getDelivertyType(),
+                        GeoUtils.getPlaceId(),
+                        false,
+                        true,
+                        true,
+                        savedAddressResponse,
+                        defaultAddress,
+                        Utils.toJson(whoIsCollectingDetails),
+                        liquorOrder?.let { liquorOrder ->
+                            liquorImageUrl?.let { liquorImageUrl ->
+                                LiquorCompliance(liquorOrder, liquorImageUrl)
+                            }
+                        }
                 )
                 activity?.finish()
             }
