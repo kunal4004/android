@@ -870,6 +870,12 @@ public class Utils {
         currentUserObject.save();
     }
 
+    public static void clearPreferredDeliveryLocation() {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        currentUserObject.preferredShoppingDeliveryLocation = null;
+        currentUserObject.save();
+    }
+
     public static void addToShoppingDeliveryLocationHistory(ShoppingDeliveryLocation shoppingDeliveryLocation) {
         AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
         currentUserObject.shoppingDeliveryLocationHistory.add(shoppingDeliveryLocation);

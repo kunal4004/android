@@ -64,9 +64,8 @@
         android:layout_marginTop="@dimen/sixteen_dp"
         android:layout_marginEnd="@dimen/thirty_two_dp"
         android:background="@color/white"
-        android:autoLink="phone"
         android:gravity="center"
-        android:text="@string/to_contact_customer_support_dial_0860_100_987" />
+        />
 
     <LinearLayout
         android:id="@+id/actionsLayout"
