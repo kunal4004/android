@@ -1,47 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:orientation="vertical">
+    android:background="@color/white">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/_16sdp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/_16sdp" />
 
     <View
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="@color/bg_light_overlay" />
+        android:background="@color/bg_light_overlay"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/orderId"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="@dimen/twenty_four_dp">
+        android:fontFamily="@font/futura_medium"
+        android:textColor="@color/color_9D9D9D"
+        android:textSize="@dimen/_10ssp"
+        android:letterSpacing="@integer/point_eleven"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toTopOf="@id/guidelineTop" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:orientation="vertical">
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/orderId"
-                style="@style/my_orders_textview_style_2"
-                android:text="o478875240"
-                android:textSize="12sp" />
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/purchaseDatePastOrder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:fontFamily="@font/futura_semi_bold"
+        android:letterSpacing="@integer/point_eleven"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_11ssp"
+        app:WTextView_font="myriadpro_semibold"
+        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@id/orderId" />
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/purchaseDate"
-                style="@style/my_orders_textview_style_2"
-                android:layout_marginTop="@dimen/five_dp"
-                android:text="28 Dec 2018"
-                android:textColor="@color/black"
-                android:textSize="15sp"
-                app:WTextView_font="myriadpro_semibold" />
-        </LinearLayout>
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/total"
-            style="@style/my_orders_textview_style_3"
-            android:text="R4 100.50" />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgOrderHistory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_1sdp"
+        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintTop_toTopOf="@id/guidelineTop"
+        app:srcCompat="@drawable/ic_order_history_right" />
 
-    </RelativeLayout>
-</LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

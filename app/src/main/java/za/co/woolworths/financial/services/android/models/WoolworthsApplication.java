@@ -33,7 +33,6 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.perfectcorp.perfectlib.SkuHandler;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TimeZone;
@@ -44,20 +43,17 @@ import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace;
-import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.models.dto.bpi.BalanceProtectionInsurance;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback;
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility;
 import za.co.woolworths.financial.services.android.util.ConnectivityLiveData;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
-
-import static za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService.CHANNEL_ID;
 
 @HiltAndroidApp
 public class WoolworthsApplication extends Application implements Application.ActivityLifecycleCallbacks, LifecycleObserver {
@@ -85,6 +81,8 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private Activity mCurrentActivity = null;
 
     private static ValidatePlace validatePlace;
+    private static ValidatePlace dashValidatePlace;
+    private static ValidatePlace cncValidatePlace;
 
 
     public static String getApiId() {
@@ -235,7 +233,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     @Override
     public void onActivityDestroyed(Activity activity) {
         if (!isAnyActivityVisible() && ChatAWSAmplify.INSTANCE.isLiveChatBackgroundServiceRunning()) {
-            Intent intentDismissService = new Intent(CHANNEL_ID);
+            Intent intentDismissService = new Intent(LiveChatService.CHANNEL_ID);
             sendBroadcast(intentDismissService);
         }
 
@@ -333,6 +331,21 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     public static void setValidatedSuburbProducts(ValidatePlace validatePlace) {
         WoolworthsApplication.validatePlace = validatePlace;
+    }
+    public static ValidatePlace getDashBrowsingValidatePlaceDetails() {
+        return dashValidatePlace;
+    }
+
+    public static void setDashBrowsingValidatePlaceDetails(ValidatePlace validatePlace) {
+        WoolworthsApplication.dashValidatePlace = validatePlace;
+    }
+
+    public static ValidatePlace getCncBrowsingValidatePlaceDetails() {
+        return cncValidatePlace;
+    }
+
+    public static void setCncBrowsingValidatePlaceDetails(ValidatePlace validatePlace) {
+        WoolworthsApplication.cncValidatePlace = validatePlace;
     }
 
     public boolean isAnyActivityVisible() {

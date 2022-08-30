@@ -1,7 +1,14 @@
 package za.co.woolworths.financial.services.android.models.dto
 
-data class ProductsRequestParams(var searchTerm: String, var searchType: SearchType, var responseType: ResponseType, var pageOffset: Int) {
+data class ProductsRequestParams(
+    var searchTerm: String,
+    var searchType: SearchType,
+    var responseType: ResponseType,
+    var pageOffset: Int
+) {
 
+    @kotlin.jvm.JvmField
+    var isUserBrowsing: Boolean = false
     var refinement: String = ""
     var sortOption: String = ""
     var filterContent: Boolean = false
