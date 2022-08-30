@@ -527,7 +527,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                                 Delivery.STANDARD.name -> CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION
                                                 else -> CheckoutAddressManagementBaseFragment.DASH_SLOT_SELECTION
                                             }
-
                                             checkoutActivityIntent.putExtra(result, true)
                                             checkoutActivityIntent.putExtra(Constant.LIQUOR_ORDER, getLiquorOrder())
                                             checkoutActivityIntent.putExtra(Constant.NO_LIQUOR_IMAGE_URL, getLiquorImageUrl())
