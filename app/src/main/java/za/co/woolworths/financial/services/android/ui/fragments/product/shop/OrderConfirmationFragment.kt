@@ -111,36 +111,6 @@ class OrderConfirmationFragment : Fragment() {
         }
 
         val mFirebaseAnalytics = FirebaseManager.getInstance().getAnalytics()
-//        val addPaymentInfoParams = Bundle()
-//        addPaymentInfoParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
-//        addPaymentInfoParams.putString(FirebaseAnalytics.Param.PAYMENT_TYPE, "Gift Card")
-//        addPaymentInfoParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.ORDER_TOTAL_VALUE, response.orderSummary?.total?.toString())
-//
-//        val addPaymentInfoItem = Bundle()
-//        addPaymentInfoItem.putString(FirebaseAnalytics.Param.ITEM_ID, response.items?.other?.get(0)?.productId)
-//        addPaymentInfoItem.putString(FirebaseAnalytics.Param.ITEM_NAME, response.items?.other?.get(0)?.productDisplayName)
-//        addPaymentInfoItem.putString(FirebaseAnalytics.Param.QUANTITY, FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE)
-//        response.items?.other?.get(0)?.priceInfo?.amount?.let {
-//            addPaymentInfoItem.putDouble(FirebaseAnalytics.Param.PRICE,
-//                it
-//            )
-//        }
-//        addPaymentInfoItem.putString(FirebaseAnalytics.Param.ITEM_BRAND,"Woolworths")
-//        addPaymentInfoItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT,  response.items?.other?.get(0)?.color)
-//
-//        addPaymentInfoParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(addPaymentInfoItem))
-//
-//        mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.ADD_PAYMENT_INFO,
-//            addPaymentInfoParams)
-//
-
-
-
-
-
-
-
-       // val mFirebaseAnalytics = FirebaseManager.getInstance().getAnalytics()
         val purchaseItemParams = Bundle()
         purchaseItemParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
         purchaseItemParams.putString(FirebaseAnalytics.Param.AFFILIATION, FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
