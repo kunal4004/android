@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card
 
-import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.fragment.app.Fragment
@@ -164,7 +163,6 @@ class ManageStoreCardLandingList(
     }
 
     fun showCardNotReceivedDialog(fragment: Fragment?, viewModel : MyAccountsRemoteApiViewModel) {
-        Log.e("isStoreCardNot", "$viewModel.isStoreCardNotReceivedDialogFragmentVisible")
         if (viewModel.isStoreCardNotReceivedDialogFragmentVisible) return
         val dialog = StoreCardNotReceivedDialogFragment.newInstance()
         try {
