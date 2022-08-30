@@ -1138,10 +1138,15 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             cartResponse.productCountMap = data.productCountMap // set delivery location
             cartResponse.liquorOrder = data.liquorOrder
             cartResponse.noLiquorImageUrl = data.noLiquorImageUrl
-            if (cartResponse.orderSummary.fulfillmentDetails?.address?.placeId != null) {
-                Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(cartResponse.orderSummary.fulfillmentDetails))
+            val fulfillmentDetailsObj = cartResponse.orderSummary.fulfillmentDetails
+            if (fulfillmentDetailsObj?.address?.placeId != null) {
+                val shoppingDeliveryLocation = ShoppingDeliveryLocation(fulfillmentDetailsObj)
+                Utils.savePreferredDeliveryLocation(shoppingDeliveryLocation)
+                setDeliveryLocation(shoppingDeliveryLocation)
+            } else {
+                // If user logs out and login with new registration who don't have location.
+                setDeliveryLocation(ShoppingDeliveryLocation(fulfillmentDetailsObj))
             }
-            setDeliveryLocation(Utils.getPreferredDeliveryLocation())
             val itemsObject = JSONObject(Gson().toJson(data.items))
             val keys = itemsObject.keys()
             val cartItemGroups = ArrayList<CartItemGroup>()
