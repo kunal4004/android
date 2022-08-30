@@ -44,6 +44,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
     OrderHistoryErrorDialogFragment.IOrderHistoryErrorDialogDismiss, IToastInterface {
 
     companion object {
+        val PROMO_NOTE_FOOD = "FOOD"
 
         fun getInstance(orderId: String, isNaviagtedFromMyAccount: Boolean = false) =
             OrderDetailsFragment().withArgs {
