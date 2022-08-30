@@ -584,6 +584,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                                             AccountsOptionFragment.CREDIT_CARD_SHECULE_OR_MANAGE -> {
                                                                 scheduleOrManageCC()
                                                             }
+
+                                                            else -> goToProduct()
                                                         }
                                                     }
 

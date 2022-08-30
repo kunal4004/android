@@ -149,8 +149,13 @@ public class AppInstanceObject {
 		public boolean cartRedeemVoucher;
 		public boolean creditScore;
         public boolean isTryItOn;
+        public boolean shopping;
+        public boolean dash;
+        public boolean delivery_details;
+        public boolean my_lists;
 
     }
+
     /***
      * Check to determine if biometric custom popup should be displayed
      */

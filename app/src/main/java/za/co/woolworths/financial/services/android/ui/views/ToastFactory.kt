@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.graphics.Point
 import android.graphics.drawable.GradientDrawable
 import android.os.Handler
+import android.os.Looper
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -22,6 +23,7 @@ import android.util.DisplayMetrics
 import android.view.View.*
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import com.google.gson.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
@@ -35,8 +37,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.mod
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_TOAST
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE
 import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.ReceiverManager
 import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 class ToastFactory {
 
@@ -305,49 +309,56 @@ class ToastFactory {
         ): PopupWindow {
             val context = WoolworthsApplication.getAppContext()
             // inflate your xml layout
-            val inflater =
-                context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as? LayoutInflater
+            val inflater = LayoutInflater.from(context)
             val view = inflater?.inflate(R.layout.items_limit_custom_toast, null)
-            val tvTotalProductCount = view?.findViewById<TextView>(R.id.totalProductCount)
-            val tvNoOfItemsAddedToCart = view?.findViewById<TextView>(R.id.noOfItemsAddedToCart)
-            val tvFoodLayoutMessage = view?.findViewById<TextView>(R.id.foodLayoutMessage)
-            val viewCart = view?.findViewById<TextView>(R.id.viewCart)
-            val toastView = view?.findViewById<ConstraintLayout>(R.id.toastView)
-            viewCart?.visibility = if (viewButtonVisible) VISIBLE else INVISIBLE
-            productCountMap.let {
-                tvTotalProductCount?.apply {
-                    text = it.totalProductCount.toString()
-                    setTextColor(Color.parseColor(it.quantityLimit?.foodLayoutColour))
-                }
-                (toastView?.background as GradientDrawable).setColor(Color.parseColor(it.quantityLimit?.foodLayoutColour))
-                tvFoodLayoutMessage?.text = it.quantityLimit?.foodLayoutMessage ?: ""
-                tvNoOfItemsAddedToCart?.text = when (count) {
-                    0 -> bindString(R.string.toast_multiple_item_added_to_cart_message, "")
-                    else -> bindString(
-                        if (count > 1) R.string.toast_multiple_item_added_to_cart_message else R.string.toast_single_item_added_to_cart_message,
-                        count.toString()
-                    )
-                }
-            }
-
             val popupWindow = PopupWindow(
                 view,
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT, true
             )
 
+            val tvTotalProductCount = view?.findViewById<TextView>(R.id.totalProductCount)
+            val tvNoOfItemsAddedToCart = view?.findViewById<TextView>(R.id.noOfItemsAddedToCart)
+            val tvFoodLayoutMessage = view?.findViewById<TextView>(R.id.foodLayoutMessage)
+            val toastView = view?.findViewById<ConstraintLayout>(R.id.toastView)
+
+            productCountMap.let {
+                tvTotalProductCount?.apply {
+                    text = it.totalProductCount.toString()
+                    setTextColor(ContextCompat.getColor(context, R.color.black90))
+
+                    // Removing Toast colors for CNC / Dash toast
+//                    it.quantityLimit?.foodLayoutColour?.let { color -> setTextColor(Color.parseColor(color)) }
+                }
+//                (toastView?.background as GradientDrawable).setColor(Color.parseColor(it.quantityLimit?.foodLayoutColour))
+                // Removing Toast colors for CNC / Dash toast
+                (toastView?.background as GradientDrawable).setColor(ContextCompat.getColor(context, R.color.black90))
+                tvFoodLayoutMessage?.text =
+                if(KotlinUtils.isDeliveryOptionDash())
+                    context.getString(R.string.dash_item_limit_message, it.quantityLimit?.foodMaximumQuantity ?: 0)
+                else
+                    it.quantityLimit?.foodLayoutMessage ?: ""
+
+                tvNoOfItemsAddedToCart?.text = context.resources.getQuantityString(R.plurals.toast_item_added_to_cart_message, count, count)
+            }
+
+            // View button on toast
+            val viewCart = view?.findViewById<TextView>(R.id.viewCart)
+            viewCart?.visibility = if (viewButtonVisible) VISIBLE else INVISIBLE
             viewCart?.setOnClickListener {
                 ScreenManager.presentShoppingCart(activity)
                 popupWindow.dismiss() // dismiss the window
             }
+
             popupWindow.isFocusable = false
-            Handler().postDelayed({ popupWindow.dismiss() }, POPUP_DELAY_MILLIS.toLong())
             popupWindow.showAtLocation(
                 viewLocation,
                 Gravity.BOTTOM,
                 0,
                 convertDpToPixel(getDeviceHeight(activity), context)
             )
+            Handler(Looper.getMainLooper()).postDelayed({ popupWindow.dismiss() }, POPUP_DELAY_MILLIS.toLong())
+
             return popupWindow
         }
 

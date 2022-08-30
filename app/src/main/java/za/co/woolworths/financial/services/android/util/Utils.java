@@ -370,7 +370,11 @@ public class Utils {
         args.putString("description", description);
         openMsg.putExtras(args);
         context.startActivity(openMsg);
-        ((AppCompatActivity) context).overridePendingTransition(0, 0);
+        if (context instanceof AppCompatActivity) {
+            ((AppCompatActivity) context).overridePendingTransition(0, 0);
+        } else if (context instanceof Activity){
+            ((Activity) context).overridePendingTransition(0, 0);
+        }
     }
 
     public static void displayDialog(Context context, CustomPopUpWindow.MODAL_LAYOUT key, String description, int requestCode) {
@@ -866,6 +870,12 @@ public class Utils {
         currentUserObject.save();
     }
 
+    public static void clearPreferredDeliveryLocation() {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        currentUserObject.preferredShoppingDeliveryLocation = null;
+        currentUserObject.save();
+    }
+
     public static void addToShoppingDeliveryLocationHistory(ShoppingDeliveryLocation shoppingDeliveryLocation) {
         AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
         currentUserObject.shoppingDeliveryLocationHistory.add(shoppingDeliveryLocation);
@@ -1164,6 +1174,18 @@ public class Utils {
                 break;
             case VTO_TRY_IT:
                 appInstanceObject.featureWalkThrough.isTryItOn = true;
+                break;
+            case SHOPPING:
+                appInstanceObject.featureWalkThrough.shopping = true;
+                break;
+            case DASH:
+                appInstanceObject.featureWalkThrough.dash = true;
+                break;
+            case DELIVERY_DETAILS:
+                appInstanceObject.featureWalkThrough.delivery_details = true;
+                break;
+            case MY_LIST:
+                appInstanceObject.featureWalkThrough.my_lists = true;
                 break;
             default:
                 break;
