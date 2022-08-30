@@ -14,10 +14,10 @@ import za.co.woolworths.financial.services.android.models.dto.EligibilityPlanRes
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.getViewStateFlowForNetworkCall
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.local.AccountDataClass
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.local.IAccountDataClass
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.repository.storecard.CollectionRepository
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.repository.storecard.ICollectionRepository
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.di.AccountDataClass
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.di.IAccountDataClass
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOptionsScreenUI
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.IStoreCardNavigator

@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.IBottomSheetBehaviour
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.WBottomSheetBehaviour
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.di.AccountDataClass
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.local.AccountDataClass
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountProductLandingDao
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import javax.inject.Inject
