@@ -6,11 +6,11 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.RemoveBlockDcMainFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
+import za.co.woolworths.financial.services.android.onecartgetstream.common.navigateSafely
 import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
 import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.InformationData
@@ -97,7 +97,7 @@ class RemoveBlockOnCollectionFragment : Fragment(R.layout.remove_block_dc_main_f
     }
 
     private fun navigateToInformation() {
-        findNavController().navigate(
+        navigateSafely(
             RemoveBlockOnCollectionFragmentDirections.actionRemoveBlockOnCollectionFragmentToAccountInfoFragment(
                 InformationData.Arrears()
             )

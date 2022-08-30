@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:paddingTop="@dimen/content_below_toolbar_height"
     tools:context="za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.information.InformationFragment">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -12,6 +11,9 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
+        android:clipToPadding="false"
+        android:paddingTop="@dimen/_90sdp"
+        android:paddingBottom="@dimen/_50sdp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
