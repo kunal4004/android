@@ -224,7 +224,7 @@ public class PopWindowValidationMessage {
 
 						case R.id.nativePetalMap:
 							if(location!=null) {
-								uri = "mapapp://navigation?saddr=" + location.getLatitude() + "," + location.getLongitude() + "&daddr=" + getmLatitude() + "," + getmLongiude();
+								uri = "petalmaps://navigation?saddr=" + location.getLatitude() + "," + location.getLongitude() + "&daddr=" + getmLatitude() + "," + getmLongiude();
 								Intent intent1 = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
 								if (intent1.resolveActivity(mContext.getPackageManager()) != null) {
 								mContext.startActivity(intent1);
