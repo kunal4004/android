@@ -1369,12 +1369,27 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 onlinePromotionalTextView2?.visibility = View.GONE
                 onlinePromotionalTextView3?.visibility = View.GONE
             }
+            if (it.isRnREnabled && RatingAndReviewUtil.isRatingAndReviewConfigavailbel()) {
+                ratingBarTop.rating = it.averageRating
+                tvTotalReviews.text = resources.getQuantityString(
+                    R.plurals.no_review,
+                    it.reviewCount,
+                    it.reviewCount
+                )
+                ratingBarTop.visibility = View.VISIBLE
+                tvTotalReviews.visibility = View.VISIBLE
+                prodId = it.productId
+                tvTotalReviews.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            } else {
+                hideRatingAndReview()
+            }
         }
 
         if (isAllProductsOutOfStock() && isInventoryCalled) {
             showProductOutOfStock()
             return
         }
+
     }
 
             private fun hideRatingAndReview() {
