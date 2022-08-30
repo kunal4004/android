@@ -79,7 +79,7 @@ class OrderConfirmationFragment : Fragment() {
                                     response.orderSummary?.orderId?.let { setToolbar(it) }
                                     setupDeliveryOrCollectionDetails(response)
                                     setupOrderTotalDetails(response)
-                                    setupOrderDetailsBottomSheet(response)
+                               //     setupOrderDetailsBottomSheet(response)
                                     displayVocifNeeded(response)
 
                                 }
@@ -158,32 +158,52 @@ class OrderConfirmationFragment : Fragment() {
             when (Delivery.getType(response?.orderSummary?.fulfillmentDetails?.deliveryType)) {
                 Delivery.CNC -> {
                     deliveryCollectionDetailsConstraintLayout?.visibility = VISIBLE
-                    deliveryOrderDetailsLayout.visibility = VISIBLE
+                  // deliveryOrderDetailsLayout.visibility = VISIBLE
+                    dashOrderDetailsLayout?.visibility = VISIBLE
                     optionImage.background =
-                        AppCompatResources.getDrawable(it, R.drawable.icon_collection_grey_bg)
+                        AppCompatResources.getDrawable(it, R.drawable.ic_collection_bag)
                     optionTitle?.text = it.getText(R.string.collecting_from)
                     deliveryTextView?.text = it.getText(R.string.collection_semicolon)
                     optionLocation?.text =
                         response?.orderSummary?.fulfillmentDetails?.storeName?.let {
                             convertToTitleCase(it)
                         } ?: ""
+                    standardEnroutetextView.text = it.getText(R.string.collection_status)
+                    collectedOrDeliveredTextView.text = it.getText(R.string.status_collected)
+                    setUpDashOrderDetailsLayout(response)
+                    continueBrowsingStandardLinearLayout.setOnClickListener {
+                        requireActivity()?.setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
+                        requireActivity()?.finish()
+                    }
                 }
                 Delivery.STANDARD -> {
                     deliveryCollectionDetailsConstraintLayout?.visibility = VISIBLE
-                    deliveryOrderDetailsLayout?.visibility = VISIBLE
+                  //  deliveryOrderDetailsLayout?.visibility = VISIBLE
+                    dashOrderDetailsLayout?.visibility = VISIBLE
                     optionImage?.background =
-                        AppCompatResources.getDrawable(it, R.drawable.icon_delivery_grey_bg)
+                        AppCompatResources.getDrawable(it, R.drawable.ic_icon_standard_delivery_truck)
                     optionTitle?.text = it.getText(R.string.delivering_to)
                     deliveryTextView?.text = it.getText(R.string.delivery_semicolon)
                     optionLocation?.text =
                         response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
                             convertToTitleCase(it)
                         } ?: ""
+                    continueBrowsingStandardLinearLayout.setOnClickListener {
+                        requireActivity()?.setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
+                        requireActivity()?.finish()
+                    }
+                    standardEnroutetextView.text = it.getText(R.string.dash_status_en_route)
+                    collectedOrDeliveredTextView.text = it.getText(R.string.dash_status_delivered)
+                    setUpDashOrderDetailsLayout(response)
+                  // setupOrderDetailsBottomSheet(response)
                 }
                 Delivery.DASH -> {
                     dashDeliveryConstraintLayout?.visibility = VISIBLE
                     deliveryOrderDetailsLayout?.visibility = GONE
                     dashOrderDetailsLayout?.visibility = VISIBLE
+                    optionImage?.background =
+                            AppCompatResources.getDrawable(it, R.drawable.icon_dash_delivery_scooter)
+                    optionTitle?.text = it.getText(R.string.dashing_to)
                     optionLocationTitle?.text =
                         response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
                             convertToTitleCase(it)
@@ -315,9 +335,14 @@ class OrderConfirmationFragment : Fragment() {
                     wRewardsVouchersSeparator?.visibility = GONE
                 }
 
-                deliveryFeeTextView?.text = CurrencyFormatter
-                    .formatAmountToRandAndCentWithSpace(response?.deliveryDetails?.shippingAmount)
-
+                val deliveryFee = response?.deliveryDetails?.shippingAmount
+                if (deliveryFee != null && deliveryFee > 0.0) {
+                    deliveryFeeTextView?.text = CurrencyFormatter
+                        .formatAmountToRandAndCentWithSpace(deliveryFee)
+                } else {
+                    deliveryFeeLinearLayout?.visibility = GONE
+                    deliveryFeeSeparator?.visibility = GONE
+                }
             }
             Delivery.DASH -> {
                 companyDiscountLinearLayout.visibility = GONE
@@ -351,8 +376,9 @@ class OrderConfirmationFragment : Fragment() {
     }
 
     private fun setFoodItemCount(items: OrderItems?) {
+        val other: Int = items?.other?.size ?: 0
         val food: Int = items?.food?.size ?: 0
-        val number: Int = food
+        val number: Int = other.plus(food)
         foodNumberItemsTextView?.text = if (number > 1)
             bindString(R.string.food_number_items, number.toString())
         else
