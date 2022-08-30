@@ -137,7 +137,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     enum class FoodSubstitution(val rgb: String) {
         PHONE_CONFIRM("YES_CALL_CONFIRM"),
         SIMILAR_SUBSTITUTION("YES"),
-        NO_THANKS("NO")
+        NO_THANKS("NO"),
+        CHAT("CHAT")
     }
 
     enum class DeliveryType(val type: String) {
@@ -582,6 +583,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         expandableGrid.setUpShimmerView()
         expandableGrid.showDeliveryTypeShimmerView()
         showDeliverySubTypeShimmerView()
+        edtTxtSpecialDeliveryInstruction?.visibility = GONE
+        edtTxtGiftInstructions?.visibility = GONE
+        switchSpecialDeliveryInstruction?.isChecked = false
+        switchGiftInstructions?.isChecked = false
 
         shimmerComponentArray = listOf(
             Pair<ShimmerFrameLayout, View>(
@@ -996,7 +1001,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     private fun onCheckoutPaymentClick() {
-        if ((isRequiredFieldsMissing() || isInstructionsMissing() || isGiftMessage())) {
+        if ((isRequiredFieldsMissing() || isGiftMessage())) {
             return
         }
         if (isAgeConfirmationLiquorCompliance()) {
@@ -1071,7 +1076,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         0,
                         layoutDeliveryInstructions?.top ?: 0
                     )
-                    true
+                    /**
+                     * New requirement to have instructions optional
+                     */
+//                    true
+                    false
                 } else false
             }
             else -> false
