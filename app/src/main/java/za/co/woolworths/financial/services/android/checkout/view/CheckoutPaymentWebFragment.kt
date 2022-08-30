@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.util.AdvancedWebView
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.Utils
 import java.net.URI
 
@@ -131,11 +132,36 @@ class CheckoutPaymentWebFragment : Fragment(), AdvancedWebView.Listener {
         val uri = Uri.parse(url)
         when (uri.getQueryParameter(KEY_STATUS)) {
             PaymentStatus.PAYMENT_SUCCESS.type -> {
+
+
                 val paymentType = uri.getQueryParameter(PAYMENT_TYPE)
-                val arguments = HashMap<String, String>()
+              /*  val arguments = HashMap<String, String>()
                 arguments[FirebaseAnalytics.Param.CURRENCY] = FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
-                arguments[FirebaseAnalytics.Param.PAYMENT_TYPE] = paymentType.toString()
+                arguments[FirebaseAnalytics.Param.PAYMENT_TYPE] = "Gift Card"
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ADD_PAYMENT_INFO, arguments, activity)
+*/
+
+            /*    val mFirebaseAnalytics = FirebaseManager.getInstance().getAnalytics()
+                val addPaymentInfoParams = Bundle()
+                addPaymentInfoParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
+                addPaymentInfoParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.ORDER_TOTAL_VALUE, " ")
+                // for (products in 0..(mProductList?.size ?: 0)) {
+                val addPaymentInfoItem = Bundle()
+                addPaymentInfoItem.putString(FirebaseAnalytics.Param.ITEM_ID, " ")
+                addPaymentInfoItem.putString(FirebaseAnalytics.Param.ITEM_NAME, " ")
+                addPaymentInfoItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, " ")
+                addPaymentInfoItem.putString(FirebaseAnalytics.Param.ITEM_BRAND," ")
+                addPaymentInfoItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT, " ")
+                addPaymentInfoItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT, "")
+
+                addPaymentInfoParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(addPaymentInfoItem))
+                //}
+                mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.ADD_PAYMENT_INFO,
+                    addPaymentInfoParams)
+*/
+
+
+
                 navigateToOrderConfirmation()
             }
             PaymentStatus.PAYMENT_ABANDON.type -> {

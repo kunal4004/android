@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -417,6 +418,28 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                     && !TextUtils.isEmpty(response?.defaultAddressNickname))
         ) {
             //   - CNAV : Checkout  activity
+
+            val mFirebaseAnalytics = FirebaseManager.getInstance().getAnalytics()
+           /* val beginCheckoutParams = Bundle()
+            beginCheckoutParams.putString(FirebaseAnalytics.Param.CURRENCY, "ZAR")
+            beginCheckoutParams.putString(FirebaseAnalytics.Param.VALUE, " ")
+           // for (products in 0..(mProductList?.size ?: 0)) {
+            val beginCheckoutItem = Bundle()
+            beginCheckoutItem.putString(FirebaseAnalytics.Param.ITEM_ID, "5051")
+            beginCheckoutItem.putString(FirebaseAnalytics.Param.ITEM_NAME, " ")
+            beginCheckoutItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, " ")
+            beginCheckoutItem.putString(FirebaseAnalytics.Param.ITEM_BRAND," ")
+            beginCheckoutItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT, " ")
+            beginCheckoutItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT, "")
+
+            beginCheckoutParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(beginCheckoutItem))
+            //}
+            mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT,
+                beginCheckoutParams)*/
+
+
+
+
             Utils.triggerFireBaseEvents(
                 FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT,
                 activity
@@ -648,10 +671,12 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         orderSummary = cartResponse?.orderSummary
         voucherDetails = cartResponse?.voucherDetails
         productCountMap = cartResponse?.productCountMap
-        liquorCompliance = LiquorCompliance(
-            cartResponse?.liquorOrder ?: false,
-            if (cartResponse?.noLiquorImageUrl != null) cartResponse?.noLiquorImageUrl else ""
-        )
+        liquorCompliance = (if (cartResponse?.noLiquorImageUrl != null) cartResponse?.noLiquorImageUrl else "")?.let {
+            LiquorCompliance(
+                cartResponse?.liquorOrder ?: false,
+                it
+            )
+        }
         setItemLimitsBanner()
         if (cartResponse?.cartItems?.size ?: 0 > 0 && cartProductAdapter != null) {
             val emptyCartItemGroups = ArrayList<CartItemGroup>(0)
@@ -1223,6 +1248,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         )
         val lastDeliveryLocation = Utils.getPreferredDeliveryLocation()
         lastDeliveryLocation?.let { setDeliveryLocation(it) }
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VIEW_CART, requireActivity())
     }
 
     override fun onPause() {

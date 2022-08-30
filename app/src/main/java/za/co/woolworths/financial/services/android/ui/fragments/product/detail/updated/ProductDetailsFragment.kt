@@ -298,9 +298,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             productDetails?.price?.toDouble()
                 ?.let { viewItem.putDouble(FirebaseAnalytics.Param.PRICE, it) }
             viewItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, productDetails?.categoryName)
-            viewItem.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
             viewItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT, productDetails?.colourSizeVariants)
-
+            viewItem.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
             viewItemListParams.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, productDetails?.categoryName)
             viewItemListParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(viewItem))
         }
