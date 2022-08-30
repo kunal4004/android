@@ -82,6 +82,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DEFAULT_ADDRESS
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CHECKOUT
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CNC_SELETION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_DASH_TAB
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.PLACE_ID
@@ -429,6 +430,7 @@ class KotlinUtils {
                 mBundle.putString(PLACE_ID, placeId)
                 mBundle.putBoolean(IS_FROM_DASH_TAB, isFromDashTab)
                 mBundle.putBoolean(IS_COMING_FROM_CHECKOUT, isComingFromCheckout)
+                mBundle.putBoolean(IS_COMING_FROM_CNC_SELETION, isComingFromCheckout)
                 mBundle.putBoolean(IS_COMING_FROM_SLOT_SELECTION, isComingFromSlotSelection)
                 mBundle.putSerializable(SAVED_ADDRESS_RESPONSE, savedAddressResponse)
                 mBundle.putSerializable(DEFAULT_ADDRESS, defaultAddress)
@@ -1381,6 +1383,9 @@ class KotlinUtils {
             when(Delivery.getType(deliveryType)){
                 Delivery.CNC->{
                     event = VocTriggerEvent.SHOP_CLICK_COLLECT_CONFIRM
+                }
+                Delivery.STANDARD->{
+                    event = VocTriggerEvent.CHCKOUT_CNT_TO_PMNT
                 }
             }
             return event

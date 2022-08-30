@@ -16,6 +16,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProviders
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
@@ -204,15 +205,18 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationDescShimmerFrameLayout,
-                txtAgeConfirmationDesc),
+                txtAgeConfirmationDesc
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationDescNoteShimmerFrameLayout,
-                txtAgeConfirmationDescNote),
+                txtAgeConfirmationDescNote
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 radioGroupAgeConfirmationShimmerFrameLayout,
-                radioBtnAgeConfirmation),
+                radioBtnAgeConfirmation
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationTitleShimmerFrameLayout,
@@ -221,15 +225,18 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationDescShimmerFrameLayout,
-                txtAgeConfirmationDesc),
+                txtAgeConfirmationDesc
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationDescNoteShimmerFrameLayout,
-                txtAgeConfirmationDescNote),
+                txtAgeConfirmationDescNote
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 radioGroupAgeConfirmationShimmerFrameLayout,
-                radioBtnAgeConfirmation),
+                radioBtnAgeConfirmation
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 collectionTimeDetailsShimmerLayout,
@@ -245,7 +252,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             ),
             Pair<ShimmerFrameLayout, View>(
                 liquorComplianceBannerShimmerFrameLayout,
-                liquorComplianceBannerLayout),
+                liquorComplianceBannerLayout
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 instructionTxtShimmerFrameLayout,
@@ -332,6 +340,10 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     fun startShimmerView() {
         txtNeedBags?.visibility = View.GONE
         switchNeedBags?.visibility = View.GONE
+        edtTxtSpecialDeliveryInstruction?.visibility = View.GONE
+        edtTxtGiftInstructions?.visibility = View.GONE
+        switchSpecialDeliveryInstruction?.isChecked = false
+        switchGiftInstructions?.isChecked = false
 
         val shimmer = Shimmer.AlphaHighlightBuilder().build()
         shimmerComponentArray.forEach {
@@ -398,8 +410,11 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                 }
                                 response.orderSummary?.fulfillmentDetails?.let {
                                     if (!it.deliveryType.isNullOrEmpty()) {
-                                        Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(
-                                            it))
+                                        Utils.savePreferredDeliveryLocation(
+                                            ShoppingDeliveryLocation(
+                                                it
+                                            )
+                                        )
                                     }
                                 }
                                 initializeOrderSummary(response.orderSummary)
@@ -619,9 +634,12 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 whoIsCollectingDetails =
                     Gson().fromJson(it, object : TypeToken<WhoIsCollectingDetails>() {}.type)
             }
-            savedAddressResponse = Utils.jsonStringToObject(getString(SAVED_ADDRESS_KEY),
-                SavedAddressResponse::class.java) as? SavedAddressResponse ?: getSerializable(
-                SAVED_ADDRESS_KEY) as? SavedAddressResponse ?: SavedAddressResponse()
+            savedAddressResponse = Utils.jsonStringToObject(
+                getString(SAVED_ADDRESS_KEY),
+                SavedAddressResponse::class.java
+            ) as? SavedAddressResponse ?: getSerializable(
+                SAVED_ADDRESS_KEY
+            ) as? SavedAddressResponse ?: SavedAddressResponse()
         }
         if (whoIsCollectingDetails != null) {
             tvCollectionUserName.text = whoIsCollectingDetails?.recipientName
@@ -897,6 +915,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                     // Cart is empty when removed unsellable items. go to cart and refresh cart screen.
                     Activity.RESULT_CANCELED, ErrorHandlerActivity.RESULT_RETRY -> {
                         (activity as? CheckoutActivity)?.apply {
+                            //set BR to update cart fragment in CNC flow
+                            LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(CheckOutFragment.TAG_CART_BROADCAST_RECEIVER))
                             setResult(CheckOutFragment.RESULT_EMPTY_CART)
                             closeActivity()
                         }
@@ -912,13 +932,15 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     private fun isAgeConfirmationLiquorCompliance(): Boolean {
-        layoutCollectionInstructions.parent.requestChildFocus(layoutCollectionInstructions,
-            layoutCollectionInstructions)
+        layoutCollectionInstructions.parent.requestChildFocus(
+            layoutCollectionInstructions,
+            layoutCollectionInstructions
+        )
         return liquorOrder == true && !radioBtnAgeConfirmation.isChecked
     }
 
     private fun onCheckoutPaymentClick() {
-        if (isRequiredFieldsMissing() || isInstructionsMissing() || isGiftMessage()) {
+        if (isRequiredFieldsMissing() || isGiftMessage()) {
             return
         }
         if (isAgeConfirmationLiquorCompliance()) {
@@ -1057,7 +1079,11 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                         0,
                         layoutCollectionInstructions?.top ?: 0
                     )
-                    true
+                    /**
+                     * New requirement to have instructions optional
+                     */
+//                    true
+                    false
                 } else false
             }
             else -> false

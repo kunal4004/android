@@ -532,15 +532,9 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                                 Delivery.STANDARD.name -> CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION
                                                 else -> CheckoutAddressManagementBaseFragment.DASH_SLOT_SELECTION
                                             }
-
                                             checkoutActivityIntent.putExtra(result, true)
-                                            bundle?.apply {
-                                                val liquorOrder = getBoolean(Constant.LIQUOR_ORDER)
-                                                val liquorImageUrl = getString(Constant.NO_LIQUOR_IMAGE_URL)
-                                                checkoutActivityIntent.putExtra(Constant.LIQUOR_ORDER, liquorOrder)
-                                                if(liquorImageUrl != null && !liquorImageUrl.isEmpty())
-                                                    checkoutActivityIntent.putExtra(Constant.NO_LIQUOR_IMAGE_URL,liquorImageUrl)
-                                            }
+                                            checkoutActivityIntent.putExtra(Constant.LIQUOR_ORDER, getLiquorOrder())
+                                            checkoutActivityIntent.putExtra(Constant.NO_LIQUOR_IMAGE_URL, getLiquorImageUrl())
                                             activity?.apply {
                                                 startActivityForResult(
                                                     checkoutActivityIntent,
@@ -601,19 +595,30 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         }
     }
 
+    private fun getLiquorOrder(): Boolean {
+        var liquorOrder = false
+        bundle?.apply {
+            liquorOrder = getBoolean(Constant.LIQUOR_ORDER)
+        }
+        return liquorOrder
+    }
+
+    private fun getLiquorImageUrl(): String {
+        var liquorImageUrl = ""
+        bundle?.apply {
+            liquorImageUrl = getString(Constant.NO_LIQUOR_IMAGE_URL, "")
+        }
+        return liquorImageUrl
+    }
+
     private fun startCheckoutActivity(toJson: String) {
         val checkoutActivityIntent = Intent(activity, CheckoutActivity::class.java)
         checkoutActivityIntent.putExtra(
             CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS,
             toJson
         )
-        bundle?.apply {
-            val liquorOrder = getBoolean(Constant.LIQUOR_ORDER)
-            val liquorImageUrl = getString(Constant.NO_LIQUOR_IMAGE_URL)
-            checkoutActivityIntent.putExtra(Constant.LIQUOR_ORDER, liquorOrder)
-            if(liquorImageUrl != null && !liquorImageUrl.isEmpty())
-                 checkoutActivityIntent.putExtra(Constant.NO_LIQUOR_IMAGE_URL,liquorImageUrl)
-        }
+        checkoutActivityIntent.putExtra(Constant.LIQUOR_ORDER, getLiquorOrder())
+        checkoutActivityIntent.putExtra(Constant.NO_LIQUOR_IMAGE_URL, getLiquorImageUrl())
         activity?.let {
             startActivityForResult(
                 checkoutActivityIntent,

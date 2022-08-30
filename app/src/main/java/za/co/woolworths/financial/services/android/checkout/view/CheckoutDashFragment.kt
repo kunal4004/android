@@ -263,15 +263,18 @@ class CheckoutDashFragment : Fragment(),
 
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationDescShimmerFrameLayout,
-                txtAgeConfirmationDesc),
+                txtAgeConfirmationDesc
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationDescNoteShimmerFrameLayout,
-                txtAgeConfirmationDescNote),
+                txtAgeConfirmationDescNote
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 radioGroupAgeConfirmationShimmerFrameLayout,
-                radioBtnAgeConfirmation),
+                radioBtnAgeConfirmation
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationTitleShimmerFrameLayout,
@@ -280,19 +283,23 @@ class CheckoutDashFragment : Fragment(),
 
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationDescShimmerFrameLayout,
-                txtAgeConfirmationDesc),
+                txtAgeConfirmationDesc
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationDescNoteShimmerFrameLayout,
-                txtAgeConfirmationDescNote),
+                txtAgeConfirmationDescNote
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 radioGroupAgeConfirmationShimmerFrameLayout,
-                radioBtnAgeConfirmation),
+                radioBtnAgeConfirmation
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 liquorComplianceBannerShimmerFrameLayout,
-                liquorComplianceBannerLayout),
+                liquorComplianceBannerLayout
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 instructionTxtShimmerFrameLayout,
@@ -359,6 +366,10 @@ class CheckoutDashFragment : Fragment(),
     private fun startShimmerView() {
         txtNeedBags?.visibility = View.GONE
         switchNeedBags?.visibility = View.GONE
+        edtTxtSpecialDeliveryInstruction?.visibility = GONE
+        edtTxtGiftInstructions?.visibility = GONE
+        switchSpecialDeliveryInstruction?.isChecked = false
+        switchGiftInstructions?.isChecked = false
 
         val shimmer = Shimmer.AlphaHighlightBuilder().build()
         shimmerComponentArray.forEach {
@@ -873,7 +884,7 @@ class CheckoutDashFragment : Fragment(),
                         activity
                     )
 
-                    selectedFoodSubstitution = FoodSubstitution.PHONE_CONFIRM
+                    selectedFoodSubstitution = FoodSubstitution.CHAT
                 }
                 R.id.radioBtnSimilarSubst -> {
                     selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
@@ -1031,7 +1042,7 @@ class CheckoutDashFragment : Fragment(),
     }
 
     private fun onCheckoutPaymentClick() {
-        if (isRequiredFieldsMissing() || isInstructionsMissing() || isAgeConfirmationLiquorCompliance()) {
+        if (isRequiredFieldsMissing() || isAgeConfirmationLiquorCompliance()) {
             return
         }
 
@@ -1157,7 +1168,11 @@ class CheckoutDashFragment : Fragment(),
                         0,
                         layoutCollectionInstructions?.top ?: 0
                     )
-                    true
+                    /**
+                     * New requirement to have instructions optional
+                     */
+//                    true
+                    false
                 } else false
             }
             else -> false
@@ -1165,10 +1180,14 @@ class CheckoutDashFragment : Fragment(),
     }
 
     private fun isAgeConfirmationLiquorCompliance(): Boolean {
-        txtAgeConfirmationTitle.parent.requestChildFocus(txtAgeConfirmationTitle,
-            txtAgeConfirmationTitle)
-        radioBtnAgeConfirmation.parent.requestChildFocus(radioBtnAgeConfirmation,
-            radioBtnAgeConfirmation)
+        txtAgeConfirmationTitle.parent.requestChildFocus(
+            txtAgeConfirmationTitle,
+            txtAgeConfirmationTitle
+        )
+        radioBtnAgeConfirmation.parent.requestChildFocus(
+            radioBtnAgeConfirmation,
+            radioBtnAgeConfirmation
+        )
         return liquorOrder == true && !radioBtnAgeConfirmation.isChecked
     }
 
