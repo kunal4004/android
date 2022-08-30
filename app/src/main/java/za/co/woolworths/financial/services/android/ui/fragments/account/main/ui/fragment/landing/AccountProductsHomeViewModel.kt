@@ -16,6 +16,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.cor
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.getViewStateFlowForNetworkCall
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.repository.storecard.CollectionRepository
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.repository.storecard.ICollectionRepository
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.di.AccountDataClass
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.di.IAccountDataClass
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOptionsScreenUI
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.IStoreCardNavigator
@@ -25,12 +27,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AccountProductsHomeViewModel @Inject constructor(
+    accountDataClass: AccountDataClass,
     screen: AccountProductLandingScreenStatus,
     account: AccountProductLandingDao,
     private val collectionRepository: CollectionRepository,
     val navigator: StoreCardNavigator,
     val accountOptions: AccountOptionsImpl
 ) : ViewModel(),
+    IAccountDataClass by accountDataClass,
     IAccountProductLandingDao by account,
     IAccountOptions by accountOptions,
     IAccountProductLandingScreen by screen,

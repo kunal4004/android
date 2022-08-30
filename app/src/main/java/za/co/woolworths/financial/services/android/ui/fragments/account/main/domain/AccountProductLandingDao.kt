@@ -3,19 +3,19 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.do
 import android.view.View
 import com.awfs.coordination.R
 import com.google.gson.Gson
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.DebitOrder
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.SaveResponseDao
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.local.AccountDataClass
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.local.IAccountDataClass
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.CreditCardType
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.ProductLandingGroupCode
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 interface IAccountProductLandingDao {
-    val product: Account?
+    var product: Account?
     fun getProductByProductGroupCode(): ProductLandingGroupCode
     fun getProductOfferingId(): Int
     fun isProductInGoodStanding(): Boolean
@@ -29,12 +29,11 @@ interface IAccountProductLandingDao {
     fun getApplyNowState(): ApplyNowState
 }
 
-class AccountProductLandingDao @Inject constructor() : IAccountProductLandingDao {
+class AccountProductLandingDao @Inject constructor( accountDataClass: AccountDataClass) : IAccountProductLandingDao,
+    IAccountDataClass by accountDataClass {
 
-    override val product: Account?
-        get() {
-       return SaveResponseDao.getValue(SessionDao.KEY.ACCOUNT_PRODUCT_PAYLOAD)
-    }
+    override var product: Account? = null
+        get() = accountData
 
     override fun getProductByProductGroupCode(): ProductLandingGroupCode {
         return when (product?.productGroupCode) {

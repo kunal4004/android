@@ -6,6 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import retrofit2.Retrofit
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.TreatmentPlanDataSource
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.local.AccountDataClass
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.StoreCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.WfsApiService
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.repository.storecard.StoreCardRepository
@@ -44,7 +45,7 @@ object ViewModelModule {
     fun provideTreatmentPlanDataSource() = TreatmentPlanDataSource()
 
     @Provides
-    fun provideAccountProductLandingDao() = AccountProductLandingDao()
+    fun provideAccountProductLandingDao(data: AccountDataClass) = AccountProductLandingDao(data)
 
     @Provides
     fun providePaymentsPayuMethodsDataSource(remoteDataSource: WfsApiService) = PaymentsPayuMethodsDataSource(remoteDataSource)
