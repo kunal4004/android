@@ -405,12 +405,15 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
     }
 
+    fun setShopDefaultTab() {
+        viewpager_main.currentItem = 0
+    }
+
     private fun prepareTabView(tabLayout: TabLayout, pos: Int, tabTitle: MutableList<String>?): View? {
         val view = requireActivity().layoutInflater.inflate(R.layout.shop_custom_tab, null)
         tabWidth = view?.width?.let {
             it.toFloat()
         }
-
         view?.tvTitle?.text = tabTitle?.get(pos)
         view?.foodOnlyText?.visibility = if(pos == 0) View.GONE else View.VISIBLE
         if (tabLayout.getTabAt(pos)?.view?.isSelected == true) {
