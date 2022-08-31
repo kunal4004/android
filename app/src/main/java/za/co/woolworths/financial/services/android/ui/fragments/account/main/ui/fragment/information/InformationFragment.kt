@@ -14,8 +14,7 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class InformationFragment :
-    ViewBindingFragment<FragmentInformationBinding>(FragmentInformationBinding::inflate) {
+class InformationFragment : ViewBindingFragment<FragmentInformationBinding>(FragmentInformationBinding::inflate) {
 
     val viewModel by viewModels<InformationViewModel>()
     val args: InformationFragmentArgs by navArgs()

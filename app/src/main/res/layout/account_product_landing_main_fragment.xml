@@ -1,86 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/accountToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_70sdp"
-        android:background="@android:color/transparent"
-        android:elevation="2dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical">
-
-            <ImageView
-                android:id="@+id/navigateBackImageButton"
-                style="@style/selectableImageButtonRippleStyle"
-                android:layout_width="@dimen/icon_dimens"
-                android:layout_height="@dimen/icon_dimens"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="@dimen/margin_end"
-                android:background="@android:color/transparent"
-                app:srcCompat="@drawable/back_white"
-                tools:ignore="ContentDescription" />
-
-            <TextView
-                android:id="@+id/toolbarTitleTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:fontFamily="@font/futura_semi_bold_ttf"
-                android:letterSpacing="0.2"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_13ssp"
-                tools:ignore="UnusedAttribute" />
-
-            <ImageButton
-                android:id="@+id/infoIconImageView"
-                android:layout_width="@dimen/icon_dimens"
-                android:layout_height="@dimen/icon_dimens"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_gravity="end"
-                android:layout_marginEnd="@dimen/margin_end"
-                android:adjustViewBounds="true"
-                android:background="@android:color/transparent"
-                android:scaleType="fitCenter"
-                app:srcCompat="@drawable/info_white"
-                tools:ignore="ContentDescription" />
-
-            <TextView
-                android:id="@+id/accountInArrearsTextView"
-                style="@style/accountInArrearsTextViewStyle"
-                android:layout_centerInParent="true"
-                android:fontFamily="@font/futura_semi_bold_ttf"
-                android:paddingStart="@dimen/_7sdp"
-                android:paddingTop="@dimen/_4sdp"
-                android:paddingEnd="@dimen/_7sdp"
-                android:paddingBottom="@dimen/_4sdp"
-                android:text="@string/account_in_arrears"
-                android:visibility="visible"
-                tools:ignore="UnusedAttribute" />
-        </RelativeLayout>
-
-    </androidx.appcompat.widget.Toolbar>
-
-    <View
-        android:id="@+id/horizontalDivider"
-        android:layout_width="match_parent"
-        android:layout_height="0.8dp"
-        android:background="@color/dark_divider"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/accountToolbar" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/productNavigationContainerView"
@@ -90,9 +12,104 @@
         android:tag="product_navigation_container_view"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/accountToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        android:layout_marginTop="@dimen/_14sdp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/navigateBackImageButton"
+            style="@style/selectableImageButtonRippleStyle"
+            android:layout_width="@dimen/icon_dimens"
+            android:layout_height="@dimen/icon_dimens"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="@dimen/margin_start"
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/back_white" />
+
+        <TextView
+            android:id="@+id/toolbarTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/futura_semi_bold_ttf"
+            android:letterSpacing="0.2"
+            android:text="@string/title_how_to_pay"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/infoIconImageView"
+            android:layout_width="@dimen/icon_dimens"
+            android:layout_height="@dimen/icon_dimens"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:adjustViewBounds="true"
+            android:layout_marginEnd="@dimen/margin_end"
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/info_white" />
+
+        <ImageButton
+            android:id="@+id/closeIconImageButton"
+            android:layout_width="@dimen/icon_dimens"
+            android:layout_height="@dimen/icon_dimens"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:adjustViewBounds="true"
+            android:layout_marginEnd="@dimen/margin_end"
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/close_24" />
+
+        <TextView
+            android:id="@+id/accountInArrearsTextView"
+            style="@style/accountInArrearsTextViewStyle"
+            android:fontFamily="@font/futura_semi_bold_ttf"
+            android:paddingStart="@dimen/_7sdp"
+            android:paddingTop="@dimen/_4sdp"
+            android:paddingEnd="@dimen/_7sdp"
+            android:paddingBottom="@dimen/_4sdp"
+            android:text="@string/account_in_arrears"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/horizontalDivider"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_1sdp"
+        android:background="@color/dark_divider"
+        android:elevation="@dimen/_1sdp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/accountToolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

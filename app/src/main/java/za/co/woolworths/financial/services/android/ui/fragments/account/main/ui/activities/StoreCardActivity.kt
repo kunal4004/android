@@ -34,6 +34,7 @@ class StoreCardActivity : AppCompatActivity() {
         setContentView(binding.root)
         statusBarCompat.setLightStatusAndNavigationBar()
         setupView()
+
     }
 
     private fun setupView() {
