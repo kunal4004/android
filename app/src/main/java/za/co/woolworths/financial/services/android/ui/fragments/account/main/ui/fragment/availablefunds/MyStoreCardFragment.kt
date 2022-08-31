@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavDirections
-import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentAvailableFundBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -17,17 +15,17 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
-import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
-import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.store_card.StoreCardFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.WBottomSheetBehaviour
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.InformationData
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.SystemBarCompat
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.PayMyAccountButtonTap
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.PayMyAccountScreen
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.loadingState
@@ -43,6 +41,9 @@ class MyStoreCardFragment @Inject constructor() :
     val viewModel: AvailableFundsViewModel by activityViewModels()
     val homeViewModel: AccountProductsHomeViewModel by activityViewModels()
     val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
+
+    @Inject
+    lateinit var pmaButton: PayMyAccountButtonTap
 
     @Inject
     lateinit var bottomSheet: WBottomSheetBehaviour
@@ -160,9 +161,7 @@ class MyStoreCardFragment @Inject constructor() :
                     }
                 }
 
-                binding.incPayMyAccountButton.root -> {
-                    onPayMyAccountButtonTap()
-                }
+                binding.incPayMyAccountButton.root -> onPayMyAccountButtonTap()
 
                 else -> Unit
             }
@@ -170,57 +169,19 @@ class MyStoreCardFragment @Inject constructor() :
     }
 
     private fun onPayMyAccountButtonTap() {
-        onPayMyAccountButtonTap(
-            FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC,
-            StoreCardFragmentDirections.storeCardFragmentToDisplayVendorDetailFragmentAction()
-        )
-    }
-
-    private fun onPayMyAccountButtonTap(eventName: String?, directions: NavDirections?) {
-        if (viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
-
-        payMyAccountViewModel.apply {
-            //Redirect to payment options when  ABSA cards array is empty for credit card products
-            if (getProductGroupCode().equals(
-                    AccountsProductGroupCode.CREDIT_CARD.groupCode,
-                    ignoreCase = true
-                )
-            ) {
-                if (getAccount()?.cards?.isEmpty() == true) {
-                    ActivityIntentNavigationManager.presentPayMyAccountActivity(
-                        activity,
-                        payMyAccountViewModel.getCardDetail()
-                    )
-                    return
+        pmaButton.payMyAccountViewModel = payMyAccountViewModel
+        pmaButton.isShimmerEnabled = viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true
+        pmaButton.onTap(
+            FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC
+        ) { navigateFrom ->
+            navigateSafelyWithNavController(
+                when (navigateFrom) {
+                    PayMyAccountScreen.RetryOnErrorScreen -> MyStoreCardFragmentDirections.actionMyStoreCardFragmentToPayMyAccountRetryErrorFragment()
+                    PayMyAccountScreen.OpenAccountOptionsOrEnterPaymentAmountDialog -> MyStoreCardFragmentDirections.actionMyStoreCardFragmentToToCardDetailFragmentDialog()
                 }
-            }
-
-            payMyAccountPresenter.apply {
-                triggerFirebaseEvent(eventName, activity)
-                resetAmountEnteredToDefault()
-                when (isPaymentMethodOfTypeError()) {
-                    true -> {
-                        try {
-                            navigateSafelyWithNavController(MyStoreCardFragmentDirections.actionMyStoreCardFragmentToPayMyAccountRetryErrorFragment())
-                        } catch (ex: IllegalStateException) {
-                            FirebaseManager.logException(ex)
-                        }
-                    }
-                    false -> {
-                        openPayMyAccountOptionOrEnterPaymentAmountDialogFragment(activity)
-                        {
-                            try {
-                                navigateSafelyWithNavController(MyStoreCardFragmentDirections.actionMyStoreCardFragmentToToCardDetailFragmentDialog())
-                            } catch (ex: IllegalStateException) {
-                                FirebaseManager.logException(ex)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
+            )
     }
+}
 
     private fun queryPaymentMethod() {
         when (!payMyAccountViewModel.isQueryPayUPaymentMethodComplete) {
