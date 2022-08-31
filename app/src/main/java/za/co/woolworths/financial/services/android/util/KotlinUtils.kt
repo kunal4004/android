@@ -1144,8 +1144,7 @@ class KotlinUtils {
             elseJob: () -> Unit,
         ) {
             if (MyAccountsFragment.verifyAppInstanceId() &&
-                (Utils.isGooglePlayServicesAvailable() ||
-                        Utils.isHuaweiMobileServicesAvailable())
+                (Utils.isGooglePlayOrHuaweiMobileServicesAvailable())
             ) {
                 doJob()
                 activity?.let {
