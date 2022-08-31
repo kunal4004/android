@@ -124,10 +124,16 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
     override fun filterPrimaryCardsGetOneVirtualCardAndOnePrimaryCardOrBoth(): MutableList<StoreCardFeatureType> {
 
         val primaryCardIndex = 0
+        val listOfStoreCardFeatures: MutableList<StoreCardFeatureType> = mutableListOf()
         val storeCardResponse = getStoreCardsResponse()
         val virtualCard = storeCardResponse?.storeCardsData?.virtualCard
-        val storeCardInPrimaryCardList = storeCardData?.primaryCards?.get(primaryCardIndex)
-        val listOfStoreCardFeatures: MutableList<StoreCardFeatureType> = mutableListOf()
+        val primaryCards :  MutableList<StoreCard>? = storeCardData?.primaryCards
+
+        if (primaryCards?.isEmpty() == true && virtualCard == null){
+            return mutableListOf()
+        }
+        val storeCardInPrimaryCardList = primaryCards?.get(primaryCardIndex)
+
         //val primaryCardBlockRequired = AppConfigSingleton.virtualTempCard?.primaryCardBlockRequired
         val virtualTempCard = StoreCardFeatureType.TemporaryCardEnabled(
             isBlockTypeNullInVirtualCardObject(),
