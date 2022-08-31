@@ -140,11 +140,11 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
                 is ListCallback.CardNotReceived -> {
                     if (!feature.isPopupVisibleInCardDetailLanding) return@showListItem
                     if (result.isCardNotReceived) mListOfStoreCardOptions?.showCardNotReceivedDialog(
-                        this@ManageMyCardDetailsFragment
+                        this@ManageMyCardDetailsFragment,
+                        viewModel
                     )
                 }
             }
         }
     }
-
 }

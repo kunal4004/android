@@ -45,7 +45,9 @@ class AccountProductsToolbarHelper(
     fun setHomeLandingToolbar(viewModel: AccountProductsHomeViewModel, onTap: (View) -> Unit) {
         with(binding) {
             infoIconImageView.onClick { onTap(it) }
-            binding.infoIconImageView.setImageResource(R.drawable.info_white)
+            binding.infoIconImageView.visibility = VISIBLE
+            binding.horizontalDivider.visibility = GONE
+            binding.closeIconImageButton.visibility = GONE
             binding.navigateBackImageButton.visibility = VISIBLE
             navigateBackImageButton.setOnClickListener {
                 if (viewModel.bottomSheetBehaviorState == BottomSheetBehavior.STATE_EXPANDED){
@@ -80,6 +82,9 @@ class AccountProductsToolbarHelper(
         binding.navigateBackImageButton.rotation = 0f
         binding.navigateBackImageButton.onClick { onTap(it) }
         binding.navigateBackImageButton.visibility = VISIBLE
+        binding.horizontalDivider.visibility = VISIBLE
+        binding.infoIconImageView.visibility = GONE
+        binding.closeIconImageButton.visibility = GONE
         binding.accountToolbar.setBackgroundColor(Color.WHITE)
         setNavigationIconBlack()
         setTitleTextColorBlack()
@@ -114,22 +119,17 @@ class AccountProductsToolbarHelper(
         binding.toolbarTitleTextView.setTextColor(ContextCompat.getColor(mContext, R.color.white))
     }
 
-    fun setRemoveBlockOnCollection(onTap: (View) -> Unit) {
-        getDetailToolbar(R.string.my_card_title)
-        binding.navigateBackImageButton.onClick { onTap(it) }
-        binding.accountToolbar.setBackgroundColor(Color.WHITE)
-        setNavigationIconBlack()
-        setTitleTextColorBlack()
-    }
-
     fun getBackIcon() = binding.navigateBackImageButton
 
     fun setInformationToolbar(onTap: (View) -> Unit) {
         getDetailToolbar(R.string.information)
         binding.navigateBackImageButton.rotation = 0f
         binding.infoIconImageView.onClick { onTap(it) }
+        binding.closeIconImageButton.onClick { onTap(it) }
+        binding.horizontalDivider.visibility = VISIBLE
         binding.navigateBackImageButton.visibility = GONE
-        binding.infoIconImageView.setImageResource(R.drawable.close_24)
+        binding.infoIconImageView.visibility = GONE
+         binding.closeIconImageButton.visibility = VISIBLE
         binding.accountToolbar.setBackgroundColor(Color.WHITE)
         setNavigationIconBlack()
         setTitleTextColorBlack()

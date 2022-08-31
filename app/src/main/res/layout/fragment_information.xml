@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="@dimen/_70sdp"
     android:background="@color/white"
     tools:context="za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.information.InformationFragment">
 
@@ -12,6 +11,9 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
+        android:clipToPadding="false"
+        android:paddingTop="@dimen/_90sdp"
+        android:paddingBottom="@dimen/_50sdp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
