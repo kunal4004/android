@@ -47,6 +47,12 @@
         <action
             android:id="@+id/action_accountProductsHomeFragment_to_accountInfoFragment"
             app:destination="@id/accountInfoFragment" />
+        <action
+            android:id="@+id/action_accountProductsHomeFragment_to_toCardDetailFragmentDialog"
+            app:destination="@id/toCardDetailFragmentDialog" />
+        <action
+            android:id="@+id/action_accountProductsHomeFragment_to_payMyAccountRetryErrorFragment"
+            app:destination="@id/payMyAccountRetryErrorFragment" />
     </fragment>
 
     <dialog
@@ -78,6 +84,12 @@
         <action
             android:id="@+id/action_removeBlockOnCollectionFragment_to_accountInfoFragment"
             app:destination="@id/accountInfoFragment" />
+        <action
+            android:id="@+id/action_removeBlockOnCollectionFragment_to_toCardDetailFragmentDialog"
+            app:destination="@id/toCardDetailFragmentDialog" />
+        <action
+            android:id="@+id/action_removeBlockOnCollectionFragment_to_payMyAccountRetryErrorFragment"
+            app:destination="@id/payMyAccountRetryErrorFragment" />
     </fragment>
 
     <fragment
@@ -100,4 +112,20 @@
             android:id="@+id/action_manageMyCardDetailsFragment_to_accountProductsHomeFragment"
             app:destination="@id/accountProductsHomeFragment" />
     </fragment>
+
+    <dialog
+        android:id="@+id/toCardDetailFragmentDialog"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.dialog.ShowAmountPopupFragment"
+        android:label="EnterPaymentAmountDetailFragment"
+        tools:layout="@layout/pma_update_payment_fragment">
+        <argument
+            android:name="isAccountStartDestination"
+            android:defaultValue="false"
+            app:argType="boolean" />
+    </dialog>
+    <dialog
+        android:id="@+id/payMyAccountRetryErrorFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.views.actionsheet.PayMyAccountRetryErrorFragment"
+        android:label="PayMyAccountRetryErrorFragment"
+        tools:layout="@layout/pay_my_account_retry_on_error_dialog_fragment" />
 </navigation>
