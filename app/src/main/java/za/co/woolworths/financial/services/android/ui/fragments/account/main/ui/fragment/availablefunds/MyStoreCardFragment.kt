@@ -201,7 +201,7 @@ class MyStoreCardFragment @Inject constructor() :
                 when (isPaymentMethodOfTypeError()) {
                     true -> {
                         try {
-                            findNavController().navigate(R.id.payMyAccountRetryErrorFragment)
+                            navigateSafelyWithNavController(MyStoreCardFragmentDirections.actionMyStoreCardFragmentToPayMyAccountRetryErrorFragment())
                         } catch (ex: IllegalStateException) {
                             FirebaseManager.logException(ex)
                         }
@@ -210,7 +210,7 @@ class MyStoreCardFragment @Inject constructor() :
                         openPayMyAccountOptionOrEnterPaymentAmountDialogFragment(activity)
                         {
                             try {
-                                directions?.let { navigateSafelyWithNavController(it) }
+                                navigateSafelyWithNavController(MyStoreCardFragmentDirections.actionMyStoreCardFragmentToToCardDetailFragmentDialog())
                             } catch (ex: IllegalStateException) {
                                 FirebaseManager.logException(ex)
                             }
