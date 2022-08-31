@@ -55,11 +55,13 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
                             manageCardAdapter?.setItem(listOfStoreCardFeatures)
                             setDotIndicatorVisibility(listOfStoreCardFeatures)
                             val currentPosition = getCardPosition(listOfStoreCardFeatures)
-                            viewModel.onManageCardPagerFragmentSelected(
-                                listOfStoreCardFeatures?.get(currentPosition), currentPosition,
-                                isPopupVisibleInAccountLanding = false,
-                                isPopupVisibleInCardDetailLanding = false
-                            )
+                            if (listOfStoreCardFeatures?.isNotEmpty() == true) {
+                                viewModel.onManageCardPagerFragmentSelected(
+                                    listOfStoreCardFeatures[currentPosition], currentPosition,
+                                    isPopupVisibleInAccountLanding = false,
+                                    isPopupVisibleInCardDetailLanding = false
+                                )
+                            }
                             CoroutineScope(Dispatchers.Main).launch {
                                 VoiceOfCustomerManager.showPendingSurveyIfNeeded(requireContext())
                             }
