@@ -685,6 +685,7 @@
     <string name="purchase_date">Purchase Date:</string>
     <string name="past_orders">Past Orders</string>
     <string name="order_items">order items</string>
+    <string name="promotion_note"><b>Note:</b> Promotions in store and online may vary.</string>
     <string name="order_page_title_prefix">ORDER:\u0020</string>
     <string name="empty_order_view_title">No order history</string>
     <string name="empty_order_view_desc">We see that you have no order history. Would you like to start shopping?</string>
@@ -906,7 +907,7 @@
     <string name="get_temp_sc_link_how_to_pay">how to use your temporary store card</string>
     <string name="dialog_temp_store_card_expire_info_title">Temp Card Expires</string>
     <string name="dialog_temp_store_card_expire_info_desc">Your temporary card is only valid for 30 days and will automatically expire after this time or on your first swipe of your store card, in store.</string>
-    <string name="cart_item_not_preserved_until_checkout_info">* Items are not reserved until you checkout \n* Delivery cost to be confirmed before payment</string>
+    <string name="cart_item_not_preserved_until_checkout_info">* Delivery cost to be confirmed before payment</string>
     <string name="having_problems_generate_new_barcode">having problems? generate new barcode</string>
     <string name="store_card_status_temporary">\u0020temp\u0020</string>
     <string name="virtual_store_card_temp_desc">Congratulations!\nYour Temp Store Card has been activated. Happy Shopping!</string>
@@ -2249,6 +2250,7 @@
     <string name="province_name_error_msg">Please select a province.</string>
     <string name="postal_code_error_msg">Please enter a Postal Code</string>
     <string name="mobile_number_error_msg">Please enter a 10-digit South African mobile number.</string>
+    <string name="street_name_error_msg">Please enter a valid street name</string>
     <string name="nick_name_exist_error_msg">This nickname already exists. Please choose another.</string>
 
     <string name="where_are_we_delivering">Where Are We Delivering To?</string>
@@ -2262,7 +2264,7 @@
 
 
     <!-- Native Checkout : Order Summary   -->
-    <string name="native_checkout_delivery_order_summary_note">* Items are not reserved until you checkout. \n* Delivery cost to be confirmed before payment</string>
+    <string name="native_checkout_delivery_order_summary_note">* Delivery cost to be confirmed before payment</string>
     <string name="native_checkout_delivery_order_summary_fee_value">TBC</string>
     <string name="native_checkout_delivery_order_summary_fee">Delivery Fee</string>
     <string name="native_checkout_delivery_order_summary_total_discount">Total Discount</string>
@@ -2346,7 +2348,11 @@
     <string name="mobile_number_text_view">Mobile Number: *</string>
     <string name="my_address_details">My Address Details</string>
     <string name="address_nickname_text_view">Address Nickname: *</string>
+    <string name="address_street_name_text_view">Please enter a street name for this location: *</string>
+    <string name="address_type_text_view">Address Type:</string>
     <string name="unit_complex_floor_text_view">Unit No/Complex/Floor/Building:</string>
+    <string name="unit_complex_floor_street_text_view">Unit No/Complex/Floor/Building/Street name:</string>
+    <string name="unit_complex_floor_street_text_view_md">Unit No/Complex/Floor/Building/Street name: *</string>
     <string name="suburb_colon_text_view">Suburb:</string>
     <string name="province_colon_text_view">Province:</string>
     <string name="postal_code_colon_text_view">Postal Code:</string>
@@ -2699,5 +2705,9 @@
     <string name="one_cart_chat_order_id">ORDER #%s</string>
     <string name="generic_error_something_wrong_newline">Unfortunately,\n Something Went Wrong</string>
     <string name="one_cart_chat_error_disc">We can’t seem to reach your shopper.\n Give them a few moments, and try again.</string>
+
+
+    <string name="we_need_more_info">We Need More Info</string>
+    <string name="enter_street_name">Please enter a street name for this location:</string>
 
 </resources>
