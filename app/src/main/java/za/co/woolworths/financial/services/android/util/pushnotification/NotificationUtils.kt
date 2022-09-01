@@ -62,6 +62,8 @@ class NotificationUtils {
                         onFailureCallback?.invoke()
                     }
                 }
+            } else {
+                onFailureCallback?.invoke()
             }
         }
 
