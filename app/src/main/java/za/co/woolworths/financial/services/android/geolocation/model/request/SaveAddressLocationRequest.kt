@@ -11,6 +11,7 @@ data class SaveAddressLocationRequest(
     val postalCode: String?,
     val province: String?,
     val suburb: String?,
-    val apiAddress1:String?=""
+    val apiAddress1:String?="",
+    val type:String?=""
 
 )

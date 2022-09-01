@@ -1168,6 +1168,19 @@
         <item name="android:textColor">@color/black40</item>
     </style>
 
+    <style name="promotion_note_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:paddingStart">@dimen/twenty_four_dp</item>
+        <item name="android:paddingTop">@dimen/sixteen_dp</item>
+        <item name="android:paddingBottom">@dimen/sixteen_dp</item>
+        <item name="fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:textColor">@color/color_666666</item>
+        <item name="android:textSize">@dimen/twelve_sp</item>
+    </style>
+
     <style name="my_orders_textview_style_3" parent="my_orders_textview_style_1">
         <item name="android:layout_alignParentRight">true</item>
         <item name="android:drawableRight">@drawable/ic_order_history_right</item>

@@ -108,6 +108,8 @@ class AppConstant {
         const val DELETE_ACCOUNT = "DELETE_ACCOUNT"
         const val DELETE_ACCOUNT_CONFIRMATION = "DELETE_ACCOUNT_CONFIRMATION"
         const val RESULT_CODE_DELETE_ACCOUNT = 444
+        const val FIFTY=50
+        const val TEN=10
     }
 
     class Keys {
