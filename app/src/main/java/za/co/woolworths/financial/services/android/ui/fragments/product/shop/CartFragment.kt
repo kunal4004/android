@@ -72,8 +72,6 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.CartUtils.Companion.filterCommerceItemFromCartResponse
 import za.co.woolworths.financial.services.android.util.CartUtils.Companion.getAppliedVouchersCount
 import za.co.woolworths.financial.services.android.util.CartUtils.Companion.updateItemLimitsBanner
-import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.logException
-import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.setCrashlyticsString
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredPlaceId
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionClickAndCollect
@@ -84,6 +82,8 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.sh
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.updateCheckOutLink
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter.Companion.instance
 import za.co.woolworths.financial.services.android.util.ToastUtils.ToastInterface
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.Delivery.Companion.getType
 import java.net.ConnectException

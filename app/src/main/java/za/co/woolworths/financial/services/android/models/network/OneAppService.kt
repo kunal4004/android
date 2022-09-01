@@ -636,9 +636,10 @@ object OneAppService : RetrofitConfig() {
         location: String?,
         primaryDevice: Boolean,
         firebaseToken: String,
+        tokenProvider: String,
         otp: String?,
         otpMethod: String?): Call<LinkedDeviceResponse> {
-        val body = LinkDeviceBody(appInstanceId, location, primaryDevice, firebaseToken)
+        val body = LinkDeviceBody(appInstanceId, location, primaryDevice, firebaseToken, tokenProvider)
 
         return mApiInterface.linkDeviceApi(
             "",
