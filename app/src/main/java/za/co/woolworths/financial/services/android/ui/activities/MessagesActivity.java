@@ -43,7 +43,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.MesssagesListAdap
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
-import za.co.woolworths.financial.services.android.util.NotificationUtils;
+import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 

@@ -30,9 +30,8 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.SecretKeySpec;
 
-import za.co.woolworths.financial.services.android.util.FirebaseManager;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 
 public class AsymmetricCryptoHelper {
     private static final String KEY_FACTORY_ALGORITHM = "RSA";

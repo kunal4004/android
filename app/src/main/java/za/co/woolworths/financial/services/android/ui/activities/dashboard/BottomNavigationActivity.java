@@ -140,7 +140,7 @@ import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFull
 import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.DeepLinkingUtils;
-import za.co.woolworths.financial.services.android.util.FirebaseManager;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;

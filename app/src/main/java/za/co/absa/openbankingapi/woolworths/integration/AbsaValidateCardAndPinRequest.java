@@ -1,11 +1,6 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-
-import java.net.HttpCookie;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import za.co.absa.openbankingapi.AsymmetricCryptoHelper;
@@ -18,7 +13,7 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateCardAndPinRe
 import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateCardAndPinResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
-import za.co.woolworths.financial.services.android.util.FirebaseManager;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 
 public class AbsaValidateCardAndPinRequest {
 
