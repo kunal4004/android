@@ -168,7 +168,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         val lastDeliveryLocation = Utils.getPreferredDeliveryLocation()
         lastDeliveryLocation?.let { setDeliveryLocation(it) }
 
-        if (Utils.isGooglePlayServicesAvailable() || Utils.isHuaweiMobileServicesAvailable()) {
+        if (Utils.isGooglePlayOrHuaweiMobileServicesAvailable()) {
             val isDeviceIdentityIdPresent = verifyDeviceIdentityId(deviceList)
             updateLinkedDeviceView(isDeviceIdentityIdPresent)
         }

@@ -60,6 +60,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
@@ -948,15 +949,21 @@ class CheckoutDashFragment : Fragment(),
                 )
 
                 KotlinUtils.presentEditDeliveryGeoLocationActivity(
-                    requireActivity(),
-                    CheckoutAddAddressReturningUserFragment.SLOT_SELECTION_REQUEST_CODE,
-                    KotlinUtils.getPreferredDeliveryType(),
-                    placesId,
-                    false,
-                    true,
-                    true,
-                    savedAddress,
-                    defaultAddress
+                        requireActivity(),
+                        CheckoutAddAddressReturningUserFragment.SLOT_SELECTION_REQUEST_CODE,
+                        KotlinUtils.getPreferredDeliveryType(),
+                        placesId,
+                        false,
+                        true,
+                        true,
+                        savedAddress,
+                        defaultAddress,
+                        "",
+                        liquorOrder?.let { liquorOrder ->
+                            liquorImageUrl?.let { liquorImageUrl ->
+                                LiquorCompliance(liquorOrder, liquorImageUrl)
+                            }
+                        }
                 )
                 activity?.finish()
             }
