@@ -7,6 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
+import io.getstream.chat.android.client.models.Device
+import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import retrofit2.Call
@@ -96,13 +98,25 @@ class InitializerViewModel: ViewModel() {
         }
 
         ChatClient.instance().connectUser(chatUser, token)
-                .enqueue { result ->
-                    if (result.isSuccess) {
-                        _state.postValue(State.RedirectToChannels)
-                    } else {
-                        _state.postValue(State.Error(result.error().message))
+            .enqueue { result ->
+                if (result.isSuccess) {
+                    _state.postValue(State.RedirectToChannels)
+                    ChatClient.instance().getDevices().enqueue {
+                        if (it.isSuccess) {
+                            val devices = it.data()
+                            for (device in devices) {
+                                ChatClient.instance().deleteDevice(device).enqueue()
+                            }
+
+                            ChatClient.instance()
+                                .addDevice(Device(WoolworthsApplication.getInstance().chatFCMToken,
+                                    PushProvider.FIREBASE)).enqueue()
+                        }
                     }
+                } else {
+                    _state.postValue(State.Error(result.error().message))
                 }
+            }
     }
 
     fun isConnectedToInternet(context: Context) =
