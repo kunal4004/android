@@ -990,8 +990,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             deliveryIcon?.setImageResource(R.drawable.icon_scooter_white)
             bubbleLayout?.setArrowDirection(ArrowDirection.TOP)
             bubbleLayout?.arrowPosition =
-                tabs_main.width - tabs_main.getTabAt(DASH_TAB.index)?.view?.width?.div(2)
-                    ?.toFloat()!!
+                tabs_main.width - tabs_main.getTabAt(DASH_TAB.index)?.view?.width?.div(1.25)?.toFloat()!!
             productAvailableText?.text = resources.getString(
                 R.string.dash_item_limit,
                 it.onDemand?.quantityLimit?.foodMaximumQuantity
