@@ -71,6 +71,7 @@ import za.co.woolworths.financial.services.android.util.ImageManager.Companion.s
 import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.regex.Pattern
 
@@ -1215,6 +1216,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             body.apply {
                 pushNotificationToken = Utils.getToken()
                 appInstanceId = it
+                tokenProvider = if (Utils.isGooglePlayServicesAvailable()) NotificationUtils.TOKEN_PROVIDER_FIREBASE else NotificationUtils.TOKEN_PROVIDER_HMS
             }
         }
         when {

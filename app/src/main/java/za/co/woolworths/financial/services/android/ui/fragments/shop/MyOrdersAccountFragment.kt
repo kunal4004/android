@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.OrdersAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorMessageDialogFragment
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
 class MyOrdersAccountFragment : Fragment(), IPresentOrderDetailInterface {
 

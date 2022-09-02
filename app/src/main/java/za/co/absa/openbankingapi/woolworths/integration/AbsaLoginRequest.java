@@ -8,7 +8,6 @@ import com.android.volley.VolleyError;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpCookie;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import za.co.absa.openbankingapi.AsymmetricCryptoHelper;
@@ -23,8 +22,7 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.LoginResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.util.FirebaseManager;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 
 public class AbsaLoginRequest {
 
