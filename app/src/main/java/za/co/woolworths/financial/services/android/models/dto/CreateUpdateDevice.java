@@ -7,5 +7,6 @@ package za.co.woolworths.financial.services.android.models.dto;
 public class CreateUpdateDevice {
     public String appInstanceId;
     public String pushNotificationToken;
+    public String tokenProvider;
     public Long deviceIdentityId;
 }

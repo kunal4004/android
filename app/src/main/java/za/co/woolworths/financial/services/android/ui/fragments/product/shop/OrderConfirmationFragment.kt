@@ -42,6 +42,8 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.WrewardsBottomSheetFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
@@ -110,12 +112,11 @@ class OrderConfirmationFragment : Fragment() {
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_CConfirm, activity)
         }
 
-        val mFirebaseAnalytics = FirebaseManager.getInstance().getAnalytics()
         val purchaseItemParams = Bundle()
         purchaseItemParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
         purchaseItemParams.putString(FirebaseAnalytics.Param.AFFILIATION, FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
         purchaseItemParams.putString(FirebaseAnalytics.Param.TRANSACTION_ID,response.orderSummary?.orderId)
-        purchaseItemParams.putString(FirebaseAnalytics.Param.VALUE, response.orderSummary?.total?.toString())
+        purchaseItemParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.ORDER_TOTAL_VALUE, response.orderSummary?.total?.toString())
         purchaseItemParams.putString(FirebaseAnalytics.Param.SHIPPING, response.deliveryDetails?.shippingAmount.toString())
 
         val purchaseItem = Bundle()
@@ -130,7 +131,7 @@ class OrderConfirmationFragment : Fragment() {
         purchaseItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT, response.items?.other?.get(0)?.color)
         purchaseItemParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(purchaseItem))
 
-        mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.PURCHASE, purchaseItemParams)
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.PURCHASE, purchaseItemParams)
     }
 
     private fun showErrorScreen(errorType: Int) {

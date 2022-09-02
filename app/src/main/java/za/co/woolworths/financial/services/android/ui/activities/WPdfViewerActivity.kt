@@ -10,6 +10,7 @@ import com.awfs.coordination.BuildConfig
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_oreder_tax_invoice.*
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.io.File
 import java.io.FileOutputStream
 
