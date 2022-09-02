@@ -116,7 +116,7 @@ class OrderConfirmationFragment : Fragment() {
         purchaseItemParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
         purchaseItemParams.putString(FirebaseAnalytics.Param.AFFILIATION, FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
         purchaseItemParams.putString(FirebaseAnalytics.Param.TRANSACTION_ID,response.orderSummary?.orderId)
-        purchaseItemParams.putString(FirebaseAnalytics.Param.VALUE, response.orderSummary?.total?.toString())
+        purchaseItemParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.ORDER_TOTAL_VALUE, response.orderSummary?.total?.toString())
         purchaseItemParams.putString(FirebaseAnalytics.Param.SHIPPING, response.deliveryDetails?.shippingAmount.toString())
 
         val purchaseItem = Bundle()

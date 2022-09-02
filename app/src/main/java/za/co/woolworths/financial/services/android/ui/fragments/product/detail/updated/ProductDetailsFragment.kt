@@ -296,13 +296,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             val viewItem = Bundle()
             viewItem.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
             viewItem.putString(FirebaseAnalytics.Param.ITEM_NAME, productDetails?.productName)
+            productDetails?.price?.toDouble()
+                ?.let { viewItem.putDouble(FirebaseAnalytics.Param.PRICE, it) }
             viewItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, productDetails?.categoryName)
+            viewItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT, productDetails?.colourSizeVariants)
             viewItem.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
-            viewItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT,
-                productDetails?.colourSizeVariants)
-            viewItem.putString(FirebaseAnalytics.Param.PRICE, productDetails?.price?.toString())
-            viewItemListParams.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME,
-                productDetails?.categoryName)
+            viewItemListParams.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, productDetails?.categoryName)
             viewItemListParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(viewItem))
         }
         AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.VIEW_ITEM_EVENT, viewItemListParams)
@@ -1725,8 +1724,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 productDetails?.categoryName)
             addToCartItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT,
                 productDetails?.colourSizeVariants)
-            addToCartItem.putString(FirebaseAnalytics.Param.PRICE,
-                productDetails?.price.toString())
+            addToCartItem.putString(FirebaseAnalytics.Param.QUANTITY,
+                FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE)
+            productDetails?.price?.let {
+                addToCartItem.putDouble(FirebaseAnalytics.Param.PRICE,
+                    it.toDouble())
+            }
             addToCartItem.putString(FirebaseAnalytics.Param.AFFILIATION,
                 FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
             addToCartItem.putString(FirebaseAnalytics.Param.INDEX,

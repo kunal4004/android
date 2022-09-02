@@ -51,7 +51,7 @@ class NotificationUtils {
                             .getToken(context.getString(R.string.huawei_app_id).replace("appid=", ""), "HCM")
                         if (!TextUtils.isEmpty(token)) {
                             withContext(Dispatchers.Main) {
-                                onSuccessCallback(token)
+                                onSuccessCallback(token!!)
                             }
                             return@launch
                         }
