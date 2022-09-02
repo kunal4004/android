@@ -73,4 +73,5 @@ class ShippingDetailsBody : Serializable {
 
     var appInstanceId: String? = null
     var pushNotificationToken: String? = null
+    var tokenProvider: String? = null
 }

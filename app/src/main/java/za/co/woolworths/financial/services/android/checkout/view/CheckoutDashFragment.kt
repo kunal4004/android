@@ -72,6 +72,8 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.removeRandFromAmount
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.regex.Pattern
 
@@ -1139,6 +1141,7 @@ class CheckoutDashFragment : Fragment(),
         KotlinUtils.getUniqueDeviceID {
             pushNotificationToken = Utils.getToken()
             appInstanceId = it
+            tokenProvider = if (Utils.isGooglePlayServicesAvailable()) NotificationUtils.TOKEN_PROVIDER_FIREBASE else NotificationUtils.TOKEN_PROVIDER_HMS
         }
     }
 

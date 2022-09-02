@@ -136,8 +136,8 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.SignOutF
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants;
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.util.FirebaseAnalyticsUserProperty;
-import za.co.woolworths.financial.services.android.util.FirebaseManager;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsUserProperty;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;

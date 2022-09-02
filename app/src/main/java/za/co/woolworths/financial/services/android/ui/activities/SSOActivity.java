@@ -31,7 +31,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import com.awfs.coordination.R;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -54,12 +53,13 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.hel
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
-import za.co.woolworths.financial.services.android.util.NotificationUtils;
+import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
 import za.co.woolworths.financial.services.android.util.ServiceTools;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager;
 import za.co.woolworths.financial.services.android.util.wenum.ConfirmLocation;
 
 public class SSOActivity extends WebViewActivity {
@@ -647,7 +647,7 @@ public class SSOActivity extends WebViewActivity {
 					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
 					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.LOGIN, arguments, SSOActivity.this);
 
-					NotificationUtils.getInstance().sendRegistrationToServer();
+					NotificationUtils.Companion.sendRegistrationToServer(SSOActivity.this);
 					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.ACTIVE);
 					QueryBadgeCounter.getInstance().queryBadgeCount();
 					setUserATGId(jwtDecodedModel);
@@ -688,12 +688,10 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	private void setUserATGId(JWTDecodedModel jwtDecodedModel) {
-		FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(SSOActivity.this);
-
 		String atgId = (jwtDecodedModel.AtgId.isJsonArray() ? jwtDecodedModel.AtgId.getAsJsonArray().get(0).getAsString() : jwtDecodedModel.AtgId.getAsString());
-		firebaseAnalytics.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, atgId);
-		firebaseAnalytics.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, jwtDecodedModel.C2Id);
-		firebaseAnalytics.setUserId(atgId);
+		AnalyticsManager.Companion.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, atgId);
+		AnalyticsManager.Companion.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, jwtDecodedModel.C2Id);
+		AnalyticsManager.Companion.setUserId(atgId);
 	}
 
 	private void unknownNetworkFailure(WebView webView, String description) {

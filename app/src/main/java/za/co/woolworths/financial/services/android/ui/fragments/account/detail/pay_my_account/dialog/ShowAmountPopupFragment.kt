@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.detail.
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.os.Bundle
@@ -19,7 +18,6 @@ import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.enter_payment_amount_fragment.*
 import kotlinx.android.synthetic.main.pma_update_payment_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
@@ -27,6 +25,7 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartDestinationType
 

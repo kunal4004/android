@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.util
 
 import androidx.annotation.VisibleForTesting
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.lang.NumberFormatException
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
