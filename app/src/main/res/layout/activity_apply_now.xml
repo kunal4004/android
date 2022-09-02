@@ -94,12 +94,24 @@
             android:layout_height="1dp"
             android:background="@color/light_gray" />
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewpager_apply_now"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/white"
-            tools:ignore="UnusedAttribute" />
+            android:layout_height="match_parent">
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewpager_apply_now"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                tools:ignore="UnusedAttribute" />
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/shimmer_apply_now"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <include layout="@layout/apply_now_skeleton" />
+
+            </com.facebook.shimmer.ShimmerFrameLayout>
+        </RelativeLayout>
     </LinearLayout>
 
     <RelativeLayout
@@ -119,5 +131,8 @@
             style="@style/blackButtonStyle"
             android:text="@string/apply_now" />
     </RelativeLayout>
+
+
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

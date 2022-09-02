@@ -9,8 +9,8 @@ import retrofit2.http.Query
 import za.co.woolworths.financial.services.android.models.dto.account.applynow.ApplyNowModel
 
 interface ApplyNowApiService {
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:10800")
-    @GET("/wfs/app/v4/content")
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:86400")
+    @GET("/wfs/app/v4/mobileconfigs/content")
     suspend fun applyNowService(
         @Query("contentId") contentId: String
     ): Response<ApplyNowModel>

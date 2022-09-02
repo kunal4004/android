@@ -74,3 +74,7 @@ enum class ApplyNowSectionType(val value: String) {
     LEFT_ICON_WITH_CONTENT_EXPANDABLE("LEFT_ICON_WITH_CONTENT_EXPANDABLE"),
     LIST_UNORDERED("LIST_UNORDERED")
 }
+enum class ApplyNowSectionReference(val value: String) {
+    CREDIT_CARD_GOLD("CREDIT_CARD_GOLD"),
+    CREDIT_CARD_BLACK("CREDIT_CARD_BLACK")
+}
