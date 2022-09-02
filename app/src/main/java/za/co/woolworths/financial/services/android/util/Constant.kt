@@ -7,5 +7,13 @@ class Constant {
         const val queryServiceGetPaymentMethod = "queryServiceGetPaymentMethod"
         const val LIQUOR_ORDER = "LIQUOR_ORDER"
         const val NO_LIQUOR_IMAGE_URL = "NO_LIQUOR_IMAGE_URL"
+        const val POI = "poi"
+        const val STREET_NAME_FROM_POI="STREET_NAME_FROM_POI"
+        const val STREET_NAME="STREET_NAME"
+        const val COMPLEX_ESTATE="Complex/Estate"
+        const val HOUSE="House"
+        const val OFFICE="Office"
+        const val APARTMENT="Apartment"
+
     }
 }
