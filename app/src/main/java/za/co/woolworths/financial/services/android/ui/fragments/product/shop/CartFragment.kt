@@ -83,6 +83,7 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.sh
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.updateCheckOutLink
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter.Companion.instance
 import za.co.woolworths.financial.services.android.util.ToastUtils.ToastInterface
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -418,8 +419,6 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                     && !TextUtils.isEmpty(response?.defaultAddressNickname))
         ) {
             //   - CNAV : Checkout  activity
-
-            val mFirebaseAnalytics = FirebaseManager.getInstance().getAnalytics()
             val beginCheckoutParams = Bundle()
             beginCheckoutParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
 
@@ -428,7 +427,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             beginCheckoutItem.putString(FirebaseAnalytics.Param.ITEM_BRAND,FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
 
             beginCheckoutParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(beginCheckoutItem))
-            mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT, beginCheckoutParams)
+            AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT, beginCheckoutParams)
 
             val checkoutActivityIntent = Intent(activity, CheckoutActivity::class.java)
             checkoutActivityIntent.putExtra(
