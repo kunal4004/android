@@ -3,7 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.integration.hel
 import android.util.Base64
 import za.co.absa.openbankingapi.DecryptionFailureException
 import za.co.absa.openbankingapi.SymmetricCipher
-import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.properties.ReadWriteProperty

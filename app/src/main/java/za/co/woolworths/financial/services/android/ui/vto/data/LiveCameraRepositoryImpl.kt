@@ -9,7 +9,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import za.co.woolworths.financial.services.android.ui.vto.data.model.LiveCameraBitmapImages
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_LIVE_CAMERA
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_NOT_MATCH
-import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import javax.inject.Inject
 
 class LiveCameraRepositoryImpl @Inject constructor(

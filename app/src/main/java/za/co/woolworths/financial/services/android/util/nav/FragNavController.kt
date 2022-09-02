@@ -373,6 +373,30 @@ class FragNavController internal constructor(builder: Builder, savedInstanceStat
     }
 
     /**
+     * Clears the previous tab's stack to get to just the bottom Fragment. This will reveal the root fragment
+     *
+     * @param transactionOptions Transaction options to be displayed
+     * @param previousTabIndex previous tab index
+     */
+    @JvmOverloads
+    fun clearStackSignOut(transactionOptions: FragNavTransactionOptions? = null, previousTabIndex : Int) {
+        //Grab Current stack
+        val fragmentStack = fragmentStacks[previousTabIndex]
+        if (fragmentStack.size > 1) {
+            var fragment: Fragment?
+            val ft = createTransactionWithOptions(transactionOptions, true)
+
+            //Pop all of the fragments on the stack and remove them from the FragmentManager
+            while (fragmentStack.size > 1) {
+                fragment = fragmentManger.findFragmentByTag(fragmentStack.pop().tag)
+                if (fragment != null) {
+                    ft.remove(fragment)
+                }
+            }
+        }
+    }
+
+    /**
      * Clears the current tab's stack to get to just the bottom Fragment. This will reveal the root fragment
      *
      * @param transactionOptions Transaction options to be displayed

@@ -136,8 +136,8 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.SignOutF
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants;
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.util.FirebaseAnalyticsUserProperty;
-import za.co.woolworths.financial.services.android.util.FirebaseManager;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsUserProperty;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
@@ -1124,7 +1124,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 if (WoolworthsApplication.getInstance() != null) {
 
                                     if (!Utils.getLinkDeviceConfirmationShown() && verifyAppInstanceId() && deepLinkParams == null
-                                            && Utils.isGooglePlayServicesAvailable()) {
+                                            && Utils.isGooglePlayOrHuaweiMobileServicesAvailable()) {
                                         navigateToLinkDeviceConfirmation(ApplyNowState.STORE_CARD);
                                     } else {
                                         hideView(retryStoreCardLinearLayout);
@@ -1161,7 +1161,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 mErrorHandlerView.showToast();
             }
         } else {
-            if (!Utils.getLinkDeviceConfirmationShown() && verifyAppInstanceId() && deepLinkParams == null && Utils.isGooglePlayServicesAvailable()) {
+            if (!Utils.getLinkDeviceConfirmationShown() && verifyAppInstanceId() && deepLinkParams == null && Utils.isGooglePlayOrHuaweiMobileServicesAvailable()) {
                 navigateToLinkDeviceConfirmation(ApplyNowState.STORE_CARD);
             } else {
                 redirectToAccountSignInActivity(ApplyNowState.STORE_CARD);
@@ -1241,7 +1241,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 FirebaseAnalyticsUserProperty.Companion.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode(), account);
 
                                 if (!Utils.getLinkDeviceConfirmationShown() && verifyAppInstanceId() && deepLinkParams == null
-                                        && Utils.isGooglePlayServicesAvailable()) {
+                                        && Utils.isGooglePlayOrHuaweiMobileServicesAvailable()) {
                                     navigateToLinkDeviceConfirmation(ApplyNowState.PERSONAL_LOAN);
                                 } else {
                                     hideView(retryPersonalLoanLinearLayout);
@@ -1277,7 +1277,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             }
         } else {
             if (!Utils.getLinkDeviceConfirmationShown() && verifyAppInstanceId() && deepLinkParams == null
-                    && Utils.isGooglePlayServicesAvailable()) {
+                    && Utils.isGooglePlayOrHuaweiMobileServicesAvailable()) {
                 navigateToLinkDeviceConfirmation(ApplyNowState.PERSONAL_LOAN);
             } else {
                 redirectToAccountSignInActivity(ApplyNowState.PERSONAL_LOAN);
@@ -1310,7 +1310,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 FirebaseAnalyticsUserProperty.Companion.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.CREDIT_CARD.getGroupCode(), account);
 
                                 if (!Utils.getLinkDeviceConfirmationShown() && verifyAppInstanceId() && deepLinkParams == null
-                                        && Utils.isGooglePlayServicesAvailable()) {
+                                        && Utils.isGooglePlayOrHuaweiMobileServicesAvailable()) {
                                     navigateToLinkDeviceConfirmation(ApplyNowState.SILVER_CREDIT_CARD);
                                 } else {
                                     hideView(retryCreditCardLinearLayout);
@@ -1347,7 +1347,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             }
         } else {
             if (!Utils.getLinkDeviceConfirmationShown() && verifyAppInstanceId() && deepLinkParams == null
-                    && Utils.isGooglePlayServicesAvailable()) {
+                    && Utils.isGooglePlayOrHuaweiMobileServicesAvailable()) {
                 navigateToLinkDeviceConfirmation(ApplyNowState.SILVER_CREDIT_CARD);
             } else {
                 redirectToAccountSignInActivity(ApplyNowState.SILVER_CREDIT_CARD);
