@@ -43,7 +43,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.shop.com
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
