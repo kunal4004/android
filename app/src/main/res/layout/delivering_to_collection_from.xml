@@ -76,13 +76,14 @@
 
         <TextView
             android:id="@+id/deliveryDateTimeTextView"
-            style="@style/myriad_pro_regular_black"
+            style="@style/myriad_pro_regular"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.7"
             android:gravity="end"
             android:textSize="@dimen/twelve_sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/gray"/>
     </LinearLayout>
 
     <LinearLayout
