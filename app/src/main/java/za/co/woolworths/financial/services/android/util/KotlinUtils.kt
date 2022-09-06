@@ -1399,7 +1399,7 @@ class KotlinUtils {
                 activity.getString(R.string.minspend_error_msg_desc),
                 String.format(activity.getString(R.string.minspend_error_msg_title, minimumBasketAmount)),
                 activity.getString(R.string.got_it),
-                R.drawable.icon_dash_delivery_scooter,
+                R.drawable.ic_cart,
                 true
             )
         }
