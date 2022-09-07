@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -72,8 +73,6 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.CartUtils.Companion.filterCommerceItemFromCartResponse
 import za.co.woolworths.financial.services.android.util.CartUtils.Companion.getAppliedVouchersCount
 import za.co.woolworths.financial.services.android.util.CartUtils.Companion.updateItemLimitsBanner
-import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.logException
-import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.setCrashlyticsString
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredPlaceId
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionClickAndCollect
@@ -84,6 +83,9 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.sh
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.updateCheckOutLink
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter.Companion.instance
 import za.co.woolworths.financial.services.android.util.ToastUtils.ToastInterface
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.Delivery.Companion.getType
 import java.net.ConnectException
@@ -417,10 +419,16 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                     && !TextUtils.isEmpty(response?.defaultAddressNickname))
         ) {
             //   - CNAV : Checkout  activity
-            Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT,
-                activity
-            )
+            val beginCheckoutParams = Bundle()
+            beginCheckoutParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
+
+            val beginCheckoutItem = Bundle()
+            beginCheckoutItem.putString(FirebaseAnalytics.Param.QUANTITY, FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE)
+            beginCheckoutItem.putString(FirebaseAnalytics.Param.ITEM_BRAND,FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
+
+            beginCheckoutParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(beginCheckoutItem))
+            AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT, beginCheckoutParams)
+
             val checkoutActivityIntent = Intent(activity, CheckoutActivity::class.java)
             checkoutActivityIntent.putExtra(
                 CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
@@ -648,10 +656,12 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         orderSummary = cartResponse?.orderSummary
         voucherDetails = cartResponse?.voucherDetails
         productCountMap = cartResponse?.productCountMap
-        liquorCompliance = LiquorCompliance(
-            cartResponse?.liquorOrder ?: false,
-            if (cartResponse?.noLiquorImageUrl != null) cartResponse?.noLiquorImageUrl else ""
-        )
+        liquorCompliance = (if (cartResponse?.noLiquorImageUrl != null) cartResponse?.noLiquorImageUrl else "")?.let {
+            LiquorCompliance(
+                cartResponse?.liquorOrder ?: false,
+                it
+            )
+        }
         setItemLimitsBanner()
         if (cartResponse?.cartItems?.size ?: 0 > 0 && cartProductAdapter != null) {
             val emptyCartItemGroups = ArrayList<CartItemGroup>(0)
@@ -1223,6 +1233,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         )
         val lastDeliveryLocation = Utils.getPreferredDeliveryLocation()
         lastDeliveryLocation?.let { setDeliveryLocation(it) }
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VIEW_CART, requireActivity())
     }
 
     override fun onPause() {

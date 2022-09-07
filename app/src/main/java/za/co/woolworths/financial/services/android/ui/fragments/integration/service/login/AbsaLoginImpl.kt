@@ -14,7 +14,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.integration.util
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.contentLength
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.resultOf
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.toAes256Encrypt
-import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.logException
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.Utils
 import java.io.UnsupportedEncodingException
 
