@@ -207,7 +207,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         if (AppConfigSingleton.tooltipSettings?.isAutoDismissEnabled == true && blackToolTipLayout?.visibility == VISIBLE) {
             val timeDuration =
                 AppConfigSingleton.tooltipSettings?.autoDismissDuration?.times(1000) ?: return
-            timer =  object : CountDownTimer(timeDuration, 100) {
+            timer = object : CountDownTimer(timeDuration, 100) {
                 override fun onTick(millisUntilFinished: Long) {}
                 override fun onFinish() {
                     KotlinUtils.isCncTabCrossClicked = true
@@ -410,13 +410,17 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         viewpager_main.currentItem = 0
     }
 
-    private fun prepareTabView(tabLayout: TabLayout, pos: Int, tabTitle: MutableList<String>?): View? {
+    private fun prepareTabView(
+        tabLayout: TabLayout,
+        pos: Int,
+        tabTitle: MutableList<String>?,
+    ): View? {
         val view = requireActivity().layoutInflater.inflate(R.layout.shop_custom_tab, null)
         tabWidth = view?.width?.let {
             it.toFloat()
         }
         view?.tvTitle?.text = tabTitle?.get(pos)
-        view?.foodOnlyText?.visibility = if(pos == 0) View.GONE else View.VISIBLE
+        view?.foodOnlyText?.visibility = if (pos == 0) View.GONE else View.VISIBLE
         if (tabLayout.getTabAt(pos)?.view?.isSelected == true) {
             val myRiadFont =
                 Typeface.createFromAsset(requireActivity().assets, "fonts/MyriadPro-Semibold.otf")
@@ -457,7 +461,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 fadeOutToolbar(R.color.recent_search_bg)
                 showBackNavigationIcon(false)
                 showBottomNavigationMenu()
-                refreshViewPagerFragment()
+                if (isResumed && isVisible)
+                    refreshViewPagerFragment()
                 Handler().postDelayed({
                     hideToolbar()
                 }, AppConstant.DELAY_1000_MS)
@@ -473,15 +478,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             viewpager_main.currentItem = STANDARD_TAB.index
         } else {
             setDeliveryView()
-        }
-        when (viewpager_main?.currentItem) {
-            STANDARD_TAB.index -> {
-                val standardDeliveryFragment = viewpager_main?.adapter?.instantiateItem(
-                    viewpager_main,
-                    viewpager_main.currentItem
-                ) as? StandardDeliveryFragment
-                standardDeliveryFragment?.onHiddenChanged(hidden)
-            }
         }
     }
 
@@ -619,12 +615,12 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     fun refreshViewPagerFragment() {
         when (viewpager_main.currentItem) {
             STANDARD_TAB.index -> {
-                val departmentsFragment =
+                val standardDeliveryFragment =
                     viewpager_main?.adapter?.instantiateItem(
                         viewpager_main,
                         viewpager_main.currentItem
-                    ) as?  StandardDeliveryFragment
-                departmentsFragment?.initView()
+                    ) as? StandardDeliveryFragment
+                standardDeliveryFragment?.initView()
             }
             CLICK_AND_COLLECT_TAB.index -> {
                 val changeFullfilmentCollectionStoreFragment =
@@ -660,11 +656,13 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     fun scrollToTop() {
         when (viewpager_main?.currentItem) {
             STANDARD_TAB.index -> {
-                val detailsFragment = viewpager_main?.adapter?.instantiateItem(
-                    viewpager_main,
-                    viewpager_main.currentItem
-                ) as? StandardDeliveryFragment
-                detailsFragment?.scrollToTop()
+                if (isResumed && isVisible) {
+                    val detailsFragment = viewpager_main?.adapter?.instantiateItem(
+                        viewpager_main,
+                        viewpager_main.currentItem
+                    ) as? StandardDeliveryFragment
+                    detailsFragment?.scrollToTop()
+                }
             }
             CLICK_AND_COLLECT_TAB.index -> {
                 val changeFullfilmentCollectionStoreFragment =
@@ -787,7 +785,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 showStandardDeliveryToolTip()
             }
             Delivery.CNC -> {
-                showClickAndCollectToolTip(KotlinUtils.isStoreSelectedForBrowsing, KotlinUtils.browsingCncStore?.storeId)
+                showClickAndCollectToolTip(KotlinUtils.isStoreSelectedForBrowsing,
+                    KotlinUtils.browsingCncStore?.storeId)
             }
             Delivery.DASH -> {
                 showDashToolTip(validateLocationResponse)
@@ -797,10 +796,10 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         if (AppConfigSingleton.tooltipSettings?.isAutoDismissEnabled == true && blackToolTipLayout?.visibility == VISIBLE) {
             val timeDuration =
                 AppConfigSingleton.tooltipSettings?.autoDismissDuration?.times(1000) ?: return
-            timer =  object : CountDownTimer(timeDuration, 100) {
+            timer = object : CountDownTimer(timeDuration, 100) {
                 override fun onTick(millisUntilFinished: Long) {}
                 override fun onFinish() {
-                    when(KotlinUtils.fullfillmentTypeClicked) {
+                    when (KotlinUtils.fullfillmentTypeClicked) {
                         Delivery.STANDARD.name -> {
                             KotlinUtils.isDeliveryLocationTabCrossClicked = true
                         }
@@ -942,7 +941,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     private fun getFirstAvailableFoodDeliveryDate(
         isStoreSelectedForBrowsing: Boolean,
-        browsingStoreId: String
+        browsingStoreId: String,
     ): String? {
         var storeId: String? = getStoreId(isStoreSelectedForBrowsing, browsingStoreId)
         validateLocationResponse?.validatePlace?.let { validatePlace ->
