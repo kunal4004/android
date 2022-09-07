@@ -419,7 +419,6 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                     && !TextUtils.isEmpty(response?.defaultAddressNickname))
         ) {
             //   - CNAV : Checkout  activity
-
             val beginCheckoutParams = Bundle()
             beginCheckoutParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
 
