@@ -8,7 +8,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.catch
-import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.datastorepref.getPrefData
 import za.co.woolworths.financial.services.android.util.datastorepref.setValue
 import javax.inject.Inject

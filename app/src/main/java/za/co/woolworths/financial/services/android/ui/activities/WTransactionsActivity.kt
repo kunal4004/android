@@ -9,7 +9,6 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.chat_collect_agent_floating_button_layout.*
-import kotlinx.android.synthetic.main.payment_options_activity.*
 import kotlinx.android.synthetic.main.wtransactions_activity.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -31,6 +30,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.helper.F
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getListOfTransaction
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 

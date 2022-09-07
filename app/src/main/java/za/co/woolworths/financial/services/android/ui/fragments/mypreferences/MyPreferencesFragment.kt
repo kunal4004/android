@@ -41,6 +41,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RESULT_CODE_DELETE_ACCOUNT
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAddressView
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator

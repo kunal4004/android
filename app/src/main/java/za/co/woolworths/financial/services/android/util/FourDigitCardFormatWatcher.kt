@@ -6,6 +6,7 @@ import android.text.TextWatcher
 import android.view.KeyEvent
 import android.view.View
 import android.widget.EditText
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
 open class FourDigitCardFormatWatcher(private var mEditText: EditText) : TextWatcher {
     private var mAvoidRecursiveCall = false

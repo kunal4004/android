@@ -39,6 +39,7 @@ import za.co.woolworths.financial.services.android.startup.viewmodel.ViewModelFa
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 
 class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     View.OnClickListener {

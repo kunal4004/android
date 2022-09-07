@@ -21,7 +21,7 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.CreateAliasResponse;
 import za.co.absa.openbankingapi.woolworths.integration.dto.Header;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
-import za.co.woolworths.financial.services.android.util.FirebaseManager;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 
 public class AbsaCreateAliasRequest {
 
