@@ -3,7 +3,7 @@ package za.co.woolworths.financial.services.android.onecartgetstream.repository
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Resource
-import za.co.woolworths.financial.services.android.onecartgetstream.network.OCAuthenticationResponse
+import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.io.IOException
 import javax.inject.Inject

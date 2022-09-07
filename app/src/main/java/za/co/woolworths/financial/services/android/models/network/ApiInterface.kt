@@ -46,8 +46,7 @@ import za.co.woolworths.financial.services.android.models.dto.voc.SurveyOptOutBo
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyRepliesBody
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
-import za.co.woolworths.financial.services.android.onecartgetstream.network.OCAuthenticationResponse
-import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.data.CardNotReceived
+import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.EmailUsRequest
 
 interface ApiInterface {

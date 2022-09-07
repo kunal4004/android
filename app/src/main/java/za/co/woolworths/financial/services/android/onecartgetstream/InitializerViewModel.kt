@@ -13,7 +13,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.onecartgetstream.common.State
-import za.co.woolworths.financial.services.android.onecartgetstream.network.OCAuthenticationResponse
+import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.network.Event
