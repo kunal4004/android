@@ -208,7 +208,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         if (AppConfigSingleton.tooltipSettings?.isAutoDismissEnabled == true && blackToolTipLayout?.visibility == VISIBLE) {
             val timeDuration =
                 AppConfigSingleton.tooltipSettings?.autoDismissDuration?.times(1000) ?: return
-            timer =  object : CountDownTimer(timeDuration, 100) {
+            timer = object : CountDownTimer(timeDuration, 100) {
                 override fun onTick(millisUntilFinished: Long) {}
                 override fun onFinish() {
                     KotlinUtils.isCncTabCrossClicked = true
@@ -302,7 +302,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             return
         }
         if (KotlinUtils.isLocationSame == true && KotlinUtils.placeId != null) {
-            Delivery.getType(getDeliveryType()?.deliveryType)?.let {
+            (KotlinUtils.browsingDeliveryType ?: Delivery.getType(getDeliveryType()?.deliveryType))?.let {
                 showBlackToolTip(it)
             }
         }
@@ -396,9 +396,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             for (i in 0 until tabLayout.tabCount) {
                 val tab = (tabLayout.getChildAt(0) as ViewGroup).getChildAt(i)
                 val layoutParams = tab.layoutParams as MarginLayoutParams
-                if(i == 0) {
+                if (i == 0) {
                     layoutParams.setMargins(margin, 0, 0, 0)
-                } else if(i == 2) {
+                } else if (i == 2) {
                     layoutParams.setMargins(0, 0, margin, 0)
                 }
                 tab.requestLayout()
@@ -411,13 +411,17 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         viewpager_main.currentItem = 0
     }
 
-    private fun prepareTabView(tabLayout: TabLayout, pos: Int, tabTitle: MutableList<String>?): View? {
+    private fun prepareTabView(
+        tabLayout: TabLayout,
+        pos: Int,
+        tabTitle: MutableList<String>?,
+    ): View? {
         val view = requireActivity().layoutInflater.inflate(R.layout.shop_custom_tab, null)
         tabWidth = view?.width?.let {
             it.toFloat()
         }
         view?.tvTitle?.text = tabTitle?.get(pos)
-        view?.foodOnlyText?.visibility = if(pos == 0) View.GONE else View.VISIBLE
+        view?.foodOnlyText?.visibility = if (pos == 0) View.GONE else View.VISIBLE
         if (tabLayout.getTabAt(pos)?.view?.isSelected == true) {
             val myRiadFont =
                 Typeface.createFromAsset(requireActivity().assets, "fonts/MyriadPro-Semibold.otf")
@@ -624,7 +628,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     viewpager_main?.adapter?.instantiateItem(
                         viewpager_main,
                         viewpager_main.currentItem
-                    ) as?  StandardDeliveryFragment
+                    ) as? StandardDeliveryFragment
                 departmentsFragment?.initView()
             }
             CLICK_AND_COLLECT_TAB.index -> {
@@ -788,7 +792,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 showStandardDeliveryToolTip()
             }
             Delivery.CNC -> {
-                showClickAndCollectToolTip(KotlinUtils.isStoreSelectedForBrowsing, KotlinUtils.browsingCncStore?.storeId)
+                showClickAndCollectToolTip(KotlinUtils.isStoreSelectedForBrowsing,
+                    KotlinUtils.browsingCncStore?.storeId)
             }
             Delivery.DASH -> {
                 showDashToolTip(validateLocationResponse)
@@ -798,10 +803,10 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         if (AppConfigSingleton.tooltipSettings?.isAutoDismissEnabled == true && blackToolTipLayout?.visibility == VISIBLE) {
             val timeDuration =
                 AppConfigSingleton.tooltipSettings?.autoDismissDuration?.times(1000) ?: return
-            timer =  object : CountDownTimer(timeDuration, 100) {
+            timer = object : CountDownTimer(timeDuration, 100) {
                 override fun onTick(millisUntilFinished: Long) {}
                 override fun onFinish() {
-                    when(KotlinUtils.fullfillmentTypeClicked) {
+                    when (KotlinUtils.fullfillmentTypeClicked) {
                         Delivery.STANDARD.name -> {
                             KotlinUtils.isDeliveryLocationTabCrossClicked = true
                         }
@@ -943,7 +948,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     private fun getFirstAvailableFoodDeliveryDate(
         isStoreSelectedForBrowsing: Boolean,
-        browsingStoreId: String
+        browsingStoreId: String,
     ): String? {
         var storeId: String? = getStoreId(isStoreSelectedForBrowsing, browsingStoreId)
         validateLocationResponse?.validatePlace?.let { validatePlace ->
