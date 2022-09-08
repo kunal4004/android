@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.google.firebase.analytics.FirebaseAnalytics
+import kotlinx.android.synthetic.main.collection_tracking_layout_cnc.*
 import kotlinx.android.synthetic.main.dash_order_details_layout.*
 import kotlinx.android.synthetic.main.delivering_to_collection_from.*
 import kotlinx.android.synthetic.main.delivering_to_collection_from.foodDeliveryLinearLayout
@@ -148,7 +149,8 @@ class OrderConfirmationFragment : Fragment() {
         helpTextView?.setOnClickListener {
             (activity as? CheckoutActivity)?.apply {
                 setResult(CheckOutFragment.RESULT_NAVIGATE_TO_HELP_AND_SUPPORT)
-                closeActivity()
+                //closeActivity()
+                finish()
             }
         }
     }
@@ -157,7 +159,35 @@ class OrderConfirmationFragment : Fragment() {
         context?.let {
             when (Delivery.getType(response?.orderSummary?.fulfillmentDetails?.deliveryType)) {
                 Delivery.CNC -> {
-                    deliveryCollectionDetailsConstraintLayout?.visibility = VISIBLE
+
+                    ClickAndCollectConstraintLayout?.visibility = VISIBLE
+                    dashOrderDetailsLayout?.visibility = VISIBLE
+                    optionImageCNC.background =
+                        AppCompatResources.getDrawable(it, R.drawable.ic_collection_bag)
+                    optionTitleCnc?.text = it.getText(R.string.collecting_from)
+                    clickAndCollectDateTimeTextView?.text =  applyBoldBeforeComma(
+                        response
+                            ?.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
+                    )
+                    optionLocationTitleCnc?.text =
+                        response?.orderSummary?.fulfillmentDetails?.storeName?.let {
+                            convertToTitleCase(it)
+                        } ?: ""
+                    setUpDashOrderDetailsLayout(response)
+                    continueBrowsingLinearLayoutCnc.setOnClickListener {
+                        requireActivity()?.setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING_CNC)
+                        requireActivity()?.finish()
+                    }
+
+
+
+
+
+
+
+
+
+                  /*  deliveryCollectionDetailsConstraintLayout?.visibility = VISIBLE
                   // deliveryOrderDetailsLayout.visibility = VISIBLE
                     dashOrderDetailsLayout?.visibility = VISIBLE
                     optionImage.background =
@@ -174,11 +204,10 @@ class OrderConfirmationFragment : Fragment() {
                     continueBrowsingStandardLinearLayout.setOnClickListener {
                         requireActivity()?.setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
                         requireActivity()?.finish()
-                    }
+                    }*/
                 }
                 Delivery.STANDARD -> {
                     deliveryCollectionDetailsConstraintLayout?.visibility = VISIBLE
-                  //  deliveryOrderDetailsLayout?.visibility = VISIBLE
                     dashOrderDetailsLayout?.visibility = VISIBLE
                     optionImage?.background =
                         AppCompatResources.getDrawable(it, R.drawable.ic_icon_standard_delivery_truck)
@@ -194,12 +223,11 @@ class OrderConfirmationFragment : Fragment() {
                     }
                     standardEnroutetextView.text = it.getText(R.string.dash_status_en_route)
                     collectedOrDeliveredTextView.text = it.getText(R.string.dash_status_delivered)
-                    setUpDashOrderDetailsLayout(response)
-                  // setupOrderDetailsBottomSheet(response)
+                    setUpStandardOrderDetailsLayout(response)
+
                 }
                 Delivery.DASH -> {
                     dashDeliveryConstraintLayout?.visibility = VISIBLE
-                    deliveryOrderDetailsLayout?.visibility = GONE
                     dashOrderDetailsLayout?.visibility = VISIBLE
                     optionImage?.background =
                             AppCompatResources.getDrawable(it, R.drawable.icon_dash_delivery_scooter)
@@ -395,14 +423,14 @@ class OrderConfirmationFragment : Fragment() {
                 deliveryLocationText?.text =
                     context?.getText(R.string.collection_location_semicolon)
                 deliveryOrderDetailsTextView?.text = context?.getText(R.string.collection_semicolon)
-                setNumberAndCostItemsBottomSheet(response?.items)
+               // setNumberAndCostItemsBottomSheet(response?.items)
                 initRecyclerView(response?.items)
                 handleAddToShoppingListButton()
             }
             Delivery.STANDARD -> {
                 deliveryLocationText?.text = context?.getText(R.string.delivery_location_semicolon)
                 deliveryOrderDetailsTextView?.text = context?.getText(R.string.delivery_semicolon)
-                setNumberAndCostItemsBottomSheet(response?.items)
+                //setNumberAndCostItemsBottomSheet(response?.items)
                 initRecyclerView(response?.items)
                 handleAddToShoppingListButton()
             }
@@ -479,15 +507,24 @@ class OrderConfirmationFragment : Fragment() {
         }
     }
 
+
+
+    private fun setUpStandardOrderDetailsLayout(response: SubmittedOrderResponse?) {
+        setNumberAndCostItemsBottomSheet(response?.items)
+
+        initRecyclerView(response?.items)
+
+        handleAddToShoppingListButton()
+    }
+
     private fun setNumberAndCostItemsBottomSheet(items: OrderItems?) {
         val other: Int = items?.other?.size ?: 0
         val food: Int = items?.food?.size ?: 0
         val number: Int = other.plus(food)
-        numberItemsTextView?.text = if (number > 1)
+        foodNumberItemsTextView?.text = if (number > 1)
             bindString(R.string.number_items, number.toString())
         else
             bindString(R.string.number_item, number.toString())
-        costItemsTextView?.text = orderTotalTextView.text
     }
 
     private fun setMissedRewardsSavings(amount: Double) {

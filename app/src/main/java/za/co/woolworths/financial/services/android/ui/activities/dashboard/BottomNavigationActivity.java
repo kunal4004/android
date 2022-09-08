@@ -21,6 +21,7 @@ import static za.co.woolworths.financial.services.android.ui.fragments.product.d
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment.REQUEST_PAYMENT_STATUS;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING_CNC;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_NAVIGATE_TO_HELP_AND_SUPPORT;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT;
@@ -1119,6 +1120,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 }
                 if (resultCode == RESULT_NAVIGATE_TO_HELP_AND_SUPPORT) {
                     pushFragment(new HelpAndSupportFragment());
+                    break;
+                }
+                if (resultCode == REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING_CNC) {
+                    navigateToTabIndex(BottomNavigationActivity.INDEX_PRODUCT, null);
+                    QueryBadgeCounter.getInstance().queryCartSummaryCount();
                     break;
                 }
             case REQUEST_CODE_ORDER_DETAILS_PAGE:// Call back when Toast clicked after adding item to shopping list

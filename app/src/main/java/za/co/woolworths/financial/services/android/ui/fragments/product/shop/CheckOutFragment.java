@@ -60,6 +60,7 @@ public class CheckOutFragment extends Fragment {
     public static final int RESULT_RELOAD_CART = 108;
     public static final int RESULT_EMPTY_CART = 109;
     public static final int REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING = 110;
+    public static final int REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING_CNC = 112;
     public static final int RESULT_NAVIGATE_TO_HELP_AND_SUPPORT = 111;
     public static String ORDER_CONFIRMATION = "order-confirmation.jsp";
     public static String IS_NATIVE_CHECKOUT = "isNativeCheckout";

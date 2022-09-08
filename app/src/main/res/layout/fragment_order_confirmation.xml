@@ -76,6 +76,15 @@
                 tools:visibility="visible" />
 
             <include
+                android:id="@+id/ClickAndCollectConstraintLayout"
+                layout="@layout/collection_tracking_layout_cnc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/nineteen_dp"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <include
                 android:id="@+id/dashDeliveryConstraintLayout"
                 layout="@layout/delivering_to_dashing_from"
                 android:layout_width="match_parent"
@@ -107,7 +116,7 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <!--<androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/deliveryOrderDetailsLayout"
         android:visibility="gone"
         android:layout_width="match_parent"
@@ -115,6 +124,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/nestedScrollView">
 
         <include layout="@layout/order_details_bottom_sheet" />
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
