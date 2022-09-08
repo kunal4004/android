@@ -123,11 +123,11 @@ class AccountProductsHomeViewModel @Inject constructor(
         viewTreatmentPlan?.getPopupData(eligibilityPlan)
     }
 
-    fun emitShowViewTreatmentPlanPopupFromConfigForChargedOff() {
+    fun emitViewTreatmentPlanPopupFromConfigForChargedOff() {
         viewTreatmentPlan?.getPopupData(eligibilityPlan)
     }
 
-    fun emitShowViewTreatmentPlanPopupInArrearsFromConfig() {
+    fun emitViewTreatmentPlanPopupInArrearsFromConfig() {
         viewTreatmentPlan?.getPopupData(eligibilityPlan)
     }
 }

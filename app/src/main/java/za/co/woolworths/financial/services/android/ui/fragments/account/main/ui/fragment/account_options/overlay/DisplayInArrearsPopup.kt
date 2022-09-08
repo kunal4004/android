@@ -61,8 +61,8 @@ class DisplayInArrearsPopup(
                 AccountOfferingState.AccountIsInArrears ->  homeViewModel.requestAccountsCollectionsCheckEligibility()
                 AccountOfferingState.MakeGetEligibilityCall -> homeViewModel.requestAccountsCollectionsCheckEligibility()
                 AccountOfferingState.AccountIsChargedOff -> homeViewModel.emitAccountIsChargedOff()
-                AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff -> homeViewModel.emitShowViewTreatmentPlanPopupFromConfigForChargedOff()
-                AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig -> homeViewModel.emitShowViewTreatmentPlanPopupInArrearsFromConfig()
+                AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff -> homeViewModel.emitViewTreatmentPlanPopupFromConfigForChargedOff()
+                AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig -> homeViewModel.emitViewTreatmentPlanPopupInArrearsFromConfig()
             }
         }
     }
