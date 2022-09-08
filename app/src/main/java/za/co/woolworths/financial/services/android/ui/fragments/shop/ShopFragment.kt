@@ -113,6 +113,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     companion object {
         private const val LOGIN_MY_LIST_REQUEST_CODE = 9876
+        private const val DASH_DIVIDER = 1.25
     }
 
     enum class SelectedTabIndex(val index: Int) {
@@ -301,7 +302,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             return
         }
         if (KotlinUtils.isLocationSame == true && KotlinUtils.placeId != null) {
-            Delivery.getType(getDeliveryType()?.deliveryType)?.let {
+            (KotlinUtils.browsingDeliveryType ?: Delivery.getType(getDeliveryType()?.deliveryType))?.let {
                 showBlackToolTip(it)
             }
         }
@@ -395,9 +396,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             for (i in 0 until tabLayout.tabCount) {
                 val tab = (tabLayout.getChildAt(0) as ViewGroup).getChildAt(i)
                 val layoutParams = tab.layoutParams as MarginLayoutParams
-                if(i == 0) {
+                if (i == 0) {
                     layoutParams.setMargins(margin, 0, 0, 0)
-                } else if(i == 2) {
+                } else if (i == 2) {
                     layoutParams.setMargins(0, 0, margin, 0)
                 }
                 tab.requestLayout()
@@ -993,8 +994,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             deliveryIcon?.setImageResource(R.drawable.icon_scooter_white)
             bubbleLayout?.setArrowDirection(ArrowDirection.TOP)
             bubbleLayout?.arrowPosition =
-                tabs_main.width - tabs_main.getTabAt(DASH_TAB.index)?.view?.width?.div(2)
-                    ?.toFloat()!!
+                tabs_main.width - tabs_main.getTabAt(DASH_TAB.index)?.view?.width?.div(DASH_DIVIDER)?.toFloat()!!
             productAvailableText?.text = resources.getString(
                 R.string.dash_item_limit,
                 it.onDemand?.quantityLimit?.foodMaximumQuantity
