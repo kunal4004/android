@@ -1945,7 +1945,6 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 if (account.productGroupCode.equalsIgnoreCase(ProductGroupCode.SC.getValue())) {
                     String product = Utils.objectToJson(account);
                     intent = new Intent(activity, StoreCardActivity.class);
-                    Utils.sessionDaoSave(SessionDao.KEY.ACCOUNT_PRODUCT_PAYLOAD, product);
                     intent.putExtra(ACCOUNT_PRODUCT_PAYLOAD,  product);
                     if (deepLinkParams != null)
                         intent.putExtra(AccountSignedInPresenterImpl.DEEP_LINKING_PARAMS, Utils.objectToJson(deepLinkParams));

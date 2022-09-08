@@ -8,12 +8,7 @@ import dagger.hilt.android.components.FragmentComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.IBottomSheetBehaviour
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.WBottomSheetBehaviour
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountProductLandingDao
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.BalanceProtectionInsuranceImpl
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.IAccountProductLandingDao
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.IBalanceProtectionInsurance
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.IStoreCardNavigator
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.StoreCardNavigator
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.local.AccountDataClass
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.ManageCardFunctionalRequirementImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.IProductLandingRouter
@@ -40,8 +35,8 @@ object FragmentModule {
         WBottomSheetBehaviour(context, accountDao)
 
     @Provides
-    fun provideAccountProductLiveEvent(): IAccountProductLandingDao =
-        AccountProductLandingDao()
+    fun provideAccountProductLiveEvent(accountDataClass: AccountDataClass): IAccountProductLandingDao =
+        AccountProductLandingDao(accountDataClass)
 
     @Provides
     fun provideBalanceProtectionInsurance(product: AccountProductLandingDao?): IBalanceProtectionInsurance =
