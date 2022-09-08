@@ -13,8 +13,11 @@ import com.awfs.coordination.databinding.AccountOptionsListFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType
 import za.co.woolworths.financial.services.android.ui.base.onClick
+import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOptionsScreenUI
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StoreCardActivityResultCallback
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
@@ -31,7 +34,11 @@ class AccountOptionsListFragment : Fragment(R.layout.account_options_list_fragme
     @Inject
     lateinit var landingRouter: ProductLandingRouterImpl
 
+    @Inject
+    lateinit var pmaButton : PayMyAccountButtonTap
+
     val viewModel: AccountProductsHomeViewModel by activityViewModels()
+    val payMyAccountViewModel : PayMyAccountViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -141,9 +148,17 @@ class AccountOptionsListFragment : Fragment(R.layout.account_options_list_fragme
         }
 
         payMyAccountRelativeLayout.onClick {
-
+            pmaButton.payMyAccountViewModel = payMyAccountViewModel
+            pmaButton.isShimmerEnabled = false
+            pmaButton.onTap(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC){ screen ->
+                navigateSafelyWithNavController(when(screen){
+                    PayMyAccountScreen.OpenAccountOptionsOrEnterPaymentAmountDialog ->AccountOptionsListFragmentDirections.actionAccountOptionsListFragmentToToCardDetailFragmentDialog()
+                    PayMyAccountScreen.RetryOnErrorScreen ->  AccountOptionsListFragmentDirections.actionAccountOptionsListFragmentToPayMyAccountRetryErrorFragment()
+                })
+            }
         }
     }
+
     private val activityLauncher = BetterActivityResult.registerActivityForResult(this)
 
     private fun launchStoreCard(intent: Intent) {

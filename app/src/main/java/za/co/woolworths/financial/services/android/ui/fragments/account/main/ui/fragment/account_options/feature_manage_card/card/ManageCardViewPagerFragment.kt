@@ -10,7 +10,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ManageCardViewpagerFragmentBinding
-import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +25,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.disableNestedScrolling
 import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
+
 
 @AndroidEntryPoint
 class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_fragment) {
@@ -55,11 +55,13 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
                             manageCardAdapter?.setItem(listOfStoreCardFeatures)
                             setDotIndicatorVisibility(listOfStoreCardFeatures)
                             val currentPosition = getCardPosition(listOfStoreCardFeatures)
-                            viewModel.onManageCardPagerFragmentSelected(
-                                listOfStoreCardFeatures?.get(currentPosition), currentPosition,
-                                isPopupVisibleInAccountLanding = false,
-                                isPopupVisibleInCardDetailLanding = false
-                            )
+                            if (listOfStoreCardFeatures?.isNotEmpty() == true) {
+                                viewModel.onManageCardPagerFragmentSelected(
+                                    listOfStoreCardFeatures[currentPosition], currentPosition,
+                                    isPopupVisibleInAccountLanding = false,
+                                    isPopupVisibleInCardDetailLanding = false
+                                )
+                            }
                             CoroutineScope(Dispatchers.Main).launch {
                                 VoiceOfCustomerManager.showPendingSurveyIfNeeded(requireContext())
                             }
@@ -71,7 +73,7 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
             }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             cardFreezeViewModel.onUpshellMessageFreezeCardTap.observe(viewLifecycleOwner){ isActive ->
                 if (isActive)
                     this@subscribeObservers?.cardItemViewPager?.setCurrentItem(0, true)
@@ -112,10 +114,9 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
         val dimens = resources.getDimension(R.dimen._15sdp).toInt()
         with(cardItemViewPager) {
             disableNestedScrolling()
-            offscreenPageLimit = 3
-            setPageTransformer(OffsetPageTransformer(dimens, dimens))
+            offscreenPageLimit = 2
             adapter = manageCardAdapter
-
+            setPageTransformer(OffsetPageTransformer(dimens, dimens))
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
@@ -133,11 +134,13 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
                         isPopupVisibleInAccountLanding = true,
                         isPopupVisibleInCardDetailLanding = true
                     )
+
                 }
             })
 
             dotAtPosition0Img.setOnClickListener { cardItemViewPager.setCurrentItem(0, true) }
             dotAtPosition1Img.setOnClickListener { cardItemViewPager.setCurrentItem(1, true) }
+
         }
 
         manageCardAdapter?.setItem(viewModel.listOfStoreCardFeatureType)
@@ -148,9 +151,19 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
             isPopupVisibleInCardDetailLanding = false
         )
 
-        cardItemViewPager.setCurrentItem(
-            cardFreezeViewModel.currentPagePosition.value ?: 0, false
-        )
+        with(cardItemViewPager) {
+                when (val pagerPosition = cardFreezeViewModel.currentPagePosition.value ?: 0) {
+                    0 -> {
+                        post {
+                            beginFakeDrag()
+                            fakeDragBy(1.0f)
+                            endFakeDrag()
+                        }
+                        setCurrentItem(pagerPosition, false)
+                    }
+                    else -> setCurrentItem(pagerPosition, false)
+            }
+        }
     }
 
     private fun onPagerSelected(position: Int, isPopupVisibleInAccountLanding : Boolean ,  isPopupVisibleInCardDetailLanding: Boolean) {
@@ -164,4 +177,5 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
                 isPopupVisibleInCardDetailLanding = isPopupVisibleInCardDetailLanding
             )
     }
+
 }

@@ -533,7 +533,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     private fun requestBlockCard() {
         val blockStoreCardRequestBody = mStoreCard?.let {
             BlockCardRequestBody(mStoreCardsResponse?.storeCardsData?.visionAccountNumber
-                    ?: "", it.number, it.sequence.toInt(), 6)
+                    ?: "", it.number, it.sequence, 6)
         }
         blockStoreCardRequestBody?.let {
             StoreCardAPIRequest().blockCard(mStoreCardsResponse?.storeCardsData?.productOfferingId

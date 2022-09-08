@@ -6,24 +6,28 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.RemoveBlockDcMainFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
+import za.co.woolworths.financial.services.android.onecartgetstream.common.navigateSafely
 import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
 import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.InformationData
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.SystemBarCompat
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.DisplayInArrearsPopup
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.availablefunds.AvailableFundsCommand
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.availablefunds.AvailableFundsViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.AccountProductsMainFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.loadingState
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class RemoveBlockOnCollectionFragment : Fragment(R.layout.remove_block_dc_main_fragment) {
+
+    @Inject
+    lateinit var statusBarCompat: SystemBarCompat
 
     val availableFundViewModel : AvailableFundsViewModel by activityViewModels()
     val homeViewModel : AccountProductsHomeViewModel by activityViewModels()
@@ -33,6 +37,7 @@ class RemoveBlockOnCollectionFragment : Fragment(R.layout.remove_block_dc_main_f
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = RemoveBlockDcMainFragmentBinding.bind(view)
+        statusBarCompat.setLightStatusAndNavigationBar()
         setupToolbar()
         mDisplayInArrearsPopup = DisplayInArrearsPopup(fragment = this@RemoveBlockOnCollectionFragment, homeViewModel = homeViewModel){ item ->
             navigateSafelyWithNavController(RemoveBlockOnCollectionFragmentDirections.actionRemoveBlockOnCollectionFragmentToAccountLandingDialogFragment(homeViewModel.product,item.first, item.second))
@@ -92,8 +97,8 @@ class RemoveBlockOnCollectionFragment : Fragment(R.layout.remove_block_dc_main_f
     }
 
     private fun navigateToInformation() {
-        findNavController().navigate(
-            AccountProductsMainFragmentDirections.actionAccountProductsMainFragmentToAccountInformationFragment(
+        navigateSafely(
+            RemoveBlockOnCollectionFragmentDirections.actionRemoveBlockOnCollectionFragmentToAccountInfoFragment(
                 InformationData.Arrears()
             )
         )
