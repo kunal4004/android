@@ -11,6 +11,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
@@ -36,6 +37,7 @@ import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrde
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ItemsOrderListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.WrewardsBottomSheetFragment
@@ -147,10 +149,7 @@ class OrderConfirmationFragment : Fragment() {
         btnClose?.setOnClickListener { requireActivity().onBackPressed() }
 
         helpTextView?.setOnClickListener {
-            (activity as? CheckoutActivity)?.apply {
-                setResult(CheckOutFragment.RESULT_NAVIGATE_TO_HELP_AND_SUPPORT)
-                closeActivity()
-            }
+            findNavController()?.navigate(R.id.action_OrderConfirmationFragment_to_helpAndSupportFragment)
         }
     }
 
