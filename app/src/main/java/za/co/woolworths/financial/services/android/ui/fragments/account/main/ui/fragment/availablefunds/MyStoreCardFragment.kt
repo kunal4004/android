@@ -19,6 +19,7 @@ import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
 import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.toolbar.AccountProductsToolbarHelper
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.OutSystemBuilder
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
@@ -33,7 +34,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.overlay.DisplayInArrearsPopup
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.dialog.AccountLandingDialogFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.dialog.AccountLandingDialogFragment.Companion.requestKeyAccountLandingDialog
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.loadingState
 import za.co.woolworths.financial.services.android.util.*
 import java.net.ConnectException
@@ -50,6 +51,8 @@ class MyStoreCardFragment @Inject constructor() :
     val homeViewModel: AccountProductsHomeViewModel by activityViewModels()
     val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
+    var mToolbarHelper : AccountProductsToolbarHelper? =   null
+
     @Inject
     lateinit var pmaButton: PayMyAccountButtonTap
 
@@ -59,8 +62,10 @@ class MyStoreCardFragment @Inject constructor() :
     @Inject
     lateinit var statusBarCompat: SystemBarCompat
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mToolbarHelper =  (activity as? StoreCardActivity)?.getToolbarHelper()
         setFragmentResultListener()
     }
 
@@ -90,8 +95,8 @@ class MyStoreCardFragment @Inject constructor() :
     }
 
     private fun setupToolbar() {
-        (activity as? StoreCardActivity)?.apply {
-            getToolbarHelper()?.setHomeLandingToolbar(homeViewModel) { view ->
+        viewLifecycleOwner.lifecycleScope.launch {
+            mToolbarHelper?.setHomeLandingToolbar(homeViewModel) { view ->
                 when (view.id) {
                     R.id.infoIconImageView -> navigateToInformation()
                     R.id.navigateBackImageButton -> activity?.finish()
@@ -258,7 +263,7 @@ class MyStoreCardFragment @Inject constructor() :
                         }
                     })
             }
-            false -> return
+            false -> showProgress(false)
         }
     }
 
@@ -329,8 +334,8 @@ class MyStoreCardFragment @Inject constructor() :
     }
 
     private fun setFragmentResultListener() {
-        setFragmentResultListener(AccountLandingDialogFragment.requestKeyAccountLandingDialog) { _, bundle ->
-            when(bundle.getInt(AccountLandingDialogFragment.requestKeyAccountLandingDialog, 0)){
+        setFragmentResultListener(requestKeyAccountLandingDialog) { _, bundle ->
+            when(bundle.getInt(requestKeyAccountLandingDialog, 0)){
                 R.string.view_payment_plan_button_label -> mOutSystemBuilder.build()
                 R.string.make_payment_now_button_label -> onPayMyAccountButtonTap()
                 R.string.cannot_afford_payment_button_label -> mDisplayInArrearsPopup.onTap(requireActivity())
