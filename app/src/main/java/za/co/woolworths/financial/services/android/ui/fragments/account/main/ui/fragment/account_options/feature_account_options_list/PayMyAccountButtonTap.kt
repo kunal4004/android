@@ -60,4 +60,12 @@ class PayMyAccountButtonTap @Inject constructor(private val activity: Activity) 
             }
         }
     }
+
+    fun navigateToPayMyAccountActivity() {
+        if (isShimmerEnabled) return
+        ActivityIntentNavigationManager.presentPayMyAccountActivity(
+            activity,
+            payMyAccountViewModel.getCardDetail()
+        )
+    }
 }
