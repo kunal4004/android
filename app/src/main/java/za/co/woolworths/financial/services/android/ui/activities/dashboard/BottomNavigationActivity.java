@@ -1112,16 +1112,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 }
 
             case REQUEST_PAYMENT_STATUS:
-                if (resultCode == RESULT_NAVIGATE_TO_HELP_AND_SUPPORT) {
-                    pushFragment(new HelpAndSupportFragment());
-                    break;
-                }
                 if (resultCode == REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING) {
                     navigateToTabIndex(BottomNavigationActivity.INDEX_PRODUCT, null);
                     QueryBadgeCounter.getInstance().queryCartSummaryCount();
                     break;
                 }
-
+                if (resultCode == RESULT_NAVIGATE_TO_HELP_AND_SUPPORT) {
+                    pushFragment(new HelpAndSupportFragment());
+                    break;
+                }
             case REQUEST_CODE_ORDER_DETAILS_PAGE:// Call back when Toast clicked after adding item to shopping list
             case SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE:
                 navigateToMyList(requestCode, resultCode, data);
