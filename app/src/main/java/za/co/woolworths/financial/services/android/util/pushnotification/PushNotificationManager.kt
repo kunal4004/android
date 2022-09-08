@@ -49,10 +49,10 @@ class PushNotificationManager {
             // else it will send data to activity extras.
             if (payloadFeature != null && payloadFeature == FEATURE_ORDER_DETAILS && payloadParameters != null) {
                 intent = Intent(context, BottomNavigationActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 for (item in payload.entries) {
                     intent.putExtra(item.key, item.value)
                 }
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 pendingIntent = PendingIntent.getActivity(
                     context, BottomNavigationActivity.DEEP_LINK_REQUEST_CODE, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT
@@ -79,6 +79,9 @@ class PushNotificationManager {
                 }*/
 
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                for (item in payload.entries) {
+                    intent.putExtra(item.key, item.value)
+                }
                 pendingIntent = PendingIntent.getActivity(
                     context, BottomNavigationActivity.DEEP_LINK_REQUEST_CODE, intent,
                     PendingIntent.FLAG_ONE_SHOT
