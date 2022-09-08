@@ -82,7 +82,6 @@ class OrderConfirmationFragment : Fragment() {
                                     response.orderSummary?.orderId?.let { setToolbar(it) }
                                     setupDeliveryOrCollectionDetails(response)
                                     setupOrderTotalDetails(response)
-                               //     setupOrderDetailsBottomSheet(response)
                                     displayVocifNeeded(response)
 
                                 }
@@ -109,9 +108,9 @@ class OrderConfirmationFragment : Fragment() {
             activity,
             KotlinUtils.vocShoppingHandling(deliveryType)
         )
-       /* if ( Delivery.getType(deliveryType) == Delivery.CNC){
+        if ( Delivery.getType(deliveryType) == Delivery.CNC){
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_CConfirm, activity)
-        }*/
+        }
 
         val purchaseItemParams = Bundle()
         purchaseItemParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
