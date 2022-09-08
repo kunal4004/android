@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing
 
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -20,6 +21,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dom
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOptionsScreenUI
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.IStoreCardNavigator
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.StoreCardNavigator
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.DialogData
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.overlay.DisplayInArrearsPopup
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanImpl
 import javax.inject.Inject
 
@@ -37,7 +40,11 @@ class AccountProductsHomeViewModel @Inject constructor(
     ICollectionRepository by collectionRepository,
     IStoreCardNavigator by navigator {
 
+    @Inject
+    lateinit var treatmentPlan: TreatmentPlanImpl
+
     var bottomSheetBehaviorState: Int? = BottomSheetBehavior.STATE_COLLAPSED
+    var viewTreatmentPlan: ViewTreatmentPlanImpl? = null
 
     private val _isBottomSheetBehaviorExpanded = MutableSharedFlow<Boolean>()
     val isBottomSheetBehaviorExpanded: SharedFlow<Boolean> = _isBottomSheetBehaviorExpanded
@@ -46,13 +53,13 @@ class AccountProductsHomeViewModel @Inject constructor(
         viewModelScope.launch { _isBottomSheetBehaviorExpanded.emit(isExpanded) }
     }
 
-    var mViewTreatmentPlanImpl: ViewTreatmentPlanImpl? = null
+    var eligibilityPlan : EligibilityPlan? = null
 
     private val _viewState = MutableSharedFlow<List<AccountOptionsScreenUI>>()
     val viewState: SharedFlow<List<AccountOptionsScreenUI>> = _viewState
 
-    fun setUpViewTreatmentPlan(eligibilityPlan: EligibilityPlan?) {
-         mViewTreatmentPlanImpl = ViewTreatmentPlanImpl(
+    fun setTreatmentPlan(eligibilityPlan: EligibilityPlan?) {
+         viewTreatmentPlan = ViewTreatmentPlanImpl(
             account = product,
             applyNowState = ApplyNowState.STORE_CARD,
             eligibilityPlan = eligibilityPlan
@@ -77,11 +84,11 @@ class AccountProductsHomeViewModel @Inject constructor(
         }
     }
 
-    fun emitEligibilityPlan(eligibilityPlan: EligibilityPlan?){
+    fun emitEligibilityPlanWhenNotEmpty(eligibilityPlan: EligibilityPlan?){
         viewModelScope.launch {
             eligibilityPlan?.let { plan ->
                 if (!plan.actionText.isNullOrEmpty() && !plan.displayText.isNullOrEmpty()) {
-                    _viewState.emit(collectionTreatmentPlanItem(plan))
+                    _viewState.tryEmit(collectionTreatmentPlanItem(plan))
                 }
             }
         }
@@ -100,5 +107,23 @@ class AccountProductsHomeViewModel @Inject constructor(
         getViewStateFlowForNetworkCall { queryServiceCheckCustomerEligibilityPlan() }.collect {
             _accountsCollectionsCheckEligibility.emit(it)
         }
+    }
+
+    fun initPopup(viewLifecycleOwner : LifecycleOwner, navigationTo: (DialogData?, EligibilityPlan?) -> Unit): DisplayInArrearsPopup {
+        return DisplayInArrearsPopup(viewLifecycleOwner, treatmentPlanImpl = treatmentPlan, homeViewModel = this){ item, eligibilityPlan ->
+            navigationTo(item, eligibilityPlan)
+        }
+    }
+
+    fun emitAccountIsChargedOff() {
+        viewTreatmentPlan?.getPopupData(eligibilityPlan)
+    }
+
+    fun emitShowViewTreatmentPlanPopupFromConfigForChargedOff() {
+        viewTreatmentPlan?.getPopupData(eligibilityPlan)
+    }
+
+    fun emitShowViewTreatmentPlanPopupInArrearsFromConfig() {
+        viewTreatmentPlan?.getPopupData(eligibilityPlan)
     }
 }

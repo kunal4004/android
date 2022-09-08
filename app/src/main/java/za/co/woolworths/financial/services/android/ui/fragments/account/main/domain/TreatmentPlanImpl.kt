@@ -62,9 +62,12 @@ class TreatmentPlanImpl @Inject constructor(private val accountProductLandingDao
     private fun isTreatmentPlanSupported(treatmentPlan: ConfigShowTreatmentPlan?): Boolean {
         val appBuildNumber = Utils.getAppBuildNumber()
         return when (productGroupCode()) {
-            productGroupCodeSc -> appBuildNumber >= treatmentPlan?.personalLoan?.minimumSupportedAppBuildNumber ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT
-            productGroupCodePl -> appBuildNumber >= treatmentPlan?.storeCard?.minimumSupportedAppBuildNumber ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT
-            else -> appBuildNumber >= treatmentPlan?.creditCard?.minimumSupportedAppBuildNumber ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT
+            productGroupCodeSc -> appBuildNumber >= (treatmentPlan?.personalLoan?.minimumSupportedAppBuildNumber
+                ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT)
+            productGroupCodePl -> appBuildNumber >= (treatmentPlan?.storeCard?.minimumSupportedAppBuildNumber
+                ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT)
+            else -> appBuildNumber >= (treatmentPlan?.creditCard?.minimumSupportedAppBuildNumber
+                ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT)
         }
     }
 
