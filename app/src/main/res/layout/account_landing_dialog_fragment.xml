@@ -70,9 +70,9 @@
         android:layout_marginStart="@dimen/margin_start"
         android:layout_marginTop="@dimen/_30sdp"
         android:layout_marginEnd="@dimen/margin_end"
-        android:gravity="center"
         android:background="@color/black"
         android:fontFamily="@font/futura_semi_bold_ttf"
+        android:gravity="center"
         android:letterSpacing="0.02"
         android:stateListAnimator="@null"
         android:text="@string/pay_now_button_label"
@@ -113,5 +113,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/payNowDivider"
         tools:ignore="UnusedAttribute" />
+
+    <View
+        android:id="@+id/buttonSpace"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_8sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chatToUsButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

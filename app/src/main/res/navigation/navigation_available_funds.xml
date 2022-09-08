@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_myStoreCardFragment_to_toCardDetailFragmentDialog"
             app:destination="@id/toCardDetailFragmentDialog" />
+        <action
+            android:id="@+id/action_myStoreCardFragment_to_accountLandingDialogFragment"
+            app:destination="@id/accountLandingDialogFragment" />
     </fragment>
 
     <dialog
@@ -34,4 +37,24 @@
             android:defaultValue="false"
             app:argType="boolean" />
     </dialog>
+
+    <dialog
+        android:id="@+id/accountLandingDialogFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.dialog.AccountLandingDialogFragment"
+        android:label="AccountLandingDialogFragment"
+        tools:layout="@layout/account_landing_dialog_fragment">
+        <argument
+            android:name="account"
+            app:argType="za.co.woolworths.financial.services.android.models.dto.Account"
+            app:nullable="true" />
+        <argument
+            android:name="dialogData"
+            app:argType="za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.DialogData"
+            app:nullable="true" />
+        <argument
+            android:name="eligibilityPlan"
+            app:argType="za.co.woolworths.financial.services.android.models.dto.EligibilityPlan"
+            app:nullable="true" />
+    </dialog>
+
 </navigation>

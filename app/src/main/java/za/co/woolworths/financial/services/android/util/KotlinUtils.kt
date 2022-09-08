@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.util
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityOptions
+import android.app.Dialog
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -11,7 +12,9 @@ import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.InsetDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -20,6 +23,7 @@ import android.text.*
 import android.text.style.*
 import android.util.TypedValue
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
@@ -30,7 +34,9 @@ import androidx.annotation.RawRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import com.awfs.coordination.R
@@ -1400,4 +1406,23 @@ class KotlinUtils {
 }
 fun Group.setAlphaForGroupdViews(alpha: Float) = referencedIds.forEach {
     rootView.findViewById<View>(it).alpha = alpha
+}
+
+fun Fragment.setDialogPadding(dialog: Dialog?) {
+    val inset = 10
+    if (dialog != null) {
+        val width = (deviceWidth() - resources.getDimension(R.dimen._48sdp)).toInt()
+        val height = ViewGroup.LayoutParams.WRAP_CONTENT
+        dialog.window?.setLayout(width, height)
+        dialog.window?.setBackgroundDrawable(
+            InsetDrawable(
+                ColorDrawable(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.transparent
+                    )
+                ), inset, inset, inset, inset
+            )
+        )
+    }
 }

@@ -3,96 +3,87 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.annotation.StringRes
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
-import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountLandingDialogFragmentBinding
+import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingDialogFragment
-import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.onClick
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.DialogData
+import za.co.woolworths.financial.services.android.util.setDialogPadding
 
-class AccountLandingDialogFragment : ViewBindingDialogFragment<AccountLandingDialogFragmentBinding>(), View.OnClickListener {
+@AndroidEntryPoint
+class AccountLandingDialogFragment :
+    ViewBindingDialogFragment<AccountLandingDialogFragmentBinding>() {
 
     val args: AccountLandingDialogFragmentArgs by navArgs()
     val viewModel by viewModels<AccountLandingDialogViewModel>()
 
-    override fun inflateViewBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ): AccountLandingDialogFragmentBinding {
-        return AccountLandingDialogFragmentBinding.inflate(inflater, container, false)
+    override fun onStart() {
+        super.onStart()
+        setDialogPadding(dialog)
     }
+
+    override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?) =
+        AccountLandingDialogFragmentBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupViewModel()
-
+        setArguments()
+        setCaption()
+        setButtonVisibility()
+        setListeners()
     }
 
-    private fun setupViewModel() {
+    private fun setArguments() {
         viewModel.setup(args)
-        viewModel.dialogData.observe(viewLifecycleOwner) {
-            setDialogViews(it)
-        }
-        viewModel.command.observe(viewLifecycleOwner) {
-
-        }
     }
 
-    fun setDialogViews(dialogData: DialogData?) {
-        dialogData?.let {
+    private fun setCaption() {
+        viewModel.dialogData?.apply {
             with(binding) {
-                accountInArrearsTitleTextView.text = getString(it.title)
-                accountInArrearsDescriptionTextView.text = getString(it.desc, it.formattedValue)
-
-                payNowButton.apply {
-                    text = bindString(it.firstButtonTitle)
-                    setOnClickListener(this@AccountLandingDialogFragment)
-                }
-                chatToUsButton.apply {
-                    text = bindString(it.secondButtonTitle)
-                    visibility = it.secondButtonVisibility
-                    setOnClickListener(this@AccountLandingDialogFragment)
-                }
-                closeIconImageButton.setOnClickListener(this@AccountLandingDialogFragment)
+                accountInArrearsTitleTextView.text = getString(title)
+                accountInArrearsDescriptionTextView.text = getString(desc, formattedValue)
+                payNowButton.text = getString(firstButtonTitle)
+                chatToUsButton.text = getString(secondButtonTitle)
             }
         }
     }
 
-    override fun onClick(view: View?) {
-        when (view?.id) {
-            R.id.payNowButton -> {
-                viewModel.handlePayNowClick()
-            }
-            R.id.chatToUsButton -> {
-                viewModel.handleCallUsClick()
-            }
-            R.id.closeIconImageButton -> {
-                dismiss()
+    private fun setButtonVisibility() {
+        viewModel.dialogData?.apply {
+            with(binding) {
+                if (secondButtonVisibility == VISIBLE) {
+                    chatToUsButton.visibility = VISIBLE
+                    payNowDivider.visibility = VISIBLE
+                }
             }
         }
-
     }
 
+    private fun setListeners() {
+        with(binding) {
 
-//    var resultLauncher =
-//        activity?.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-//            if (result.resultCode == Activity.RESULT_OK) {
-//                // There are no request codes
-//                val data: Intent? = result.data
-////            doSomeOperations()
-//            }
-//        }
-//
-//    fun navigateToGetAPayment() {
-//        val intent = Intent(activity, GetAPaymentPlanActivity::class.java)
-//        intent.putExtra(
-//            ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN,
-//            viewModel.eligibilityPlan.value
-//        )
-//        resultLauncher?.launch(intent)
-//    }
+            closeIconImageButton.onClick { dismiss() }
+
+            payNowButton.onClick { setResult(requestKeyAccountLandingDialog, viewModel.dialogData?.firstButtonTitle) }
+
+            chatToUsButton.onClick { setResult(requestKeyAccountLandingDialog,  viewModel.dialogData?.secondButtonTitle) }
+
+        }
+    }
+
+    private fun setResult(requestKey: String, @StringRes key: Int?) {
+        setFragmentResult(requestKey, bundleOf(requestKey to key))
+        dismiss()
+    }
+
+    companion object {
+        val requestKeyAccountLandingDialog: String = AccountLandingDialogFragment::class.java.simpleName
+    }
 }
 

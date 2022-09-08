@@ -3,22 +3,26 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentAvailableFundBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.available_funds_fragment.*
-import kotlinx.android.synthetic.main.view_pay_my_account_button.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
+import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.OutSystemBuilder
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.WBottomSheetBehaviour
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.InformationData
@@ -26,8 +30,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.PayMyAccountButtonTap
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.PayMyAccountScreen
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.overlay.DisplayInArrearsPopup
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.dialog.AccountLandingDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.loadingState
 import za.co.woolworths.financial.services.android.util.*
 import java.net.ConnectException
@@ -38,6 +44,8 @@ class MyStoreCardFragment @Inject constructor() :
     ViewBindingFragment<FragmentAvailableFundBinding>(FragmentAvailableFundBinding::inflate),
     View.OnClickListener {
 
+    private lateinit var mOutSystemBuilder: OutSystemBuilder
+    private lateinit var mDisplayInArrearsPopup: DisplayInArrearsPopup
     val viewModel: AvailableFundsViewModel by activityViewModels()
     val homeViewModel: AccountProductsHomeViewModel by activityViewModels()
     val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
@@ -51,6 +59,11 @@ class MyStoreCardFragment @Inject constructor() :
     @Inject
     lateinit var statusBarCompat: SystemBarCompat
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setFragmentResultListener()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.availableFunds.setUpView()
@@ -61,9 +74,14 @@ class MyStoreCardFragment @Inject constructor() :
         setGuideline()
         setAccountInArrearsUI()
         setBackground()
+        setInArrearsPopup()
         clickListeners()
         autoConnectPMA()
         navigateToDeepLinkView()
+        with(mDisplayInArrearsPopup) {
+            collectCheckEligibilityResult()
+            setupInArrearsPopup()
+        }
     }
 
     private fun showProgress(isLoading: Boolean) {
@@ -170,7 +188,7 @@ class MyStoreCardFragment @Inject constructor() :
 
     private fun onPayMyAccountButtonTap() {
         pmaButton.payMyAccountViewModel = payMyAccountViewModel
-        pmaButton.isShimmerEnabled = viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true
+        pmaButton.isShimmerEnabled = binding.incPayMyAccountButton.viewPaymentOptionImageShimmerLayout.isShimmerStarted == true
         pmaButton.onTap(
             FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC
         ) { navigateFrom ->
@@ -210,7 +228,7 @@ class MyStoreCardFragment @Inject constructor() :
                         payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
                         navigateToDeepLinkView(
                             AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT,
-                            incPayMyAccountButton
+                            binding.incPayMyAccountButton.root
                         )
                     }, { onSessionExpired ->
                         if (!isAdded) return@queryServicePayUPaymentMethod
@@ -271,7 +289,7 @@ class MyStoreCardFragment @Inject constructor() :
                     when (deepLinkingObject?.get("feature")?.asString) {
                         AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT -> {
                             deleteDeepLinkData()
-                            incViewStatementButton?.performClick()
+                            binding.incViewStatementButton.root.performClick()
                         }
                     }
                 }
@@ -295,5 +313,40 @@ class MyStoreCardFragment @Inject constructor() :
 
     }
 
+    private fun setInArrearsPopup() {
+        mDisplayInArrearsPopup = homeViewModel.initPopup(viewLifecycleOwner) { dialogData, eligibilityPlan ->
+            CoroutineScope(Dispatchers.Main).launch {
+                mOutSystemBuilder = OutSystemBuilder(requireActivity(), ProductGroupCode.SC, eligibilityPlan = homeViewModel.eligibilityPlan)
+                navigateSafelyWithNavController(
+                    MyStoreCardFragmentDirections.actionMyStoreCardFragmentToAccountLandingDialogFragment(
+                        homeViewModel.product,
+                        dialogData,
+                        eligibilityPlan
+                    )
+                )
+            }
+        }
+    }
+
+    private fun setFragmentResultListener() {
+        setFragmentResultListener(AccountLandingDialogFragment.requestKeyAccountLandingDialog) { _, bundle ->
+            when(bundle.getInt(AccountLandingDialogFragment.requestKeyAccountLandingDialog, 0)){
+                R.string.view_payment_plan_button_label -> mOutSystemBuilder.build()
+                R.string.make_payment_now_button_label -> onPayMyAccountButtonTap()
+                R.string.cannot_afford_payment_button_label -> mDisplayInArrearsPopup.onTap(requireActivity())
+                R.string.chat_to_us_label ->  navigateToChatToUs()
+            }
+        }
+    }
+
+    private fun navigateToChatToUs() {
+        val chatBubble = ChatFloatingActionButtonBubbleView(
+                activity = activity as? AccountSignedInActivity,
+                applyNowState = ApplyNowState.STORE_CARD,
+                vocTriggerEvent = payMyAccountViewModel.getVocTriggerEventMyAccounts()
+            )
+
+        chatBubble.navigateToChatActivity(activity, homeViewModel.product)
+    }
 }
 

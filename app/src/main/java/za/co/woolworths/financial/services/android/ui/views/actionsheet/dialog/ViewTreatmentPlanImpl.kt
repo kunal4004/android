@@ -13,6 +13,8 @@ import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowSt
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.ProductOfferingStatus
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountInArrears
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountInDelinquency
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.DialogData
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.DateFormatter
@@ -36,7 +38,7 @@ interface IViewTreatmentPlan {
     fun isAccountChargedOff() : Boolean
     fun isViewElitePlanEnabled(eligibilityPlan: EligibilityPlan?) : Boolean
     fun isElitePlanEnabled(eligibilityPlan: EligibilityPlan?) : Boolean
-    fun getPopUpData(eligibilityPlan: EligibilityPlan?): DialogData
+    fun getPopupData(eligibilityPlan: EligibilityPlan?): DialogData
 }
 
 enum class TreatmentPlanType {
@@ -166,37 +168,41 @@ class ViewTreatmentPlanImpl (
         return eligibilityPlan?.planType.equals(AccountSignedInPresenterImpl.ELITE_PLAN, ignoreCase = true)
     }
 
-    override fun getPopUpData(eligibilityPlan: EligibilityPlan?): DialogData {
-        val amountOverdue = getAmountOverdue()
-       return  when (isAccountChargedOff()) {
-            true -> { when (isCreditCardProduct()
-                        && (productOfferingStatus.isViewTreatmentPlanSupported()
-                        || productOfferingStatus.isTakeUpTreatmentPlanJourneyEnabled())) {
-                    true -> when (getPlanType()) {
-                        TreatmentPlanType.VIEW, TreatmentPlanType.ELITE -> {
-                            DialogData.ViewPlanDialog(desc = getPlanDescription(ApplyNowState.STORE_CARD), formattedValue = account?.paymentDueDate)}
-                        else ->DialogData.ChargedOff()
-                    }
-                    false ->DialogData.ChargedOff()
+    override fun getPopupData(eligibilityPlan: EligibilityPlan?) : DialogData {
+
+        val isCreditCardProduct = isCreditCardProduct()
+
+        val isCollectionTypeViewPlan = when (getPlanType()) {
+            TreatmentPlanType.VIEW, TreatmentPlanType.ELITE -> true
+            else -> false
+        }
+
+        val isViewVipOrElitePlanSupported = (productOfferingStatus.isViewTreatmentPlanSupported()
+                || productOfferingStatus.isTakeUpTreatmentPlanJourneyEnabled())
+
+        val amountOverdue = Utils.removeNegativeSymbol(
+            CurrencyFormatter.formatAmountToRandAndCent(
+                account?.amountOverdue ?: 0
+            )
+        )
+
+        val descId = getPlanDescription(applyNowState)
+
+       return when (isAccountChargedOff()) {
+            true -> when (isCreditCardProduct && isViewVipOrElitePlanSupported) {
+                true -> when(isCollectionTypeViewPlan){
+                    true ->  AccountInDelinquency.AccountInRecovery( desc = descId, formattedValue = account?.paymentDueDate)
+                    false -> AccountInDelinquency.TakePlan()
                 }
+                false -> AccountInDelinquency.ChargedOff()
             }
-            false -> {
-                when (productOfferingStatus.isViewTreatmentPlanSupported()
-                        || productOfferingStatus.isTakeUpTreatmentPlanJourneyEnabled()) {
-                    true -> when (getPlanType()) {
-                        TreatmentPlanType.ELITE, TreatmentPlanType.VIEW ->DialogData.ViewPlanDialog(desc = getPlanDescription(ApplyNowState.STORE_CARD), formattedValue = account?.paymentDueDate)
-                        else -> DialogData.AccountInArrDialog(
-                            title = R.string.payment_overdue_label,
-                            desc = R.string.payment_overdue_error_desc,
-                            formattedValue = amountOverdue
-                        )
+
+            false -> when (isViewVipOrElitePlanSupported) {
+                    true -> when(isCollectionTypeViewPlan){
+                        true -> AccountInArrears.AccountInRecovery(desc = descId, formattedValue = account?.paymentDueDate)
+                        false -> AccountInArrears.TakePlan(formattedValue = amountOverdue)
                     }
-                    false -> DialogData.AccountInArrDialog(
-                            title = R.string.payment_overdue_label,
-                            desc = R.string.payment_overdue_error_desc,
-                            formattedValue = amountOverdue
-                        )
-                }
+                    false -> AccountInArrears.InArrears(formattedValue = amountOverdue)
             }
         }
     }
