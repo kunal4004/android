@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.google.firebase.analytics.FirebaseAnalytics
-import kotlinx.android.synthetic.main.collection_tracking_layout_cnc.*
 import kotlinx.android.synthetic.main.dash_order_details_layout.*
 import kotlinx.android.synthetic.main.delivering_to_collection_from.*
 import kotlinx.android.synthetic.main.delivering_to_collection_from.foodDeliveryLinearLayout
@@ -23,7 +22,6 @@ import kotlinx.android.synthetic.main.delivering_to_collection_from.optionImage
 import kotlinx.android.synthetic.main.delivering_to_collection_from.optionTitle
 import kotlinx.android.synthetic.main.delivering_to_dashing_from.*
 import kotlinx.android.synthetic.main.fragment_order_confirmation.*
-import kotlinx.android.synthetic.main.order_details_bottom_sheet.*
 import kotlinx.android.synthetic.main.order_details_bottom_sheet.addShoppingListButton
 import kotlinx.android.synthetic.main.order_details_bottom_sheet.itemsRecyclerView
 import kotlinx.android.synthetic.main.other_order_details.*
@@ -42,7 +40,10 @@ import za.co.woolworths.financial.services.android.ui.adapters.ItemsOrderListAda
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.WrewardsBottomSheetFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
-import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -108,9 +109,9 @@ class OrderConfirmationFragment : Fragment() {
             activity,
             KotlinUtils.vocShoppingHandling(deliveryType)
         )
-        if ( Delivery.getType(deliveryType) == Delivery.CNC){
+       /* if ( Delivery.getType(deliveryType) == Delivery.CNC){
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_CConfirm, activity)
-        }
+        }*/
 
         val purchaseItemParams = Bundle()
         purchaseItemParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
@@ -149,8 +150,7 @@ class OrderConfirmationFragment : Fragment() {
         helpTextView?.setOnClickListener {
             (activity as? CheckoutActivity)?.apply {
                 setResult(CheckOutFragment.RESULT_NAVIGATE_TO_HELP_AND_SUPPORT)
-                //closeActivity()
-                finish()
+                closeActivity()
             }
         }
     }
@@ -159,36 +159,7 @@ class OrderConfirmationFragment : Fragment() {
         context?.let {
             when (Delivery.getType(response?.orderSummary?.fulfillmentDetails?.deliveryType)) {
                 Delivery.CNC -> {
-
-                    ClickAndCollectConstraintLayout?.visibility = VISIBLE
-                    dashOrderDetailsLayout?.visibility = VISIBLE
-                    optionImageCNC.background =
-                        AppCompatResources.getDrawable(it, R.drawable.ic_collection_bag)
-                    optionTitleCnc?.text = it.getText(R.string.collecting_from)
-                    clickAndCollectDateTimeTextView?.text =  applyBoldBeforeComma(
-                        response
-                            ?.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
-                    )
-                    optionLocationTitleCnc?.text =
-                        response?.orderSummary?.fulfillmentDetails?.storeName?.let {
-                            convertToTitleCase(it)
-                        } ?: ""
-                    setUpDashOrderDetailsLayout(response)
-                    continueBrowsingLinearLayoutCnc.setOnClickListener {
-                        requireActivity()?.setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING_CNC)
-                        requireActivity()?.finish()
-                    }
-
-
-
-
-
-
-
-
-
-                  /*  deliveryCollectionDetailsConstraintLayout?.visibility = VISIBLE
-                  // deliveryOrderDetailsLayout.visibility = VISIBLE
+                    deliveryCollectionDetailsConstraintLayout?.visibility = VISIBLE
                     dashOrderDetailsLayout?.visibility = VISIBLE
                     optionImage.background =
                         AppCompatResources.getDrawable(it, R.drawable.ic_collection_bag)
@@ -204,7 +175,7 @@ class OrderConfirmationFragment : Fragment() {
                     continueBrowsingStandardLinearLayout.setOnClickListener {
                         requireActivity()?.setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
                         requireActivity()?.finish()
-                    }*/
+                    }
                 }
                 Delivery.STANDARD -> {
                     deliveryCollectionDetailsConstraintLayout?.visibility = VISIBLE
@@ -416,56 +387,10 @@ class OrderConfirmationFragment : Fragment() {
             bindString(R.string.food_number_item, number.toString())
     }
 
-    private fun setupOrderDetailsBottomSheet(response: SubmittedOrderResponse?) {
-
-        when (Delivery.getType(response?.orderSummary?.fulfillmentDetails?.deliveryType)) {
-            Delivery.CNC -> {
-                deliveryLocationText?.text =
-                    context?.getText(R.string.collection_location_semicolon)
-                deliveryOrderDetailsTextView?.text = context?.getText(R.string.collection_semicolon)
-               // setNumberAndCostItemsBottomSheet(response?.items)
-                initRecyclerView(response?.items)
-                handleAddToShoppingListButton()
-            }
-            Delivery.STANDARD -> {
-                deliveryLocationText?.text = context?.getText(R.string.delivery_location_semicolon)
-                deliveryOrderDetailsTextView?.text = context?.getText(R.string.delivery_semicolon)
-                //setNumberAndCostItemsBottomSheet(response?.items)
-                initRecyclerView(response?.items)
-                handleAddToShoppingListButton()
-            }
-            else -> {
-            }
-        }
-
-        bottomSheetScrollView?.visibility = VISIBLE
-        orderStatusTextView?.text = response?.orderSummary?.state
-        deliveryLocationTextView?.text = optionLocation.text?.let { convertToTitleCase(it as String) }
-
-        if (response?.deliveryDetails?.deliveryInfos?.size == 2) {
-            oneDeliveryBottomSheetLinearLayout?.visibility = GONE
-            foodDeliveryLinearLayout?.visibility = VISIBLE
-            otherDeliveryBottomSheetLinearLayout?.visibility = VISIBLE
-            foodDeliveryDateTimeBottomSheetTextView?.text = applyBoldBeforeComma(
-                response
-                    .deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
-            )
-            otherDeliveryDateTimeBottomSheetTextView?.text =
-                response.deliveryDetails?.deliveryInfos?.get(1)?.deliveryDateAndTime
-        } else if (response?.deliveryDetails?.deliveryInfos?.size == 1) {
-            oneDeliveryBottomSheetLinearLayout?.visibility = VISIBLE
-            foodDeliveryBottomSheetLinearLayout?.visibility = GONE
-            otherDeliveryBottomSheetLinearLayout?.visibility = GONE
-            deliveryDateTimeBottomSheetTextView?.text =
-                response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
-        }
-    }
-
     private fun handleAddToShoppingListButton() {
         if (itemsOrder.isNullOrEmpty()) {
             return
         }
-
         val listOfItems = ArrayList<AddToListRequest>()
         itemsOrder!!.forEach {
             val item = AddToListRequest()
@@ -484,13 +409,10 @@ class OrderConfirmationFragment : Fragment() {
     }
 
     private fun initRecyclerView(items: OrderItems?) {
-
         initialiseItemsOrder(items)
-
         if (itemsOrder.isNullOrEmpty()) {
             return
         }
-
         context?.let {
             itemsRecyclerView.layoutManager = LinearLayoutManager(it, RecyclerView.VERTICAL, false)
             itemsOrderListAdapter = ItemsOrderListAdapter(itemsOrder!!)
@@ -506,8 +428,6 @@ class OrderConfirmationFragment : Fragment() {
             itemsOrder?.addAll(items.food!!)
         }
     }
-
-
 
     private fun setUpStandardOrderDetailsLayout(response: SubmittedOrderResponse?) {
         setNumberAndCostItemsBottomSheet(response?.items)
