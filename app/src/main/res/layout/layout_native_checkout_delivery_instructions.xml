@@ -44,18 +44,17 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
         android:theme="@style/SwitchTheme"
-        app:layout_constraintBottom_toBottomOf="@id/txtNeedBags"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/txtNeedBags" />
+        app:layout_constraintTop_toBottomOf="@+id/viewHorizontalSeparator" />
 
     <View
         android:id="@+id/shoppingBagSeparator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/one_dp"
         android:layout_marginTop="@dimen/twenty_four_dp"
-        app:layout_goneMarginTop="@dimen/_minus2sdp"
         android:background="@color/color_12000000"
-        app:layout_constraintTop_toBottomOf="@id/txtNeedBags" />
+        app:layout_constraintTop_toBottomOf="@id/txtNeedBags"
+        app:layout_goneMarginTop="@dimen/_minus2sdp" />
 
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/instructionTxtShimmerFrameLayout"
@@ -83,8 +82,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
         android:background="@color/shimmer_view_background"
-        app:layout_constraintTop_toBottomOf="@id/shoppingBagSeparator"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/shoppingBagSeparator">
 
         <Switch
             android:id="@+id/switchSpecialDeliveryInstruction"
@@ -158,8 +157,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
         android:background="@color/shimmer_view_background"
-        app:layout_constraintTop_toBottomOf="@id/viewGiftHorizontalSeparator"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewGiftHorizontalSeparator">
 
         <Switch
             android:id="@+id/switchGiftInstructions"
