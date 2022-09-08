@@ -132,7 +132,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var isUserBrowsing: Boolean = false
     private var mIsComingFromBLP: Boolean = false
     private var liquorDialog: Dialog? = null
-    private var deliveryType: Delivery = Delivery.STANDARD
+    private var deliveryType: Delivery? = null
     private var placeId: String? = null
     private var isUnSellableItemsRemoved: Boolean? = false
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
@@ -416,10 +416,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 localPlaceId = currentPlaceId
                 updateRequestForReload()
                 pushFragment()
-            } else if (!localDeliveryType.isNullOrEmpty() && !(localDeliveryType.let {
-                    it.equals(deliveryType.type)
+            } else if (!localDeliveryType.isNullOrEmpty() && deliveryType != null && !(localDeliveryType.let {
+                    it.equals(deliveryType?.type)
                 })) {
-                localDeliveryType = deliveryType.type
+                localDeliveryType = deliveryType?.type
                 updateRequestForReload()
                 pushFragment()
             }

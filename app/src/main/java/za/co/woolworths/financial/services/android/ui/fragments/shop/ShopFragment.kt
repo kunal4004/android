@@ -462,7 +462,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 fadeOutToolbar(R.color.recent_search_bg)
                 showBackNavigationIcon(false)
                 showBottomNavigationMenu()
-                refreshViewPagerFragment()
+                if (isResumed && isVisible)
+                    refreshViewPagerFragment()
                 Handler().postDelayed({
                     hideToolbar()
                 }, AppConstant.DELAY_1000_MS)
@@ -478,15 +479,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             viewpager_main.currentItem = STANDARD_TAB.index
         } else {
             setDeliveryView()
-        }
-        when (viewpager_main?.currentItem) {
-            STANDARD_TAB.index -> {
-                val standardDeliveryFragment = viewpager_main?.adapter?.instantiateItem(
-                    viewpager_main,
-                    viewpager_main.currentItem
-                ) as? StandardDeliveryFragment
-                standardDeliveryFragment?.onHiddenChanged(hidden)
-            }
         }
     }
 
@@ -624,12 +616,12 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     fun refreshViewPagerFragment() {
         when (viewpager_main.currentItem) {
             STANDARD_TAB.index -> {
-                val departmentsFragment =
+                val standardDeliveryFragment =
                     viewpager_main?.adapter?.instantiateItem(
                         viewpager_main,
                         viewpager_main.currentItem
                     ) as? StandardDeliveryFragment
-                departmentsFragment?.initView()
+                standardDeliveryFragment?.initView()
             }
             CLICK_AND_COLLECT_TAB.index -> {
                 val changeFullfilmentCollectionStoreFragment =
@@ -665,11 +657,13 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     fun scrollToTop() {
         when (viewpager_main?.currentItem) {
             STANDARD_TAB.index -> {
-                val detailsFragment = viewpager_main?.adapter?.instantiateItem(
-                    viewpager_main,
-                    viewpager_main.currentItem
-                ) as? StandardDeliveryFragment
-                detailsFragment?.scrollToTop()
+                if (isResumed && isVisible) {
+                    val detailsFragment = viewpager_main?.adapter?.instantiateItem(
+                        viewpager_main,
+                        viewpager_main.currentItem
+                    ) as? StandardDeliveryFragment
+                    detailsFragment?.scrollToTop()
+                }
             }
             CLICK_AND_COLLECT_TAB.index -> {
                 val changeFullfilmentCollectionStoreFragment =
