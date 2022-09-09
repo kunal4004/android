@@ -29,14 +29,14 @@ import com.awfs.coordination.R
 import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
-import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.ageConfirmationLayout
-import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.continuePaymentTxtShimmerFrameLayout
-import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.loadingBar
-import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.txtContinueToPayment
 import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.*
-import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.checkoutCollectingFromLayout
-import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.checkoutCollectingTimeDetailsLayout
 import kotlinx.android.synthetic.main.fragment_checkout_returning_user_dash.*
+import kotlinx.android.synthetic.main.fragment_checkout_returning_user_dash.ageConfirmationLayout
+import kotlinx.android.synthetic.main.fragment_checkout_returning_user_dash.checkoutCollectingFromLayout
+import kotlinx.android.synthetic.main.fragment_checkout_returning_user_dash.checkoutCollectingTimeDetailsLayout
+import kotlinx.android.synthetic.main.fragment_checkout_returning_user_dash.continuePaymentTxtShimmerFrameLayout
+import kotlinx.android.synthetic.main.fragment_checkout_returning_user_dash.loadingBar
+import kotlinx.android.synthetic.main.fragment_checkout_returning_user_dash.txtContinueToPayment
 import kotlinx.android.synthetic.main.layout_collection_time_details.*
 import kotlinx.android.synthetic.main.layout_collection_time_details.view.*
 import kotlinx.android.synthetic.main.layout_delivering_to_details.*
@@ -173,8 +173,8 @@ class CheckoutDashFragment : Fragment(),
     }
 
     private fun hideInstructionLayout() {
-        txtNeedBags?.visibility = View.GONE
-        switchNeedBags?.visibility = View.GONE
+        txtNeedBags?.visibility = GONE
+        switchNeedBags?.visibility = GONE
     }
 
     private fun setFragmentResults() {
@@ -218,8 +218,8 @@ class CheckoutDashFragment : Fragment(),
                     }
                 }
             } else {
-                ageConfirmationLayout?.visibility = View.GONE
-                liquorComplianceBannerLayout?.visibility = View.GONE
+                ageConfirmationLayout?.visibility = GONE
+                liquorComplianceBannerLayout?.visibility = GONE
             }
         }
     }
@@ -360,8 +360,8 @@ class CheckoutDashFragment : Fragment(),
     }
 
     private fun startShimmerView() {
-        txtNeedBags?.visibility = View.GONE
-        switchNeedBags?.visibility = View.GONE
+        txtNeedBags?.visibility = GONE
+        switchNeedBags?.visibility = GONE
         edtTxtSpecialDeliveryInstruction?.visibility = GONE
         edtTxtGiftInstructions?.visibility = GONE
         switchSpecialDeliveryInstruction?.isChecked = false
@@ -405,7 +405,7 @@ class CheckoutDashFragment : Fragment(),
         initShimmerView()
         val confirmLocationAddress =
             ConfirmLocationAddress(defaultAddress?.placesId, defaultAddress?.nickname)
-        var body = ConfirmLocationRequest(
+        val body = ConfirmLocationRequest(
             Delivery.DASH.type, confirmLocationAddress,
             KotlinUtils.getDeliveryType()?.storeId, "checkout"
         )
@@ -451,9 +451,11 @@ class CheckoutDashFragment : Fragment(),
                                     initializeDatesAndTimeSlots(firstAvailableDateSlot)
                                     // Set default time slot selected
                                     var selectedSlotIndex = 0
-                                    ArrayList(firstAvailableDateSlot?.slots).forEachIndexed { index, slot ->
-                                        if (slot.slotId.equals(selectedTimeSlot?.slotId)) {
-                                            selectedSlotIndex = index
+                                    firstAvailableDateSlot?.slots?.let {
+                                        ArrayList(it).forEachIndexed { index, slot ->
+                                            if (slot.slotId.equals(selectedTimeSlot?.slotId)) {
+                                                selectedSlotIndex = index
+                                            }
                                         }
                                     }
                                     dashTimeSlotsAdapter.setSelectedItem(selectedSlotIndex)
@@ -642,7 +644,6 @@ class CheckoutDashFragment : Fragment(),
                             resources.getDimension(R.dimen.five_dp).toInt()
                     }
                 }
-
                 titleTextView?.setOnClickListener {
                     val amountString = (it as TextView).text as? String
                     if (selectedDriverTipValue.equals(amountString, ignoreCase = true)) {
@@ -732,9 +733,9 @@ class CheckoutDashFragment : Fragment(),
 
     private fun initializeDashingToView() {
         tvNativeCheckoutDeliveringTitle?.text = getString(R.string.dashing_to)
-        chooseDateLayout?.visibility = View.GONE
+        chooseDateLayout?.visibility = GONE
         if (arguments == null) {
-            checkoutDeliveryDetailsLayout.visibility = View.GONE
+            checkoutDeliveryDetailsLayout.visibility = GONE
             return
         }
         context?.let { context ->
@@ -750,7 +751,7 @@ class CheckoutDashFragment : Fragment(),
                         ?: SavedAddressResponse()
 
             if (savedAddress?.addresses.isNullOrEmpty()) {
-                checkoutDeliveryDetailsLayout?.visibility = View.GONE
+                checkoutDeliveryDetailsLayout?.visibility = GONE
                 return
             }
             savedAddress.let { savedAddresses ->
@@ -796,7 +797,7 @@ class CheckoutDashFragment : Fragment(),
                         return@forEach
                     }
                     if (savedAddresses.defaultAddressNickname.isNullOrEmpty()) {
-                        checkoutDeliveryDetailsLayout?.visibility = View.GONE
+                        checkoutDeliveryDetailsLayout?.visibility = GONE
                     }
                 }
                 tvNativeCheckoutDeliveringValue?.text = deliveringToAddress
@@ -808,7 +809,7 @@ class CheckoutDashFragment : Fragment(),
 
     private fun initializeDeliveryInstructions() {
         edtTxtSpecialDeliveryInstruction?.addTextChangedListener(deliveryInstructionsTextWatcher)
-        edtTxtInputLayoutSpecialDeliveryInstruction?.visibility = View.GONE
+        edtTxtInputLayoutSpecialDeliveryInstruction?.visibility = GONE
         edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = false
         deliveryInstructionClickListener(switchSpecialDeliveryInstruction.isChecked)
 
@@ -821,8 +822,8 @@ class CheckoutDashFragment : Fragment(),
         if (AppConfigSingleton.nativeCheckout?.currentShoppingBag?.isEnabled == true) {
             switchNeedBags?.visibility = View.VISIBLE
             txtNeedBags?.visibility = View.VISIBLE
-            viewHorizontalSeparator?.visibility = View.GONE
-            newShoppingBagsLayout?.visibility = View.GONE
+            viewHorizontalSeparator?.visibility = GONE
+            newShoppingBagsLayout?.visibility = GONE
             switchNeedBags?.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
                     Utils.triggerFireBaseEvents(
@@ -832,9 +833,9 @@ class CheckoutDashFragment : Fragment(),
                 }
             }
         } else if (AppConfigSingleton.nativeCheckout?.newShoppingBag?.isEnabled == true) {
-            switchNeedBags?.visibility = View.GONE
+            switchNeedBags?.visibility = GONE
             viewHorizontalSeparator?.visibility = View.VISIBLE
-            txtNeedBags?.visibility = View.GONE
+            txtNeedBags?.visibility = GONE
             newShoppingBagsLayout?.visibility = View.VISIBLE
             addShoppingBagsRadioButtons()
         }
@@ -847,10 +848,10 @@ class CheckoutDashFragment : Fragment(),
                 activity
             )
         edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
-            if (isChecked) View.VISIBLE else View.GONE
+            if (isChecked) View.VISIBLE else GONE
         edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = isChecked
         edtTxtSpecialDeliveryInstruction?.visibility =
-            if (isChecked) View.VISIBLE else View.GONE
+            if (isChecked) View.VISIBLE else GONE
     }
 
     private fun addShoppingBagsRadioButtons() {
@@ -918,15 +919,15 @@ class CheckoutDashFragment : Fragment(),
                 CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.basketTotal)
             it.discountDetails?.let { discountDetails ->
                 groupOrderSummaryDiscount?.visibility =
-                    if (discountDetails.otherDiscount == 0.0) View.GONE else View.VISIBLE
+                    if (discountDetails.otherDiscount == 0.0) GONE else View.VISIBLE
                 groupPromoCodeDiscount?.visibility =
-                    if (discountDetails.promoCodeDiscount == 0.0) View.GONE else View.VISIBLE
+                    if (discountDetails.promoCodeDiscount == 0.0) GONE else View.VISIBLE
                 groupWRewardsDiscount?.visibility =
-                    if (discountDetails.voucherDiscount == 0.0) View.GONE else View.VISIBLE
+                    if (discountDetails.voucherDiscount == 0.0) GONE else View.VISIBLE
                 groupCompanyDiscount?.visibility =
-                    if (discountDetails.companyDiscount == 0.0) View.GONE else View.VISIBLE
+                    if (discountDetails.companyDiscount == 0.0) GONE else View.VISIBLE
                 groupTotalDiscount?.visibility =
-                    if (discountDetails.totalDiscount == 0.0) View.GONE else View.VISIBLE
+                    if (discountDetails.totalDiscount == 0.0) GONE else View.VISIBLE
 
                 txtOrderSummaryDiscountValue?.text =
                     "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.otherDiscount)
@@ -1061,7 +1062,7 @@ class CheckoutDashFragment : Fragment(),
         setScreenClickEvents(false)
         checkoutAddAddressNewUserViewModel.getShippingDetails(body)
             .observe(viewLifecycleOwner) { response ->
-                loadingBar.visibility = View.GONE
+                loadingBar.visibility = GONE
                 setScreenClickEvents(true)
                 when (response) {
                     is ShippingDetailsResponse -> {
@@ -1166,26 +1167,6 @@ class CheckoutDashFragment : Fragment(),
         edtTxtInputLayoutGiftInstructions.visibility = GONE
     }
 
-    private fun isInstructionsMissing(): Boolean {
-        return when (switchSpecialDeliveryInstruction?.isChecked) {
-            true -> {
-                if (TextUtils.isEmpty(edtTxtSpecialDeliveryInstruction?.text.toString())) {
-                    // scroll to instructions layout
-                    checkoutReturningCollectionScrollView?.smoothScrollTo(
-                        0,
-                        layoutCollectionInstructions?.top ?: 0
-                    )
-                    /**
-                     * New requirement to have instructions optional
-                     */
-//                    true
-                    false
-                } else false
-            }
-            else -> false
-        }
-    }
-
     private fun isAgeConfirmationLiquorCompliance(): Boolean {
         txtAgeConfirmationTitle.parent.requestChildFocus(
             txtAgeConfirmationTitle,
@@ -1200,7 +1181,7 @@ class CheckoutDashFragment : Fragment(),
 
     private fun isRequiredFieldsMissing(): Boolean {
         if (!TextUtils.isEmpty(selectedTimeSlot?.slotId)) {
-            txtSelectCollectionTimeSlotFoodError?.visibility = View.GONE
+            txtSelectCollectionTimeSlotFoodError?.visibility = GONE
             return false
         }
         // scroll to slot selection layout
