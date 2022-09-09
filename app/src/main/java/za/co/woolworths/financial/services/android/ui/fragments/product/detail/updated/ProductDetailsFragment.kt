@@ -968,7 +968,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             if (!this.productDetails?.productType.equals(
                     getString(R.string.food_product_type),
                     ignoreCase = true
-                ) && KotlinUtils.getPreferredDeliveryType() == Delivery.CNC
+                ) && (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC
+                        || KotlinUtils.getPreferredDeliveryType() == Delivery.DASH)
             ) {
                 showProductUnavailable()
                 showProductNotAvailableForCollection()
