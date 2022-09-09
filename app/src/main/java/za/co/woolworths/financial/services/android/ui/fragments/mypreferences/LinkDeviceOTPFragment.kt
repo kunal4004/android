@@ -6,8 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Paint
-import android.location.Address
-import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
@@ -52,6 +50,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccoun
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.personal_loan.PersonalLoanFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.StoreCardOptionsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.AccountOptionsManageCardFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextWatcher
 import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment
@@ -549,13 +548,13 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                                             MyCardDetailFragment.PAY_WITH_CARD_DETAIL -> {
                                                                 showPayWithCardScreen()
                                                             }
-                                                            StoreCardOptionsFragment.GET_REPLACEMENT_CARD_DETAIL -> {
+                                                            AccountOptionsManageCardFragment.GET_REPLACEMENT_CARD_DETAIL -> {
                                                                 showGetReplacementStoreCardScreen()
                                                             }
                                                             StatementFragment.VIEW_STATEMENT_DETAIL -> {
                                                                 showSendStatementScreen()
                                                             }
-                                                            StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL -> {
+                                                            AccountOptionsManageCardFragment.ACTIVATE_VIRTUAL_CARD_DETAIL -> {
                                                                 showActivateVirtualTempCardScreen()
                                                             }
 
@@ -655,8 +654,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     }
 
     private fun showGetReplacementStoreCardScreen(){
-        StoreCardOptionsFragment.SHOW_GET_REPLACEMENT_CARD_SCREEN = true
-        StoreCardOptionsFragment.GET_REPLACEMENT_CARD_DETAIL = false
+        AccountOptionsManageCardFragment.SHOW_GET_REPLACEMENT_CARD_SCREEN = true
+        AccountOptionsManageCardFragment.GET_REPLACEMENT_CARD_DETAIL = false
         activity?.finish()
     }
 
@@ -671,8 +670,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         activity?.finish()
     }
     private fun showActivateVirtualTempCardScreen(){
-        StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL = false
-        StoreCardOptionsFragment.SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = true
+        AccountOptionsManageCardFragment.ACTIVATE_VIRTUAL_CARD_DETAIL = false
+        AccountOptionsManageCardFragment.SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = true
         activity?.finish()
     }
 

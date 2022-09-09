@@ -42,7 +42,7 @@ import java.net.ConnectException
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class RemoveBlockOnCollectionFragment : Fragment(R.layout.remove_block_dc_main_fragment) {
+class AccountInDelinquencyFragment : Fragment(R.layout.remove_block_dc_main_fragment) {
 
     val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
@@ -77,7 +77,7 @@ class RemoveBlockOnCollectionFragment : Fragment(R.layout.remove_block_dc_main_f
             CoroutineScope(Dispatchers.Main).launch {
                 mOutSystemBuilder = OutSystemBuilder(requireActivity(), ProductGroupCode.SC, eligibilityPlan = homeViewModel.eligibilityPlan)
                 navigateSafelyWithNavController(
-                        RemoveBlockOnCollectionFragmentDirections.actionRemoveBlockOnCollectionFragmentToAccountLandingDialogFragment(
+                        AccountInDelinquencyFragmentDirections.actionRemoveBlockOnCollectionFragmentToAccountLandingDialogFragment(
                             homeViewModel.product,
                             dialogData,
                             eligibilityPlan
@@ -133,7 +133,7 @@ class RemoveBlockOnCollectionFragment : Fragment(R.layout.remove_block_dc_main_f
 
     private fun navigateToInformation() {
         navigateSafely(
-            RemoveBlockOnCollectionFragmentDirections.actionRemoveBlockOnCollectionFragmentToAccountInfoFragment(
+            AccountInDelinquencyFragmentDirections.actionRemoveBlockOnCollectionFragmentToAccountInfoFragment(
                 InformationData.Arrears()
             )
         )
@@ -192,18 +192,18 @@ class RemoveBlockOnCollectionFragment : Fragment(R.layout.remove_block_dc_main_f
     }
 
     private fun RemoveBlockDcMainFragmentBinding.onPayMyAccountButtonTap() {
-        pmaButton.payMyAccountViewModel = payMyAccountViewModel
-        pmaButton.isShimmerEnabled = incPayMyAccountButton.viewPaymentOptionImageShimmerLayout.isShimmerStarted == true
-        pmaButton.onTap(
-            FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC
-        ) { navigateFrom ->
-            navigateSafelyWithNavController(
-                when (navigateFrom) {
-                    PayMyAccountScreen.RetryOnErrorScreen -> RemoveBlockOnCollectionFragmentDirections.actionRemoveBlockOnCollectionFragmentToPayMyAccountRetryErrorFragment()
-                    PayMyAccountScreen.OpenAccountOptionsOrEnterPaymentAmountDialog -> RemoveBlockOnCollectionFragmentDirections.actionRemoveBlockOnCollectionFragmentToToCardDetailFragmentDialog()
+            pmaButton.payMyAccountViewModel = payMyAccountViewModel
+            pmaButton.isShimmerEnabled =
+                incPayMyAccountButton.viewPaymentOptionImageShimmerLayout.isShimmerStarted == true
+            pmaButton.onTap(
+                FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC
+            ) { navigateFrom ->
+                val toDestination =    when (navigateFrom) {
+                    is PayMyAccountScreen.RetryOnErrorScreen -> AccountInDelinquencyFragmentDirections.actionRemoveBlockOnCollectionFragmentToPayMyAccountRetryErrorFragment()
+                    is PayMyAccountScreen.OpenAccountOptionsOrEnterPaymentAmountDialog -> AccountInDelinquencyFragmentDirections.actionRemoveBlockOnCollectionFragmentToToCardDetailFragmentDialog()
                 }
-            )
-        }
+                navigateSafely(toDestination)
+            }
     }
 
     private fun RemoveBlockDcMainFragmentBinding.queryPaymentMethod() {
@@ -293,7 +293,7 @@ class RemoveBlockOnCollectionFragment : Fragment(R.layout.remove_block_dc_main_f
     private fun RemoveBlockDcMainFragmentBinding.autoConnectPMA() {
         ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(
             requireActivity(),
-            this@RemoveBlockOnCollectionFragment,
+            this@AccountInDelinquencyFragment,
             object : ConnectionBroadcastReceiver() {
                 override fun onConnectionChanged(hasConnection: Boolean) {
                     when (hasConnection || !payMyAccountViewModel.isQueryPayUPaymentMethodComplete) {
