@@ -37,7 +37,6 @@ import kotlinx.android.synthetic.main.layout_native_checkout_age_confirmation.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_order_summary.*
-import kotlinx.android.synthetic.main.layout_native_checkout_driver_tip.*
 import kotlinx.android.synthetic.main.liquor_compliance_banner.*
 import kotlinx.android.synthetic.main.new_shopping_bags_layout.*
 import kotlinx.android.synthetic.main.where_are_we_delivering_items.view.*
@@ -315,14 +314,6 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             Pair<ShimmerFrameLayout, View>(
                 imageViewCaretForwardCollectionShimmerFrameLayout,
                 imageViewCaretForwardCollection
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                tipDashDriverTitleShimmerFrameLayout,
-                tipDashDriverTitle
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                tipOptionScrollViewShimmerFrameLayout,
-                tipOptionScrollView
             )
         )
         startShimmerView()

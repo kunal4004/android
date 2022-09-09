@@ -29,8 +29,14 @@ import com.awfs.coordination.R
 import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
+import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.ageConfirmationLayout
+import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.continuePaymentTxtShimmerFrameLayout
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.loadingBar
+import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.txtContinueToPayment
 import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.*
+import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.checkoutCollectingFromLayout
+import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.checkoutCollectingTimeDetailsLayout
+import kotlinx.android.synthetic.main.fragment_checkout_returning_user_dash.*
 import kotlinx.android.synthetic.main.layout_collection_time_details.*
 import kotlinx.android.synthetic.main.layout_collection_time_details.view.*
 import kotlinx.android.synthetic.main.layout_delivering_to_details.*
@@ -98,7 +104,7 @@ class CheckoutDashFragment : Fragment(),
     private var shimmerComponentArray: List<Pair<ShimmerFrameLayout, View>> = ArrayList()
     private var navController: NavController? = null
     private var driverTipOptionsList: ArrayList<String>? = null
-    private var selectedDriverTipValue: String? = null
+    private var selectedDriverTipValue: String = "R10"
     private var driverTipTextView: View? = null
     private var mainView: View? = null
 
@@ -578,9 +584,9 @@ class CheckoutDashFragment : Fragment(),
     private fun initializeDriverTipView() {
         //Todo This value will come from Config once it is available.
         driverTipOptionsList = ArrayList()
+        driverTipOptionsList!!.add("R0")
         driverTipOptionsList!!.add("R10")
         driverTipOptionsList!!.add("R20")
-        driverTipOptionsList!!.add("R30")
         driverTipOptionsList!!.add("Own Amount")
 
         showDriverTipView()
@@ -596,40 +602,54 @@ class CheckoutDashFragment : Fragment(),
                 val titleTextView: TextView? = driverTipTextView?.findViewById(R.id.titleTv)
                 titleTextView?.tag = index
                 titleTextView?.text = options
-                if (!selectedDriverTipValue.isNullOrEmpty() && selectedDriverTipValue.equals(
-                        options
-                    )
-                ) {
-                    titleTextView?.background =
-                        bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
-                    titleTextView?.setTextColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.white
+
+                if (selectedDriverTipValue.isNotEmpty()) {
+                    if (selectedDriverTipValue == options) {
+                        titleTextView?.background =
+                            bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
+                        titleTextView?.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.white
+                            )
                         )
-                    )
-                    tipNoteTextView?.visibility = View.VISIBLE
-                } else if (!selectedDriverTipValue.isNullOrEmpty() && driverTipOptionsList?.contains(
-                        selectedDriverTipValue
-                    ) == false
-                    && index == driverTipOptionsList?.size?.minus(1)
-                ) {
-                    /*this is for custom driver tip*/
-                    titleTextView?.background =
-                        bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
-                    titleTextView?.setTextColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.white
+                        tipNoteTextView?.visibility = View.VISIBLE
+                    } else if (driverTipOptionsList?.contains(selectedDriverTipValue) == false
+                        && index == driverTipOptionsList?.size?.minus(1)
+                    ) {
+                        /*this is for custom driver tip*/
+                        titleTextView?.background =
+                            bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
+                        titleTextView?.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.white
+                            )
                         )
-                    )
-                    tipNoteTextView?.visibility = View.VISIBLE
-                    titleTextView?.text = selectedDriverTipValue
+                        tipNoteTextView?.visibility = View.VISIBLE
+                        titleTextView?.text = selectedDriverTipValue
+                        val image = AppCompatResources.getDrawable(
+                            requireContext(),
+                            R.drawable.edit_icon_white
+                        )
+                        titleTextView?.setCompoundDrawablesWithIntrinsicBounds(
+                            null,
+                            null,
+                            image,
+                            null
+                        )
+                        titleTextView?.compoundDrawablePadding =
+                            resources.getDimension(R.dimen.five_dp).toInt()
+                    }
                 }
+
                 titleTextView?.setOnClickListener {
-                    var isSameSelection =
-                        true // Because we want to change this view after the value entered from user.
-                    selectedDriverTipValue = (it as TextView).text as? String
+                    val amountString = (it as TextView).text as? String
+                    if (selectedDriverTipValue.equals(amountString, ignoreCase = true)) {
+                        return@setOnClickListener
+                    }
+
+                    val isSameSelection = resetAllDriverTip(it.tag as? Int ?: 0)
 
                     if (it.tag == driverTipOptionsList?.lastIndex) {
                         val tipValue =
@@ -652,15 +672,10 @@ class CheckoutDashFragment : Fragment(),
                             requireActivity().supportFragmentManager,
                             CustomDriverTipBottomSheetDialog::class.java.simpleName
                         )
-                    } else {
-                        isSameSelection = resetAllDriverTip(it.tag as Int)
-                        if (isSameSelection) {
-                            selectedDriverTipValue = null
-                            tipNoteTextView?.visibility = View.GONE
-                        }
-                    }
+                    } else if (!isSameSelection) {
 
-                    if (!isSameSelection) {
+                        selectedDriverTipValue = amountString ?: "R0"
+
                         // Change background of selected Tip as it's not unselection.
                         it.background =
                             bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
@@ -951,21 +966,21 @@ class CheckoutDashFragment : Fragment(),
                 )
 
                 KotlinUtils.presentEditDeliveryGeoLocationActivity(
-                        requireActivity(),
-                        CheckoutAddAddressReturningUserFragment.SLOT_SELECTION_REQUEST_CODE,
-                        KotlinUtils.getPreferredDeliveryType(),
-                        placesId,
-                        false,
-                        true,
-                        true,
-                        savedAddress,
-                        defaultAddress,
-                        "",
-                        liquorOrder?.let { liquorOrder ->
-                            liquorImageUrl?.let { liquorImageUrl ->
-                                LiquorCompliance(liquorOrder, liquorImageUrl)
-                            }
+                    requireActivity(),
+                    CheckoutAddAddressReturningUserFragment.SLOT_SELECTION_REQUEST_CODE,
+                    KotlinUtils.getPreferredDeliveryType(),
+                    placesId,
+                    false,
+                    true,
+                    true,
+                    savedAddress,
+                    defaultAddress,
+                    "",
+                    liquorOrder?.let { liquorOrder ->
+                        liquorImageUrl?.let { liquorImageUrl ->
+                            LiquorCompliance(liquorOrder, liquorImageUrl)
                         }
+                    }
                 )
                 activity?.finish()
             }
@@ -1139,7 +1154,8 @@ class CheckoutDashFragment : Fragment(),
         KotlinUtils.getUniqueDeviceID {
             pushNotificationToken = Utils.getToken()
             appInstanceId = it
-            tokenProvider = if (Utils.isGooglePlayServicesAvailable()) NotificationUtils.TOKEN_PROVIDER_FIREBASE else NotificationUtils.TOKEN_PROVIDER_HMS
+            tokenProvider =
+                if (Utils.isGooglePlayServicesAvailable()) NotificationUtils.TOKEN_PROVIDER_FIREBASE else NotificationUtils.TOKEN_PROVIDER_HMS
         }
     }
 
@@ -1207,7 +1223,7 @@ class CheckoutDashFragment : Fragment(),
         val titleTextView: TextView? =
             driverTipTextView?.findViewWithTag(driverTipOptionsList?.lastIndex)
         driverTipOptionsList?.lastIndex?.let { resetAllDriverTip(it) }
-        titleTextView?.text = "R$tipValue "
+        titleTextView?.text = "R$tipValue"
         val image = AppCompatResources.getDrawable(requireContext(), R.drawable.edit_icon_white)
         titleTextView?.setCompoundDrawablesWithIntrinsicBounds(null, null, image, null)
         titleTextView?.compoundDrawablePadding = resources.getDimension(R.dimen.five_dp).toInt()
@@ -1222,6 +1238,23 @@ class CheckoutDashFragment : Fragment(),
         )
         tipNoteTextView?.visibility = View.VISIBLE
         selectedDriverTipValue = tipValue
+    }
+
+    override fun onCancelDialog(previousTipValue: String) {
+
+        val index = driverTipOptionsList?.indexOf(selectedDriverTipValue)
+        val titleTextView: TextView? = view?.findViewWithTag(index)
+        if (index == driverTipOptionsList?.lastIndex) {
+            titleTextView?.text = selectedDriverTipValue
+            val image = AppCompatResources.getDrawable(requireContext(), R.drawable.edit_icon_white)
+            titleTextView?.setCompoundDrawablesWithIntrinsicBounds(null, null, image, null)
+            titleTextView?.compoundDrawablePadding = resources.getDimension(R.dimen.five_dp).toInt()
+        }
+        titleTextView?.background = bindDrawable(
+            R.drawable.checkout_delivering_title_round_button_pressed
+        )
+        titleTextView?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+        tipNoteTextView?.visibility = View.VISIBLE
     }
 
     override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
