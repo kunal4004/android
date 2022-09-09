@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.remove_dc_block
 
+import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -21,6 +23,7 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.onecartgetstream.common.navigateSafely
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.OutSystemBuilder
 import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
 import za.co.woolworths.financial.services.android.ui.extension.onClick
@@ -32,12 +35,16 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.PayMyAccountButtonTap
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.PayMyAccountScreen
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.overlay.DisplayInArrearsPopup
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StoreCardActivityResultCallback
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.availablefunds.AvailableFundsCommand
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.availablefunds.AvailableFundsViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.dialog.AccountLandingDialogFragment.Companion.requestKeyAccountLandingDialog
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.CallBack
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.loadingState
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartDestinationType
 import java.net.ConnectException
 import javax.inject.Inject
 
@@ -59,9 +66,13 @@ class AccountInDelinquencyFragment : Fragment(R.layout.remove_block_dc_main_frag
 
     private lateinit var mDisplayInArrearsPopup: DisplayInArrearsPopup
 
+    private val activityLauncher = BetterActivityResult.registerActivityForResult(this)
+    @Inject lateinit var storeCardActivityResultCallback : StoreCardActivityResultCallback
+    private lateinit var binding: RemoveBlockDcMainFragmentBinding
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val binding = RemoveBlockDcMainFragmentBinding.bind(view)
+        binding = RemoveBlockDcMainFragmentBinding.bind(view)
         statusBarCompat.setLightStatusAndNavigationBar()
         setupToolbar()
         setInArrearsPopup(binding)
@@ -157,12 +168,31 @@ class AccountInDelinquencyFragment : Fragment(R.layout.remove_block_dc_main_frag
 
             incViewStatementButton.root.onClick { navigateToStatementActivity(requireActivity(), product) }
 
-            helpWithPayment.onClick { mDisplayInArrearsPopup.onTap(requireActivity()) }
-
+            helpWithPayment.onClick {
+                mDisplayInArrearsPopup.onTap(requireActivity())
+            }
+            mDisplayInArrearsPopup.onClickIntentObserver.observe(viewLifecycleOwner) {
+                when (it) {
+                    is CallBack.IntentCallBack -> {
+                        it.intent?.let { intent ->
+                            launchTreatmentPlan(it.intent)
+                        }
+                    }
+                }
+            }
             incPayMyAccountButton.root.onClick { onPayMyAccountButtonTap() }
         }
     }
-
+    private fun launchTreatmentPlan(intent: Intent) {
+        activityLauncher.launch(intent, onActivityResult = { result ->
+            if (storeCardActivityResultCallback.eliteTreatmeantPlanCallBack(result)) {
+                homeViewModel.requestAccountsCollectionsCheckEligibility()
+                val elitePlanModel = result.data?.extras?.getParcelable(AccountSignedInPresenterImpl.ELITE_PLAN_MODEL) as Parcelable?
+                ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, payMyAccountViewModel.getCardDetail(), PayMyAccountStartDestinationType.CREATE_USER, true,elitePlanModel)
+            }
+        })
+        activity?.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+    }
     private fun RemoveBlockDcMainFragmentBinding.setHelpWithPaymentViewLabel(eligibilityPlan: EligibilityPlan?) {
                 helpWithPayment.text = when (homeViewModel.viewTreatmentPlan?.isViewElitePlanEnabled(eligibilityPlan) == true) {
                         true -> getString(R.string.view_your_payment_plan)
