@@ -2,13 +2,11 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 
 import android.text.TextUtils
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCard
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsData
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.VirtualCardStaffMemberMessage
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.SaveResponseDao
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountProductLandingDao
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import javax.inject.Inject
@@ -16,10 +14,11 @@ import javax.inject.Inject
 class ManageCardFunctionalRequirementImpl @Inject constructor(private val accountDao: AccountProductLandingDao) :
     IManageCardFunctionalRequirement {
 
-    private var storeCardData: StoreCardsData? = getStoreCardData()
+    private var storeCardData: StoreCardsData? = null
+    get() = storeCardData()
 
     override fun refreshStoreCardsData() {
-        storeCardData = getStoreCardData()
+        storeCardData = storeCardData()
     }
 
     override fun isOneTimePinUnblockStoreCardEnabled(): Boolean {
@@ -29,10 +28,7 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
     override fun getCardHolderNameSurname(): String? = KotlinUtils.getCardHolderNameSurname()
 
     override fun getStoreCardsResponse(): StoreCardsResponse? {
-        val response: StoreCardsResponse? = SaveResponseDao.getValue(
-            SessionDao.KEY.STORE_CARD_RESPONSE_PAYLOAD,
-            StoreCardsResponse::class.java
-        )
+        val response: StoreCardsResponse? = accountDao.storeCardsData
         return response?.apply {
             storeCardsData?.productOfferingId = accountDao.product?.productOfferingId.toString()
             storeCardsData?.visionAccountNumber = accountDao.product?.accountNumber.toString()
@@ -44,7 +40,7 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
 
     override fun getPrimaryCards() = storeCardData?.primaryCards
 
-    override fun getStoreCardData(): StoreCardsData? = getStoreCardsResponse()?.storeCardsData
+    override fun storeCardData(): StoreCardsData? = getStoreCardsResponse()?.storeCardsData
 
     override fun getBlockCode(primaryCardIndex: Int) =
         getPrimaryCards()?.elementAt(primaryCardIndex)?.blockCode

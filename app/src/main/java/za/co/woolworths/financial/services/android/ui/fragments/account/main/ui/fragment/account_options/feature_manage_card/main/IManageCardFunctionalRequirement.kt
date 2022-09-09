@@ -10,7 +10,7 @@ interface IManageCardFunctionalRequirement {
     fun getStoreCardsResponse(): StoreCardsResponse?
     fun isPrimaryCardAvailable(): Boolean
     fun getPrimaryCards(): MutableList<StoreCard>?
-    fun getStoreCardData(): StoreCardsData?
+    fun storeCardData(): StoreCardsData?
     fun splitStoreCardByCardType(
         primaryCardIndex: Int,
         storeCard: StoreCard?
