@@ -9,6 +9,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
+import io.getstream.chat.android.client.models.Device
+import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import kotlinx.coroutines.launch
@@ -80,6 +82,18 @@ private val ocAuthRepository: OCAuthRepository
         ChatClient.instance().connectUser(chatUser, token)
                 .enqueue { result ->
                     if (result.isSuccess) {
+                        ChatClient.instance().getDevices().enqueue {
+                            if (it.isSuccess) {
+                                val devices = it.data()
+                                for (device in devices) {
+                                    ChatClient.instance().deleteDevice(device).enqueue()
+                                }
+
+                                ChatClient.instance()
+                                    .addDevice(Device(WoolworthsApplication.getInstance().chatFCMToken,
+                                        PushProvider.FIREBASE)).enqueue()
+                            }
+                        }
                         _state.postValue(State.RedirectToChannels)
                     } else {
                         _state.postValue(State.Error(result.error().message))

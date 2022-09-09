@@ -27,7 +27,9 @@ import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.perfectcorp.perfectlib.SkuHandler;
 
 import java.io.UnsupportedEncodingException;
@@ -76,7 +78,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     private RxBus bus;
     private static boolean isApplicationInForeground = false;
-
+    private String token;
     private Activity mCurrentActivity = null;
 
     private static ValidatePlace validatePlace;
@@ -163,12 +165,39 @@ public class WoolworthsApplication extends Application implements Application.Ac
         getTracker();
         bus = new RxBus();
         vtoSyncServer();
+        initChatFCMToken();
     }
 
     private void initializeAnalytics() {
         FirebaseManager.Companion.getInstance();
         HuaweiManager.Companion.getInstance();
     }
+
+
+    private void initChatFCMToken() {
+        FirebaseOptions firebaseChatOptions = new FirebaseOptions.Builder()
+                .setProjectId("onecart-chat")
+                .setApplicationId("1:513058672751:android:4f21181161790c6b1b7d9a")
+                .setApiKey("AIzaSyC6syO9-lBDn7dBCguRqRXJcqOG2WAUfIU")
+                .build();
+
+        FirebaseApp chatApp = FirebaseApp.initializeApp(this, firebaseChatOptions, "CHAT_APP");
+        FirebaseMessaging fbMessaging = chatApp.get(FirebaseMessaging.class);
+        fbMessaging.getToken().addOnCompleteListener(it -> {
+            if (it.isSuccessful()) {
+                token = it.getResult();
+            } else {
+                token = "";
+            }
+        });
+    }
+
+    public String getChatFCMToken() {
+        return token;
+    }
+
+
+
 
     //#region ShowServerMessage
     public void showServerMessageOrProceed(Activity activity) {
