@@ -119,7 +119,6 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
 
     fun handleStoreCardResponseResult(response: StoreCardsResponse): MutableList<StoreCardFeatureType>? {
         dataSource.landingDao.storeCardsData = response
-        dataSource.refreshStoreCardsData()
         val listOfStoreCards = dataSource.filterPrimaryCardsGetOneVirtualCardAndOnePrimaryCardOrBoth()
         listOfStoreCardFeatureType = listOfStoreCards
         return listOfStoreCards

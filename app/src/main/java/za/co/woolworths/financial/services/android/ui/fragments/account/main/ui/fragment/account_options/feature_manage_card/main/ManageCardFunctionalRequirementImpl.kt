@@ -15,11 +15,7 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
     IManageCardFunctionalRequirement {
 
     private var storeCardData: StoreCardsData? = null
-    get() = storeCardData()
-
-    override fun refreshStoreCardsData() {
-        storeCardData = storeCardData()
-    }
+    get() = getStoreCardsResponse()?.storeCardsData
 
     override fun isOneTimePinUnblockStoreCardEnabled(): Boolean {
         return getStoreCardsResponse()?.oneTimePinRequired?.unblockStoreCard ?: false
@@ -39,8 +35,6 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
     override fun isPrimaryCardAvailable(): Boolean = getPrimaryCards()?.isNotEmpty() ?: false
 
     override fun getPrimaryCards() = storeCardData?.primaryCards
-
-    override fun storeCardData(): StoreCardsData? = getStoreCardsResponse()?.storeCardsData
 
     override fun getBlockCode(primaryCardIndex: Int) =
         getPrimaryCards()?.elementAt(primaryCardIndex)?.blockCode
