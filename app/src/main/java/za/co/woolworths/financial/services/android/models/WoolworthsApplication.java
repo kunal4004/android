@@ -10,7 +10,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Base64;
-import android.util.Log;
+
 
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AlertDialog;
@@ -27,7 +27,10 @@ import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
+
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.perfectcorp.perfectlib.SkuHandler;
 
 import java.io.UnsupportedEncodingException;
@@ -70,7 +73,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static String creditCardType;
     private boolean isOther = false;
     private static int productOfferingId;
-
+    private String token;
     private boolean shouldDisplayServerMessage = true;
     public UpdateBankDetail updateBankDetail;
 
@@ -163,12 +166,37 @@ public class WoolworthsApplication extends Application implements Application.Ac
         getTracker();
         bus = new RxBus();
         vtoSyncServer();
+
+        initChatFCMToken();
     }
 
     private void initializeAnalytics() {
         FirebaseManager.Companion.getInstance();
         HuaweiManager.Companion.getInstance();
     }
+
+    private void initChatFCMToken() {
+        FirebaseOptions firebaseChatOptions = new FirebaseOptions.Builder()
+                .setProjectId("onecart-chat")
+                .setApplicationId("1:513058672751:android:1efcba06f24e24bb1b7d9a")
+                .setApiKey("AIzaSyC0tpAjZzAJNoI3IIx_oJe7bb6sIm0P6Wg")
+                .build();
+
+        FirebaseApp chatApp = FirebaseApp.initializeApp(this, firebaseChatOptions, "CHAT_APP");
+        FirebaseMessaging fbMessaging = chatApp.get(FirebaseMessaging.class);
+        fbMessaging.getToken().addOnCompleteListener(it -> {
+            if (it.isSuccessful()) {
+                token = it.getResult();
+            } else {
+                token = "";
+            }
+        });
+    }
+
+    public String getChatFCMToken() {
+        return token;
+    }
+
 
     //#region ShowServerMessage
     public void showServerMessageOrProceed(Activity activity) {
@@ -177,7 +205,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
         try {
             hash = Cryptography.PasswordBasedKeyDerivationFunction2(passphrase, Integer.toString(BuildConfig.VERSION_CODE), 1007, 256);
         } catch (KeyGenerationFailureException | UnsupportedEncodingException e) {
-            Log.e(TAG, e.getMessage());
+
         }
         String hashB64 = Base64.encodeToString(hash, Base64.NO_WRAP);
         if (!AppConfigSingleton.INSTANCE.getAuthenticVersionStamp().isEmpty() && !hashB64.equals(AppConfigSingleton.INSTANCE.getAuthenticVersionStamp())) {

@@ -81,7 +81,11 @@ class ChatViewModel : ViewModel() {
             text = messageText
         )
         chatClient.channel(channelId).sendMessage(message).enqueue { result ->
-            if (!result.isSuccess) {
+
+            if (result.isSuccess && isOtherUserOnline.value == false) {
+                val message: Message = result.data()
+                _state.postValue(ChatState.ReceivedMessageData(message))
+            } else if (!result.isSuccess) {
                 _state.postValue(ChatState.Error(result.error().message))
             }
         }
