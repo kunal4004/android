@@ -315,7 +315,7 @@ class MyStoreCardFragment @Inject constructor() :
 
     private fun setInArrearsPopup() {
         mDisplayInArrearsPopup = homeViewModel.initPopup(viewLifecycleOwner) { dialogData, eligibilityPlan ->
-            CoroutineScope(Dispatchers.Main).launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 mOutSystemBuilder = OutSystemBuilder(requireActivity(), ProductGroupCode.SC, eligibilityPlan = homeViewModel.eligibilityPlan)
                 navigateSafelyWithNavController(
                     MyStoreCardFragmentDirections.actionMyStoreCardFragmentToAccountLandingDialogFragment(

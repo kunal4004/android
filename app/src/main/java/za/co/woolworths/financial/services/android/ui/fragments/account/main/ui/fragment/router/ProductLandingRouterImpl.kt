@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.S
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ToastFactory
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountOptionsImpl
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.AccountOptionsManageCardFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_credit_limit_increase.CreditLimitIncreaseLanding
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.ManageMyCardDetailsFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.PayWithCardListFragmentDirections
@@ -55,7 +56,7 @@ interface IProductLandingRouter {
     fun routeToLinkNewCard(activity: Activity?): CallBack
     fun routeToManageMyCard(activity: Activity): CallBack
     fun routeToActivateVirtualTempCard(activity: Activity): CallBack?
-    fun routeToGetReplacementCard(activity: Activity?): CallBack
+    fun routeToGetReplacementCard(activity: Activity?): CallBack?
     fun routeToBlockCard(activity: Activity): CallBack
     fun routeToHowItWorks(
         activity: Activity?,
@@ -148,7 +149,7 @@ class ProductLandingRouterImpl @Inject constructor(
         return CallBack.IntentCallBack(navigateToTemporaryStoreCard(activity))
     }
 
-    private fun navigateToTemporaryStoreCard(activity: Activity): Intent {
+    fun navigateToTemporaryStoreCard(activity: Activity): Intent {
         val storeCardResponse =
             manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
         return when (manageCardImpl.isActivateVirtualTempCard()) {
@@ -163,7 +164,7 @@ class ProductLandingRouterImpl @Inject constructor(
     override fun routeToActivateVirtualTempCard(activity: Activity): CallBack? {
         var intent:Intent? = null
         KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
-            StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL = true
+            AccountOptionsManageCardFragment.ACTIVATE_VIRTUAL_CARD_DETAIL = true
         }, {
 
             intent = navigateToTemporaryStoreCard(activity)
@@ -171,24 +172,33 @@ class ProductLandingRouterImpl @Inject constructor(
         return CallBack.IntentCallBack(intent)
     }
 
-    override fun routeToGetReplacementCard(activity: Activity?): CallBack {
-        activity.apply {
-            val storeCardResponse =
-                manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
-            Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_GET_CARD,
-                this
-            )
-            Intent(this, SelectStoreActivity::class.java).apply {
-                putExtra(
-                    SelectStoreActivity.STORE_DETAILS,
-                    Gson().toJson(storeCardResponse)
-                )
-                return CallBack.IntentCallBack(this)
-            }
-        }
+    override fun routeToGetReplacementCard(activity: Activity?): CallBack? {
+        activity ?: return null
+
+        var selectStoreActivity: Intent? = null
+        KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
+            AccountOptionsManageCardFragment.GET_REPLACEMENT_CARD_DETAIL = true
+        }, {
+            val storeCardResponse = manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_GET_CARD, activity)
+            selectStoreActivity = Intent(activity, SelectStoreActivity::class.java)
+            selectStoreActivity?.putExtra(SelectStoreActivity.STORE_DETAILS, Gson().toJson(storeCardResponse)) })
+        return CallBack.IntentCallBack(selectStoreActivity)
     }
 
+    fun navigateToGetReplacementCard(
+        activity: Activity?) {
+        val storeCardResponse = manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_GET_CARD,
+            activity
+        )
+        val selectStoreActivity = Intent(activity, SelectStoreActivity::class.java)
+        selectStoreActivity.putExtra(SelectStoreActivity.STORE_DETAILS,
+            Gson().toJson(storeCardResponse)
+        )
+        activity?.startActivity(selectStoreActivity)
+    }
 
     override fun routeToBlockCard(activity: Activity): CallBack {
         val storeCardResponse = manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()

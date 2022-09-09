@@ -33,8 +33,16 @@ class ManageStoreCardMoreDetail(
             }
 
             is StoreCardFeatureType.StoreCardIsTemporaryFreeze -> {
-                setPrimaryCardLabel()
-                setSubTitleLabel()
+                when (storeCardFeatureType.isStoreCardFrozen){
+                    true -> {
+                        setFrozenPrimaryCardLabel()
+                        setSubTitleLabel()
+                    }
+                    false -> {
+                        setPrimaryCardLabel()
+                        setSubTitleLabel()
+                    }
+                }
             }
 
             is StoreCardFeatureType.TemporaryCardEnabled -> {
@@ -86,6 +94,10 @@ class ManageStoreCardMoreDetail(
 
     private fun setPrimaryCardLabel() {
         binding.headerTextView.text = mContext.getString(R.string.primary_card)
+    }
+
+    private fun setFrozenPrimaryCardLabel() {
+        binding.headerTextView.text = mContext.getString(R.string.frozen_primary_card)
     }
 
     private fun setStoreCardLabel() {

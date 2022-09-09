@@ -75,7 +75,7 @@
     </dialog>
     <fragment
         android:id="@+id/removeBlockOnCollectionFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.remove_dc_block.RemoveBlockOnCollectionFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.remove_dc_block.AccountInDelinquencyFragment"
         android:label="RemoveBlockOnCollectionFragment"
         tools:layout="@layout/remove_block_dc_main_fragment" >
         <action
