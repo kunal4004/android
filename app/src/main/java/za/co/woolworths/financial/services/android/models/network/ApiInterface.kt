@@ -696,8 +696,8 @@ interface ApiInterface {
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
-            @Path("commerceId") commerceId: String,
-            @Body quantity: ChangeQuantity): Call<ShoppingCartResponse>
+            @Path("commerceId") commerceId: String?,
+            @Body quantity: ChangeQuantity?): Call<ShoppingCartResponse>
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
