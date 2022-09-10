@@ -29,7 +29,6 @@ import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
-
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.perfectcorp.perfectlib.SkuHandler;
 
@@ -73,13 +72,12 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static String creditCardType;
     private boolean isOther = false;
     private static int productOfferingId;
-    private String token;
     private boolean shouldDisplayServerMessage = true;
     public UpdateBankDetail updateBankDetail;
 
     private RxBus bus;
     private static boolean isApplicationInForeground = false;
-
+    private String token;
     private Activity mCurrentActivity = null;
 
     private static ValidatePlace validatePlace;
@@ -166,7 +164,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
         getTracker();
         bus = new RxBus();
         vtoSyncServer();
-
         initChatFCMToken();
     }
 
@@ -178,8 +175,8 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private void initChatFCMToken() {
         FirebaseOptions firebaseChatOptions = new FirebaseOptions.Builder()
                 .setProjectId("onecart-chat")
-                .setApplicationId("1:513058672751:android:1efcba06f24e24bb1b7d9a")
-                .setApiKey("AIzaSyC0tpAjZzAJNoI3IIx_oJe7bb6sIm0P6Wg")
+                .setApplicationId("1:513058672751:android:4f21181161790c6b1b7d9a")
+                .setApiKey("AIzaSyC6syO9-lBDn7dBCguRqRXJcqOG2WAUfIU")
                 .build();
 
         FirebaseApp chatApp = FirebaseApp.initializeApp(this, firebaseChatOptions, "CHAT_APP");
@@ -196,7 +193,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
     public String getChatFCMToken() {
         return token;
     }
-
 
     //#region ShowServerMessage
     public void showServerMessageOrProceed(Activity activity) {

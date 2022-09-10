@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.onecartgetstream.chat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.subscribeFor
 import io.getstream.chat.android.client.events.*
@@ -10,9 +11,18 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.observable.Disposable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.onecartgetstream.common.ChatState
+import za.co.woolworths.financial.services.android.onecartgetstream.repository.OCToastNotification
+import javax.inject.Inject
 
-class ChatViewModel : ViewModel() {
+@HiltViewModel
+class ChatViewModel  @Inject constructor(
+    private val ocToastNotification: OCToastNotification
+) : ViewModel() {
 
     private val chatClient: ChatClient by lazy { ChatClient.instance() }
     private val currentUser: User? by lazy { chatClient.getCurrentUser() }
@@ -126,6 +136,19 @@ class ChatViewModel : ViewModel() {
         this.newMessageEventDisposable = channelClient.subscribeFor<NewMessageEvent> { event ->
             val message = event.message
             _state.postValue(ChatState.ReceivedMessageData(message))
+            //TODO: need to remove ... add for toast testing
+            GlobalScope.launch(Dispatchers.Main) {
+                val woolworthsApplication = WoolworthsApplication.getInstance()
+                woolworthsApplication?.currentActivity?.let {
+                    it.window?.decorView?.rootView?.apply {
+
+                        ocToastNotification.showOCToastNotification(woolworthsApplication.currentActivity,"1",250,"677656")
+
+                    }
+                }
+            }
+
+
         }
     }
 
@@ -151,10 +174,11 @@ class ChatViewModel : ViewModel() {
 
 
     fun disconnect() {
-        userWatchingEventsDisposable.dispose()
-        newMessageEventDisposable.dispose()
-        userTypingEvent.dispose()
-        chatClient.disconnect()
+        //TODO: need to undo ....
+      //  userWatchingEventsDisposable.dispose()
+      //  newMessageEventDisposable.dispose()
+       // userTypingEvent.dispose()
+      //  chatClient.disconnect()
     }
 
     fun isConnected(): Boolean {

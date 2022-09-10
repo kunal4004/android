@@ -80,25 +80,25 @@ private val ocAuthRepository: OCAuthRepository
         }
 
         ChatClient.instance().connectUser(chatUser, token)
-            .enqueue { result ->
-                if (result.isSuccess) {
-                    _state.postValue(State.RedirectToChannels)
-                    ChatClient.instance().getDevices().enqueue {
-                        if (it.isSuccess) {
-                            val devices = it.data()
-                            for (device in devices) {
-                                ChatClient.instance().deleteDevice(device).enqueue()
-                            }
+                .enqueue { result ->
+                    if (result.isSuccess) {
+                        ChatClient.instance().getDevices().enqueue {
+                            if (it.isSuccess) {
+                                val devices = it.data()
+                                for (device in devices) {
+                                    ChatClient.instance().deleteDevice(device).enqueue()
+                                }
 
-                            ChatClient.instance()
-                                .addDevice(Device(WoolworthsApplication.getInstance().chatFCMToken,
-                                    PushProvider.FIREBASE)).enqueue()
+                                ChatClient.instance()
+                                    .addDevice(Device(WoolworthsApplication.getInstance().chatFCMToken,
+                                        PushProvider.FIREBASE)).enqueue()
+                            }
                         }
+                        _state.postValue(State.RedirectToChannels)
+                    } else {
+                        _state.postValue(State.Error(result.error().message))
                     }
-                } else {
-                    _state.postValue(State.Error(result.error().message))
                 }
-            }
     }
 
     fun isConnectedToInternet(context: Context) =
