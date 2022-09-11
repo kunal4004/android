@@ -380,6 +380,8 @@ dependencies {
 
     // get stream chat Client + offline
     implementation "io.getstream:stream-chat-android-offline:$stream_version"
+    implementation "io.getstream:stream-chat-android-pushprovider-firebase:$stream_version"
+    implementation "io.getstream:stream-chat-android-pushprovider-huawei:$stream_version"
 }
 
 apply plugin: 'com.google.gms.google-services'

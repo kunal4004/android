@@ -77,7 +77,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     private RxBus bus;
     private static boolean isApplicationInForeground = false;
-    private String token;
+    private String pushNotificationTokenOneCartChat;
     private Activity mCurrentActivity = null;
 
     private static ValidatePlace validatePlace;
@@ -164,7 +164,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
         getTracker();
         bus = new RxBus();
         vtoSyncServer();
-        initChatFCMToken();
+        initOneCartChatFirebaseService();
     }
 
     private void initializeAnalytics() {
@@ -172,7 +172,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
         HuaweiManager.Companion.getInstance();
     }
 
-    private void initChatFCMToken() {
+    private void initOneCartChatFirebaseService() {
         FirebaseOptions firebaseChatOptions = new FirebaseOptions.Builder()
                 .setProjectId("onecart-chat")
                 .setApplicationId("1:513058672751:android:4f21181161790c6b1b7d9a")
@@ -183,15 +183,16 @@ public class WoolworthsApplication extends Application implements Application.Ac
         FirebaseMessaging fbMessaging = chatApp.get(FirebaseMessaging.class);
         fbMessaging.getToken().addOnCompleteListener(it -> {
             if (it.isSuccessful()) {
-                token = it.getResult();
+                pushNotificationTokenOneCartChat = it.getResult();
             } else {
-                token = "";
+                pushNotificationTokenOneCartChat = "";
             }
         });
     }
 
-    public String getChatFCMToken() {
-        return token;
+    public String getOneCartChatFirebaseToken() {
+        // TODO: do not store the value in this class. Cache it to a local database instead, else it is prone to getting removed from memory by Garbage Collector. See Utils.setToken(String value) for reference, make sure the naming convention is correct (this specific token is for onecart, not our firebase).
+        return pushNotificationTokenOneCartChat;
     }
 
     //#region ShowServerMessage
