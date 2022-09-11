@@ -195,7 +195,7 @@ class ViewTreatmentPlanImpl (
        return when (isAccountChargedOff()) {
             true -> when (isCreditCardProduct && isViewVipOrElitePlanSupported) {
                 true -> when(isCollectionTypeViewPlan){
-                    true ->  AccountInDelinquency.AccountInRecovery( desc = descId, formattedValue = paymentDueDate)
+                    true ->  AccountInDelinquency.InRecovery( desc = descId, formattedValue = paymentDueDate)
                     false -> AccountInDelinquency.TakePlan()
                 }
                 false -> AccountInDelinquency.ChargedOff()
@@ -203,7 +203,7 @@ class ViewTreatmentPlanImpl (
 
             false -> when (isViewVipOrElitePlanSupported) {
                     true -> when(isCollectionTypeViewPlan){
-                        true -> AccountInArrears.AccountInRecovery(desc = descId, formattedValue = paymentDueDate)
+                        true -> AccountInArrears.InRecovery(desc = descId, formattedValue = paymentDueDate)
                         false -> AccountInArrears.TakePlan(formattedValue = amountOverdue)
                     }
                     false -> AccountInArrears.InArrears(formattedValue = amountOverdue)
