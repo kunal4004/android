@@ -128,13 +128,30 @@ class AccountOptionsListFragment : Fragment(R.layout.account_options_list_fragme
         }
     }
 
-    private fun AccountOptionsListFragmentBinding.showViewYourPaymentPlan(isVisible: Boolean) {
-        viewTreatmentPlanLinearLayout.visibility = if (isVisible) VISIBLE else GONE
-    }
+    private fun AccountOptionsListFragmentBinding.showViewYourPaymentPlan(isVisible: Boolean) =
+        when (isVisible) {
+            true -> {
+                viewTreatmentPlanLinearLayout.visibility = VISIBLE
+                viewTreatmentPlanDivider.visibility = VISIBLE
+            }
+            false -> {
+                viewTreatmentPlanLinearLayout.visibility = GONE
+                viewTreatmentPlanDivider.visibility = GONE
+            }
+        }
 
-    private fun AccountOptionsListFragmentBinding.showSetupPaymentPlan(isVisible: Boolean) {
-        setupTreatmentPlanView.visibility = if (isVisible) VISIBLE else GONE
-    }
+
+    private fun AccountOptionsListFragmentBinding.showSetupPaymentPlan(isVisible: Boolean) =
+        when (isVisible) {
+            true -> {
+                setupTreatmentPlanView.visibility = VISIBLE
+                viewTreatmentPlanDivider.visibility = VISIBLE
+            }
+            false -> {
+                setupTreatmentPlanView.visibility = GONE
+                viewTreatmentPlanDivider.visibility = GONE
+            }
+        }
 
     private fun AccountOptionsListFragmentBinding.setListeners() {
 
@@ -157,6 +174,10 @@ class AccountOptionsListFragment : Fragment(R.layout.account_options_list_fragme
                 })
             }
         }
+
+        setupTreatmentPlanView.onClick { landingRouter.routeToSetupPaymentPlan(activity, viewModel) }
+
+        viewTreatmentPlanLinearLayout.onClick { landingRouter.routeToViewTreatmentPlan(activity, viewModel) }
     }
 
     private val activityLauncher = BetterActivityResult.registerActivityForResult(this)

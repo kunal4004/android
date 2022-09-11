@@ -8,6 +8,8 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
@@ -15,7 +17,9 @@ import za.co.woolworths.financial.services.android.models.dto.npc.Transition
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.VirtualCardStaffMemberMessage
 import za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity
+import za.co.woolworths.financial.services.android.ui.activities.GetAPaymentPlanActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.OutSystemBuilder
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
@@ -25,6 +29,7 @@ import za.co.woolworths.financial.services.android.ui.activities.store_card.Requ
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.HowToUseTemporaryStoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.StoreCardOptionsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ToastFactory
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountOptionsImpl
@@ -34,7 +39,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.ManageCardFunctionalRequirementImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.showErrorDialog
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeFragmentDirections
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -74,6 +81,8 @@ interface IProductLandingRouter {
     fun routeToDefaultErrorMessageDialog(activity: Activity?)
     fun showNoConnectionToast(activity: Activity?)
     fun routeToAccountOptionsProductLanding(findNavController: NavController?)
+    fun routeToSetupPaymentPlan(activity: Activity?, viewModel: AccountProductsHomeViewModel?)
+    fun routeToViewTreatmentPlan(activity: Activity?, viewModel: AccountProductsHomeViewModel?)
 }
 
 sealed class CallBack{
@@ -166,7 +175,13 @@ class ProductLandingRouterImpl @Inject constructor(
             StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL = true
         }, {
 
-            intent = navigateToTemporaryStoreCard(activity)
+            val storeCardResponse =
+                manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
+            intent=  navigateToGetTemporaryStoreCardPopupActivity(
+                activity,
+                storeCardResponse = storeCardResponse
+            )
+
         })
         return CallBack.IntentCallBack(intent)
     }
@@ -322,6 +337,25 @@ class ProductLandingRouterImpl @Inject constructor(
 
     override fun routeToAccountOptionsProductLanding(findNavController: NavController?) {
         findNavController?.navigate(ManageMyCardDetailsFragmentDirections.actionManageMyCardDetailsFragmentToAccountProductsHomeFragment())
+    }
+
+    override fun routeToSetupPaymentPlan(activity : Activity?, viewModel: AccountProductsHomeViewModel?) {
+        activity ?: return
+        viewModel ?: return
+        val intent = Intent(activity, GetAPaymentPlanActivity::class.java)
+        intent.putExtra(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN, viewModel.eligibilityPlan)
+        activity.startActivityForResult(intent, AccountsOptionFragment.REQUEST_GET_PAYMENT_PLAN)
+        activity.overridePendingTransition(R.anim.slide_from_right, R.anim.stay)
+    }
+
+    override fun routeToViewTreatmentPlan(
+        activity: Activity?,
+        viewModel: AccountProductsHomeViewModel?
+    ) {
+        activity ?: return
+        viewModel ?: return
+            val outSystemBuilder = OutSystemBuilder(activity,ProductGroupCode.SC, viewModel.eligibilityPlan)
+            outSystemBuilder.build()
     }
 
     companion object {

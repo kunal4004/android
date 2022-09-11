@@ -43,7 +43,11 @@ class AccountProductsHomeFragment : Fragment(R.layout.account_products_home_frag
                 )
             )
         )
+
+        homeViewModel.bottomSheetBehaviorState = BottomSheetBehavior.STATE_COLLAPSED
+
         setupBottomSheet(binding)
+
     }
 
     private fun setupBottomSheet(binding: AccountProductsHomeFragmentBinding) {

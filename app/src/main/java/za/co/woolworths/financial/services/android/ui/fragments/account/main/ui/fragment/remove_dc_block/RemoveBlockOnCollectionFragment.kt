@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.remove_dc_block
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -10,11 +11,9 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.RemoveBlockDcMainFragmentBinding
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
@@ -36,6 +35,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.availablefunds.AvailableFundsViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.dialog.AccountLandingDialogFragment.Companion.requestKeyAccountLandingDialog
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.loadingState
 import za.co.woolworths.financial.services.android.util.*
 import java.net.ConnectException
@@ -45,6 +45,9 @@ import javax.inject.Inject
 class RemoveBlockOnCollectionFragment : Fragment(R.layout.remove_block_dc_main_fragment) {
 
     val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
+
+    @Inject
+    lateinit var router: ProductLandingRouterImpl
 
     @Inject
     lateinit var statusBarCompat: SystemBarCompat
@@ -73,8 +76,8 @@ class RemoveBlockOnCollectionFragment : Fragment(R.layout.remove_block_dc_main_f
     }
 
     private fun setInArrearsPopup(binding: RemoveBlockDcMainFragmentBinding) {
-        mDisplayInArrearsPopup = homeViewModel.initPopup(viewLifecycleOwner) { dialogData, eligibilityPlan ->
-            CoroutineScope(Dispatchers.Main).launch {
+        mDisplayInArrearsPopup = homeViewModel.initPopup(viewLifecycleOwner, router = router) { dialogData, eligibilityPlan ->
+           viewLifecycleOwner.lifecycleScope.launch {
                 mOutSystemBuilder = OutSystemBuilder(requireActivity(), ProductGroupCode.SC, eligibilityPlan = homeViewModel.eligibilityPlan)
                 navigateSafelyWithNavController(
                         RemoveBlockOnCollectionFragmentDirections.actionRemoveBlockOnCollectionFragmentToAccountLandingDialogFragment(
@@ -83,6 +86,7 @@ class RemoveBlockOnCollectionFragment : Fragment(R.layout.remove_block_dc_main_f
                             eligibilityPlan
                         )
                     )
+                    delay(AppConstant.DELAY_200_MS)
                     binding.setHelpWithPaymentViewLabel(eligibilityPlan)
                     binding.setHelpWithPaymentViewVisibility(eligibilityPlan)
                 }
@@ -197,12 +201,15 @@ class RemoveBlockOnCollectionFragment : Fragment(R.layout.remove_block_dc_main_f
         pmaButton.onTap(
             FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC
         ) { navigateFrom ->
-            navigateSafelyWithNavController(
-                when (navigateFrom) {
-                    PayMyAccountScreen.RetryOnErrorScreen -> RemoveBlockOnCollectionFragmentDirections.actionRemoveBlockOnCollectionFragmentToPayMyAccountRetryErrorFragment()
-                    PayMyAccountScreen.OpenAccountOptionsOrEnterPaymentAmountDialog -> RemoveBlockOnCollectionFragmentDirections.actionRemoveBlockOnCollectionFragmentToToCardDetailFragmentDialog()
-                }
-            )
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(AppConstant.DELAY_200_MS)
+                navigateSafely(
+                    when (navigateFrom) {
+                        PayMyAccountScreen.RetryOnErrorScreen -> RemoveBlockOnCollectionFragmentDirections.actionRemoveBlockOnCollectionFragmentToPayMyAccountRetryErrorFragment()
+                        PayMyAccountScreen.OpenAccountOptionsOrEnterPaymentAmountDialog -> RemoveBlockOnCollectionFragmentDirections.actionRemoveBlockOnCollectionFragmentToToCardDetailFragmentDialog()
+                    }
+                )
+            }
         }
     }
 
