@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.remove_dc_block
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -11,7 +10,6 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.RemoveBlockDcMainFragmentBinding
-import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -42,7 +40,7 @@ import java.net.ConnectException
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class RemoveBlockOnCollectionFragment : Fragment(R.layout.remove_block_dc_main_fragment) {
+class AccountInDelinquencyFragment : Fragment(R.layout.remove_block_dc_main_fragment) {
 
     val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
@@ -80,7 +78,7 @@ class RemoveBlockOnCollectionFragment : Fragment(R.layout.remove_block_dc_main_f
            viewLifecycleOwner.lifecycleScope.launch {
                 mOutSystemBuilder = OutSystemBuilder(requireActivity(), ProductGroupCode.SC, eligibilityPlan = homeViewModel.eligibilityPlan)
                 navigateSafelyWithNavController(
-                        RemoveBlockOnCollectionFragmentDirections.actionRemoveBlockOnCollectionFragmentToAccountLandingDialogFragment(
+                        AccountInDelinquencyFragmentDirections.actionRemoveBlockOnCollectionFragmentToAccountLandingDialogFragment(
                             homeViewModel.product,
                             dialogData,
                             eligibilityPlan
@@ -137,7 +135,7 @@ class RemoveBlockOnCollectionFragment : Fragment(R.layout.remove_block_dc_main_f
 
     private fun navigateToInformation() {
         navigateSafely(
-            RemoveBlockOnCollectionFragmentDirections.actionRemoveBlockOnCollectionFragmentToAccountInfoFragment(
+            AccountInDelinquencyFragmentDirections.actionRemoveBlockOnCollectionFragmentToAccountInfoFragment(
                 InformationData.Arrears()
             )
         )
@@ -205,13 +203,13 @@ class RemoveBlockOnCollectionFragment : Fragment(R.layout.remove_block_dc_main_f
                 delay(AppConstant.DELAY_200_MS)
                 navigateSafely(
                     when (navigateFrom) {
-                        PayMyAccountScreen.RetryOnErrorScreen -> RemoveBlockOnCollectionFragmentDirections.actionRemoveBlockOnCollectionFragmentToPayMyAccountRetryErrorFragment()
-                        PayMyAccountScreen.OpenAccountOptionsOrEnterPaymentAmountDialog -> RemoveBlockOnCollectionFragmentDirections.actionRemoveBlockOnCollectionFragmentToToCardDetailFragmentDialog()
+                        PayMyAccountScreen.RetryOnErrorScreen -> AccountInDelinquencyFragmentDirections.actionRemoveBlockOnCollectionFragmentToPayMyAccountRetryErrorFragment()
+                        PayMyAccountScreen.OpenAccountOptionsOrEnterPaymentAmountDialog -> AccountInDelinquencyFragmentDirections.actionRemoveBlockOnCollectionFragmentToToCardDetailFragmentDialog()
                     }
                 )
             }
         }
-    }
+  }
 
     private fun RemoveBlockDcMainFragmentBinding.queryPaymentMethod() {
         when (!payMyAccountViewModel.isQueryPayUPaymentMethodComplete) {
@@ -300,7 +298,7 @@ class RemoveBlockOnCollectionFragment : Fragment(R.layout.remove_block_dc_main_f
     private fun RemoveBlockDcMainFragmentBinding.autoConnectPMA() {
         ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(
             requireActivity(),
-            this@RemoveBlockOnCollectionFragment,
+            this@AccountInDelinquencyFragment,
             object : ConnectionBroadcastReceiver() {
                 override fun onConnectionChanged(hasConnection: Boolean) {
                     when (hasConnection || !payMyAccountViewModel.isQueryPayUPaymentMethodComplete) {

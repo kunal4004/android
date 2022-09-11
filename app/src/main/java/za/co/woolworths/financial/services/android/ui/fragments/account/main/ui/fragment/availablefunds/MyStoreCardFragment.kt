@@ -18,6 +18,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.onecartgetstream.common.navigateSafely
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.toolbar.AccountProductsToolbarHelper
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.OutSystemBuilder
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
@@ -50,6 +51,7 @@ class MyStoreCardFragment @Inject constructor() :
     val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
     @Inject lateinit var router : ProductLandingRouterImpl
+    var mToolbarHelper : AccountProductsToolbarHelper? =   null
 
     @Inject
     lateinit var pmaButton: PayMyAccountButtonTap
@@ -59,6 +61,11 @@ class MyStoreCardFragment @Inject constructor() :
 
     @Inject
     lateinit var statusBarCompat: SystemBarCompat
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        mToolbarHelper =  (activity as? StoreCardActivity)?.getToolbarHelper()
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -80,7 +87,6 @@ class MyStoreCardFragment @Inject constructor() :
             setupInArrearsPopup()
         }
 
-
     }
 
     private fun showProgress(isLoading: Boolean) {
@@ -89,17 +95,15 @@ class MyStoreCardFragment @Inject constructor() :
     }
 
     private fun setupToolbar() {
-        (activity as? StoreCardActivity)?.apply {
-            getToolbarHelper()?.apply {
-                setHomeLandingToolbar(homeViewModel) { view ->
-                    when (view.id) {
-                        R.id.infoIconImageView -> navigateToInformation()
-                        R.id.navigateBackImageButton -> activity?.finish()
-                    }
+        viewLifecycleOwner.lifecycleScope.launch {
+            mToolbarHelper?.setHomeLandingToolbar(homeViewModel) { view ->
+                when (view.id) {
+                    R.id.infoIconImageView -> navigateToInformation()
+                    R.id.navigateBackImageButton -> activity?.finish()
                 }
-                setOnAccountInArrearsTapListener { mDisplayInArrearsPopup.setupInArrearsPopup() }
             }
         }
+        mToolbarHelper?.setOnAccountInArrearsTapListener { mDisplayInArrearsPopup.setupInArrearsPopup() }
     }
 
     private fun clickListeners() {
@@ -260,7 +264,7 @@ class MyStoreCardFragment @Inject constructor() :
                         }
                     })
             }
-            false -> return
+            false -> showProgress(false)
         }
     }
 

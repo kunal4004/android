@@ -38,6 +38,10 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
 
     companion object {
         val AccountOptionsLandingKey: String by lazy { AccountOptionsManageCardFragment::class.java.simpleName }
+        var SHOW_GET_REPLACEMENT_CARD_SCREEN = false
+        var GET_REPLACEMENT_CARD_DETAIL = false
+        var SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = false
+        var ACTIVATE_VIRTUAL_CARD_DETAIL = false
     }
 
     @Inject
@@ -97,8 +101,8 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
     }
 
     private fun AccountOptionsManageCardFragmentBinding.setOnClickListener() {
-        mOnItemClickListener = ManageCardItemListener(requireActivity(), router, includeListOptions).apply {
-                onClickIntentObserver.observe(viewLifecycleOwner) {
+        mOnItemClickListener = ManageCardItemListener(requireActivity(), router, includeListOptions)
+        mOnItemClickListener.onClickIntentObserver.observe(viewLifecycleOwner) {
                     when (it) {
                         is CallBack.IntentCallBack -> {
                             it.intent?.let { intent ->
@@ -108,7 +112,7 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
                         else -> Unit
                     }
                 }
-            }
+
 
 
         manageCardText.onClick {
@@ -241,4 +245,21 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
             else -> cardFreezeViewModel.stopLoading()
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (SHOW_GET_REPLACEMENT_CARD_SCREEN) {
+            SHOW_GET_REPLACEMENT_CARD_SCREEN = false
+            viewLifecycleOwner.lifecycleScope.launch {
+                router.navigateToGetReplacementCard(requireActivity())
+            }
+        } else if (SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN) {
+            SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = false
+            viewLifecycleOwner.lifecycleScope.launch {
+                router.navigateToTemporaryStoreCard(requireActivity())
+            }
+        }
+    }
+
 }

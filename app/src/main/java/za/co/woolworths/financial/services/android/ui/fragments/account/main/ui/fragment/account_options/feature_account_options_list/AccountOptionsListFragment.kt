@@ -167,12 +167,7 @@ class AccountOptionsListFragment : Fragment(R.layout.account_options_list_fragme
         payMyAccountRelativeLayout.onClick {
             pmaButton.payMyAccountViewModel = payMyAccountViewModel
             pmaButton.isShimmerEnabled = false
-            pmaButton.onTap(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC){ screen ->
-                navigateSafelyWithNavController(when(screen){
-                    PayMyAccountScreen.OpenAccountOptionsOrEnterPaymentAmountDialog ->AccountOptionsListFragmentDirections.actionAccountOptionsListFragmentToToCardDetailFragmentDialog()
-                    PayMyAccountScreen.RetryOnErrorScreen ->  AccountOptionsListFragmentDirections.actionAccountOptionsListFragmentToPayMyAccountRetryErrorFragment()
-                })
-            }
+            pmaButton.navigateToPayMyAccountActivity()
         }
 
         setupTreatmentPlanView.onClick { landingRouter.routeToSetupPaymentPlan(activity, viewModel) }
