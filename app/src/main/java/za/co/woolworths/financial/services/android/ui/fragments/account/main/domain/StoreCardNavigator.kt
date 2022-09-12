@@ -5,6 +5,7 @@ import android.content.Intent
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -29,6 +30,9 @@ class StoreCardNavigator @Inject constructor() : IStoreCardNavigator {
     override fun navigateToStatementActivity(activity: Activity?, product: Account?, applyNowState:ApplyNowState) {
         statementsEvent(activity,applyNowState)
         activity?.apply {
+            //TODO:: getStatement using offerid from WoolworthsApplication class, so we follow same approach to avoid impact of changing.
+            // to be changed when we refactor statements activity and fragment
+            product?.let { WoolworthsApplication.getInstance().setProductOfferingId(it.productOfferingId) }
             val mAccountPair: Pair<ApplyNowState, Account?> = Pair(applyNowState,product)
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDSTATEMENTS, this)
             val openStatement = Intent(this, StatementActivity::class.java)

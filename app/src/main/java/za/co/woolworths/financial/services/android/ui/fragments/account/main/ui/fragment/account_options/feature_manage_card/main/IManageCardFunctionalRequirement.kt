@@ -10,7 +10,6 @@ interface IManageCardFunctionalRequirement {
     fun getStoreCardsResponse(): StoreCardsResponse?
     fun isPrimaryCardAvailable(): Boolean
     fun getPrimaryCards(): MutableList<StoreCard>?
-    fun getStoreCardData(): StoreCardsData?
     fun splitStoreCardByCardType(
         primaryCardIndex: Int,
         storeCard: StoreCard?
@@ -34,7 +33,6 @@ interface IManageCardFunctionalRequirement {
     fun isMultipleStoreCardEnabled(): Boolean
     fun isStaffMemberAndHasTemporaryCard(): Boolean
     fun getVirtualCardStaffMemberMessage(): VirtualCardStaffMemberMessage?
-    fun refreshStoreCardsData()
     fun isOneTimePinUnblockStoreCardEnabled(): Boolean
     fun getCardHolderNameSurname(): String?
     fun getVirtualTempCardNumber(): String
