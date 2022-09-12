@@ -8,8 +8,6 @@ import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentAvailableFundBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -18,11 +16,11 @@ import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
 import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.onecartgetstream.common.navigateSafely
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.toolbar.AccountProductsToolbarHelper
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.OutSystemBuilder
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
-import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.WBottomSheetBehaviour
@@ -35,6 +33,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.dialog.AccountLandingDialogFragment.Companion.requestKeyAccountLandingDialog
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.loadingState
 import za.co.woolworths.financial.services.android.util.*
 import java.net.ConnectException
@@ -51,6 +50,7 @@ class MyStoreCardFragment @Inject constructor() :
     val homeViewModel: AccountProductsHomeViewModel by activityViewModels()
     val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
+    @Inject lateinit var router : ProductLandingRouterImpl
     var mToolbarHelper : AccountProductsToolbarHelper? =   null
 
     @Inject
@@ -62,11 +62,9 @@ class MyStoreCardFragment @Inject constructor() :
     @Inject
     lateinit var statusBarCompat: SystemBarCompat
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mToolbarHelper =  (activity as? StoreCardActivity)?.getToolbarHelper()
-        setFragmentResultListener()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -82,11 +80,13 @@ class MyStoreCardFragment @Inject constructor() :
         setInArrearsPopup()
         clickListeners()
         autoConnectPMA()
+        setFragmentResultListener()
         navigateToDeepLinkView()
         with(mDisplayInArrearsPopup) {
             collectCheckEligibilityResult()
             setupInArrearsPopup()
         }
+
     }
 
     private fun showProgress(isLoading: Boolean) {
@@ -103,6 +103,7 @@ class MyStoreCardFragment @Inject constructor() :
                 }
             }
         }
+        mToolbarHelper?.setOnAccountInArrearsTapListener { mDisplayInArrearsPopup.setupInArrearsPopup() }
     }
 
     private fun clickListeners() {
@@ -197,7 +198,7 @@ class MyStoreCardFragment @Inject constructor() :
         pmaButton.onTap(
             FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC
         ) { navigateFrom ->
-            navigateSafelyWithNavController(
+            navigateSafely(
                 when (navigateFrom) {
                     PayMyAccountScreen.RetryOnErrorScreen -> MyStoreCardFragmentDirections.actionMyStoreCardFragmentToPayMyAccountRetryErrorFragment()
                     PayMyAccountScreen.OpenAccountOptionsOrEnterPaymentAmountDialog -> MyStoreCardFragmentDirections.actionMyStoreCardFragmentToToCardDetailFragmentDialog()
@@ -302,7 +303,7 @@ class MyStoreCardFragment @Inject constructor() :
         }
     }
 
-    fun autoConnectPMA() {
+    private fun autoConnectPMA() {
             ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(
                 requireActivity(),
                 this,
@@ -319,10 +320,10 @@ class MyStoreCardFragment @Inject constructor() :
     }
 
     private fun setInArrearsPopup() {
-        mDisplayInArrearsPopup = homeViewModel.initPopup(viewLifecycleOwner) { dialogData, eligibilityPlan ->
-            viewLifecycleOwner.lifecycleScope.launch {
+        mDisplayInArrearsPopup = homeViewModel.initPopup(viewLifecycleOwner, router = router) { dialogData, eligibilityPlan ->
+           viewLifecycleOwner.lifecycleScope.launch {
                 mOutSystemBuilder = OutSystemBuilder(requireActivity(), ProductGroupCode.SC, eligibilityPlan = homeViewModel.eligibilityPlan)
-                navigateSafelyWithNavController(
+                navigateSafely(
                     MyStoreCardFragmentDirections.actionMyStoreCardFragmentToAccountLandingDialogFragment(
                         homeViewModel.product,
                         dialogData,
@@ -334,13 +335,29 @@ class MyStoreCardFragment @Inject constructor() :
     }
 
     private fun setFragmentResultListener() {
-        setFragmentResultListener(requestKeyAccountLandingDialog) { _, bundle ->
-            when(bundle.getInt(requestKeyAccountLandingDialog, 0)){
-                R.string.view_payment_plan_button_label -> mOutSystemBuilder.build()
-                R.string.make_payment_now_button_label -> onPayMyAccountButtonTap()
-                R.string.cannot_afford_payment_button_label -> mDisplayInArrearsPopup.onTap(requireActivity())
-                R.string.chat_to_us_label ->  navigateToChatToUs()
+        viewLifecycleOwner.lifecycleScope.launch {
+            setFragmentResultListener(requestKeyAccountLandingDialog) { _, bundle ->
+                when (bundle.getInt(requestKeyAccountLandingDialog, 0)) {
+                    R.string.view_payment_plan_button_label -> mOutSystemBuilder.build()
+                    R.string.make_payment_now_button_label -> autoTapPayMyAccountButton()
+                    R.string.cannot_afford_payment_button_label -> mDisplayInArrearsPopup.onTap(
+                        requireActivity()
+                    )
+                    R.string.chat_to_us_label -> navigateToChatToUs()
+                }
             }
+        }
+    }
+
+    /**
+     *   Delay added to give android enough time to process the dismissal of inArrears popup.
+         Then proceed with pma journey routine. Otherwise, pma journey will not launch.
+      */
+
+    private fun autoTapPayMyAccountButton() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            delay(AppConstant.DELAY_200_MS)
+            onPayMyAccountButtonTap()
         }
     }
 

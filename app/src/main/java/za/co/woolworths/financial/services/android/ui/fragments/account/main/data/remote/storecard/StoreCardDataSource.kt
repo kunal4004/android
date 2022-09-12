@@ -36,7 +36,7 @@ interface IStoreCardDataSource {
 
 class StoreCardDataSource @Inject constructor(
     private val wfsApiService: WfsApiService,
-    private val landingDao: AccountProductLandingDao,
+    internal val landingDao: AccountProductLandingDao,
     private val manageCard: ManageCardFunctionalRequirementImpl,
 ) : CoreDataSource(), IStoreCardDataSource, IAccountProductLandingDao by landingDao,
     WfsApiService by wfsApiService, IManageCardFunctionalRequirement by manageCard {

@@ -70,7 +70,7 @@ class ViewTreatmentPlanImpl (
 
     @SuppressLint("VisibleForTests")
     override fun getTitleAndDescription(): Pair<Int, String?> {
-        val amountOverdue = getAmountOverdue()
+        val amountOverdue = "R ${getAmountOverdue()}"
         return when (isAccountChargedOff()) {
             true -> {
                 when (isCreditCardProduct() && (productOfferingStatus.isViewTreatmentPlanSupported()
@@ -188,10 +188,14 @@ class ViewTreatmentPlanImpl (
 
         val descId = getPlanDescription(applyNowState)
 
+        var paymentDueDate = account?.paymentDueDate
+        if (!paymentDueDate.isNullOrEmpty())
+            paymentDueDate = DateFormatter.formatDateTOddMMMYYYY(paymentDueDate, toPattern = "dd MMMM yyyy")
+
        return when (isAccountChargedOff()) {
             true -> when (isCreditCardProduct && isViewVipOrElitePlanSupported) {
                 true -> when(isCollectionTypeViewPlan){
-                    true ->  AccountInDelinquency.AccountInRecovery( desc = descId, formattedValue = account?.paymentDueDate)
+                    true ->  AccountInDelinquency.InRecovery( desc = descId, formattedValue = paymentDueDate)
                     false -> AccountInDelinquency.TakePlan()
                 }
                 false -> AccountInDelinquency.ChargedOff()
@@ -199,7 +203,7 @@ class ViewTreatmentPlanImpl (
 
             false -> when (isViewVipOrElitePlanSupported) {
                     true -> when(isCollectionTypeViewPlan){
-                        true -> AccountInArrears.AccountInRecovery(desc = descId, formattedValue = account?.paymentDueDate)
+                        true -> AccountInArrears.InRecovery(desc = descId, formattedValue = paymentDueDate)
                         false -> AccountInArrears.TakePlan(formattedValue = amountOverdue)
                     }
                     false -> AccountInArrears.InArrears(formattedValue = amountOverdue)

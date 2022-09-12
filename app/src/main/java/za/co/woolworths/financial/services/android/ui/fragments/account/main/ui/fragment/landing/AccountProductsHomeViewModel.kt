@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing
 
+
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -25,6 +26,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dom
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.StoreCardNavigator
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.DialogData
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.overlay.DisplayInArrearsPopup
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanImpl
 import javax.inject.Inject
 
@@ -92,7 +94,7 @@ class AccountProductsHomeViewModel @Inject constructor(
         viewModelScope.launch {
             eligibilityPlan?.let { plan ->
                 if (!plan.actionText.isNullOrEmpty() && !plan.displayText.isNullOrEmpty()) {
-                    _viewState.tryEmit(collectionTreatmentPlanItem(plan))
+                    _viewState.emit(collectionTreatmentPlanItem(plan))
                 }
             }
         }
@@ -113,8 +115,8 @@ class AccountProductsHomeViewModel @Inject constructor(
         }
     }
 
-    fun initPopup(viewLifecycleOwner : LifecycleOwner, navigationTo: (DialogData?, EligibilityPlan?) -> Unit): DisplayInArrearsPopup {
-        return DisplayInArrearsPopup(viewLifecycleOwner, treatmentPlanImpl = treatmentPlan, homeViewModel = this){ item, eligibilityPlan ->
+    fun initPopup(viewLifecycleOwner : LifecycleOwner,router : ProductLandingRouterImpl, navigationTo: (DialogData?, EligibilityPlan?) -> Unit): DisplayInArrearsPopup {
+        return DisplayInArrearsPopup(viewLifecycleOwner, treatmentPlanImpl = treatmentPlan, landingRouter = router, homeViewModel = this){ item, eligibilityPlan ->
             navigationTo(item, eligibilityPlan)
         }
     }

@@ -4,16 +4,12 @@ import android.app.Activity
 import android.content.Intent
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import com.awfs.coordination.R
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.ActionText
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.GetAPaymentPlanActivity
-import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
-import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
-import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.ITreatmentPlan
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.TreatmentPlanImpl
@@ -22,6 +18,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dom
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.DialogData
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.CallBack
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.SingleLiveEvent
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -40,6 +37,7 @@ class DisplayInArrearsPopup(
     val viewLifecycleOwner : LifecycleOwner,
     val homeViewModel: AccountProductsHomeViewModel,
     private val treatmentPlanImpl: TreatmentPlanImpl,
+    private val landingRouter : ProductLandingRouterImpl,
     val navigationTo: (DialogData?, EligibilityPlan?) -> Unit
 ) : IDisplayInArrearsPopup, ITreatmentPlan by treatmentPlanImpl {
 
@@ -78,9 +76,10 @@ class DisplayInArrearsPopup(
                 accountsCollectionsCheckEligibility.collectLatest { item ->
                     with(item) {
                         renderSuccess {
+                            mEligibilityPlan = output.eligibilityPlan
                             setEligibilityPlan(output.eligibilityPlan)
                             homeViewModel.setTreatmentPlan(output.eligibilityPlan)
-                            navigationTo(homeViewModel.viewTreatmentPlan?.getPopupData(mEligibilityPlan),mEligibilityPlan)
+                            navigationTo(homeViewModel.viewTreatmentPlan?.getPopupData(output.eligibilityPlan),output.eligibilityPlan)
                         }
                         renderEmpty { showAccountInArrears() }
                         renderHttpFailureFromServer { showAccountInArrears() }
@@ -92,10 +91,8 @@ class DisplayInArrearsPopup(
     }
 
     private fun setEligibilityPlan(eligibilityPlan : EligibilityPlan?) {
-        mEligibilityPlan = eligibilityPlan
-        homeViewModel.eligibilityPlan = eligibilityPlan
-        homeViewModel.emitEligibilityPlanWhenNotEmpty(eligibilityPlan)
-
+            homeViewModel.eligibilityPlan = eligibilityPlan
+            homeViewModel.emitEligibilityPlanWhenNotEmpty(eligibilityPlan)
     }
 
     override fun onTap(activity: Activity?) {
@@ -109,9 +106,11 @@ class DisplayInArrearsPopup(
                 })
             }
 
-            ActionText.VIEW_ELITE_PLAN.value -> KotlinUtils.openTreatmentPlanUrl(
-                activity,
-                mEligibilityPlan
+            ActionText.TAKE_UP_TREATMENT_PLAN.value  -> {
+                landingRouter.routeToSetupPaymentPlan(activity, homeViewModel)
+            }
+
+            ActionText.VIEW_ELITE_PLAN.value -> KotlinUtils.openTreatmentPlanUrl(activity, mEligibilityPlan
             )
         }
     }
