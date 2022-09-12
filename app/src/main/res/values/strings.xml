@@ -1921,8 +1921,8 @@
     <string name="dash_send_us_an_email">Send Us An Email</string>
     <string name="dash_Chat_to_your_shopper">Chat To Your Shopper, </string>
     <string name="dash_track_your_order">Track Your Order</string>
-    <string name="dash_email_id">shop@wooliesdash.co.za</string>
-    <string name="dash_customer_care_no_phone">087 210 0305</string>
+    <string name="dash_email_id">wooliesdash@woolworths.co.za</string>
+    <string name="dash_customer_care_no_phone">0860 022 002</string>
 
     <string name="app_feature_title"></string>
     <string name="app_feature_get_delivered">Same-day delivery</string>

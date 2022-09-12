@@ -54,7 +54,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.hel
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback;
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility;
 import za.co.woolworths.financial.services.android.util.ConnectivityLiveData;
-import za.co.woolworths.financial.services.android.util.FirebaseManager;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
+import za.co.woolworths.financial.services.android.util.analytics.HuaweiManager;
 
 @HiltAndroidApp
 public class WoolworthsApplication extends Application implements Application.ActivityLifecycleCallbacks, LifecycleObserver {
@@ -148,9 +149,10 @@ public class WoolworthsApplication extends Application implements Application.Ac
                 .setDownsampleEnabled(true)
                 .build();
         Fresco.initialize(this, config);
-        //wake up FirebaseManager that will instantiate
-        //FirebaseApp
-        FirebaseManager.Companion.getInstance();
+
+        // Initialise Firebase and Huawei Analytics (if this is a Huawei variant)
+        initializeAnalytics();
+
         mWGlobalState = new WGlobalState();
         updateBankDetail = new UpdateBankDetail();
         // set app context
@@ -164,7 +166,11 @@ public class WoolworthsApplication extends Application implements Application.Ac
         getTracker();
         bus = new RxBus();
         vtoSyncServer();
+    }
 
+    private void initializeAnalytics() {
+        FirebaseManager.Companion.getInstance();
+        HuaweiManager.Companion.getInstance();
     }
 
     //#region ShowServerMessage

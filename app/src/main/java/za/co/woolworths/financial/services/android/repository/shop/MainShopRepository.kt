@@ -10,7 +10,7 @@ import za.co.woolworths.financial.services.android.models.dto.shop.DashCategorie
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.util.AppConstant
-import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.io.IOException
 
 class MainShopRepository : ShopRepository {

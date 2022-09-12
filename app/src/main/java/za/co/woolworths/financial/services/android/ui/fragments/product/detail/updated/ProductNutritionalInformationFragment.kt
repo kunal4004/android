@@ -19,7 +19,7 @@ import za.co.woolworths.financial.services.android.models.dto.NutritionalTableIt
 import za.co.woolworths.financial.services.android.ui.adapters.NutritionalInformationFilterAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.NutritionalInformationListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.Utils
 
 class ProductNutritionalInformationFragment : Fragment(), NutritionalInformationFilterAdapter.FilterOptionSelection {

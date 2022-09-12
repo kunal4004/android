@@ -17,6 +17,7 @@ import za.co.woolworths.financial.services.android.startup.service.network.Start
 import za.co.woolworths.financial.services.android.startup.service.repository.StartUpRepository
 import za.co.woolworths.financial.services.android.startup.utils.ConfigResource
 import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import java.util.*
 
 /**
@@ -33,7 +34,6 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
     var environment: String? = null
     var appVersion: String? = null
 
-    var firebaseAnalytics: FirebaseAnalytics? = null
     private lateinit var firebaseRemoteConfig: FirebaseRemoteConfig
 
 
@@ -68,17 +68,12 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
             appVersion = "6.1.0"
             environment = "QA"
         }
-        firebaseAnalytics = getFirebaseInstance(context)
-    }
-
-    fun getFirebaseInstance(context: Context): FirebaseAnalytics{
-        return FirebaseAnalytics.getInstance(context)
     }
 
     fun setUpFirebaseEvents() {
         setupFirebaseUserProperty()
         if (SessionUtilities.getInstance().isUserAuthenticated) {
-            firebaseAnalytics?.apply {
+            AnalyticsManager.apply {
                 val token = SessionUtilities.getInstance().jwt
                 token.AtgId?.apply {
                     val atgId = if (this.isJsonArray) this.asJsonArray.first().asString else this.asString
@@ -94,7 +89,7 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
     }
 
     fun setupFirebaseUserProperty() {
-        firebaseAnalytics?.apply {
+        AnalyticsManager.apply {
             setUserProperty(APP_SERVER_ENVIRONMENT_KEY, if (environment?.isEmpty() == true) "prod" else environment?.toLowerCase(Locale.getDefault()))
             setUserProperty(APP_VERSION_KEY, appVersion)
         }

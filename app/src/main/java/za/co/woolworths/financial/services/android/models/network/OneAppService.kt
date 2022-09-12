@@ -375,9 +375,9 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.getShoppingCart( getSessionToken(), getDeviceIdentityToken())
     }
 
-    fun getChangeQuantity(changeQuantity: ChangeQuantity): Call<ShoppingCartResponse> {
+    fun getChangeQuantity(changeQuantity: ChangeQuantity?): Call<ShoppingCartResponse> {
         return mApiInterface.changeQuantityRequest( "",
-                "", getSessionToken(), getDeviceIdentityToken(), changeQuantity.commerceId, changeQuantity)
+                "", getSessionToken(), getDeviceIdentityToken(), changeQuantity?.commerceId, changeQuantity)
     }
 
     fun removeCartItem(commerceId: String): Call<ShoppingCartResponse> {
@@ -641,9 +641,10 @@ object OneAppService : RetrofitConfig() {
         location: String?,
         primaryDevice: Boolean,
         firebaseToken: String,
+        tokenProvider: String,
         otp: String?,
         otpMethod: String?): Call<LinkedDeviceResponse> {
-        val body = LinkDeviceBody(appInstanceId, location, primaryDevice, firebaseToken)
+        val body = LinkDeviceBody(appInstanceId, location, primaryDevice, firebaseToken, tokenProvider)
 
         return mApiInterface.linkDeviceApi(
             "",

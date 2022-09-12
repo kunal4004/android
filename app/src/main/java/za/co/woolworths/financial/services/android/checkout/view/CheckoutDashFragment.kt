@@ -72,6 +72,8 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.removeRandFromAmount
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.regex.Pattern
 
@@ -165,8 +167,8 @@ class CheckoutDashFragment : Fragment(),
     }
 
     private fun hideInstructionLayout() {
-        txtNeedBags?.visibility = View.GONE
-        switchNeedBags?.visibility = View.GONE
+        txtNeedBags?.visibility = GONE
+        switchNeedBags?.visibility = GONE
     }
 
     private fun setFragmentResults() {
@@ -210,8 +212,8 @@ class CheckoutDashFragment : Fragment(),
                     }
                 }
             } else {
-                ageConfirmationLayout?.visibility = View.GONE
-                liquorComplianceBannerLayout?.visibility = View.GONE
+                ageConfirmationLayout?.visibility = GONE
+                liquorComplianceBannerLayout?.visibility = GONE
             }
         }
     }
@@ -352,8 +354,8 @@ class CheckoutDashFragment : Fragment(),
     }
 
     private fun startShimmerView() {
-        txtNeedBags?.visibility = View.GONE
-        switchNeedBags?.visibility = View.GONE
+        txtNeedBags?.visibility = GONE
+        switchNeedBags?.visibility = GONE
         edtTxtSpecialDeliveryInstruction?.visibility = GONE
         edtTxtGiftInstructions?.visibility = GONE
         switchSpecialDeliveryInstruction?.isChecked = false
@@ -397,7 +399,7 @@ class CheckoutDashFragment : Fragment(),
         initShimmerView()
         val confirmLocationAddress =
             ConfirmLocationAddress(defaultAddress?.placesId, defaultAddress?.nickname)
-        var body = ConfirmLocationRequest(
+        val body = ConfirmLocationRequest(
             Delivery.DASH.type, confirmLocationAddress,
             KotlinUtils.getDeliveryType()?.storeId, "checkout"
         )
@@ -443,9 +445,11 @@ class CheckoutDashFragment : Fragment(),
                                     initializeDatesAndTimeSlots(firstAvailableDateSlot)
                                     // Set default time slot selected
                                     var selectedSlotIndex = 0
-                                    ArrayList(firstAvailableDateSlot?.slots).forEachIndexed { index, slot ->
-                                        if (slot.slotId.equals(selectedTimeSlot?.slotId)) {
-                                            selectedSlotIndex = index
+                                    if (firstAvailableDateSlot != null) {
+                                        ArrayList(firstAvailableDateSlot?.slots).forEachIndexed { index, slot ->
+                                            if (slot.slotId.equals(selectedTimeSlot?.slotId)) {
+                                                selectedSlotIndex = index
+                                            }
                                         }
                                     }
                                     dashTimeSlotsAdapter.setSelectedItem(selectedSlotIndex)
@@ -654,7 +658,7 @@ class CheckoutDashFragment : Fragment(),
                         isSameSelection = resetAllDriverTip(it.tag as Int)
                         if (isSameSelection) {
                             selectedDriverTipValue = null
-                            tipNoteTextView?.visibility = View.GONE
+                            tipNoteTextView?.visibility = GONE
                         }
                     }
 
@@ -715,9 +719,9 @@ class CheckoutDashFragment : Fragment(),
 
     private fun initializeDashingToView() {
         tvNativeCheckoutDeliveringTitle?.text = getString(R.string.dashing_to)
-        chooseDateLayout?.visibility = View.GONE
+        chooseDateLayout?.visibility = GONE
         if (arguments == null) {
-            checkoutDeliveryDetailsLayout.visibility = View.GONE
+            checkoutDeliveryDetailsLayout.visibility = GONE
             return
         }
         context?.let { context ->
@@ -733,7 +737,7 @@ class CheckoutDashFragment : Fragment(),
                         ?: SavedAddressResponse()
 
             if (savedAddress?.addresses.isNullOrEmpty()) {
-                checkoutDeliveryDetailsLayout?.visibility = View.GONE
+                checkoutDeliveryDetailsLayout?.visibility = GONE
                 return
             }
             savedAddress.let { savedAddresses ->
@@ -779,7 +783,7 @@ class CheckoutDashFragment : Fragment(),
                         return@forEach
                     }
                     if (savedAddresses.defaultAddressNickname.isNullOrEmpty()) {
-                        checkoutDeliveryDetailsLayout?.visibility = View.GONE
+                        checkoutDeliveryDetailsLayout?.visibility = GONE
                     }
                 }
                 tvNativeCheckoutDeliveringValue?.text = deliveringToAddress
@@ -791,7 +795,7 @@ class CheckoutDashFragment : Fragment(),
 
     private fun initializeDeliveryInstructions() {
         edtTxtSpecialDeliveryInstruction?.addTextChangedListener(deliveryInstructionsTextWatcher)
-        edtTxtInputLayoutSpecialDeliveryInstruction?.visibility = View.GONE
+        edtTxtInputLayoutSpecialDeliveryInstruction?.visibility = GONE
         edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = false
         deliveryInstructionClickListener(switchSpecialDeliveryInstruction.isChecked)
 
@@ -804,8 +808,8 @@ class CheckoutDashFragment : Fragment(),
         if (AppConfigSingleton.nativeCheckout?.currentShoppingBag?.isEnabled == true) {
             switchNeedBags?.visibility = View.VISIBLE
             txtNeedBags?.visibility = View.VISIBLE
-            viewHorizontalSeparator?.visibility = View.GONE
-            newShoppingBagsLayout?.visibility = View.GONE
+            viewHorizontalSeparator?.visibility = GONE
+            newShoppingBagsLayout?.visibility = GONE
             switchNeedBags?.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
                     Utils.triggerFireBaseEvents(
@@ -815,9 +819,9 @@ class CheckoutDashFragment : Fragment(),
                 }
             }
         } else if (AppConfigSingleton.nativeCheckout?.newShoppingBag?.isEnabled == true) {
-            switchNeedBags?.visibility = View.GONE
+            switchNeedBags?.visibility = GONE
             viewHorizontalSeparator?.visibility = View.VISIBLE
-            txtNeedBags?.visibility = View.GONE
+            txtNeedBags?.visibility = GONE
             newShoppingBagsLayout?.visibility = View.VISIBLE
             addShoppingBagsRadioButtons()
         }
@@ -830,10 +834,10 @@ class CheckoutDashFragment : Fragment(),
                 activity
             )
         edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
-            if (isChecked) View.VISIBLE else View.GONE
+            if (isChecked) View.VISIBLE else GONE
         edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = isChecked
         edtTxtSpecialDeliveryInstruction?.visibility =
-            if (isChecked) View.VISIBLE else View.GONE
+            if (isChecked) View.VISIBLE else GONE
     }
 
     private fun addShoppingBagsRadioButtons() {
@@ -901,15 +905,15 @@ class CheckoutDashFragment : Fragment(),
                 CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.basketTotal)
             it.discountDetails?.let { discountDetails ->
                 groupOrderSummaryDiscount?.visibility =
-                    if (discountDetails.otherDiscount == 0.0) View.GONE else View.VISIBLE
+                    if (discountDetails.otherDiscount == 0.0) GONE else View.VISIBLE
                 groupPromoCodeDiscount?.visibility =
-                    if (discountDetails.promoCodeDiscount == 0.0) View.GONE else View.VISIBLE
+                    if (discountDetails.promoCodeDiscount == 0.0) GONE else View.VISIBLE
                 groupWRewardsDiscount?.visibility =
-                    if (discountDetails.voucherDiscount == 0.0) View.GONE else View.VISIBLE
+                    if (discountDetails.voucherDiscount == 0.0) GONE else View.VISIBLE
                 groupCompanyDiscount?.visibility =
-                    if (discountDetails.companyDiscount == 0.0) View.GONE else View.VISIBLE
+                    if (discountDetails.companyDiscount == 0.0) GONE else View.VISIBLE
                 groupTotalDiscount?.visibility =
-                    if (discountDetails.totalDiscount == 0.0) View.GONE else View.VISIBLE
+                    if (discountDetails.totalDiscount == 0.0) GONE else View.VISIBLE
 
                 txtOrderSummaryDiscountValue?.text =
                     "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.otherDiscount)
@@ -1044,7 +1048,7 @@ class CheckoutDashFragment : Fragment(),
         setScreenClickEvents(false)
         checkoutAddAddressNewUserViewModel.getShippingDetails(body)
             .observe(viewLifecycleOwner) { response ->
-                loadingBar.visibility = View.GONE
+                loadingBar.visibility = GONE
                 setScreenClickEvents(true)
                 when (response) {
                     is ShippingDetailsResponse -> {
@@ -1137,6 +1141,7 @@ class CheckoutDashFragment : Fragment(),
         KotlinUtils.getUniqueDeviceID {
             pushNotificationToken = Utils.getToken()
             appInstanceId = it
+            tokenProvider = if (Utils.isGooglePlayServicesAvailable()) NotificationUtils.TOKEN_PROVIDER_FIREBASE else NotificationUtils.TOKEN_PROVIDER_HMS
         }
     }
 
@@ -1181,7 +1186,7 @@ class CheckoutDashFragment : Fragment(),
 
     private fun isRequiredFieldsMissing(): Boolean {
         if (!TextUtils.isEmpty(selectedTimeSlot?.slotId)) {
-            txtSelectCollectionTimeSlotFoodError?.visibility = View.GONE
+            txtSelectCollectionTimeSlotFoodError?.visibility = GONE
             return false
         }
         // scroll to slot selection layout

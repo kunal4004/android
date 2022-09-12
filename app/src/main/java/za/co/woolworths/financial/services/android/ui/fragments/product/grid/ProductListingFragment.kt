@@ -85,8 +85,11 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO
-import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.logException
-import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.setCrashlyticsString
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.net.ConnectException
@@ -129,7 +132,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var isUserBrowsing: Boolean = false
     private var mIsComingFromBLP: Boolean = false
     private var liquorDialog: Dialog? = null
-    private var deliveryType: Delivery = Delivery.STANDARD
+    private var deliveryType: Delivery? = null
     private var placeId: String? = null
     private var isUnSellableItemsRemoved: Boolean? = false
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
@@ -413,10 +416,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 localPlaceId = currentPlaceId
                 updateRequestForReload()
                 pushFragment()
-            } else if (!localDeliveryType.isNullOrEmpty() && !(localDeliveryType.let {
-                    it.equals(deliveryType.type)
+            } else if (!localDeliveryType.isNullOrEmpty() && deliveryType != null && !(localDeliveryType.let {
+                    it.equals(deliveryType?.type)
                 })) {
-                localDeliveryType = deliveryType.type
+                localDeliveryType = deliveryType?.type
                 updateRequestForReload()
                 pushFragment()
             }
@@ -1237,7 +1240,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     override fun openProductDetailView(productList: ProductList) {
         //firebase event select_item
         state = productsRecyclerView.layoutManager?.onSaveInstanceState()
-        val mFirebaseAnalytics = FirebaseManager.getInstance().getAnalytics()
         val selectItemParams = Bundle()
         selectItemParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_LIST_NAME,
             mSubCategoryName)
@@ -1248,12 +1250,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             selectItem.putString(FirebaseAnalytics.Param.ITEM_ID, productList.productId)
             selectItem.putString(FirebaseAnalytics.Param.ITEM_NAME, productList.productName)
             selectItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, mSubCategoryName)
+            selectItem.putString(FirebaseAnalytics.Param.ITEM_BRAND, productList.brandText)
             selectItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT, productList.productVariants)
-            selectItem.putString(FirebaseAnalytics.Param.PRICE, productList.price.toString())
+            productList.price?.let { selectItem.putDouble(FirebaseAnalytics.Param.PRICE, it.toDouble())
+            }
             selectItemParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(selectItem))
         }
-        mFirebaseAnalytics.logEvent(FirebaseManagerAnalyticsProperties.SELECT_ITEM_EVENT,
-            selectItemParams)
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.SELECT_ITEM_EVENT, selectItemParams)
 
         val title = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
         (activity as? BottomNavigationActivity)?.openProductDetailFragment(
