@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.onecartgetstream.service
 
 import android.content.Intent
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LifecycleService
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -11,6 +12,7 @@ import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerat
 import io.getstream.chat.android.pushprovider.huawei.HuaweiPushDeviceGenerator
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.onecartgetstream.InitializerViewModel
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.ACTION_PAUSE_OC_NOTIFICATION_SERVICE
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.ACTION_START_RESUME_OC_NOTIFICATION_SERVICE
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.ACTION_STOP_OC_NOTIFICATION_SERVICE
