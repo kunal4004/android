@@ -4,6 +4,7 @@ import androidx.activity.result.ActivityResult
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 import za.co.woolworths.financial.services.android.util.AppConstant
@@ -14,6 +15,7 @@ import javax.inject.Inject
 interface StoreCardActivityResult {
     fun balanceProtectionInsuranceCallback(result: ActivityResult) : Account?
     fun linkNewCardCallback(result: ActivityResult): Boolean
+    fun eliteTreatmeantPlanCallBack(result: ActivityResult): Boolean
 }
 
 class StoreCardActivityResultCallback @Inject constructor() : StoreCardActivityResult {
@@ -59,4 +61,14 @@ class StoreCardActivityResultCallback @Inject constructor() : StoreCardActivityR
             else -> false
         }
     }
+
+    override fun eliteTreatmeantPlanCallBack(result: ActivityResult): Boolean {
+        return when (result.resultCode) {
+            AppCompatActivity.RESULT_OK -> {
+                true
+            }
+            else -> false
+        } && result.data?.extras?.containsKey(AccountSignedInPresenterImpl.ELITE_PLAN_MODEL) == true
+    }
+
 }
