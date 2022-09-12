@@ -19,6 +19,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dom
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOfferingState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.DialogData
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -36,6 +37,7 @@ class DisplayInArrearsPopup(
     val viewLifecycleOwner : LifecycleOwner,
     val homeViewModel: AccountProductsHomeViewModel,
     private val treatmentPlanImpl: TreatmentPlanImpl,
+    private val landingRouter : ProductLandingRouterImpl,
     val navigationTo: (DialogData?, EligibilityPlan?) -> Unit
 ) : IDisplayInArrearsPopup, ITreatmentPlan by treatmentPlanImpl {
 
@@ -73,9 +75,10 @@ class DisplayInArrearsPopup(
                 accountsCollectionsCheckEligibility.collectLatest { item ->
                     with(item) {
                         renderSuccess {
+                            mEligibilityPlan = output.eligibilityPlan
                             setEligibilityPlan(output.eligibilityPlan)
                             homeViewModel.setTreatmentPlan(output.eligibilityPlan)
-                            navigationTo(homeViewModel.viewTreatmentPlan?.getPopupData(mEligibilityPlan),mEligibilityPlan)
+                            navigationTo(homeViewModel.viewTreatmentPlan?.getPopupData(output.eligibilityPlan),output.eligibilityPlan)
                         }
                         renderEmpty { showAccountInArrears() }
                         renderHttpFailureFromServer { showAccountInArrears() }
@@ -87,10 +90,8 @@ class DisplayInArrearsPopup(
     }
 
     private fun setEligibilityPlan(eligibilityPlan : EligibilityPlan?) {
-        mEligibilityPlan = eligibilityPlan
-        homeViewModel.eligibilityPlan = eligibilityPlan
-        homeViewModel.emitEligibilityPlanWhenNotEmpty(eligibilityPlan)
-
+            homeViewModel.eligibilityPlan = eligibilityPlan
+            homeViewModel.emitEligibilityPlanWhenNotEmpty(eligibilityPlan)
     }
 
     override fun onTap(activity: Activity?) {
@@ -105,9 +106,11 @@ class DisplayInArrearsPopup(
                 activity.overridePendingTransition(R.anim.slide_from_right, R.anim.stay)
             }
 
-            ActionText.VIEW_ELITE_PLAN.value -> KotlinUtils.openTreatmentPlanUrl(
-                activity,
-                mEligibilityPlan
+            ActionText.TAKE_UP_TREATMENT_PLAN.value  -> {
+                landingRouter.routeToSetupPaymentPlan(activity, homeViewModel)
+            }
+
+            ActionText.VIEW_ELITE_PLAN.value -> KotlinUtils.openTreatmentPlanUrl(activity, mEligibilityPlan
             )
         }
     }

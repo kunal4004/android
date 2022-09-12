@@ -17,8 +17,13 @@ class ManageStoreCardMoreDetail(
         isManageCardSubcategoryLabelVisible(true)
         when (storeCardFeatureType) {
 
-            is StoreCardFeatureType.StoreCardFreezeCardUpShellMessage,
+            is StoreCardFeatureType.StoreCardFreezeCardUpShellMessage -> {
+                setUpshellTitleForFreezeCard()
+                isManageCardSubcategoryLabelVisible(false)
+            }
+
             is StoreCardFeatureType.StoreCardActivateVirtualTempCardUpShellMessage -> {
+                setUpshellTitleForActivateVirtualCard()
                 isManageCardSubcategoryLabelVisible(false)
             }
 
@@ -33,7 +38,7 @@ class ManageStoreCardMoreDetail(
             }
 
             is StoreCardFeatureType.StoreCardIsTemporaryFreeze -> {
-                when (storeCardFeatureType.isStoreCardFrozen){
+                when (storeCardFeatureType.isStoreCardFrozen) {
                     true -> {
                         setFrozenPrimaryCardLabel()
                         setSubTitleLabel()
@@ -80,13 +85,13 @@ class ManageStoreCardMoreDetail(
     private fun isManageCardSubcategoryLabelVisible(isVisible: Boolean) {
         with(binding) {
             if (isVisible) {
-                headerTextView.visibility =  View.VISIBLE
+                headerTextView.visibility = View.VISIBLE
                 cardDetailDivider.visibility = View.VISIBLE
                 cardDetailLinearLayout.visibility = View.VISIBLE
-            }else {
-                headerTextView.visibility =  View.INVISIBLE
-                cardDetailDivider.visibility =  View.INVISIBLE
-                cardDetailLinearLayout.visibility =  View.INVISIBLE
+            } else {
+                headerTextView.visibility = View.INVISIBLE
+                cardDetailDivider.visibility = View.INVISIBLE
+                cardDetailLinearLayout.visibility = View.INVISIBLE
             }
         }
 
@@ -110,5 +115,14 @@ class ManageStoreCardMoreDetail(
 
     fun setCardHolderName(cardHolderName: String?) {
         binding.cardholderValueTextView.text = cardHolderName?.capitaliseFirstLetterInEveryWord()
+    }
+
+    fun setUpshellTitleForFreezeCard() {
+        binding.headerTextView.text = mContext.getString(R.string.upshell_message_freeze_title)
+    }
+
+    fun setUpshellTitleForActivateVirtualCard() {
+        binding.headerTextView.text =
+            mContext.getString(R.string.upshell_message_activate_virtual_card_title)
     }
 }

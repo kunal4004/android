@@ -18,7 +18,7 @@ sealed class DialogData : Parcelable {
 sealed class AccountInDelinquency : Parcelable, DialogData() {
 
     @Parcelize
-    data class AccountInRecovery(
+    data class InRecovery(
         @StringRes override val title: Int = R.string.account_in_recovery_label,
         @StringRes override val desc: Int = R.string.remove_block_on_collection_dialog_desc,
         @StringRes override var firstButtonTitle: Int = R.string.view_payment_plan_button_label,
@@ -51,11 +51,11 @@ sealed class AccountInDelinquency : Parcelable, DialogData() {
 sealed class AccountInArrears : Parcelable, DialogData() {
 
     @Parcelize
-    data class AccountInRecovery(
-        @StringRes override val title: Int = R.string.payment_overdue_label,
+    data class InRecovery(
+        @StringRes override val title: Int = R.string.account_in_recovery_label,
         @StringRes override val desc: Int = R.string.payment_overdue_error_desc,
-        @StringRes override val firstButtonTitle: Int = R.string.make_payment_now_button_label,
-        @StringRes override val secondButtonTitle: Int = R.string.cannot_afford_payment_button_label,
+        @StringRes override val firstButtonTitle: Int = R.string.view_payment_plan_button_label,
+        @StringRes override val secondButtonTitle: Int = R.string.make_payment_now_button_label,
         override val secondButtonVisibility: Int = VISIBLE,
         override var formattedValue: String? = ""
     ) : AccountInArrears()
