@@ -303,7 +303,7 @@ class MyStoreCardFragment @Inject constructor() :
         }
     }
 
-    fun autoConnectPMA() {
+    private fun autoConnectPMA() {
             ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(
                 requireActivity(),
                 this,
