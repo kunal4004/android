@@ -787,6 +787,10 @@ object OneAppService : RetrofitConfig() {
         )
     }
 
+    fun authenticateOneCart(): Call<OCAuthenticationResponse> {
+        return mApiInterface.authenticateOneCart(getSessionToken(), getDeviceIdentityToken())
+    }
+
     suspend fun getOCAuthData(): retrofit2.Response<OCAuthenticationResponse> {
         return withContext(Dispatchers.IO) {
             mApiInterface.getOCAuth(getSessionToken(), getDeviceIdentityToken())

@@ -503,9 +503,10 @@
             android:label="liveChatFollowMeService" />
 
         <service
-            android:name="za.co.woolworths.financial.services.android.onecartgetstream.service.OCToastNotificationService"
+            android:name="za.co.woolworths.financial.services.android.onecartgetstream.service.DashChatMessageListeningService"
             android:enabled="true"
             android:label="ocChatNotificationToast" />
+
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity"
             android:screenOrientation="portrait"

@@ -46,6 +46,7 @@ import za.co.woolworths.financial.services.android.geolocation.network.model.Val
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
+import za.co.woolworths.financial.services.android.onecartgetstream.service.DashChatMessageListeningService;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
@@ -53,6 +54,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.hel
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback;
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility;
 import za.co.woolworths.financial.services.android.util.ConnectivityLiveData;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.analytics.HuaweiManager;
 
@@ -164,7 +166,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
         getTracker();
         bus = new RxBus();
         vtoSyncServer();
-        initOneCartChatFirebaseService();
+        configureDashChatServices();
     }
 
     private void initializeAnalytics() {
@@ -172,7 +174,10 @@ public class WoolworthsApplication extends Application implements Application.Ac
         HuaweiManager.Companion.getInstance();
     }
 
-    private void initOneCartChatFirebaseService() {
+    private void configureDashChatServices() {
+        // TODO: ApplicationId and ApiKey will be different for prod and QA. Make sure to check for variant and set the appropriate credentials, based on what's in google-services-onecart.json. Or, use ids.xml to contain this information, there's one for each variant. Easier to separate prod and QA.
+        // Ideally, it would be better to just have Firebase read from the JSON file, instead of manually setting those credentials.
+        // TODO: also add check so that this firebase configuration is done only on Google variants, not Huawei, since Huawei uses Push Kit instead of Firebase.
         FirebaseOptions firebaseChatOptions = new FirebaseOptions.Builder()
                 .setProjectId("onecart-chat")
                 .setApplicationId("1:513058672751:android:4f21181161790c6b1b7d9a")
@@ -188,6 +193,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
                 pushNotificationTokenOneCartChat = "";
             }
         });
+
+        // Start service to listen to incoming messages from Stream
+        // TODO: add same code below after user is done logging in
+        if (SessionUtilities.getInstance().isUserAuthenticated()) {
+            Intent chatListeningServiceIntent = new Intent(this, DashChatMessageListeningService.class);
+            startService(chatListeningServiceIntent);
+        }
     }
 
     public String getOneCartChatFirebaseToken() {

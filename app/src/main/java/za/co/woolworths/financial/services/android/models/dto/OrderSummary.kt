@@ -35,6 +35,7 @@ data class OrderSummary(
     var isChatEnabled: Boolean,
     var isDriverTrackingEnabled: Boolean,
     var shopperName: String?,
+    var shopperId: String?,
     var orderStatus: @RawValue Any,
     var taxNoteNumbers: ArrayList<String>?,
     var requestCancellation: Boolean = false,
