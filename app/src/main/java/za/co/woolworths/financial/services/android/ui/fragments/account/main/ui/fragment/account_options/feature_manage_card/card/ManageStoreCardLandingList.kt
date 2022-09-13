@@ -152,18 +152,8 @@ class ManageStoreCardLandingList(
     }
 
     private fun showActivateVirtualTempCardRow(isTemporaryCardEnabled: Boolean) {
-        with(includeListOptions) {
            showActivateVirtualCardItem(true)
-
-            if (isTemporaryCardEnabled) {
-                showLinkNewCardItem(false)
-
-            } else {
-                showLinkNewCardItem(true)
-
-            }
-
-        }
+           showLinkNewCardItem(!isTemporaryCardEnabled)
     }
 
     fun showCardNotReceivedDialog(fragment: Fragment?, viewModel: MyAccountsRemoteApiViewModel) {
