@@ -357,7 +357,8 @@ interface ApiInterface {
         @Header("longitude") long: Double?,
         @Query("suburbId") suburbId: String?,
         @Query("storeId") storeId: String?,
-        @Query("deliveryType") deliveryType: String?
+        @Query("deliveryType") deliveryType: String?,
+        @Query("fulFillmentStoreId01") fulFillmentStoreId01: String?
     ): Call<RootCategories>
 
     // Same as fun getRootCategories()
@@ -391,7 +392,8 @@ interface ApiInterface {
             @Query("version") version: String,
             //Optional params
             @Query("suburbId") suburbId: String?,
-            @Query("storeId") storeId: String?
+            @Query("storeId") storeId: String?,
+            @Query("fulFillmentStoreId01") fulFillmentStoreId01: String?
     ): Call<SubCategories>
 
 
@@ -694,8 +696,8 @@ interface ApiInterface {
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
-            @Path("commerceId") commerceId: String,
-            @Body quantity: ChangeQuantity): Call<ShoppingCartResponse>
+            @Path("commerceId") commerceId: String?,
+            @Body quantity: ChangeQuantity?): Call<ShoppingCartResponse>
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")

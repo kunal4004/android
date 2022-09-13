@@ -6,13 +6,12 @@ import za.co.absa.openbankingapi.Cryptography
 import za.co.absa.openbankingapi.KeyGenerationFailureException
 import za.co.absa.openbankingapi.SessionKey
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.fragments.integration.helper.AbsaTemporaryDataSourceSingleton
 import za.co.woolworths.financial.services.android.ui.fragments.integration.remote.AbsaRemoteApi
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.model.AbsaProxyResponseProperty
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.NetworkState
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.resultOf
-import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.logException
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.Utils
 import java.io.UnsupportedEncodingException
 

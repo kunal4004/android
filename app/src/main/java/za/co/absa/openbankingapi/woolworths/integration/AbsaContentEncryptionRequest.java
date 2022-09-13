@@ -21,8 +21,7 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.CEKDResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.util.FirebaseManager;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class AbsaContentEncryptionRequest {

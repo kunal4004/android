@@ -44,6 +44,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
     OrderHistoryErrorDialogFragment.IOrderHistoryErrorDialogDismiss, IToastInterface {
 
     companion object {
+        val PROMO_NOTE_FOOD = "FOOD"
 
         fun getInstance(orderId: String, isNaviagtedFromMyAccount: Boolean = false) =
             OrderDetailsFragment().withArgs {
@@ -182,10 +183,10 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
                         OrderDetailsItem.ViewType.CHAT_VIEW
                     )
                 )
-            if (isDriverTrackingEnabled)
+            if (isDriverTrackingEnabled && (!driverTrackingURL.isNullOrEmpty()))
                 dataList.add(
                     OrderDetailsItem(
-                        null,
+                        ordersResponse,
                         OrderDetailsItem.ViewType.TRACK_ORDER
                     )
                 )
@@ -368,8 +369,13 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         }
     }
 
-    override fun onOpenTrackOrderScreen() {
-        //TODO: open track order screen
+    override fun onOpenTrackOrderScreen(orderTrackingURL: String) {
+        activity?.apply {startActivity(OrderTrackingWebViewActivity.newIntent(this, orderTrackingURL))
+            overridePendingTransition(
+                R.anim.slide_from_right,
+                R.anim.slide_out_to_left
+            )
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

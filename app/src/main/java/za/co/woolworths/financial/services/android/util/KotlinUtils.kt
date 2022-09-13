@@ -34,7 +34,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import com.awfs.coordination.R
 import com.google.common.reflect.TypeToken
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.installations.FirebaseInstallations
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -82,10 +81,13 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DEFAULT_ADDRESS
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CHECKOUT
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CNC_SELETION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_DASH_TAB
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
@@ -429,6 +431,7 @@ class KotlinUtils {
                 mBundle.putString(PLACE_ID, placeId)
                 mBundle.putBoolean(IS_FROM_DASH_TAB, isFromDashTab)
                 mBundle.putBoolean(IS_COMING_FROM_CHECKOUT, isComingFromCheckout)
+                mBundle.putBoolean(IS_COMING_FROM_CNC_SELETION, isComingFromCheckout)
                 mBundle.putBoolean(IS_COMING_FROM_SLOT_SELECTION, isComingFromSlotSelection)
                 mBundle.putSerializable(SAVED_ADDRESS_RESPONSE, savedAddressResponse)
                 mBundle.putSerializable(DEFAULT_ADDRESS, defaultAddress)
@@ -953,9 +956,7 @@ class KotlinUtils {
         @SuppressLint("MissingPermission")
         @JvmStatic
         fun setUserPropertiesToNull() {
-            val firebaseInstance =
-                FirebaseAnalytics.getInstance(WoolworthsApplication.getAppContext())
-            firebaseInstance?.apply {
+            AnalyticsManager.apply {
                 setUserProperty(
                     FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_OFFERING,
                     FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
@@ -1149,8 +1150,7 @@ class KotlinUtils {
             elseJob: () -> Unit,
         ) {
             if (MyAccountsFragment.verifyAppInstanceId() &&
-                (Utils.isGooglePlayServicesAvailable() ||
-                        Utils.isHuaweiMobileServicesAvailable())
+                (Utils.isGooglePlayOrHuaweiMobileServicesAvailable())
             ) {
                 doJob()
                 activity?.let {
@@ -1388,6 +1388,9 @@ class KotlinUtils {
             when(Delivery.getType(deliveryType)){
                 Delivery.CNC->{
                     event = VocTriggerEvent.SHOP_CLICK_COLLECT_CONFIRM
+                }
+                Delivery.STANDARD->{
+                    event = VocTriggerEvent.CHCKOUT_CNT_TO_PMNT
                 }
             }
             return event

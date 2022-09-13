@@ -21,13 +21,15 @@ import kotlinx.android.synthetic.main.order_history_details_total_amount_layout.
 import kotlinx.android.synthetic.main.order_history_type.view.*
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment
+import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.WFormatter
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var dataList: ArrayList<OrderDetailsItem>) :  RecyclerView.Adapter<OrdersBaseViewHolder>() {
-
+    private var isContainsFood : Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrdersBaseViewHolder {
         when (viewType) {
@@ -220,6 +222,8 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                 price?.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item?.priceInfo?.amount)
                 price?.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                 setOnClickListener { listner.onOpenProductDetail(item) }
+
+                promotion_note.visibility = if(isContainsFood && position == dataList.size - 1) View.VISIBLE else View.GONE
             }
 
         }
@@ -243,6 +247,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
             val orderItemDetail = dataList[position] as? OrderDetailsItem
             val headerText = "${orderItemDetail?.item}${if (orderItemDetail?.orderItemLength!! > 1) "s" else ""}"
             itemView.header?.text = "${orderItemDetail?.orderItemLength} $headerText"
+            isContainsFood = headerText.contains(OrderDetailsFragment.PROMO_NOTE_FOOD)
         }
     }
 
@@ -292,8 +297,11 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
     }
     inner class TrackOrderViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
         override fun bind(position: Int) {
+            val item = dataList[position].item as OrderDetailsResponse
             itemView.setOnClickListener {
-                listner.onOpenTrackOrderScreen()
+                item.orderSummary?.driverTrackingURL?.let {
+                    listner.onOpenTrackOrderScreen(it)
+                }
             }
         }
     }
@@ -325,7 +333,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
         fun onViewTaxInvoice()
         fun onCancelOrder()
         fun onOpenChatScreen(orderID: String?)
-        fun onOpenTrackOrderScreen()
+        fun onOpenTrackOrderScreen(orderTrackingURL:String)
     }
 
     fun getCommerceItemList(): MutableList<AddToListRequest> {
