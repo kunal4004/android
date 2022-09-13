@@ -136,14 +136,8 @@ class ManageStoreCardLandingList(
             }
 
             when (featureType.upShellMessage) {
-                is StoreCardUpShellMessage.ActivateVirtualTempCard -> {
-                    activateVirtualTempCardDivider.visibility = VISIBLE
-                    activateVirtualTempCardRelativeLayout.visibility = VISIBLE
-                }
-                else -> {
-                    activateVirtualTempCardDivider.visibility = GONE
-                    activateVirtualTempCardRelativeLayout.visibility = GONE
-                }
+                is StoreCardUpShellMessage.ActivateVirtualTempCard -> showActivateVirtualCardItem(true)
+                else -> showActivateVirtualCardItem(false)
             }
         }
     }
@@ -153,20 +147,19 @@ class ManageStoreCardLandingList(
             replacementCardDivider.visibility = VISIBLE
             replacementCardRelativeLayout.visibility = VISIBLE
 
-            showLinkNewCardItem(true, null)
+            showLinkNewCardItem(true)
         }
     }
 
     private fun showActivateVirtualTempCardRow(isTemporaryCardEnabled: Boolean) {
         with(includeListOptions) {
-            activateVirtualTempCardDivider.visibility = VISIBLE
-            activateVirtualTempCardRelativeLayout.visibility = VISIBLE
+           showActivateVirtualCardItem(true)
 
             if (isTemporaryCardEnabled) {
-                showLinkNewCardItem(false,null)
+                showLinkNewCardItem(false)
 
             } else {
-                showLinkNewCardItem(true,null)
+                showLinkNewCardItem(true)
 
             }
 
@@ -201,7 +194,7 @@ class ManageStoreCardLandingList(
         } ?: run { false }
     }
 
-    private fun showLinkNewCardItem(isVisible: Boolean, label: String?) {
+    private fun showLinkNewCardItem(isVisible: Boolean, label: String? = null) {
         with(includeListOptions) {
            label?.let { linkNewCardTextView.text = it }
             when (isVisible) {
@@ -217,7 +210,7 @@ class ManageStoreCardLandingList(
         }
     }
 
-    private fun showActivateVirtualCardItem(isVisible : Boolean, label : String?){
+    private fun showActivateVirtualCardItem(isVisible : Boolean, label : String? = null){
         with(includeListOptions) {
             label?.let { activateVirtualTempCardTextView.text = it }
             when (isVisible) {
