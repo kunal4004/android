@@ -43,6 +43,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     private var whoIsCollectingString: String? = null
     private var isComingFromCnc: Boolean? = false
     private var mSavedAddressPosition = 0
+    var isEditAddressScreenNeeded = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +51,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         setActionBar()
         intent?.extras?.apply {
             savedAddressResponse = getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
+            isEditAddressScreenNeeded = getBoolean(CheckoutAddressConfirmationFragment.IS_EDIT_ADDRESS_SCREEN, false)
             geoSlotSelection = getBoolean(GEO_SLOT_SELECTION, false)
             dashSlotSelection = getBoolean(DASH_SLOT_SELECTION, false)
             whoIsCollectingString =
@@ -129,7 +131,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         val graph =
             navHostFrag.navController.navInflater.inflate(R.navigation.nav_graph_checkout)
 
-        if (checkIfAddressHasNoUnitComplexNo()) {
+        if (checkIfAddressHasNoUnitComplexNo() && (whoIsCollectingString.isNullOrEmpty() || isComingFromCnc == false) && isEditAddressScreenNeeded) {
             // Show edit address screen to add Unit complex no to address.
             baseFragBundle?.putString(
                 CheckoutAddressConfirmationListAdapter.EDIT_SAVED_ADDRESS_RESPONSE_KEY,

@@ -190,9 +190,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                             }
 
                         }
-
                     }
-                    setHasOptionsMenu(true)
+                    setHasOptionsMenu(activity !is CheckoutActivity)
                 }
             } else if (containsKey(ADD_NEW_ADDRESS_KEY)) {
                 //Add new Address from delivery.
@@ -260,10 +259,19 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         // Show prepopulate fields on edit address
         if (selectedAddressId.isNotEmpty() || isAddNewAddress) {
             //selectedAddressId is not empty means it's a edit address call.
-            if (activity is CheckoutActivity)
-                (activity as CheckoutActivity).hideBackArrow()
             if (selectedAddressId.isNotEmpty())
                 setTextFields()
+            if (activity is CheckoutActivity) {
+                (activity as CheckoutActivity).hideBackArrow()
+                if (!navController?.popBackStack()!!) {
+                    // Edit address screen from Cart as user don't have unit no or complex no.
+                    // disable Google address view.
+                    autoCompleteTextView?.isEnabled = false
+                    autoCompleteTextView?.setBackgroundResource(R.drawable.input_box_inactive_bg)
+                    autoCompleteTextView?.setTextColor(ContextCompat.getColor(requireContext(), R.color.non_editable_edit_text_text_color))
+                    saveAddress.text = getString(R.string.confirm_address)
+                }
+            }
         }
     }
 
@@ -1196,6 +1204,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                                     hideKeyboardIfVisible(activity)
                                     if (navController?.navigateUp() == false) {
                                         if (activity is CheckoutActivity) {
+                                            (activity as CheckoutActivity).isEditAddressScreenNeeded = false
                                             navController?.navigate((activity as CheckoutActivity).getStartDestinationGraph(),
                                                 baseFragBundle)
                                         }
