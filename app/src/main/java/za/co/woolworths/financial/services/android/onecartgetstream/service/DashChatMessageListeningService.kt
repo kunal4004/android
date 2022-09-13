@@ -57,6 +57,9 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
         return super.onStartCommand(intent, flags, startId)
     }
 
+    // TODO: If the user initiates a new chat from My Order Details, for a channel that was not registered here, then that fragment needs to communicate with this service to add the new channel and start listening to it too.
+    // Scenario A: service is started on app launch; user adds to cart, checkout and make payment; that order goes to pending_picking state and shopper initiates a chat with this user - this would mean the service is not listening to this new channel
+    // Scenario B: Same as above, except there's no channel for the service to listen to, which means it will stop on launch itself. When new order's channel is opened, service needs to be started and listen to that new channel.
     private fun connectUserAndListenToChannels() {
         initializeOneCartStream()
         authenticateOneCart(
@@ -180,10 +183,11 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                 if (result.isSuccess) {
                     ChatClient.instance().getDevices().enqueue {
                         if (it.isSuccess) {
-                            val devices = it.data()
-                            for (device in devices) {
-                                ChatClient.instance().deleteDevice(device).enqueue()
-                            }
+                            // TODO: commenting this part to facilitate push notification troubleshooting. Needs to be uncommented after work is complete.
+//                            val devices = it.data()
+//                            for (device in devices) {
+//                                ChatClient.instance().deleteDevice(device).enqueue()
+//                            }
 
                             ChatClient
                                 .instance()
@@ -333,6 +337,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
     }
 
     private fun killService() {
+        // TODO: do we need to disconnect here? Will this prevent further push notifications from coming in? If not, we can disconnect.
 //        chatClient.disconnect()
         stopSelf()
     }
