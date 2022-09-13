@@ -6,6 +6,7 @@ import android.text.TextUtils
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -17,10 +18,12 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.GEO_SLOT_SELECTION
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.IS_DELIVERY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.baseFragBundle
+import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.*
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.OrderConfirmationFragment
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CNC_SELETION
 import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -39,6 +42,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     private var savedAddressResponse: SavedAddressResponse? = null
     private var whoIsCollectingString: String? = null
     private var isComingFromCnc: Boolean? = false
+    private var mSavedAddressPosition = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,19 +111,6 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    fun showTitleWithCrossButton(titleText: String) {
-        btnClose?.visibility = View.VISIBLE
-        btnClose?.setOnClickListener(this)
-        toolbar?.visibility = View.VISIBLE
-        toolbarText?.text = titleText
-        setSupportActionBar(toolbar)
-        supportActionBar?.apply {
-            title = ""
-            setDisplayHomeAsUpEnabled(false)
-            show()
-        }
-    }
-
     fun hideBackArrow() {
         toolbar?.visibility = View.VISIBLE
         setSupportActionBar(toolbar)
@@ -138,9 +129,27 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         val graph =
             navHostFrag.navController.navInflater.inflate(R.navigation.nav_graph_checkout)
 
-        graph.startDestination = when {
+        if (checkIfAddressHasNoUnitComplexNo()) {
+            // Show edit address screen to add Unit complex no to address.
+            baseFragBundle?.putString(
+                CheckoutAddressConfirmationListAdapter.EDIT_SAVED_ADDRESS_RESPONSE_KEY,
+                Utils.toJson(savedAddressResponse))
 
-            whoIsCollectingString.isNullOrEmpty() == false || isComingFromCnc == true -> {
+            baseFragBundle?.putInt(CheckoutAddressConfirmationListAdapter.EDIT_ADDRESS_POSITION_KEY,
+                mSavedAddressPosition)
+            graph.startDestination = R.id.CheckoutAddAddressNewUserFragment
+            findNavController(R.id.navHostFragment).setGraph(graph,
+                bundleOf(BundleKeysConstants.BUNDLE to baseFragBundle))
+            return
+        }
+
+        graph.startDestination = getStartDestinationGraph()
+        findNavController(R.id.navHostFragment).setGraph(graph, baseFragBundle)
+    }
+
+    fun getStartDestinationGraph(): Int {
+        return when {
+            !whoIsCollectingString.isNullOrEmpty() || isComingFromCnc == true -> {
                 R.id.checkoutReturningUserCollectionFragment
             }
 
@@ -165,7 +174,6 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
             }
             else -> R.id.CheckoutAddAddressReturningUserFragment
         }
-        findNavController(R.id.navHostFragment).setGraph(graph, baseFragBundle)
     }
 
     private fun finishActivityOnCheckoutSuccess() {
@@ -207,13 +215,14 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                     this)
                 setReloadResultAndFinish()
             }
-            is CheckoutAddAddressReturningUserFragment, is CheckoutReturningUserCollectionFragment -> {
+            is CheckoutAddAddressReturningUserFragment, is CheckoutReturningUserCollectionFragment, is CheckoutDashFragment -> {
                 setReloadResultAndFinish()
             }
             is OrderConfirmationFragment -> {
-                if(isComingFromCnc == true) {
+                if (isComingFromCnc == true) {
                     //set BR to update cart fragment
-                    LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(TAG_CART_BROADCAST_RECEIVER))
+                    LocalBroadcastManager.getInstance(this)
+                        .sendBroadcast(Intent(TAG_CART_BROADCAST_RECEIVER))
                 } else {
                     setResult(REQUEST_CHECKOUT_ON_DESTROY)
                 }
@@ -233,6 +242,16 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     fun closeActivity() {
         finish()
         overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
+    }
+
+    private fun checkIfAddressHasNoUnitComplexNo(): Boolean {
+        savedAddressResponse?.addresses?.forEachIndexed { index, address ->
+            if (savedAddressResponse?.defaultAddressNickname.equals(address?.nickname)) {
+                mSavedAddressPosition = index
+                return address?.address2.isNullOrEmpty()
+            }
+        }
+        return true
     }
 
     override fun onClick(v: View?) {
