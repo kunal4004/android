@@ -60,22 +60,22 @@ class ManageStoreCardLandingList(
                 }
 
                 is StoreCardFeatureType.ActivateVirtualTempCard -> {
-                    if (actionforStoreCardUsage1Item(featureType.storeCard)) return@launch
+                    if (actionForStoreCardUsage1Item(featureType.storeCard)) return@launch
                     showActivateVirtualTempCardRow(featureType.isTemporaryCardEnabled)
                 }
 
                 is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive -> {
-                    if (actionforStoreCardUsage1Item(featureType.storeCard)) return@launch
+                    if (actionForStoreCardUsage1Item(featureType.storeCard)) return@launch
                     showInstantReplacementCardAndInactive()
                 }
 
                 is StoreCardFeatureType.StoreCardIsTemporaryFreeze -> {
-                    if (actionforStoreCardUsage1Item(featureType.storeCard)) return@launch
+                    if (actionForStoreCardUsage1Item(featureType.storeCard)) return@launch
                     showStoreCardIsTemporaryFreeze(featureType)
                 }
 
                 is StoreCardFeatureType.TemporaryCardEnabled -> {
-                    if (actionforStoreCardUsage1Item(featureType.storeCard)) return@launch
+                    if (actionForStoreCardUsage1Item(featureType.storeCard)) return@launch
                     showTemporaryCardEnabled(featureType, callback)
                 }
 
@@ -171,7 +171,7 @@ class ManageStoreCardLandingList(
         }
     }
 
-    private fun actionforStoreCardUsage1Item(storeCard: StoreCard?): Boolean {
+    private fun actionForStoreCardUsage1Item(storeCard: StoreCard?): Boolean {
         return storeCard?.actions?.let { action ->
             action.forEach {  actionButton ->
                 when(actionButton.action){
