@@ -58,6 +58,21 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/review_sub_label"
             tools:listitem="@layout/report_item_cell" />
+        <TextView
+            android:id="@+id/review_write_report_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/twenty_four_dp"
+            android:layout_marginTop="@dimen/twenty_four_dp"
+            android:layout_marginEnd="@dimen/twenty_four_dp"
+            android:fontFamily="@font/myriad_pro_regular"
+            android:text="@string/why_would_you_like_to_report_this_review"
+            android:textColor="@color/black"
+            android:visibility="invisible"
+            android:textSize="@dimen/fifteen_sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recyler_report" />
 
         <EditText
             android:id="@+id/edt_txt_feedback"
@@ -78,7 +93,8 @@
             app:layout_constraintBottom_toTopOf="@+id/btn_submit_report"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recyler_report" />
+            app:layout_constraintTop_toBottomOf="@+id/review_write_report_label"
+            app:layout_constraintVertical_bias="0.0" />
 
         <Button
             android:id="@+id/btn_submit_report"

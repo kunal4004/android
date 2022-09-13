@@ -152,8 +152,10 @@ class ReportReviewFragment : Fragment(), ReportReviewsAdapter.ReportItemClick {
             selectedFeedbacks.remove(reportItem)
         if (reportItem.equals(OTHERS) && isChecked) {
             edt_txt_feedback.visibility = View.VISIBLE
+            review_write_report_label.visibility = View.VISIBLE
         } else if (reportItem.equals(OTHERS) && !isChecked) {
             edt_txt_feedback.visibility = View.INVISIBLE
+            review_write_report_label.visibility = View.INVISIBLE
         }
 
         if (reportReviewsAdapter.getAllCheckBoxCount() != 0) {

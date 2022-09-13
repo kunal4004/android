@@ -34,6 +34,7 @@
         style="@style/myriad_pro_regular_black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="invisible"
         app:layout_constraintStart_toEndOf="@+id/iv_like"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginStart="@dimen/five_dp"/>
