@@ -124,7 +124,6 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
         }
         val storeCardInPrimaryCardList = primaryCards?.get(primaryCardIndex)
 
-        //val primaryCardBlockRequired = AppConfigSingleton.virtualTempCard?.primaryCardBlockRequired
         val virtualTempCard = StoreCardFeatureType.TemporaryCardEnabled(
             isBlockTypeNullInVirtualCardObject(),
             virtualCard
@@ -246,7 +245,7 @@ class ManageCardFunctionalRequirementImpl @Inject constructor(private val accoun
     }
 
     override fun isTemporaryFrozenStoreCardAndIsGenerateVirtualTempCardTrue(primaryCardIndex: Int): Boolean {
-        return isActivateVirtualTempCard() && isBlockTypeTemporary(primaryCardIndex)
+        return AppConfigSingleton.virtualTempCard?.primaryCardBlockRequired  == true && isActivateVirtualTempCard() && isBlockTypeTemporary(primaryCardIndex)
     }
 
     override fun isBlockTypeTemporary(primaryCardIndex: Int): Boolean {

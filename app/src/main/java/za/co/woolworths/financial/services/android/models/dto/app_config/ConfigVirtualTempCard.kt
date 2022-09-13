@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.models.dto.app_config
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
-import za.co.woolworths.financial.services.android.models.dto.npc.PrimaryCard
 
 @Parcelize
 data class ConfigVirtualTempCard(

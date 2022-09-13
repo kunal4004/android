@@ -7,6 +7,8 @@ import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountOptionsManageCardListFragmentBinding
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCard
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardItemActions
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.StoreCardInfo
 import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.StoreCardNotReceivedDialogFragment
@@ -57,17 +59,25 @@ class ManageStoreCardLandingList(
                     hideAllRows()
                 }
 
-                is StoreCardFeatureType.ActivateVirtualTempCard ->
+                is StoreCardFeatureType.ActivateVirtualTempCard -> {
+                    if (actionForStoreCardUsage1Item(featureType.storeCard)) return@launch
                     showActivateVirtualTempCardRow(featureType.isTemporaryCardEnabled)
+                }
 
-                is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive ->
+                is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive -> {
+                    if (actionForStoreCardUsage1Item(featureType.storeCard)) return@launch
                     showInstantReplacementCardAndInactive()
+                }
 
-                is StoreCardFeatureType.StoreCardIsTemporaryFreeze ->
+                is StoreCardFeatureType.StoreCardIsTemporaryFreeze -> {
+                    if (actionForStoreCardUsage1Item(featureType.storeCard)) return@launch
                     showStoreCardIsTemporaryFreeze(featureType)
+                }
 
-                is StoreCardFeatureType.TemporaryCardEnabled ->
+                is StoreCardFeatureType.TemporaryCardEnabled -> {
+                    if (actionForStoreCardUsage1Item(featureType.storeCard)) return@launch
                     showTemporaryCardEnabled(featureType, callback)
+                }
 
                 StoreCardFeatureType.ManageMyCard ->
                     showManageMyCardRow()
@@ -126,14 +136,8 @@ class ManageStoreCardLandingList(
             }
 
             when (featureType.upShellMessage) {
-                is StoreCardUpShellMessage.ActivateVirtualTempCard -> {
-                    activateVirtualTempCardDivider.visibility = VISIBLE
-                    activateVirtualTempCardRelativeLayout.visibility = VISIBLE
-                }
-                else -> {
-                    activateVirtualTempCardDivider.visibility = GONE
-                    activateVirtualTempCardRelativeLayout.visibility = GONE
-                }
+                is StoreCardUpShellMessage.ActivateVirtualTempCard -> showActivateVirtualCardItem(true)
+                else -> showActivateVirtualCardItem(false)
             }
         }
     }
@@ -143,25 +147,13 @@ class ManageStoreCardLandingList(
             replacementCardDivider.visibility = VISIBLE
             replacementCardRelativeLayout.visibility = VISIBLE
 
-            linkNewCardDivider.visibility = VISIBLE
-            linkNewCardRelativeLayout.visibility = VISIBLE
+            showLinkNewCardItem(true)
         }
     }
 
     private fun showActivateVirtualTempCardRow(isTemporaryCardEnabled: Boolean) {
-        with(includeListOptions) {
-            activateVirtualTempCardDivider.visibility = VISIBLE
-            activateVirtualTempCardRelativeLayout.visibility = VISIBLE
-
-            if (isTemporaryCardEnabled) {
-                linkNewCardDivider.visibility = GONE
-                linkNewCardRelativeLayout.visibility = GONE
-            } else {
-                linkNewCardDivider.visibility = VISIBLE
-                linkNewCardRelativeLayout.visibility = VISIBLE
-            }
-
-        }
+           showActivateVirtualCardItem(true)
+           showLinkNewCardItem(!isTemporaryCardEnabled)
     }
 
     fun showCardNotReceivedDialog(fragment: Fragment?, viewModel: MyAccountsRemoteApiViewModel) {
@@ -176,6 +168,51 @@ class ManageStoreCardLandingList(
             }
         } catch (e: IllegalStateException) {
             FirebaseManager.logException(e)
+        }
+    }
+
+    private fun actionForStoreCardUsage1Item(storeCard: StoreCard?): Boolean {
+        return storeCard?.actions?.let { action ->
+            action.forEach {  actionButton ->
+                when(actionButton.action){
+                    StoreCardItemActions.LINK_STORE_CARD -> showLinkNewCardItem(true, actionButton.label)
+                    StoreCardItemActions.ACTIVATE_VIRTUAL_CARD -> showActivateVirtualCardItem(true, actionButton.label)
+                    null -> Unit
+                }
+            }
+            true
+        } ?: run { false }
+    }
+
+    private fun showLinkNewCardItem(isVisible: Boolean, label: String? = null) {
+        with(includeListOptions) {
+           label?.let { linkNewCardTextView.text = it }
+            when (isVisible) {
+                true -> {
+                    linkNewCardDivider.visibility = VISIBLE
+                    linkNewCardRelativeLayout.visibility = VISIBLE
+                }
+                false -> {
+                    linkNewCardDivider.visibility = GONE
+                    linkNewCardRelativeLayout.visibility = GONE
+                }
+            }
+        }
+    }
+
+    private fun showActivateVirtualCardItem(isVisible : Boolean, label : String? = null){
+        with(includeListOptions) {
+            label?.let { activateVirtualTempCardTextView.text = it }
+            when (isVisible) {
+                true -> {
+                    activateVirtualTempCardDivider.visibility = VISIBLE
+                    activateVirtualTempCardRelativeLayout.visibility = VISIBLE
+                }
+                false -> {
+                    activateVirtualTempCardDivider.visibility = GONE
+                    activateVirtualTempCardRelativeLayout.visibility = GONE
+                }
+            }
         }
     }
 
