@@ -56,7 +56,6 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
                 setupTemporaryFreezeCardGraph()
                 setupVirtualTemporaryCardGraph()
             }
-
         }
 
         onBackPressed()

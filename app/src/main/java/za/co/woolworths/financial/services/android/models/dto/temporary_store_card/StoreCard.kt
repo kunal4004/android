@@ -18,5 +18,15 @@ data class StoreCard(
     val dateOpened: String,
     val dateLastMaintained: String,
     var blockType: String? = "",
-    var cardNotReceived: Boolean = false
+    var cardNotReceived: Boolean = false,
+    var actions: MutableList<ActionButton>?
 ):Parcelable
+
+
+@Parcelize
+data class ActionButton(var label: String?, var action : StoreCardItemActions?) : Parcelable
+
+enum class StoreCardItemActions (action: String?){
+    LINK_STORE_CARD("LINK_STORE_CARD"),
+    ACTIVATE_VIRTUAL_CARD("ACTIVATE_VIRTUAL_CARD")
+}
