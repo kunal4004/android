@@ -19,12 +19,12 @@ class ManageStoreCardMoreDetail(
 
             is StoreCardFeatureType.StoreCardFreezeCardUpShellMessage -> {
                 setUpshellTitleForFreezeCard()
-                isManageCardSubcategoryLabelVisible(false)
+                isManageCardSubcategoryLabelVisible(true)
             }
 
             is StoreCardFeatureType.StoreCardActivateVirtualTempCardUpShellMessage -> {
                 setUpshellTitleForActivateVirtualCard()
-                isManageCardSubcategoryLabelVisible(false)
+                isManageCardSubcategoryLabelVisible(true)
             }
 
             is StoreCardFeatureType.ActivateVirtualTempCard -> {
