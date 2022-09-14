@@ -876,7 +876,20 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             empty_state_template?.visibility = View.VISIBLE
         }
         onChangeQuantityComplete()
+        setMinimumCartErrorMessage()
         setItemLimitsBanner()
+    }
+
+    private fun setMinimumCartErrorMessage() {
+        if(orderSummary?.hasMinimumBasketAmount == false) {
+            txt_min_spend_error_msg?.visibility = View.VISIBLE
+            txt_min_spend_error_msg?.text = String.format(getString(R.string.minspend_error_msg_cart, orderSummary?.minimumBasketAmount))
+            btnCheckOut?.isEnabled = false
+            fadeCheckoutButton(true)
+        } else {
+            txt_min_spend_error_msg?.visibility = View.GONE
+            btnCheckOut?.isEnabled = true
+        }
     }
 
     private fun getUpdatedCommerceItem(
@@ -1603,12 +1616,8 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             }
         }
         updateItemQuantityToMatchStock()
-        if(orderSummary?.hasMinimumBasketAmount == false) {
-            txt_min_spend_error_msg?.visibility = View.VISIBLE
-            txt_min_spend_error_msg?.text = String.format(getString(R.string.minspend_error_msg_cart, orderSummary?.minimumBasketAmount))
-            btnCheckOut?.isEnabled = false
-        }
         cartProductAdapter?.updateStockAvailability(cartItems)
+        setMinimumCartErrorMessage()
     }
 
     // If CommerceItem quantity in cart is more then inStock Update quantity to match stock
