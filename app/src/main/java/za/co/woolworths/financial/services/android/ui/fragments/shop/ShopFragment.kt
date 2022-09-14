@@ -1007,6 +1007,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun showShopFeatureWalkThrough() {
+        if (activity == null) {
+            return
+        }
         (activity as? BottomNavigationActivity)?.let {
             // Prevent dialog to display in other section when fragment is not visible
             if (it.currentFragment !is ShopFragment || !isAdded || AppInstanceObject.get().featureWalkThrough.shopping || !Utils.isFeatureWalkThroughTutorialsEnabled())
@@ -1034,7 +1037,10 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun showDashFeatureWalkThrough() {
-        (requireActivity() as? BottomNavigationActivity)?.let {
+        if (activity == null) {
+            return
+        }
+        (activity as? BottomNavigationActivity)?.let {
             // Prevent dialog to display in other section when fragment is not visible
             if (it.currentFragment !is ShopFragment || !isAdded || AppInstanceObject.get().featureWalkThrough.dash || !Utils.isFeatureWalkThroughTutorialsEnabled())
                 return
@@ -1062,7 +1068,10 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun showDeliveryDetailsFeatureWalkThrough() {
-        (requireActivity() as? BottomNavigationActivity)?.let {
+        if (activity == null) {
+            return
+        }
+        (activity as? BottomNavigationActivity)?.let {
             // Prevent dialog to display in other section when fragment is not visible
             if (it.currentFragment !is ShopFragment || !isAdded || AppInstanceObject.get().featureWalkThrough.delivery_details || !Utils.isFeatureWalkThroughTutorialsEnabled())
                 return
@@ -1090,6 +1099,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun showMyListsFeatureWalkThrough() {
+        if (activity == null) {
+            return
+        }
         (activity as? BottomNavigationActivity)?.let {
             // Prevent dialog to display in other section when fragment is not visible
             if (it.currentFragment !is ShopFragment || !isAdded || AppInstanceObject.get().featureWalkThrough.my_lists || !Utils.isFeatureWalkThroughTutorialsEnabled())
@@ -1117,6 +1129,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun showBarcodeScannerFeatureWalkThrough() {
+        if (activity == null) {
+            return
+        }
         (activity as? BottomNavigationActivity)?.let {
             // Prevent dialog to display in other section when fragment is not visible
             if (it.currentFragment !is ShopFragment || imBarcodeScanner == null || !isAdded || AppInstanceObject.get().featureWalkThrough.barcodeScan || !Utils.isFeatureWalkThroughTutorialsEnabled())
