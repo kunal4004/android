@@ -102,11 +102,10 @@ private val ocAuthRepository: OCAuthRepository
                     if (result.isSuccess) {
                         ChatClient.instance().getDevices().enqueue {
                             if (it.isSuccess) {
-                                // TODO: commenting this part to facilitate push notification troubleshooting. Needs to be uncommented after work is complete.
-//                                val devices = it.data()
-//                                for (device in devices) {
-//                                    ChatClient.instance().deleteDevice(device).enqueue()
-//                                }
+                                val devices = it.data()
+                                for (device in devices) {
+                                    ChatClient.instance().deleteDevice(device).enqueue()
+                                }
 
                                 ChatClient
                                     .instance()

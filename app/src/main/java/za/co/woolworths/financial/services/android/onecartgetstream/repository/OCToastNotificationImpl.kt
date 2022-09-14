@@ -6,6 +6,7 @@ import android.widget.Toast
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.oc_chat_toast_notification.view.*
 import kotlinx.android.synthetic.main.single_line_common_toast.*
+import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
 
 import javax.inject.Inject
 
@@ -22,8 +23,8 @@ class OCToastNotificationImpl @Inject constructor(
             R.layout.oc_chat_toast_notification,
             context.mainCommonToastLayout)
         layout?.ocMessageCount?.text = messageCount
-        layout?.setOnClickListener {
-            //TODO: chat
+        layout?.ocChatLayout?.setOnClickListener {
+            context.startActivity(OCChatActivity.newIntent(context, orderId))
         }
 
         Toast(context).apply {

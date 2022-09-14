@@ -48,6 +48,7 @@ import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.onecartgetstream.service.DashChatMessageListeningService;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -463,6 +464,8 @@ public class SSOActivity extends WebViewActivity {
 					if (urlWithoutQueryString.equals(extraQueryStringParams.get("post_logout_redirect_uri"))) {
 						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
 						ServiceTools.Companion.stop(SSOActivity.this, LiveChatService.class);
+						Intent chatListeningServiceIntent = new Intent(SSOActivity.this, DashChatMessageListeningService.class);
+						stopService(chatListeningServiceIntent);
 						Intent intent = new Intent();
 						setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
 						Utils.setUserKMSIState(false);
@@ -514,6 +517,8 @@ public class SSOActivity extends WebViewActivity {
 				if (SSOActivity.this.path.rawValue().equals(Path.LOGOUT.rawValue())) {
 					KotlinUtils.setUserPropertiesToNull();
 					ServiceTools.Companion.stop(SSOActivity.this, LiveChatService.class);
+					Intent chatListeningServiceIntent = new Intent(SSOActivity.this, DashChatMessageListeningService.class);
+					stopService(chatListeningServiceIntent);
 					Intent intent = new Intent();
 					setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
 

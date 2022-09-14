@@ -19,10 +19,8 @@ import za.co.woolworths.financial.services.android.onecartgetstream.common.ChatS
 import za.co.woolworths.financial.services.android.onecartgetstream.repository.OCToastNotification
 import javax.inject.Inject
 
-@HiltViewModel
-class ChatViewModel  @Inject constructor(
-    private val ocToastNotification: OCToastNotification
-) : ViewModel() {
+
+class ChatViewModel : ViewModel() {
 
     private val chatClient: ChatClient by lazy { ChatClient.instance() }
     private val currentUser: User? by lazy { chatClient.getCurrentUser() }
@@ -136,19 +134,6 @@ class ChatViewModel  @Inject constructor(
         this.newMessageEventDisposable = channelClient.subscribeFor<NewMessageEvent> { event ->
             val message = event.message
             _state.postValue(ChatState.ReceivedMessageData(message))
-            //TODO: need to remove ... add for toast testing
-            GlobalScope.launch(Dispatchers.Main) {
-                val woolworthsApplication = WoolworthsApplication.getInstance()
-                woolworthsApplication?.currentActivity?.let {
-                    it.window?.decorView?.rootView?.apply {
-
-                        ocToastNotification.showOCToastNotification(woolworthsApplication.currentActivity,"1",250,"677656")
-
-                    }
-                }
-            }
-
-
         }
     }
 
@@ -174,11 +159,10 @@ class ChatViewModel  @Inject constructor(
 
 
     fun disconnect() {
-        //TODO: need to undo ....
-      //  userWatchingEventsDisposable.dispose()
-      //  newMessageEventDisposable.dispose()
-       // userTypingEvent.dispose()
-      //  chatClient.disconnect()
+        userWatchingEventsDisposable.dispose()
+        newMessageEventDisposable.dispose()
+        userTypingEvent.dispose()
+        chatClient.disconnect()
     }
 
     fun isConnected(): Boolean {

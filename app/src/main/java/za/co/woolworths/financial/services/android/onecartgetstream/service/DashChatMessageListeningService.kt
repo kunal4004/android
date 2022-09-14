@@ -2,14 +2,12 @@ package za.co.woolworths.financial.services.android.onecartgetstream.service
 
 import android.content.Intent
 import android.util.Log
-import android.view.View
 import androidx.lifecycle.LifecycleService
-import com.awfs.coordination.R
+import dagger.hilt.android.AndroidEntryPoint
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatEventListener
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.subscribeFor
 import io.getstream.chat.android.client.events.NewMessageEvent
@@ -17,15 +15,14 @@ import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
 import io.getstream.chat.android.pushprovider.huawei.HuaweiPushDeviceGenerator
 import kotlinx.android.synthetic.main.fragment_shop_my_orders.*
 import kotlinx.android.synthetic.main.order_details_fragment.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
@@ -36,11 +33,14 @@ import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.onecartgetstream.common.ChatState
-import za.co.woolworths.financial.services.android.onecartgetstream.common.State
+import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
 import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
+import za.co.woolworths.financial.services.android.onecartgetstream.repository.OCToastNotification
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class DashChatMessageListeningService : LifecycleService(), ChatEventListener<NewMessageEvent> {
 
     private lateinit var chatClient: ChatClient
@@ -48,6 +48,8 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
     private var chatChannelClients = HashMap<String, ChannelClient>()
     private var ordersSummary = ArrayList<OrderSummary>()
     private var channelIdToOrderIdMap = HashMap<String, String>()
+    @Inject
+    lateinit var ocToastNotification: OCToastNotification
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         // TODO: use Coroutine instead of thread
@@ -183,12 +185,10 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                 if (result.isSuccess) {
                     ChatClient.instance().getDevices().enqueue {
                         if (it.isSuccess) {
-                            // TODO: commenting this part to facilitate push notification troubleshooting. Needs to be uncommented after work is complete.
-//                            val devices = it.data()
-//                            for (device in devices) {
-//                                ChatClient.instance().deleteDevice(device).enqueue()
-//                            }
-
+                            val devices = it.data()
+                            for (device in devices) {
+                                ChatClient.instance().deleteDevice(device).enqueue()
+                            }
                             ChatClient
                                 .instance()
                                 .addDevice(
@@ -353,7 +353,27 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                 // TODO: Show toast with ability to open chat screen
                 // TODO: do not show toast if current screen is either the chat screen or authentication screen (can still receive message while signing out)
                 // TODO: show only 1 toast per N seconds (debounce) to prevent overwhelming overlapping toasts for fast incoming messages
-                //
+
+                // TODO: Need to  remove all TODO: After Test...
+                if (WoolworthsApplication.getInstance().currentActivity != null &&
+                    WoolworthsApplication.getInstance().currentActivity::class != OCChatActivity::class
+                ) {
+                    GlobalScope.launch(Dispatchers.Main) {
+                        val woolworthsApplication = WoolworthsApplication.getInstance()
+                        woolworthsApplication?.currentActivity?.let {
+                            it.window?.decorView?.rootView?.apply {
+                                orderId?.let { orderID ->
+
+                                    ocToastNotification.showOCToastNotification(it, "1", 250,
+                                        orderID)
+                                    delay(AppConstant.DELAY_3000_MS)
+                                }
+                            }
+                        }
+                    }
+
+                }
+
             }
         }
     }

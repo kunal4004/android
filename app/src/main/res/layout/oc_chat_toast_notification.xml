@@ -6,6 +6,7 @@
     android:layout_height="wrap_content">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ocChatLayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_50sdp"
         android:layout_marginStart="@dimen/_8sdp"
@@ -35,7 +36,6 @@
             android:background="@drawable/bg_oc_message_count"
             android:gravity="center"
             android:includeFontPadding="false"
-            android:text="1"
             android:textColor="@color/white"
             android:textSize="@dimen/_7sdp"
             app:layout_constraintStart_toStartOf="parent"
@@ -52,7 +52,7 @@
             android:letterSpacing="0.1"
             android:lineSpacingExtra="3sp"
             android:maxLines="2"
-            android:text="Your shopper is trying to \ncontact you."
+            android:text="@string/your_shopper_is_trying_to"
             android:textAllCaps="true"
             android:textColor="@color/white"
             android:textSize="@dimen/twelve_sp"

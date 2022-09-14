@@ -2709,5 +2709,6 @@
 
     <string name="we_need_more_info">We Need More Info</string>
     <string name="enter_street_name">Please enter a street name for this location:</string>
+    <string name="your_shopper_is_trying_to">Your shopper is trying to \ncontact you.</string>
 
 </resources>
