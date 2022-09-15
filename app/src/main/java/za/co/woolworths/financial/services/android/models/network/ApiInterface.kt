@@ -46,7 +46,7 @@ import za.co.woolworths.financial.services.android.models.dto.voc.SurveyOptOutBo
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyRepliesBody
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
-import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.data.CardNotReceived
+import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.EmailUsRequest
 
 interface ApiInterface {
@@ -1425,6 +1425,13 @@ interface ApiInterface {
         @Header("userAgentVersion") userAgentVersion: String,
         @Header("sessionToken") sessionToken: String
     ): Call<DeleteAccountResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/dash/chat/authenticate")
+    suspend fun getOCAuth(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String
+    ): retrofit2.Response<OCAuthenticationResponse>
 
 }
 
