@@ -32,7 +32,6 @@
         android:layout_margin="@dimen/twenty_four_dp"
         android:background="@color/white"
         android:fontFamily="@font/myriad_pro_regular"
-        android:text="@string/native_checkout_delivery_instructions_need_bags"
         android:textColor="@color/black"
         android:textSize="@dimen/fifteen_sp"
         app:layout_constraintStart_toStartOf="parent"

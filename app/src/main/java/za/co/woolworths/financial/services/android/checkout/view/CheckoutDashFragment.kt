@@ -808,6 +808,9 @@ class CheckoutDashFragment : Fragment(),
         if (AppConfigSingleton.nativeCheckout?.currentShoppingBag?.isEnabled == true) {
             switchNeedBags?.visibility = View.VISIBLE
             txtNeedBags?.visibility = View.VISIBLE
+            txtNeedBags?.text = AppConfigSingleton.nativeCheckout?.currentShoppingBag?.title.plus(
+                AppConfigSingleton.nativeCheckout?.currentShoppingBag?.description
+            )
             viewHorizontalSeparator?.visibility = GONE
             newShoppingBagsLayout?.visibility = GONE
             switchNeedBags?.setOnCheckedChangeListener { _, isChecked ->
