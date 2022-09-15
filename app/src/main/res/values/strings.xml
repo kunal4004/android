@@ -320,7 +320,7 @@
 
     <string name="stock_finder_map_view">map view</string>
     <string name="stock_finder_list_view">list view</string>
-    <string name="stock_finder_btn_label">find in-store</string>
+    <string name="stock_finder_btn_label">find in store</string>
     <string name="find_in_store_info">We update these numbers every few hours. Stock moves quickly, so items may have sold since the last count.</string>
     <string name="confirm_color_desc">select your colour</string>
     <string name="confirm_size_desc">select your size</string>
@@ -1587,7 +1587,7 @@
     <string name="select_your_delivery_location">Select your delivery location:</string>
     <string name="remove_these_items_continue">remove these items &amp; continue</string>
     <string name="item_not_available_for_collection_title">Item not available</string>
-    <string name="item_not_available_for_collection_desc">To purchase, please try find-in-store or change delivery option to Standard.</string>
+    <string name="item_not_available_for_collection_desc">To purchase, please try find in store or change delivery option to Standard.</string>
     <string name="change_delivery_option">CHANGE DELIVERY OPTION</string>
     <string name="remove_items_dialog_title">These items will be removed</string>
     <string name="remove_items_dialog_desc">We always show you items available at the store closest to your location. When you change this location, the items you see may change too.</string>
