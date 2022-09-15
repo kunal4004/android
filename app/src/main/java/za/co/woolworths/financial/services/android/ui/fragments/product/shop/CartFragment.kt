@@ -1081,6 +1081,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                                 resetItemDelete(true)
                             }
                             enableItemDelete(false)
+                            setMinimumCartErrorMessage()
                         } catch (ex: Exception) {
                             logException(ex)
                         }
