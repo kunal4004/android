@@ -261,7 +261,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             if (object instanceof LoadState) {
                 String searchProduct = ((LoadState) object).getSearchProduct();
                 if (!TextUtils.isEmpty((searchProduct))) {
-                    pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.SEARCH, "", searchProduct, true));
+                    pushFragment(ProductListingFragment.Companion.newInstance(
+                            ProductsRequestParams.SearchType.SEARCH,
+                            "",
+                            searchProduct,
+                            true,
+                            ((LoadState) object).isSendDeliveryDetails()));
                 }
             } else if (object instanceof CartSummaryResponse) {
                 // product item successfully added to cart
@@ -327,7 +332,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     public void setToast(String message, String cartText, ProductCountMap productCountMap, int noOfItems) {
         if (productCountMap != null
                 && (KotlinUtils.Companion.isDeliveryOptionClickAndCollect()
-                    || KotlinUtils.Companion.isDeliveryOptionDash())
+                || KotlinUtils.Companion.isDeliveryOptionDash())
                 && productCountMap.getQuantityLimit() != null
                 && productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
             ToastFactory.Companion.showItemsLimitToastOnAddToCart(getBottomNavigationById(), productCountMap, this, noOfItems, true);
@@ -395,7 +400,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                         arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.ENTRY_POINT, FirebaseManagerAnalyticsProperties.EntryPoint.DEEP_LINK.getValue());
                         arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.DEEP_LINK_URL, linkData.toString());
                         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTDELIVERY, arguments, this);
-                        pushFragment(ProductListingFragment.Companion.newInstance(productSearchTypeAndSearchTerm.getSearchType(), "", productSearchTypeAndSearchTerm.getSearchTerm(), true));
+                        pushFragment(ProductListingFragment.Companion.newInstance(productSearchTypeAndSearchTerm.getSearchType(), "", productSearchTypeAndSearchTerm.getSearchTerm(), true, false));
                     }
                     break;
 
@@ -762,7 +767,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMENU, BottomNavigationActivity.this);
 
         Fragment fragment = mNavController.getCurrentFrag();
-        if (isNewSession &&  fragment instanceof ShopFragment) {
+        if (isNewSession && fragment instanceof ShopFragment) {
             isNewSession = false;
             ((ShopFragment) fragment).setShopDefaultTab();
         }
@@ -1170,7 +1175,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if ((requestCode == REQUEST_CODE_BARCODE_ACTIVITY || requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE) && resultCode == RESULT_OK) {
             ProductsRequestParams.SearchType searchType = ProductsRequestParams.SearchType.valueOf(data.getStringExtra("searchType"));
             String searchTerm = data.getStringExtra("searchTerm");
-            pushFragment(ProductListingFragment.Companion.newInstance(searchType, "", searchTerm, true));
+            pushFragment(ProductListingFragment.Companion.newInstance(searchType, "", searchTerm, true, false));
             return;
         }
 

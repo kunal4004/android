@@ -98,8 +98,6 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
 
     private val TAG = this.javaClass.simpleName
     private var mNumberOfListSelected = 0
-    private var localCartCount = 0
-
     private var changeQuantityWasClicked = false
     private var errorMessageWasPopUp = false
     private var onRemoveItemFailed = false
@@ -130,7 +128,6 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         setupToolbar()
         initViews()
         hideEditCart()
-        localCartCount = instance.getCartItemCount()
         mChangeQuantityList = ArrayList(0)
         mChangeQuantity = ChangeQuantity()
         mConnectionBroadcast = Utils.connectionBroadCast(
@@ -957,6 +954,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                                         )
                                     }
                                     setItemLimitsBanner()
+                                    instance.queryCartSummaryCount()
                                 }
                                 440 -> {
                                     //TODO:: improve error handling
@@ -1343,10 +1341,6 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                     } else {
                         buildAddToCartSuccessToast(rlCheckOut, false, activity, null)
                     }
-                }
-                REQUEST_SUBURB_CHANGE -> {
-                    initializeLoggedInUserCartUI()
-                    loadShoppingCartAndSetDeliveryLocation()
                 }
                 REDEEM_VOUCHERS_REQUEST_CODE, APPLY_PROMO_CODE_REQUEST_CODE -> {
                     val shoppingCartResponse = Utils.strToJson(
