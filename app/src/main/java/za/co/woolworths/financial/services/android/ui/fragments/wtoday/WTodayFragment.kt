@@ -134,7 +134,10 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
     }
 
     override fun onShowProductListing(categoryId: String, categoryName: String) {
-        (activity as? BottomNavigationActivity)?.pushFragment(ProductListingFragment.newInstance(ProductsRequestParams.SearchType.NAVIGATE, categoryName, categoryId, false))
+        (activity as? BottomNavigationActivity)?.pushFragment(ProductListingFragment.newInstance(ProductsRequestParams.SearchType.NAVIGATE, categoryName, categoryId,
+            isBrowsing = false,
+            sendDeliveryDetails = false
+        ))
     }
 
     override fun onAddIngredientsToShoppingList(ingredients: String) {
