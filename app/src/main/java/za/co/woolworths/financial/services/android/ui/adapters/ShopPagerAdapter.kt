@@ -5,10 +5,14 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.PagerAdapter
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFullfilmentCollectionStoreFragment
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashDeliveryAddressFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDeliveryFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
+import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.ARG_SEND_DELIVERY_DETAILS
+import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.ARG_VALIDATE_PLACE
 
 class ShopPagerAdapter(fm: FragmentManager, tabTitle: MutableList<String>?, var listener: OnChildFragmentEvents) : FragmentStatePagerAdapter(fm) {
     private val mTabTitle: MutableList<String>? = tabTitle
@@ -17,11 +21,19 @@ class ShopPagerAdapter(fm: FragmentManager, tabTitle: MutableList<String>?, var 
     fun setValidateResponse(validatePlace: ValidatePlace?) {
        this.validatePlace = validatePlace
     }
+
     override fun getItem(position: Int): Fragment {
         return when (position) {
-            0 -> StandardDeliveryFragment()
-            1 -> ChangeFullfilmentCollectionStoreFragment(validatePlace)
-            else -> DashDeliveryAddressFragment()
+            0 -> StandardDeliveryFragment().withArgs {
+                ARG_SEND_DELIVERY_DETAILS to listener.isSendDeliveryDetails()
+            }
+            1 -> ChangeFullfilmentCollectionStoreFragment().withArgs {
+                ARG_VALIDATE_PLACE to validatePlace
+                ARG_SEND_DELIVERY_DETAILS to listener.isSendDeliveryDetails()
+            }
+            else -> DashDeliveryAddressFragment().withArgs {
+                ARG_SEND_DELIVERY_DETAILS to listener.isSendDeliveryDetails()
+            }
         }
     }
 

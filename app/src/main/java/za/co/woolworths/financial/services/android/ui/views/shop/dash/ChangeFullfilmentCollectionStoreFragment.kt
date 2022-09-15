@@ -47,10 +47,11 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
-class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?) :
+class ChangeFullfilmentCollectionStoreFragment() :
     DepartmentExtensionFragment(), DynamicMapDelegate,
     StoreListAdapter.OnStoreSelected, View.OnClickListener, TextWatcher {
 
+    private var validatePlace: ValidatePlace? = null
     private var updatedAddressStoreList: List<Store>? = mutableListOf()
     private var storeId: String? = null
     private var placeId: String? = null
@@ -58,6 +59,11 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
     private var parentFragment: ShopFragment? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
     private var saveInstanceState: Bundle? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        validatePlace = arguments?.get(AppConstant.Keys.ARG_VALIDATE_PLACE) as? ValidatePlace
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -382,7 +388,8 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
                 ProductsRequestParams.SearchType.NAVIGATE,
                 rootCategory.categoryName,
                 rootCategory.dimValId,
-                true
+                isBrowsing = true,
+                sendDeliveryDetails = arguments?.getBoolean(AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false)
             )
         }
     }
