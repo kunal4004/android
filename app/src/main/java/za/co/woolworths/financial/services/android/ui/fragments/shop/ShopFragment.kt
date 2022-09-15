@@ -49,7 +49,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ShopPagerAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.newInstance
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment.SelectedTabIndex.*
 import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDeliveryFragment.Companion.DEPARTMENT_LOGIN_REQUEST
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.DISPLAY_TOAST_RESULT_CODE
@@ -61,6 +61,7 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_3000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_BARCODE_ACTIVITY
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_ORDER_DETAILS_PAGE
+import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.ARG_FROM_NOTIFICATION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.CNC_SET_ADDRESS_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DASH_SET_ADDRESS_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
@@ -102,11 +103,15 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                         SearchType.valueOf(extras.getString(AppConstant.Keys.EXTRA_SEARCH_TYPE, ""))
                     val searchTerm: String =
                         extras.getString(AppConstant.Keys.EXTRA_SEARCH_TERM, "")
-                    (requireActivity() as? BottomNavigationActivity)?.pushFragment(newInstance(
-                        searchType,
-                        "",
-                        searchTerm,
-                        false))
+                    (requireActivity() as? BottomNavigationActivity)?.pushFragment(
+                        ProductListingFragment.newInstance(
+                            searchType,
+                            "",
+                            searchTerm,
+                            isBrowsing = false,
+                            sendDeliveryDetails = false // false because barcode result
+                        )
+                    )
                 }
             }
         }
@@ -302,7 +307,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             return
         }
         if (KotlinUtils.isLocationSame == true && KotlinUtils.placeId != null) {
-            (KotlinUtils.browsingDeliveryType ?: Delivery.getType(getDeliveryType()?.deliveryType))?.let {
+            (KotlinUtils.browsingDeliveryType
+                ?: Delivery.getType(getDeliveryType()?.deliveryType))?.let {
                 showBlackToolTip(it)
             }
         }
@@ -431,9 +437,14 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun navigateToProductSearch() {
-        activity?.apply {
+        requireActivity().apply {
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPSEARCHBAR, this)
-            val openProductSearch = Intent(this, ProductSearchActivity::class.java)
+
+            val openProductSearch = Intent(this, ProductSearchActivity::class.java).also {
+                it.putExtra(
+                    AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS, true
+                )
+            }
             startActivity(openProductSearch)
             overridePendingTransition(0, 0)
         }
@@ -646,6 +657,14 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         viewpager_main?.setCurrentItem(0, true)
     }
 
+    override fun isSendDeliveryDetails(): Boolean {
+        val fromNotification: Boolean = arguments?.getBoolean(ARG_FROM_NOTIFICATION, false) ?: false
+        if(fromNotification) {
+            return false
+        }
+        return true
+    }
+
     fun navigateToMyListFragment() {
         (activity as? BottomNavigationActivity)?.let {
             it.bottomNavigationById.currentItem = INDEX_ACCOUNT
@@ -786,8 +805,10 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 showStandardDeliveryToolTip()
             }
             Delivery.CNC -> {
-                showClickAndCollectToolTip(KotlinUtils.isStoreSelectedForBrowsing,
-                    KotlinUtils.browsingCncStore?.storeId)
+                showClickAndCollectToolTip(
+                    KotlinUtils.isStoreSelectedForBrowsing,
+                    KotlinUtils.browsingCncStore?.storeId
+                )
             }
             Delivery.DASH -> {
                 showDashToolTip(validateLocationResponse)
@@ -884,14 +905,18 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             blackToolTipLayout?.visibility = View.GONE
             return
         }
-        if (isUserAuthenticated() && getFirstAvailableFoodDeliveryDate(isStoreSelectedForBrowsing,
-                browsingStoreId).isNullOrEmpty() == true
+        if (isUserAuthenticated() && getFirstAvailableFoodDeliveryDate(
+                isStoreSelectedForBrowsing,
+                browsingStoreId
+            ).isNullOrEmpty() == true
         ) {
             blackToolTipLayout?.visibility = View.GONE
             return
         } else {
-            if (getFirstAvailableFoodDeliveryDate(isStoreSelectedForBrowsing,
-                    browsingStoreId).isNullOrEmpty() == true
+            if (getFirstAvailableFoodDeliveryDate(
+                    isStoreSelectedForBrowsing,
+                    browsingStoreId
+                ).isNullOrEmpty() == true
             ) {
                 blackToolTipLayout?.visibility = View.GONE
                 return
@@ -994,7 +1019,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             deliveryIcon?.setImageResource(R.drawable.icon_scooter_white)
             bubbleLayout?.setArrowDirection(ArrowDirection.TOP)
             bubbleLayout?.arrowPosition =
-                tabs_main.width - tabs_main.getTabAt(DASH_TAB.index)?.view?.width?.div(DASH_DIVIDER)?.toFloat()!!
+                tabs_main.width - tabs_main.getTabAt(DASH_TAB.index)?.view?.width?.div(DASH_DIVIDER)
+                    ?.toFloat()!!
             productAvailableText?.text = resources.getString(
                 R.string.dash_item_limit,
                 it.onDemand?.quantityLimit?.foodMaximumQuantity
