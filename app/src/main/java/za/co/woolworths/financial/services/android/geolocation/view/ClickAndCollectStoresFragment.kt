@@ -152,7 +152,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
         rvStoreList.adapter = activity?.let { activity ->
             StoreListAdapter(
                 activity,
-                address,
+                KotlinUtils.sortedStoreList(address),
                 this
             )
         }

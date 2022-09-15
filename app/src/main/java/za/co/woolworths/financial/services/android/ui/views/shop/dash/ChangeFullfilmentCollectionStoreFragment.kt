@@ -197,7 +197,7 @@ class ChangeFullfilmentCollectionStoreFragment(var validatePlace: ValidatePlace?
         rvStoreList.adapter = activity?.let { activity ->
             StoreListAdapter(
                 activity,
-                stores,
+                KotlinUtils.sortedStoreList(stores),
                 this
             )
         }
