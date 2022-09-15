@@ -875,7 +875,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     searchType = ProductsRequestParams.SearchType.NAVIGATE,
                     sub_category_name = categoryItem.categoryName,
                     searchTerm = categoryItem.dimValId,
-                    true
+                    isBrowsing = true,
+                    sendDeliveryDetails = arguments?.getBoolean(AppConstant.Keys.ARG_SEND_DELIVERY_DETAILS, false) == true
                 )
             )
         }
@@ -888,7 +889,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     searchType = ProductsRequestParams.SearchType.NAVIGATE,
                     sub_category_name = item.displayName,
                     searchTerm = item.navigationState,
-                    true
+                    isBrowsing = true,
+                    sendDeliveryDetails = arguments?.getBoolean(AppConstant.Keys.ARG_SEND_DELIVERY_DETAILS, false) == true
                 )
             )
         }

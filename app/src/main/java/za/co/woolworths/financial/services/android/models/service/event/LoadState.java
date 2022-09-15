@@ -2,7 +2,7 @@ package za.co.woolworths.financial.services.android.models.service.event;
 
 public class LoadState {
 
-	private boolean loadComplete;
+	private boolean loadComplete, sendDeliveryDetails;
 	private String searchProduct;
 
 	public boolean onLoanCompleted() {
@@ -20,4 +20,12 @@ public class LoadState {
 	public String getSearchProduct() {
 		return searchProduct;
 	}
+
+	public void setSendDeliveryDetails(boolean isUserBrowsingDash) {
+		this.sendDeliveryDetails = isUserBrowsingDash;
+	}
+	public boolean isSendDeliveryDetails() {
+		return this.sendDeliveryDetails;
+	}
+
 }
