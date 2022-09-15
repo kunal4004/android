@@ -60,4 +60,10 @@ class ConfirmDeliveryAddressResponse {
 
     @SerializedName("httpCode")
     var httpCode: Int? = null
+
+    @SerializedName("hasMinimumBasketAmount")
+    var hasMinimumBasketAmount:Boolean?= false
+
+    @SerializedName("minimumBasketAmount")
+    var minimumBasketAmount:Double?= 0.0
 }

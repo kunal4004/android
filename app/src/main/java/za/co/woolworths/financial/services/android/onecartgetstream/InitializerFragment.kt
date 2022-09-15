@@ -5,10 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentGetStreamInitializerBinding
+import za.co.woolworths.financial.services.android.models.network.Status
 import za.co.woolworths.financial.services.android.onecartgetstream.common.State
 import za.co.woolworths.financial.services.android.onecartgetstream.common.navigateSafely
 
@@ -16,7 +17,7 @@ import za.co.woolworths.financial.services.android.onecartgetstream.common.navig
 
 class InitializerFragment : Fragment() {
 
-    private val viewModel: InitializerViewModel by viewModels()
+    private val viewModel: InitializerViewModel by activityViewModels()
     private var _binding: FragmentGetStreamInitializerBinding? = null
     private val binding get() = _binding!!
 
@@ -36,11 +37,29 @@ class InitializerFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        if (viewModel.isConnectedToInternet(requireContext()))
-        initChat()
-        else
+        if (viewModel.isConnectedToInternet(requireContext())) {
+            initChat()
+            getOCAuthData()
+        } else
             binding.oneCartChatConnectionLayout.noConnectionLayout.visibility = View.VISIBLE
 
+    }
+
+    private fun getOCAuthData() {
+        viewModel.ocAuthData.observe(viewLifecycleOwner) {
+            it.getContentIfNotHandled()?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        resource.data?.details?.let { details ->
+                            viewModel.initChatUser(details.userId,details.name,details.token)
+                        }
+                    }
+                    Status.ERROR -> {
+                        showErrorDialog()
+                    }
+                }
+            }
+        }
     }
 
     private fun initChat() {
