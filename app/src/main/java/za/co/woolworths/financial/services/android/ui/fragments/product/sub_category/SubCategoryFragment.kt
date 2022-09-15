@@ -26,6 +26,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPictureCenterInside
 import za.co.woolworths.financial.services.android.util.Utils
@@ -211,7 +212,8 @@ class SubCategoryFragment :
             subCategory.dimValId,
             subCategory.categoryName,
             brandNavigationDetails,
-            true
+            isBrowsing = true,
+            sendDeliveryDetails = this.arguments?.getBoolean(AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false)
         ))
     }
 

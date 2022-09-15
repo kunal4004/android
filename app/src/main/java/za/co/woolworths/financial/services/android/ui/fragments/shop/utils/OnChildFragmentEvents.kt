@@ -4,4 +4,5 @@ import java.io.Serializable
 
 interface OnChildFragmentEvents : Serializable {
     fun onStartShopping()
+    fun isSendDeliveryDetails(): Boolean
 }
