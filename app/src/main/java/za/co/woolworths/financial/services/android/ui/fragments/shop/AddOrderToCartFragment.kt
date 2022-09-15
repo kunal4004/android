@@ -459,6 +459,14 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
                 SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, addItemToCartResponse.response.stsParams, requireActivity())
             }
 
+            AppConstant.ERROR_CODE_500 -> {
+                KotlinUtils.showQuantityLimitErrror(
+                    activity?.supportFragmentManager,
+                    "",
+                    "",
+                    context
+                )
+            }
         }
     }
 

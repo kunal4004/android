@@ -10,6 +10,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.product.
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_CATEGORY;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE;
+import static za.co.woolworths.financial.services.android.util.AppConstant.ERROR_CODE_500;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_EXPECTATION_FAILED_417;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_OK;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_SESSION_TIMEOUT_440;
@@ -83,6 +84,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.u
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.EmptyCartView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
@@ -1097,6 +1099,14 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
                             onSessionTokenExpired(addItemToCartResponse.response);
                         break;
 
+                    case ERROR_CODE_500 :
+                        KotlinUtils.showQuantityLimitErrror(
+                                getActivity().getSupportFragmentManager(),
+                                "",
+                                "",
+                                getContext()
+                        );
+                        break;
                     default:
                         if (addItemToCartResponse.response != null)
                             otherHttpCode(addItemToCartResponse.response);

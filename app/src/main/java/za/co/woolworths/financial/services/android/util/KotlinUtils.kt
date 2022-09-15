@@ -1388,5 +1388,26 @@ class KotlinUtils {
             }
             return event
         }
+
+        @JvmStatic
+        fun showQuantityLimitErrror(
+            fragmentManager: FragmentManager?,
+            title: String,
+            desc: String,
+            context: Context?
+        ) {
+            if (context == null || fragmentManager == null) {
+                return
+            }
+            if (getPreferredDeliveryType() == Delivery.DASH) {
+                showGeneralInfoDialog(
+                    fragmentManager = fragmentManager,
+                    description = desc,
+                    title = title,
+                    actionText = context.getString(R.string.got_it),
+                    infoIcon = R.drawable.icon_dash_delivery_scooter
+                )
+            }
+        }
     }
 }

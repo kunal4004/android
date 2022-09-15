@@ -1539,6 +1539,15 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                             ScreenManager.presentSSOSignin(this)
                         }
 
+                        AppConstant.ERROR_CODE_500 -> {
+                            KotlinUtils.showQuantityLimitErrror(
+                                activity?.supportFragmentManager,
+                                "",
+                                "",
+                                context
+                            )
+                        }
+
                         else -> addItemToCartResponse?.response?.desc?.let { desc ->
                             Utils.displayValidationMessage(
                                 this,
