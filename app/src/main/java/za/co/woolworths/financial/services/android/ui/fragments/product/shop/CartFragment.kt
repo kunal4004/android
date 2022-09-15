@@ -417,24 +417,26 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         ) {
             //   - CNAV : Checkout  activity
             val beginCheckoutParams = Bundle()
-            beginCheckoutParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
+            beginCheckoutParams.putString(FirebaseAnalytics.Param.CURRENCY,
+                FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
 
             val beginCheckoutItem = Bundle()
-            beginCheckoutItem.putString(FirebaseAnalytics.Param.QUANTITY, FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE)
-            beginCheckoutItem.putString(FirebaseAnalytics.Param.ITEM_BRAND,FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
+            beginCheckoutItem.putString(FirebaseAnalytics.Param.QUANTITY,
+                FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE)
+            beginCheckoutItem.putString(FirebaseAnalytics.Param.ITEM_BRAND,
+                FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
 
-            beginCheckoutParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(beginCheckoutItem))
-            AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT, beginCheckoutParams)
+            beginCheckoutParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS,
+                arrayOf(beginCheckoutItem))
+            AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT,
+                beginCheckoutParams)
 
             val checkoutActivityIntent = Intent(activity, CheckoutActivity::class.java)
-            checkoutActivityIntent.putExtra(
-                CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
-                response
-            )
-            checkoutActivityIntent.putExtra(
-                CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION,
-                true
-            )
+            checkoutActivityIntent.apply {
+                putExtra(CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY, response)
+                putExtra(CheckoutAddressConfirmationFragment.IS_EDIT_ADDRESS_SCREEN, true)
+                putExtra(CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION, true)
+            }
             if ((liquorCompliance != null) && liquorCompliance!!.isLiquorOrder && (AppConfigSingleton.liquor!!.noLiquorImgUrl != null) && !AppConfigSingleton.liquor!!.noLiquorImgUrl.isEmpty()) {
                 checkoutActivityIntent.putExtra(
                     Constant.LIQUOR_ORDER,
@@ -459,6 +461,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             val checkoutActivityIntent = Intent(activity, CheckoutActivity::class.java)
             checkoutActivityIntent.apply {
                 putExtra(CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY, response)
+                putExtra(CheckoutAddressConfirmationFragment.IS_EDIT_ADDRESS_SCREEN, true)
                 putExtra(CheckoutAddressManagementBaseFragment.DASH_SLOT_SELECTION, true)
                 liquorCompliance.let {
                     if ((it != null) && it.isLiquorOrder && (AppConfigSingleton.liquor!!.noLiquorImgUrl != null) && !AppConfigSingleton.liquor!!.noLiquorImgUrl.isEmpty()) {
@@ -653,12 +656,13 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         orderSummary = cartResponse?.orderSummary
         voucherDetails = cartResponse?.voucherDetails
         productCountMap = cartResponse?.productCountMap
-        liquorCompliance = (if (cartResponse?.noLiquorImageUrl != null) cartResponse?.noLiquorImageUrl else "")?.let {
-            LiquorCompliance(
-                cartResponse?.liquorOrder ?: false,
-                it
-            )
-        }
+        liquorCompliance =
+            (if (cartResponse?.noLiquorImageUrl != null) cartResponse?.noLiquorImageUrl else "")?.let {
+                LiquorCompliance(
+                    cartResponse?.liquorOrder ?: false,
+                    it
+                )
+            }
         setItemLimitsBanner()
         if (cartResponse?.cartItems?.size ?: 0 > 0 && cartProductAdapter != null) {
             val emptyCartItemGroups = ArrayList<CartItemGroup>(0)
