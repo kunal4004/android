@@ -1034,7 +1034,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun showDashFeatureWalkThrough() {
-        (requireActivity() as? BottomNavigationActivity)?.let {
+        (activity as? BottomNavigationActivity)?.let {
             // Prevent dialog to display in other section when fragment is not visible
             if (it.currentFragment !is ShopFragment || !isAdded || AppInstanceObject.get().featureWalkThrough.dash || !Utils.isFeatureWalkThroughTutorialsEnabled())
                 return
@@ -1062,7 +1062,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun showDeliveryDetailsFeatureWalkThrough() {
-        (requireActivity() as? BottomNavigationActivity)?.let {
+        (activity as? BottomNavigationActivity)?.let {
             // Prevent dialog to display in other section when fragment is not visible
             if (it.currentFragment !is ShopFragment || !isAdded || AppInstanceObject.get().featureWalkThrough.delivery_details || !Utils.isFeatureWalkThroughTutorialsEnabled())
                 return
@@ -1142,6 +1142,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     override fun onWalkthroughActionButtonClick(feature: WMaterialShowcaseView.Feature?) {
+        if (activity == null) {
+            return
+        }
         when (feature) {
             WMaterialShowcaseView.Feature.DASH -> {
                 viewpager_main?.apply {
@@ -1171,6 +1174,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     override fun onPromptDismiss(feature: WMaterialShowcaseView.Feature) {
+        if (activity == null) {
+            return
+        }
         when (feature) {
             WMaterialShowcaseView.Feature.SHOPPING -> {
                 showDashFeatureWalkThrough()
