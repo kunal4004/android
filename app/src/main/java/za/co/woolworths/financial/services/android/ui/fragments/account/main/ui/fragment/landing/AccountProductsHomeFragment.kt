@@ -25,12 +25,13 @@ class UIComponent(
 @AndroidEntryPoint
 class AccountProductsHomeFragment : Fragment(R.layout.account_products_home_fragment) {
 
+    private var mSlideOffSet: Float? = 0f
     private var sheetBehavior: BottomSheetBehavior<*>? = null
 
     private lateinit var uiComponent: UIComponent
 
     val homeViewModel: AccountProductsHomeViewModel by activityViewModels()
-
+    private var viewBinding : AccountProductsHomeFragmentBinding? = null
     @Inject
     lateinit var accountDataClass: AccountDataClass
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -46,18 +47,18 @@ class AccountProductsHomeFragment : Fragment(R.layout.account_products_home_frag
 
         homeViewModel.bottomSheetBehaviorState = BottomSheetBehavior.STATE_COLLAPSED
 
-        setupBottomSheet(binding)
+         setupBottomSheet(binding)
 
     }
 
     private fun setupBottomSheet(binding: AccountProductsHomeFragmentBinding) {
         with(uiComponent) {
-
             with(binding) {
                 sheetBehavior = init(bottomSheetBehaviourView)
                 sheetBehavior?.addBottomSheetCallback(callback { slideOffset ->
                     val homeIcon = (activity as? StoreCardActivity)?.getBackIcon()
                     homeIcon?.rotation = slideOffset * -90
+                    mSlideOffSet = slideOffset
                     homeViewModel.bottomSheetBehaviorState =
                         if (slideOffset == 1.0f) BottomSheetBehavior.STATE_EXPANDED else BottomSheetBehavior.STATE_COLLAPSED
                     animateDim(slideOffset, dimView)
@@ -75,4 +76,8 @@ class AccountProductsHomeFragment : Fragment(R.layout.account_products_home_frag
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        viewBinding = null
+    }
 }

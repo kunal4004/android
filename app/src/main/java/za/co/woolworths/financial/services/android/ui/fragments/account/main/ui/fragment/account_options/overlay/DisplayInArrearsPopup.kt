@@ -1,15 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.overlay
 
 import android.app.Activity
-import android.content.Intent
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.ActionText
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
-import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
-import za.co.woolworths.financial.services.android.ui.activities.GetAPaymentPlanActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.ITreatmentPlan
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.TreatmentPlanImpl
@@ -17,17 +14,13 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dom
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOfferingState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.DialogData
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.CallBack
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.SingleLiveEvent
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.eliteplan.TakeUpPlanUtil
 
 interface IDisplayInArrearsPopup {
     fun showInArrearsDialogByStatus(status: (AccountOfferingState) -> Unit)
-    fun setupInArrearsPopup()
+    fun setupInArrearsPopup(isAccountInArrearsPopupVisible : Boolean)
     fun collectCheckEligibilityResult()
     fun onTap(activity: Activity?)
     fun isChargedOff(): Boolean
@@ -42,7 +35,6 @@ class DisplayInArrearsPopup(
 ) : IDisplayInArrearsPopup, ITreatmentPlan by treatmentPlanImpl {
 
     private var mEligibilityPlan: EligibilityPlan? = null
-    val onClickIntentObserver = SingleLiveEvent<CallBack>()
 
     override fun showInArrearsDialogByStatus(status: (AccountOfferingState) -> Unit) {
         status(
@@ -57,12 +49,12 @@ class DisplayInArrearsPopup(
         )
     }
 
-    override fun setupInArrearsPopup() {
+    override fun setupInArrearsPopup(isAccountInArrearsPopupVisible : Boolean) {
         showInArrearsDialogByStatus { status ->
             when (status) {
                 AccountOfferingState.AccountInGoodStanding -> Unit
-                AccountOfferingState.AccountIsInArrears ->  homeViewModel.requestAccountsCollectionsCheckEligibility()
-                AccountOfferingState.MakeGetEligibilityCall -> homeViewModel.requestAccountsCollectionsCheckEligibility()
+                AccountOfferingState.AccountIsInArrears ->  homeViewModel.requestAccountsCollectionsCheckEligibility(isAccountInArrearsPopupVisible)
+                AccountOfferingState.MakeGetEligibilityCall -> homeViewModel.requestAccountsCollectionsCheckEligibility(isAccountInArrearsPopupVisible)
                 AccountOfferingState.AccountIsChargedOff -> homeViewModel.emitAccountIsChargedOff()
                 AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff -> homeViewModel.emitViewTreatmentPlanPopupFromConfigForChargedOff()
                 AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig -> homeViewModel.emitViewTreatmentPlanPopupInArrearsFromConfig()
@@ -99,19 +91,11 @@ class DisplayInArrearsPopup(
         activity ?: return
         when (mEligibilityPlan?.actionText) {
 
-            ActionText.START_NEW_ELITE_PLAN.value -> {
-                TakeUpPlanUtil.takeUpPlanEventLog(ApplyNowState.STORE_CARD, activity)
-                onClickIntentObserver.value = CallBack.IntentCallBack(Intent(activity, GetAPaymentPlanActivity::class.java).apply {
-                    putExtra(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN, mEligibilityPlan)
-                })
-            }
+            ActionText.START_NEW_ELITE_PLAN.value -> landingRouter.routeToStartNewElitePlan(activity, homeViewModel)
 
-            ActionText.TAKE_UP_TREATMENT_PLAN.value  -> {
-                landingRouter.routeToSetupPaymentPlan(activity, homeViewModel)
-            }
+            ActionText.TAKE_UP_TREATMENT_PLAN.value  -> landingRouter.routeToSetupPaymentPlan(activity, homeViewModel)
 
-            ActionText.VIEW_ELITE_PLAN.value -> KotlinUtils.openTreatmentPlanUrl(activity, mEligibilityPlan
-            )
+            ActionText.VIEW_ELITE_PLAN.value -> KotlinUtils.openTreatmentPlanUrl(activity, mEligibilityPlan)
         }
     }
 

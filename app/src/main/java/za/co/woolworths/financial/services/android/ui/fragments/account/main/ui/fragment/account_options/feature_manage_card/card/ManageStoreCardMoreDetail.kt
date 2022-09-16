@@ -14,22 +14,19 @@ class ManageStoreCardMoreDetail(
 ) {
 
     fun setupView(storeCardFeatureType: StoreCardFeatureType?) {
-        isManageCardSubcategoryLabelVisible(true)
         when (storeCardFeatureType) {
 
             is StoreCardFeatureType.StoreCardFreezeCardUpShellMessage -> {
                 setUpshellTitleForFreezeCard()
-                isManageCardSubcategoryLabelVisible(true)
             }
 
             is StoreCardFeatureType.StoreCardActivateVirtualTempCardUpShellMessage -> {
                 setUpshellTitleForActivateVirtualCard()
-                isManageCardSubcategoryLabelVisible(true)
             }
 
             is StoreCardFeatureType.ActivateVirtualTempCard -> {
                 setPrimaryCardLabel()
-                setSubTitleLabel(R.string.card_block_desc)
+                setSubTitleLabel(R.string.virtual_temp_card_detail)
             }
 
             is StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive -> {

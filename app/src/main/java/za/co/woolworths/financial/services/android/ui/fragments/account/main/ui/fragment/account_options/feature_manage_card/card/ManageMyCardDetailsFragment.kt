@@ -58,6 +58,13 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
             }
         }
 
+        cardFreezeViewModel.onUpshellMessageActivateTempCardTap.observe(viewLifecycleOwner){ wasTapped ->
+            if (wasTapped){
+                mOnItemClickListener?.navigateToActivateVirtualTempCard()
+                cardFreezeViewModel.onUpshellMessageActivateTempCardTap.value = false
+            }
+        }
+
         onBackPressed()
     }
 
@@ -143,6 +150,7 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
                         viewModel
                     )
                 }
+                else -> Unit
             }
         }
     }

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlanResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.IStoreCardDataSource
@@ -21,6 +22,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.ApiResult
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.capitaliseFirstLetterInEveryWord
+import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 enum class LoaderType {
@@ -118,9 +120,16 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
 
     fun handleStoreCardResponseResult(response: StoreCardsResponse): MutableList<StoreCardFeatureType>? {
         dataSource.landingDao.storeCardsData = response
+        resetCardNotReceivedFlagFromDB(response)
         val listOfStoreCards = dataSource.filterPrimaryCardsGetOneVirtualCardAndOnePrimaryCardOrBoth()
         listOfStoreCardFeatureType = listOfStoreCards
         return listOfStoreCards
+    }
+
+    private fun resetCardNotReceivedFlagFromDB(response: StoreCardsResponse) {
+        if (response.storeCardsData?.virtualCard?.cardNotReceived == true) {
+            Utils.sessionDaoSave((SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN), "")
+        }
     }
 
     fun queryServiceCardNotYetReceived() = viewModelScope.launch {

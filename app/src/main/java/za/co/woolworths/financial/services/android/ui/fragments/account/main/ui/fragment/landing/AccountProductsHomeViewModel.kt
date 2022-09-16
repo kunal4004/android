@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlanResponse
@@ -28,6 +29,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dom
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.overlay.DisplayInArrearsPopup
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanImpl
+import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 @HiltViewModel
@@ -51,6 +53,7 @@ class AccountProductsHomeViewModel @Inject constructor(
 
     var bottomSheetBehaviorState: Int? = BottomSheetBehavior.STATE_COLLAPSED
     var viewTreatmentPlan: ViewTreatmentPlanImpl? = null
+    var showAccountInArrearsPopup : Boolean = true
 
     private val _isBottomSheetBehaviorExpanded = MutableSharedFlow<Boolean>()
     val isBottomSheetBehaviorExpanded: SharedFlow<Boolean> = _isBottomSheetBehaviorExpanded
@@ -109,7 +112,8 @@ class AccountProductsHomeViewModel @Inject constructor(
     val accountsCollectionsCheckEligibility: SharedFlow<ViewState<EligibilityPlanResponse>> =
         _accountsCollectionsCheckEligibility
 
-    fun requestAccountsCollectionsCheckEligibility() = viewModelScope.launch {
+    fun requestAccountsCollectionsCheckEligibility(isShown : Boolean) = viewModelScope.launch {
+        showAccountInArrearsPopup = isShown
         getViewStateFlowForNetworkCall { queryServiceCheckCustomerEligibilityPlan() }.collect {
             _accountsCollectionsCheckEligibility.emit(it)
         }
@@ -131,5 +135,9 @@ class AccountProductsHomeViewModel @Inject constructor(
 
     fun emitViewTreatmentPlanPopupInArrearsFromConfig() {
         viewTreatmentPlan?.getPopupData(eligibilityPlan)
+    }
+
+    fun clearSessionDaoKey(){
+        Utils.sessionDaoSave((SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN), "")
     }
 }

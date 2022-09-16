@@ -10,6 +10,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountLandingDialogFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingDialogFragment
@@ -50,6 +51,8 @@ class AccountLandingDialogFragment :
                 accountInArrearsDescriptionTextView.text = getString(desc, formattedValue)
                 payNowButton.text = getString(firstButtonTitle)
                 chatToUsButton.text = getString(secondButtonTitle)
+
+                chatToUsButton.text = getString(R.string.cannot_afford_payment_button_label)
             }
         }
     }
@@ -72,7 +75,7 @@ class AccountLandingDialogFragment :
 
             payNowButton.onClick { setResult(requestKeyAccountLandingDialog, viewModel.dialogData?.firstButtonTitle) }
 
-            chatToUsButton.onClick { setResult(requestKeyAccountLandingDialog,  viewModel.dialogData?.secondButtonTitle) }
+            chatToUsButton.onClick { setResult(requestKeyAccountLandingDialog,  R.string.cannot_afford_payment_button_label) }
 
         }
     }
