@@ -49,9 +49,6 @@ import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.net.URLEncoder
 import retrofit2.adapter.rxjava2.Result.response
 
-
-
-
 object OneAppService : RetrofitConfig() {
 
     var forceNetworkUpdate: Boolean = false

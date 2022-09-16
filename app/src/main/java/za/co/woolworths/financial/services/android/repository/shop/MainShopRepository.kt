@@ -4,7 +4,6 @@ import android.location.Location
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
-import retrofit2.adapter.rxjava2.Result
 import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmDeliveryAddressResponse
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
@@ -15,14 +14,6 @@ import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.io.IOException
-import retrofit2.adapter.rxjava2.Result.response
-import retrofit2.adapter.rxjava2.Result.response
-
-
-
-
-
-
 
 class MainShopRepository : ShopRepository {
 
