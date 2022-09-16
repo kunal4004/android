@@ -78,7 +78,7 @@ class AccountProductsToolbarHelper(
     }
 
     fun setManageMyCardDetailsToolbar(isMultipleStoreCard: Boolean, onTap: (View) -> Unit) {
-        getDetailToolbar(R.string.my_card_title, if (isMultipleStoreCard) "s" else "")
+        getDetailToolbar(R.string.my_card, if (isMultipleStoreCard) "s" else "")
         binding.navigateBackImageButton.rotation = 0f
         binding.navigateBackImageButton.onClick { onTap(it) }
         binding.navigateBackImageButton.visibility = VISIBLE

@@ -23,15 +23,17 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dat
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.disableNestedScrolling
 import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_fragment) {
 
     private var manageCardAdapter: ManageCardViewPagerAdapter? = null
-
     val viewModel: MyAccountsRemoteApiViewModel by activityViewModels()
     val cardFreezeViewModel: TemporaryFreezeCardViewModel by activityViewModels()
 
@@ -94,6 +96,7 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
             is StoreCardType.PrimaryCard -> {
                 (activity as? StoreCardActivity)?.showToast(
                     if (type.block == BlockStoreCardType.FREEZE) {
+                        cardFreezeViewModel.onUpshellMessageActivateTempCardTap.value = true
                         R.string.card_temporarily_frozen_label
                     } else R.string.card_temporarily_unfrozen_label
                 )

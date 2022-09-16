@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
@@ -271,19 +272,16 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
 
                 R.id.ibBack -> onBackPressed()
                 R.id.okGotItButton -> {
-                    mStoreCardsResponse?.let {
-                        Handler().postDelayed({
-                            goToMyCardDetailActivity(it) }, AppConstant.DELAY_3000_MS)
-                    }
+                    requireActivity().setResult(Activity.RESULT_OK)
+                    this.finish()
                 }
                 R.id.closeIconImageView -> {
                     finish()
                     overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
                 }
                 R.id.okGotItStaffButton -> {
-                    mStoreCardsResponse?.let {
-                        goToMyCardDetailActivity(it)
-                    }
+                    requireActivity().setResult(Activity.RESULT_OK)
+                    this.finish()
                 }
             }
         }

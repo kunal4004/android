@@ -8,7 +8,6 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
@@ -28,7 +27,6 @@ import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Ac
 import za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.HowToUseTemporaryStoreCardActivity
-import za.co.woolworths.financial.services.android.ui.fragments.account.detail.StoreCardOptionsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ToastFactory
@@ -84,6 +82,7 @@ interface IProductLandingRouter {
     fun routeToAccountOptionsProductLanding(findNavController: NavController?)
     fun routeToSetupPaymentPlan(activity: Activity?, viewModel: AccountProductsHomeViewModel?)
     fun routeToViewTreatmentPlan(activity: Activity?, viewModel: AccountProductsHomeViewModel?)
+    fun routeToStartNewElitePlan(activity: Activity?, viewModel: AccountProductsHomeViewModel?)
 }
 
 sealed class CallBack{
@@ -366,6 +365,15 @@ class ProductLandingRouterImpl @Inject constructor(
         viewModel ?: return
             val outSystemBuilder = OutSystemBuilder(activity,ProductGroupCode.SC, viewModel.eligibilityPlan)
             outSystemBuilder.build()
+    }
+
+    override fun routeToStartNewElitePlan(activity: Activity?,viewModel: AccountProductsHomeViewModel?) {
+            activity?.apply {
+                val intent = Intent(this, GetAPaymentPlanActivity::class.java)
+                intent.putExtra(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN, viewModel?.eligibilityPlan)
+                startActivityForResult(intent, AccountsOptionFragment.REQUEST_ELITEPLAN)
+                overridePendingTransition(R.anim.slide_from_right, R.anim.stay)
+            }
     }
 
     companion object {

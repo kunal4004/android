@@ -2984,4 +2984,16 @@
         <item name="android:layout_height">24dp</item>
         <item name="android:background">@drawable/tab_selector</item>
     </style>
+
+    <style name="closeIconStyle">
+        <item name="android:layout_width">@dimen/icon_dimens</item>
+        <item name="android:layout_height">@dimen/icon_dimens</item>
+        <item name="android:layout_alignParentEnd">true</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:layout_marginEnd">@dimen/margin_end</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="srcCompat">@drawable/close</item>
+    </style>
 </resources>

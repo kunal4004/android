@@ -64,6 +64,7 @@ class MyStoreCardFragment @Inject constructor() :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        homeViewModel.showAccountInArrearsPopup = true
         mToolbarHelper =  (activity as? StoreCardActivity)?.getToolbarHelper()
     }
 
@@ -84,9 +85,10 @@ class MyStoreCardFragment @Inject constructor() :
         navigateToDeepLinkView()
         with(mDisplayInArrearsPopup) {
             collectCheckEligibilityResult()
-            setupInArrearsPopup()
+            viewLifecycleOwner.lifecycleScope.launch {
+                setupInArrearsPopup(homeViewModel.showAccountInArrearsPopup)
+            }
         }
-
     }
 
     private fun showProgress(isLoading: Boolean) {
@@ -103,7 +105,9 @@ class MyStoreCardFragment @Inject constructor() :
                 }
             }
         }
-        mToolbarHelper?.setOnAccountInArrearsTapListener { mDisplayInArrearsPopup.setupInArrearsPopup() }
+        mToolbarHelper?.setOnAccountInArrearsTapListener {
+            homeViewModel.showAccountInArrearsPopup = true
+            mDisplayInArrearsPopup.setupInArrearsPopup(homeViewModel.showAccountInArrearsPopup) }
     }
 
     private fun clickListeners() {
@@ -172,9 +176,7 @@ class MyStoreCardFragment @Inject constructor() :
     override fun onClick(view: View?) {
         with(homeViewModel) {
             when (view) {
-                binding.incViewStatementButton.root -> {
-                    navigateToStatementActivity(activity, product)
-                }
+                binding.incViewStatementButton.root -> { navigateToStatementActivity(activity, product) }
                 binding.incRecentTransactionButton.root -> {
                     product?.let {
                         navigateToRecentTransactionActivity(
@@ -323,13 +325,15 @@ class MyStoreCardFragment @Inject constructor() :
         mDisplayInArrearsPopup = homeViewModel.initPopup(viewLifecycleOwner, router = router) { dialogData, eligibilityPlan ->
            viewLifecycleOwner.lifecycleScope.launch {
                 mOutSystemBuilder = OutSystemBuilder(requireActivity(), ProductGroupCode.SC, eligibilityPlan = homeViewModel.eligibilityPlan)
-                navigateSafely(
-                    MyStoreCardFragmentDirections.actionMyStoreCardFragmentToAccountLandingDialogFragment(
-                        homeViewModel.product,
-                        dialogData,
-                        eligibilityPlan
-                    )
-                )
+               if (homeViewModel.showAccountInArrearsPopup) {
+                   navigateSafely(
+                       MyStoreCardFragmentDirections.actionMyStoreCardFragmentToAccountLandingDialogFragment(
+                           homeViewModel.product,
+                           dialogData,
+                           eligibilityPlan
+                       )
+                   )
+               }
             }
         }
     }
@@ -370,5 +374,7 @@ class MyStoreCardFragment @Inject constructor() :
 
         chatBubble.navigateToChatActivity(activity, homeViewModel.product)
     }
+
+
 }
 

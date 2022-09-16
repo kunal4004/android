@@ -1,18 +1,24 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import androidx.activity.viewModels
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountProductLandingActivityBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
@@ -21,6 +27,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.ACCOUNT_PRODUCT_PAYLOAD
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.ui.views.snackbar.OneAppSnackbar
+import za.co.woolworths.financial.services.android.util.ActivityIntentNavigationManager
+import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartDestinationType
 import java.util.*
 import javax.inject.Inject
 
@@ -43,7 +51,6 @@ class StoreCardActivity : AppCompatActivity() {
         setContentView(binding.root)
         statusBarCompat.setLightStatusAndNavigationBar()
         setupView()
-
     }
 
     private fun setupView() {
@@ -70,9 +77,20 @@ class StoreCardActivity : AppCompatActivity() {
     fun showToast(@StringRes stringId : Int) {
         OneAppSnackbar.make(binding.rootContainer.rootView, bindString(stringId).toUpperCase(
             Locale.getDefault())).show()
-
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        homeViewModel.clearSessionDaoKey()
+    }
+
+    /**
+     * On activity result
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     * TODO:: onActivityResult, @Deprecated("Deprecated in Java"), Replace with registerForActivityResult()
+     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         val extras = data?.extras
@@ -85,14 +103,45 @@ class StoreCardActivity : AppCompatActivity() {
                         }
                     }
 
+
                     // on back to my account pressed (R.string.back_to_my_account_button)
                     PMA3DSecureProcessRequestFragment.PMA_TRANSACTION_COMPLETED_RESULT_CODE -> {
                         extras?.getString(PayMyAccountActivity.PAYMENT_DETAIL_CARD_UPDATE)?.apply {
                             payMyAccountViewModel.setPMACardInfo(this)
                         }
                     }
+
+                    AccountsOptionFragment.REQUEST_ELITEPLAN -> {
+                        //elitePlanModel is the model extracted from callback url parameters
+                        if (extras?.containsKey(AccountSignedInPresenterImpl.ELITE_PLAN_MODEL) == true) {
+                            val elitePlanModel =
+                                extras.getParcelable(AccountSignedInPresenterImpl.ELITE_PLAN_MODEL) as? Parcelable
+                            ActivityIntentNavigationManager.presentPayMyAccountActivity(
+                                this@StoreCardActivity,
+                                payMyAccountViewModel.getCardDetail(),
+                                PayMyAccountStartDestinationType.CREATE_USER,
+                                true,
+                                elitePlanModel
+                            )
+                        } else {
+                            onTreatmentPlanStatusUpdateRequired()
+                        }
+                    }
+
+                    AccountsOptionFragment.REQUEST_GET_PAYMENT_PLAN -> {
+                        if (resultCode == Activity.RESULT_OK) {
+                            onTreatmentPlanStatusUpdateRequired()
+                        }
+                    }
                 }
-            }
+                }
+
+        }
+    }
+
+    private fun onTreatmentPlanStatusUpdateRequired() {
+        lifecycleScope.launch {
+            homeViewModel.requestAccountsCollectionsCheckEligibility(false)
         }
     }
 }

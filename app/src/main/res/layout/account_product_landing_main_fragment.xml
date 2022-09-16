@@ -54,7 +54,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageButton
+        <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/infoIconImageView"
             android:layout_width="@dimen/icon_dimens"
             android:layout_height="@dimen/icon_dimens"
@@ -71,19 +71,10 @@
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/closeIconImageButton"
-            android:layout_width="@dimen/icon_dimens"
-            android:layout_height="@dimen/icon_dimens"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:adjustViewBounds="true"
-            android:layout_marginEnd="@dimen/margin_end"
-            android:background="@android:color/transparent"
-            android:scaleType="fitCenter"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/close_24"
-            app:tint="@color/black"/>
+            style="@style/closeIconStyle" />
 
         <TextView
             android:id="@+id/accountInArrearsTextView"

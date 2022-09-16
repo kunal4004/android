@@ -9,7 +9,6 @@ import com.awfs.coordination.databinding.StoreCardUpshellMessageFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
@@ -36,9 +35,7 @@ class StoreCardActivateVTCUpshellMessageFragment :
         super.onViewCreated(view, savedInstanceState)
         val binding = StoreCardUpshellMessageFragmentBinding.bind(view)
         binding.storeCardImageView.setImageResource(R.drawable.virtual_temp_activate)
-        binding.storeCardImageView.onClick {
-            viewModel.onUpshellMessageActivateTempCardTap.value = true
-        }
+        binding.storeCardImageView.onClick { viewModel.onUpshellMessageActivateTempCardTap.value = true }
     }
 
 }
