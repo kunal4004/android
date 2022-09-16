@@ -13,6 +13,7 @@ import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -29,6 +30,7 @@ import com.awfs.coordination.R
 import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
+import kotlinx.android.synthetic.main.fragment_cart.*
 import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.*
 import kotlinx.android.synthetic.main.fragment_checkout_returning_user_dash.*
 import kotlinx.android.synthetic.main.fragment_checkout_returning_user_dash.ageConfirmationLayout
@@ -444,6 +446,14 @@ class CheckoutDashFragment : Fragment(),
                                         )
                                     }
                                 }
+
+                                if(response.orderSummary?.hasMinimumBasketAmount == false) {
+                                    KotlinUtils.showMinCartValueError(
+                                        requireActivity() as AppCompatActivity,
+                                        response.orderSummary?.minimumBasketAmount
+                                    )
+                                }
+
                                 initializeFoodSubstitution()
                                 initializeOrderSummary(response.orderSummary)
                                 response.sortedJoinDeliverySlots?.apply {

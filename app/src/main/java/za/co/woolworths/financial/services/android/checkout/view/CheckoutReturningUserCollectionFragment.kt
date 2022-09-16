@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.annotation.VisibleForTesting
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -29,6 +30,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.loadingBar
+import kotlinx.android.synthetic.main.fragment_cart.*
 import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.*
 import kotlinx.android.synthetic.main.layout_collection_time_details.*
 import kotlinx.android.synthetic.main.layout_collection_user_information.*
@@ -411,6 +413,12 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                         }
                                     }
                                     collectionTimeSlotsAdapter.setSelectedItem(selectedSlotIndex)
+                                }
+                                if(response.orderSummary?.hasMinimumBasketAmount == false) {
+                                   KotlinUtils.showMinCartValueError(
+                                       requireActivity() as AppCompatActivity,
+                                       response.orderSummary?.minimumBasketAmount
+                                   )
                                 }
                             }
                             else -> {

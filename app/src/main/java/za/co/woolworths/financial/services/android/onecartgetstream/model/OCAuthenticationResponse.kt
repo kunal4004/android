@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.onecartgetstream.network
+package za.co.woolworths.financial.services.android.onecartgetstream.model
 
 import com.google.gson.annotations.SerializedName
 

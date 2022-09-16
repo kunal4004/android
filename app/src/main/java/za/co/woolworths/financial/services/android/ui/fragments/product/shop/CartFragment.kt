@@ -98,8 +98,6 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
 
     private val TAG = this.javaClass.simpleName
     private var mNumberOfListSelected = 0
-    private var localCartCount = 0
-
     private var changeQuantityWasClicked = false
     private var errorMessageWasPopUp = false
     private var onRemoveItemFailed = false
@@ -130,7 +128,6 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         setupToolbar()
         initViews()
         hideEditCart()
-        localCartCount = instance.getCartItemCount()
         mChangeQuantityList = ArrayList(0)
         mChangeQuantity = ChangeQuantity()
         mConnectionBroadcast = Utils.connectionBroadCast(
@@ -880,7 +877,20 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             empty_state_template?.visibility = View.VISIBLE
         }
         onChangeQuantityComplete()
+        setMinimumCartErrorMessage()
         setItemLimitsBanner()
+    }
+
+    private fun setMinimumCartErrorMessage() {
+        if(orderSummary?.hasMinimumBasketAmount == false) {
+            txt_min_spend_error_msg?.visibility = View.VISIBLE
+            txt_min_spend_error_msg?.text = String.format(getString(R.string.minspend_error_msg_cart, orderSummary?.minimumBasketAmount))
+            btnCheckOut?.isEnabled = false
+            fadeCheckoutButton(true)
+        } else {
+            txt_min_spend_error_msg?.visibility = View.GONE
+            btnCheckOut?.isEnabled = true
+        }
     }
 
     private fun getUpdatedCommerceItem(
@@ -957,6 +967,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                                         )
                                     }
                                     setItemLimitsBanner()
+                                    instance.queryCartSummaryCount()
                                 }
                                 440 -> {
                                     //TODO:: improve error handling
@@ -1072,6 +1083,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                                 resetItemDelete(true)
                             }
                             enableItemDelete(false)
+                            setMinimumCartErrorMessage()
                         } catch (ex: Exception) {
                             logException(ex)
                         }
@@ -1344,10 +1356,6 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                         buildAddToCartSuccessToast(rlCheckOut, false, activity, null)
                     }
                 }
-                REQUEST_SUBURB_CHANGE -> {
-                    initializeLoggedInUserCartUI()
-                    loadShoppingCartAndSetDeliveryLocation()
-                }
                 REDEEM_VOUCHERS_REQUEST_CODE, APPLY_PROMO_CODE_REQUEST_CODE -> {
                     val shoppingCartResponse = Utils.strToJson(
                         data?.getStringExtra("ShoppingCartResponse"),
@@ -1608,6 +1616,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         }
         updateItemQuantityToMatchStock()
         cartProductAdapter?.updateStockAvailability(cartItems)
+        setMinimumCartErrorMessage()
     }
 
     // If CommerceItem quantity in cart is more then inStock Update quantity to match stock
