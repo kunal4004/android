@@ -123,6 +123,9 @@ class KotlinUtils {
         const val RESULT_CODE_CLOSE_VIEW = 2203
         private var GEO_REQUEST_CODE = -1
 
+        const val OTHER = "other"
+        const val FOOD = "food"
+        const val FOOD_AND_OTHER = "foodAndOther"
 
         fun highlightTextInDesc(
             context: Context?,
@@ -210,9 +213,9 @@ class KotlinUtils {
         fun sortedStoreList(address: List<Store>?) : List<Store> {
             val storeArrayList = ArrayList(address)
             val sortRoles: HashMap<String, Int> = hashMapOf(
-                    "Other".lowercase() to 0,
-                    "food".lowercase() to 1,
-                    "foodAndOther".lowercase() to 2
+                    OTHER.lowercase() to 0,
+                    FOOD.lowercase() to 1,
+                    FOOD_AND_OTHER.lowercase() to 2
             )
             val comparator = Comparator { s1: Store, s2: Store ->
                 return@Comparator sortRoles[s2.storeDeliveryType?.lowercase()]?.let { sortRoles[s1.storeDeliveryType?.lowercase()]?.minus(it) }
