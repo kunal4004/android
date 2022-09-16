@@ -1,8 +1,16 @@
 package za.co.woolworths.financial.services.android.onecartgetstream.service
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.util.Log
+import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
+import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatEventListener
@@ -34,8 +42,12 @@ import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
+import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.HUAWEI_APP_ID
+import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.ORDER_PENDING_PICKING
 import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.onecartgetstream.repository.OCToastNotification
+import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
@@ -53,10 +65,40 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         // TODO: use Coroutine instead of thread
+//        GlobalScope.launch(Dispatchers.Main) {
+//            connectUserAndListenToChannels()
+//        }
         Thread {
             connectUserAndListenToChannels()
         }.start()
+
+       createNotificationChannel(applicationContext)?.build()
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    private fun createNotificationChannel(context: Context?): NotificationCompat.Builder? {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val serviceChannel = NotificationChannel(
+                CHANNEL_ID, bindString(R.string.app_name),
+                NotificationManager.IMPORTANCE_LOW
+            )
+            serviceChannel.enableVibration(false)
+            val manager = context?.getSystemService(NotificationManager::class.java)
+            manager?.createNotificationChannel(serviceChannel)
+
+            val notificationIntent = Intent()
+            val pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0)
+            return context?.let {
+                NotificationCompat.Builder(it, LiveChatService.CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setContentText(bindString(R.string.woolies_chat_active))
+                    .setDefaults(Notification.DEFAULT_LIGHTS or Notification.DEFAULT_SOUND)
+                    .setVibrate(null) // Passing null here silently fails
+                    .setContentIntent(pendingIntent)
+            }
+        }
+        return null
     }
 
     // TODO: If the user initiates a new chat from My Order Details, for a channel that was not registered here, then that fragment needs to communicate with this service to add the new channel and start listening to it too.
@@ -220,8 +262,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
         OneAppService.getOrders().apply {
             enqueue(CompletionHandler(object : IResponseListener<OrdersResponse> {
                 override fun onSuccess(ordersResponse: OrdersResponse?) {
-                    // TODO: move string to constant
-                    ordersResponse?.upcomingOrders?.filter { it.deliveryStatus?.Food?.equals("PENDING_PICKING") == true }?.let {
+                    ordersResponse?.upcomingOrders?.filter { it.deliveryStatus?.Food?.equals(ORDER_PENDING_PICKING) == true }?.let {
                         onCompletion(ArrayList(it))
                     } ?: kotlin.run {
                         onCompletion(null)
@@ -305,7 +346,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                 else
                     HuaweiPushDeviceGenerator(
                         WoolworthsApplication.getAppContext(),
-                        appId = "102461773" // TODO: move hardcoded huawei app ID somewhere else
+                        appId = HUAWEI_APP_ID
                     )
             )
         )
@@ -376,5 +417,10 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
 
             }
         }
+    }
+
+
+    companion object {
+        const val CHANNEL_ID = "ForegroundServiceChannelId"
     }
 }
