@@ -85,7 +85,6 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO
-import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
@@ -1539,10 +1538,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                             ScreenManager.presentSSOSignin(this)
                         }
 
-                        AppConstant.ERROR_CODE_500 -> {
+                        AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
                             KotlinUtils.showQuantityLimitErrror(
                                 activity?.supportFragmentManager,
-                                "",
+                                addItemToCartResponse.response.desc,
                                 "",
                                 context
                             )

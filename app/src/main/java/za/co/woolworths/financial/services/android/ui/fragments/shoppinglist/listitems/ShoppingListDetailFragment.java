@@ -10,8 +10,8 @@ import static za.co.woolworths.financial.services.android.ui.activities.product.
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_CATEGORY;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE;
-import static za.co.woolworths.financial.services.android.util.AppConstant.ERROR_CODE_500;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_EXPECTATION_FAILED_417;
+import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_EXPECTATION_FAILED_502;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_OK;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_SESSION_TIMEOUT_440;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
@@ -56,7 +56,6 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils;
-import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
@@ -95,7 +94,6 @@ import za.co.woolworths.financial.services.android.util.PostItemToCart;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.wenum.Delivery;
 
 public class ShoppingListDetailFragment extends Fragment implements View.OnClickListener, EmptyCartView.EmptyCartInterface, NetworkChangeListener, ToastUtils.ToastInterface, ShoppingListItemsNavigator, IToastInterface, IOnConfirmDeliveryLocationActionListener {
 
@@ -1099,13 +1097,17 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
                             onSessionTokenExpired(addItemToCartResponse.response);
                         break;
 
-                    case ERROR_CODE_500 :
-                        KotlinUtils.showQuantityLimitErrror(
-                                getActivity().getSupportFragmentManager(),
-                                "",
-                                "",
-                                getContext()
-                        );
+                    case HTTP_EXPECTATION_FAILED_502:
+                        if (addItemToCartResponse.response.code.equals(AppConstant.RESPONSE_ERROR_CODE_1235)) {
+                            pbLoadingIndicator.setVisibility(GONE);
+                            KotlinUtils.showQuantityLimitErrror(
+                                    getActivity().getSupportFragmentManager(),
+                                    addItemToCartResponse.response.desc,
+                                    "",
+                                    getContext()
+                            );
+                            enableAddToCartButton(VISIBLE);
+                        }
                         break;
                     default:
                         if (addItemToCartResponse.response != null)

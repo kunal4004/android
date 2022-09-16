@@ -49,7 +49,7 @@ import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBotto
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
 import za.co.woolworths.financial.services.android.util.*
-import za.co.woolworths.financial.services.android.util.AppConstant.Companion.ERROR_CODE_500
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_502
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_QUERY_INVENTORY_FOR_STORE
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_QUERY_STORE_FINDER
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
@@ -446,13 +446,16 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                     .setSessionState(SessionDao.SESSION_STATE.INACTIVE)
                                 ScreenManager.presentSSOSignin(requireActivity())
                             }
-                            ERROR_CODE_500 -> {
-                               KotlinUtils.showQuantityLimitErrror(
-                                   activity?.supportFragmentManager,
-                                   "",
-                                   "",
-                                   context
-                               )
+
+                            HTTP_EXPECTATION_FAILED_502 -> {
+                                if (response.response.code == AppConstant.RESPONSE_ERROR_CODE_1235) {
+                                    KotlinUtils.showQuantityLimitErrror(
+                                        activity?.supportFragmentManager,
+                                        response.response.desc,
+                                        "",
+                                        context
+                                    )
+                                }
                             }
                             else -> response?.response?.desc?.let { desc ->
                                 Utils.displayValidationMessage(

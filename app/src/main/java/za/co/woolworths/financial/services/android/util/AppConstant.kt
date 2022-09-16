@@ -49,7 +49,7 @@ class AppConstant {
         const val HTTP_SESSION_TIMEOUT_440: Int = 440
         const val HTTP_EXPECTATION_FAILED_502: Int = 502
         const val HTTP_SESSION_TIMEOUT_400: Int = 400
-        const val ERROR_CODE_500: Int = 500
+        const val RESPONSE_ERROR_CODE_1235: String = "1235"
 
         /*****************************************************************************************
          * Request/Result Codes

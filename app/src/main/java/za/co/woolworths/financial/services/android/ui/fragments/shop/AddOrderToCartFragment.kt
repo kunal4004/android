@@ -31,6 +31,7 @@ import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RESPONSE_ERROR_CODE_1235
 
 
 class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
@@ -459,13 +460,17 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
                 SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, addItemToCartResponse.response.stsParams, requireActivity())
             }
 
-            AppConstant.ERROR_CODE_500 -> {
-                KotlinUtils.showQuantityLimitErrror(
-                    activity?.supportFragmentManager,
-                    "",
-                    "",
-                    context
-                )
+            AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
+                if (addItemToCartResponse.response.code == RESPONSE_ERROR_CODE_1235 ) {
+                    loadingBar?.visibility = View.GONE
+                    tvAddToCart?.visibility = View.VISIBLE
+                    KotlinUtils.showQuantityLimitErrror(
+                        activity?.supportFragmentManager,
+                        addItemToCartResponse.response.desc,
+                        "",
+                        context
+                    )
+                }
             }
         }
     }
