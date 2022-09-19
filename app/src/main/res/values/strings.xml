@@ -2763,6 +2763,7 @@
     <string name="submit_report">Submit Report</string>
     <string name="hint_reason">Please enter a reason here</string>
     <string name="report_moderated">It is currently being moderated.</string>
+    <string name="your_report_on_this_review_has_been_submitted_we_will_review_your_concern_and_will_notify_you_once_action_has_been_taken">Your report on this review has been submitted.\nWe will review your concern and will notify you once action has been taken.</string>
     <string name="report_submit">Report Submitted</string>
     <string name="report_got_it">GOT IT</string>
     <string name="failed_more_reviews">FAILED TO LOAD MORE REVIEWS</string>

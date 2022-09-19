@@ -11,7 +11,7 @@
     android:paddingLeft="@dimen/sixteen_dp"
     android:paddingRight="@dimen/sixteen_dp"
     android:paddingBottom="@dimen/sixteen_dp"
-    android:layout_marginBottom="@dimen/sixteen_dp">
+    android:layout_marginBottom="@dimen/eight_dp">
 
     <TextView
         android:id="@+id/tvName"

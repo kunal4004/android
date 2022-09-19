@@ -89,6 +89,7 @@
             android:imeOptions="actionDone"
             android:inputType="textAutoComplete"
             android:padding="@dimen/eight_dp"
+            android:textSize="@dimen/fifteen_sp"
             android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/btn_submit_report"
             app:layout_constraintEnd_toEndOf="parent"

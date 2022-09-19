@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.activities.rating_and_rev
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.ConcatAdapter
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.google.android.material.snackbar.Snackbar
@@ -20,30 +20,31 @@ import kotlinx.android.synthetic.main.common_toolbar.view.*
 import kotlinx.android.synthetic.main.fragment_more_reviews.*
 import kotlinx.android.synthetic.main.fragment_report_review.*
 import kotlinx.android.synthetic.main.no_connection_handler.*
+import kotlinx.android.synthetic.main.no_connection_handler.view.*
+import kotlinx.android.synthetic.main.review_detail_layout.*
+import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
+import kotlinx.android.synthetic.main.skin_profile_layout.view.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.models.dto.SortOption
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingReviewResponse
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewFeedback
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewStatistics
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Reviews
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.apihelper.RatingAndReviewApiHelper
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.MoreReviewHeaderAdapter
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.MoreReviewLoadStateAdapter
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.MoreReviewsAdapter
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModel
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModelFactory
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
 import za.co.woolworths.financial.services.android.util.KotlinUtils
-import kotlinx.android.synthetic.main.no_connection_handler.view.*
-import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
-import retrofit2.HttpException
-import za.co.woolworths.financial.services.android.models.network.GenericResponse
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewFeedback
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewStatistics
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.MoreReviewHeaderAdapter
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
-import kotlin.collections.ArrayList
+
 
 class MoreReviewsFragment : Fragment(),
         MoreReviewsAdapter.ReviewItemClickListener,
@@ -53,8 +54,7 @@ class MoreReviewsFragment : Fragment(),
     private var onSortRefineFragmentListener: OnSortRefineFragmentListener? = null
     private var sortString: String? = null
     private var refinementString: String? = null
-    private lateinit var reviewStatistics: ReviewStatistics
-    private var reviewStatisticsList: MutableList<ReviewStatistics> = mutableListOf<ReviewStatistics>()
+    private var reviewStatisticsList: MutableList<ReviewStatistics> = mutableListOf()
     private var moreReviewsAdapter: MoreReviewsAdapter? = null
     companion object {
         fun newInstance() = MoreReviewsFragment()
@@ -130,7 +130,6 @@ class MoreReviewsFragment : Fragment(),
                 }, this@MoreReviewsFragment)
         )
         val concatAdapter = ConcatAdapter(headerAdapter, footerLoadStateAdapter)
-
         rv_more_reviews.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = concatAdapter
