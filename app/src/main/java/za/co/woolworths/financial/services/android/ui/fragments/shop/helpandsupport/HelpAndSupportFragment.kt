@@ -11,12 +11,12 @@ import za.co.woolworths.financial.services.android.models.dto.OrderDetailsRespon
 import za.co.woolworths.financial.services.android.ui.activities.CancelOrderProgressActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.CancelOrderConfirmationDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.CancelOrderProgressFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.TaxInvoiceLIstFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 class HelpAndSupportFragment : Fragment(R.layout.layout_help_and_support_fragement), CancelOrderConfirmationDialogFragment.ICancelOrderConfirmation,
         HelpAndSupportAdapter.HelpAndSupportClickListener {
@@ -49,7 +49,8 @@ class HelpAndSupportFragment : Fragment(R.layout.layout_help_and_support_frageme
         rvHelpAndSupport.setLayoutManager(llm)
         rvHelpAndSupport.setAdapter(adapter)
         imgDelBack?.setOnClickListener {
-            activity?.onBackPressed()
+                requireActivity()?.setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
+                requireActivity()?.finish()
         }
     }
 
