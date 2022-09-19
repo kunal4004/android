@@ -596,9 +596,9 @@ class CheckoutDashFragment : Fragment(),
     private fun initializeDriverTipView() {
         //Todo This value will come from Config once it is available.
         driverTipOptionsList = ArrayList()
-        driverTipOptionsList!!.add("R0")
         driverTipOptionsList!!.add("R10")
         driverTipOptionsList!!.add("R20")
+        driverTipOptionsList!!.add("R30")
         driverTipOptionsList!!.add("Own Amount")
 
         showDriverTipView()
@@ -685,7 +685,7 @@ class CheckoutDashFragment : Fragment(),
                         )
                     } else if (!isSameSelection) {
 
-                        selectedDriverTipValue = amountString ?: "R0"
+                        selectedDriverTipValue = amountString ?: "R10"
 
                         // Change background of selected Tip as it's not unselection.
                         it.background =
@@ -1158,7 +1158,7 @@ class CheckoutDashFragment : Fragment(),
         deliveryType = Delivery.DASH.type
         address =
             ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
-        driverTip = removeRandFromAmount(selectedDriverTipValue ?: "0.0").toDouble()
+        driverTip = removeRandFromAmount(selectedDriverTipValue ?: "R10.0").toDouble()
         if (liquorOrder == true) {
             ageConsentConfirmed = true
         }
