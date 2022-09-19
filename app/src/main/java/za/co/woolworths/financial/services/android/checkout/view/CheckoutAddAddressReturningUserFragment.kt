@@ -12,6 +12,7 @@ import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
 import android.widget.CompoundButton
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResultListener
@@ -762,6 +763,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         selectedSlotResponseOther = response
                         showDeliverySlotSelectionView()
                         initializeOrderSummary(response.orderSummary)
+
+                        if(response.orderSummary?.hasMinimumBasketAmount == false) {
+                            KotlinUtils.showMinCartValueError(requireActivity() as AppCompatActivity,
+                                response.orderSummary?.minimumBasketAmount)
+                        }
                     }
                     is Throwable -> {
                         presentErrorDialog(
