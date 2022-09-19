@@ -90,6 +90,8 @@
         android:background="@color/white"
         android:fontFamily="@font/myriad_pro_regular"
         android:lineSpacingExtra="@dimen/_2ssp"
+        android:paddingStart="@dimen/five_dp"
+        android:paddingEnd="@dimen/five_dp"
         android:text="@string/geo_loc_error_msg"
         android:textColor="@color/red"
         android:textSize="@dimen/_12ssp"

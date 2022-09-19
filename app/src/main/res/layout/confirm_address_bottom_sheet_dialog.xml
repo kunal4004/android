@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_four_dp"
-        android:layout_marginTop="@dimen/fourty_dp"
+        android:layout_marginTop="@dimen/twenty_six_dp"
         android:fontFamily="@font/futura_semi_bold"
         android:text="@string/confirm_your_address"
         android:textColor="@color/black"
@@ -33,11 +33,14 @@
     <TextView
         android:id="@+id/tv_address_desc"
         style="@style/myriad_pro_regular_black_15_text_style"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_four_dp"
         android:layout_marginTop="@dimen/eight_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:lineSpacingMultiplier="1.2"
         android:text="@string/we_use_your_location_to_give_you_the_most_naccurate_stock_availabilty_and_pricing"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_confirm_address" />
 
@@ -118,8 +121,10 @@
         android:paddingBottom="@dimen/twenty_four_dp"
         app:layout_constraintBottom_toTopOf="@+id/tvConfirmAddress"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/inSavedAddress"
+        app:layout_constraintVertical_bias="0.0"
         tools:itemCount="5"
         tools:listitem="@layout/address_row_layout" />
 
