@@ -11,7 +11,6 @@ import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountOptionsListFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.ActionText
@@ -74,8 +73,8 @@ class AccountOptionsListFragment : Fragment(R.layout.account_options_list_fragme
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            homeViewModel.accountsCollectionsCheckEligibility.collectLatest { storeCardResponse ->
-                with(storeCardResponse) {
+            homeViewModel.accountsCollectionsCheckEligibility.collectLatest { checkEligibilityResponse ->
+                with(checkEligibilityResponse) {
 
                     renderLoading {
                         if (isLoading) {
