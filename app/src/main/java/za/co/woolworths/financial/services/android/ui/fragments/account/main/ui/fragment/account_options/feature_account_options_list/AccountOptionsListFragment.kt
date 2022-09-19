@@ -12,10 +12,14 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountOptionsListFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.models.dto.ActionText
 import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType
 import za.co.woolworths.financial.services.android.ui.base.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOptionsScreenUI
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StoreCardActivityResultCallback
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
@@ -37,6 +41,7 @@ class AccountOptionsListFragment : Fragment(R.layout.account_options_list_fragme
 
     val viewModel: AccountProductsHomeViewModel by activityViewModels()
     val payMyAccountViewModel : PayMyAccountViewModel by activityViewModels()
+    val homeViewModel : AccountProductsHomeViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -50,22 +55,52 @@ class AccountOptionsListFragment : Fragment(R.layout.account_options_list_fragme
         accountOptionsSkeleton.loadingState(false, targetedShimmerLayout = accountOptionsLayout)
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.init()
-            viewModel.viewState.collect { items ->
+            viewModel.viewState.collectLatest { items ->
                 items.forEach { item ->
                     with(item) {
                         when (this) {
-                            is AccountOptionsScreenUI.ViewTreatmentPlan -> showViewYourPaymentPlan(
-                                isVisible
-                            )
-                            is AccountOptionsScreenUI.SetUpAPaymentPlan -> showSetupPaymentPlan(
-                                isVisible
-                            )
+
                             is AccountOptionsScreenUI.PaymentOptionsScreenUI -> Unit
                             is AccountOptionsScreenUI.BalanceProtectionInsurance -> showBalanceProtectionInsuranceTag(
                                 this
                             )
                             is AccountOptionsScreenUI.WithdrawCashNow -> hideLoanWithdrawal()
                             is AccountOptionsScreenUI.DebitOrder -> showDebitOrder(isActive)
+                            else -> Unit
+                        }
+                    }
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            homeViewModel.accountsCollectionsCheckEligibility.collectLatest { storeCardResponse ->
+                with(storeCardResponse) {
+
+                    renderLoading {
+                        if (isLoading) {
+                            showSetupPaymentPlan(false)
+                            showViewYourPaymentPlan(false)
+                        }
+                    }
+
+                    renderSuccess {
+                        val eligibilityPlan = output.eligibilityPlan
+                        when (eligibilityPlan?.actionText) {
+                            ActionText.TAKE_UP_TREATMENT_PLAN.value -> {
+                                showSetupPaymentPlan(
+                                    isVisible
+                                )
+                                showViewYourPaymentPlan(false)
+                            }
+                            ActionText.VIEW_TREATMENT_PLAN.value -> {
+                                showViewYourPaymentPlan(
+                                    isVisible
+                                )
+                                showSetupPaymentPlan(
+                                    false
+                                )
+                            }
                         }
                     }
                 }
