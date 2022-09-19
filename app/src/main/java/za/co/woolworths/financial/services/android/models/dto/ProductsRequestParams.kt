@@ -7,6 +7,9 @@ data class ProductsRequestParams(
     var pageOffset: Int
 ) {
 
+    @JvmField
+    var sendDeliveryDetailsParams: Boolean = false
+
     @kotlin.jvm.JvmField
     var isUserBrowsing: Boolean = false
     var refinement: String = ""

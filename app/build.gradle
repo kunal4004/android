@@ -14,12 +14,15 @@ android {
     def major = "9"
     def minor = "4"
     def fix = "0"
-    def jobNumberProduction = 194
-    def jobNumberQa = 619
-    def jobNumberFeature = 4004
+    def jobNumberProduction = 197
+    def jobNumberQa = 631
+    def jobNumberFeature = 4005
 
     buildFeatures {
         dataBinding true
+        viewBinding true
+    }
+    buildFeatures {
         viewBinding true
     }
 
@@ -367,6 +370,10 @@ dependencies {
     huaweiProductionImplementation 'com.huawei.hms:location:6.4.0.300'
     huaweiQaImplementation 'com.huawei.hms:maps:6.3.1.300'
     huaweiProductionImplementation 'com.huawei.hms:maps:6.3.1.300'
+    huaweiQaImplementation 'com.huawei.hms:push:6.5.0.300'
+    huaweiProductionImplementation 'com.huawei.hms:push:6.5.0.300'
+    huaweiQaImplementation 'com.huawei.hms:hianalytics:6.6.0.300'
+    huaweiProductionImplementation 'com.huawei.hms:hianalytics:6.6.0.300'
 
     // get stream chat Client + offline
     implementation "io.getstream:stream-chat-android-offline:$stream_version"

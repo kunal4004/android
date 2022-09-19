@@ -63,7 +63,13 @@
             android:id="@+id/actionClickAndCollectStoresFragment"
             app:destination="@id/clickAndCollectStoresFragment" />
 
-
+        <action
+            android:id="@+id/action_confirmAddressMapFragment_to_poiMapBottomSheetDialog"
+            app:destination="@id/poiMapBottomSheetDialog"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right" />
     </fragment>
 
     <fragment
@@ -143,13 +149,13 @@
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
             app:popExitAnim="@anim/slide_to_right"/>
-        <action
+       <!-- <action
             android:id="@+id/action_to_suburbSelectorFragment"
             app:destination="@id/suburbSelectorFragment2"
             app:enterAnim="@anim/slide_in_from_right"
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
-            app:popExitAnim="@anim/slide_to_right"/>
+            app:popExitAnim="@anim/slide_to_right"/>-->
         <action
             android:id="@+id/action_checkoutAddAddressNewUserFragment_to_confirmAddressLocationFragment"
             app:destination="@id/confirmAddressLocationFragment"
@@ -181,10 +187,10 @@
         android:name="za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBottomSheetDialog"
         android:label="ErrorHandlerBottomSheetDialog" >
     </dialog>
-    <fragment
+  <!--  <fragment
         android:id="@+id/suburbSelectorFragment2"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.SuburbSelectorFragment"
-        android:label="SuburbSelectorFragment" />
+        android:label="SuburbSelectorFragment" />-->
 
     <fragment
         android:id="@+id/geoCheckoutCollectingFragment"
@@ -201,5 +207,9 @@
         android:name="za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment"
         android:label="UnsellableItemsFragment" />
 
+    <dialog
+        android:id="@+id/poiMapBottomSheetDialog"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.poi.MapsPoiBottomSheetDialog"
+        android:label="MapsPoiBottomSheetDialog"/>
 
 </navigation>

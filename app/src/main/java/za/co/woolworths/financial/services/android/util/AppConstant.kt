@@ -110,6 +110,8 @@ class AppConstant {
         const val DELETE_ACCOUNT = "DELETE_ACCOUNT"
         const val DELETE_ACCOUNT_CONFIRMATION = "DELETE_ACCOUNT_CONFIRMATION"
         const val RESULT_CODE_DELETE_ACCOUNT = 444
+        const val FIFTY=50
+        const val TEN=10
     }
 
     class Keys {
@@ -121,6 +123,7 @@ class AppConstant {
             const val EXTRA_NOTIFICATION_FEATURE = "feature"
             const val EXTRA_NOTIFICATION_PARAMETERS = "parameters"
 
+            const val EXTRA_SEND_DELIVERY_DETAILS_PARAMS = "EXTRA_SEND_DELIVERY_DETAILS_PARAMS"
             const val EXTRA_PRODUCT_NAME = "PRODUCT_NAME"
             const val EXTRA_SEARCH_TYPE = "searchType"
             const val EXTRA_SEARCH_TERM = "searchTerm"
@@ -135,6 +138,10 @@ class AppConstant {
              *****************************************************************************************/
             const val ARG_NOTIFICATION_PARAMETERS: String = "parameters"
             const val ARG_ORDER: String = "order"
+            const val ARG_VALIDATE_PLACE = "validatePlace"
+            const val ARG_SEND_DELIVERY_DETAILS = "sendDeliveryDetails"
+            const val ARG_FROM_NOTIFICATION = "fromNotification"
+
             /*****************************************************************************************
              * Parameters Keys
              * const val PARAM_EXAMPLE_NAME = "PARAM_NAME"

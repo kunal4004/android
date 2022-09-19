@@ -9,6 +9,7 @@ import android.graphics.Paint
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.text.TextUtils
 import android.view.*
 import android.view.inputmethod.InputMethodManager
@@ -22,6 +23,8 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import com.google.firebase.installations.FirebaseInstallations
+import com.huawei.hms.aaid.HmsInstanceId
+import com.huawei.hms.common.ApiException
 import kotlinx.android.synthetic.main.fragment_enter_otp.buttonNext
 import kotlinx.android.synthetic.main.fragment_enter_otp.didNotReceiveOTPTextView
 import kotlinx.android.synthetic.main.fragment_link_device_otp.*
@@ -56,10 +59,12 @@ import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextW
 import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
 import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator
+import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 import java.util.*
 
 class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeListener {
@@ -454,22 +459,18 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
 
     private fun retrieveTokenAndCallLinkDevice() {
         if (TextUtils.isEmpty(Utils.getToken())) {
-            if (Utils.isGooglePlayServicesAvailable() ||
-                Utils.isHuaweiMobileServicesAvailable()) {
-                FirebaseInstallations.getInstance().getToken(true).addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        task.result.token.let {
-                            // Save fb token in DB.
-                            Utils.setToken(it)
-                            sendTokenToLinkDevice(it)
-                            return@addOnCompleteListener
-                        }
+            context?.let { context ->
+                NotificationUtils.getTokenFromMessagingService(
+                    context,
+                    onSuccessCallback = { token ->
+                        Utils.setToken(token)
+                        sendTokenToLinkDevice(token)
+                    },
+                    onFailureCallback = {
+                        showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
                     }
-                    // token is null show error message to user
-                    showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
-                }
-            } else {
-                // token is null show error message to user
+                )
+            } ?: kotlin.run {
                 showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
             }
         } else {
@@ -494,6 +495,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                 locationAddress,
                 true,
                 token,
+                if (Utils.isGooglePlayServicesAvailable()) NotificationUtils.TOKEN_PROVIDER_FIREBASE else NotificationUtils.TOKEN_PROVIDER_HMS,
                 otpNumber,
                 otpMethod
             )

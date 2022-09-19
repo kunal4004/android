@@ -20,6 +20,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dat
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
+typealias StoreCardFreezeState = Pair<Boolean, Int>
+
 @HiltViewModel
 class TemporaryFreezeCardViewModel @Inject constructor(private val storeCardDataSource: StoreCardDataSource) : ViewModel(), IStoreCardDataSource by storeCardDataSource {
 
@@ -39,6 +41,7 @@ class TemporaryFreezeCardViewModel @Inject constructor(private val storeCardData
     // ViewPager current position value
     val currentPagePosition: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
 
+    val showToastMessageOnStoreCardFreeze: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
 
     init {
         currentPagePosition.value = 0

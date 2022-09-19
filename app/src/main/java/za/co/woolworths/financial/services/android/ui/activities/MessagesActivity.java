@@ -73,7 +73,8 @@ public class MessagesActivity extends AppCompatActivity implements MesssagesList
 	private Call<MessageResponse> mMessageAsyncRequest;
 	private Call<MessageResponse> mMoreMessageAsyncRequest;
 
-	@Inject NotificationUtils  notificationUtils;
+	@Inject
+	NotificationUtils notificationUtils;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

@@ -8,7 +8,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
@@ -114,7 +114,7 @@ class AccountProductsHomeViewModel @Inject constructor(
 
     fun requestAccountsCollectionsCheckEligibility(isShown : Boolean) = viewModelScope.launch {
         showAccountInArrearsPopup = isShown
-        getViewStateFlowForNetworkCall { queryServiceCheckCustomerEligibilityPlan() }.collect {
+        getViewStateFlowForNetworkCall { queryServiceCheckCustomerEligibilityPlan() }.collectLatest {
             _accountsCollectionsCheckEligibility.emit(it)
         }
     }

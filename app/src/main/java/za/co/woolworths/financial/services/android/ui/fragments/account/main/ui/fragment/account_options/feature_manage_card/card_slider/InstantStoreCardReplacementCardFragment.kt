@@ -30,7 +30,7 @@ class InstantStoreCardReplacementCardFragment : Fragment(R.layout.instant_store_
         val binding = InstantStoreCardReplacementCardFragmentBinding.bind(view)
         val card = arguments?.getParcelable<StoreCardFeatureType?>(STORE_CARD_FEATURE_TYPE) as? StoreCardFeatureType.StoreCardIsInstantReplacementCardAndInactive
         binding.accountHolderNameTextView.visibility = View.GONE
-        binding.storeCardImageView.setImageResource(R.drawable.ic_sc_inactive)
+        binding.storeCardImageView.setImageResource(R.drawable.store_card_inactive)
         setLabel(binding)
         binding.storeCardImageView.onClick {
             (requireActivity() as? StoreCardActivity)?.apply {
@@ -40,8 +40,8 @@ class InstantStoreCardReplacementCardFragment : Fragment(R.layout.instant_store_
     }
 
     private fun setLabel(binding: InstantStoreCardReplacementCardFragmentBinding) {
-        binding.tempCardLabel.visibility = View.VISIBLE
-        binding.cardLabel.visibility = View.VISIBLE
+        binding.tempCardLabel.visibility = View.GONE
+        binding.cardLabel.visibility = View.GONE
         binding.tempCardLabel.setTextColor(ContextCompat.getColor(requireContext(),R.color.inactive_label_color))
         binding.cardLabel.setTextColor(ContextCompat.getColor(requireContext(),R.color.inactive_label_color))
         binding.tempCardLabel.text = getString(R.string.inactive)

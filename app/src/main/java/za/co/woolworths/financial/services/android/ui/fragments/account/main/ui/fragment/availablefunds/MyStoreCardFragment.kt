@@ -84,7 +84,7 @@ class MyStoreCardFragment @Inject constructor() :
         setFragmentResultListener()
         navigateToDeepLinkView()
         with(mDisplayInArrearsPopup) {
-            collectCheckEligibilityResult()
+            collectCheckEligibilityResult{}
             viewLifecycleOwner.lifecycleScope.launch {
                 setupInArrearsPopup(homeViewModel.showAccountInArrearsPopup)
             }

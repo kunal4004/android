@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
-import android.graphics.SweepGradient
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
@@ -13,6 +12,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.link_store_card_process_fragment.*
@@ -24,23 +24,23 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IOTPLinkStoreCard
 import za.co.woolworths.financial.services.android.contracts.IStoreCardListener
 import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.ui.fragments.integration.service.model.Response
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkCardType
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkStoreCard
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsData
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.REQUEST_CODE_BLOCK_MY_STORE_CARD
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
-import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
 import kotlinx.android.synthetic.main.npc_virtual_temp_card_staff_layout.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE
 
 class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListener {
 
@@ -287,13 +287,11 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
         }
     }
 
-    private fun goToMyCardDetailActivity(storeCardsResponse: StoreCardsResponse) {
+    private fun refreshProductLandingPage(storeCardsResponse: StoreCardsResponse) {
         activity?.apply {
-            val displayStoreCardDetail = Intent(activity, MyCardDetailActivity::class.java)
-            displayStoreCardDetail.putExtra(STORE_CARD_DETAIL, Gson().toJson(storeCardsResponse))
-            this.startActivityForResult(displayStoreCardDetail, REQUEST_CODE_BLOCK_MY_STORE_CARD)
-            this.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
-            this.setResult(MyCardDetailActivity.ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE)
+            val intent = Intent()
+            intent.putExtra(STORE_CARD_DETAIL, Gson().toJson(storeCardsResponse))
+            this.setResult(ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE,intent)
             this.finish()
             this.overridePendingTransition(0, 0)
         }
@@ -353,8 +351,10 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                         }
                     }
                     else{
-                        Handler().postDelayed({
-                            goToMyCardDetailActivity(storeCardsResponse) }, AppConstant.DELAY_3000_MS)
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            delay(AppConstant.DELAY_3000_MS)
+                            refreshProductLandingPage(storeCardsResponse)
+                        }
                     }
                 }
             }

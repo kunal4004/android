@@ -11,11 +11,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.annotation.VisibleForTesting
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProviders
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
@@ -28,6 +30,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.loadingBar
+import kotlinx.android.synthetic.main.fragment_cart.*
 import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.*
 import kotlinx.android.synthetic.main.layout_collection_time_details.*
 import kotlinx.android.synthetic.main.layout_collection_user_information.*
@@ -60,6 +63,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
@@ -70,6 +74,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.shop.Che
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.regex.Pattern
 
@@ -192,15 +198,18 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationDescShimmerFrameLayout,
-                txtAgeConfirmationDesc),
+                txtAgeConfirmationDesc
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationDescNoteShimmerFrameLayout,
-                txtAgeConfirmationDescNote),
+                txtAgeConfirmationDescNote
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 radioGroupAgeConfirmationShimmerFrameLayout,
-                radioBtnAgeConfirmation),
+                radioBtnAgeConfirmation
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationTitleShimmerFrameLayout,
@@ -209,15 +218,18 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationDescShimmerFrameLayout,
-                txtAgeConfirmationDesc),
+                txtAgeConfirmationDesc
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationDescNoteShimmerFrameLayout,
-                txtAgeConfirmationDescNote),
+                txtAgeConfirmationDescNote
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 radioGroupAgeConfirmationShimmerFrameLayout,
-                radioBtnAgeConfirmation),
+                radioBtnAgeConfirmation
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 collectionTimeDetailsShimmerLayout,
@@ -233,7 +245,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             ),
             Pair<ShimmerFrameLayout, View>(
                 liquorComplianceBannerShimmerFrameLayout,
-                liquorComplianceBannerLayout),
+                liquorComplianceBannerLayout
+            ),
 
             Pair<ShimmerFrameLayout, View>(
                 instructionTxtShimmerFrameLayout,
@@ -320,6 +333,10 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     fun startShimmerView() {
         txtNeedBags?.visibility = View.GONE
         switchNeedBags?.visibility = View.GONE
+        edtTxtSpecialDeliveryInstruction?.visibility = View.GONE
+        edtTxtGiftInstructions?.visibility = View.GONE
+        switchSpecialDeliveryInstruction?.isChecked = false
+        switchGiftInstructions?.isChecked = false
 
         val shimmer = Shimmer.AlphaHighlightBuilder().build()
         shimmerComponentArray.forEach {
@@ -386,8 +403,11 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                 }
                                 response.orderSummary?.fulfillmentDetails?.let {
                                     if (!it.deliveryType.isNullOrEmpty()) {
-                                        Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(
-                                            it))
+                                        Utils.savePreferredDeliveryLocation(
+                                            ShoppingDeliveryLocation(
+                                                it
+                                            )
+                                        )
                                     }
                                 }
                                 initializeOrderSummary(response.orderSummary)
@@ -402,6 +422,12 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                         }
                                     }
                                     collectionTimeSlotsAdapter.setSelectedItem(selectedSlotIndex)
+                                }
+                                if(response.orderSummary?.hasMinimumBasketAmount == false) {
+                                   KotlinUtils.showMinCartValueError(
+                                       requireActivity() as AppCompatActivity,
+                                       response.orderSummary?.minimumBasketAmount
+                                   )
                                 }
                             }
                             else -> {
@@ -607,9 +633,12 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 whoIsCollectingDetails =
                     Gson().fromJson(it, object : TypeToken<WhoIsCollectingDetails>() {}.type)
             }
-            savedAddressResponse = Utils.jsonStringToObject(getString(SAVED_ADDRESS_KEY),
-                SavedAddressResponse::class.java) as? SavedAddressResponse ?: getSerializable(
-                SAVED_ADDRESS_KEY) as? SavedAddressResponse ?: SavedAddressResponse()
+            savedAddressResponse = Utils.jsonStringToObject(
+                getString(SAVED_ADDRESS_KEY),
+                SavedAddressResponse::class.java
+            ) as? SavedAddressResponse ?: getSerializable(
+                SAVED_ADDRESS_KEY
+            ) as? SavedAddressResponse ?: SavedAddressResponse()
         }
         if (whoIsCollectingDetails != null) {
             tvCollectionUserName.text = whoIsCollectingDetails?.recipientName
@@ -806,16 +835,21 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 }
 
                 KotlinUtils.presentEditDeliveryGeoLocationActivity(
-                    requireActivity(),
-                    COLLECTION_SLOT_SLECTION_REQUEST_CODE,
-                    GeoUtils.getDelivertyType(),
-                    GeoUtils.getPlaceId(),
-                    false,
-                    true,
-                    true,
-                    savedAddressResponse,
-                    defaultAddress,
-                    Utils.toJson(whoIsCollectingDetails)
+                        requireActivity(),
+                        COLLECTION_SLOT_SLECTION_REQUEST_CODE,
+                        GeoUtils.getDelivertyType(),
+                        GeoUtils.getPlaceId(),
+                        false,
+                        true,
+                        true,
+                        savedAddressResponse,
+                        defaultAddress,
+                        Utils.toJson(whoIsCollectingDetails),
+                        liquorOrder?.let { liquorOrder ->
+                            liquorImageUrl?.let { liquorImageUrl ->
+                                LiquorCompliance(liquorOrder, liquorImageUrl)
+                            }
+                        }
                 )
                 activity?.finish()
             }
@@ -880,6 +914,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                     // Cart is empty when removed unsellable items. go to cart and refresh cart screen.
                     Activity.RESULT_CANCELED, ErrorHandlerActivity.RESULT_RETRY -> {
                         (activity as? CheckoutActivity)?.apply {
+                            //set BR to update cart fragment in CNC flow
+                            LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(CheckOutFragment.TAG_CART_BROADCAST_RECEIVER))
                             setResult(CheckOutFragment.RESULT_EMPTY_CART)
                             closeActivity()
                         }
@@ -895,13 +931,15 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     private fun isAgeConfirmationLiquorCompliance(): Boolean {
-        layoutCollectionInstructions.parent.requestChildFocus(layoutCollectionInstructions,
-            layoutCollectionInstructions)
+        layoutCollectionInstructions.parent.requestChildFocus(
+            layoutCollectionInstructions,
+            layoutCollectionInstructions
+        )
         return liquorOrder == true && !radioBtnAgeConfirmation.isChecked
     }
 
     private fun onCheckoutPaymentClick() {
-        if (isRequiredFieldsMissing() || isInstructionsMissing() || isGiftMessage()) {
+        if (isRequiredFieldsMissing() || isGiftMessage()) {
             return
         }
         if (isAgeConfirmationLiquorCompliance()) {
@@ -1012,6 +1050,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         KotlinUtils.getUniqueDeviceID {
             pushNotificationToken = Utils.getToken()
             appInstanceId = it
+            tokenProvider = if (Utils.isGooglePlayServicesAvailable()) NotificationUtils.TOKEN_PROVIDER_FIREBASE else NotificationUtils.TOKEN_PROVIDER_HMS
         }
     }
 
@@ -1040,7 +1079,11 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                         0,
                         layoutCollectionInstructions?.top ?: 0
                     )
-                    true
+                    /**
+                     * New requirement to have instructions optional
+                     */
+//                    true
+                    false
                 } else false
             }
             else -> false

@@ -47,7 +47,7 @@ class ActivateVirtualTempCardFragment :
         activateVTC: StoreCardFeatureType.ActivateVirtualTempCard?
     ) {
         if (activateVTC?.isTemporaryCardEnabled == true) {
-            binding.storeCardImageView.setImageResource(R.drawable.ic_sc_temporary_store_card)
+            binding.storeCardImageView.setImageResource(R.drawable.store_card_virtual_temp)
             binding.tempCardLabel.visibility = View.GONE
             binding.cardLabel.visibility = View.GONE
             binding.accountHolderNameTextView.text = KotlinUtils.getCardHolderNameSurname()

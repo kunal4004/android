@@ -20,6 +20,8 @@
         android:id="@+id/subTitleTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_14sdp"
+        android:layout_marginEnd="@dimen/_14sdp"
         android:layout_marginTop="@dimen/_10sdp"
         android:layout_marginBottom="@dimen/_41sdp"
         android:fontFamily="@font/myriad_pro_regular"
