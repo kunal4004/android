@@ -537,7 +537,7 @@ class ConfirmAddressMapFragment :
         ))
         errorMessage?.setBackgroundColor(ContextCompat.getColor(
             requireContext(),
-            R.color.black_off
+            R.color.color_222222
         ))
     }
 
