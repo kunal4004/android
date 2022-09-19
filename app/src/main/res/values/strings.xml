@@ -2450,7 +2450,7 @@
     <string name="out_of_stock_item">Unfortunately this item is out of stock in %1$s. Try changing your delivery location and try again.</string>
     <string name="absa_statement_error_try_again_later">We\'re unable to retrieve your Statement. Please try again later.</string>
     <string name="confirm_your_address">Confirm Your Address</string>
-    <string name="we_use_your_location_to_give_you_the_most_naccurate_stock_availabilty_and_pricing">If you live in a complex, try searching the complex name and we will fill in the rest of the details for you. We will confirm your exact delivery details during checkout, including house or unit number. You can also search for a landmark, like a Woolies store and then move the pin to your location.\nWe use your location to give you the most accurate stock availability and pricing.</string>
+    <string name="we_use_your_location_to_give_you_the_most_naccurate_stock_availabilty_and_pricing">If you live in a complex, try searching the complex name and we will fill in the rest of the details for you. We will confirm your exact delivery details during checkout, including house or unit number. \n\nYou can also search for a landmark, like a Woolies store and then move the pin to your location.\n\nWe use your location to give you the most accurate stock availability and pricing.</string>
     <string name="enter_new_location">Enter new location</string>
     <string name="my_saved_addresses">My Saved Addresses</string>
     <string name="current_location">Current Location</string>
