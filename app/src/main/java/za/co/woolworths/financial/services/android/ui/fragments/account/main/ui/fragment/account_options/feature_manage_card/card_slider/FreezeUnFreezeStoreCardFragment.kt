@@ -68,12 +68,12 @@ class FreezeUnFreezeStoreCardFragment : Fragment(R.layout.freeze_unfreeze_card_f
             true -> {
                 binding.accountHolderNameTextView.visibility =View.GONE
                 binding.storeCardImageView.setImageDrawable(ContextCompat.getDrawable(
-                    requireContext(),R.drawable.card_freeze))
+                    requireContext(),R.drawable.store_card_frozen))
             }
             else -> {
                 binding.accountHolderNameTextView.visibility = View.VISIBLE
                 binding.storeCardImageView.setImageDrawable( ContextCompat.getDrawable(
-                    requireContext(),R.drawable.ic_store_card))
+                    requireContext(),R.drawable.store_card_active))
             }
         }
     }

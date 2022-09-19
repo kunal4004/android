@@ -21,7 +21,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 interface IDisplayInArrearsPopup {
     fun showInArrearsDialogByStatus(status: (AccountOfferingState) -> Unit)
     fun setupInArrearsPopup(isAccountInArrearsPopupVisible : Boolean)
-    fun collectCheckEligibilityResult()
+    fun collectCheckEligibilityResult(isLoading : (Boolean) -> Unit?)
     fun onTap(activity: Activity?)
     fun isChargedOff(): Boolean
 }
@@ -62,11 +62,12 @@ class DisplayInArrearsPopup(
         }
     }
 
-    override fun collectCheckEligibilityResult() {
+    override fun collectCheckEligibilityResult(isLoading : (Boolean) -> Unit?) {
         viewLifecycleOwner.lifecycleScope.launch {
             with(homeViewModel) {
-                accountsCollectionsCheckEligibility.collectLatest { item ->
-                    with(item) {
+                accountsCollectionsCheckEligibility.collectLatest {
+                    with(it) {
+                        renderLoading { isLoading(this.isLoading) }
                         renderSuccess {
                             mEligibilityPlan = output.eligibilityPlan
                             setEligibilityPlan(output.eligibilityPlan)

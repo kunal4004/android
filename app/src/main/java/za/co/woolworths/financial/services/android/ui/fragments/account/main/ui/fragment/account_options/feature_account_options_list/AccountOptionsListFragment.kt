@@ -11,12 +11,10 @@ import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountOptionsListFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType
 import za.co.woolworths.financial.services.android.ui.base.onClick
-import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOptionsScreenUI
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StoreCardActivityResultCallback
@@ -51,7 +49,8 @@ class AccountOptionsListFragment : Fragment(R.layout.account_options_list_fragme
     private fun AccountOptionsListFragmentBinding.subscribeObservers() {
         accountOptionsSkeleton.loadingState(false, targetedShimmerLayout = accountOptionsLayout)
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.viewState.collectLatest { items ->
+            viewModel.init()
+            viewModel.viewState.collect { items ->
                 items.forEach { item ->
                     with(item) {
                         when (this) {
@@ -72,7 +71,6 @@ class AccountOptionsListFragment : Fragment(R.layout.account_options_list_fragme
                 }
             }
         }
-        viewModel.init()
     }
 
     private fun AccountOptionsListFragmentBinding.hideLoanWithdrawal() {
@@ -145,11 +143,11 @@ class AccountOptionsListFragment : Fragment(R.layout.account_options_list_fragme
         when (isVisible) {
             true -> {
                 setupTreatmentPlanView.visibility = VISIBLE
-                viewTreatmentPlanDivider.visibility = VISIBLE
+                showPaymentPlanDivider.visibility = VISIBLE
             }
             false -> {
                 setupTreatmentPlanView.visibility = GONE
-                viewTreatmentPlanDivider.visibility = GONE
+                showPaymentPlanDivider.visibility = GONE
             }
         }
 

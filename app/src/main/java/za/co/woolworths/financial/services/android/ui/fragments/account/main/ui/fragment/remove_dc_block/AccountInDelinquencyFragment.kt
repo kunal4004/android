@@ -122,7 +122,7 @@ class AccountInDelinquencyFragment : Fragment(R.layout.remove_block_dc_main_frag
         }
 
         with(mDisplayInArrearsPopup) {
-            collectCheckEligibilityResult()
+            collectCheckEligibilityResult { isLoading -> if (isLoading) binding.setHelpWithPaymentViewVisibility(null) }
             setupInArrearsPopup(homeViewModel.showAccountInArrearsPopup)
         }
     }

@@ -47,7 +47,7 @@ class TemporaryCardFragment : Fragment(R.layout.instant_store_card_replacement_c
     }
 
     private fun setupView(binding: InstantStoreCardReplacementCardFragmentBinding) {
-        binding.storeCardImageView.setImageResource(R.drawable.ic_sc_temporary_store_card)
+        binding.storeCardImageView.setImageResource(R.drawable.store_card_virtual_temp)
         binding.accountHolderNameTextView.text = KotlinUtils.getCardHolderNameSurname()
         binding.accountHolderNameTextView.visibility = VISIBLE
         binding.accountHolderNameTextView.setTextColor(Color.BLACK)

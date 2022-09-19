@@ -17,10 +17,13 @@ import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.AccountProductsMainFragment
@@ -28,7 +31,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.uti
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.ui.views.snackbar.OneAppSnackbar
 import za.co.woolworths.financial.services.android.util.ActivityIntentNavigationManager
+import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartDestinationType
+import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.util.*
 import javax.inject.Inject
 
@@ -40,6 +45,8 @@ class StoreCardActivity : AppCompatActivity() {
 
     val homeViewModel: AccountProductsHomeViewModel by viewModels()
     val payMyAccountViewModel: PayMyAccountViewModel by viewModels()
+    val cardFreezeViewModel: TemporaryFreezeCardViewModel by viewModels()
+    val viewModel: MyAccountsRemoteApiViewModel by viewModels()
 
     @Inject lateinit var statusBarCompat: SystemBarCompat
 
@@ -51,6 +58,15 @@ class StoreCardActivity : AppCompatActivity() {
         setContentView(binding.root)
         statusBarCompat.setLightStatusAndNavigationBar()
         setupView()
+        setObservers()
+    }
+
+    private fun setObservers() {
+        lifecycleScope.launch{
+            cardFreezeViewModel.showToastMessageOnStoreCardFreeze.observe(this@StoreCardActivity) { result ->
+                showToast(result)
+            }
+        }
     }
 
     private fun setupView() {
@@ -110,38 +126,51 @@ class StoreCardActivity : AppCompatActivity() {
                             payMyAccountViewModel.setPMACardInfo(this)
                         }
                     }
-
-                    AccountsOptionFragment.REQUEST_ELITEPLAN -> {
-                        //elitePlanModel is the model extracted from callback url parameters
-                        if (extras?.containsKey(AccountSignedInPresenterImpl.ELITE_PLAN_MODEL) == true) {
-                            val elitePlanModel =
-                                extras.getParcelable(AccountSignedInPresenterImpl.ELITE_PLAN_MODEL) as? Parcelable
-                            ActivityIntentNavigationManager.presentPayMyAccountActivity(
-                                this@StoreCardActivity,
-                                payMyAccountViewModel.getCardDetail(),
-                                PayMyAccountStartDestinationType.CREATE_USER,
-                                true,
-                                elitePlanModel
-                            )
-                        } else {
-                            onTreatmentPlanStatusUpdateRequired()
-                        }
-                    }
-
-                    AccountsOptionFragment.REQUEST_GET_PAYMENT_PLAN -> {
-                        if (resultCode == Activity.RESULT_OK) {
-                            onTreatmentPlanStatusUpdateRequired()
-                        }
-                    }
                 }
-                }
+            }
 
+            AccountsOptionFragment.REQUEST_ELITEPLAN -> {
+                //elitePlanModel is the model extracted from callback url parameters
+                if (extras?.containsKey(AccountSignedInPresenterImpl.ELITE_PLAN_MODEL) == true) {
+                    val elitePlanModel =
+                        extras.getParcelable(AccountSignedInPresenterImpl.ELITE_PLAN_MODEL) as? Parcelable
+                    ActivityIntentNavigationManager.presentPayMyAccountActivity(
+                        this@StoreCardActivity,
+                        payMyAccountViewModel.getCardDetail(),
+                        PayMyAccountStartDestinationType.CREATE_USER,
+                        true,
+                        elitePlanModel
+                    )
+                } else {
+                    onTreatmentPlanStatusUpdateRequired()
+                }
+            }
+
+            AccountsOptionFragment.REQUEST_GET_PAYMENT_PLAN -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    onTreatmentPlanStatusUpdateRequired()
+                }
+            }
+
+        }
+
+        when (resultCode) {
+            ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE -> {
+                //ICR Journey success and When Get replacement card email confirmation is success and result ok
+                VoiceOfCustomerManager.pendingTriggerEvent = VocTriggerEvent.MYACCOUNTS_ICR_LINK_CONFIRM
+                requestGetStoreCardCards()
+            }
         }
     }
 
     private fun onTreatmentPlanStatusUpdateRequired() {
         lifecycleScope.launch {
             homeViewModel.requestAccountsCollectionsCheckEligibility(false)
+        }
+    }
+    private fun requestGetStoreCardCards() {
+        lifecycleScope.launch {
+            viewModel.requestGetStoreCardCards()
         }
     }
 }
