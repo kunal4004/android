@@ -2511,7 +2511,8 @@
     <string name="standard_delivery">Standard Delivery</string>
     <string name="click_and_collect">Click &amp; Collect</string>
     <string name="click_and_collect_title_text">Free Collection. \n Limited shop of %1$s Items.</string>
-    <string name="dash_title_text">R%1$s Delivery Fee. \n Limited shop of %2$s Items.</string>
+    <string name="dash_title_text_1">R%1$s Delivery Fee. \n </string>
+    <string name="dash_title_text_2">Limited shop of %1$s Items.</string>
     <string name="dash_delivery">Dash Delivery</string>
     <string name="dash_delivery_bold"><b>Dash Delivery</b></string>
     <string name="dash_product_search">Search name, product code or brand</string>
