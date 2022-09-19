@@ -85,11 +85,12 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO
+import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.EXTRA_SEND_DELIVERY_DETAILS_PARAMS
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.net.ConnectException
 import java.net.UnknownHostException
@@ -282,13 +283,17 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     when (validateLocationResponse?.httpCode) {
                         HTTP_OK -> {
                             val unsellableList =
-                                KotlinUtils.getUnsellableList(validateLocationResponse.validatePlace,
-                                    KotlinUtils.browsingDeliveryType)
+                                KotlinUtils.getUnsellableList(
+                                    validateLocationResponse.validatePlace,
+                                    KotlinUtils.browsingDeliveryType
+                                )
                             if (unsellableList?.isNullOrEmpty() == false && isUnSellableItemsRemoved == false) {
                                 // show unsellable items
                                 unsellableList?.let {
-                                    navigateToUnsellableItemsFragment(it as ArrayList<UnSellableCommerceItem>,
-                                        KotlinUtils.browsingDeliveryType?.name)
+                                    navigateToUnsellableItemsFragment(
+                                        it as ArrayList<UnSellableCommerceItem>,
+                                        KotlinUtils.browsingDeliveryType?.name
+                                    )
                                 }
                             } else
                                 callConfirmPlace()
@@ -318,8 +323,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         deliveryType?.let {
             val unsellableItemsBottomSheetDialog =
                 UnsellableItemsBottomSheetDialog.newInstance(unSellableCommerceItems, it)
-            unsellableItemsBottomSheetDialog.show(requireFragmentManager(),
-                UnsellableItemsBottomSheetDialog::class.java.simpleName)
+            unsellableItemsBottomSheetDialog.show(
+                requireFragmentManager(),
+                UnsellableItemsBottomSheetDialog::class.java.simpleName
+            )
         }
     }
 
@@ -337,13 +344,19 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     when (confirmLocationResponse.httpCode) {
                         HTTP_OK -> {
                             if (SessionUtilities.getInstance().isUserAuthenticated) {
-                                Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(
-                                    confirmLocationResponse.orderSummary?.fulfillmentDetails))
+                                Utils.savePreferredDeliveryLocation(
+                                    ShoppingDeliveryLocation(
+                                        confirmLocationResponse.orderSummary?.fulfillmentDetails
+                                    )
+                                )
                                 if (KotlinUtils.getAnonymousUserLocationDetails() != null)
                                     KotlinUtils.clearAnonymousUserLocationDetails()
                             } else {
-                                saveAnonymousUserLocationDetails(ShoppingDeliveryLocation(
-                                    confirmLocationResponse.orderSummary?.fulfillmentDetails))
+                                saveAnonymousUserLocationDetails(
+                                    ShoppingDeliveryLocation(
+                                        confirmLocationResponse.orderSummary?.fulfillmentDetails
+                                    )
+                                )
                             }
 
                             val savedPlaceId = KotlinUtils.getDeliveryType()?.address?.placeId
@@ -374,12 +387,15 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             else -> WoolworthsApplication.getValidatePlaceDetails()
         }
         WoolworthsApplication.setValidatedSuburbProducts(
-            browsingPlaceDetails)
+            browsingPlaceDetails
+        )
         // set latest response to browsing data.
         WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
-            browsingPlaceDetails)
+            browsingPlaceDetails
+        )
         WoolworthsApplication.setDashBrowsingValidatePlaceDetails(
-            browsingPlaceDetails)
+            browsingPlaceDetails
+        )
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -401,9 +417,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         val arguments = HashMap<String, String>()
         arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_LIST_NAME] =
             mSubCategoryName!!
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST,
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.VIEW_ITEM_LIST,
             arguments,
-            activity)
+            activity
+        )
 
         if (activity is BottomNavigationActivity
             && (activity as BottomNavigationActivity).currentFragment is ProductListingFragment
@@ -438,7 +456,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                         brandText = (arguments?.getSerializable(BRAND_NAVIGATION_DETAILS) as? BrandNavigationDetails)?.brandText,
                         navigationState = mNavigationState
                     ),
-                    isUserBrowsing
+                    isUserBrowsing,
+                    arguments?.getBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false)
                 )
             )
         }
@@ -632,9 +651,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             setSuburb?.setOnClickListener {
                 dismiss()
                 if (!SessionUtilities.getInstance().isUserAuthenticated) {
-                    ScreenManager.presentSSOSigninActivity(activity,
+                    ScreenManager.presentSSOSigninActivity(
+                        activity,
                         LOGIN_REQUEST_SUBURB_CHANGE,
-                        isUserBrowsing)
+                        isUserBrowsing
+                    )
                 } else {
                     activity?.apply {
                         KotlinUtils.presentEditDeliveryGeoLocationActivity(
@@ -881,7 +902,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             walkThroughPromtView?.removeFromWindow()
             lockDrawerFragment()
         }
-
     }
 
     override fun startProductRequest() {
@@ -969,8 +989,17 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 }
 
                 R.id.plpSearchIcon -> {
-                    activity?.apply {
-                        val openSearchActivity = Intent(this, ProductSearchActivity::class.java)
+                    requireActivity().apply {
+                        val openSearchActivity =
+                            Intent(this, ProductSearchActivity::class.java).also {
+                                it.putExtra(
+                                    EXTRA_SEND_DELIVERY_DETAILS_PARAMS,
+                                    arguments?.getBoolean(
+                                        EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false
+                                    )
+                                )
+                            }
+
                         startActivity(openSearchActivity)
                         overridePendingTransition(0, 0)
                     }
@@ -979,9 +1008,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                         mSearchTerm.toString()
                     arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SEARCH_TYPE] =
                         mSearchType.toString()
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SEARCH,
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.SEARCH,
                         arguments,
-                        activity)
+                        activity
+                    )
                 }
 
                 R.id.plpBackIcon -> {
@@ -1235,10 +1266,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         //firebase event select_item
         state = productsRecyclerView.layoutManager?.onSaveInstanceState()
         val selectItemParams = Bundle()
-        selectItemParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_LIST_NAME,
-            mSubCategoryName)
-        selectItemParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_BRAND,
-            productList.brandText)
+        selectItemParams.putString(
+            FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_LIST_NAME,
+            mSubCategoryName
+        )
+        selectItemParams.putString(
+            FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_BRAND,
+            productList.brandText
+        )
         for (products in 0..(mProductList?.size ?: 0)) {
             val selectItem = Bundle()
             selectItem.putString(FirebaseAnalytics.Param.ITEM_ID, productList.productId)
@@ -1246,11 +1281,15 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             selectItem.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, mSubCategoryName)
             selectItem.putString(FirebaseAnalytics.Param.ITEM_BRAND, productList.brandText)
             selectItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT, productList.productVariants)
-            productList.price?.let { selectItem.putDouble(FirebaseAnalytics.Param.PRICE, it.toDouble())
+            productList.price?.let {
+                selectItem.putDouble(FirebaseAnalytics.Param.PRICE, it.toDouble())
             }
             selectItemParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(selectItem))
         }
-        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.SELECT_ITEM_EVENT, selectItemParams)
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.SELECT_ITEM_EVENT,
+            selectItemParams
+        )
 
         val title = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
         (activity as? BottomNavigationActivity)?.openProductDetailFragment(
@@ -1294,9 +1333,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         val activity = activity ?: return
 
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            ScreenManager.presentSSOSigninActivity(activity,
+            ScreenManager.presentSSOSigninActivity(
+                activity,
                 QUERY_INVENTORY_FOR_STORE_REQUEST_CODE,
-                isUserBrowsing)
+                isUserBrowsing
+            )
             return
         }
 
@@ -1310,8 +1351,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         // Now first check for if delivery location and browsing location is same.
         // if same no issues. If not then show changing delivery location popup.
         if (!KotlinUtils.getDeliveryType()?.deliveryType.equals(KotlinUtils.browsingDeliveryType?.type) && isUserBrowsing) {
-            KotlinUtils.showChangeDeliveryTypeDialog(requireContext(), requireFragmentManager(),
-                KotlinUtils.browsingDeliveryType)
+            KotlinUtils.showChangeDeliveryTypeDialog(
+                requireContext(), requireFragmentManager(),
+                KotlinUtils.browsingDeliveryType
+            )
             return
         }
 
@@ -1337,25 +1380,43 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                             if (skuInventoryList.size == 0 || skuInventoryList[0].quantity == 0) {
                                 addItemToCart?.catalogRefId?.let { skuId ->
                                     // TODO: Remove non-fatal exception below once APP2-65 is closed
-                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_ID,
-                                        mSelectedProductList?.productId)
-                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_NAME,
-                                        mSelectedProductList?.productName)
-                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.DELIVERY_LOCATION,
-                                        KotlinUtils.getPreferredDeliveryAddressOrStoreName())
-                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_SKU,
-                                        mSelectedProductList?.sku)
-                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.FULFILLMENT_ID,
-                                        mFulfilmentTypeId)
-                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.STORE_ID,
-                                        mStoreId)
-                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.DELIVERY_TYPE,
-                                        KotlinUtils.getPreferredDeliveryType().toString())
-                                    setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.IS_USER_AUTHENTICATED,
-                                        SessionUtilities.getInstance().isUserAuthenticated.toString())
+                                    setCrashlyticsString(
+                                        FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_ID,
+                                        mSelectedProductList?.productId
+                                    )
+                                    setCrashlyticsString(
+                                        FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_NAME,
+                                        mSelectedProductList?.productName
+                                    )
+                                    setCrashlyticsString(
+                                        FirebaseManagerAnalyticsProperties.CrashlyticsKeys.DELIVERY_LOCATION,
+                                        KotlinUtils.getPreferredDeliveryAddressOrStoreName()
+                                    )
+                                    setCrashlyticsString(
+                                        FirebaseManagerAnalyticsProperties.CrashlyticsKeys.PRODUCT_SKU,
+                                        mSelectedProductList?.sku
+                                    )
+                                    setCrashlyticsString(
+                                        FirebaseManagerAnalyticsProperties.CrashlyticsKeys.FULFILLMENT_ID,
+                                        mFulfilmentTypeId
+                                    )
+                                    setCrashlyticsString(
+                                        FirebaseManagerAnalyticsProperties.CrashlyticsKeys.STORE_ID,
+                                        mStoreId
+                                    )
+                                    setCrashlyticsString(
+                                        FirebaseManagerAnalyticsProperties.CrashlyticsKeys.DELIVERY_TYPE,
+                                        KotlinUtils.getPreferredDeliveryType().toString()
+                                    )
+                                    setCrashlyticsString(
+                                        FirebaseManagerAnalyticsProperties.CrashlyticsKeys.IS_USER_AUTHENTICATED,
+                                        SessionUtilities.getInstance().isUserAuthenticated.toString()
+                                    )
                                     Utils.getLastSavedLocation()?.let {
-                                        setCrashlyticsString(FirebaseManagerAnalyticsProperties.CrashlyticsKeys.LAST_KNOWN_LOCATION,
-                                            "${it.latitude}, ${it.longitude}")
+                                        setCrashlyticsString(
+                                            FirebaseManagerAnalyticsProperties.CrashlyticsKeys.LAST_KNOWN_LOCATION,
+                                            "${it.latitude}, ${it.longitude}"
+                                        )
                                     }
                                     logException(Exception(FirebaseManagerAnalyticsProperties.CrashlyticsExceptionName.PRODUCT_LIST_FIND_IN_STORE))
 
@@ -1677,7 +1738,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     brandText = (arguments?.getSerializable(BRAND_NAVIGATION_DETAILS) as? BrandNavigationDetails)?.brandText,
                     navigationState = navigationState
                 ),
-                isUserBrowsing
+                isUserBrowsing,
+                arguments?.getBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false)
             )
         )
     }
@@ -1717,11 +1779,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             sub_category_name: String?,
             searchTerm: String?,
             isBrowsing: Boolean,
+            sendDeliveryDetails: Boolean?
         ) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
             putString(SUB_CATEGORY_NAME, sub_category_name)
             putString(SEARCH_TERM, searchTerm)
             putBoolean(IS_BROWSING, isBrowsing)
+            putBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, sendDeliveryDetails ?: false)
         }
 
         fun newInstance(
@@ -1730,12 +1794,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             sub_category_name: String?,
             brandNavigationDetails: BrandNavigationDetails?,
             isBrowsing: Boolean,
+            sendDeliveryDetails: Boolean?
         ) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
             putString(SEARCH_TERM, searchTerm)
             putString(SUB_CATEGORY_NAME, sub_category_name)
             putSerializable(BRAND_NAVIGATION_DETAILS, brandNavigationDetails)
             putBoolean(IS_BROWSING, isBrowsing)
+            putBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, sendDeliveryDetails ?: false)
         }
 
         fun newInstance(
@@ -1745,6 +1811,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             sortOption: String,
             brandNavigationDetails: BrandNavigationDetails?,
             isBrowsing: Boolean,
+            sendDeliveryDetails: Boolean?
         ) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
             putString(SUB_CATEGORY_NAME, sub_category_name)
@@ -1752,6 +1819,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             putString(SORT_OPTION, sortOption)
             putSerializable(BRAND_NAVIGATION_DETAILS, brandNavigationDetails)
             putBoolean(IS_BROWSING, isBrowsing)
+            putBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, sendDeliveryDetails == true)
         }
     }
 
@@ -1838,7 +1906,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     searchTerm = brandNavigationDetails.brandText,
                     "",
                     brandNavigationDetails,
-                    isUserBrowsing
+                    isUserBrowsing,
+                    arguments?.getBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false)
                 )
             )
         }
@@ -1886,7 +1955,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     searchTerm = navigation?.displayName,
                     "",
                     brandNavigationDetails,
-                    isUserBrowsing
+                    isUserBrowsing,
+                    arguments?.getBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false)
                 )
             )
         }

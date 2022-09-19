@@ -268,7 +268,8 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
                 ProductsRequestParams.SearchType.NAVIGATE,
                 rootCategory.categoryName,
                 rootCategory.dimValId,
-                true
+                isBrowsing = true,
+                sendDeliveryDetails = arguments?.getBoolean(AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false)
             )
         }
     }
