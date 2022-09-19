@@ -101,7 +101,7 @@ class MainShopRepository : ShopRepository {
                 var errorResponse : AddItemToCartResponse? = null
                 try {
                    errorResponse = Gson().fromJson(
-                       response.errorBody()!!.charStream(),
+                       response?.errorBody()?.charStream(),
                        AddItemToCartResponse::class.java)
                 } catch (jsonException: JsonParseException) {
                     FirebaseManager.logException(jsonException)
