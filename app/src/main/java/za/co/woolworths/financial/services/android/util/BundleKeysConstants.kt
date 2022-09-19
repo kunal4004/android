@@ -41,6 +41,8 @@ class BundleKeysConstants {
         const val PLACE_ID = "placeId"
         const val IS_LIQUOR = "IS_LIQUOR"
         const val NICK_NAME = "nickname"
+        const val KEY_ADDRESS2 = "ADDRESS2"
+
     }
 
 }

@@ -20,7 +20,6 @@ import kotlinx.android.synthetic.main.activity_deeplink_pdp.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus

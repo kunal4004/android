@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.util;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import android.text.TextUtils;
 
 import java.text.DateFormat;
@@ -7,22 +9,17 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
-
-import static com.google.common.base.Preconditions.checkArgument;
-
-import org.w3c.dom.Text;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 
 public class WFormatter {
 

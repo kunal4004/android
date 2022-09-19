@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.*
 import android.os.Build
 import androidx.lifecycle.LiveData
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import javax.inject.Inject
 
 class ConnectivityLiveData @Inject constructor(context: Context) : LiveData<Boolean>() {

@@ -12,6 +12,7 @@ import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
 import android.widget.CompoundButton
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResultListener
@@ -54,6 +55,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
@@ -70,6 +72,7 @@ import za.co.woolworths.financial.services.android.util.ImageManager.Companion.s
 import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.regex.Pattern
 
@@ -136,7 +139,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     enum class FoodSubstitution(val rgb: String) {
         PHONE_CONFIRM("YES_CALL_CONFIRM"),
         SIMILAR_SUBSTITUTION("YES"),
-        NO_THANKS("NO")
+        NO_THANKS("NO"),
+        CHAT("CHAT")
     }
 
     enum class DeliveryType(val type: String) {
@@ -581,6 +585,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         expandableGrid.setUpShimmerView()
         expandableGrid.showDeliveryTypeShimmerView()
         showDeliverySubTypeShimmerView()
+        edtTxtSpecialDeliveryInstruction?.visibility = GONE
+        edtTxtGiftInstructions?.visibility = GONE
+        switchSpecialDeliveryInstruction?.isChecked = false
+        switchGiftInstructions?.isChecked = false
 
         shimmerComponentArray = listOf(
             Pair<ShimmerFrameLayout, View>(
@@ -755,6 +763,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         selectedSlotResponseOther = response
                         showDeliverySlotSelectionView()
                         initializeOrderSummary(response.orderSummary)
+
+                        if(response.orderSummary?.hasMinimumBasketAmount == false) {
+                            KotlinUtils.showMinCartValueError(requireActivity() as AppCompatActivity,
+                                response.orderSummary?.minimumBasketAmount)
+                        }
                     }
                     is Throwable -> {
                         presentErrorDialog(
@@ -959,15 +972,21 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             }
             R.id.checkoutDeliveryDetailsLayout -> {
                 KotlinUtils.presentEditDeliveryGeoLocationActivity(
-                    requireActivity(),
-                    SLOT_SELECTION_REQUEST_CODE,
-                    KotlinUtils.getPreferredDeliveryType(),
-                    placesId,
-                    false,
-                    true,
-                    true,
-                    savedAddress,
-                    defaultAddress
+                        requireActivity(),
+                        SLOT_SELECTION_REQUEST_CODE,
+                        KotlinUtils.getPreferredDeliveryType(),
+                        placesId,
+                        false,
+                        true,
+                        true,
+                        savedAddress,
+                        defaultAddress,
+                        "",
+                        liquorOrder?.let { liquorOrder ->
+                            liquorImageUrl?.let { liquorImageUrl ->
+                                LiquorCompliance(liquorOrder, liquorImageUrl)
+                            }
+                        }
                 )
                 activity?.finish()
             }
@@ -986,7 +1005,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     private fun onCheckoutPaymentClick() {
-        if ((isRequiredFieldsMissing() || isInstructionsMissing() || isGiftMessage())) {
+        if ((isRequiredFieldsMissing() || isGiftMessage())) {
             return
         }
         if (isAgeConfirmationLiquorCompliance()) {
@@ -1061,7 +1080,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         0,
                         layoutDeliveryInstructions?.top ?: 0
                     )
-                    true
+                    /**
+                     * New requirement to have instructions optional
+                     */
+//                    true
+                    false
                 } else false
             }
             else -> false
@@ -1199,6 +1222,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             body.apply {
                 pushNotificationToken = Utils.getToken()
                 appInstanceId = it
+                tokenProvider = if (Utils.isGooglePlayServicesAvailable()) NotificationUtils.TOKEN_PROVIDER_FIREBASE else NotificationUtils.TOKEN_PROVIDER_HMS
             }
         }
         when {

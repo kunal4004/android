@@ -23,7 +23,7 @@ import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice;
-import za.co.woolworths.financial.services.android.util.FirebaseManager;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 @AndroidEntryPoint

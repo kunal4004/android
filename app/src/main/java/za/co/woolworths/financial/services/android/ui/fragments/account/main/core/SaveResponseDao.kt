@@ -2,7 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.co
 
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
 class SaveResponseDao {
 

@@ -32,6 +32,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.V
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment.Companion.MAKE_A_PAYMENT_BUTTON
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment.Companion.VIEW_PAYMENT_PLAN_BUTTON
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
 class StoreCardFragment : AvailableFundsFragment(), View.OnClickListener {
 

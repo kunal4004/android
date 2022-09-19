@@ -260,6 +260,6 @@
     <dimen name="hundred_and_thirty_six_dp">136dp</dimen>
     <dimen name="toolbar_height" >@dimen/_48sdp</dimen>
     <dimen name="content_below_toolbar_height" >@dimen/_50sdp</dimen>
-
+    <dimen name="fourty_three_dp">43dp</dimen>
 </resources>
 

@@ -21,8 +21,7 @@ import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService.getResponseOnCreateUpdateDevice
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getUniqueDeviceID
-import java.lang.Exception
-import java.util.function.Consumer
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import javax.inject.Inject
 
 class NotificationUtils @Inject constructor(@ApplicationContext private val context: Context) {
