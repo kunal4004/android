@@ -460,6 +460,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                 this,
                 channelId,
                 onSuccess = { orderId ->
+                    // TODO: we can also send the channelId here. Send as part of parameters if it can be used to directly open that channel. Logic to be added to OCChatActivity.
                     val bundle = bundleOf(
                         "feature" to AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID,
                         "parameters" to "{\"${AppConstant.ORDER_ID}\": \"${orderId}\"}"

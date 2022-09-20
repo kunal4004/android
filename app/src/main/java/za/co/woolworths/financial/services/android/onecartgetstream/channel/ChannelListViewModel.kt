@@ -38,6 +38,7 @@ class ChannelListViewModel: ViewModel() {
             limit = 10
         )
 
+         // TODO: Confirm if this is right. Seem to be using only the first channelId, which gives a high risk of getting the wrong channel if there is more than 1 channel. Needs to be fixed - TBC
         chatClient.queryChannels(request).enqueue { result ->
             if (result.isSuccess && (!result.data().isNullOrEmpty())) {
                 val channelId = result.data().first().cid
