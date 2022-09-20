@@ -7,6 +7,7 @@ import static za.co.woolworths.financial.services.android.ui.fragments.shoppingl
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.MY_LIST_LIST_NAME;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.PRODUCT_DETAILS_FROM_MY_LIST_SEARCH;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.util.AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -53,8 +54,8 @@ public class ProductSearchActivity extends AppCompatActivity
     private LinearLayout recentSearchList;
     private String mSearchTextHint = "";
     private String mListID;
+    private boolean isUserBrowsingDash;
     public static final int PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE = 1244;
-    public final String SEARCH_VALUE_CHANEL = "chanel";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,14 +67,17 @@ public class ProductSearchActivity extends AppCompatActivity
         showRecentSearchHistoryView(true);
         mEditSearchProduct.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE || event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                if(TextUtils.isEmpty(mEditSearchProduct.getText().toString())) {
+                    return false;
+                }
                 searchProduct(mEditSearchProduct.getText().toString());
                 return true;
             }
             return false;
         });
-
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
+            isUserBrowsingDash = bundle.getBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false);
             if (!TextUtils.isEmpty(bundle.getString("SEARCH_TEXT_HINT"))) {
                 mListID = bundle.getString(MY_LIST_LIST_ID);
                 mSearchTextHint = getString(R.string.shopping_search_hint);
@@ -134,6 +138,7 @@ public class ProductSearchActivity extends AppCompatActivity
 				if (TextUtils.isEmpty(mSearchTextHint)) {
 					LoadState loadState = new LoadState();
 					loadState.setSearchProduct(searchProductBrand);
+					loadState.setSendDeliveryDetails(isUserBrowsingDash);
 					Utils.sendBus(loadState);
 					mEditSearchProduct.setText("");
 					finish();
@@ -142,6 +147,7 @@ public class ProductSearchActivity extends AppCompatActivity
 					Intent intent = new Intent();
                     intent.putExtra(MY_LIST_LIST_ID, mListID);
                     intent.putExtra(MY_LIST_LIST_NAME, search.searchedValue);
+                    intent.putExtra(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, isUserBrowsingDash);
                     setActivityResult(intent, PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE);
 				}
 		}

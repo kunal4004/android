@@ -109,7 +109,8 @@
             android:layout_height="@dimen/two_dp"
             android:layout_marginTop="@dimen/eight_dp"
             android:layout_marginStart="@dimen/four_dp"
-            android:layout_marginEnd="@dimen/four_dp"/>
+            android:layout_marginEnd="@dimen/four_dp"
+            android:background="@color/black"/>
 
 
         <ImageView

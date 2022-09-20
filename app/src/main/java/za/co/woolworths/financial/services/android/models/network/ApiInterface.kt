@@ -837,7 +837,7 @@ interface ApiInterface {
             @Query("suburbId") suburbId: String?,
             @Query("storeId") storeId: String?,
             @Query("filterContent") filterContent: Boolean?,
-            @Query("deliveryType") deliveryType: String,
+            @Query("deliveryType") deliveryType: String?,
             @Query("deliveryDetails") deliveryDetails: String?
     ): Call<ProductView>
 
@@ -861,7 +861,7 @@ interface ApiInterface {
             @Query("suburbId") suburbId: String?,
             @Query("storeId") storeId: String?,
             @Query("filterContent") filterContent: Boolean?,
-            @Query("deliveryType") deliveryType: String,
+            @Query("deliveryType") deliveryType: String?,
             @Query("deliveryDetails") deliveryDetails: String?
     ): Call<ProductView>
 
