@@ -111,6 +111,9 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                                 channelIdToOrderIdMap = HashMap()
 
                                 val fnGetChannelForOrders = {
+                                    // Cache ordersSummary for use during deep-linking
+                                    Utils.setCachedOrdersPendingPicking(ordersSummary.toTypedArray())
+
                                     fetchChannels(
                                         chatClient,
                                         onSuccess = { channels ->
@@ -242,56 +245,93 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                         displayName,
                         token,
                         onSuccess = {
-                            fetchOrdersPendingPicking { pendingOrders ->
-                                if (!pendingOrders.isNullOrEmpty()) {
-                                    var countOrderDetailsRemaining = pendingOrders.size
-                                    var ordersSummary = ArrayList<OrderSummary>()
+                            val fnGetOrderIdFromServerOrders = {
+                                fetchOrdersPendingPicking { pendingOrders ->
+                                    if (!pendingOrders.isNullOrEmpty()) {
+                                        var countOrderDetailsRemaining = pendingOrders.size
+                                        var ordersSummary = ArrayList<OrderSummary>()
 
-                                    val fnGetChannelForOrders = {
-                                        getRecipientChannelMember(
-                                            chatClient,
-                                            channelId,
-                                            onSuccess = { member ->
-                                                ordersSummary.firstOrNull { !it.shopperId.isNullOrEmpty() && member.id.contains(it.shopperId!!) }?.let { orderForChannel ->
-                                                    orderForChannel.orderId?.let { orderId ->
-                                                        onSuccess(orderId)
-                                                    } ?: kotlin.run {
-                                                        onFailure()
+                                        val fnGetChannelForOrders = {
+                                            // Cache ordersSummary for use during deep-linking
+                                            Utils.setCachedOrdersPendingPicking(ordersSummary.toTypedArray())
+
+                                            getRecipientChannelMember(
+                                                chatClient,
+                                                channelId,
+                                                onSuccess = { member ->
+                                                    ordersSummary.firstOrNull { !it.shopperId.isNullOrEmpty() && member.id.contains(it.shopperId!!) }?.let { orderForChannel ->
+                                                        orderForChannel.orderId?.let { orderId ->
+                                                            onSuccess(orderId)
+                                                        } ?: kotlin.run {
+                                                            onFailure()
+                                                        }
+                                                    }
+                                                },
+                                                onFailure = {
+                                                    // TODO: handle negative scenario
+                                                    onFailure()
+                                                }
+                                            )
+                                        }
+
+                                        pendingOrders.forEach { order ->
+                                            fetchOrderDetails(
+                                                order.orderId,
+                                                onSuccess = { orderSummary ->
+                                                    ordersSummary.add(orderSummary)
+                                                    countOrderDetailsRemaining -= 1
+                                                    if (countOrderDetailsRemaining == 0) {
+                                                        fnGetChannelForOrders()
+                                                    }
+                                                },
+                                                onFailure = {
+                                                    // TODO: handle negative scenario
+                                                    countOrderDetailsRemaining -= 1
+                                                    if (countOrderDetailsRemaining == 0) {
+                                                        fnGetChannelForOrders()
                                                     }
                                                 }
-                                            },
-                                            onFailure = {
-                                                // TODO: handle negative scenario
+                                            )
+                                        }
+
+                                    } else {
+                                        // TODO: No pending order - do we need to handle anything?
+                                        // This would mean that a push notification was received, but no order matched that notification's data
+                                        onFailure()
+                                    }
+                                }
+                            }
+
+                            // Check cached orders first
+                            val cachedOrderSummaryPendingPicking = Utils.getCachedOrdersPendingPicking()
+                            if (!cachedOrderSummaryPendingPicking.isNullOrEmpty()) {
+                                getRecipientChannelMember(
+                                    chatClient,
+                                    channelId,
+                                    onSuccess = { member ->
+                                        cachedOrderSummaryPendingPicking.firstOrNull {
+                                            !it.shopperId.isNullOrEmpty() && member.id.contains(
+                                                it.shopperId!!
+                                            )
+                                        }?.let { orderForChannel ->
+                                            orderForChannel.orderId?.let { orderId ->
+                                                onSuccess(orderId)
+                                            } ?: kotlin.run {
                                                 onFailure()
                                             }
-                                        )
+                                        } ?: kotlin.run {
+                                            // Order not found in cached data, let's find it from server instead
+                                            fnGetOrderIdFromServerOrders()
+                                        }
+                                    },
+                                    onFailure = {
+                                        // TODO: handle negative scenario
+                                        onFailure()
                                     }
-
-                                    pendingOrders.forEach { order ->
-                                        fetchOrderDetails(
-                                            order.orderId,
-                                            onSuccess = { orderSummary ->
-                                                ordersSummary.add(orderSummary)
-                                                countOrderDetailsRemaining -= 1
-                                                if (countOrderDetailsRemaining == 0) {
-                                                    fnGetChannelForOrders()
-                                                }
-                                            },
-                                            onFailure = {
-                                                // TODO: handle negative scenario
-                                                countOrderDetailsRemaining -= 1
-                                                if (countOrderDetailsRemaining == 0) {
-                                                    fnGetChannelForOrders()
-                                                }
-                                            }
-                                        )
-                                    }
-
-                                } else {
-                                    // TODO: No pending order - do we need to handle anything?
-                                    // This would mean that a push notification was received, but no order matched that notification's data
-                                    onFailure()
-                                }
+                                )
+                            } else {
+                                // No cached order, let's find it from server instead
+                                fnGetOrderIdFromServerOrders()
                             }
                         },
                         onFailure = {
