@@ -704,10 +704,11 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         val deliveryQuantity =
             validateLocationResponse?.validatePlace?.onDemand?.quantityLimit?.foodMaximumQuantity
 
-        changeFulfillmentSubTitleTextView?.text =
-            if (deliveryFee != null || deliveryQuantity != null) bindString(R.string.dash_title_text,
-                deliveryFee.toString(),
-                deliveryQuantity.toString()) else bindString(R.string.empty)
+        var titleText = if (deliveryFee != null) bindString(R.string.dash_title_text_1,
+            deliveryFee.toString()) else ""
+        titleText += if (deliveryQuantity != null) bindString(R.string.dash_title_text_2,
+            deliveryQuantity.toString()) else ""
+        changeFulfillmentSubTitleTextView?.text = titleText
     }
 
     private fun openGeoDeliveryTab() {
@@ -782,10 +783,12 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         val deliveryQuantity =
             validateLocationResponse?.validatePlace?.onDemand?.quantityLimit?.foodMaximumQuantity
 
-        changeFulfillmentSubTitleTextView?.text =
-            if (deliveryFee != null || deliveryQuantity != null) bindString(R.string.dash_title_text,
-                deliveryFee.toString(),
-                deliveryQuantity.toString()) else bindString(R.string.empty)
+        var titleText = if (deliveryFee != null) bindString(R.string.dash_title_text_1,
+            deliveryFee.toString()) else ""
+        titleText += if (deliveryQuantity != null) bindString(R.string.dash_title_text_2,
+            deliveryQuantity.toString()) else ""
+        changeFulfillmentSubTitleTextView?.text = titleText
+
         val dashDeliverable = validateLocationResponse?.validatePlace?.onDemand?.deliverable
         if (validateLocationResponse != null && (dashDeliverable == null || dashDeliverable == false) && progressBar?.visibility == View.GONE) {
             // Show not deliverable Popup
