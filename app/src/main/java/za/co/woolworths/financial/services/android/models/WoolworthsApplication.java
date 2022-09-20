@@ -176,9 +176,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
     }
 
     private void configureDashChatServices() {
-
-        Log.d("testAPIKEY",getString(R.string.oc_chat_app_id));
-        Log.d("testAPIKEY",getString(R.string.oc_chat_api_key));
         // Ideally, it would be better to just have Firebase read from the JSON file, instead of manually setting those credentials.
         // TODO: also add check so that this firebase configuration is done only on Google variants, not Huawei, since Huawei uses Push Kit instead of Firebase.
         FirebaseOptions firebaseChatOptions = new FirebaseOptions.Builder()
