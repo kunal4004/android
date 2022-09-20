@@ -46,7 +46,7 @@ import za.co.woolworths.financial.services.android.geolocation.network.model.Val
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
-import za.co.woolworths.financial.services.android.onecartgetstream.service.DashChatMessageListeningService;
+import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
@@ -195,10 +195,8 @@ public class WoolworthsApplication extends Application implements Application.Ac
         });
 
         // Start service to listen to incoming messages from Stream
-        // TODO: add same code below after user is done logging in
         if (SessionUtilities.getInstance().isUserAuthenticated()) {
-            Intent chatListeningServiceIntent = new Intent(this, DashChatMessageListeningService.class);
-            startService(chatListeningServiceIntent);
+           OCConstant.INSTANCE.startOCChatService(this);
         }
     }
 

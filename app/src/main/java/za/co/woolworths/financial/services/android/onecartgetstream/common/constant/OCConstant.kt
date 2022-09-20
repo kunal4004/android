@@ -1,10 +1,21 @@
 package za.co.woolworths.financial.services.android.onecartgetstream.common.constant
+import android.content.Context
+import android.content.Intent
+import za.co.woolworths.financial.services.android.onecartgetstream.service.DashChatMessageListeningService
 
 object OCConstant {
 
-    const val ACTION_START_RESUME_OC_NOTIFICATION_SERVICE = "ACTION_START_RESUME_OC_NOTIFICATION_SERVICE"
-    const val ACTION_PAUSE_OC_NOTIFICATION_SERVICE = "ACTION_PAUSE_OC_NOTIFICATION_SERVICE"
-    const val ACTION_STOP_OC_NOTIFICATION_SERVICE = "ACTION_STOP_OC_NOTIFICATION_SERVICE"
     const val ORDER_PENDING_PICKING = "PENDING_PICKING"
     const val HUAWEI_APP_ID = "102461773"
+    var OC_MESSAGE_COUNT = 0
+
+    fun startOCChatService(context: Context?){
+        val chatListeningServiceIntent = Intent(context, DashChatMessageListeningService::class.java)
+        context?.startService(chatListeningServiceIntent)
+
+    }
+    fun stopOCChatService(context: Context?){
+        val chatListeningServiceIntent = Intent(context, DashChatMessageListeningService::class.java)
+        context?.stopService(chatListeningServiceIntent)
+    }
 }

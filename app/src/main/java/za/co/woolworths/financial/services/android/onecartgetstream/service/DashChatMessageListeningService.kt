@@ -7,9 +7,9 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
 import io.getstream.chat.android.client.ChatClient
@@ -28,10 +28,7 @@ import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerat
 import io.getstream.chat.android.pushprovider.huawei.HuaweiPushDeviceGenerator
 import kotlinx.android.synthetic.main.fragment_shop_my_orders.*
 import kotlinx.android.synthetic.main.order_details_fragment.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -43,11 +40,11 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.HUAWEI_APP_ID
+import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.OC_MESSAGE_COUNT
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.ORDER_PENDING_PICKING
 import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.onecartgetstream.repository.OCToastNotification
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
@@ -64,15 +61,12 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
     lateinit var ocToastNotification: OCToastNotification
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // TODO: use Coroutine instead of thread
-//        GlobalScope.launch(Dispatchers.Main) {
-//            connectUserAndListenToChannels()
-//        }
-        Thread {
-            connectUserAndListenToChannels()
-        }.start()
 
-       createNotificationChannel(applicationContext)?.build()
+        lifecycleScope.launch(Dispatchers.IO) {
+            connectUserAndListenToChannels()
+        createNotificationChannel(applicationContext)?.build()
+        }
+
         return super.onStartCommand(intent, flags, startId)
     }
 
@@ -90,7 +84,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
             val notificationIntent = Intent()
             val pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0)
             return context?.let {
-                NotificationCompat.Builder(it, LiveChatService.CHANNEL_ID)
+                NotificationCompat.Builder(it, CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_notification)
                     .setContentText(bindString(R.string.woolies_chat_active))
                     .setDefaults(Notification.DEFAULT_LIGHTS or Notification.DEFAULT_SOUND)
@@ -140,14 +134,12 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                                                         }
                                                     },
                                                     onFailure = {
-                                                        // TODO: handle negative scenario
                                                         // Ignored for now
                                                     }
                                                 )
                                             }
                                         },
                                         onFailure = {
-                                            // TODO: handle negative scenario
                                             killService()
                                         }
                                     )
@@ -164,7 +156,6 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                                             }
                                         },
                                         onFailure = {
-                                            // TODO: handle negative scenario
                                             countOrderDetailsRemaining -= 1
                                             if (countOrderDetailsRemaining == 0) {
                                                 fnGetChannelForOrders()
@@ -174,19 +165,16 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                                 }
 
                             } else {
-                                // TODO: No pending order - do we need to handle anything else before killing the service?
                                 killService()
                             }
                         }
                     },
                     onFailure = {
-                        // TODO: handle negative scenario
                         killService()
                     }
                 )
             },
             onFailure = {
-                // TODO: handle negative scenario
                 killService()
             }
         )
@@ -378,8 +366,6 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
     }
 
     private fun killService() {
-        // TODO: do we need to disconnect here? Will this prevent further push notifications from coming in? If not, we can disconnect.
-//        chatClient.disconnect()
         stopSelf()
     }
 
@@ -390,12 +376,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                 val channelId = event.cid
                 val orderId = channelIdToOrderIdMap[event.cid]
                 val orderSummary = ordersSummary.firstOrNull { it.orderId == orderId }
-                Log.i("DashService", "Incoming Message from ${event.user.name} for channelId $channelId and orderId $orderId: ${event.message.text}")
-                // TODO: Show toast with ability to open chat screen
-                // TODO: do not show toast if current screen is either the chat screen or authentication screen (can still receive message while signing out)
-                // TODO: show only 1 toast per N seconds (debounce) to prevent overwhelming overlapping toasts for fast incoming messages
 
-                // TODO: Need to  remove all TODO: After Test...
                 if (WoolworthsApplication.getInstance().currentActivity != null &&
                     WoolworthsApplication.getInstance().currentActivity::class != OCChatActivity::class
                 ) {
@@ -404,8 +385,8 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                         woolworthsApplication?.currentActivity?.let {
                             it.window?.decorView?.rootView?.apply {
                                 orderId?.let { orderID ->
-
-                                    ocToastNotification.showOCToastNotification(it, "1", 250,
+                                    ++OC_MESSAGE_COUNT
+                                    ocToastNotification.showOCToastNotification(it, OC_MESSAGE_COUNT.toString(), 250,
                                         orderID)
                                     delay(AppConstant.DELAY_3000_MS)
                                 }
