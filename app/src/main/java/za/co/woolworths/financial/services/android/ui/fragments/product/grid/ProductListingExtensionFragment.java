@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.grid;
 
 import static za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.IS_BROWSING;
+import static za.co.woolworths.financial.services.android.util.AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS;
 
 import android.app.Activity;
 import android.util.Log;
@@ -32,7 +33,6 @@ public class ProductListingExtensionFragment extends Fragment {
     private Call<ProductView> retrieveProduct;
 
     private GridNavigator mNavigator;
-    private Boolean isUserBrowsing;
 
     public void setNavigator(GridNavigator navigator) {
         this.mNavigator = navigator;
@@ -60,8 +60,8 @@ public class ProductListingExtensionFragment extends Fragment {
         this.productsRequestParams.setRefinement(navigationState);
         this.productsRequestParams.setSortOption(sortOption);
         this.productsRequestParams.setFilterContent(filterContent);
-        this.isUserBrowsing = getArguments() != null && getArguments().getBoolean(IS_BROWSING, false);
-        this.productsRequestParams.isUserBrowsing = isUserBrowsing;
+        this.productsRequestParams.isUserBrowsing = getArguments() != null && getArguments().getBoolean(IS_BROWSING, false);
+        this.productsRequestParams.sendDeliveryDetailsParams = getArguments() != null && getArguments().getBoolean(EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false);
     }
 
     public ProductsRequestParams getProductRequestBody() {
@@ -161,10 +161,9 @@ public class ProductListingExtensionFragment extends Fragment {
         this.mIsLoading = false;
         this.mIsLastPage = false;
         this.productIsLoading = false;
+
         getProductRequestBody().setPageOffset(pageOffset);
         getProductRequestBody().setRefinement(navigationState);
-        getProductRequestBody().isUserBrowsing = isUserBrowsing;
-
     }
 
     public void updateProductRequestBodyForSort(String sortOption) {
@@ -175,7 +174,5 @@ public class ProductListingExtensionFragment extends Fragment {
         this.productIsLoading = false;
         getProductRequestBody().setPageOffset(pageOffset);
         getProductRequestBody().setSortOption(sortOption);
-        getProductRequestBody().isUserBrowsing = isUserBrowsing;
-
     }
 }

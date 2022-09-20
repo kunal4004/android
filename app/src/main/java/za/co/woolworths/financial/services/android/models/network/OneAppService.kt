@@ -42,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.models.dto.voc.*
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
+import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -53,67 +54,134 @@ object OneAppService : RetrofitConfig() {
     var forceNetworkUpdate: Boolean = false
 
     fun login(loginRequest: LoginRequest): Call<LoginResponse> {
-        return mApiInterface.login("",
-            "", getSessionToken(), getDeviceIdentityToken(), loginRequest)
+        return mApiInterface.login(
+            "",
+            "", getSessionToken(), getDeviceIdentityToken(), loginRequest
+        )
     }
 
     fun getAccounts(): Call<AccountsResponse> {
-        return mApiInterface.getAccounts("", "",
-            getSessionToken(), getDeviceIdentityToken())
+        return mApiInterface.getAccounts(
+            "", "",
+            getSessionToken(), getDeviceIdentityToken()
+        )
     }
 
     fun authoriseLoan(authoriseLoanRequest: AuthoriseLoanRequest): Call<AuthoriseLoanResponse> {
-        return mApiInterface.authoriseLoan("", "", getSessionToken(),
-            getDeviceIdentityToken(), authoriseLoanRequest)
+        return mApiInterface.authoriseLoan(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken(), authoriseLoanRequest
+        )
     }
 
     fun getAccountTransactionHistory(productOfferingId: String): Call<TransactionHistoryResponse> {
-        return mApiInterface.getAccountTransactionHistory("", "", getSessionToken(),
-            getDeviceIdentityToken(), productOfferingId)
+        return mApiInterface.getAccountTransactionHistory(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken(), productOfferingId
+        )
     }
 
     fun getVouchers(): Call<VoucherResponse> {
-        return mApiInterface.getVouchers("", "", getSessionToken(),
-            getDeviceIdentityToken())
+        return mApiInterface.getVouchers(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken()
+        )
     }
 
     fun getVouchersCount(): Call<VoucherCount> {
-        return mApiInterface.getVouchersCount("", "", getSessionToken(),
-            getDeviceIdentityToken())
+        return mApiInterface.getVouchersCount(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken()
+        )
     }
 
-    fun queryServiceGetStore(latitude: Double? = 0.0, longitude: Double? = 0.0, searchTextField: String): Call<LocationResponse> {
-        return mApiInterface.queryServiceGetStore("", "",
-            getSessionToken(), getDeviceIdentityToken(), latitude.toString(), longitude.toString(), searchTextField)
+    fun queryServiceGetStore(
+        latitude: Double? = 0.0,
+        longitude: Double? = 0.0,
+        searchTextField: String
+    ): Call<LocationResponse> {
+        return mApiInterface.queryServiceGetStore(
+            "",
+            "",
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            latitude.toString(),
+            longitude.toString(),
+            searchTextField
+        )
     }
 
-    fun getStoresForNPC(latitude: Double? = 0.0, longitude: Double? = 0.0, searchTextField: String, npc: Boolean?): Call<LocationResponse> {
-        return mApiInterface.getStoresForNPC("", "", getSessionToken(),
-            getDeviceIdentityToken(), latitude.toString(), longitude.toString(), searchTextField, npc)
+    fun getStoresForNPC(
+        latitude: Double? = 0.0,
+        longitude: Double? = 0.0,
+        searchTextField: String,
+        npc: Boolean?
+    ): Call<LocationResponse> {
+        return mApiInterface.getStoresForNPC(
+            "",
+            "",
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            latitude.toString(),
+            longitude.toString(),
+            searchTextField,
+            npc
+        )
     }
 
-    fun getLocationsItem(sku: String, startRadius: String, endRadius: String): Call<LocationResponse> {
+    fun getLocationsItem(
+        sku: String,
+        startRadius: String,
+        endRadius: String
+    ): Call<LocationResponse> {
         val loc = getMyLocation()
         return if (startRadius != null && startRadius == "") {
             //This should never happen for now
-            mApiInterface.getStoresLocationItem("", "", loc.latitude.toString(),
-                loc.longitude.toString(), getSessionToken(), getDeviceIdentityToken(), sku, startRadius, endRadius, true)
+            mApiInterface.getStoresLocationItem(
+                "",
+                "",
+                loc.latitude.toString(),
+                loc.longitude.toString(),
+                getSessionToken(),
+                getDeviceIdentityToken(),
+                sku,
+                startRadius,
+                endRadius,
+                true
+            )
         } else {
-            mApiInterface.getStoresLocationItem("", "", loc.latitude.toString(),
-                loc.longitude.toString(), getSessionToken(), getDeviceIdentityToken(), sku, startRadius, endRadius, true)
+            mApiInterface.getStoresLocationItem(
+                "",
+                "",
+                loc.latitude.toString(),
+                loc.longitude.toString(),
+                getSessionToken(),
+                getDeviceIdentityToken(),
+                sku,
+                startRadius,
+                endRadius,
+                true
+            )
         }
     }
 
-    suspend fun productStoreFinder(sku: String, startRadius: String?, endRadius: String?): retrofit2.Response<LocationResponse> {
+    suspend fun productStoreFinder(
+        sku: String,
+        startRadius: String?,
+        endRadius: String?
+    ): retrofit2.Response<LocationResponse> {
         val loc = getMyLocation()
         return withContext(Dispatchers.IO) {
             if ("" == startRadius) {
                 //This should never happen for now
-                mApiInterface.productStoreFinder("", "", loc.latitude.toString(),
+                mApiInterface.productStoreFinder(
+                    "", "", loc.latitude.toString(),
                     loc.longitude.toString(), getSessionToken(), getDeviceIdentityToken(), sku,
-                    startRadius, endRadius, true)
+                    startRadius, endRadius, true
+                )
             } else {
-                mApiInterface.productStoreFinder("", "", loc.latitude.toString(),
+                mApiInterface.productStoreFinder(
+                    "", "", loc.latitude.toString(),
                     loc.longitude.toString(), getSessionToken(), getDeviceIdentityToken(), sku,
                     startRadius, endRadius, true
                 )
@@ -122,80 +190,118 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun getMessagesResponse(pageSize: Int, pageNumber: Int): Call<MessageResponse> {
-        return mApiInterface.getMessages("", "", getSessionToken(),
-            getDeviceIdentityToken(), pageSize, pageNumber)
+        return mApiInterface.getMessages(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken(), pageSize, pageNumber
+        )
     }
 
     fun cliCreateApplication(offerRequest: CreateOfferRequest): Call<OfferActive> {
-        return mApiInterface.cliCreateApplication("", "",
-            getSessionToken(), getDeviceIdentityToken(), offerRequest)
+        return mApiInterface.cliCreateApplication(
+            "", "",
+            getSessionToken(), getDeviceIdentityToken(), offerRequest
+        )
     }
 
     fun cliUpdateApplication(offerRequest: CreateOfferRequest, cliId: String): Call<OfferActive> {
-        return mApiInterface.cliUpdateApplication("", "",
-            getSessionToken(), getDeviceIdentityToken(), cliId, offerRequest)
+        return mApiInterface.cliUpdateApplication(
+            "", "",
+            getSessionToken(), getDeviceIdentityToken(), cliId, offerRequest
+        )
     }
 
-    fun createOfferDecision(createOfferDecision: CLIOfferDecision, cliId: String): Call<OfferActive> {
-        return mApiInterface.createOfferDecision("", "",
-            getSessionToken(), getDeviceIdentityToken(), cliId, createOfferDecision)
+    fun createOfferDecision(
+        createOfferDecision: CLIOfferDecision,
+        cliId: String
+    ): Call<OfferActive> {
+        return mApiInterface.createOfferDecision(
+            "", "",
+            getSessionToken(), getDeviceIdentityToken(), cliId, createOfferDecision
+        )
     }
 
     fun getDeaBanks(): Call<DeaBanks> {
-        return mApiInterface.getDeaBanks("", "",
-            getSessionToken(), getDeviceIdentityToken(), 0, 0)
+        return mApiInterface.getDeaBanks(
+            "", "",
+            getSessionToken(), getDeviceIdentityToken(), 0, 0
+        )
     }
 
     fun getBankAccountTypes(): Call<BankAccountTypes> {
-        return mApiInterface.getBankAccountTypes("", "",
-            getSessionToken(), getDeviceIdentityToken(), 0, 0)
+        return mApiInterface.getBankAccountTypes(
+            "", "",
+            getSessionToken(), getDeviceIdentityToken(), 0, 0
+        )
     }
 
     fun getActiveOfferRequest(productOfferingId: String): Call<OfferActive> {
-        return mApiInterface.getActiveOfferRequest( "", "",
-            getSessionToken(), getDeviceIdentityToken(), productOfferingId)
+        return mApiInterface.getActiveOfferRequest(
+            "", "",
+            getSessionToken(), getDeviceIdentityToken(), productOfferingId
+        )
     }
 
     fun getDeleteMessagesResponse(id: String): Call<DeleteMessageResponse> {
-        return mApiInterface.getDeleteresponse("", "",
-            getSessionToken(), getDeviceIdentityToken(), id)
+        return mApiInterface.getDeleteresponse(
+            "", "",
+            getSessionToken(), getDeviceIdentityToken(), id
+        )
     }
 
     fun getReadMessagesResponse(readMessages: MessageReadRequest): Call<ReadMessagesResponse> {
-        return mApiInterface.setReadMessages("", "",
-            getSessionToken(), getDeviceIdentityToken(), readMessages)
+        return mApiInterface.setReadMessages(
+            "", "",
+            getSessionToken(), getDeviceIdentityToken(), readMessages
+        )
     }
 
     fun cliEmailResponse(): Call<CLIEmailResponse> {
-        return mApiInterface.cliSendEmailRquest( getSessionToken(), getDeviceIdentityToken())
+        return mApiInterface.cliSendEmailRquest(getSessionToken(), getDeviceIdentityToken())
     }
 
     fun cliUpdateBankDetail(updateBankDetail: UpdateBankDetail): Call<UpdateBankDetailResponse> {
-        return mApiInterface.cliUpdateBankRequest( "", "",
-            getSessionToken(), getDeviceIdentityToken(), updateBankDetail)
+        return mApiInterface.cliUpdateBankRequest(
+            "", "",
+            getSessionToken(), getDeviceIdentityToken(), updateBankDetail
+        )
     }
 
     fun getResponseOnCreateUpdateDevice(device: CreateUpdateDevice): Call<CreateUpdateDeviceResponse> {
-        return mApiInterface.createUpdateDevice( "", "",
-            getSessionToken(), getDeviceIdentityToken(), device)
+        return mApiInterface.createUpdateDevice(
+            "", "",
+            getSessionToken(), getDeviceIdentityToken(), device
+        )
     }
 
     fun issueLoan(issueLoan: IssueLoan): Call<IssueLoanResponse> {
-        return mApiInterface.issueLoan( "", "", getSessionToken(),
-            getDeviceIdentityToken(), issueLoan)
+        return mApiInterface.issueLoan(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken(), issueLoan
+        )
     }
 
-    fun addToList(addToListRequest: MutableList<AddToListRequest>, listId: String): Call<ShoppingListItemsResponse> {
-        return mApiInterface.addToList( getSessionToken(), getDeviceIdentityToken(), listId,
-            addToListRequest)
+    fun addToList(
+        addToListRequest: MutableList<AddToListRequest>,
+        listId: String
+    ): Call<ShoppingListItemsResponse> {
+        return mApiInterface.addToList(
+            getSessionToken(), getDeviceIdentityToken(), listId,
+            addToListRequest
+        )
     }
 
     fun getPromotions(): Call<PromotionsResponse> {
-        return mApiInterface.getPromotions( "", "", getSessionToken(),
-            getDeviceIdentityToken())
+        return mApiInterface.getPromotions(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken()
+        )
     }
 
-    fun getRootCategory(locationEnabled: Boolean, location: Location?, deliveryType: String?): Call<RootCategories> {
+    fun getRootCategory(
+        locationEnabled: Boolean,
+        location: Location?,
+        deliveryType: String?
+    ): Call<RootCategories> {
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
         // Pass storeId value of 01 fulfillment type
         val fulfillmentStoreId01 = Utils.retrieveStoreId("01")
@@ -206,22 +312,35 @@ object OneAppService : RetrofitConfig() {
 
         return mApiInterface.getRootCategories(
             getSessionToken(),
-            getDeviceIdentityToken(), locationCord?.latitude, locationCord?.longitude, suburbId, storeId, deliveryType,fulfillmentStoreId01)
+            getDeviceIdentityToken(),
+            locationCord?.latitude,
+            locationCord?.longitude,
+            suburbId,
+            storeId,
+            deliveryType,
+            fulfillmentStoreId01
+        )
     }
 
     suspend fun getDashCategoryNavigation(location: Location?): retrofit2.Response<RootCategories> {
         return withContext(Dispatchers.IO) {
             val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
 
-             mApiInterface.getDashCategoriesNavigation(
+            mApiInterface.getDashCategoriesNavigation(
                 getSessionToken(),
-                getDeviceIdentityToken(), location?.latitude, location?.longitude, suburbId, storeId, "OnDemand")
+                getDeviceIdentityToken(),
+                location?.latitude,
+                location?.longitude,
+                suburbId,
+                storeId,
+                "OnDemand"
+            )
         }
     }
 
     suspend fun getDashLandingDetails(): retrofit2.Response<DashCategories> {
         return withContext(Dispatchers.IO) {
-             mApiInterface.getDashLandingDetails(getSessionToken(), getDeviceIdentityToken())
+            mApiInterface.getDashLandingDetails(getSessionToken(), getDeviceIdentityToken())
         }
     }
 
@@ -230,17 +349,22 @@ object OneAppService : RetrofitConfig() {
         val fulfillmentStoreId01 = Utils.retrieveStoreId("01")
         return mApiInterface.getSubCategory(
             getSessionToken(), getDeviceIdentityToken(),
-            category_id, version, suburbId, storeId,fulfillmentStoreId01)
+            category_id, version, suburbId, storeId, fulfillmentStoreId01
+        )
     }
 
     fun getProvinces(): Call<ProvincesResponse> {
-        return mApiInterface.getProvinces( "", "", getSessionToken(),
-            getDeviceIdentityToken())
+        return mApiInterface.getProvinces(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken()
+        )
     }
 
     fun getSavedAddresses(): Call<SavedAddressResponse> {
-        return mApiInterface.getSavedAddresses( "", "",  getSessionToken(),
-            getDeviceIdentityToken())
+        return mApiInterface.getSavedAddresses(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken()
+        )
     }
 
     fun addAddress(addAddressRequestBody: AddAddressRequestBody): Call<AddAddressResponse> {
@@ -252,6 +376,7 @@ object OneAppService : RetrofitConfig() {
             addAddressRequestBody,
         )
     }
+
     fun editAddress(
         addAddressRequestBody: AddAddressRequestBody,
         addressId: String
@@ -262,67 +387,115 @@ object OneAppService : RetrofitConfig() {
             getSessionToken(), getDeviceIdentityToken(), addressId, addAddressRequestBody
         )
     }
+
     fun deleteAddress(addressId: String): Call<DeleteAddressResponse> {
         return mApiInterface.deleteAddress(getSessionToken(), getDeviceIdentityToken(), addressId)
     }
 
     fun changeAddress(nickName: String): Call<ChangeAddressResponse> {
-        return mApiInterface.changeAddress(nickName, "", "", getSessionToken(),
-            getDeviceIdentityToken())
+        return mApiInterface.changeAddress(
+            nickName, "", "", getSessionToken(),
+            getDeviceIdentityToken()
+        )
     }
 
-    fun getShippingDetails(body: ShippingDetailsBody): Call<ShippingDetailsResponse>{
-        return mApiInterface.getShippingDetails("", "", getSessionToken(),
-        getDeviceIdentityToken(), body)
+    fun getShippingDetails(body: ShippingDetailsBody): Call<ShippingDetailsResponse> {
+        return mApiInterface.getShippingDetails(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken(), body
+        )
     }
 
     fun getStorePickupInfo(body: StorePickupInfoBody): Call<ConfirmDeliveryAddressResponse> {
-        return mApiInterface.getStorePickupInfo("", "", getSessionToken(),
-        getDeviceIdentityToken(), body)
+        return mApiInterface.getStorePickupInfo(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken(), body
+        )
     }
 
-    fun setConfirmSelection(confirmSelectionRequestBody: ConfirmSelectionRequestBody): Call<ConfirmSelectionResponse>{
-        return mApiInterface.setConfirmSelection("", "", getSessionToken(),
-        getDeviceIdentityToken(), confirmSelectionRequestBody)
+    fun setConfirmSelection(confirmSelectionRequestBody: ConfirmSelectionRequestBody): Call<ConfirmSelectionResponse> {
+        return mApiInterface.setConfirmSelection(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken(), confirmSelectionRequestBody
+        )
     }
 
     fun getCartSummary(): Call<CartSummaryResponse> {
-        return mApiInterface.getCartSummary( "", "", getSessionToken(),
-            getDeviceIdentityToken())
+        return mApiInterface.getCartSummary(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken()
+        )
     }
 
     fun getSuburbs(locationId: String): Call<SuburbsResponse> {
-        return mApiInterface.getSuburbs( "", "", getSessionToken(),
-            getDeviceIdentityToken(), locationId)
+        return mApiInterface.getSuburbs(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken(), locationId
+        )
     }
 
     fun setSuburb(suburbId: String): Call<SetDeliveryLocationSuburbResponse> {
         val request = SetDeliveryLocationSuburbRequest(suburbId)
-        return mApiInterface.setDeliveryLocationSuburb( getSessionToken(), getDeviceIdentityToken(),
-            request)
+        return mApiInterface.setDeliveryLocationSuburb(
+            getSessionToken(), getDeviceIdentityToken(),
+            request
+        )
     }
 
 
     fun getProducts(requestParams: ProductsRequestParams): Call<ProductView> {
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
 
-        val deliveryType = if (requestParams.isUserBrowsing) KotlinUtils.browsingDeliveryType?.type
-            ?: Delivery.STANDARD.type
-        else KotlinUtils.getDeliveryType()?.deliveryType ?: Delivery.STANDARD.type
+        val (deliveryType, deliveryDetails) = when {
+            !requestParams.sendDeliveryDetailsParams -> {
+                Pair(null, null)
+            }
+            else ->
+                Pair(
+                    KotlinUtils.browsingDeliveryType?.type,
+                    KotlinUtils.getDeliveryDetails(requestParams.isUserBrowsing)
+                )
+        }
 
         return if (Utils.isLocationEnabled(appContext())) {
-            mApiInterface.getProducts("", "",  "",
-                "", getSessionToken(), getDeviceIdentityToken(), requestParams.searchTerm, requestParams.searchType.value,
-                requestParams.responseType.value, requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption,
-                requestParams.refinement, suburbId = suburbId, storeId = storeId, filterContent = requestParams.filterContent,
-                deliveryType = deliveryType, deliveryDetails = KotlinUtils.getDeliveryDetails(requestParams.isUserBrowsing)
+            mApiInterface.getProducts(
+                "",
+                "",
+                "",
+                "",
+                getSessionToken(),
+                getDeviceIdentityToken(),
+                requestParams.searchTerm,
+                requestParams.searchType.value,
+                requestParams.responseType.value,
+                requestParams.pageOffset,
+                Utils.PAGE_SIZE,
+                requestParams.sortOption,
+                requestParams.refinement,
+                suburbId = suburbId,
+                storeId = storeId,
+                filterContent = requestParams.filterContent,
+                deliveryType = deliveryType,
+                deliveryDetails = deliveryDetails
             )
         } else {
-            mApiInterface.getProductsWithoutLocation("", "", getSessionToken(),
-                getDeviceIdentityToken(), requestParams.searchTerm, requestParams.searchType.value, requestParams.responseType.value,
-                requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption, requestParams.refinement, suburbId = suburbId,
-                storeId = storeId, filterContent =  requestParams.filterContent,
-                deliveryType = deliveryType, deliveryDetails = KotlinUtils.getDeliveryDetails(requestParams.isUserBrowsing)
+            mApiInterface.getProductsWithoutLocation(
+                "",
+                "",
+                getSessionToken(),
+                getDeviceIdentityToken(),
+                requestParams.searchTerm,
+                requestParams.searchType.value,
+                requestParams.responseType.value,
+                requestParams.pageOffset,
+                Utils.PAGE_SIZE,
+                requestParams.sortOption,
+                requestParams.refinement,
+                suburbId = suburbId,
+                storeId = storeId,
+                filterContent = requestParams.filterContent,
+                deliveryType = deliveryType,
+                deliveryDetails = deliveryDetails
             )
         }
     }
@@ -334,31 +507,39 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun getFAQ(): Call<FAQ> {
-        return mApiInterface.getFAQ("", "", getSessionToken(),
-            getDeviceIdentityToken())
+        return mApiInterface.getFAQ(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken()
+        )
     }
 
     fun getCardDetails(): Call<CardDetailsResponse> {
-        return mApiInterface.getCardDetails( getSessionToken(), getDeviceIdentityToken())
+        return mApiInterface.getCardDetails(getSessionToken(), getDeviceIdentityToken())
     }
 
     fun getStatementResponse(statement: UserStatement): Call<StatementResponse> {
-        return mApiInterface.getUserStatement( "", "", getSessionToken(),
+        return mApiInterface.getUserStatement(
+            "", "", getSessionToken(),
             getDeviceIdentityToken(), statement.productOfferingId, statement.accountNumber
-                ?: "", statement.startDate, statement.endDate)
+                ?: "", statement.startDate, statement.endDate
+        )
     }
 
     fun sendStatementRequest(statement: SendUserStatementRequest): Call<SendUserStatementResponse> {
-        return mApiInterface.sendUserStatement( "", "", getSessionToken(),
-            getDeviceIdentityToken(), statement)
+        return mApiInterface.sendUserStatement(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken(), statement
+        )
     }
 
     fun addItemToCart(addToCart: MutableList<AddItemToCart>): Call<AddItemToCartResponse> {
 
         val deliveryType = KotlinUtils.getPreferredDeliveryType()?.type ?: ""
 
-        return mApiInterface.addItemToCart( "", "", getSessionToken(),
-            getDeviceIdentityToken(),deliveryType, addToCart)
+        return mApiInterface.addItemToCart(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken(), deliveryType, addToCart
+        )
     }
 
 
@@ -366,44 +547,72 @@ object OneAppService : RetrofitConfig() {
         return withContext(Dispatchers.IO) {
             val deliveryType = KotlinUtils.getPreferredDeliveryType()?.type ?: ""
 
-            mApiInterface.addItemsToCart( "", "", getSessionToken(),
-                getDeviceIdentityToken(),deliveryType, addToCart)
+            mApiInterface.addItemsToCart(
+                "", "", getSessionToken(),
+                getDeviceIdentityToken(), deliveryType, addToCart
+            )
         }
     }
 
     fun getShoppingCart(): Call<ShoppingCartResponse> {
-        return mApiInterface.getShoppingCart( getSessionToken(), getDeviceIdentityToken())
+        return mApiInterface.getShoppingCart(getSessionToken(), getDeviceIdentityToken())
     }
 
     fun getChangeQuantity(changeQuantity: ChangeQuantity?): Call<ShoppingCartResponse> {
-        return mApiInterface.changeQuantityRequest( "",
-                "", getSessionToken(), getDeviceIdentityToken(), changeQuantity?.commerceId, changeQuantity)
+        return mApiInterface.changeQuantityRequest(
+            "",
+            "",
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            changeQuantity?.commerceId,
+            changeQuantity
+        )
     }
 
     fun removeCartItem(commerceId: String): Call<ShoppingCartResponse> {
-        return mApiInterface.removeItemFromCart( getSessionToken(), getDeviceIdentityToken(), commerceId)
+        return mApiInterface.removeItemFromCart(
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            commerceId
+        )
     }
 
     fun removeAllCartItems(): Call<ShoppingCartResponse> {
-        return mApiInterface.removeAllCartItems( getSessionToken(), getDeviceIdentityToken())
+        return mApiInterface.removeAllCartItems(getSessionToken(), getDeviceIdentityToken())
     }
 
-    fun productDetail(productId: String, skuId: String, isUserBrowsing: Boolean = false): Call<ProductDetailResponse> {
+    fun productDetail(
+        productId: String,
+        skuId: String,
+        isUserBrowsing: Boolean = false
+    ): Call<ProductDetailResponse> {
         val loc = getMyLocation()
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
         val deliveryType =
             if (isUserBrowsing) KotlinUtils.browsingDeliveryType?.type ?: Delivery.STANDARD.type
             else KotlinUtils.getDeliveryType()?.deliveryType ?: Delivery.STANDARD.type
         return if (Utils.isLocationEnabled(appContext())) {
-            mApiInterface.productDetail("", "",
-                     loc.longitude, loc.latitude, getSessionToken(), getDeviceIdentityToken(),
-                    productId, skuId, suburbId, storeId,
-                deliveryType = deliveryType, deliveryDetails = KotlinUtils.getDeliveryDetails(isUserBrowsing))
+            mApiInterface.productDetail(
+                "",
+                "",
+                loc.longitude,
+                loc.latitude,
+                getSessionToken(),
+                getDeviceIdentityToken(),
+                productId,
+                skuId,
+                suburbId,
+                storeId,
+                deliveryType = deliveryType,
+                deliveryDetails = KotlinUtils.getDeliveryDetails(isUserBrowsing)
+            )
         } else {
-            mApiInterface.productDetail( "", "",
+            mApiInterface.productDetail(
+                "", "",
                 getSessionToken(), getDeviceIdentityToken(),
-                    productId, skuId, suburbId, storeId, deliveryType = deliveryType,
-                deliveryDetails = KotlinUtils.getDeliveryDetails(isUserBrowsing))
+                productId, skuId, suburbId, storeId, deliveryType = deliveryType,
+                deliveryDetails = KotlinUtils.getDeliveryDetails(isUserBrowsing)
+            )
         }
     }
 
@@ -412,52 +621,101 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun getShoppingLists(): Call<ShoppingListsResponse> {
-        return mApiInterface.getShoppingLists( getSessionToken(), getDeviceIdentityToken())
+        return mApiInterface.getShoppingLists(getSessionToken(), getDeviceIdentityToken())
     }
 
     fun createList(listName: CreateList): Call<ShoppingListsResponse> {
-        return mApiInterface.createList( getSessionToken(), getDeviceIdentityToken(), listName)
+        return mApiInterface.createList(getSessionToken(), getDeviceIdentityToken(), listName)
     }
 
 
     fun getShoppingListItems(listId: String): Call<ShoppingListItemsResponse> {
-        return mApiInterface.getShoppingListItems( getSessionToken(), getDeviceIdentityToken(), listId)
+        return mApiInterface.getShoppingListItems(
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            listId
+        )
     }
 
     fun deleteShoppingList(listId: String): Call<ShoppingListsResponse> {
-        return mApiInterface.deleteShoppingList( getSessionToken(), getDeviceIdentityToken(), listId)
+        return mApiInterface.deleteShoppingList(getSessionToken(), getDeviceIdentityToken(), listId)
     }
 
-    fun deleteShoppingListItem(listId: String, id: String, productId: String, catalogRefId: String): Call<ShoppingListItemsResponse> {
-        return mApiInterface.deleteShoppingListItem( getSessionToken(), getDeviceIdentityToken(), listId, id, productId,
-            catalogRefId)
+    fun deleteShoppingListItem(
+        listId: String,
+        id: String,
+        productId: String,
+        catalogRefId: String
+    ): Call<ShoppingListItemsResponse> {
+        return mApiInterface.deleteShoppingListItem(
+            getSessionToken(), getDeviceIdentityToken(), listId, id, productId,
+            catalogRefId
+        )
     }
 
     fun getInventorySku(multipleSku: String): Call<SkuInventoryResponse> {
-        return mApiInterface.getInventorySKU( getSessionToken(), getDeviceIdentityToken(), multipleSku)
+        return mApiInterface.getInventorySKU(
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            multipleSku
+        )
     }
 
-    fun getInventorySkuForStore(store_id: String, multipleSku: String, isUserBrowsing: Boolean): Call<SkusInventoryForStoreResponse> {
+    fun getInventorySkuForStore(
+        store_id: String,
+        multipleSku: String,
+        isUserBrowsing: Boolean
+    ): Call<SkusInventoryForStoreResponse> {
         return if ((isUserBrowsing && Delivery.DASH.type == KotlinUtils.browsingDeliveryType?.type) ||
-            (!isUserBrowsing && Delivery.DASH.type == KotlinUtils.getDeliveryType()?.deliveryType)) {
-            mApiInterface.getDashInventorySKUForStore(getSessionToken(), getDeviceIdentityToken(), store_id, multipleSku)
+            (!isUserBrowsing && Delivery.DASH.type == KotlinUtils.getDeliveryType()?.deliveryType)
+        ) {
+            mApiInterface.getDashInventorySKUForStore(
+                getSessionToken(),
+                getDeviceIdentityToken(),
+                store_id,
+                multipleSku
+            )
         } else
-            mApiInterface.getInventorySKUForStore(getSessionToken(), getDeviceIdentityToken(), store_id, multipleSku)
+            mApiInterface.getInventorySKUForStore(
+                getSessionToken(),
+                getDeviceIdentityToken(),
+                store_id,
+                multipleSku
+            )
     }
 
-    suspend fun fetchInventorySkuForStore(store_id: String, multipleSku: String): retrofit2.Response<SkusInventoryForStoreResponse> {
+    suspend fun fetchInventorySkuForStore(
+        store_id: String,
+        multipleSku: String
+    ): retrofit2.Response<SkusInventoryForStoreResponse> {
         return withContext(Dispatchers.IO) {
-            mApiInterface.fetchDashInventorySKUForStore( getSessionToken(), getDeviceIdentityToken(), store_id, multipleSku)
+            mApiInterface.fetchDashInventorySKUForStore(
+                getSessionToken(),
+                getDeviceIdentityToken(),
+                store_id,
+                multipleSku
+            )
         }
     }
 
     fun getPDFResponse(getStatement: GetStatement): Call<ResponseBody> {
-        return mApiInterface.getStatement( "", "", getSessionToken(),
-            getDeviceIdentityToken(), getStatement.docId, getStatement.productOfferingId, getStatement.docDesc)
+        return mApiInterface.getStatement(
+            "",
+            "",
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            getStatement.docId,
+            getStatement.productOfferingId,
+            getStatement.docDesc
+        )
     }
 
     fun postCheckoutSuccess(checkoutSuccess: CheckoutSuccess): Call<Void> {
-        return mApiInterface.postCheckoutSuccess( getSessionToken(), getDeviceIdentityToken(), checkoutSuccess)
+        return mApiInterface.postCheckoutSuccess(
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            checkoutSuccess
+        )
     }
 
     fun getOrders(): Call<OrdersResponse> {
@@ -465,154 +723,276 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun getOrderDetails(orderId: String): Call<OrderDetailsResponse> {
-        return mApiInterface.getOrderDetails( getSessionToken(), getDeviceIdentityToken(), orderId)
+        return mApiInterface.getOrderDetails(getSessionToken(), getDeviceIdentityToken(), orderId)
     }
 
-    fun addOrderToList(orderId: String, orderToShoppingListRequestBody: OrderToShoppingListRequestBody): Call<OrderToListReponse> {
-        return mApiInterface.addOrderToList( getSessionToken(), getDeviceIdentityToken(), orderId,
-            orderToShoppingListRequestBody)
+    fun addOrderToList(
+        orderId: String,
+        orderToShoppingListRequestBody: OrderToShoppingListRequestBody
+    ): Call<OrderToListReponse> {
+        return mApiInterface.addOrderToList(
+            getSessionToken(), getDeviceIdentityToken(), orderId,
+            orderToShoppingListRequestBody
+        )
     }
 
     fun getOrderTaxInvoice(taxNoteNumber: String): Call<OrderTaxInvoiceResponse> {
-        return mApiInterface.getTaxInvoice(getSessionToken(), getDeviceIdentityToken(), taxNoteNumber)
+        return mApiInterface.getTaxInvoice(
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            taxNoteNumber
+        )
     }
 
     fun getCreditCardToken(): Call<CreditCardTokenResponse> {
         return mApiInterface.getCreditCardToken("", "", getSessionToken(), getDeviceIdentityToken())
     }
 
-    fun postBlockMyCard(blockCardRequestBody: BlockCardRequestBody, productOfferingId: String): Call<BlockMyCardResponse> {
-        return mApiInterface.blockStoreCard(getOsVersion(), "", getSessionToken(),
-            getDeviceIdentityToken(), productOfferingId, blockCardRequestBody)
+    fun postBlockMyCard(
+        blockCardRequestBody: BlockCardRequestBody,
+        productOfferingId: String
+    ): Call<BlockMyCardResponse> {
+        return mApiInterface.blockStoreCard(
+            getOsVersion(), "", getSessionToken(),
+            getDeviceIdentityToken(), productOfferingId, blockCardRequestBody
+        )
     }
 
     fun getStoreCards(storeCardsRequestBody: StoreCardsRequestBody): Call<StoreCardsResponse> {
         val lastSavedLocation = Utils.getLastSavedLocation()
-        return mApiInterface.getStoreCards("", "", getSessionToken(),
-            getDeviceIdentityToken(),lastSavedLocation?.latitude, lastSavedLocation?.longitude, storeCardsRequestBody)
+        return mApiInterface.getStoreCards(
+            "",
+            "",
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            lastSavedLocation?.latitude,
+            lastSavedLocation?.longitude,
+            storeCardsRequestBody
+        )
     }
 
     fun getLinkNewCardOTP(otpMethodType: OTPMethodType): Call<LinkNewCardOTP> {
-        return mApiInterface.getLinkNewCardOTP( "", "", getSessionToken(),
-            getDeviceIdentityToken(), otpMethodType.name)
+        return mApiInterface.getLinkNewCardOTP(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken(), otpMethodType.name
+        )
     }
 
     fun linkStoreCardRequest(linkStoreCard: LinkStoreCard): Call<LinkNewCardResponse> {
-        return mApiInterface.linkStoreCard( "", "", getSessionToken(),
-            getDeviceIdentityToken(), linkStoreCard)
+        return mApiInterface.linkStoreCard(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken(), linkStoreCard
+        )
     }
 
-    fun unblockStoreCard(productOfferingId: String, requestBody: UnblockStoreCardRequestBody): Call<UnblockStoreCardResponse> {
-        return mApiInterface.unblockStoreCard( "", "", getSessionToken(),
-            getDeviceIdentityToken(), productOfferingId, requestBody)
+    fun unblockStoreCard(
+        productOfferingId: String,
+        requestBody: UnblockStoreCardRequestBody
+    ): Call<UnblockStoreCardResponse> {
+        return mApiInterface.unblockStoreCard(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken(), productOfferingId, requestBody
+        )
     }
 
     fun activateCreditCardRequest(requestBody: CreditCardActivationRequestBody): Call<CreditCardActivationResponse> {
-        return mApiInterface.activateCreditCard( "", "", getSessionToken(),
-            getDeviceIdentityToken(), requestBody)
+        return mApiInterface.activateCreditCard(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken(), requestBody
+        )
     }
 
-    fun retrieveOTP(otpMethodType: OTPMethodType, productOfferingId: String): Call<RetrieveOTPResponse> {
-        return mApiInterface.retrieveOTP( "", "", getSessionToken(),
-            getDeviceIdentityToken(), otpMethodType.name, productOfferingId)
+    fun retrieveOTP(
+        otpMethodType: OTPMethodType,
+        productOfferingId: String
+    ): Call<RetrieveOTPResponse> {
+        return mApiInterface.retrieveOTP(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken(), otpMethodType.name, productOfferingId
+        )
     }
 
-    fun validateOTP(validateOTPRequest: ValidateOTPRequest, productOfferingId: String): Call<ValidateOTPResponse> {
-        return mApiInterface.validateOTP( "", "", getSessionToken(),
-            getDeviceIdentityToken(), validateOTPRequest, productOfferingId)
+    fun validateOTP(
+        validateOTPRequest: ValidateOTPRequest,
+        productOfferingId: String
+    ): Call<ValidateOTPResponse> {
+        return mApiInterface.validateOTP(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken(), validateOTPRequest, productOfferingId
+        )
     }
 
     fun queryServiceCancelOrder(orderId: String): Call<CancelOrderResponse> {
-        return mApiInterface.queryServiceCancelOrder( "", "",
-            getSessionToken(), getDeviceIdentityToken(), orderId)
+        return mApiInterface.queryServiceCancelOrder(
+            "", "",
+            getSessionToken(), getDeviceIdentityToken(), orderId
+        )
     }
 
-    fun getCreditCardDeliveryStatus(envelopeReference: String, productOfferingId: String): Call<CreditCardDeliveryStatusResponse> {
-        return mApiInterface.cardDeliveryStatus( "", "",
-            getSessionToken(), getDeviceIdentityToken(), envelopeReference, productOfferingId)
+    fun getCreditCardDeliveryStatus(
+        envelopeReference: String,
+        productOfferingId: String
+    ): Call<CreditCardDeliveryStatusResponse> {
+        return mApiInterface.cardDeliveryStatus(
+            "", "",
+            getSessionToken(), getDeviceIdentityToken(), envelopeReference, productOfferingId
+        )
     }
 
-    fun getPossibleAddress(searchPhrase: String, productOfferingId: String, envelopeNumber: String): Call<PossibleAddressResponse> {
-        return mApiInterface.possibleAddress( "", "",
-            getSessionToken(), getDeviceIdentityToken(), searchPhrase, envelopeNumber, productOfferingId)
+    fun getPossibleAddress(
+        searchPhrase: String,
+        productOfferingId: String,
+        envelopeNumber: String
+    ): Call<PossibleAddressResponse> {
+        return mApiInterface.possibleAddress(
+            "",
+            "",
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            searchPhrase,
+            envelopeNumber,
+            productOfferingId
+        )
     }
 
-    fun getAvailableTimeSlots(envelopeReference: String, productOfferingId: String, x: String, y: String, shipByDate: String): Call<AvailableTimeSlotsResponse> {
-        return mApiInterface.availableTimeSlots( "", "",
-            getSessionToken(), getDeviceIdentityToken(), envelopeReference, productOfferingId, x, y, shipByDate)
+    fun getAvailableTimeSlots(
+        envelopeReference: String,
+        productOfferingId: String,
+        x: String,
+        y: String,
+        shipByDate: String
+    ): Call<AvailableTimeSlotsResponse> {
+        return mApiInterface.availableTimeSlots(
+            "",
+            "",
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            envelopeReference,
+            productOfferingId,
+            x,
+            y,
+            shipByDate
+        )
     }
 
-    fun postScheduleDelivery(productOfferingId: String, envelopeNumber: String, schedule: Boolean, bookingReference: String, scheduleDeliveryRequest: ScheduleDeliveryRequest): Call<CreditCardDeliveryStatusResponse> {
-        return mApiInterface.scheduleDelivery( "", "",
-            getSessionToken(), getDeviceIdentityToken(), productOfferingId, envelopeNumber, schedule, bookingReference,
-            scheduleDeliveryRequest)
+    fun postScheduleDelivery(
+        productOfferingId: String,
+        envelopeNumber: String,
+        schedule: Boolean,
+        bookingReference: String,
+        scheduleDeliveryRequest: ScheduleDeliveryRequest
+    ): Call<CreditCardDeliveryStatusResponse> {
+        return mApiInterface.scheduleDelivery(
+            "",
+            "",
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            productOfferingId,
+            envelopeNumber,
+            schedule,
+            bookingReference,
+            scheduleDeliveryRequest
+        )
     }
 
     fun queryServicePostEvent(featureName: String?, appScreen: String?): Call<Response> {
-        return mApiInterface.postEvent( "", "",
+        return mApiInterface.postEvent(
+            "", "",
             getSessionToken(), getDeviceIdentityToken(), featureName
-                ?: "", appScreen ?: "")
+                ?: "", appScreen ?: ""
+        )
     }
 
     fun queryServicePayUMethod(): Call<PaymentMethodsResponse> {
-        return mApiInterface.getPaymentPAYUMethod("", "",
-            getSessionToken(), getDeviceIdentityToken())
+        return mApiInterface.getPaymentPAYUMethod(
+            "", "",
+            getSessionToken(), getDeviceIdentityToken()
+        )
     }
 
     fun queryServicePostPayU(payUPay: PayUPay): Call<PayUResponse> {
-        return mApiInterface.postPayUpPay( "", "", getSessionToken(),
-            getDeviceIdentityToken(), payUPay)
+        return mApiInterface.postPayUpPay(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken(), payUPay
+        )
     }
 
     fun queryServicePaymentResult(request: PayUPayResultRequest): Call<PayUPayResultResponse> {
-        return mApiInterface.getPaymentPayUResult( "", "", getSessionToken(),
-            getDeviceIdentityToken(), request.customer, request.payment_id, request.charge_id, request.status,
-            request.productOfferingID)
+        return mApiInterface.getPaymentPayUResult(
+            "",
+            "",
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            request.customer,
+            request.payment_id,
+            request.charge_id,
+            request.status,
+            request.productOfferingID
+        )
     }
 
-    fun validateSelectedSuburb(suburbId: String, isStore: Boolean): Call<ValidateSelectedSuburbResponse> {
-        return mApiInterface.validateSelectedSuburb( "", "",
-            getSessionToken(), getDeviceIdentityToken(), suburbId, isStore)
+    fun validateSelectedSuburb(
+        suburbId: String,
+        isStore: Boolean
+    ): Call<ValidateSelectedSuburbResponse> {
+        return mApiInterface.validateSelectedSuburb(
+            "", "",
+            getSessionToken(), getDeviceIdentityToken(), suburbId, isStore
+        )
     }
 
     suspend fun getValidateLocation(placeId: String): retrofit2.Response<ValidateLocationResponse> {
         return withContext(Dispatchers.IO) {
-            mApiInterface.validatePlace("",
+            mApiInterface.validatePlace(
+                "",
                 "",
                 getSessionToken(),
                 getDeviceIdentityToken(),
-                placeId)
+                placeId
+            )
         }
     }
 
     fun applyVouchers(vouchers: List<SelectedVoucher>): Call<ShoppingCartResponse> {
-        return mApiInterface.applyVouchers( "", "", getSessionToken(),
-            getDeviceIdentityToken(), vouchers)
+        return mApiInterface.applyVouchers(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken(), vouchers
+        )
     }
 
     fun applyPromoCode(couponClaimCode: CouponClaimCode): Call<ShoppingCartResponse> {
-        return mApiInterface.applyPromoCode( "", "", getSessionToken(),
-            getDeviceIdentityToken(), couponClaimCode)
+        return mApiInterface.applyPromoCode(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken(), couponClaimCode
+        )
     }
 
     fun removePromoCode(couponClaimCode: CouponClaimCode): Call<ShoppingCartResponse> {
-        return mApiInterface.removePromoCode( "", "", getSessionToken(),
-            getDeviceIdentityToken(), couponClaimCode)
+        return mApiInterface.removePromoCode(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken(), couponClaimCode
+        )
     }
 
     fun queryServicePayURemovePaymentMethod(paymenToken: String): Call<DeleteResponse> {
-        return mApiInterface.payURemovePaymentMethod( "", "", getSessionToken(),
-            getDeviceIdentityToken(), paymenToken)
+        return mApiInterface.payURemovePaymentMethod(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken(), paymenToken
+        )
     }
 
     fun getSizeGuideContent(contentId: String): Call<SizeGuideResponse> {
-        return mApiInterface.getSizeGuideContent( "", "", getSessionToken(),
-            getDeviceIdentityToken(), contentId)
+        return mApiInterface.getSizeGuideContent(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken(), contentId
+        )
     }
 
     fun getAccountsByProductOfferingId(productOfferingId: String): Call<AccountsResponse> {
-        return mApiInterface.getAccountsByProductOfferingId( "", "", getSessionToken(),
-            getDeviceIdentityToken(), productOfferingId)
+        return mApiInterface.getAccountsByProductOfferingId(
+            "", "", getSessionToken(),
+            getDeviceIdentityToken(), productOfferingId
+        )
     }
 
     fun getLinkDeviceOtp(otpMethod: String): Call<RetrieveOTPResponse> {
@@ -621,10 +1001,15 @@ object OneAppService : RetrofitConfig() {
             "",
             getDeviceIdentityToken(),
             getSessionToken(),
-            otpMethod)
+            otpMethod
+        )
     }
 
-    fun changePrimaryDeviceApi(deviceIdentityId: String, otp: String?, otpMethod: String?): Call<ViewAllLinkedDeviceResponse> {
+    fun changePrimaryDeviceApi(
+        deviceIdentityId: String,
+        otp: String?,
+        otpMethod: String?
+    ): Call<ViewAllLinkedDeviceResponse> {
         return mApiInterface.changePrimaryDeviceApi(
             "",
             "",
@@ -632,7 +1017,8 @@ object OneAppService : RetrofitConfig() {
             getDeviceIdentityToken(),
             deviceIdentityId,
             otp,
-            otpMethod)
+            otpMethod
+        )
     }
 
     fun linkDeviceApi(
@@ -643,8 +1029,10 @@ object OneAppService : RetrofitConfig() {
         firebaseToken: String,
         tokenProvider: String,
         otp: String?,
-        otpMethod: String?): Call<LinkedDeviceResponse> {
-        val body = LinkDeviceBody(appInstanceId, location, primaryDevice, firebaseToken, tokenProvider)
+        otpMethod: String?
+    ): Call<LinkedDeviceResponse> {
+        val body =
+            LinkDeviceBody(appInstanceId, location, primaryDevice, firebaseToken, tokenProvider)
 
         return mApiInterface.linkDeviceApi(
             "",
@@ -653,23 +1041,27 @@ object OneAppService : RetrofitConfig() {
             URLEncoder.encode(deviceName, "UTF-8"),
             body,
             otp,
-            otpMethod)
+            otpMethod
+        )
     }
 
     fun getAllLinkedDevices(isForced: Boolean): Call<ViewAllLinkedDeviceResponse> {
-       forceNetworkUpdate = isForced
-       return mApiInterface.getAllLinkedDevices(
-           "",
-           "",
-           getDeviceIdentityToken(),
-           getSessionToken())
+        forceNetworkUpdate = isForced
+        return mApiInterface.getAllLinkedDevices(
+            "",
+            "",
+            getDeviceIdentityToken(),
+            getSessionToken()
+        )
 
     }
 
-    fun deleteDevice(deviceIdentityId: String,
-                     newPrimaryDeviceIdentityId: String?,
-                     otp: String?,
-                     otpMethod: String?): Call<ViewAllLinkedDeviceResponse> {
+    fun deleteDevice(
+        deviceIdentityId: String,
+        newPrimaryDeviceIdentityId: String?,
+        otp: String?,
+        otpMethod: String?
+    ): Call<ViewAllLinkedDeviceResponse> {
         return mApiInterface.deleteDevice(
             "",
             "",
@@ -678,45 +1070,51 @@ object OneAppService : RetrofitConfig() {
             deviceIdentityId,
             newPrimaryDeviceIdentityId,
             otp,
-            otpMethod)
+            otpMethod
+        )
     }
 
     fun confirmStoreCardEmail(body: StoreCardEmailConfirmBody): Call<GenericResponse> {
-        return mApiInterface.confirmStoreCardEmail( "", "",
-            getSessionToken(), getDeviceIdentityToken(),  body)
+        return mApiInterface.confirmStoreCardEmail(
+            "", "",
+            getSessionToken(), getDeviceIdentityToken(), body
+        )
     }
 
     fun getVocSurvey(triggerEvent: VocTriggerEvent): Call<SurveyDetailsResponse> {
         return mApiInterface.getVocSurvey(
-                userAgent = "",
-                userAgentVersion =  "",
-                sessionToken = getSessionToken(),
-                triggerEvent = triggerEvent.value
+            userAgent = "",
+            userAgentVersion = "",
+            sessionToken = getSessionToken(),
+            triggerEvent = triggerEvent.value
         )
     }
 
-    fun submitVocSurveyReplies(surveyDetails: SurveyDetails, surveyAnswers: HashMap<Long, SurveyAnswer>): Call<Void> {
+    fun submitVocSurveyReplies(
+        surveyDetails: SurveyDetails,
+        surveyAnswers: HashMap<Long, SurveyAnswer>
+    ): Call<Void> {
         return mApiInterface.submitVocSurveyReplies(
-                userAgent = "",
-                userAgentVersion =  "",
-                sessionToken = getSessionToken(),
+            userAgent = "",
+            userAgentVersion = "",
+            sessionToken = getSessionToken(),
+            surveyId = surveyDetails.id,
+            surveyReplies = SurveyRepliesBody(
                 surveyId = surveyDetails.id,
-                surveyReplies = SurveyRepliesBody(
-                        surveyId = surveyDetails.id,
-                        appInstanceId = Utils.getUniqueDeviceID(),
-                        participantReplies = surveyAnswers.values.toList()
-                )
+                appInstanceId = Utils.getUniqueDeviceID(),
+                participantReplies = surveyAnswers.values.toList()
+            )
         )
     }
 
     fun optOutVocSurvey(): Call<Void> {
         return mApiInterface.optOutVocSurvey(
-                userAgent = "",
-                userAgentVersion =  "",
-                sessionToken = getSessionToken(),
-                optOutBody = SurveyOptOutBody(
-                        appInstanceId = Utils.getUniqueDeviceID()
-                )
+            userAgent = "",
+            userAgentVersion = "",
+            sessionToken = getSessionToken(),
+            optOutBody = SurveyOptOutBody(
+                appInstanceId = Utils.getUniqueDeviceID()
+            )
         )
     }
 
@@ -725,19 +1123,21 @@ object OneAppService : RetrofitConfig() {
             "",
             "",
             getSessionToken(),
-            getDeviceIdentityToken())
+            getDeviceIdentityToken()
+        )
     }
 
-    fun getBPITermsAndConditionsInfo(productGroupCode: String): Call<BPITermsConditionsResponse>{
+    fun getBPITermsAndConditionsInfo(productGroupCode: String): Call<BPITermsConditionsResponse> {
         return mApiInterface.getBPITermsAndConditionsInfo(
             "",
             "",
             getSessionToken(),
             getDeviceIdentityToken(),
-            productGroupCode)
+            productGroupCode
+        )
     }
 
-    fun emailBPITermsAndConditions(productGroupCode: String): Call<GenericResponse>{
+    fun emailBPITermsAndConditions(productGroupCode: String): Call<GenericResponse> {
         return mApiInterface.emailBPITermsAndConditions(
             "",
             "",
@@ -747,7 +1147,10 @@ object OneAppService : RetrofitConfig() {
         )
     }
 
-    fun postInsuranceLeadGenOptIn(insuranceType: String, insuranceTypeOptInBody: InsuranceTypeOptInBody): Call<GenericResponse> {
+    fun postInsuranceLeadGenOptIn(
+        insuranceType: String,
+        insuranceTypeOptInBody: InsuranceTypeOptInBody
+    ): Call<GenericResponse> {
         return mApiInterface.postInsuranceLeadGenOptIn(
             "",
             "",
@@ -765,8 +1168,9 @@ object OneAppService : RetrofitConfig() {
         )
     }
 
-    fun getConfirmDeliveryAddressDetails(body: ConfirmLocationRequest): Call<ConfirmDeliveryAddressResponse>{
-        return mApiInterface.confirmLocation("",
+    fun getConfirmDeliveryAddressDetails(body: ConfirmLocationRequest): Call<ConfirmDeliveryAddressResponse> {
+        return mApiInterface.confirmLocation(
+            "",
             "",
             getSessionToken(),
             getDeviceIdentityToken(),
@@ -776,18 +1180,27 @@ object OneAppService : RetrofitConfig() {
 
     suspend fun confirmLocation(confirmLocationRequest: ConfirmLocationRequest): retrofit2.Response<ConfirmDeliveryAddressResponse> {
         return withContext(Dispatchers.IO) {
-            mApiInterface.confirmPlaceLocation("",
+            mApiInterface.confirmPlaceLocation(
+                "",
                 "",
                 getSessionToken(),
                 getDeviceIdentityToken(),
-                confirmLocationRequest)
+                confirmLocationRequest
+            )
         }
     }
 
-    fun deleteAccount(): Call<DeleteAccountResponse>{
-        return mApiInterface.deleteAccount("",
+    fun deleteAccount(): Call<DeleteAccountResponse> {
+        return mApiInterface.deleteAccount(
+            "",
             "",
             getSessionToken()
         )
+    }
+
+    suspend fun getOCAuthData(): retrofit2.Response<OCAuthenticationResponse> {
+        return withContext(Dispatchers.IO) {
+            mApiInterface.getOCAuth(getSessionToken(), getDeviceIdentityToken())
+        }
     }
 }

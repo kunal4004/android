@@ -885,14 +885,21 @@ class KotlinUtils {
             title: String = "",
             actionText: String = "",
             infoIcon: Int = 0,
+            isFromCheckoutScreen: Boolean = false
         ) {
             val dialog =
-                GeneralInfoDialogFragment.newInstance(description, title, actionText, infoIcon)
+                GeneralInfoDialogFragment.newInstance(description, title, actionText, infoIcon, isFromCheckoutScreen)
             fragmentManager.let { fragmentTransaction ->
                 dialog.show(
                     fragmentTransaction,
                     GeneralInfoDialogFragment::class.java.simpleName
                 )
+            }
+
+            if (isFromCheckoutScreen) {
+                dialog.isCancelable = false
+            } else {
+                dialog.isCancelable = true
             }
         }
 
@@ -1405,6 +1412,17 @@ class KotlinUtils {
                 }
             }
             return event
+        }
+
+         fun showMinCartValueError(activity: AppCompatActivity, minimumBasketAmount: Double?) {
+           showGeneralInfoDialog(
+                activity?.supportFragmentManager,
+                activity.getString(R.string.minspend_error_msg_desc),
+                String.format(activity.getString(R.string.minspend_error_msg_title, minimumBasketAmount)),
+                activity.getString(R.string.got_it),
+                R.drawable.ic_cart,
+                true
+            )
         }
     }
 

@@ -1922,7 +1922,7 @@
     <string name="dash_Chat_to_your_shopper">Chat To Your Shopper, </string>
     <string name="dash_track_your_order">Track Your Order</string>
     <string name="dash_email_id">wooliesdash@woolworths.co.za</string>
-    <string name="dash_customer_care_no_phone">0860 022 002</string>
+    <string name="dash_customer_care_no_phone">0860 100 987</string>
 
     <string name="app_feature_title"></string>
     <string name="app_feature_get_delivered">Same-day delivery</string>
@@ -2516,7 +2516,7 @@
     <string name="device_location_service_disabled_subTitle">To view and shop using Click &amp; Collect, we need your location.</string>
     <string name="btn_turn_on_location_text">Turn location on</string>
     <string name="all_products_available">All Products Available</string>
-    <string name="next_dash_delivery_timeslot_text">Next Dash Delivery timeslot</string>
+    <string name="next_dash_delivery_timeslot_text">Next Dash Delivery Timeslot</string>
     <string name="my_shopping_lists">My Shopping Lists</string>
     <string name="hi">HI&#160;</string>
     <string name="tip_your_dash_driver">Tip Your Dash Driver</string>
@@ -2568,6 +2568,12 @@
         <item quantity="one">This Item Will Be Removed From Your Cart.</item>
         <item quantity="other">@string/these_items_will_be_removed_from_your_cart</item>
     </plurals>
+    <string name="minspend_error_msg_cart">A minimum spend of R%.1f is required to checkout.</string>
+    <string name="minspend_error_msg_title">A minimum spend of R%.1f is required to checkout.</string>
+    <string name="minspend_error_msg_desc">To complete your purchase, increase your order value, or change your delivery method.</string>
+    <string name="min_spend_error_msg_checkout_title">A minimum spend of %d is required to checkout.</string>
+    <string name="min_spend_error_msg_checkout_desc">To complete your purchase, increase your order value, or change your delivery method.</string>
+
 
     <string name="product_listing_price_from">From</string>
 
@@ -2675,6 +2681,8 @@
     <string name="dash_status_packaging">Packing</string>
     <string name="dash_status_en_route">En-route</string>
     <string name="dash_status_delivered">Delivered</string>
+    <string name="collection_status">Can Collect</string>
+    <string name="status_collected">Collected</string>
     <string name="empty" />
     <string name="dash_item_limit_message">Dash orders allow %d items max</string>
     <string name="delete_your_profile">DELETE YOUR PROFILE</string>

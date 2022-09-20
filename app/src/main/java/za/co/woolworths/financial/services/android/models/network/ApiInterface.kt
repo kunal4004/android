@@ -47,7 +47,7 @@ import za.co.woolworths.financial.services.android.models.dto.voc.SurveyOptOutBo
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyRepliesBody
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
-import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.data.CardNotReceived
+import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.EmailUsRequest
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewFeedback
 
@@ -839,7 +839,7 @@ interface ApiInterface {
             @Query("suburbId") suburbId: String?,
             @Query("storeId") storeId: String?,
             @Query("filterContent") filterContent: Boolean?,
-            @Query("deliveryType") deliveryType: String,
+            @Query("deliveryType") deliveryType: String?,
             @Query("deliveryDetails") deliveryDetails: String?
     ): Call<ProductView>
 
@@ -863,7 +863,7 @@ interface ApiInterface {
             @Query("suburbId") suburbId: String?,
             @Query("storeId") storeId: String?,
             @Query("filterContent") filterContent: Boolean?,
-            @Query("deliveryType") deliveryType: String,
+            @Query("deliveryType") deliveryType: String?,
             @Query("deliveryDetails") deliveryDetails: String?
     ): Call<ProductView>
 
@@ -1461,5 +1461,12 @@ interface ApiInterface {
         @Body reviewFeedback: ReviewFeedback
 
     ): GenericResponse
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/dash/chat/authenticate")
+    suspend fun getOCAuth(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String
+    ): retrofit2.Response<OCAuthenticationResponse>
+
 }
 
