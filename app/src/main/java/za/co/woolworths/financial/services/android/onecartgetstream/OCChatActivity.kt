@@ -55,6 +55,7 @@ class OCChatActivity : AppCompatActivity(R.layout.activity_one_cart_chat_activit
 
     companion object {
         private const val ORDER_ID = "key:oid"
+        @JvmStatic
         fun newIntent(context: Context, orderID: String): Intent =
             Intent(context, OCChatActivity::class.java).putExtra(ORDER_ID, orderID)
     }

@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.onecartgetstream.chat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.subscribeFor
 import io.getstream.chat.android.client.events.*
@@ -11,13 +10,8 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.observable.Disposable
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.onecartgetstream.common.ChatState
-import za.co.woolworths.financial.services.android.onecartgetstream.repository.OCToastNotification
-import javax.inject.Inject
+
 
 
 class ChatViewModel : ViewModel() {

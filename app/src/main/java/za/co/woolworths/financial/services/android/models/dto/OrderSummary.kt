@@ -47,5 +47,7 @@ data class OrderSummary(
     var storeDetails: StoreDetails? = null,
     var deliveryStatus: @RawValue Any? = null,
     var totalOrderCount: Double = 0.0,
-    var driverTrackingURL : String? = ""
+    var driverTrackingURL : String? = "",
+    var hasMinimumBasketAmount: Boolean = false,
+    var minimumBasketAmount: Double = 0.0
 ) : Parcelable

@@ -457,6 +457,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         } else if (appLinkData is Bundle && appLinkData.containsKey(AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID)) {
             val channelId = appLinkData[AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID] as String
             DashChatMessageListeningService.getOrderIdForChannel(
+                this,
                 channelId,
                 onSuccess = { orderId ->
                     val bundle = bundleOf(

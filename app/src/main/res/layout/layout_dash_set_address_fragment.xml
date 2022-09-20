@@ -57,6 +57,7 @@
         android:textSize="@dimen/fifteen_sp"
         android:lineHeight="@dimen/twenty_four_dp"
         android:textStyle="normal"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/btn_dash_set_address"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

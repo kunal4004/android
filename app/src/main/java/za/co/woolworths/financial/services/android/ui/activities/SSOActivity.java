@@ -31,6 +31,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import com.awfs.coordination.R;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -48,7 +51,7 @@ import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.onecartgetstream.service.DashChatMessageListeningService;
+import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -464,8 +467,7 @@ public class SSOActivity extends WebViewActivity {
 					if (urlWithoutQueryString.equals(extraQueryStringParams.get("post_logout_redirect_uri"))) {
 						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
 						ServiceTools.Companion.stop(SSOActivity.this, LiveChatService.class);
-						Intent chatListeningServiceIntent = new Intent(SSOActivity.this, DashChatMessageListeningService.class);
-						stopService(chatListeningServiceIntent);
+						OCConstant.INSTANCE.stopOCChatService(SSOActivity.this);
 						Intent intent = new Intent();
 						setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
 						Utils.setUserKMSIState(false);
@@ -517,8 +519,7 @@ public class SSOActivity extends WebViewActivity {
 				if (SSOActivity.this.path.rawValue().equals(Path.LOGOUT.rawValue())) {
 					KotlinUtils.setUserPropertiesToNull();
 					ServiceTools.Companion.stop(SSOActivity.this, LiveChatService.class);
-					Intent chatListeningServiceIntent = new Intent(SSOActivity.this, DashChatMessageListeningService.class);
-					stopService(chatListeningServiceIntent);
+					OCConstant.INSTANCE.stopOCChatService(SSOActivity.this);
 					Intent intent = new Intent();
 					setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
 
@@ -611,6 +612,7 @@ public class SSOActivity extends WebViewActivity {
 					extractFormDataAndCloseSSOIfNeeded();
 				}
 			});
+			//configureDashChatServices();
 		}
 	}
 
@@ -685,6 +687,7 @@ public class SSOActivity extends WebViewActivity {
 			if (!TextUtils.isEmpty(stsParams)) {
 				SessionUtilities.getInstance().setSTSParameters(null);
 			}
+
 			closeActivity();
 
 		} catch (NullPointerException ex) {
@@ -840,6 +843,35 @@ public class SSOActivity extends WebViewActivity {
 	public void onAttachedToWindow() {
 		getTheme().applyStyle(isKMSIChecked ? R.style.SSOActivityKMSIStyle : R.style.SSOActivity, true);
 		super.onAttachedToWindow();
+	}
+
+
+
+	private void configureDashChatServices() {
+
+		// Ideally, it would be better to just have Firebase read from the JSON file, instead of manually setting those credentials.
+		// TODO: also add check so that this firebase configuration is done only on Google variants, not Huawei, since Huawei uses Push Kit instead of Firebase.
+		FirebaseOptions firebaseChatOptions = new FirebaseOptions.Builder()
+				.setProjectId("onecart-chat")
+				.setApplicationId(getString(R.string.oc_chat_app_id))
+				.setApiKey(getString(R.string.oc_chat_api_key))
+				.build();
+
+		FirebaseApp chatApp = FirebaseApp.initializeApp(this, firebaseChatOptions, "CHAT_APP");
+		FirebaseMessaging fbMessaging = chatApp.get(FirebaseMessaging.class);
+		fbMessaging.getToken().addOnCompleteListener(it -> {
+			if (it.isSuccessful()) {
+
+				Utils.setOCChatFCMToken(it.getResult());
+			} else {
+
+				Utils.setOCChatFCMToken("");
+			}
+		});
+
+		// Start service to listen to incoming messages from Stream
+		OCConstant.INSTANCE.startOCChatService(this);
+
 	}
 
 }
