@@ -1599,6 +1599,15 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                             ScreenManager.presentSSOSignin(this)
                         }
 
+                        AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
+                            KotlinUtils.showQuantityLimitErrror(
+                                activity?.supportFragmentManager,
+                                addItemToCartResponse.response.desc,
+                                "",
+                                context
+                            )
+                        }
+
                         else -> addItemToCartResponse?.response?.desc?.let { desc ->
                             Utils.displayValidationMessage(
                                 this,
