@@ -1704,6 +1704,17 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
+    override fun onAddToCartError(addItemToCartResponse: AddItemToCartResponse) {
+        if (addItemToCartResponse?.response.code == AppConstant.RESPONSE_ERROR_CODE_1235) {
+            KotlinUtils.showQuantityLimitErrror(
+                activity?.supportFragmentManager,
+                addItemToCartResponse?.response.desc,
+                "",
+                context
+            )
+        }
+    }
+
     //firebase event add_to_cart
     private fun addToCartEvent(productDetails: ProductDetails?) {
         val addToCartParams = Bundle()
