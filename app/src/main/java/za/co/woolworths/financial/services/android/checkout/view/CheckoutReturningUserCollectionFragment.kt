@@ -682,6 +682,9 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         }
         if (AppConfigSingleton.nativeCheckout?.currentShoppingBag?.isEnabled == true) {
             switchNeedBags?.visibility = View.VISIBLE
+            txtNeedBags?.text = AppConfigSingleton.nativeCheckout?.currentShoppingBag?.title.plus(
+                AppConfigSingleton.nativeCheckout?.currentShoppingBag?.description
+            )
             txtNeedBags?.visibility = View.VISIBLE
             viewHorizontalSeparator?.visibility = View.GONE
             newShoppingBagsLayout?.visibility = View.GONE
