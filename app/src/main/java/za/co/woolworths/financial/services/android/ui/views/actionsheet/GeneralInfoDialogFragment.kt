@@ -14,18 +14,21 @@ class GeneralInfoDialogFragment : WBottomSheetDialogFragment() {
     private var mTitle: String = ""
     private var mActionText: String = ""
     private var mInfoIcon:Int = 0
+    private var mIsFromCheckoutScreen = false
 
     companion object {
         private const val DESCRIPTION = "DESCRIPTION"
         private const val TITLE = "TITLE"
         private const val ACTION_TEXT = "ACTION_TEXT"
         private const val INFO_ICON = "INFO_ICON"
-        fun newInstance(description: String, title: String, actionText: String, infoIcon:Int? = null) = GeneralInfoDialogFragment().withArgs {
+        private const val IS_FROM_CHECKOUT_SCREEN = "ISFROMCHECKOUTSCREEN"
+        fun newInstance(description: String, title: String, actionText: String, infoIcon:Int? = null, isFromCheckoutScreen:Boolean = false) = GeneralInfoDialogFragment().withArgs {
             putString(DESCRIPTION, description)
             putString(TITLE, title)
             putString(ACTION_TEXT, actionText)
             if (infoIcon != null)
                 putInt(INFO_ICON, infoIcon)
+            putBoolean(IS_FROM_CHECKOUT_SCREEN, isFromCheckoutScreen)
         }
     }
 
@@ -36,6 +39,7 @@ class GeneralInfoDialogFragment : WBottomSheetDialogFragment() {
             mTitle = getString(TITLE, "")
             mActionText = getString(ACTION_TEXT, "")
             mInfoIcon = getInt(INFO_ICON)
+            mIsFromCheckoutScreen = getBoolean(IS_FROM_CHECKOUT_SCREEN)
         }
     }
 
@@ -66,6 +70,13 @@ class GeneralInfoDialogFragment : WBottomSheetDialogFragment() {
                 visibility = View.VISIBLE
             }
         }
-        actionButton?.setOnClickListener { dismissAllowingStateLoss() }
+        actionButton?.setOnClickListener {
+            if (mIsFromCheckoutScreen) {
+                dismissAllowingStateLoss()
+                activity?.onBackPressed()
+            }else {
+                dismissAllowingStateLoss()
+            }
+        }
     }
 }
