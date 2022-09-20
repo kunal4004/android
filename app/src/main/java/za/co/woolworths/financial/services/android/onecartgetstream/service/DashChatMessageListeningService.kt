@@ -236,6 +236,62 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
     companion object {
         const val CHANNEL_ID = "ForegroundServiceChannelId"
 
+        fun getChannelForOrder(context: Context, orderId: String, onSuccess: (Channel) -> Unit, onFailure: () -> Unit) {
+            val chatClient = getOneCartStreamChatClient(context)
+            authenticateOneCart(
+                onSuccess = { userId, displayName, token ->
+                    connectUser(
+                        userId,
+                        displayName,
+                        token,
+                        onSuccess = {
+                            fetchOrderDetails(
+                                orderId,
+                                onSuccess = { orderSummary ->
+                                    fetchChannels(
+                                        chatClient,
+                                        onSuccess = { channels ->
+                                            if (channels.isEmpty()) {
+                                                onFailure()
+                                                return@fetchChannels
+                                            }
+
+                                            channels.forEach { channel ->
+                                                getRecipientChannelMember(
+                                                    chatClient,
+                                                    channel.cid,
+                                                    onSuccess = { member ->
+                                                        if (!orderSummary.shopperId.isNullOrEmpty() && member.id.contains(orderSummary.shopperId!!)) {
+                                                            onSuccess(channel)
+                                                        }
+                                                    },
+                                                    onFailure = {
+                                                        // Ignored for now
+                                                    }
+                                                )
+                                            }
+                                        },
+                                        onFailure = {
+                                            onFailure()
+                                        }
+                                    )
+                                },
+                                onFailure
+                            )
+                        },
+                        onFailure = {
+                            // TODO: handle negative scenario
+                            onFailure()
+                        }
+                    )
+                },
+                onFailure = {
+                    // TODO: handle negative scenario
+                    onFailure()
+                }
+            )
+        }
+
         fun getOrderIdForChannel(context: Context, channelId: String, onSuccess: (String) -> Unit, onFailure: () -> Unit) {
             val chatClient = getOneCartStreamChatClient(context)
             authenticateOneCart(

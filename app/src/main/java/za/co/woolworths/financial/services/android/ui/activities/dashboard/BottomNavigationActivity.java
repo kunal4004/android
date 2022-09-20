@@ -406,13 +406,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     break;
 
                 case AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID:
-                    if (appLinkData.get(AppConstant.ORDER_ID) == null) {
+                    if (appLinkData.get(AppConstant.DP_LINKING_PARAM_STREAM_ORDER_ID) == null) {
                         return;
                     }
 
-                    String orderId = appLinkData.get(AppConstant.ORDER_ID).getAsString();
+                    String orderId = appLinkData.get(AppConstant.DP_LINKING_PARAM_STREAM_ORDER_ID).getAsString();
+                    String channelId = appLinkData.get(AppConstant.DP_LINKING_PARAM_STREAM_CHANNEL_ID).getAsString();
                     if (orderId != null && !orderId.isEmpty()) {
-                        startActivity(OCChatActivity.Companion.newIntent(this, orderId));
+                        startActivity(OCChatActivity.Companion.newIntent(this, orderId, channelId));
                     }
                     break;
 
