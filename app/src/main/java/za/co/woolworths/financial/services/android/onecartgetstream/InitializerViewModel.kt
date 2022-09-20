@@ -112,12 +112,12 @@ private val ocAuthRepository: OCAuthRepository
                                     .addDevice(
                                         if (Utils.isGooglePlayServicesAvailable())
                                             Device(
-                                                WoolworthsApplication.getInstance().oneCartChatFirebaseToken,
+                                                Utils.getOCChatFCMToken(),
                                                 PushProvider.FIREBASE
                                             )
                                         else
                                             Device (
-                                                Utils.getToken(), // Since Stream uses Woolworths details for Huawei, we can use our own HMS cached token
+                                                Utils.getOCChatFCMToken(), // Since Stream uses Woolworths details for Huawei, we can use our own HMS cached token
                                                 PushProvider.HUAWEI
                                             )
                                     )

@@ -39,7 +39,6 @@ import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
-import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.HUAWEI_APP_ID
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.OC_MESSAGE_COUNT
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.ORDER_PENDING_PICKING
 import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
@@ -224,12 +223,12 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                                 .addDevice(
                                     if (Utils.isGooglePlayServicesAvailable())
                                         Device(
-                                            WoolworthsApplication.getInstance().oneCartChatFirebaseToken,
+                                            Utils.getOCChatFCMToken(),
                                             PushProvider.FIREBASE
                                         )
                                     else
                                         Device (
-                                            Utils.getToken(), // Since Stream uses Woolworths details for Huawei, we can use our own HMS cached token
+                                            Utils.getOCChatFCMToken(), // Since Stream uses Woolworths details for Huawei, we can use our own HMS cached token
                                             PushProvider.HUAWEI
                                         )
                                 )
@@ -334,7 +333,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                 else
                     HuaweiPushDeviceGenerator(
                         WoolworthsApplication.getAppContext(),
-                        appId = HUAWEI_APP_ID
+                        appId = getString(R.string.huawei_app_id)
                     )
             )
         )

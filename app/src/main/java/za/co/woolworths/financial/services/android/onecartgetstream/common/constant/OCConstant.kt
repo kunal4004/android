@@ -6,7 +6,6 @@ import za.co.woolworths.financial.services.android.onecartgetstream.service.Dash
 object OCConstant {
 
     const val ORDER_PENDING_PICKING = "PENDING_PICKING"
-    const val HUAWEI_APP_ID = "102461773"
     var OC_MESSAGE_COUNT = 0
 
     fun startOCChatService(context: Context?){
