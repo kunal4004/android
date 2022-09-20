@@ -30,7 +30,6 @@ import static za.co.woolworths.financial.services.android.ui.fragments.shoppingl
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.PRODUCT_DETAILS_FROM_MY_LIST_SEARCH;
 import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
 import static za.co.woolworths.financial.services.android.util.AppConstant.DP_LINKING_MY_ACCOUNTS_ORDER_DETAILS;
-import static za.co.woolworths.financial.services.android.util.AppConstant.DP_LINKING_OC_CHAT;
 import static za.co.woolworths.financial.services.android.util.AppConstant.REQUEST_CODE_BARCODE_ACTIVITY;
 import static za.co.woolworths.financial.services.android.util.AppConstant.REQUEST_CODE_ORDER_DETAILS_PAGE;
 import static za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS;
@@ -89,16 +88,12 @@ import java.util.Set;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.functions.Consumer;
-import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.BrandNavigationDetails;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
-import za.co.woolworths.financial.services.android.models.dto.OrderDetailsResponse;
-import za.co.woolworths.financial.services.android.models.dto.OrdersResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductSearchTypeAndTerm;
@@ -106,11 +101,10 @@ import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType;
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap;
-import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
-import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.network.Parameter;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
+import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
@@ -147,7 +141,6 @@ import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFull
 import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.DeepLinkingUtils;
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
@@ -158,6 +151,7 @@ import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.nav.FragNavController;
 import za.co.woolworths.financial.services.android.util.nav.FragNavTransactionOptions;
 
@@ -405,6 +399,17 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                         arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.DEEP_LINK_URL, linkData.toString());
                         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTDELIVERY, arguments, this);
                         pushFragment(ProductListingFragment.Companion.newInstance(productSearchTypeAndSearchTerm.getSearchType(), "", productSearchTypeAndSearchTerm.getSearchTerm(), true));
+                    }
+                    break;
+
+                case AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID:
+                    if (appLinkData.get(AppConstant.ORDER_ID) == null) {
+                        return;
+                    }
+
+                    String orderId = appLinkData.get(AppConstant.ORDER_ID).getAsString();
+                    if (orderId != null && !orderId.isEmpty()) {
+                        startActivity(OCChatActivity.Companion.newIntent(this, orderId));
                     }
                     break;
 
@@ -1086,7 +1091,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 }
 
                 break;
-          //  case DP_LINKING_OC_CHAT:
 
 
             //  Old way to navigate Deeplinking flows.
@@ -1671,54 +1675,4 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }, AppConstant.DELAY_500_MS);
 
     }
-
-
-    private void fetchOrderHistory() {
-
-        Call<OrdersResponse> ordersResponseCall = OneAppService.INSTANCE.getOrders();
-        ordersResponseCall.enqueue(new CompletionHandler<OrdersResponse>(new IResponseListener<OrdersResponse>() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @Override
-            public void onSuccess(OrdersResponse ordersResponse) {
-                //TODO:
-
-//                ordersResponse.getUpcomingOrders().forEach({orderHistory->
-//
-//                    });
-
-
-
-            }
-
-            @Override
-            public void onFailure(Throwable error) {
-                if (error == null) return;
-
-            }
-        }, OrdersResponse.class));
-
-      //  return ordersResponseCall;
-    }
-
-
-    private void fetchOrderDetails() {
-
-        Call<OrderDetailsResponse> ordersResponseCall = OneAppService.INSTANCE.getOrderDetails("");
-        ordersResponseCall.enqueue(new CompletionHandler<OrderDetailsResponse>(new IResponseListener<OrderDetailsResponse>() {
-            @Override
-            public void onSuccess(OrderDetailsResponse ordersResponse) {
-                //TODO:
-                ordersResponse.getOrderSummary().getShopperId();
-
-            }
-
-            @Override
-            public void onFailure(Throwable error) {
-                if (error == null) return;
-
-            }
-        }, OrderDetailsResponse.class));
-
-    }
-
 }

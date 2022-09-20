@@ -30,6 +30,7 @@ import za.co.woolworths.financial.services.android.firebase.FirebaseConfigUtils
 import za.co.woolworths.financial.services.android.firebase.model.ConfigData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.onecartgetstream.service.DashChatMessageListeningService
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.startup.service.network.StartupApiHelper
 import za.co.woolworths.financial.services.android.startup.service.repository.StartUpRepository
@@ -453,6 +454,21 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                 "parameters" to "{\"url\": \"${appLinkData}\"}"
             )
             ScreenManager.presentMain(this@StartupActivity, bundle)
+        } else if (appLinkData is Bundle && appLinkData.containsKey(AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID)) {
+            val channelId = appLinkData[AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID] as String
+            DashChatMessageListeningService.getOrderIdForChannel(
+                channelId,
+                onSuccess = { orderId ->
+                    val bundle = bundleOf(
+                        "feature" to AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID,
+                        "parameters" to "{\"${AppConstant.ORDER_ID}\": \"${orderId}\"}"
+                    )
+                    ScreenManager.presentMain(this@StartupActivity, bundle)
+                },
+                onFailure = {
+                    ScreenManager.presentMain(this@StartupActivity)
+                }
+            )
         } else {
             ScreenManager.presentMain(this@StartupActivity, appLinkData as Bundle)
         }

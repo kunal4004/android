@@ -16,6 +16,7 @@ import com.google.gson.JsonObject
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.startup.view.StartupActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.PersistenceLayer
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
@@ -25,6 +26,9 @@ class PushNotificationManager {
         private const val PAYLOAD_FEATURE = "feature"
         private const val PAYLOAD_TITLE = "title"
         private const val PAYLOAD_BODY = "body"
+        private const val PAYLOAD_STREAM_CHANNEL = "channel"
+        private const val PAYLOAD_STREAM_CHANNEL_ID = "id"
+        private const val PAYLOAD_STREAM_CHANNEL_TYPE = "type"
         private const val FEATURE_ORDER_DETAILS = "Order Details"
         private const val FEATURE_PRODUCT_LISTING = "Product Listing"
 
@@ -53,6 +57,18 @@ class PushNotificationManager {
                 for (item in payload.entries) {
                     intent.putExtra(item.key, item.value)
                 }
+                pendingIntent = PendingIntent.getActivity(
+                    context, BottomNavigationActivity.DEEP_LINK_REQUEST_CODE, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+                )
+            } else if (payload.contains(PAYLOAD_STREAM_CHANNEL)) {
+                val streamChannelJson = payload[PAYLOAD_STREAM_CHANNEL]
+                val streamChannelParameters = Gson().fromJson(
+                    streamChannelJson,
+                    JsonObject::class.java
+                )
+                // Stream Channel's cid needs to be in the format channelType:channelId. For example, messaging:123
+                intent.putExtra(AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID, "${streamChannelParameters[PAYLOAD_STREAM_CHANNEL_TYPE].asString}:${streamChannelParameters[PAYLOAD_STREAM_CHANNEL_ID].asString}")
                 pendingIntent = PendingIntent.getActivity(
                     context, BottomNavigationActivity.DEEP_LINK_REQUEST_CODE, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT

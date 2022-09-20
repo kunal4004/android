@@ -28,10 +28,7 @@ import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerat
 import io.getstream.chat.android.pushprovider.huawei.HuaweiPushDeviceGenerator
 import kotlinx.android.synthetic.main.fragment_shop_my_orders.*
 import kotlinx.android.synthetic.main.order_details_fragment.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -64,15 +61,11 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
     lateinit var ocToastNotification: OCToastNotification
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // TODO: use Coroutine instead of thread
-//        GlobalScope.launch(Dispatchers.Main) {
-//            connectUserAndListenToChannels()
-//        }
-        Thread {
+        CoroutineScope(Dispatchers.IO).launch {
             connectUserAndListenToChannels()
-        }.start()
+        }
 
-       createNotificationChannel(applicationContext)?.build()
+        createNotificationChannel(applicationContext)?.build()
         return super.onStartCommand(intent, flags, startId)
     }
 
@@ -105,7 +98,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
     // Scenario A: service is started on app launch; user adds to cart, checkout and make payment; that order goes to pending_picking state and shopper initiates a chat with this user - this would mean the service is not listening to this new channel
     // Scenario B: Same as above, except there's no channel for the service to listen to, which means it will stop on launch itself. When new order's channel is opened, service needs to be started and listen to that new channel.
     private fun connectUserAndListenToChannels() {
-        initializeOneCartStream()
+        chatClient = getOneCartStreamChatClient()
         authenticateOneCart(
             onSuccess = { userId, displayName, token ->
                 connectUser(
@@ -121,6 +114,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
 
                                 val fnGetChannelForOrders = {
                                     fetchChannels(
+                                        chatClient,
                                         onSuccess = { channels ->
                                             if (channels.isEmpty()) {
                                                 killService()
@@ -129,6 +123,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
 
                                             channels.forEach { channel ->
                                                 getRecipientChannelMember(
+                                                    chatClient,
                                                     channel.cid,
                                                     onSuccess = { member ->
                                                         ordersSummary.firstOrNull { !it.shopperId.isNullOrEmpty() && member.id.contains(it.shopperId!!) }?.let { orderForChannel ->
@@ -192,176 +187,6 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
         )
     }
 
-    private fun authenticateOneCart(onSuccess: (String, String, String) -> Unit, onFailure: () -> Unit) {
-        OneAppService.authenticateOneCart().apply {
-            enqueue(CompletionHandler(object : IResponseListener<OCAuthenticationResponse> {
-                override fun onSuccess(response: OCAuthenticationResponse?) {
-                    response?.apply {
-                        onSuccess(details.userId, details.name, details.token)
-                    } ?: kotlin.run {
-                        onFailure()
-                    }
-                }
-
-                override fun onFailure(error: Throwable?) {
-                    onFailure()
-                }
-            }, OCAuthenticationResponse::class.java))
-        }
-    }
-
-    private fun connectUser(userId: String, displayName: String, token: String, onSuccess: () -> Unit, onFailure: () -> Unit) {
-        val currentUser = ChatClient.instance().getCurrentUser()
-        currentUser?.let {
-            onFailure()
-            return
-        }
-
-        val chatUser = User().apply {
-            id = userId
-            name = displayName
-        }
-
-        ChatClient.instance().connectUser(chatUser, token)
-            .enqueue { result ->
-                if (result.isSuccess) {
-                    ChatClient.instance().getDevices().enqueue {
-                        if (it.isSuccess) {
-                            val devices = it.data()
-                            for (device in devices) {
-                                ChatClient.instance().deleteDevice(device).enqueue()
-                            }
-                            ChatClient
-                                .instance()
-                                .addDevice(
-                                    if (Utils.isGooglePlayServicesAvailable())
-                                        Device(
-                                            WoolworthsApplication.getInstance().oneCartChatFirebaseToken,
-                                            PushProvider.FIREBASE
-                                        )
-                                    else
-                                        Device (
-                                            Utils.getToken(), // Since Stream uses Woolworths details for Huawei, we can use our own HMS cached token
-                                            PushProvider.HUAWEI
-                                        )
-                                )
-                                .enqueue()
-
-                            onSuccess()
-                        } else {
-                            onFailure()
-                        }
-                    }
-                } else {
-                    onFailure()
-                }
-            }
-    }
-
-    private fun fetchOrdersPendingPicking(onCompletion: (ArrayList<Order>?) -> Unit) {
-        OneAppService.getOrders().apply {
-            enqueue(CompletionHandler(object : IResponseListener<OrdersResponse> {
-                override fun onSuccess(ordersResponse: OrdersResponse?) {
-                    ordersResponse?.upcomingOrders?.filter { it.deliveryStatus?.Food?.equals(ORDER_PENDING_PICKING) == true }?.let {
-                        onCompletion(ArrayList(it))
-                    } ?: kotlin.run {
-                        onCompletion(null)
-                    }
-                }
-
-                override fun onFailure(error: Throwable?) {
-                    onCompletion(null)
-                }
-            }, OrdersResponse::class.java))
-        }
-    }
-
-    private fun fetchChannels(onSuccess: (List<Channel>) -> Unit, onFailure: () -> Unit) {
-        chatClient.getCurrentUser()?.let { currentUser ->
-            val filter = Filters.and(
-                Filters.`in`("members", listOf<String>(currentUser.id))
-            )
-            val sort = QuerySort.desc<Channel>("created_at")
-            val request = QueryChannelsRequest(
-                filter = filter,
-                querySort = sort,
-                limit = 10,
-                messageLimit = 35
-            )
-
-            chatClient
-                .queryChannels(request)
-                .enqueue { result ->
-                    if (result.isSuccess) {
-                        onSuccess(result.data())
-                    } else {
-                        onFailure()
-                    }
-                }
-        } ?: kotlin.run {
-            onFailure()
-        }
-    }
-
-    private fun fetchOrderDetails(orderId: String, onSuccess: (OrderSummary) -> Unit, onFailure: () -> Unit) {
-        OneAppService.getOrderDetails(orderId).enqueue(CompletionHandler(object :
-            IResponseListener<OrderDetailsResponse> {
-            override fun onSuccess(ordersResponse: OrderDetailsResponse?) {
-                ordersResponse?.orderSummary?.let {
-                    onSuccess(it)
-                } ?: kotlin.run {
-                    onFailure()
-                }
-            }
-
-            override fun onFailure(error: Throwable?) {
-                onFailure()
-            }
-
-        }, OrderDetailsResponse::class.java))
-    }
-
-    private fun getRecipientChannelMember(channelId: String, onSuccess: (User) -> Unit, onFailure: () -> Unit) {
-        chatClient.getCurrentUser()?.let { currentUser ->
-            chatClient
-                .channel(channelId)
-                .queryMembers(0, 2, Filters.neutral()).enqueue { result ->
-                    if (result.isSuccess) {
-                        val member = result.data().last { x -> x.user.id != currentUser.id }
-                        onSuccess(member.user)
-                    } else {
-                        onFailure()
-                    }
-                }
-        } ?: kotlin.run {
-            onFailure()
-        }
-    }
-
-    private fun initializeOneCartStream() {
-        val notificationConfig = NotificationConfig(
-            pushDeviceGenerators = listOf(
-                if (Utils.isGooglePlayServicesAvailable())
-                    FirebasePushDeviceGenerator()
-                else
-                    HuaweiPushDeviceGenerator(
-                        WoolworthsApplication.getAppContext(),
-                        appId = HUAWEI_APP_ID
-                    )
-            )
-        )
-
-        chatClient = ChatClient.Builder(AppConfigSingleton.dashConfig?.inAppChat?.apiKey.toString(), WoolworthsApplication.getAppContext())
-            .logLevel(ChatLogLevel.ALL)
-            .notifications(ChatNotificationHandler(WoolworthsApplication.getAppContext(), notificationConfig))
-            .build()
-
-        ChatDomain.Builder(chatClient, WoolworthsApplication.getAppContext())
-            .userPresenceEnabled()
-            .offlineEnabled()
-            .build()
-    }
-
     private fun getChatChannelClient(orderId: String, channelId: String): ChannelClient {
         getChatChannelClient(orderId)?.let { return it } ?: kotlin.run {
             val channelClient = chatClient.channel(channelId)
@@ -399,7 +224,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                 if (WoolworthsApplication.getInstance().currentActivity != null &&
                     WoolworthsApplication.getInstance().currentActivity::class != OCChatActivity::class
                 ) {
-                    GlobalScope.launch(Dispatchers.Main) {
+                    CoroutineScope(Dispatchers.Main).launch {
                         val woolworthsApplication = WoolworthsApplication.getInstance()
                         woolworthsApplication?.currentActivity?.let {
                             it.window?.decorView?.rootView?.apply {
@@ -422,5 +247,251 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
 
     companion object {
         const val CHANNEL_ID = "ForegroundServiceChannelId"
+
+        fun getOrderIdForChannel(channelId: String, onSuccess: (String) -> Unit, onFailure: () -> Unit) {
+            val chatClient = getOneCartStreamChatClient()
+            authenticateOneCart(
+                onSuccess = { userId, displayName, token ->
+                    connectUser(
+                        userId,
+                        displayName,
+                        token,
+                        onSuccess = {
+                            fetchOrdersPendingPicking { pendingOrders ->
+                                if (!pendingOrders.isNullOrEmpty()) {
+                                    var countOrderDetailsRemaining = pendingOrders.size
+                                    var ordersSummary = ArrayList<OrderSummary>()
+
+                                    val fnGetChannelForOrders = {
+                                        getRecipientChannelMember(
+                                            chatClient,
+                                            channelId,
+                                            onSuccess = { member ->
+                                                ordersSummary.firstOrNull { !it.shopperId.isNullOrEmpty() && member.id.contains(it.shopperId!!) }?.let { orderForChannel ->
+                                                    orderForChannel.orderId?.let { orderId ->
+                                                        onSuccess(orderId)
+                                                    } ?: kotlin.run {
+                                                        onFailure()
+                                                    }
+                                                }
+                                            },
+                                            onFailure = {
+                                                // TODO: handle negative scenario
+                                                onFailure()
+                                            }
+                                        )
+                                    }
+
+                                    pendingOrders.forEach { order ->
+                                        fetchOrderDetails(
+                                            order.orderId,
+                                            onSuccess = { orderSummary ->
+                                                ordersSummary.add(orderSummary)
+                                                countOrderDetailsRemaining -= 1
+                                                if (countOrderDetailsRemaining == 0) {
+                                                    fnGetChannelForOrders()
+                                                }
+                                            },
+                                            onFailure = {
+                                                // TODO: handle negative scenario
+                                                countOrderDetailsRemaining -= 1
+                                                if (countOrderDetailsRemaining == 0) {
+                                                    fnGetChannelForOrders()
+                                                }
+                                            }
+                                        )
+                                    }
+
+                                } else {
+                                    // TODO: No pending order - do we need to handle anything?
+                                    // This would mean that a push notification was received, but no order matched that notification's data
+                                    onFailure()
+                                }
+                            }
+                        },
+                        onFailure = {
+                            // TODO: handle negative scenario
+                            onFailure()
+                        }
+                    )
+                },
+                onFailure = {
+                    // TODO: handle negative scenario
+                    onFailure()
+                }
+            )
+        }
+
+        private fun getOneCartStreamChatClient(): ChatClient {
+            val notificationConfig = NotificationConfig(
+                pushDeviceGenerators = listOf(
+                    if (Utils.isGooglePlayServicesAvailable())
+                        FirebasePushDeviceGenerator()
+                    else
+                        HuaweiPushDeviceGenerator(
+                            WoolworthsApplication.getAppContext(),
+                            appId = HUAWEI_APP_ID
+                        )
+                )
+            )
+
+            val chatClient = ChatClient.Builder(AppConfigSingleton.dashConfig?.inAppChat?.apiKey.toString(), WoolworthsApplication.getAppContext())
+                .logLevel(ChatLogLevel.ALL)
+                .notifications(ChatNotificationHandler(WoolworthsApplication.getAppContext(), notificationConfig))
+                .build()
+
+            ChatDomain.Builder(chatClient, WoolworthsApplication.getAppContext())
+                .userPresenceEnabled()
+                .offlineEnabled()
+                .build()
+
+            return chatClient
+        }
+
+        private fun authenticateOneCart(onSuccess: (String, String, String) -> Unit, onFailure: () -> Unit) {
+            OneAppService.authenticateOneCart().apply {
+                enqueue(CompletionHandler(object : IResponseListener<OCAuthenticationResponse> {
+                    override fun onSuccess(response: OCAuthenticationResponse?) {
+                        response?.apply {
+                            onSuccess(details.userId, details.name, details.token)
+                        } ?: kotlin.run {
+                            onFailure()
+                        }
+                    }
+
+                    override fun onFailure(error: Throwable?) {
+                        onFailure()
+                    }
+                }, OCAuthenticationResponse::class.java))
+            }
+        }
+
+        private fun connectUser(userId: String, displayName: String, token: String, onSuccess: () -> Unit, onFailure: () -> Unit) {
+            val currentUser = ChatClient.instance().getCurrentUser()
+            currentUser?.let {
+                onFailure()
+                return
+            }
+
+            val chatUser = User().apply {
+                id = userId
+                name = displayName
+            }
+
+            ChatClient.instance().connectUser(chatUser, token)
+                .enqueue { result ->
+                    if (result.isSuccess) {
+                        ChatClient.instance().getDevices().enqueue {
+                            if (it.isSuccess) {
+                                val devices = it.data()
+                                for (device in devices) {
+                                    ChatClient.instance().deleteDevice(device).enqueue()
+                                }
+                                ChatClient
+                                    .instance()
+                                    .addDevice(
+                                        if (Utils.isGooglePlayServicesAvailable())
+                                            Device(
+                                                WoolworthsApplication.getInstance().oneCartChatFirebaseToken,
+                                                PushProvider.FIREBASE
+                                            )
+                                        else
+                                            Device (
+                                                Utils.getToken(), // Since Stream uses Woolworths details for Huawei, we can use our own HMS cached token
+                                                PushProvider.HUAWEI
+                                            )
+                                    )
+                                    .enqueue()
+
+                                onSuccess()
+                            } else {
+                                onFailure()
+                            }
+                        }
+                    } else {
+                        onFailure()
+                    }
+                }
+        }
+
+        private fun fetchOrdersPendingPicking(onCompletion: (ArrayList<Order>?) -> Unit) {
+            OneAppService.getOrders().apply {
+                enqueue(CompletionHandler(object : IResponseListener<OrdersResponse> {
+                    override fun onSuccess(ordersResponse: OrdersResponse?) {
+                        ordersResponse?.upcomingOrders?.filter { it.deliveryStatus?.Food?.equals(ORDER_PENDING_PICKING) == true }?.let {
+                            onCompletion(ArrayList(it))
+                        } ?: kotlin.run {
+                            onCompletion(null)
+                        }
+                    }
+
+                    override fun onFailure(error: Throwable?) {
+                        onCompletion(null)
+                    }
+                }, OrdersResponse::class.java))
+            }
+        }
+
+        private fun fetchChannels(chatClient: ChatClient, onSuccess: (List<Channel>) -> Unit, onFailure: () -> Unit) {
+            chatClient.getCurrentUser()?.let { currentUser ->
+                val filter = Filters.and(
+                    Filters.`in`("members", listOf<String>(currentUser.id))
+                )
+                val sort = QuerySort.desc<Channel>("created_at")
+                val request = QueryChannelsRequest(
+                    filter = filter,
+                    querySort = sort,
+                    limit = 10,
+                    messageLimit = 35
+                )
+
+                chatClient
+                    .queryChannels(request)
+                    .enqueue { result ->
+                        if (result.isSuccess) {
+                            onSuccess(result.data())
+                        } else {
+                            onFailure()
+                        }
+                    }
+            } ?: kotlin.run {
+                onFailure()
+            }
+        }
+
+        private fun fetchOrderDetails(orderId: String, onSuccess: (OrderSummary) -> Unit, onFailure: () -> Unit) {
+            OneAppService.getOrderDetails(orderId).enqueue(CompletionHandler(object :
+                IResponseListener<OrderDetailsResponse> {
+                override fun onSuccess(ordersResponse: OrderDetailsResponse?) {
+                    ordersResponse?.orderSummary?.let {
+                        onSuccess(it)
+                    } ?: kotlin.run {
+                        onFailure()
+                    }
+                }
+
+                override fun onFailure(error: Throwable?) {
+                    onFailure()
+                }
+
+            }, OrderDetailsResponse::class.java))
+        }
+
+        private fun getRecipientChannelMember(chatClient: ChatClient, channelId: String, onSuccess: (User) -> Unit, onFailure: () -> Unit) {
+            chatClient.getCurrentUser()?.let { currentUser ->
+                chatClient
+                    .channel(channelId)
+                    .queryMembers(0, 2, Filters.neutral()).enqueue { result ->
+                        if (result.isSuccess) {
+                            val member = result.data().last { x -> x.user.id != currentUser.id }
+                            onSuccess(member.user)
+                        } else {
+                            onFailure()
+                        }
+                    }
+            } ?: kotlin.run {
+                onFailure()
+            }
+        }
     }
 }
