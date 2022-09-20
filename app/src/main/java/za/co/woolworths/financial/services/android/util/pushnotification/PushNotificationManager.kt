@@ -26,9 +26,9 @@ class PushNotificationManager {
         private const val PAYLOAD_FEATURE = "feature"
         private const val PAYLOAD_TITLE = "title"
         private const val PAYLOAD_BODY = "body"
-        private const val PAYLOAD_STREAM_CHANNEL = "channel"
-        private const val PAYLOAD_STREAM_CHANNEL_ID = "id"
-        private const val PAYLOAD_STREAM_CHANNEL_TYPE = "type"
+        const val PAYLOAD_STREAM_CHANNEL = "channel"
+        const val PAYLOAD_STREAM_CHANNEL_ID = "id"
+        const val PAYLOAD_STREAM_CHANNEL_TYPE = "type"
         private const val FEATURE_ORDER_DETAILS = "Order Details"
         private const val FEATURE_PRODUCT_LISTING = "Product Listing"
 

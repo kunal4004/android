@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.startup.view
 
 import android.app.Activity
+import android.app.PendingIntent
 import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Color
@@ -21,6 +22,8 @@ import com.awfs.coordination.R
 import com.google.firebase.crashlytics.internal.common.CommonUtils
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_splash_screen.*
 import kotlinx.android.synthetic.main.activity_startup.*
 import kotlinx.android.synthetic.main.activity_startup_without_video.*
@@ -37,10 +40,12 @@ import za.co.woolworths.financial.services.android.startup.service.repository.St
 import za.co.woolworths.financial.services.android.startup.utils.ConfigResource
 import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModel
 import za.co.woolworths.financial.services.android.startup.viewmodel.ViewModelFactory
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
+import za.co.woolworths.financial.services.android.util.pushnotification.PushNotificationManager
 
 class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     View.OnClickListener {
@@ -455,7 +460,32 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
             )
             ScreenManager.presentMain(this@StartupActivity, bundle)
         } else if (appLinkData is Bundle && appLinkData.containsKey(AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID)) {
+            // Push notification created by Messaging Service, when app was active and foreground
             val channelId = appLinkData[AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID] as String
+            DashChatMessageListeningService.getOrderIdForChannel(
+                this,
+                channelId,
+                onSuccess = { orderId ->
+                    // TODO: we can also send the channelId here. Send as part of parameters if it can be used to directly open that channel. Logic to be added to OCChatActivity.
+                    val bundle = bundleOf(
+                        "feature" to AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID,
+                        "parameters" to "{\"${AppConstant.ORDER_ID}\": \"${orderId}\"}"
+                    )
+                    ScreenManager.presentMain(this@StartupActivity, bundle)
+                },
+                onFailure = {
+                    ScreenManager.presentMain(this@StartupActivity)
+                }
+            )
+        } else if (appLinkData is Bundle && appLinkData.containsKey(PushNotificationManager.PAYLOAD_STREAM_CHANNEL)) {
+            // Push notification created by OS, when app was inactive
+            val streamChannelJson = appLinkData[PushNotificationManager.PAYLOAD_STREAM_CHANNEL] as String
+            val streamChannelParameters = Gson().fromJson(
+                streamChannelJson,
+                JsonObject::class.java
+            )
+            // Stream Channel's cid needs to be in the format channelType:channelId. For example, messaging:123
+            val channelId = "${streamChannelParameters[PushNotificationManager.PAYLOAD_STREAM_CHANNEL_TYPE].asString}:${streamChannelParameters[PushNotificationManager.PAYLOAD_STREAM_CHANNEL_ID].asString}"
             DashChatMessageListeningService.getOrderIdForChannel(
                 this,
                 channelId,
