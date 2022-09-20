@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
+import com.awfs.coordination.BuildConfig
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.RemoveBlockDcMainFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,7 +30,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.PayMyAccountButtonTap
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.PayMyAccountScreen
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.overlay.DisplayInArrearsPopup
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StoreCardActivityResultCallback
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.availablefunds.AvailableFundsCommand
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.availablefunds.AvailableFundsViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
@@ -61,20 +61,19 @@ class AccountInDelinquencyFragment : Fragment(R.layout.remove_block_dc_main_frag
 
     private lateinit var mDisplayInArrearsPopup: DisplayInArrearsPopup
 
-    @Inject lateinit var storeCardActivityResultCallback : StoreCardActivityResultCallback
     private lateinit var binding: RemoveBlockDcMainFragmentBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding = RemoveBlockDcMainFragmentBinding.bind(view)
-        statusBarCompat.setLightStatusAndNavigationBar()
-        setupToolbar()
-        setInArrearsPopup(binding)
-        binding.setupView()
-        binding.subscribeObservers()
-        binding.setListeners()
-        binding.setFragmentResultListener()
-        binding.autoConnectPMA()
+            binding = RemoveBlockDcMainFragmentBinding.bind(view)
+            statusBarCompat.setLightStatusAndNavigationBar()
+            setupToolbar()
+            setInArrearsPopup(binding)
+            binding.setupView()
+            binding.subscribeObservers()
+            binding.setListeners()
+            binding.setFragmentResultListener()
+            binding.autoConnectPMA()
     }
 
     private fun setInArrearsPopup(
@@ -96,6 +95,11 @@ class AccountInDelinquencyFragment : Fragment(R.layout.remove_block_dc_main_frag
                     binding.setHelpWithPaymentViewVisibility(eligibilityPlan)
                 }
             }
+
+        homeViewModel.eligibilityPlan?.let {
+            binding.setHelpWithPaymentViewLabel(it)
+            binding.setHelpWithPaymentViewVisibility(it)
+        }
     }
 
     private fun RemoveBlockDcMainFragmentBinding.setHelpWithPaymentViewVisibility(plan: EligibilityPlan?) {
@@ -122,7 +126,7 @@ class AccountInDelinquencyFragment : Fragment(R.layout.remove_block_dc_main_frag
         }
 
         with(mDisplayInArrearsPopup) {
-            collectCheckEligibilityResult { isLoading -> if (isLoading) binding.setHelpWithPaymentViewVisibility(null) }
+            collectCheckEligibilityResult{}
             setupInArrearsPopup(homeViewModel.showAccountInArrearsPopup)
         }
     }
@@ -137,8 +141,11 @@ class AccountInDelinquencyFragment : Fragment(R.layout.remove_block_dc_main_frag
             }
 
             setOnAccountInArrearsTapListener {
-                homeViewModel.showAccountInArrearsPopup = true
-                mDisplayInArrearsPopup.setupInArrearsPopup(homeViewModel.showAccountInArrearsPopup) }
+                if (BuildConfig.DEBUG) {
+                    homeViewModel.showAccountInArrearsPopup = true
+                    mDisplayInArrearsPopup.setupInArrearsPopup(homeViewModel.showAccountInArrearsPopup)
+                }
+            }
         }
     }
 

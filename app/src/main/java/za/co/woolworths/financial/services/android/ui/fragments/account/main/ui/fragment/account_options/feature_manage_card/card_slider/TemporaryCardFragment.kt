@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -51,7 +52,7 @@ class TemporaryCardFragment : Fragment(R.layout.instant_store_card_replacement_c
         binding.accountHolderNameTextView.text = KotlinUtils.getCardHolderNameSurname()
         binding.accountHolderNameTextView.visibility = VISIBLE
         binding.accountHolderNameTextView.setTextColor(Color.BLACK)
-        binding.tempCardLabel.visibility = VISIBLE
-        binding.cardLabel.visibility = VISIBLE
+        binding.tempCardLabel.visibility = GONE
+        binding.cardLabel.visibility = GONE
     }
 }

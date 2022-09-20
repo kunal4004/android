@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing
 
-
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -63,6 +62,8 @@ class AccountProductsHomeViewModel @Inject constructor(
     }
 
     var eligibilityPlan : EligibilityPlan? = null
+
+    var isFromInformationUI : Boolean = false
 
     private val _viewState = MutableSharedFlow<List<AccountOptionsScreenUI>>()
     val viewState: SharedFlow<List<AccountOptionsScreenUI>> = _viewState

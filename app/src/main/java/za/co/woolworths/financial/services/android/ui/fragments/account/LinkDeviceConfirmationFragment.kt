@@ -17,7 +17,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.current_location_row_layout.*
 import kotlinx.android.synthetic.main.fragment_link_device_from_account_prod.*
 import kotlinx.android.synthetic.main.layout_link_device_result.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -27,15 +26,13 @@ import za.co.woolworths.financial.services.android.ui.activities.account.LinkDev
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationInterface
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.personal_loan.PersonalLoanFragment
-import za.co.woolworths.financial.services.android.ui.fragments.account.detail.StoreCardOptionsFragment
-import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator
-import java.util.*
 
 
 class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
@@ -211,12 +208,10 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
     }
 
     fun clearAllFlags(){
-        MyCardDetailFragment.apply {
+        StoreCardActivity.apply {
             FREEZE_CARD_DETAIL = false
             BLOCK_CARD_DETAIL = false
             PAY_WITH_CARD_DETAIL = false
-        }
-        StoreCardOptionsFragment.apply {
             GET_REPLACEMENT_CARD_DETAIL = false
             ACTIVATE_VIRTUAL_CARD_DETAIL = false
         }

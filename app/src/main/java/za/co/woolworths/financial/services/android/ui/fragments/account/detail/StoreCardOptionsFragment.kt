@@ -33,6 +33,10 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.ACTIVATE_VIRTUAL_CARD_DETAIL
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.GET_REPLACEMENT_CARD_DETAIL
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.SHOW_GET_REPLACEMENT_CARD_SCREEN
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
@@ -343,13 +347,6 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
         }
     }
 
-    companion object {
-        var SHOW_GET_REPLACEMENT_CARD_SCREEN = false
-        var GET_REPLACEMENT_CARD_DETAIL = false
-        var SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = false
-        var ACTIVATE_VIRTUAL_CARD_DETAIL = false
-    }
-
     private fun getReplacementCard() {
         mCardPresenterImpl?.apply {
             activity?.apply {
@@ -405,7 +402,7 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
         mCardPresenterImpl?.apply {
             when (v?.id) {
                 R.id.includeManageMyCard, R.id.cardDetailImageView -> {
-                    if (storeCardDetailShimmer?.isShimmerStarted == true) return
+                   // if (storeCardDetailShimmer?.isShimmerStarted == true) return
                     cancelRetrofitRequest(mOfferActiveCall)
                     when (manageMyCardTextView?.text?.toString()) {
                         bindString(R.string.replacement_card_label) -> {

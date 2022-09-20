@@ -78,6 +78,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.device_security.verifyAppInstanceId
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiFailureHandler
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
@@ -1179,6 +1180,8 @@ class KotlinUtils {
             }
         }
 
+
+
         fun getPreferredDeliveryType(): Delivery? {
             return Delivery.getType(
                 Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType ?: Delivery.STANDARD.type
@@ -1423,6 +1426,7 @@ class KotlinUtils {
                 true
             )
         }
+
     }
 }
 fun Group.setAlphaForGroupdViews(alpha: Float) = referencedIds.forEach {

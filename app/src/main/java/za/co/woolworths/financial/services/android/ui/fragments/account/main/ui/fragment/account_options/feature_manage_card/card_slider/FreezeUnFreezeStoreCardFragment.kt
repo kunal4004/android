@@ -50,11 +50,11 @@ class FreezeUnFreezeStoreCardFragment : Fragment(R.layout.freeze_unfreeze_card_f
                 binding.freezeUnfreezeShimmerLayout.showShimmer(false)
                 binding.freezeUnfreezeShimmerLayout.stopShimmer()
             }
-            setCardImage(card, binding)
-            binding.storeCardImageView.onClick {
-                (requireActivity() as? StoreCardActivity)?.apply {
-                    accountViewModel.emitEventOnCardTap(card)
-                }
+        }
+        setCardImage(card, binding)
+        binding.storeCardImageView.onClick {
+            (requireActivity() as? StoreCardActivity)?.apply {
+                accountViewModel.emitEventOnCardTap(card)
             }
         }
     }

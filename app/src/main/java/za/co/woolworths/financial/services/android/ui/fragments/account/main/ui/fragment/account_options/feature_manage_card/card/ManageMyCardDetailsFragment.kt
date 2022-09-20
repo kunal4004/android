@@ -16,6 +16,9 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.StoreCardInfo
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.SystemBarCompat
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.SHOW_BLOCK_CARD_SCREEN
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.SHOW_GET_REPLACEMENT_CARD_SCREEN
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StoreCardActivityResultCallback
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
@@ -150,7 +153,26 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
                         viewModel
                     )
                 }
-                else -> Unit
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (SHOW_GET_REPLACEMENT_CARD_SCREEN) {
+            SHOW_GET_REPLACEMENT_CARD_SCREEN = false
+            viewLifecycleOwner.lifecycleScope.launch {
+                router.navigateToGetReplacementCard(requireActivity())
+            }
+        } else if (SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN) {
+            SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = false
+            viewLifecycleOwner.lifecycleScope.launch {
+                router.navigateToTemporaryStoreCard(requireActivity())
+            }
+        } else if (SHOW_BLOCK_CARD_SCREEN) {
+            SHOW_BLOCK_CARD_SCREEN = false
+            viewLifecycleOwner.lifecycleScope.launch {
+                mOnItemClickListener?.onBlockCardTap()
             }
         }
     }

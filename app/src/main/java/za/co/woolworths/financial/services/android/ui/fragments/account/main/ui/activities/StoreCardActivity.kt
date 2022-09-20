@@ -173,4 +173,17 @@ class StoreCardActivity : AppCompatActivity() {
             viewModel.requestGetStoreCardCards()
         }
     }
+
+    companion object {
+        var SHOW_TEMPORARY_FREEZE_DIALOG = false
+        var FREEZE_CARD_DETAIL = false
+        var SHOW_BLOCK_CARD_SCREEN = false
+        var BLOCK_CARD_DETAIL = false
+        var SHOW_PAY_WITH_CARD_SCREEN = false
+        var PAY_WITH_CARD_DETAIL = false
+        var SHOW_GET_REPLACEMENT_CARD_SCREEN = false
+        var GET_REPLACEMENT_CARD_DETAIL = false
+        var SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = false
+        var ACTIVATE_VIRTUAL_CARD_DETAIL = false
+    }
 }

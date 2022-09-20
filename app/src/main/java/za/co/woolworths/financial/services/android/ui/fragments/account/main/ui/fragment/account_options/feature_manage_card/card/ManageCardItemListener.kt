@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card
 
 import android.app.Activity
+import android.util.Log
 import android.view.View
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountOptionsManageCardListFragmentBinding
@@ -15,8 +16,7 @@ class ManageCardItemListener(
     private val includeListOptions: AccountOptionsManageCardListFragmentBinding,
 ) : (View?) -> Unit {
     val onClickIntentObserver = SingleLiveEvent<CallBack>()
-
-
+    var isDeviceLinked :Boolean = true
     init {
         setOnClickListener()
     }
@@ -37,12 +37,21 @@ class ManageCardItemListener(
             R.id.linkNewCardRelativeLayout -> {  router.routeToLinkNewCard(activity) }
             R.id.activateVirtualTempCardRelativeLayout ->{  router.routeToActivateVirtualTempCard(activity) }
             R.id.replacementCardRelativeLayout ->{  router.routeToGetReplacementCard(activity) }
-            R.id.blockCardRelativeLayout ->{  router.routeToBlockCard(activity) }
+            R.id.blockCardRelativeLayout ->{  router.routeToBlockCard(activity, isDeviceLinked = isDeviceLinked) }
             else -> null
         }
     }
 
     fun navigateToActivateVirtualTempCard() {
+        isDeviceLinked = false
         includeListOptions.activateVirtualTempCardRelativeLayout.performClick()
+        isDeviceLinked = true
     }
+
+    fun onBlockCardTap() {
+        isDeviceLinked = false
+        includeListOptions.blockCardRelativeLayout.performClick()
+        isDeviceLinked = true
+    }
+
 }

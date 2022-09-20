@@ -18,6 +18,9 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.SHOW_BLOCK_CARD_SCREEN
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.SHOW_GET_REPLACEMENT_CARD_SCREEN
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StoreCardActivityResultCallback
@@ -37,10 +40,6 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
 
     companion object {
         val AccountOptionsLandingKey: String by lazy { AccountOptionsManageCardFragment::class.java.simpleName }
-        var SHOW_GET_REPLACEMENT_CARD_SCREEN = false
-        var GET_REPLACEMENT_CARD_DETAIL = false
-        var SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = false
-        var ACTIVATE_VIRTUAL_CARD_DETAIL = false
     }
 
     @Inject
@@ -257,6 +256,11 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
             SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = false
             viewLifecycleOwner.lifecycleScope.launch {
                 router.navigateToTemporaryStoreCard(requireActivity())
+            }
+        } else if (SHOW_BLOCK_CARD_SCREEN) {
+            SHOW_BLOCK_CARD_SCREEN = false
+            viewLifecycleOwner.lifecycleScope.launch {
+                mOnItemClickListener.onBlockCardTap()
             }
         }
     }
