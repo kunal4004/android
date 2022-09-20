@@ -527,22 +527,13 @@ class ConfirmAddressMapFragment :
     }
 
     private fun showSearchBarHint() {
-        errorMessage?.visibility = View.VISIBLE
+        errorMessage?.visibility = View.GONE
         errorMassageDivider?.visibility = View.VISIBLE
-        errorMessage?.text = getString(R.string.enter_address_for_google_map_hint)
-
-        errorMessage?.setTextColor(ContextCompat.getColor(
-            requireContext(),
-            R.color.white
-        ))
-        errorMessage?.setBackgroundColor(ContextCompat.getColor(
-            requireContext(),
-            R.color.color_222222
-        ))
+        searchBarTipHint?.visibility = View.VISIBLE
     }
 
     private fun hideSearchBarHint() {
-        errorMessage?.visibility = View.GONE
+        searchBarTipHint?.visibility = View.GONE
         errorMassageDivider?.visibility = View.GONE
     }
 
