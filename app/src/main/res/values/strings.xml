@@ -320,7 +320,7 @@
 
     <string name="stock_finder_map_view">map view</string>
     <string name="stock_finder_list_view">list view</string>
-    <string name="stock_finder_btn_label">find in-store</string>
+    <string name="stock_finder_btn_label">find in store</string>
     <string name="find_in_store_info">We update these numbers every few hours. Stock moves quickly, so items may have sold since the last count.</string>
     <string name="confirm_color_desc">select your colour</string>
     <string name="confirm_size_desc">select your size</string>
@@ -718,7 +718,7 @@
     <string name="update_title">Update Available</string>
     <string name="update_desc">Please update to the latest version of the App.</string>
     <string name="my_card_title">My Card</string>
-    <string name="my_card">MY CARD</string>
+    <string name="my_card">MY CARD%1$s</string>
     <string name="card_number_title">Card Number:</string>
     <string name="card_holder_title">Cardholder:</string>
     <string name="manage">Manage</string>
@@ -732,7 +732,7 @@
     <string name="processing_your_request_desc">This may take a few seconds</string>
     <string name="blocked">BLOCKED</string>
     <string name="no_active_card">No Active Card</string>
-    <string name="card_block_desc">Your card has been blocked and can no longer be used.</string>
+    <string name="card_block_desc">Your card has been blocked and can\nno longer be used.</string>
     <string name="card_block_replacement_card_disabled_desc">Your card has been blocked and can no longer be used. Call 0861 50 20 20 to arrange for delivery.</string>
     <string name="get_replacement_card">get replacement card</string>
     <string name="get_a_replacement_card">Get A Replacement Card</string>
@@ -1586,8 +1586,8 @@
     <string name="select_your_collection_store">Select your collection store:</string>
     <string name="select_your_delivery_location">Select your delivery location:</string>
     <string name="remove_these_items_continue">remove these items &amp; continue</string>
-    <string name="item_not_available_for_collection_title">Item not available for collection</string>
-    <string name="item_not_available_for_collection_desc">To purchase, please try find in-store or change location for delivery.</string>
+    <string name="item_not_available_for_collection_title">Item not available</string>
+    <string name="item_not_available_for_collection_desc">To purchase, please try \'Find In Store\', or change delivery option to Standard.</string>
     <string name="change_delivery_option">CHANGE DELIVERY OPTION</string>
     <string name="remove_items_dialog_title">These items will be removed</string>
     <string name="remove_items_dialog_desc">We always show you items available at the store closest to your location. When you change this location, the items you see may change too.</string>
@@ -1764,7 +1764,7 @@
     <string name="first_available_food_delivery_date_store">The earliest collection slot we have available for %1$s is &lt;b>%2$s&lt;/b></string>
     <string name="confirm_store">Confirm Store</string>
     <string name="confirm_suburb">Confirm Suburb</string>
-    <string name="manage_my_card_title">Manage My Card</string>
+    <string name="manage_my_card_title">Manage My Card%1$s</string>
     <string name="activate_vtc_title">Activate Virtual Temp Card</string>
     <string name="temporary_card_freeze_title">Temporary Card Freeze</string>
     <string name="freeze_temporary_card_title">Temporary Card Freeze</string>
@@ -2449,8 +2449,8 @@
     <string name="unavailable_item">Unfortunately this item is unavailable in %1$s. Try changing your delivery location and try again.</string>
     <string name="out_of_stock_item">Unfortunately this item is out of stock in %1$s. Try changing your delivery location and try again.</string>
     <string name="absa_statement_error_try_again_later">We\'re unable to retrieve your Statement. Please try again later.</string>
-    <string name="confirm_your_address">Confirm Your Address</string>
-    <string name="we_use_your_location_to_give_you_the_most_naccurate_stock_availabilty_and_pricing">We use your location to give you the most \naccurate stock availability and pricing.</string>
+    <string name="confirm_your_loc">Confirm Your Location</string>
+    <string name="we_use_your_location_to_give_you_the_most_naccurate_stock_availabilty_and_pricing">You can use an address, the name of a complex, or your closest landmark (e.g. a Woolies store).</string>
     <string name="enter_new_location">Enter new location</string>
     <string name="my_saved_addresses">My Saved Addresses</string>
     <string name="current_location">Current Location</string>
@@ -2468,6 +2468,7 @@
     <string name="treatment_plan_desc_2">Make payments on the Woolies app.</string>
     <string name="treatment_plan_desc_3">Track your payment plan history and schedule.</string>
     <string name="treatment_plan_desc_4">Simple and easy to manage from the palm of your hand.</string>
+    <string name="view_treatment_plan_caption">View Treatment Plan</string>
     <string name="geoloc_delivery">Standard Delivery</string>
     <string name="products_available_title">Products available:</string>
     <string name="item_limit">Item limit:</string>
@@ -2483,7 +2484,8 @@
     <string name="geoloc_ClickNCollectValue">28 Eastlake Isla...</string>
     <string name="collection_store_title">There Are No Collection Stores Available Near You</string>
     <string name="change_location">CHANGE LOCATION</string>
-    <string name="enter_your_street_number_and_name">Enter your street number and name</string>
+    <string name="enter_your_street_number_and_name">Enter your Location</string>
+    <string name="enter_address_for_google_map_hint">Use an address, the name of a complex, or your closest landmark.</string>
     <string name="no_location_title">We Can’t Deliver \n To This Location Yet.</string>
     <string name="no_location_desc">However, we’re growing quickly, \n so please check back soon</string>
     <string name="confirm_delivery_location_title">Confirm Your Delivery Location</string>
@@ -2511,7 +2513,8 @@
     <string name="standard_delivery">Standard Delivery</string>
     <string name="click_and_collect">Click &amp; Collect</string>
     <string name="click_and_collect_title_text">Free Collection. \n Limited shop of %1$s Items.</string>
-    <string name="dash_title_text">R%1$s Delivery Fee. \n Limited shop of %2$s Items.</string>
+    <string name="dash_title_text_1">R%1$s Delivery Fee. \n </string>
+    <string name="dash_title_text_2">Limited shop of %1$s Items.</string>
     <string name="dash_delivery">Dash Delivery</string>
     <string name="dash_delivery_bold"><b>Dash Delivery</b></string>
     <string name="dash_product_search">Search name, product code or brand</string>
@@ -2594,7 +2597,7 @@
     <string name="vtsc_card_not_arrived_notified_desc">A customer service agent will be in touch to arrange VIP delivery.</string>
 
     <string name="product_details_color_count">+ %d More</string>
-    <string name="geo_loc_error_msg">We can’t seem to find you. Please enter number and name of your street ,or drag the pin to your exact location.</string>
+    <string name="geo_loc_error_msg">We can’t seem to find you. Please enter the number and name of your street, the location of your closest landmark, or drag the pin to your exact location.</string>
     <string name="geo_loc_error_msg_on_edit_address">We can’t seem to find you. Please enter number and name of your street, to get
         your exact location.</string>
     <string name="fashion_beauty_geo">Fashion,Beauty,Home</string>
@@ -2610,6 +2613,7 @@
     <string name="view_your_payment_plan">VIEW PAYMENT PLAN</string>
     <string name="total_amount_you_saving">This is the total amount you are saving as agreed \n upon in your settlement plan</string>
     <string name="pay_now">PAY NOW</string>
+
     <string name="account_in_recovery_label">Account in Recovery</string>
     <string name="account_in_recovery_desc">Your account is in arrears. Have you already agreed to a repayment plan? View your plan or make a payment now.</string>
 
@@ -2670,6 +2674,10 @@
     <string name="enquiry_failed">Failed To Send Enquiry.</string>
     <string name="enter_valid_email">Please enter valid email.</string>
     <string name="create_list_and_add">create list and add</string>
+    <string name="card_label">card</string>
+    <string name="temp_card_label">temp</string>
+    <string name="virtual_temp_card_label">Virtual Temporary Card</string>
+    <string name="primary_card">Primary Card</string>
 
     <!-- Feature Walkthrough : Barcode Scanning  -->
     <string name="feature_barcode_scanning_title">BARCODE SCANNING</string>
@@ -2702,6 +2710,8 @@
     <string name="to_contact_customer_support_dial_0860_100_987">To contact Customer Support, dial</string>
     <string name="delete_my_account">Delete my account</string>
     <string name="your_online_profile_has_been_successfully_deleted">Your Online Profile Has Been Successfully Deleted</string>
+
+
     <string name="dash_order">Dash Order:</string>
     <string name="dash_email_type">plain/text</string>
 
@@ -2713,9 +2723,14 @@
     <string name="one_cart_chat_order_id">ORDER #%s</string>
     <string name="generic_error_something_wrong_newline">Unfortunately,\n Something Went Wrong</string>
     <string name="one_cart_chat_error_disc">We can’t seem to reach your shopper.\n Give them a few moments, and try again.</string>
+<string name="frozen_primary_card">Frozen Primary Card</string>
+    <string name="upshell_message_freeze_title">Freeze Card to Activate</string>
+    <string name="upshell_message_activate_virtual_card_title">Activate Virtual Card</string>
+    <string name="virtual_temp_card_detail">Your new card has been issued and will be delivered to you. Activate your Virtual Temp Card and use it to pay in-store</string>
 
 
     <string name="we_need_more_info">We Need More Info</string>
     <string name="enter_street_name">Please enter a street name for this location:</string>
+    <string name="your_shopper_is_trying_to">Your shopper is trying to \ncontact you.</string>
 
 </resources>

@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.util
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityOptions
+import android.app.Dialog
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -11,7 +12,9 @@ import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.InsetDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -20,6 +23,7 @@ import android.text.*
 import android.text.style.*
 import android.util.TypedValue
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
@@ -29,7 +33,10 @@ import android.widget.TextView
 import androidx.annotation.RawRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.Group
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import com.awfs.coordination.R
@@ -195,7 +202,7 @@ class KotlinUtils {
             }
         }
 
-        private fun AppCompatActivity.setWindowFlag(bits: Int, on: Boolean) {
+        fun AppCompatActivity.setWindowFlag(bits: Int, on: Boolean) {
             val winParams = window?.attributes
             winParams?.apply {
                 flags = if (on) {
@@ -270,6 +277,13 @@ class KotlinUtils {
             view.background = shape
         }
 
+        fun getCardHolderNameSurname(): String? {
+            val jwtDecoded = SessionUtilities.getInstance()?.jwt
+            val name = jwtDecoded?.name?.get(0)
+            val familyName = jwtDecoded?.family_name?.get(0)
+            return "$name $familyName"
+        }
+
         fun dpToPxConverter(dp: Int): Int {
             return (dp * Resources.getSystem().displayMetrics.density).toInt()
         }
@@ -302,10 +316,10 @@ class KotlinUtils {
 
 
         fun capitaliseFirstWordAndLetters(str: String): CharSequence? {
-            val value = str.toLowerCase()
+            val value = str.lowercase()
             val words = value.split(" ").toMutableList()
 
-            var output = words[0].toUpperCase() + " "
+            var output = words[0].uppercase() + " "
             words.removeAt(0)
             for (word in words) {
                 output += word.capitalize() + " "
@@ -872,6 +886,7 @@ class KotlinUtils {
             }
         }
 
+        fun String.capitaliseFirstLetterInEveryWord(): String = split(" ").map { it.lowercase().replaceFirstChar { it -> it.titlecase() } }.joinToString(" ")
         fun showGeneralInfoDialog(
             fragmentManager: FragmentManager,
             description: String,
@@ -1164,6 +1179,8 @@ class KotlinUtils {
             }
         }
 
+
+
         fun getPreferredDeliveryType(): Delivery? {
             return Delivery.getType(
                 Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType ?: Delivery.STANDARD.type
@@ -1252,6 +1269,8 @@ class KotlinUtils {
             return fulFillmentStoreId
         }
 
+
+
         fun getUniqueDeviceID(result: (String?) -> Unit) {
             val deviceID = Utils.getSessionDaoValue(KEY.DEVICE_ID)
             when (deviceID.isNullOrEmpty()) {
@@ -1290,10 +1309,16 @@ class KotlinUtils {
         fun hasADayPassed(dateString: String?): Boolean {
             // when dateString = null it means it's the first time to call api
             if (dateString == null) return true
-            val from = LocalDateTime.parse(
-                dateString,
-                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
-            )
+            val from = try {
+                LocalDateTime.parse(
+                    dateString,
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
+                ) }catch (e :Exception) {
+                LocalDateTime.parse(
+                    dateString,
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+                )
+            }
             val today = LocalDateTime.now()
             var period = ChronoUnit.DAYS.between(from, today)
             return if (period >= 1) {
@@ -1406,5 +1431,54 @@ class KotlinUtils {
                 true
             )
         }
+
+        @JvmStatic
+        fun showQuantityLimitErrror(
+            fragmentManager: FragmentManager?,
+            title: String,
+            desc: String = "Error message",
+            context: Context?
+        ) {
+            if (context == null || fragmentManager == null || getPreferredDeliveryType() != Delivery.DASH) {
+                return
+            }
+            showGeneralInfoDialog(
+                fragmentManager = fragmentManager,
+                description = desc,
+                title = title,
+                actionText = context.getString(R.string.got_it),
+                infoIcon = R.drawable.icon_dash_delivery_scooter
+            )
+        }
     }
 }
+
+fun Group.setAlphaForGroupdViews(alpha: Float) = referencedIds.forEach {
+    rootView.findViewById<View>(it).alpha = alpha
+}
+
+fun Fragment.setDialogPadding(dialog: Dialog?) {
+    val inset = 10
+    if (dialog != null) {
+        val width = (deviceWidth() - resources.getDimension(R.dimen._48sdp)).toInt()
+        val height = ViewGroup.LayoutParams.WRAP_CONTENT
+        dialog.window?.setLayout(width, height)
+        dialog.window?.setBackgroundDrawable(
+            InsetDrawable(
+                ColorDrawable(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.transparent
+                    )
+                ), inset, inset, inset, inset
+            )
+        )
+    }
+}
+
+
+
+
+
+
+

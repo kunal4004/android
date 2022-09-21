@@ -2,6 +2,8 @@ package za.co.woolworths.financial.services.android.repository.shop
 
 import android.location.Location
 import com.awfs.coordination.R
+import com.google.gson.Gson
+import com.google.gson.JsonParseException
 import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmDeliveryAddressResponse
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
@@ -85,7 +87,6 @@ class MainShopRepository : ShopRepository {
 
     override suspend fun addItemsToCart(mAddItemsToCart: MutableList<AddItemToCart>): Resource<AddItemToCartResponse> {
        return try {
-
             val response = OneAppService.addItemsToCart(mAddItemsToCart)
             if (response.isSuccessful) {
                 response.body()?.let {
@@ -97,7 +98,15 @@ class MainShopRepository : ShopRepository {
                     }
                 } ?: Resource.error(R.string.error_unknown, null)
             } else {
-                Resource.error(R.string.error_unknown, null)
+                var errorResponse : AddItemToCartResponse? = null
+                try {
+                   errorResponse = Gson().fromJson(
+                       response?.errorBody()?.charStream(),
+                       AddItemToCartResponse::class.java)
+                } catch (jsonException: JsonParseException) {
+                    FirebaseManager.logException(jsonException)
+                }
+                Resource.error(R.string.error_unknown, errorResponse)
             }
         } catch (e: IOException) {
             FirebaseManager.logException(e)

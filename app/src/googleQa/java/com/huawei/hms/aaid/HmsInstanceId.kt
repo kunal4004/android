@@ -8,7 +8,8 @@ import android.content.Context
  */
 class HmsInstanceId {
     companion object {
-        fun getInstance(context: Context): HmsInstanceId = HmsInstanceId()
+        @JvmStatic
+        fun getInstance(context: Context?): HmsInstanceId = HmsInstanceId()
     }
 
     fun getToken(appId: String, scope: String): String? = null
