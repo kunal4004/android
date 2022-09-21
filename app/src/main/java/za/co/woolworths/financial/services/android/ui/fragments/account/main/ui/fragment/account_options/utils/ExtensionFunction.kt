@@ -8,10 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
-import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.error_handler.GeneralErrorDialogPopupFragment
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment
 
 fun Fragment.setupGraph(
     @NavigationRes graphResId: Int,
@@ -48,3 +46,4 @@ fun showErrorDialog(activity: AppCompatActivity?, serverErrorResponse: ServerErr
         )
     }
 }
+

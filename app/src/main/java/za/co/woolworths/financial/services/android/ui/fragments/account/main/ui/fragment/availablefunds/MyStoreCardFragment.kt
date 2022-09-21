@@ -105,9 +105,7 @@ class MyStoreCardFragment @Inject constructor() :
                 }
             }
         }
-        mToolbarHelper?.setOnAccountInArrearsTapListener {
-            homeViewModel.showAccountInArrearsPopup = true
-            mDisplayInArrearsPopup.setupInArrearsPopup(homeViewModel.showAccountInArrearsPopup) }
+        mToolbarHelper?.setOnAccountInArrearsTapListener {}
     }
 
     private fun clickListeners() {

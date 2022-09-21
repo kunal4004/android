@@ -28,10 +28,13 @@ import za.co.woolworths.financial.services.android.ui.activities.store_card.Requ
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.HowToUseTemporaryStoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.device_security.linkMyDeviceIfNecessary
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ToastFactory
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountOptionsImpl
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.AccountOptionsManageCardFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.ACTIVATE_VIRTUAL_CARD_DETAIL
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.BLOCK_CARD_DETAIL
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.GET_REPLACEMENT_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_credit_limit_increase.CreditLimitIncreaseLanding
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.ManageMyCardDetailsFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.PayWithCardListFragmentDirections
@@ -39,7 +42,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.showErrorDialog
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
-import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -60,9 +62,9 @@ interface IProductLandingRouter {
 
     fun routeToLinkNewCard(activity: Activity?): CallBack
     fun routeToManageMyCard(activity: Activity): CallBack
-    fun routeToActivateVirtualTempCard(activity: Activity): CallBack?
+    fun routeToActivateVirtualTempCard(activity: Activity,isDeviceLinked : Boolean): CallBack?
     fun routeToGetReplacementCard(activity: Activity?): CallBack?
-    fun routeToBlockCard(activity: Activity): CallBack
+    fun routeToBlockCard(activity: Activity,isDeviceLinked : Boolean = true): CallBack
     fun routeToHowItWorks(
         activity: Activity?,
         isStaffMemberAndHasTemporaryCard: Boolean,
@@ -169,10 +171,10 @@ class ProductLandingRouterImpl @Inject constructor(
         }
     }
 
-    override fun routeToActivateVirtualTempCard(activity: Activity): CallBack? {
+    override fun routeToActivateVirtualTempCard(activity: Activity,isDeviceLinked : Boolean): CallBack? {
         var intent:Intent? = null
-        KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
-            AccountOptionsManageCardFragment.ACTIVATE_VIRTUAL_CARD_DETAIL = true
+        linkMyDeviceIfNecessary(activity = activity, isDeviceLinked = isDeviceLinked, ApplyNowState.STORE_CARD, {
+            ACTIVATE_VIRTUAL_CARD_DETAIL = true
         }, {
 
             val storeCardResponse =
@@ -181,6 +183,7 @@ class ProductLandingRouterImpl @Inject constructor(
                 activity,
                 storeCardResponse = storeCardResponse
             )
+            intent
 
         })
         return CallBack.IntentCallBack(intent)
@@ -191,7 +194,7 @@ class ProductLandingRouterImpl @Inject constructor(
 
         var selectStoreActivity: Intent? = null
         KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
-            AccountOptionsManageCardFragment.GET_REPLACEMENT_CARD_DETAIL = true
+            GET_REPLACEMENT_CARD_DETAIL = true
         }, {
             val storeCardResponse = manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_GET_CARD, activity)
@@ -214,19 +217,20 @@ class ProductLandingRouterImpl @Inject constructor(
         activity?.startActivity(selectStoreActivity)
     }
 
-    override fun routeToBlockCard(activity: Activity): CallBack {
+    override fun routeToBlockCard(activity: Activity,isDeviceLinked : Boolean): CallBack {
         val storeCardResponse = manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
         activity.apply {
-            val openBlockMyCardActivity = Intent(this, BlockMyCardActivity::class.java)
-
-            KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
-                MyCardDetailFragment.BLOCK_CARD_DETAIL = true
+            var openBlockMyCardActivity : Intent? = null
+            linkMyDeviceIfNecessary(activity = activity,isDeviceLinked = isDeviceLinked, state = ApplyNowState.STORE_CARD, {
+                BLOCK_CARD_DETAIL = true
             }, {
-                openBlockMyCardActivity.putExtra(
+                openBlockMyCardActivity = Intent(this, BlockMyCardActivity::class.java)
+                openBlockMyCardActivity?.putExtra(
                     MyCardDetailActivity.STORE_CARD_DETAIL,
                     Gson().toJson(storeCardResponse)
                 )
             })
+
             return CallBack.IntentCallBack(openBlockMyCardActivity)
         }
     }
@@ -280,7 +284,7 @@ class ProductLandingRouterImpl @Inject constructor(
         }
     }
 
-    fun navigateToGetTemporaryStoreCardPopupActivity(
+    private fun navigateToGetTemporaryStoreCardPopupActivity(
         activity: Activity,
         storeCardResponse: StoreCardsResponse,
         screenType: StoreCardViewType = StoreCardViewType.DEFAULT

@@ -15,8 +15,7 @@ class ManageCardItemListener(
     private val includeListOptions: AccountOptionsManageCardListFragmentBinding,
 ) : (View?) -> Unit {
     val onClickIntentObserver = SingleLiveEvent<CallBack>()
-
-
+    var isDeviceLinked :Boolean = true
     init {
         setOnClickListener()
     }
@@ -35,14 +34,23 @@ class ManageCardItemListener(
         onClickIntentObserver.value =  when (view?.id) {
             R.id.manageCardRelativeLayout ->{  router.routeToManageMyCard(activity) }
             R.id.linkNewCardRelativeLayout -> {  router.routeToLinkNewCard(activity) }
-            R.id.activateVirtualTempCardRelativeLayout ->{  router.routeToActivateVirtualTempCard(activity) }
+            R.id.activateVirtualTempCardRelativeLayout ->{  router.routeToActivateVirtualTempCard(activity, isDeviceLinked) }
             R.id.replacementCardRelativeLayout ->{  router.routeToGetReplacementCard(activity) }
-            R.id.blockCardRelativeLayout ->{  router.routeToBlockCard(activity) }
+            R.id.blockCardRelativeLayout ->{  router.routeToBlockCard(activity, isDeviceLinked = isDeviceLinked) }
             else -> null
         }
     }
 
     fun navigateToActivateVirtualTempCard() {
+        isDeviceLinked = false
         includeListOptions.activateVirtualTempCardRelativeLayout.performClick()
+        isDeviceLinked = true
     }
+
+    fun onBlockCardTap() {
+        isDeviceLinked = false
+        includeListOptions.blockCardRelativeLayout.performClick()
+        isDeviceLinked = true
+    }
+
 }

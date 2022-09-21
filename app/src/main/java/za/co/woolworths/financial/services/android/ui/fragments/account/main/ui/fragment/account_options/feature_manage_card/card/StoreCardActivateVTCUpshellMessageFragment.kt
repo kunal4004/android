@@ -35,7 +35,9 @@ class StoreCardActivateVTCUpshellMessageFragment :
         super.onViewCreated(view, savedInstanceState)
         val binding = StoreCardUpshellMessageFragmentBinding.bind(view)
         binding.storeCardImageView.setImageResource(R.drawable.virtual_temp_activate)
-        binding.storeCardImageView.onClick { viewModel.onUpshellMessageActivateTempCardTap.value = true }
+        binding.storeCardImageView.onClick {
+            viewModel.mStoreCardUpsellMessageFlagState.activateVirtualCardFlag()
+        }
     }
 
 }

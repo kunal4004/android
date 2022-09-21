@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard
 
+import android.location.Location
 import kotlinx.coroutines.flow.Flow
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
@@ -72,12 +73,12 @@ class StoreCardDataSource @Inject constructor(
             visionAccountNumber = visionAccountNumber,
             productOfferingId = productOfferingId
         )
-        val location = Utils.getLastSavedLocation()
+        val location : Location? = Utils.getLastSavedLocation()
         //TODO :: Retrieve Locations...
         requestPostAccountsStoreCardCards(
             deviceIdentityToken,
-            location.latitude,
-            location.longitude,
+            location?.latitude,
+            location?.longitude,
             storeCardRequest
         )
 

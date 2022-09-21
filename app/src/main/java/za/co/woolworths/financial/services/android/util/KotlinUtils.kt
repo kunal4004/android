@@ -1179,6 +1179,8 @@ class KotlinUtils {
             }
         }
 
+
+
         fun getPreferredDeliveryType(): Delivery? {
             return Delivery.getType(
                 Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType ?: Delivery.STANDARD.type
@@ -1307,10 +1309,16 @@ class KotlinUtils {
         fun hasADayPassed(dateString: String?): Boolean {
             // when dateString = null it means it's the first time to call api
             if (dateString == null) return true
-            val from = LocalDateTime.parse(
-                dateString,
-                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
-            )
+            val from = try {
+                LocalDateTime.parse(
+                    dateString,
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
+                ) }catch (e :Exception) {
+                LocalDateTime.parse(
+                    dateString,
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+                )
+            }
             val today = LocalDateTime.now()
             var period = ChronoUnit.DAYS.between(from, today)
             return if (period >= 1) {
@@ -1444,6 +1452,7 @@ class KotlinUtils {
         }
     }
 }
+
 fun Group.setAlphaForGroupdViews(alpha: Float) = referencedIds.forEach {
     rootView.findViewById<View>(it).alpha = alpha
 }
@@ -1466,3 +1475,10 @@ fun Fragment.setDialogPadding(dialog: Dialog?) {
         )
     }
 }
+
+
+
+
+
+
+

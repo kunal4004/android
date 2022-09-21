@@ -33,7 +33,7 @@ class StoreCardFreezeCardUpshellMessage : Fragment(R.layout.store_card_upshell_m
         binding.storeCardImageView.setImageResource(R.drawable.virtual_temp_freeze)
         val card = arguments?.getParcelable<StoreCardFeatureType?>(STORE_CARD_FEATURE_TYPE) as? StoreCardFeatureType.StoreCardIsTemporaryFreeze
         binding.storeCardImageView.onClick {
-            viewModel.onUpshellMessageFreezeCardTap.value = true
+            viewModel.mStoreCardUpsellMessageFlagState.activateFreezeStoreCardFlag()
             (requireActivity() as? StoreCardActivity)?.apply {
                 accountViewModel.emitEventOnCardTap(card)
             }

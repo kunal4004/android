@@ -18,6 +18,9 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.SHOW_BLOCK_CARD_SCREEN
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.SHOW_GET_REPLACEMENT_CARD_SCREEN
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.StoreCardActivityResultCallback
@@ -37,10 +40,6 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
 
     companion object {
         val AccountOptionsLandingKey: String by lazy { AccountOptionsManageCardFragment::class.java.simpleName }
-        var SHOW_GET_REPLACEMENT_CARD_SCREEN = false
-        var GET_REPLACEMENT_CARD_DETAIL = false
-        var SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = false
-        var ACTIVATE_VIRTUAL_CARD_DETAIL = false
     }
 
     @Inject
@@ -50,7 +49,7 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
     lateinit var connectivityLiveData: ConnectivityLiveData
 
     @Inject
-    lateinit var storeCardActivityResultCallback : StoreCardActivityResultCallback
+    lateinit var storeCardActivityResultCallback: StoreCardActivityResultCallback
 
     private lateinit var mOnItemClickListener: ManageCardItemListener
     private lateinit var mHeaderItems: ManageCardLandingHeaderItems
@@ -72,7 +71,8 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(AccountOptionsManageCardFragmentBinding.bind(view)) {
-            mHeaderItems = ManageCardLandingHeaderItems(viewModel, this, this@AccountOptionsManageCardFragment)
+            mHeaderItems =
+                ManageCardLandingHeaderItems(viewModel, this, this@AccountOptionsManageCardFragment)
             mItemList = ManageStoreCardLandingList(
                 cardFreezeViewModel,
                 includeListOptions,
@@ -102,27 +102,20 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
     private fun AccountOptionsManageCardFragmentBinding.setOnClickListener() {
         mOnItemClickListener = ManageCardItemListener(requireActivity(), router, includeListOptions)
         mOnItemClickListener.onClickIntentObserver.observe(viewLifecycleOwner) {
-                    when (it) {
-                        is CallBack.IntentCallBack -> {
-                            it.intent?.let { intent ->
-                                launchStoreCard(intent)
-                            }
-                        }
-                        else -> Unit
+            when (it) {
+                is CallBack.IntentCallBack -> {
+                    it.intent?.let { intent ->
+                        launchStoreCard(intent)
                     }
                 }
+                else -> Unit
+            }
+        }
 
 
 
         manageCardText.onClick {
             viewModel.emitEventOnCardTap(viewModel.mStoreCardFeatureType)
-        }
-
-        cardFreezeViewModel.onUpshellMessageActivateTempCardTap.observe(viewLifecycleOwner){ wasTapped ->
-            if (wasTapped){
-                mOnItemClickListener.navigateToActivateVirtualTempCard()
-                cardFreezeViewModel.onUpshellMessageActivateTempCardTap.value = false
-            }
         }
     }
 
@@ -153,6 +146,18 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
                 setRefreshRequestStoreCardCards(false)
             }
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            cardFreezeViewModel.mStoreCardUpsellMessageFlagState.observeVirtualTempCardResult(viewLifecycleOwner){ wasTapped ->
+                if (landingController?.currentDestination?.label?.equals(ManageMyCardDetailsFragment::class.java.simpleName) == true)
+                    return@observeVirtualTempCardResult
+
+                if (wasTapped) {
+                    mOnItemClickListener.navigateToActivateVirtualTempCard()
+                    cardFreezeViewModel.mStoreCardUpsellMessageFlagState.disableActivateVirtualCardFlag()
+                }
+            }
+        }
     }
 
 
@@ -176,7 +181,7 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
                 }
             }
         }
-            lifecycleScope.launch {
+        lifecycleScope.launch {
             with(viewModel) {
                 storeCardResponseResult.collectLatest { response ->
                     retryNetworkRequest.popStoreCardRequest()
@@ -196,7 +201,8 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
                             )
                         }
 
-                        renderFailure { router.routeToDefaultErrorMessageDialog(requireActivity()) }
+                        renderFailure {
+                            router.routeToDefaultErrorMessageDialog(requireActivity()) }
 
                     }
                 }
@@ -257,6 +263,11 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
             SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = false
             viewLifecycleOwner.lifecycleScope.launch {
                 router.navigateToTemporaryStoreCard(requireActivity())
+            }
+        } else if (SHOW_BLOCK_CARD_SCREEN) {
+            SHOW_BLOCK_CARD_SCREEN = false
+            viewLifecycleOwner.lifecycleScope.launch {
+                mOnItemClickListener.onBlockCardTap()
             }
         }
     }

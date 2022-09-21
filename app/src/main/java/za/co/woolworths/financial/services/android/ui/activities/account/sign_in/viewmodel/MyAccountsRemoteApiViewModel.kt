@@ -51,6 +51,8 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
     var isStoreCardNotReceivedDialogFragmentVisible: Boolean  = false
     var mStoreCardType: StoreCardType = StoreCardType.None
 
+
+
     var mStoreCardFeatureType: StoreCardFeatureType? = null
     var loaderType : LoaderType = LoaderType.LANDING
     var refreshApiModel : RefreshApiModel  = RefreshApiModel()
@@ -67,6 +69,15 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
 
     private val _viewState = MutableStateFlow(CoreDataSource.IOTaskResult.Empty)
     val viewState = _viewState.asStateFlow()
+
+    private val _payWithCard = MutableSharedFlow<Boolean>(0)
+    val payWithCardTap: SharedFlow<Boolean> = _payWithCard
+
+    fun setPayWithCard(wasTapped: Boolean){
+        viewModelScope.launch {
+            _payWithCard.emit(wasTapped)
+        }
+    }
 
     private val _notifyCardNotReceived = MutableSharedFlow<ViewState<BlockMyCardResponse>>(0)
     val notifyCardNotReceived: SharedFlow<ViewState<BlockMyCardResponse>> = _notifyCardNotReceived

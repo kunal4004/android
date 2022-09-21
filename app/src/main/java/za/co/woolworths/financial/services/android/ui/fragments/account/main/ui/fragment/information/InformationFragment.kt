@@ -29,6 +29,7 @@ class InformationFragment : ViewBindingFragment<FragmentInformationBinding>(Frag
         super.onViewCreated(view, savedInstanceState)
         statusBarCompat.setDarkStatusAndNavigationBar()
         homeViewModel.showAccountInArrearsPopup = false
+        homeViewModel.isFromInformationUI = true
         setToolbar()
         setAdapter()
         onBackPressed()

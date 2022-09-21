@@ -53,16 +53,13 @@ class AccountOptionsListFragment : Fragment(R.layout.account_options_list_fragme
     private fun AccountOptionsListFragmentBinding.subscribeObservers() {
         accountOptionsSkeleton.loadingState(false, targetedShimmerLayout = accountOptionsLayout)
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.init()
             viewModel.viewState.collectLatest { items ->
                 items.forEach { item ->
                     with(item) {
                         when (this) {
 
                             is AccountOptionsScreenUI.PaymentOptionsScreenUI -> Unit
-                            is AccountOptionsScreenUI.BalanceProtectionInsurance -> showBalanceProtectionInsuranceTag(
-                                this
-                            )
+                            is AccountOptionsScreenUI.BalanceProtectionInsurance -> showBalanceProtectionInsuranceTag(this)
                             is AccountOptionsScreenUI.WithdrawCashNow -> hideLoanWithdrawal()
                             is AccountOptionsScreenUI.DebitOrder -> showDebitOrder(isActive)
                             else -> Unit
@@ -71,7 +68,7 @@ class AccountOptionsListFragment : Fragment(R.layout.account_options_list_fragme
                 }
             }
         }
-
+        viewModel.init()
         viewLifecycleOwner.lifecycleScope.launch {
             homeViewModel.accountsCollectionsCheckEligibility.collectLatest { checkEligibilityResponse ->
                 with(checkEligibilityResponse) {
