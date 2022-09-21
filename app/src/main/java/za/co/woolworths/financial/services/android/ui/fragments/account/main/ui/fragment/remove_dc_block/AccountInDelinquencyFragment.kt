@@ -61,19 +61,21 @@ class AccountInDelinquencyFragment : Fragment(R.layout.remove_block_dc_main_frag
 
     private lateinit var mDisplayInArrearsPopup: DisplayInArrearsPopup
 
-    private lateinit var binding: RemoveBlockDcMainFragmentBinding
+    private var binding: RemoveBlockDcMainFragmentBinding?  = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-            binding = RemoveBlockDcMainFragmentBinding.bind(view)
-            statusBarCompat.setLightStatusAndNavigationBar()
-            setupToolbar()
-            setInArrearsPopup(binding)
-            binding.setupView()
-            binding.subscribeObservers()
-            binding.setListeners()
-            binding.setFragmentResultListener()
-            binding.autoConnectPMA()
+        binding = RemoveBlockDcMainFragmentBinding.bind(view)
+        statusBarCompat.setLightStatusAndNavigationBar()
+        setupToolbar()
+        binding?.apply {
+            setInArrearsPopup(this)
+            setupView()
+            subscribeObservers()
+            setListeners()
+            setFragmentResultListener()
+            autoConnectPMA()
+        }
     }
 
     private fun setInArrearsPopup(
@@ -325,6 +327,10 @@ class AccountInDelinquencyFragment : Fragment(R.layout.remove_block_dc_main_frag
             })
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = null
+    }
 
 }
 
