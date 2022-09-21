@@ -13,6 +13,7 @@ open class CompletionHandler<T>(private val requestListener: IResponseListener<T
     override fun onResponse(call: Call<T>, response: Response<T>?) {
         this.requestListener?.apply {
             response?.apply {
+                //should be added to the new work
                 if (displayMaintenanceScreenIfNeeded(call.request().url.toString(),this)) return
                 when (isSuccessful) {
                     true -> onSuccess(body())
