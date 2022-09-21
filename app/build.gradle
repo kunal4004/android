@@ -22,10 +22,6 @@ android {
         dataBinding true
         viewBinding true
     }
-    buildFeatures {
-        viewBinding true
-    }
-
 
     compileOptions {
         // Support for Java 8 features
