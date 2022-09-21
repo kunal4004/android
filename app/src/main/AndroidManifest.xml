@@ -147,6 +147,16 @@
             android:value="@string/install_channel">
         </meta-data>
 
+        <meta-data
+            android:name="mobilesdk_app_id"
+            android:value="@string/oc_chat_app_id">
+        </meta-data>
+
+        <meta-data
+            android:name="current_key"
+            android:value="@string/oc_chat_api_key">
+        </meta-data>
+
         <service
             android:name="za.co.woolworths.financial.services.android.util.pushnotification.WHuaweiMessagingService"
             android:exported="false">
@@ -161,7 +171,7 @@
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                <action android:name="OPEN_ACTIVITY_1" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter
@@ -501,6 +511,11 @@
             android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService"
             android:enabled="true"
             android:label="liveChatFollowMeService" />
+
+        <service
+            android:name="za.co.woolworths.financial.services.android.onecartgetstream.service.DashChatMessageListeningService"
+            android:enabled="true"
+            android:label="ocChatNotificationToast" />
 
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity"
