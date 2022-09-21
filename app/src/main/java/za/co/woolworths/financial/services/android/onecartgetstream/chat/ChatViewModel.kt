@@ -12,6 +12,8 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.observable.Disposable
 import za.co.woolworths.financial.services.android.onecartgetstream.common.ChatState
 
+
+
 class ChatViewModel : ViewModel() {
 
     private val chatClient: ChatClient by lazy { ChatClient.instance() }

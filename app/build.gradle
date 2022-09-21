@@ -12,11 +12,11 @@ apply plugin: 'dagger.hilt.android.plugin'
 android {
 
     def major = "9"
-    def minor = "4"
+    def minor = "5"
     def fix = "0"
     def jobNumberProduction = 197
     def jobNumberQa = 632
-    def jobNumberFeature = 1136
+    def jobNumberFeature = 102
 
     dataBinding {
         enabled = true
@@ -380,6 +380,8 @@ dependencies {
 
     // get stream chat Client + offline
     implementation "io.getstream:stream-chat-android-offline:$stream_version"
+    implementation "io.getstream:stream-chat-android-pushprovider-firebase:$stream_version"
+    implementation "io.getstream:stream-chat-android-pushprovider-huawei:$stream_version"
 }
 
 apply plugin: 'com.google.gms.google-services'
