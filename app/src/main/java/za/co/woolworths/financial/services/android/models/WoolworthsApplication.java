@@ -10,8 +10,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Base64;
-import android.util.Log;
-
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -27,7 +25,9 @@ import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.perfectcorp.perfectlib.SkuHandler;
 
 import java.io.UnsupportedEncodingException;
@@ -44,6 +44,7 @@ import za.co.woolworths.financial.services.android.geolocation.network.model.Val
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
+import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
@@ -51,6 +52,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.hel
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback;
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility;
 import za.co.woolworths.financial.services.android.util.ConnectivityLiveData;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.analytics.HuaweiManager;
 
@@ -74,13 +77,11 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static String creditCardType;
     private boolean isOther = false;
     private static int productOfferingId;
-
     private boolean shouldDisplayServerMessage = true;
     public UpdateBankDetail updateBankDetail;
 
     private RxBus bus;
     private static boolean isApplicationInForeground = false;
-
     private Activity mCurrentActivity = null;
 
     private static ValidatePlace validatePlace;
@@ -168,12 +169,39 @@ public class WoolworthsApplication extends Application implements Application.Ac
         getTracker();
         bus = new RxBus();
         vtoSyncServer();
+        configureDashChatServices();
     }
 
     private void initializeAnalytics() {
         FirebaseManager.Companion.getInstance();
         HuaweiManager.Companion.getInstance();
     }
+
+    private void configureDashChatServices() {
+        // Ideally, it would be better to just have Firebase read from the JSON file, instead of manually setting those credentials.
+        // TODO: also add check so that this firebase configuration is done only on Google variants, not Huawei, since Huawei uses Push Kit instead of Firebase.
+        FirebaseOptions firebaseChatOptions = new FirebaseOptions.Builder()
+                .setProjectId("onecart-chat")
+                .setApplicationId(getString(R.string.oc_chat_app_id))
+                .setApiKey(getString(R.string.oc_chat_api_key))
+                .build();
+
+        FirebaseApp chatApp = FirebaseApp.initializeApp(this, firebaseChatOptions, "CHAT_APP");
+        FirebaseMessaging fbMessaging = chatApp.get(FirebaseMessaging.class);
+        fbMessaging.getToken().addOnCompleteListener(it -> {
+            if (it.isSuccessful()) {
+                Utils.setOCChatFCMToken(it.getResult());
+            } else {
+                Utils.setOCChatFCMToken("");
+            }
+        });
+
+        // Start service to listen to incoming messages from Stream
+        if (SessionUtilities.getInstance().isUserAuthenticated()) {
+           OCConstant.INSTANCE.startOCChatService(this);
+        }
+    }
+
 
     //#region ShowServerMessage
     public void showServerMessageOrProceed(Activity activity) {
@@ -182,7 +210,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
         try {
             hash = Cryptography.PasswordBasedKeyDerivationFunction2(passphrase, Integer.toString(BuildConfig.VERSION_CODE), 1007, 256);
         } catch (KeyGenerationFailureException | UnsupportedEncodingException e) {
-            Log.e(TAG, e.getMessage());
+
         }
         String hashB64 = Base64.encodeToString(hash, Base64.NO_WRAP);
         if (!AppConfigSingleton.INSTANCE.getAuthenticVersionStamp().isEmpty() && !hashB64.equals(AppConfigSingleton.INSTANCE.getAuthenticVersionStamp())) {
