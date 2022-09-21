@@ -78,7 +78,6 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
-import za.co.woolworths.financial.services.android.ui.fragments.account.device_security.verifyAppInstanceId
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiFailureHandler
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
@@ -1310,10 +1309,16 @@ class KotlinUtils {
         fun hasADayPassed(dateString: String?): Boolean {
             // when dateString = null it means it's the first time to call api
             if (dateString == null) return true
-            val from = LocalDateTime.parse(
-                dateString,
-                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
-            )
+            val from = try {
+                LocalDateTime.parse(
+                    dateString,
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
+                ) }catch (e :Exception) {
+                LocalDateTime.parse(
+                    dateString,
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+                )
+            }
             val today = LocalDateTime.now()
             var period = ChronoUnit.DAYS.between(from, today)
             return if (period >= 1) {
@@ -1451,3 +1456,10 @@ fun Fragment.setDialogPadding(dialog: Dialog?) {
         )
     }
 }
+
+
+
+
+
+
+

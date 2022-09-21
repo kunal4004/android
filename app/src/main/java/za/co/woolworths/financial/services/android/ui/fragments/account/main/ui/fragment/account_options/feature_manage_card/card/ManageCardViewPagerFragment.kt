@@ -25,7 +25,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.disableNestedScrolling
 import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 
-
 @AndroidEntryPoint
 class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_fragment) {
 
@@ -89,7 +88,7 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
         when (val type = cardFreezeViewModel.mStoreCardType) {
             is StoreCardType.PrimaryCard -> {
                 if (type.block == BlockStoreCardType.FREEZE) {
-                    cardFreezeViewModel.onUpshellMessageActivateTempCardTap.value = true
+                    cardFreezeViewModel.mStoreCardUpsellMessageFlagState.activateVirtualCardFlag()
                     cardFreezeViewModel.showToastMessageOnStoreCardFreeze.value = R.string.card_temporarily_frozen_label
                 } else {
                     cardFreezeViewModel.showToastMessageOnStoreCardFreeze.value = R.string.card_temporarily_unfrozen_label

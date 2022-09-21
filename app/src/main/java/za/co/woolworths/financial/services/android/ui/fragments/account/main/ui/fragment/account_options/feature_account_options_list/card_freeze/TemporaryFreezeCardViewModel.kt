@@ -34,8 +34,6 @@ class TemporaryFreezeCardViewModel @Inject constructor(private val storeCardData
     // Store card type visible to user
     var mStoreCardType: StoreCardType = StoreCardType.None
 
-    val onUpshellMessageActivateTempCardTap: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-
     // Loader for temporary freeze UnFreeze api
     val isTempFreezeUnFreezeLoading: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
 

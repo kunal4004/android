@@ -10,12 +10,14 @@ interface StoreCardUpsellMessageFlag{
     fun getFreezeStoreCardFlagValue(): Boolean?
     fun observeResult(viewLifecycleOwner: LifecycleOwner?, content : (Boolean) -> Unit)
 
+    fun activateVirtualCardFlag()
+    fun disableActivateVirtualCardFlag()
+    fun observeVirtualTempCardResult(viewLifecycleOwner: LifecycleOwner?,  content: (Boolean) -> Unit)
+
 }
 class StoreCardUpsellMessageFlagState @Inject constructor() : StoreCardUpsellMessageFlag {
 
     val onUpshellMessageFreezeCardTap : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-
-    val onUpshellMessageActivateTempCardTap : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
 
     override fun disableFreezeStoreCardFlag() {
         onUpshellMessageFreezeCardTap.value = false // required to prevent automatic device security popup on landing
@@ -35,5 +37,21 @@ class StoreCardUpsellMessageFlagState @Inject constructor() : StoreCardUpsellMes
         onUpshellMessageFreezeCardTap.value = true
     }
 
+    val onUpshellMessageActivateTempCardTap : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+
+    override fun activateVirtualCardFlag() {
+        onUpshellMessageActivateTempCardTap.value = true
+    }
+
+    override fun disableActivateVirtualCardFlag() {
+        onUpshellMessageActivateTempCardTap.value = false
+    }
+
+    override fun observeVirtualTempCardResult(viewLifecycleOwner: LifecycleOwner?,  content: (Boolean) -> Unit) {
+        viewLifecycleOwner?:return
+        onUpshellMessageActivateTempCardTap.observe(viewLifecycleOwner) {
+            content(it)
+        }
+    }
 
 }

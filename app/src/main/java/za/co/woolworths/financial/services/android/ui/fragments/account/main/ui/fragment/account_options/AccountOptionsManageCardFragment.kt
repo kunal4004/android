@@ -148,13 +148,13 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            cardFreezeViewModel.onUpshellMessageActivateTempCardTap.observe(viewLifecycleOwner) { wasTapped ->
+            cardFreezeViewModel.mStoreCardUpsellMessageFlagState.observeVirtualTempCardResult(viewLifecycleOwner){ wasTapped ->
                 if (landingController?.currentDestination?.label?.equals(ManageMyCardDetailsFragment::class.java.simpleName) == true)
-                    return@observe
+                    return@observeVirtualTempCardResult
 
                 if (wasTapped) {
                     mOnItemClickListener.navigateToActivateVirtualTempCard()
-                    cardFreezeViewModel.onUpshellMessageActivateTempCardTap.value = false
+                    cardFreezeViewModel.mStoreCardUpsellMessageFlagState.disableActivateVirtualCardFlag()
                 }
             }
         }
