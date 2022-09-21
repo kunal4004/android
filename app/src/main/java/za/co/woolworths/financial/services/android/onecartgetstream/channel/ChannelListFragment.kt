@@ -56,7 +56,10 @@ class ChannelListFragment : Fragment() {
                 }
             }
         )
-        viewModel.fetchChannels()
+
+        val orderId = (activity as? OCChatActivity)?.getOrderId()
+        val channelId = (activity as? OCChatActivity)?.getChannelId()
+        viewModel.fetchChannel(requireContext(), orderId, channelId)
     }
 
     private fun showLoading() {

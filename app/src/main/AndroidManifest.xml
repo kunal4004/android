@@ -171,7 +171,6 @@
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <action android:name="OPEN_ACTIVITY_1" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter
@@ -186,6 +185,12 @@
                 <data android:host="${app_links_host}" />
                 <data android:pathPattern="/cat.*" />
                 <data android:pathPattern="/forgot-password.*" />
+            </intent-filter>
+            <intent-filter
+                android:autoVerify="true"
+                android:order="2">
+                <action android:name="OPEN_ACTIVITY_1" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
