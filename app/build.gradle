@@ -18,6 +18,7 @@ android {
     def jobNumberQa = 632
     def jobNumberFeature = 4006
 
+
     buildFeatures {
         dataBinding true
         viewBinding true

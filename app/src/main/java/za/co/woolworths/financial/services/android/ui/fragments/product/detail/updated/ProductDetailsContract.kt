@@ -28,6 +28,7 @@ interface ProductDetailsContract {
         fun onCartSummarySuccess(cartSummaryResponse: CartSummaryResponse)
         fun responseFailureHandler(response: Response)
         fun onAddToCartSuccess(addItemToCartResponse: AddItemToCartResponse)
+        fun onAddToCartError(addItemToCartResponse: AddItemToCartResponse)
         fun showOutOfStockInStores()
         fun onFindStoresSuccess(location: List<StoreDetails>)
         fun showProductDetailsLoading()

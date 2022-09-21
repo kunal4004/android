@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
@@ -29,6 +30,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
+import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter.Companion.SEARCH_LENGTH
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
 import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.ROUTE
 import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.STREET_NUMBER
@@ -43,6 +45,7 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.Confirm
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
+import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate
 import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
@@ -106,7 +109,7 @@ class ConfirmAddressMapFragment :
     private var _binding: GeolocationConfirmAddressBinding? = null
     private val binding get() = _binding
     private var isPoiAddress: Boolean? = false
-    private var address2:String?=""
+    private var address2: String? = ""
 
 
     override fun onCreateView(
@@ -212,8 +215,7 @@ class ConfirmAddressMapFragment :
 
     private fun clearAddressText() {
         autoCompleteTextView.setText("")
-        errorMassageDivider.visibility = View.GONE
-        errorMessage.visibility = View.GONE
+        showSearchBarHint()
     }
 
     private fun clearMapDetails() {
@@ -358,7 +360,7 @@ class ConfirmAddressMapFragment :
                 putString(KEY_PLACE_ID, placeId)
                 putString(BundleKeysConstants.DELIVERY_TYPE,
                     deliveryType)
-                if(!address2.isNullOrEmpty()){
+                if (!address2.isNullOrEmpty()) {
                     putString(
                         KEY_ADDRESS2, address2
                     )
@@ -479,6 +481,13 @@ class ConfirmAddressMapFragment :
             binding?.autoCompleteTextView?.apply {
                 setAdapter(placesAdapter)
             }
+            showSearchBarHint()
+            binding?.autoCompleteTextView?.afterTextChanged {
+                if (it.length < SEARCH_LENGTH) {
+                    showSearchBarHint()
+                } else
+                    hideSearchBarHint()
+            }
             binding?.autoCompleteTextView?.onItemClickListener =
                 AdapterView.OnItemClickListener { parent, _, position, _ ->
                     val item = parent.getItemAtPosition(position) as? PlaceAutocomplete
@@ -520,17 +529,37 @@ class ConfirmAddressMapFragment :
         }
     }
 
+    private fun showSearchBarHint() {
+        errorMessage?.visibility = View.GONE
+        errorMassageDivider?.visibility = View.VISIBLE
+        searchBarTipHint?.visibility = View.VISIBLE
+    }
+
+    private fun hideSearchBarHint() {
+        searchBarTipHint?.visibility = View.GONE
+        errorMassageDivider?.visibility = View.GONE
+    }
+
     private fun showSelectedLocationError(result: Boolean?) {
         binding?.apply {
             if (result == true) {
-                if(isPoiAddress==true){
+                if (isPoiAddress == true) {
                     confirmAddress?.isEnabled = false
-                   findNavController()?.navigate(
+                    findNavController()?.navigate(
                         R.id.action_confirmAddressMapFragment_to_poiMapBottomSheetDialog
                     )
-                }else{
+                } else {
                     errorMassageDivider?.visibility = View.VISIBLE
                     errorMessage?.visibility = View.VISIBLE
+                    errorMessage?.text = getString(R.string.geo_loc_error_msg)
+                    errorMessage?.setTextColor(ContextCompat.getColor(
+                        requireContext(),
+                        R.color.red
+                    ))
+                    errorMessage?.setBackgroundColor(ContextCompat.getColor(
+                        requireContext(),
+                        R.color.white
+                    ))
                     confirmAddress?.isEnabled = false
                 }
 
@@ -553,18 +582,18 @@ class ConfirmAddressMapFragment :
             binding?.imgMapMarker?.visibility = View.GONE
             binding?.confirmAddress?.isEnabled = false
             dynamicMapView?.moveCamera(
-                latitude =DEFAULT_LATITUDE,
-               longitude = DEFAULT_LONGITUDE,
+                latitude = DEFAULT_LATITUDE,
+                longitude = DEFAULT_LONGITUDE,
                 zoom = 5f
             )
 
         }
     }
 
-    override fun onMarkerClicked(marker: DynamicMapMarker) { }
+    override fun onMarkerClicked(marker: DynamicMapMarker) {}
 
     private fun moveMapCamera(latitude: Double?, longitude: Double?) {
-        if(latitude!=null && longitude!=null) {
+        if (latitude != null && longitude != null) {
             binding?.imgMapMarker?.visibility = View.VISIBLE
             binding?.confirmAddress?.isEnabled = true
         }
@@ -607,9 +636,9 @@ class ConfirmAddressMapFragment :
             mAddress?.let {
                 if (!isAddressFromSearch) {
                     binding?.autoCompleteTextView?.setText(getString(R.string.geo_map_address,
-                    address1,
-                    city,
-                    state))
+                        address1,
+                        city,
+                        state))
                 }
                 isAddressFromSearch = false
                 binding?.autoCompleteTextView?.dismissDropDown()
@@ -642,7 +671,7 @@ class ConfirmAddressMapFragment :
     }
 
     private fun getStreetNumberAndRoute(placeId: String?) {
-        isPoiAddress=false
+        isPoiAddress = false
         if (placeId.isNullOrEmpty() || placeId == "null") {
             showSelectedLocationError(true)
             return
@@ -674,26 +703,26 @@ class ConfirmAddressMapFragment :
                         }
                     }
                     var type: String? = ""
-                    address2=""
-                    val placeTypes:MutableList<Place.Type>? = response.place.types
+                    address2 = ""
+                    val placeTypes: MutableList<Place.Type>? = response.place.types
                     if (!placeTypes.isNullOrEmpty()) {
                         for (placeType in placeTypes) {
-                            if(placeType.equals(Place.Type.POINT_OF_INTEREST)){
-                                isPoiAddress=true
+                            if (placeType.equals(Place.Type.POINT_OF_INTEREST)) {
+                                isPoiAddress = true
 
                             }
                         }
                     }
 
-                    if(streetNumber.isNullOrEmpty()){
-                        streetNumber=""
+                    if (streetNumber.isNullOrEmpty()) {
+                        streetNumber = ""
                     }
                     if (routeName.isNullOrEmpty()) {
                         routeName = ""
                     }
 
-                    if(isPoiAddress==true&&streetNumber.isNullOrEmpty()&&routeName.isNullOrEmpty()){
-                        type=POI
+                    if (isPoiAddress == true && streetNumber.isNullOrEmpty() && routeName.isNullOrEmpty()) {
+                        type = POI
                     }
 
 
@@ -701,13 +730,13 @@ class ConfirmAddressMapFragment :
                         if (!it.equals("$streetNumber $routeName",
                                 true) && isMainPlaceName == true
                         ) {
-                            sendAddressData(it, "$streetNumber $routeName",type)
+                            sendAddressData(it, "$streetNumber $routeName", type)
                             isMainPlaceName = false
                         } else {
-                            sendAddressData("$streetNumber $routeName",type)
+                            sendAddressData("$streetNumber $routeName", type)
                             isMainPlaceName = false
                         }
-                    } ?: sendAddressData("$streetNumber $routeName",type)
+                    } ?: sendAddressData("$streetNumber $routeName", type)
 
                     try {
                         view?.let {
@@ -741,7 +770,7 @@ class ConfirmAddressMapFragment :
         ).get(ConfirmAddressViewModel::class.java)
     }
 
-    private fun sendAddressData(placeName: String?, apiAddress1: String? = "",type:String?="") {
+    private fun sendAddressData(placeName: String?, apiAddress1: String? = "", type: String? = "") {
         val saveAddressLocationRequest = SaveAddressLocationRequest(
             "$placeName",
             city,
@@ -756,7 +785,7 @@ class ConfirmAddressMapFragment :
             apiAddress1,
             type)
         try {
-            view?.let{
+            view?.let {
                 lifecycleScope.launch {
                     confirmAddressViewModel.postSaveAddress(saveAddressLocationRequest)
                 }
@@ -803,8 +832,8 @@ class ConfirmAddressMapFragment :
     private fun setPOIResult() {
         setFragmentResultListener(STREET_NAME_FROM_POI) { _, bundle ->
             address2 = bundle?.getString(STREET_NAME)
-            address2?.let{
-                confirmAddress?.isEnabled=true
+            address2?.let {
+                confirmAddress?.isEnabled = true
             }
         }
     }
