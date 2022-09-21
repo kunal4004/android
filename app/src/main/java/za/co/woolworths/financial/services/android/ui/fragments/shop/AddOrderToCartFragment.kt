@@ -81,8 +81,8 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
                     taxNoteNumbers = orderSummary.taxNoteNumbers ?: ArrayList(0),
                     requestCancellation = orderSummary.requestCancellation,
                     deliveryDates = orderSummary.deliveryDates,
-                    clickAndCollectOrder = orderSummary.clickAndCollectOrder
-
+                    clickAndCollectOrder = orderSummary.clickAndCollectOrder,
+                    deliveryStatus = null // TODO: update oderSummary.deliveryStatus's type, remove null and use value from orderSummary, and test if no regression happens
                 )
             }
             orderText = getString(R.string.order_page_title_prefix) + order?.orderId

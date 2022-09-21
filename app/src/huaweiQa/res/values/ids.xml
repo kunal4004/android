@@ -2,4 +2,6 @@
 <resources>
     <string name="huawei_app_id">appid=106059975</string>
     <string name="install_channel">AppCenter</string>
+    <string name="oc_chat_app_id">1:513058672751:android:4f21181161790c6b1b7d9a</string>
+    <string name="oc_chat_api_key">AIzaSyC6syO9-lBDn7dBCguRqRXJcqOG2WAUfIU</string>
 </resources>
