@@ -71,9 +71,8 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            cardFreezeViewModel.onUpshellMessageFreezeCardTap.observe(viewLifecycleOwner){ isActive ->
-                if (isActive)
-                    this@subscribeObservers?.cardItemViewPager?.setCurrentItem(0, true)
+            cardFreezeViewModel.mStoreCardUpsellMessageFlagState.observeResult(viewLifecycleOwner){
+                this@subscribeObservers?.cardItemViewPager?.setCurrentItem(0, true)
             }
         }
     }

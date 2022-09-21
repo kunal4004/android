@@ -7,6 +7,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowSt
 import za.co.woolworths.financial.services.android.models.repository.AppStateRepository
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeUnfreezeCardItemFragment.Companion.DEVICE_SECURITY_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.Utils
 
 fun verifyAppInstanceId(isDeviceLinked: Boolean = true): Boolean {
@@ -38,7 +39,7 @@ fun linkMyDeviceIfNecessary(
             activity.let {
                 val intent = Intent(it, LinkDeviceConfirmationActivity::class.java)
                 intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, state)
-                it.startActivity(intent)
+                it.startActivityForResult(intent, DEVICE_SECURITY_REQUEST_CODE)
                 it.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
             }
         }

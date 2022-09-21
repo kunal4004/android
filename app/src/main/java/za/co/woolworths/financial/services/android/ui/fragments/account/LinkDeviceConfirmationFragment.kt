@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account
 
 import android.annotation.TargetApi
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Build
@@ -138,11 +139,16 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
             gotItLinkDeviceConfirmationButton.apply {
                 visibility = View.VISIBLE
                 setOnClickListener {
-                    clearAllFlags()
                     val intent = Intent()
                     intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
-                    activity?.setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
+                    if(StoreCardActivity.FREEZE_CARD_DETAIL){
+                        activity?.setResult(Activity.RESULT_CANCELED, intent)
+                    }else {
+                        activity?.setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
+                    }
+                    clearAllFlags()
                     activity?.finish()
+
                 }
             }
             linkMyDeviceConfirmationButton.apply {
@@ -207,12 +213,17 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
         navigateToLinkDeviceFragment()
     }
 
-    fun clearAllFlags(){
+    private fun clearAllFlags(){
         StoreCardActivity.apply {
+            SHOW_TEMPORARY_FREEZE_DIALOG = false
             FREEZE_CARD_DETAIL = false
+            SHOW_BLOCK_CARD_SCREEN = false
             BLOCK_CARD_DETAIL = false
+            SHOW_PAY_WITH_CARD_SCREEN = false
             PAY_WITH_CARD_DETAIL = false
+            SHOW_GET_REPLACEMENT_CARD_SCREEN = false
             GET_REPLACEMENT_CARD_DETAIL = false
+            SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = false
             ACTIVATE_VIRTUAL_CARD_DETAIL = false
         }
         PersonalLoanFragment.apply{

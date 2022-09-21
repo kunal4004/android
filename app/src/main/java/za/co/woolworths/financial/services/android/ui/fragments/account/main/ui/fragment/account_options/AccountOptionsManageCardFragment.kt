@@ -49,7 +49,7 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
     lateinit var connectivityLiveData: ConnectivityLiveData
 
     @Inject
-    lateinit var storeCardActivityResultCallback : StoreCardActivityResultCallback
+    lateinit var storeCardActivityResultCallback: StoreCardActivityResultCallback
 
     private lateinit var mOnItemClickListener: ManageCardItemListener
     private lateinit var mHeaderItems: ManageCardLandingHeaderItems
@@ -71,7 +71,8 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(AccountOptionsManageCardFragmentBinding.bind(view)) {
-            mHeaderItems = ManageCardLandingHeaderItems(viewModel, this, this@AccountOptionsManageCardFragment)
+            mHeaderItems =
+                ManageCardLandingHeaderItems(viewModel, this, this@AccountOptionsManageCardFragment)
             mItemList = ManageStoreCardLandingList(
                 cardFreezeViewModel,
                 includeListOptions,
@@ -101,27 +102,20 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
     private fun AccountOptionsManageCardFragmentBinding.setOnClickListener() {
         mOnItemClickListener = ManageCardItemListener(requireActivity(), router, includeListOptions)
         mOnItemClickListener.onClickIntentObserver.observe(viewLifecycleOwner) {
-                    when (it) {
-                        is CallBack.IntentCallBack -> {
-                            it.intent?.let { intent ->
-                                launchStoreCard(intent)
-                            }
-                        }
-                        else -> Unit
+            when (it) {
+                is CallBack.IntentCallBack -> {
+                    it.intent?.let { intent ->
+                        launchStoreCard(intent)
                     }
                 }
+                else -> Unit
+            }
+        }
 
 
 
         manageCardText.onClick {
             viewModel.emitEventOnCardTap(viewModel.mStoreCardFeatureType)
-        }
-
-        cardFreezeViewModel.onUpshellMessageActivateTempCardTap.observe(viewLifecycleOwner){ wasTapped ->
-            if (wasTapped){
-                mOnItemClickListener.navigateToActivateVirtualTempCard()
-                cardFreezeViewModel.onUpshellMessageActivateTempCardTap.value = false
-            }
         }
     }
 
@@ -152,6 +146,18 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
                 setRefreshRequestStoreCardCards(false)
             }
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            cardFreezeViewModel.onUpshellMessageActivateTempCardTap.observe(viewLifecycleOwner) { wasTapped ->
+                if (landingController?.currentDestination?.label?.equals(ManageMyCardDetailsFragment::class.java.simpleName) == true)
+                    return@observe
+
+                if (wasTapped) {
+                    mOnItemClickListener.navigateToActivateVirtualTempCard()
+                    cardFreezeViewModel.onUpshellMessageActivateTempCardTap.value = false
+                }
+            }
+        }
     }
 
 
@@ -175,7 +181,7 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
                 }
             }
         }
-            lifecycleScope.launch {
+        lifecycleScope.launch {
             with(viewModel) {
                 storeCardResponseResult.collectLatest { response ->
                     retryNetworkRequest.popStoreCardRequest()
@@ -195,7 +201,8 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
                             )
                         }
 
-                        renderFailure { router.routeToDefaultErrorMessageDialog(requireActivity()) }
+                        renderFailure {
+                            router.routeToDefaultErrorMessageDialog(requireActivity()) }
 
                     }
                 }

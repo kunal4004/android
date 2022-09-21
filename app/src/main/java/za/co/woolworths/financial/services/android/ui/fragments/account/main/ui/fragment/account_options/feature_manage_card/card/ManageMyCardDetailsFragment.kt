@@ -44,6 +44,7 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
 
     private val activityLauncher = BetterActivityResult.registerActivityForResult(this)
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         statusBarCompat.setDarkStatusAndNavigationBar()
@@ -61,12 +62,15 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
             }
         }
 
-        cardFreezeViewModel.onUpshellMessageActivateTempCardTap.observe(viewLifecycleOwner){ wasTapped ->
-            if (wasTapped){
-                mOnItemClickListener?.navigateToActivateVirtualTempCard()
-                cardFreezeViewModel.onUpshellMessageActivateTempCardTap.value = false
-            }
+            cardFreezeViewModel.onUpshellMessageActivateTempCardTap.observe(viewLifecycleOwner) { wasTapped ->
+                if (  (activity as? StoreCardActivity)?.landingNavController()?.currentDestination?.label?.equals(ManageMyCardDetailsFragment::class.java.simpleName) == true) {
+                    if (wasTapped) {
+                        mOnItemClickListener?.navigateToActivateVirtualTempCard()
+                        cardFreezeViewModel.onUpshellMessageActivateTempCardTap.value = false
+                    }
+                }
         }
+
 
         onBackPressed()
     }

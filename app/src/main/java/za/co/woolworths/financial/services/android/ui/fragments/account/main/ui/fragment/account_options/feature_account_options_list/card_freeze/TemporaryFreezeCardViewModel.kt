@@ -11,6 +11,8 @@ import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCard
+import za.co.woolworths.financial.services.android.ui.fragments.account.device_security.DeviceSecurityFlagState
+import za.co.woolworths.financial.services.android.ui.fragments.account.device_security.StoreCardUpsellMessageFlagState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.getViewStateFlowForNetworkCall
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.BlockStoreCardType
@@ -20,17 +22,19 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dat
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
-typealias StoreCardFreezeState = Pair<Boolean, Int>
-
 @HiltViewModel
-class TemporaryFreezeCardViewModel @Inject constructor(private val storeCardDataSource: StoreCardDataSource) : ViewModel(), IStoreCardDataSource by storeCardDataSource {
+class TemporaryFreezeCardViewModel @Inject constructor(private val storeCardDataSource: StoreCardDataSource) :
+    ViewModel(), IStoreCardDataSource by storeCardDataSource {
+
+    // TODO:: Dimitri to determine why failed to inject with hilt
+    var mDeviceSecurityFlagState: DeviceSecurityFlagState = DeviceSecurityFlagState()
+    var mStoreCardUpsellMessageFlagState: StoreCardUpsellMessageFlagState =
+        StoreCardUpsellMessageFlagState()
 
     // Store card type visible to user
-    var mStoreCardType  : StoreCardType = StoreCardType.None
+    var mStoreCardType: StoreCardType = StoreCardType.None
 
-    val onUpshellMessageFreezeCardTap : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-
-    val onUpshellMessageActivateTempCardTap : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val onUpshellMessageActivateTempCardTap: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
 
     // Loader for temporary freeze UnFreeze api
     val isTempFreezeUnFreezeLoading: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
@@ -44,6 +48,7 @@ class TemporaryFreezeCardViewModel @Inject constructor(private val storeCardData
     val showToastMessageOnStoreCardFreeze: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
 
     init {
+        mDeviceSecurityFlagState.clearRevertSwitcher()
         currentPagePosition.value = 0
     }
 
@@ -85,7 +90,9 @@ class TemporaryFreezeCardViewModel @Inject constructor(private val storeCardData
         }
 
     fun isCardNotReceived(storeCard: StoreCard?): Boolean {
-        val shouldNotifyUserByEmail = Utils.getSessionDaoValue(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN).isNullOrEmpty()
+        val shouldNotifyUserByEmail =
+            Utils.getSessionDaoValue(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN)
+                .isNullOrEmpty()
         return (storeCard?.cardNotReceived == true && shouldNotifyUserByEmail)
     }
 

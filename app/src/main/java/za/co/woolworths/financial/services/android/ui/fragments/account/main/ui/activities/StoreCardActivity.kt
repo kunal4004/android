@@ -24,6 +24,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.c
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeUnfreezeCardItemFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.AccountProductsMainFragment
@@ -49,6 +50,7 @@ class StoreCardActivity : AppCompatActivity() {
     val viewModel: MyAccountsRemoteApiViewModel by viewModels()
 
     @Inject lateinit var statusBarCompat: SystemBarCompat
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -111,6 +113,13 @@ class StoreCardActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         val extras = data?.extras
         when (requestCode) {
+
+            TemporaryFreezeUnfreezeCardItemFragment.DEVICE_SECURITY_REQUEST_CODE -> {
+                if (resultCode == Activity.RESULT_CANCELED) {
+                    cardFreezeViewModel.mDeviceSecurityFlagState.fillRevertSwitcher()
+                }
+            }
+
             PayMyAccountActivity.PAY_MY_ACCOUNT_REQUEST_CODE -> {
                 when (resultCode) {
                     RESULT_OK, PMA3DSecureProcessRequestFragment.PMA_UPDATE_CARD_RESULT_CODE -> {

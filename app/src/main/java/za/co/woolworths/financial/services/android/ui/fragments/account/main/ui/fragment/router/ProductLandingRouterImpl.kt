@@ -62,7 +62,7 @@ interface IProductLandingRouter {
 
     fun routeToLinkNewCard(activity: Activity?): CallBack
     fun routeToManageMyCard(activity: Activity): CallBack
-    fun routeToActivateVirtualTempCard(activity: Activity): CallBack?
+    fun routeToActivateVirtualTempCard(activity: Activity,isDeviceLinked : Boolean): CallBack?
     fun routeToGetReplacementCard(activity: Activity?): CallBack?
     fun routeToBlockCard(activity: Activity,isDeviceLinked : Boolean = true): CallBack
     fun routeToHowItWorks(
@@ -171,9 +171,9 @@ class ProductLandingRouterImpl @Inject constructor(
         }
     }
 
-    override fun routeToActivateVirtualTempCard(activity: Activity): CallBack? {
+    override fun routeToActivateVirtualTempCard(activity: Activity,isDeviceLinked : Boolean): CallBack? {
         var intent:Intent? = null
-        KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
+        linkMyDeviceIfNecessary(activity = activity, isDeviceLinked = isDeviceLinked, ApplyNowState.STORE_CARD, {
             ACTIVATE_VIRTUAL_CARD_DETAIL = true
         }, {
 
@@ -183,6 +183,7 @@ class ProductLandingRouterImpl @Inject constructor(
                 activity,
                 storeCardResponse = storeCardResponse
             )
+            intent
 
         })
         return CallBack.IntentCallBack(intent)
