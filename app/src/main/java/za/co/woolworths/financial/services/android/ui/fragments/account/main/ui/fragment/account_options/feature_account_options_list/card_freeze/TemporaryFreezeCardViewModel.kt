@@ -23,11 +23,10 @@ import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 @HiltViewModel
-class TemporaryFreezeCardViewModel @Inject constructor(private val storeCardDataSource: StoreCardDataSource) :
+class TemporaryFreezeCardViewModel @Inject constructor(private val storeCardDataSource: StoreCardDataSource,
+ val mDeviceSecurityFlagState: DeviceSecurityFlagState) :
     ViewModel(), IStoreCardDataSource by storeCardDataSource {
 
-    // TODO:: Dimitri to determine why failed to inject with hilt
-    var mDeviceSecurityFlagState: DeviceSecurityFlagState = DeviceSecurityFlagState()
     var mStoreCardUpsellMessageFlagState: StoreCardUpsellMessageFlagState =
         StoreCardUpsellMessageFlagState()
 
