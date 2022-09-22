@@ -78,7 +78,7 @@ class ScanBarcodeToPayDialogFragment : WBottomSheetDialogFragment() {
         mStoreCardsResponse?.storeCardsData?.virtualCard?.let {
             tvCardNumber.text = it.number.chunked(4).joinToString("  ")
             tvCardholderValue.text = it.embossedName
-            tvSequenceNumberValue.text = it.sequence.toString()
+            tvSequenceNumberValue.text = it.sequence
             ivBarcode.post {
                 ivBarcode.setImageBitmap(Utils.encodeAsBitmap(it.number.plus(it.sequence), BarcodeFormat.CODE_128, ivBarcode.width, 60))
             }

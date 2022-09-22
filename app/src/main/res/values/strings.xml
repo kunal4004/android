@@ -718,7 +718,7 @@
     <string name="update_title">Update Available</string>
     <string name="update_desc">Please update to the latest version of the App.</string>
     <string name="my_card_title">My Card</string>
-    <string name="my_card">MY CARD%1$s</string>
+    <string name="my_card">MY CARD</string>
     <string name="card_number_title">Card Number:</string>
     <string name="card_holder_title">Cardholder:</string>
     <string name="manage">Manage</string>
@@ -732,7 +732,7 @@
     <string name="processing_your_request_desc">This may take a few seconds</string>
     <string name="blocked">BLOCKED</string>
     <string name="no_active_card">No Active Card</string>
-    <string name="card_block_desc">Your card has been blocked and can\nno longer be used.</string>
+    <string name="card_block_desc">Your card has been blocked and can no longer be used.</string>
     <string name="card_block_replacement_card_disabled_desc">Your card has been blocked and can no longer be used. Call 0861 50 20 20 to arrange for delivery.</string>
     <string name="get_replacement_card">get replacement card</string>
     <string name="get_a_replacement_card">Get A Replacement Card</string>
@@ -1764,7 +1764,7 @@
     <string name="first_available_food_delivery_date_store">The earliest collection slot we have available for %1$s is &lt;b>%2$s&lt;/b></string>
     <string name="confirm_store">Confirm Store</string>
     <string name="confirm_suburb">Confirm Suburb</string>
-    <string name="manage_my_card_title">Manage My Card%1$s</string>
+    <string name="manage_my_card_title">Manage My Card</string>
     <string name="activate_vtc_title">Activate Virtual Temp Card</string>
     <string name="temporary_card_freeze_title">Temporary Card Freeze</string>
     <string name="freeze_temporary_card_title">Temporary Card Freeze</string>
@@ -2468,7 +2468,6 @@
     <string name="treatment_plan_desc_2">Make payments on the Woolies app.</string>
     <string name="treatment_plan_desc_3">Track your payment plan history and schedule.</string>
     <string name="treatment_plan_desc_4">Simple and easy to manage from the palm of your hand.</string>
-    <string name="view_treatment_plan_caption">View Treatment Plan</string>
     <string name="geoloc_delivery">Standard Delivery</string>
     <string name="products_available_title">Products available:</string>
     <string name="item_limit">Item limit:</string>
@@ -2614,7 +2613,6 @@
     <string name="view_your_payment_plan">VIEW PAYMENT PLAN</string>
     <string name="total_amount_you_saving">This is the total amount you are saving as agreed \n upon in your settlement plan</string>
     <string name="pay_now">PAY NOW</string>
-
     <string name="account_in_recovery_label">Account in Recovery</string>
     <string name="account_in_recovery_desc">Your account is in arrears. Have you already agreed to a repayment plan? View your plan or make a payment now.</string>
 
@@ -2675,10 +2673,6 @@
     <string name="enquiry_failed">Failed To Send Enquiry.</string>
     <string name="enter_valid_email">Please enter valid email.</string>
     <string name="create_list_and_add">create list and add</string>
-    <string name="card_label">card</string>
-    <string name="temp_card_label">temp</string>
-    <string name="virtual_temp_card_label">Virtual Temporary Card</string>
-    <string name="primary_card">Primary Card</string>
 
     <!-- Feature Walkthrough : Barcode Scanning  -->
     <string name="feature_barcode_scanning_title">BARCODE SCANNING</string>
@@ -2711,8 +2705,6 @@
     <string name="to_contact_customer_support_dial_0860_100_987">To contact Customer Support, dial</string>
     <string name="delete_my_account">Delete my account</string>
     <string name="your_online_profile_has_been_successfully_deleted">Your Online Profile Has Been Successfully Deleted</string>
-
-
     <string name="dash_order">Dash Order:</string>
     <string name="dash_email_type">plain/text</string>
 
@@ -2724,10 +2716,6 @@
     <string name="one_cart_chat_order_id">ORDER #%s</string>
     <string name="generic_error_something_wrong_newline">Unfortunately,\n Something Went Wrong</string>
     <string name="one_cart_chat_error_disc">We can’t seem to reach your shopper.\n Give them a few moments, and try again.</string>
-<string name="frozen_primary_card">Frozen Primary Card</string>
-    <string name="upshell_message_freeze_title">Freeze Card to Activate</string>
-    <string name="upshell_message_activate_virtual_card_title">Activate Virtual Card</string>
-    <string name="virtual_temp_card_detail">Your new card has been issued and will be delivered to you. Activate your Virtual Temp Card and use it to pay in-store</string>
 
 
     <string name="we_need_more_info">We Need More Info</string>

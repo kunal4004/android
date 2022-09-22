@@ -45,9 +45,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.inject.Inject;
-
-import dagger.hilt.android.AndroidEntryPoint;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
@@ -60,7 +57,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.hel
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
-import za.co.woolworths.financial.services.android.util.NotificationUtils;
+import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
 import za.co.woolworths.financial.services.android.util.ServiceTools;
@@ -69,7 +66,6 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager;
 import za.co.woolworths.financial.services.android.util.wenum.ConfirmLocation;
 
-@AndroidEntryPoint
 public class SSOActivity extends WebViewActivity {
 
 	public ErrorHandlerView mErrorHandlerView;
@@ -110,9 +106,6 @@ public class SSOActivity extends WebViewActivity {
 	public static final String IS_USER_BROWSING = "IS_USER_BROWSING";
 	private String forgotPasswordLogin = "login=true&source=oneapp";
 	private String TNC_TITLE = "Woolworths.co.za";
-
-	@Inject
-	NotificationUtils notificationUtils;
 
 	public static final String TAG_EXTRA_QUERYSTRING_PARAMS = "TAG_EXTRA_QUERYSTRING_PARAMS";
 	//Default redirect url used by LOGIN AND LINK CARDS
@@ -661,8 +654,7 @@ public class SSOActivity extends WebViewActivity {
 					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
 					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.LOGIN, arguments, SSOActivity.this);
 
-					notificationUtils.sendRegistrationToServer();
-
+					NotificationUtils.Companion.sendRegistrationToServer(SSOActivity.this);
 					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.ACTIVE);
 					QueryBadgeCounter.getInstance().queryBadgeCount();
 					setUserATGId(jwtDecodedModel);

@@ -34,15 +34,9 @@ class GetTemporaryStoreCardPopupActivity : MyCardActivityExtension() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        overridePendingTransition(R.anim.slide_up_anim_duration_1000, R.anim.stay_duration_1000)
+    override fun onBackPressed() {
+        this@GetTemporaryStoreCardPopupActivity.finish()
+        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        overridePendingTransition(R.anim.stay_duration_1000, R.anim.slide_down_anim_1000)
-    }
-
 }
 

@@ -14,7 +14,7 @@ import za.co.woolworths.financial.services.android.startup.service.repository.St
  */
 class ViewModelFactory(private val startUpRepository: StartUpRepository, private val startupApiHelper: StartupApiHelper) : ViewModelProvider.Factory {
 
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(StartupViewModel::class.java)) {
             return StartupViewModel(startUpRepository, startupApiHelper) as T
         }
