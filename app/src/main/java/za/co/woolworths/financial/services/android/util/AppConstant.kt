@@ -79,6 +79,10 @@ class AppConstant {
         const val DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT = "Accounts Product Statement"
         const val DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT = "Pay My Account"
         const val DP_LINKING_MY_ACCOUNTS_ORDER_DETAILS = "Order Details"
+        const val DP_LINKING_STREAM_CHAT_CHANNEL_ID = "Stream Chat Channel Id"
+
+        const val DP_LINKING_PARAM_STREAM_ORDER_ID = "orderId"
+        const val DP_LINKING_PARAM_STREAM_CHANNEL_ID = "channelId"
 
         const val PLAY_STORE_URL = "https://play.google.com/store/apps/details?id="
         const val VTO_FACE_NOT_DETECT = "face_not_detect"

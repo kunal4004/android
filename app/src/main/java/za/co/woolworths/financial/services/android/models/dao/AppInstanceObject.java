@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
+import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.app_config.chat.ConfigChatEnabledForProductFeatures;
 import za.co.woolworths.financial.services.android.models.dto.chat.InAppChatTipAcknowledgements;
@@ -79,6 +80,7 @@ public class AppInstanceObject {
         public String id;
         public ShoppingDeliveryLocation preferredShoppingDeliveryLocation;
         public ArrayList<ShoppingDeliveryLocation> shoppingDeliveryLocationHistory;
+        public OrderSummary[] myOrdersPendingPicking;
         public SessionDao.BIOMETRIC_AUTHENTICATION_STATE biometricAuthenticationState;
         public boolean kmsi;
         public String absaLoginAliasID;
@@ -91,6 +93,7 @@ public class AppInstanceObject {
         public User() {
             id = AppInstanceObject.getCurrentUsersID();
             shoppingDeliveryLocationHistory = new ArrayList<>();
+            myOrdersPendingPicking = new OrderSummary[0];
         }
 
         public void save() {
