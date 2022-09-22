@@ -100,6 +100,9 @@ class ConfirmAddressMapFragment :
 
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
+
+    @Inject lateinit var connectivityLiveData: ConnectivityLiveData
+
     private var placeName: String? = null
     private var isMainPlaceName: Boolean? = false
     private var isStreetNumberAndRouteFromSearch: Boolean? = false
@@ -180,7 +183,7 @@ class ConfirmAddressMapFragment :
 
     private fun checkNetwork() {
         activity?.let {
-            ConnectivityLiveData.observe(viewLifecycleOwner) { isNetworkAvailable ->
+            connectivityLiveData.observe(viewLifecycleOwner) { isNetworkAvailable ->
                 binding?.apply {
                     if (isNetworkAvailable) {
                         dynamicMapView?.visibility = View.VISIBLE
@@ -527,22 +530,13 @@ class ConfirmAddressMapFragment :
     }
 
     private fun showSearchBarHint() {
-        errorMessage?.visibility = View.VISIBLE
+        errorMessage?.visibility = View.GONE
         errorMassageDivider?.visibility = View.VISIBLE
-        errorMessage?.text = getString(R.string.enter_address_for_google_map_hint)
-
-        errorMessage?.setTextColor(ContextCompat.getColor(
-            requireContext(),
-            R.color.white
-        ))
-        errorMessage?.setBackgroundColor(ContextCompat.getColor(
-            requireContext(),
-            R.color.color_222222
-        ))
+        searchBarTipHint?.visibility = View.VISIBLE
     }
 
     private fun hideSearchBarHint() {
-        errorMessage?.visibility = View.GONE
+        searchBarTipHint?.visibility = View.GONE
         errorMassageDivider?.visibility = View.GONE
     }
 

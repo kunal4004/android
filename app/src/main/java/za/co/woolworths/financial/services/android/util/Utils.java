@@ -7,6 +7,7 @@ import static za.co.woolworths.financial.services.android.models.dao.ApiRequestD
 import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.DELIVERY_OPTION;
 import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.FCM_TOKEN;
 import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.IN_APP_REVIEW;
+import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.OC_CHAT_FCM_TOKEN;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.REMOVE_ALL_BADGE_COUNTER;
 import static za.co.woolworths.financial.services.android.util.RequestInAppReviewKt.requestInAppReview;
 
@@ -1559,6 +1560,34 @@ public class Utils {
 
         return token;
     }
+
+    public static void setOCChatFCMToken(String value) {
+        try {
+            if (TextUtils.isEmpty(value)) {
+                return;
+            }
+            String firstTime = Utils.getSessionDaoValue(OC_CHAT_FCM_TOKEN);
+            if (firstTime == null) {
+                Utils.sessionDaoSave(OC_CHAT_FCM_TOKEN, value);
+            }
+        } catch (Exception ignored) {
+            FirebaseManager.Companion.logException(ignored);
+        }
+    }
+
+    public static String getOCChatFCMToken() {
+        String token = "";
+        try {
+            token = Utils.getSessionDaoValue(OC_CHAT_FCM_TOKEN);
+        } catch (Exception ignored) {
+            return null;
+        }
+
+        return token;
+    }
+
+
+
 
     public static void setInAppReviewRequested() {
         Utils.sessionDaoSave(IN_APP_REVIEW, "1");

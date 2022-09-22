@@ -54,7 +54,6 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:7200")
     @GET("wfs/app/v4/user/accounts")
     fun getAccounts(
-
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -632,7 +631,6 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/cartV2")
     fun getShoppingCart(
-
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
     ): Call<ShoppingCartResponse>
@@ -934,7 +932,7 @@ interface ApiInterface {
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("otpMethod") otpMethod: String): Call<LinkNewCardOTP>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @Headers("Content-Type: application/json", "Accept: application/vnd.appserver.api.v2+json", "Media-Type: application/json")
     @POST("wfs/app/v4/accounts/storecard/linkStoreCard")
     fun linkStoreCard(
             @Header("userAgent") userAgent: String,
@@ -1425,6 +1423,13 @@ interface ApiInterface {
         @Header("userAgentVersion") userAgentVersion: String,
         @Header("sessionToken") sessionToken: String
     ): Call<DeleteAccountResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/dash/chat/authenticate")
+    fun authenticateOneCart(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String
+    ): Call<OCAuthenticationResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/dash/chat/authenticate")
