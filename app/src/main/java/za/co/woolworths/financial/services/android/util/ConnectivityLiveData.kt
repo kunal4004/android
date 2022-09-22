@@ -1,60 +1,50 @@
 package za.co.woolworths.financial.services.android.util
 
+import android.app.Application
 import android.content.Context
 import android.net.*
-import android.os.Build
 import androidx.lifecycle.LiveData
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
-import javax.inject.Inject
 
-class ConnectivityLiveData @Inject constructor(context: Context) : LiveData<Boolean>() {
+object ConnectivityLiveData : LiveData<Boolean>() {
 
-    private val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE)
-            as? ConnectivityManager
+    private lateinit var application: Application
+    private lateinit var networkRequest: NetworkRequest
+    private var connectivityService: ConnectivityManager? = null
 
-    override fun onActive() {
-        super.onActive()
-        val networkRequestBuilder = getNetworkCallback()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            connectivityManager?.registerDefaultNetworkCallback(networkRequestBuilder)
-        } else {
-            connectivityManager?.registerNetworkCallback(getNetworkRequest(), networkRequestBuilder)
-        }
+    fun init(application: Application) {
+        this.application = application
+        this.networkRequest = NetworkRequest.Builder()
+            .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+            .build()
     }
 
-    override fun onInactive() {
-        super.onInactive()
-        try {
-            connectivityManager?.unregisterNetworkCallback(getNetworkCallback())
-        } catch (e: Exception) {
-            FirebaseManager.logException(e)
-        }
-    }
-
-    private fun getNetworkRequest(): NetworkRequest {
-        val networkRequestBuilder = NetworkRequest.Builder()
-        with(networkRequestBuilder) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                addCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
-            } else {
-                addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-                addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
-            }
-        }
-        return networkRequestBuilder.build()
-    }
-
-    private fun getNetworkCallback() = object : ConnectivityManager.NetworkCallback() {
+    private val networkCallback = object : ConnectivityManager.NetworkCallback() {
 
         override fun onAvailable(network: Network) {
             super.onAvailable(network)
             postValue(true)
         }
-
         override fun onLost(network: Network) {
             super.onLost(network)
             postValue(false)
         }
     }
 
+    override fun onActive() {
+        super.onActive()
+        connectivityService = application.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        connectivityService?.registerNetworkCallback(networkRequest, networkCallback)
+    }
+
+    override fun onInactive() {
+        super.onInactive()
+        connectivityService?.unregisterNetworkCallback(networkCallback)
+    }
+
+    fun isNetworkAvailable(): Boolean {
+        val cm = application.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        val activeNetwork = cm?.activeNetworkInfo
+        return activeNetwork != null && activeNetwork.isConnected
+    }
 }

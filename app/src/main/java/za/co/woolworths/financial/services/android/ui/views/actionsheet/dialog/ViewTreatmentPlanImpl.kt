@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.annotation.StringRes
@@ -10,12 +11,8 @@ import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.ActionText
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.ProductOfferingStatus
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountInArrears
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountInDelinquency
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.DialogData
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.DateFormatter
 import za.co.woolworths.financial.services.android.util.Utils
@@ -27,7 +24,6 @@ interface IViewTreatmentPlan {
     fun isCreditCardProduct(): Boolean
     fun getTitleAndDescription(): Pair<Int, String?>
     fun getViewTreatmentPlanDescription(applyNowState: ApplyNowState?): String?
-    fun getPlanDescription(applyNowState: ApplyNowState?): Int
     fun getString(@StringRes stringId: Int, value: String): String
     fun isViewPaymentOptionsButtonVisible(): Int
     fun isMakePaymentButtonVisible(): Int
@@ -35,17 +31,15 @@ interface IViewTreatmentPlan {
     fun makePaymentPlanButtonLabel(): String
     fun cannotAffordPaymentFirebaseEvent(): Pair<String, String>
     fun isCannotAffordPaymentButtonVisible(): Int
-    fun isAccountChargedOff() : Boolean
-    fun isViewElitePlanEnabled(eligibilityPlan: EligibilityPlan?) : Boolean
-    fun isElitePlanEnabled(eligibilityPlan: EligibilityPlan?) : Boolean
-    fun getPopupData(eligibilityPlan: EligibilityPlan?): DialogData
+    fun isProductChargedOff() : Boolean
 }
 
 enum class TreatmentPlanType {
     VIEW, TAKE_UP, ELITE, NONE
 }
 
-class ViewTreatmentPlanImpl (
+class ViewTreatmentPlanImpl(
+    private val context: Context?,
     private val eligibilityPlan: EligibilityPlan?,
     private val account: Account?,
     private val applyNowState: ApplyNowState?
@@ -70,10 +64,15 @@ class ViewTreatmentPlanImpl (
 
     @SuppressLint("VisibleForTests")
     override fun getTitleAndDescription(): Pair<Int, String?> {
-        val amountOverdue = "R ${getAmountOverdue()}"
-        return when (isAccountChargedOff()) {
+        val isCreditCardProduct = isCreditCardProduct()
+        val amountOverdue = Utils.removeNegativeSymbol(
+            CurrencyFormatter.formatAmountToRandAndCent(
+                account?.amountOverdue ?: 0
+            )
+        )
+        return when (isProductChargedOff()) {
             true -> {
-                when (isCreditCardProduct() && (productOfferingStatus.isViewTreatmentPlanSupported()
+                when (isCreditCardProduct && (productOfferingStatus.isViewTreatmentPlanSupported()
                         || productOfferingStatus.isTakeUpTreatmentPlanJourneyEnabled())) {
                     true -> when(getPlanType()) {
                         TreatmentPlanType.VIEW, TreatmentPlanType.ELITE -> R.string.account_in_recovery_label to getViewTreatmentPlanDescription(
@@ -104,11 +103,11 @@ class ViewTreatmentPlanImpl (
         }
     }
 
-    override fun getViewTreatmentPlanDescription(applyNowState: ApplyNowState?): String {
+    override fun getViewTreatmentPlanDescription(applyNowState: ApplyNowState?): String? {
         val paymentDueDate = account?.paymentDueDate
         return when (paymentDueDate.isNullOrEmpty()) {
             true ->
-               bindString(
+                context?.resources?.getString(
                     when (applyNowState) {
                         ApplyNowState.PERSONAL_LOAN -> R.string.account_in_recovery_pl_payment_due_unavailable_desc
                         ApplyNowState.STORE_CARD -> R.string.account_in_recovery_sc_payment_due_unavailable_desc
@@ -116,19 +115,19 @@ class ViewTreatmentPlanImpl (
                     }
                 )
 
-            false -> bindString(
+            false -> context?.resources?.getString(
                 when (applyNowState) {
                     ApplyNowState.PERSONAL_LOAN -> R.string.account_in_recovery_pl_desc
                     ApplyNowState.STORE_CARD -> R.string.account_in_recovery_sc_desc
                     else -> R.string.account_in_recovery_cc_desc
                 },
-                DateFormatter.formatDateTOddMMMYYYY(paymentDueDate, toPattern = "dd MMMM yyyy") ?: ""
+                DateFormatter.formatDateTOddMMMYYYY(paymentDueDate, toPattern = "dd MMMM yyyy")
             )
         }
     }
 
     override fun getString(@StringRes stringId: Int, value: String): String =
-        bindString(stringId, value)
+        context?.getString(stringId, value) ?: ""
 
     override fun isViewPaymentOptionsButtonVisible() =
         if (isViewTreatmentPlan() && isCreditCardProduct()) VISIBLE else GONE
@@ -158,83 +157,6 @@ class ViewTreatmentPlanImpl (
 
     override fun isCannotAffordPaymentButtonVisible(): Int  = if (isTreatmentPlanTakeUp()) VISIBLE else GONE
 
-    override fun isAccountChargedOff(): Boolean  = productOfferingStatus.isChargedOff()
-
-    override fun isViewElitePlanEnabled(eligibilityPlan: EligibilityPlan?): Boolean {
-        return eligibilityPlan?.actionText.equals(ActionText.VIEW_ELITE_PLAN.value, ignoreCase = true)
-    }
-
-    override fun isElitePlanEnabled(eligibilityPlan: EligibilityPlan?): Boolean {
-        return eligibilityPlan?.planType.equals(AccountSignedInPresenterImpl.ELITE_PLAN, ignoreCase = true)
-    }
-
-    override fun getPopupData(eligibilityPlan: EligibilityPlan?) : DialogData {
-
-        val isCreditCardProduct = isCreditCardProduct()
-
-        val isCollectionTypeViewPlan = when (getPlanType()) {
-            TreatmentPlanType.VIEW, TreatmentPlanType.ELITE -> true
-            else -> false
-        }
-
-        val isViewVipOrElitePlanSupported = (productOfferingStatus.isViewTreatmentPlanSupported()
-                || productOfferingStatus.isTakeUpTreatmentPlanJourneyEnabled())
-
-        val amountOverdue = Utils.removeNegativeSymbol(
-            CurrencyFormatter.formatAmountToRandAndCent(
-                account?.amountOverdue ?: 0
-            )
-        )
-
-        val descId = getPlanDescription(applyNowState)
-
-        var paymentDueDate = account?.paymentDueDate
-        if (!paymentDueDate.isNullOrEmpty())
-            paymentDueDate = DateFormatter.formatDateTOddMMMYYYY(paymentDueDate, toPattern = "dd MMMM yyyy")
-
-       return when (isAccountChargedOff()) {
-            true -> when (isCreditCardProduct && isViewVipOrElitePlanSupported) {
-                true -> when(isCollectionTypeViewPlan){
-                    true ->  AccountInDelinquency.InRecovery( desc = descId, formattedValue = paymentDueDate)
-                    false -> AccountInDelinquency.TakePlan()
-                }
-                false -> AccountInDelinquency.ChargedOff()
-            }
-
-            false -> when (isViewVipOrElitePlanSupported) {
-                    true -> when(isCollectionTypeViewPlan){
-                        true -> AccountInArrears.InRecovery(desc = descId, formattedValue = paymentDueDate)
-                        false -> AccountInArrears.TakePlan(formattedValue = amountOverdue)
-                    }
-                    false -> AccountInArrears.InArrears(formattedValue = amountOverdue)
-            }
-        }
-    }
-
-    private fun getAmountOverdue() =
-        Utils.removeNegativeSymbol(
-            CurrencyFormatter.formatAmountToRandAndCent(
-                account?.amountOverdue ?: 0
-            )
-        )
-
-    override fun getPlanDescription(applyNowState: ApplyNowState?): Int {
-        val paymentDueDate = account?.paymentDueDate
-        return when (paymentDueDate.isNullOrEmpty()) {
-            true ->
-                    when (applyNowState) {
-                        ApplyNowState.PERSONAL_LOAN -> R.string.account_in_recovery_pl_payment_due_unavailable_desc
-                        ApplyNowState.STORE_CARD -> R.string.account_in_recovery_sc_payment_due_unavailable_desc
-                        else -> R.string.account_in_recovery_cc_payment_due_unavailable_desc
-                    }
-
-
-            false -> when (applyNowState) {
-                    ApplyNowState.PERSONAL_LOAN -> R.string.account_in_recovery_pl_desc
-                    ApplyNowState.STORE_CARD -> R.string.account_in_recovery_sc_desc
-                    else -> R.string.account_in_recovery_cc_desc
-                }
-        }
-    }
+    override fun isProductChargedOff(): Boolean  = productOfferingStatus.isChargedOff()
 
 }

@@ -29,6 +29,7 @@ class AccountInArrearsDialogFragment : AppCompatDialogFragment(), View.OnClickLi
     companion object {
         const val ARREARS_PAY_NOW_BUTTON = "payNowButton"
         const val ARREARS_CHAT_TO_US_BUTTON = "chatToUsButton"
+
     }
 
     override fun onAttach(context: Context) {
