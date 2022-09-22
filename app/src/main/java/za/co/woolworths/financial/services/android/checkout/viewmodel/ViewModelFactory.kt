@@ -11,7 +11,7 @@ class ViewModelFactory(
     private val interactor: Any
 ) : ViewModelProvider.Factory {
 
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(CheckoutAddAddressNewUserViewModel::class.java)) {
             return CheckoutAddAddressNewUserViewModel(
                 interactor as CheckoutAddAddressNewUserInteractor

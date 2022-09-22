@@ -21,7 +21,6 @@ import com.awfs.coordination.R
 import com.google.firebase.crashlytics.internal.common.CommonUtils
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_splash_screen.*
 import kotlinx.android.synthetic.main.activity_startup.*
 import kotlinx.android.synthetic.main.activity_startup_without_video.*
@@ -40,9 +39,8 @@ import za.co.woolworths.financial.services.android.startup.viewmodel.ViewModelFa
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.util.*
-import javax.inject.Inject
+import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 
-@AndroidEntryPoint
 class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     View.OnClickListener {
 
@@ -54,8 +52,6 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     private var actionUrlSecond: String? = AppConstant.EMPTY_STRING
     private var remoteConfigJsonString: String = AppConstant.EMPTY_STRING
     private var isAppSideLoaded = false
-
-    @Inject lateinit var notificationUtils: NotificationUtils
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -253,9 +249,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     fun init() {
-        //TODO:: Handle notification for Android R
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationUtils.createNotificationChannelIfNeeded()
+            NotificationUtils.createNotificationChannelIfNeeded(this)
         }
         // Disable first time launch splash video screen, remove to enable video on startup
         startupViewModel.setSessionDao(SessionDao.KEY.SPLASH_VIDEO, "1")
@@ -514,7 +509,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     override fun onResume() {
         super.onResume()
-        notificationUtils.clearNotifications()
+        NotificationUtils.clearNotifications(this@StartupActivity)
     }
 
     private fun forgotPasswordDeeplink() {

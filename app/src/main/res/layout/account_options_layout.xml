@@ -30,8 +30,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="@+id/logoProtectionInsurance"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/logoProtectionInsurance"
-        app:layout_constraintVertical_bias="0.428" />
+        app:layout_constraintTop_toTopOf="@+id/logoProtectionInsurance" />
 
     <TextView
         android:id="@+id/balanceLabelTextView"
@@ -92,15 +91,17 @@
         app:layout_constraintStart_toEndOf="@+id/debitOrderLogoImageView"
         app:layout_constraintTop_toTopOf="@+id/debitOrderView" />
 
+
     <androidx.constraintlayout.widget.Group
         android:id="@+id/debitOrderViewGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="visible"
+        android:visibility="gone"
         app:constraint_referenced_ids="debitOrderView,debitOrderLogoImageView,debitOrderIsActiveTextView,debitOrderTextView,debitOrderDivider"
         app:layout_constraintEnd_toStartOf="@+id/balanceProtectionInsuranceView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 
     <View
         android:id="@+id/withdrawCashView"
@@ -118,6 +119,7 @@
         app:layout_constraintStart_toStartOf="@+id/withdrawCashView"
         app:layout_constraintTop_toTopOf="@+id/withdrawCashView"
         tools:ignore="HardcodedText" />
+
 
     <ImageView
         android:id="@+id/iconDrawnDownAmount"
@@ -179,11 +181,11 @@
         android:layout_width="0dp"
         android:layout_marginStart="@dimen/twenty_two_dp"
         android:layout_marginEnd="@dimen/eight_dp"
+        tools:text="View Treatment Plan"
         app:layout_constraintBottom_toBottomOf="@+id/viewTreatmentPlanOptions"
         app:layout_constraintEnd_toStartOf="@+id/viewTreatmentPlanNext"
         app:layout_constraintStart_toEndOf="@+id/viewTreatmentPlanLogoImageView"
-        app:layout_constraintTop_toTopOf="@+id/viewTreatmentPlanOptions"
-        tools:text="View Treatment Plan" />
+        app:layout_constraintTop_toTopOf="@+id/viewTreatmentPlanOptions" />
 
     <ImageView
         android:id="@+id/viewTreatmentPlanNext"
@@ -202,11 +204,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        tools:visibility="visible"
         app:constraint_referenced_ids="viewTreatmentPlanDivider,viewTreatmentPlanLogoImageView,viewTreatmentPlanOptions,viewTreatmentPlanTextView,viewTreatmentPlanNext"
         app:layout_constraintEnd_toStartOf="@+id/balanceProtectionInsuranceView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:id="@+id/viewTreatmentPlanDivider"
@@ -261,11 +263,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        tools:visibility="visible"
         app:constraint_referenced_ids="setUpPaymentPlanDivider,setUpPaymentPlanLogoImageView,setUpPaymentPlanOptions,setUpPaymentPlanTextView,setUpPaymentPlanNext"
         app:layout_constraintEnd_toStartOf="@+id/balanceProtectionInsuranceView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:id="@+id/setUpPaymentPlanDivider"

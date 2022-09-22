@@ -16,7 +16,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.chat_fragment.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
@@ -36,9 +35,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.req
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.keyboard.SoftKeyboardObserver
-import javax.inject.Inject
 
-@AndroidEntryPoint
 class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
 
     companion object {
@@ -46,8 +43,6 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
         const val CARD: String = "CARD"
         const val SESSION_TYPE = "SESSION_TYPE"
     }
-
-    @Inject lateinit var connectivityLiveData: ConnectivityLiveData
 
     var mChatAdapter: WChatAdapter? = null
     var productOfferingId: String? = null
@@ -262,7 +257,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
 
     private fun autoConnectToNetwork() {
         activity?.let { activity ->
-            connectivityLiveData.observe(viewLifecycleOwner) { isNetworkAvailable ->
+            ConnectivityLiveData.observe(viewLifecycleOwner, { isNetworkAvailable ->
                 if (isNetworkAvailable && !isConnectedToNetwork) {
                     isConnectedToNetwork = true
                     with(chatViewModel) {
@@ -285,7 +280,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                     if (!isNetworkAvailable)
                         isConnectedToNetwork = false
                 }
-            }
+            })
         }
     }
 

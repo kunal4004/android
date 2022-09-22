@@ -13,6 +13,7 @@ import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAY_MY_ACCOUNT_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_TRANSACTION_COMPLETED_RESULT_CODE
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
@@ -22,7 +23,6 @@ import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWi
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.OutSystemBuilder
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.availablefunds.AvailableFundsFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_CHAT_TO_US_BUTTON
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_PAY_NOW_BUTTON
@@ -34,7 +34,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.V
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
-class StoreCardFragment : AvailableFundsFragment(), View.OnClickListener {
+class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -42,8 +42,8 @@ class StoreCardFragment : AvailableFundsFragment(), View.OnClickListener {
         navController = Navigation.findNavController(view)
         availableFundBackground?.setBackgroundResource(R.drawable.store_card_background)
 
-        viewModel.queryPaymentMethod.observe(viewLifecycleOwner) {
-            viewModel.isQueryPayUPaymentMethodComplete = false
+        payMyAccountViewModel.queryPaymentMethod.observe(viewLifecycleOwner) {
+            isQueryPayUPaymentMethodComplete = false
             queryPaymentMethod()
         }
 
@@ -61,14 +61,14 @@ class StoreCardFragment : AvailableFundsFragment(), View.OnClickListener {
                 when (bundle.getString(AccountInArrearsDialogFragment::class.java.simpleName, "N/A")) {
                     ARREARS_PAY_NOW_BUTTON -> onStoreCardButtonTap()
                     ARREARS_CHAT_TO_US_BUTTON -> {
-                        val chatBubble = viewModel.getApplyNowState()?.let { applyNowState ->
+                        val chatBubble = payMyAccountViewModel.getApplyNowState()?.let { applyNowState ->
                             ChatFloatingActionButtonBubbleView(
-                                activity = activity as? AccountSignedInActivity,
-                                applyNowState = applyNowState,
-                                vocTriggerEvent = viewModel.getVocTriggerEventMyAccounts()
+                                    activity = activity as? AccountSignedInActivity,
+                                    applyNowState = applyNowState,
+                                    vocTriggerEvent = payMyAccountViewModel.getVocTriggerEventMyAccounts()
                             )
                         }
-                        chatBubble?.navigateToChatActivity(activity, viewModel.getCardDetail()?.account?.second)
+                        chatBubble?.navigateToChatActivity(activity, payMyAccountViewModel.getCardDetail()?.account?.second)
                     }
                 }
             }
@@ -112,9 +112,9 @@ class StoreCardFragment : AvailableFundsFragment(), View.OnClickListener {
         if (viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
 
         activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC, this) }
-        viewModel.resetAmountEnteredToDefault()
+        payMyAccountViewModel.resetAmountEnteredToDefault()
 
-        if (viewModel.getPaymentMethodType() == PayMyAccountViewModel.PAYUMethodType.ERROR) {
+        if (payMyAccountViewModel.getPaymentMethodType() == PayMyAccountViewModel.PAYUMethodType.ERROR) {
             try {
                 if (navController.currentDestination?.id == R.id.storeCardFragment) {
                     navController.navigate(R.id.payMyAccountRetryErrorFragment)

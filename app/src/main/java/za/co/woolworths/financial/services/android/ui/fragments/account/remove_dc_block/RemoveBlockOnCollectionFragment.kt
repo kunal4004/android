@@ -83,7 +83,8 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener, Eligib
             ApplyNowState.STORE_CARD -> {
                 removeBlockBackgroundConstraintLayout?.setBackgroundResource(R.drawable.store_card_background)
             }
-            else -> Unit
+            else -> {
+            }
         }
 
         val account = accountData?.second
