@@ -79,10 +79,11 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
         if(!primaryCards.isNullOrEmpty()){
             val primaryCard = primaryCards[PRIMARY_CARD_POSITION]
             val blockType = primaryCard.blockType?.toLowerCase(Locale.getDefault())
+            val shouldDisplayStoreCardDetail = TextUtils.isEmpty(blockType) || blockType == TemporaryFreezeStoreCard.TEMPORARY
             val virtualCard = Gson().fromJson(getMyStoreCardDetail(), StoreCardsResponse::class.java)?.storeCardsData?.virtualCard
             // Determine if card is blocked: if blockCode is not null, card is blocked.
             when ((virtualCard != null && AppConfigSingleton.virtualTempCard?.isEnabled == true)
-                    || (TextUtils.isEmpty(blockType) || blockType == TemporaryFreezeStoreCard.TEMPORARY)
+                    || shouldDisplayStoreCardDetail
                     && blockType != TemporaryFreezeStoreCard.PERMANENT) {
                 true -> {
                     addFragment(

@@ -31,7 +31,7 @@ class OCToastNotificationImpl @Inject constructor(
         snackbar.view.setBackgroundColor(Color.TRANSPARENT)
         layout?.ocMessageCount?.text = messageCount
         layout?.ocChatLayout?.setOnClickListener {
-            OCConstant.OC_MESSAGE_COUNT = 0
+            OCConstant.ocChatMessageCount = 0
             context.startActivity(OCChatActivity.newIntent(context, orderId))
             snackbar.dismiss()
             snackbarLayout.removeAllViews()

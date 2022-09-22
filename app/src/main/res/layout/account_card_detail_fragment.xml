@@ -124,7 +124,8 @@
                 <RelativeLayout
                     android:id="@+id/relIncreaseMyLimit"
                     style="@style/card_item_click_no_pad_style"
-                    android:contentDescription="@string/cliItemContainer">
+                    android:contentDescription="@string/cliItemContainer"
+                    android:visibility="visible">
 
                     <ImageView
                         android:id="@+id/imLogoIncreaseLimit"

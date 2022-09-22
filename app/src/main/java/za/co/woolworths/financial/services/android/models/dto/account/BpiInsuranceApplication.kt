@@ -11,7 +11,5 @@ data class BpiInsuranceApplication(
 enum class BpiInsuranceApplicationStatusType(val status: String) {
     OPTED_IN("OPTED_IN"),
     NOT_OPTED_IN("NOT_OPTED_IN"),
-    COVERED("COVERED"),
-    NOT_COVERED("NOT_COVERED"),
-    INSURANCE_COVERED("INSURANCE_COVERED")
+    COVERED("COVERED")
 }

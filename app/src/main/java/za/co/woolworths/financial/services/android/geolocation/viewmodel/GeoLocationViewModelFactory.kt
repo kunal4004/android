@@ -8,7 +8,7 @@ class GeoLocationViewModelFactory(
     private val geoLocationApiHelper: GeoLocationApiHelper)
     : ViewModelProvider.Factory {
 
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ConfirmAddressViewModel::class.java)) {
             return ConfirmAddressViewModel(geoLocationApiHelper) as T
         }

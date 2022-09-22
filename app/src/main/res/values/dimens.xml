@@ -231,35 +231,18 @@
     <dimen name="ninety_four_dp">94dp</dimen>
     <dimen name="fourty_sp">40sp</dimen>
     <item name="bottom_guideline_percent_for_available_fund_transaction_statement_pma_button" type="dimen" format="float">0.7</item>
+    <item name="slider_guideline_percent_for_arrears_account_product" type="dimen" format="float">0.82</item>
     <item name="slider_guideline_percent_for_account_product" type="dimen" format="float">0.72</item>
     <dimen name="twenty_two_sp">22sp</dimen>
     <dimen name="product_close_image_size">35sp</dimen>
     <dimen name="vto_count_txt_size">90sp</dimen>
     <dimen name="vto_preview_size">380dp</dimen>
-    <item name="bottom_view_guideline" type="dimen" format="float">0.7</item>
-    <dimen name="switch_thumb_padding">@dimen/_2sdp</dimen>
-    <dimen name="switch_track_radius">@dimen/_24sdp</dimen>
-    <dimen name="switch_track_height">@dimen/_24sdp</dimen>
-    <dimen name="heading1_dimens">@dimen/_19ssp</dimen>
-    <dimen name="margin_start">@dimen/_16sdp</dimen>
-    <dimen name="margin_end">@dimen/_16sdp</dimen>
-    <dimen name="lineSpacingExtra">@dimen/_8sdp</dimen>
-    <dimen name="heading5">@dimen/_14ssp</dimen>
-    <dimen name="heading6">@dimen/_12ssp</dimen>
-    <dimen name="amount_row_margin">@dimen/_16sdp</dimen>
-    <dimen name="icon_dimens">@dimen/_23sdp</dimen>
-    <dimen name="icon_medium_size_dimens">@dimen/_75sdp</dimen>
-    <dimen name="icon_medium_size_height_dimens">@dimen/_63sdp</dimen>
-    <dimen name="icon_view_height">@dimen/_77sdp</dimen>
-    <dimen name="button_height">@dimen/_39sdp</dimen>
     <dimen name="hundred_and_ninety_five_dp">195dp</dimen>
     <dimen name="three_twenty_dp">320dp</dimen>
     <dimen name="two_hundred_ten_dp">210dp</dimen>
     <dimen name="two_hundred_eight_dp">208dp</dimen>
     <dimen name="nine_sp">9sp</dimen>
     <dimen name="hundred_and_thirty_six_dp">136dp</dimen>
-    <dimen name="toolbar_height" >@dimen/_48sdp</dimen>
-    <dimen name="content_below_toolbar_height" >@dimen/_50sdp</dimen>
     <dimen name="fourty_three_dp">43dp</dimen>
     <dimen name="eighty_eight_dp">88dp</dimen>
     <dimen name="_minus8dp">-8dp</dimen>

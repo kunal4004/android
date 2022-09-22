@@ -16,6 +16,7 @@ import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Ac
 import za.co.woolworths.financial.services.android.ui.activities.cli.FindOutMoreActivity
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.roundCornerDrawable
 import za.co.woolworths.financial.services.android.util.Utils
+import java.util.*
 
 enum class CreditLimitIncreaseStates(private val status: String) {
     CONSENTS("Consents"),
@@ -30,7 +31,7 @@ enum class CreditLimitIncreaseStates(private val status: String) {
     COMPLETE("complete");
 
     val type: String
-        get() = status.lowercase()
+        get() = status.toLowerCase(Locale.getDefault())
 }
 
 class CreditLimitIncreaseStatus {
