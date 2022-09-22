@@ -410,7 +410,7 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                     else
                         HuaweiPushDeviceGenerator(
                             WoolworthsApplication.getAppContext(),
-                            appId = context.getString(R.string.huawei_app_id)
+                            appId = context.getString(R.string.huawei_app_id).replace("appid=", "")
                         )
                 )
             )
