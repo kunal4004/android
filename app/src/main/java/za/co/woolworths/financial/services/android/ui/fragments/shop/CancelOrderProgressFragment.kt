@@ -16,7 +16,10 @@ import kotlinx.android.synthetic.main.npc_processing_request_layout.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.dto.CancelOrderAnalyticsObject
 import za.co.woolworths.financial.services.android.models.dto.CancelOrderResponse
+import za.co.woolworths.financial.services.android.models.dto.Order
+import za.co.woolworths.financial.services.android.models.dto.OrderDetailsResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CancelOrderProgressActivity
@@ -25,11 +28,14 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTag
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProgressStateFragment
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 
 class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.OnClickListener {
 
     private var orderId: String? = null
+    private var cancelOrderAnalyticsObject: CancelOrderAnalyticsObject? = null
     private var closeButton:View? = null
 
     companion object {
@@ -37,8 +43,9 @@ class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.On
         const val REQUEST_CODE_CANCEL_ORDER = 1976
         const val RESULT_CODE_CANCEL_ORDER_SUCCESS = 1970
 
-        fun getInstance(orderId: String) = CancelOrderProgressFragment().withArgs {
+        fun getInstance(orderId: String, cancelOrderAnalyticsObject: CancelOrderAnalyticsObject?) = CancelOrderProgressFragment().withArgs {
             putString(ORDER_ID, orderId)
+            putSerializable(AppConstant.ORDER_RESPONSE, cancelOrderAnalyticsObject)
         }
     }
 
@@ -50,6 +57,7 @@ class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.On
         super.onCreate(savedInstanceState)
         arguments?.apply {
             orderId = getString(ORDER_ID, "")
+            cancelOrderAnalyticsObject = getSerializable(AppConstant.ORDER_RESPONSE) as CancelOrderAnalyticsObject
         }
         closeButton = activity?.findViewById(R.id.btnClose)
     }
@@ -116,6 +124,7 @@ class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.On
     }
 
     fun onCancelOrderSuccess() {
+        setEventForCancelOrderForRefund()
         getProgressState()?.animateSuccessEnd(true)
         processRequestDescriptionTextView.visibility = View.GONE
         processRequestTitleTextView?.text = bindString(R.string.cancel_order_success_title)
@@ -129,42 +138,45 @@ class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.On
         /*main */
         cancelOrderParams.putString(
             FirebaseAnalytics.Param.CURRENCY,
-            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
+            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+        )
 
         cancelOrderParams.putString(
             FirebaseAnalytics.Param.TRANSACTION_ID,
-            FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
+            FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE
+        )
 
         cancelOrderParams.putString(
             FirebaseAnalytics.Param.VALUE,
-            FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
+            FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE
+        )
 
         cancelOrderParams.putString(
             FirebaseAnalytics.Param.SHIPPING,
-            FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
+            FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE
+        )
 
         cancelOrderParams.putString(
             FirebaseManagerAnalyticsProperties.PropertyNames.REFUND_TYPE,
-            FirebaseManagerAnalyticsProperties.PropertyValues.DASH_CANCELLED_ORDER)
+            FirebaseManagerAnalyticsProperties.PropertyValues.DASH_CANCELLED_ORDER
+        )
 
         cancelOrderParams.putString(
             FirebaseManagerAnalyticsProperties.PropertyNames.AFFILIATION,
-            FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
+            FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE
+        )
 
-        /*item array
         val cancelOrderItem = Bundle()
-         cancelOrderItem.putString(FirebaseAnalytics.Param.ITEM_ID,
-             response.items?.other?.get(0)?.productId)
-         cancelOrderItem.putString(FirebaseAnalytics.Param.ITEM_NAME,
-             response.items?.other?.get(0)?.productDisplayName)
-         cancelOrderItem.putString(FirebaseAnalytics.Param.QUANTITY,
-             response.items?.other?.get(0)?.commerceItemInfo?.quantity.toString())
-         }
-         */
 
-      //  cancelOrderParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(driverTipItem))
-       // AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.PURCHASE, cancelOrderParams)
+        cancelOrderItem.putString(
+            FirebaseAnalytics.Param.ITEM_ID,
+            cancelOrderAnalyticsObject?.itemId
+        )
+
+        cancelOrderParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(cancelOrderItem))
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.REFUND, cancelOrderParams)
     }
+
 
     fun onCancelOrderFailure() {
         closeButton?.visibility = View.VISIBLE

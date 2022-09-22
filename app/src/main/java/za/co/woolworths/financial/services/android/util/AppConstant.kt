@@ -104,6 +104,7 @@ class AppConstant {
         const val TAG_TAX_INVOICE_FRAGMENT: String = "TaxInvoiceFragment"
         const val ORDER_ID: String = "ORDER_ID"
         const val NAVIGATED_FROM_MY_ACCOUNTS = "NAVIGATED_FROM_MY_ACCOUNTS"
+        const val ORDER_RESPONSE = "Order_Response"
 
         // delete my profile
         const val DELETE_ACCOUNT = "DELETE_ACCOUNT"

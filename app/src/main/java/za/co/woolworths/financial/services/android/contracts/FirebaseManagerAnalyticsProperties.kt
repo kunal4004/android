@@ -424,6 +424,7 @@ open class FirebaseManagerAnalyticsProperties {
          const val DASH_DELIVERY_BROWSE_MODE = "set_delivery_browse_mode"
          const val DASH_SWITCH_DELIVERY_MODE = "switch_delivery_mode"
          const val DASH_SWITCH_BROWSE_MODE = "switch_browse_mode"
+         const val REFUND = "refund"
     }
 
     class PropertyNames {
@@ -524,7 +525,6 @@ open class FirebaseManagerAnalyticsProperties {
             const val DELIVERY_MODE = "delivery_mode"
             const val BROWSE_MODE = "browse_mode"
             const val DASH_TIP = "dash_tip"
-            const val REFUND = "refund"
             const val REFUND_TYPE = "refund_type"
         }
     }

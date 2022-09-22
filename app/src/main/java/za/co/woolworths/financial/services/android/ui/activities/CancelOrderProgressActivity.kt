@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.cancel_order_progress_activity.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.dto.CancelOrderAnalyticsObject
+import za.co.woolworths.financial.services.android.models.dto.OrderDetailsResponse
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.CancelOrderProgressFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
@@ -14,6 +16,7 @@ class CancelOrderProgressActivity : AppCompatActivity() {
 
     var orderId: String = ""
     var isNavigatedFromMyAccounts: Boolean  = false
+    var cancelOrderAnalyticsObject: CancelOrderAnalyticsObject? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,9 +27,10 @@ class CancelOrderProgressActivity : AppCompatActivity() {
         intent?.extras?.apply {
             orderId = getString(CancelOrderProgressFragment.ORDER_ID, "")
             isNavigatedFromMyAccounts = getBoolean(AppConstant.NAVIGATED_FROM_MY_ACCOUNTS, false)
+            cancelOrderAnalyticsObject = getSerializable(AppConstant.ORDER_RESPONSE) as CancelOrderAnalyticsObject
         }
         addFragment(
-                fragment = CancelOrderProgressFragment.getInstance(orderId),
+                fragment = CancelOrderProgressFragment.getInstance(orderId, cancelOrderAnalyticsObject),
                 tag = CancelOrderProgressFragment::class.java.simpleName,
                 containerViewId = R.id.fragmentContainer)
     }
