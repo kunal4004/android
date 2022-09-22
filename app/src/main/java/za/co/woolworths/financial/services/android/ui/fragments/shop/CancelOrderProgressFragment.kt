@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.android.synthetic.main.cancel_order_failure_layout.*
 import kotlinx.android.synthetic.main.cancel_order_progress_fragment.*
 import kotlinx.android.synthetic.main.npc_processing_request_layout.*
@@ -119,6 +120,50 @@ class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.On
         processRequestDescriptionTextView.visibility = View.GONE
         processRequestTitleTextView?.text = bindString(R.string.cancel_order_success_title)
         (activity as? CancelOrderProgressActivity)?.triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CANCEL_API_SUCCESS)
+    }
+
+    private fun setEventForCancelOrderForRefund() {
+
+        val cancelOrderParams = Bundle()
+
+        /*main */
+        cancelOrderParams.putString(
+            FirebaseAnalytics.Param.CURRENCY,
+            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
+
+        cancelOrderParams.putString(
+            FirebaseAnalytics.Param.TRANSACTION_ID,
+            FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
+
+        cancelOrderParams.putString(
+            FirebaseAnalytics.Param.VALUE,
+            FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
+
+        cancelOrderParams.putString(
+            FirebaseAnalytics.Param.SHIPPING,
+            FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
+
+        cancelOrderParams.putString(
+            FirebaseManagerAnalyticsProperties.PropertyNames.REFUND_TYPE,
+            FirebaseManagerAnalyticsProperties.PropertyValues.DASH_CANCELLED_ORDER)
+
+        cancelOrderParams.putString(
+            FirebaseManagerAnalyticsProperties.PropertyNames.AFFILIATION,
+            FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
+
+        /*item array
+        val cancelOrderItem = Bundle()
+         cancelOrderItem.putString(FirebaseAnalytics.Param.ITEM_ID,
+             response.items?.other?.get(0)?.productId)
+         cancelOrderItem.putString(FirebaseAnalytics.Param.ITEM_NAME,
+             response.items?.other?.get(0)?.productDisplayName)
+         cancelOrderItem.putString(FirebaseAnalytics.Param.QUANTITY,
+             response.items?.other?.get(0)?.commerceItemInfo?.quantity.toString())
+         }
+         */
+
+      //  cancelOrderParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(driverTipItem))
+       // AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.PURCHASE, cancelOrderParams)
     }
 
     fun onCancelOrderFailure() {
