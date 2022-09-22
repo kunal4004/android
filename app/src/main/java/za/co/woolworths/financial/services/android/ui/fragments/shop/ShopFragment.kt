@@ -67,6 +67,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
 import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
@@ -141,6 +142,36 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             bindString(R.string.click_and_collect),
             bindString(R.string.dash_delivery)
         )
+
+        setEventForDeliveryTypeAndBrowsingType()
+    }
+
+    fun setEventForDeliveryTypeAndBrowsingType(){
+
+        /*this event is triggered only first time and */
+
+        if (KotlinUtils.getPreferredDeliveryType() == null) {
+            return
+        }
+
+        val dashParams = Bundle()
+        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_MODE,
+            KotlinUtils.getPreferredDeliveryType()?.name)
+        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.BROWSE_MODE,
+            KotlinUtils.browsingDeliveryType?.name)
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.DASH_DELIVERY_BROWSE_MODE, dashParams)
+    }
+
+    private fun setEventsForSwitchingBrowsingType(browsingType: String?) {
+        if (KotlinUtils.getPreferredDeliveryType() == null) {
+            return
+        }
+        val dashParams = Bundle()
+        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_MODE,
+            KotlinUtils.getPreferredDeliveryType()?.name)
+        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.BROWSE_MODE,
+            browsingType)
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.DASH_SWITCH_BROWSE_MODE, dashParams)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -191,8 +222,10 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                             KotlinUtils.browsingDeliveryType = Delivery.DASH
                         }
                     }
+                    setEventsForSwitchingBrowsingType(KotlinUtils.browsingDeliveryType?.name)
                     setupToolbar(position)
                 }
+                setAnalyticEventsForBrowseingSwitch()
                 shopPagerAdapter?.notifyDataSetChanged()
                 updateTabIconUI(position)
             }
@@ -838,6 +871,17 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 }
             }.start()
         }
+    }
+
+    private fun setAnalyticEventsForBrowseingSwitch() {
+         /*Firebase analytics*/
+        val dashParams = Bundle()
+        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_MODE,
+            KotlinUtils.getPreferredDeliveryType()?.name)
+        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.BROWSE_MODE,
+            KotlinUtils.browsingDeliveryType?.name)
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.DASH_SWITCH_BROWSE_MODE,
+            dashParams)
     }
 
     private fun showStandardDeliveryToolTip() {
