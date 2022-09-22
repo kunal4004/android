@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/white">
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -60,10 +59,10 @@
         android:layout_marginStart="@dimen/thirty_five_dp"
         android:layout_marginTop="@dimen/ten_dp"
         android:layout_marginEnd="@dimen/thirty_five_dp"
-        android:layout_marginBottom="@dimen/fourty_dp"
+        android:layout_marginBottom="@dimen/eighty_eight_dp"
         android:gravity="center"
-        android:textSize="@dimen/fifteen_sp"
         android:textColor="@color/color_444444"
+        android:textSize="@dimen/fifteen_sp"
         app:layout_constraintBottom_toTopOf="@id/geoDeliveryTab"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart" />
@@ -132,24 +131,24 @@
         style="@style/futura_semi_bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_22sdp"
-        android:src="@drawable/ic_title_tag"
+        android:layout_marginBottom="@dimen/_minus8dp"
         android:gravity="center"
+        android:src="@drawable/ic_title_tag"
+        app:layout_constraintBottom_toTopOf="@id/geoCollectTab"
         app:layout_constraintEnd_toEndOf="@id/geoCollectTab"
-        app:layout_constraintStart_toStartOf="@id/geoCollectTab"
-        app:layout_constraintTop_toBottomOf="@+id/changeFulfillmentSubTitleTextView" />
+        app:layout_constraintStart_toStartOf="@id/geoCollectTab" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/txtNewFeature"
         style="@style/futura_semi_bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_22sdp"
-        android:src="@drawable/ic_title_tag"
+        android:layout_marginBottom="@dimen/_minus8dp"
         android:gravity="center"
+        android:src="@drawable/ic_title_tag"
+        app:layout_constraintBottom_toTopOf="@id/geoDashTab"
         app:layout_constraintEnd_toEndOf="@id/geoDashTab"
-        app:layout_constraintStart_toStartOf="@id/geoDashTab"
-        app:layout_constraintTop_toBottomOf="@+id/changeFulfillmentSubTitleTextView" />
+        app:layout_constraintStart_toStartOf="@id/geoDashTab" />
 
     <View
         android:id="@+id/tabsDivider"
@@ -166,6 +165,7 @@
         style="@style/myriad_pro_regular"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/eight_dp"
         android:ellipsize="end"
         android:maxLines="1"
         android:minWidth="@dimen/_55sdp"
@@ -180,6 +180,7 @@
         android:id="@+id/earliestDeliveryDateValue"
         style="@style/myriad_pro_semi_bold"
         android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/eight_dp"
         android:ellipsize="end"
         android:gravity="end"
         android:maxLines="1"
@@ -194,7 +195,7 @@
         style="@style/myriad_pro_regular"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_6sdp"
+        android:layout_marginTop="@dimen/eight_dp"
         android:layout_marginBottom="@dimen/twenty_four_dp"
         android:ellipsize="end"
         android:maxLines="1"
@@ -313,15 +314,16 @@
         android:layout_marginStart="@dimen/_6sdp"
         android:layout_marginEnd="@dimen/_10sdp"
         android:ellipsize="end"
+        android:fontFamily="@font/myriad_pro_regular"
         android:gravity="start|center"
-        android:textAlignment="gravity"
         android:maxLines="1"
+        android:textAlignment="gravity"
         android:textColor="@color/black"
         android:textSize="@dimen/fifteen_sp"
-        app:layout_constraintTop_toTopOf="@id/imgDelIcon"
         app:layout_constraintBottom_toBottomOf="@id/imgDelIcon"
         app:layout_constraintEnd_toStartOf="@+id/editDelivery"
-        app:layout_constraintStart_toEndOf="@id/imgDelIcon" />
+        app:layout_constraintStart_toEndOf="@id/imgDelIcon"
+        app:layout_constraintTop_toTopOf="@id/imgDelIcon" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/editDelivery"
@@ -337,9 +339,9 @@
         android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="@dimen/twelve_sp"
-        app:layout_constraintTop_toTopOf="@id/imgDelIcon"
         app:layout_constraintBottom_toBottomOf="@id/imgDelIcon"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd" />
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintTop_toTopOf="@id/imgDelIcon" />
 
     <Button
         android:id="@+id/btnConfirmAddress"
