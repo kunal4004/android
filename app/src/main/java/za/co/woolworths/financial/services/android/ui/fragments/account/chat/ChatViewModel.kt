@@ -29,7 +29,6 @@ import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatAuthImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatListAllAgentConversationImpl
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.ActivityType
@@ -179,8 +178,6 @@ class ChatViewModel : ViewModel() {
             WTransactionsActivity::class.java.simpleName -> ActivityType.TRANSACTION
             StatementActivity::class.java.simpleName -> ActivityType.STATEMENT
             AbsaStatementsActivity::class.java.simpleName -> ActivityType.ABSA_STATEMENT
-            StoreCardActivity::class.java.simpleName -> ActivityType.ABSA_STATEMENT
-
             else -> throw RuntimeException("${liveChatDBRepository.getLiveChatParams()?.fromActivity} value not supported")
         }
     }

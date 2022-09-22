@@ -7,6 +7,7 @@ import za.co.woolworths.financial.services.android.models.network.CommonHeaderUt
 import za.co.woolworths.financial.services.android.models.network.CommonHeaderUtils.Companion.DEVICE_VERSION
 import za.co.woolworths.financial.services.android.models.network.CommonHeaderUtils.Companion.NETWORK
 import za.co.woolworths.financial.services.android.models.network.CommonHeaderUtils.Companion.OS
+import za.co.woolworths.financial.services.android.models.network.CommonHeaderUtils.Companion.OS_VERISON
 import za.co.woolworths.financial.services.android.models.network.CommonHeaderUtils.Companion.SHA1_PASSWORD
 
 class CommonHeaderInterceptor : NetworkConfig() , Interceptor {
@@ -20,7 +21,7 @@ class CommonHeaderInterceptor : NetworkConfig() , Interceptor {
                 .addHeader(DEVICE_MODEL, getDeviceModel())
                 .addHeader(NETWORK, getNetworkCarrier())
                 .addHeader(OS, getOS())
-                .addHeader(CommonHeaderUtils.OS_VERSION, getOsVersion())
+                .addHeader(OS_VERISON, getOsVersion())
                 .addHeader(APP_VERSION,getAppVersion())
         return chain.proceed(request.build())
     }

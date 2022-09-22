@@ -60,6 +60,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         return getAccount()?.insuranceCovered ?: false
     }
 
+
     override fun getBpiInsuranceApplication(): BpiInsuranceApplication? {
         return getAccount()?.bpiInsuranceApplication
     }
@@ -336,8 +337,8 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         if (storeCardsData == null || storeCardsData.primaryCards.isNullOrEmpty()) {
             return ""
         }
-        val primaryCard = storeCardsData.primaryCards?.get(PRIMARY_CARD_POSITION)
-        val blockType = primaryCard?.blockType?.toLowerCase(Locale.getDefault())
+        val primaryCard = storeCardsData.primaryCards.get(PRIMARY_CARD_POSITION)
+        val blockType = primaryCard.blockType?.toLowerCase(Locale.getDefault())
         return blockType ?: ""
     }
 
@@ -348,9 +349,9 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         if (storeCardsData == null || storeCardsData.primaryCards.isNullOrEmpty()) {
             return false
         }
-        val primaryCard = storeCardsData.primaryCards?.get(PRIMARY_CARD_POSITION)
-        val blockType = primaryCard?.blockType?.toLowerCase(Locale.getDefault())
-        return !storeCardsData.generateVirtualCard && AppConfigSingleton.instantCardReplacement?.isEnabled == true
+        val primaryCard = storeCardsData.primaryCards.get(PRIMARY_CARD_POSITION)
+        val blockType = primaryCard.blockType?.toLowerCase(Locale.getDefault())
+        return !storeCardsData?.generateVirtualCard && AppConfigSingleton.instantCardReplacement?.isEnabled == true
                 && TemporaryFreezeStoreCard.PERMANENT.equals(blockType, ignoreCase = true)
     }
 
@@ -396,5 +397,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
             mainView?.showBalanceProtectionInsuranceLead(balanceProtectionInsurance)
         else
             mainView?.showBalanceProtectionInsurance(account?.insuranceCovered)
+
     }
+
 }
