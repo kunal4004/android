@@ -6,15 +6,9 @@ import android.util.Base64
 import android.view.View
 import android.view.WindowManager
 import androidx.annotation.ColorRes
-import androidx.annotation.NavigationRes
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavController
-import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
 import com.awfs.coordination.R
 import retrofit2.HttpException
 import za.co.absa.openbankingapi.AsymmetricCryptoHelper
@@ -136,61 +130,6 @@ fun Fragment.updateStatusBarColor(@ColorRes colorId: Int, isStatusBarFontDark: B
     }
 }
 
-/**
- * Accessing graph-scoped ViewModel of child NavHostFragment
- * using by navGraphViewModels
- */
-
-inline fun <reified T: ViewModel> NavController.viewModel(@NavigationRes navGraphId: Int): T {
-    val storeOwner = getViewModelStoreOwner(navGraphId)
-    return ViewModelProvider(storeOwner)[T::class.java]
-}
-
-inline fun <T> T?.whenNull(block: T?.() -> Unit): T? {
-    if (this == null) block()
-    return this@whenNull
-}
-
-inline fun <T> T?.whenNonNull(block: T.() -> Unit): T? {
-    this?.block()
-    return this@whenNonNull
-}
-
-
-enum class ApiStatus{
-    SUCCESS,
-    ERROR,
-    LOADING
-}
-
-sealed class AccountApiResult <out T> (val status: ApiStatus, val data: T?, val message:String?) {
-
-    data class Success<out R>(val _data: R?): AccountApiResult<R>(
-        status = ApiStatus.SUCCESS,
-        data = _data,
-        message = null
-    )
-
-    data class Error(val exception: String): AccountApiResult<Nothing>(
-        status = ApiStatus.ERROR,
-        data = null,
-        message = exception
-    )
-
-    data class Loading<out R>(val _data: R?, val isLoading: Boolean): AccountApiResult<R>(
-        status = ApiStatus.LOADING,
-        data = _data,
-        message = null
-    )
-}
-
-//as extension function
-fun ViewPager2.disableNestedScrolling() {
-    (getChildAt(0) as? RecyclerView)?.apply {
-        isNestedScrollingEnabled = false
-        overScrollMode = View.OVER_SCROLL_NEVER
-    }
-}
 fun Context.displayLabel() : String? = resources?.getString(R.string.view_your_payment_plan)
 
 fun String.toMaskABSAPhoneNumber() = this.replace("\\d(?!\\d{0,2}\$|\\d{7,10}\$)".toRegex(), "*")
