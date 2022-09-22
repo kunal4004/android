@@ -176,12 +176,12 @@ public class WoolworthsApplication extends Application implements Application.Ac
         // Ideally, it would be better to just have Firebase read from the JSON file, instead of manually setting those credentials.
         // TODO: also add check so that this firebase configuration is done only on Google variants, not Huawei, since Huawei uses Push Kit instead of Firebase.
         FirebaseOptions firebaseChatOptions = new FirebaseOptions.Builder()
-                .setProjectId("onecart-chat")
+                .setProjectId(getString(R.string.one_cart_chat))
                 .setApplicationId(getString(R.string.oc_chat_app_id))
                 .setApiKey(getString(R.string.oc_chat_api_key))
                 .build();
 
-        FirebaseApp chatApp = FirebaseApp.initializeApp(this, firebaseChatOptions, "CHAT_APP");
+        FirebaseApp chatApp = FirebaseApp.initializeApp(this, firebaseChatOptions, getString(R.string.oc_chat_app));
         FirebaseMessaging fbMessaging = chatApp.get(FirebaseMessaging.class);
         fbMessaging.getToken().addOnCompleteListener(it -> {
             if (it.isSuccessful()) {
@@ -267,6 +267,10 @@ public class WoolworthsApplication extends Application implements Application.Ac
         if (!isAnyActivityVisible() && ChatAWSAmplify.INSTANCE.isLiveChatBackgroundServiceRunning()) {
             Intent intentDismissService = new Intent(LiveChatService.CHANNEL_ID);
             sendBroadcast(intentDismissService);
+        }
+
+        if (!isAnyActivityVisible() && OCConstant.INSTANCE.isOCChatBackgroundServiceRunning()) {
+            OCConstant.INSTANCE.stopOCChatService(this);
         }
 
     }

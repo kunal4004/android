@@ -39,8 +39,9 @@ import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
-import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.OC_MESSAGE_COUNT
+import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.ocChatMessageCount
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.ORDER_PENDING_PICKING
+import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.isOCChatBackgroundServiceRunning
 import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.onecartgetstream.repository.OCToastNotification
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -56,14 +57,20 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
     private var chatChannelClients = HashMap<String, ChannelClient>()
     private var ordersSummary = ArrayList<OrderSummary>()
     private var channelIdToOrderIdMap = HashMap<String, String>()
+    private var isServiceRunning = true
     @Inject
     lateinit var ocToastNotification: OCToastNotification
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        lifecycleScope.launch(Dispatchers.IO) {
-            connectUserAndListenToChannels()
-            createNotificationChannel(applicationContext)?.build()
+        if (isServiceRunning){
+            lifecycleScope.launch(Dispatchers.IO) {
+                isOCChatBackgroundServiceRunning = true
+                isServiceRunning = false
+                connectUserAndListenToChannels()
+                createNotificationChannel(applicationContext)?.build()
+            }
         }
+
         return super.onStartCommand(intent, flags, startId)
     }
 
@@ -217,8 +224,8 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                         woolworthsApplication?.currentActivity?.let {
                             it.window?.decorView?.rootView?.apply {
                                 orderId?.let { orderID ->
-                                    ++OC_MESSAGE_COUNT
-                                    ocToastNotification.showOCToastNotification(it, OC_MESSAGE_COUNT.toString(), 250,
+                                    ++ocChatMessageCount
+                                    ocToastNotification.showOCToastNotification(it, ocChatMessageCount.toString(), 250,
                                         orderID)
                                     delay(AppConstant.DELAY_3000_MS)
                                 }
@@ -280,13 +287,11 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                             )
                         },
                         onFailure = {
-                            // TODO: handle negative scenario
                             onFailure()
                         }
                     )
                 },
                 onFailure = {
-                    // TODO: handle negative scenario
                     onFailure()
                 }
             )
@@ -324,7 +329,6 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                                                     }
                                                 },
                                                 onFailure = {
-                                                    // TODO: handle negative scenario
                                                     onFailure()
                                                 }
                                             )
@@ -341,7 +345,6 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                                                     }
                                                 },
                                                 onFailure = {
-                                                    // TODO: handle negative scenario
                                                     countOrderDetailsRemaining -= 1
                                                     if (countOrderDetailsRemaining == 0) {
                                                         fnGetChannelForOrders()
@@ -351,7 +354,6 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                                         }
 
                                     } else {
-                                        // TODO: No pending order - do we need to handle anything?
                                         // This would mean that a push notification was received, but no order matched that notification's data
                                         onFailure()
                                     }
@@ -381,7 +383,6 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                                         }
                                     },
                                     onFailure = {
-                                        // TODO: handle negative scenario
                                         onFailure()
                                     }
                                 )
@@ -391,13 +392,11 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                             }
                         },
                         onFailure = {
-                            // TODO: handle negative scenario
                             onFailure()
                         }
                     )
                 },
                 onFailure = {
-                    // TODO: handle negative scenario
                     onFailure()
                 }
             )
@@ -574,5 +573,10 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                 onFailure()
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        chatClient.disconnect()
     }
 }
