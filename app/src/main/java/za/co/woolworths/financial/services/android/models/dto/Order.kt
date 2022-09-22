@@ -16,8 +16,3 @@ data class Order(
     var clickAndCollectOrder: Boolean,
     var deliveryStatus: MyOrderDeliveryStatus?
 ) : Serializable
-
-// TODO: move to a separate class
-data class MyOrderDeliveryStatus(
-    var Food: String?
-) : Serializable

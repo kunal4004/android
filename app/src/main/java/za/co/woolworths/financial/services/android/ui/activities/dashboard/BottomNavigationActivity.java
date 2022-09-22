@@ -103,6 +103,7 @@ import za.co.woolworths.financial.services.android.models.dto.item_limits.Produc
 import za.co.woolworths.financial.services.android.models.network.Parameter;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
+import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
@@ -401,6 +402,18 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                         arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.DEEP_LINK_URL, linkData.toString());
                         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTDELIVERY, arguments, this);
                         pushFragment(ProductListingFragment.Companion.newInstance(productSearchTypeAndSearchTerm.getSearchType(), "", productSearchTypeAndSearchTerm.getSearchTerm(), true, false));
+                    }
+                    break;
+
+                case AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID:
+                    if (appLinkData.get(AppConstant.DP_LINKING_PARAM_STREAM_ORDER_ID) == null) {
+                        return;
+                    }
+
+                    String orderId = appLinkData.get(AppConstant.DP_LINKING_PARAM_STREAM_ORDER_ID).getAsString();
+                    String channelId = appLinkData.get(AppConstant.DP_LINKING_PARAM_STREAM_CHANNEL_ID).getAsString();
+                    if (orderId != null && !orderId.isEmpty()) {
+                        startActivity(OCChatActivity.Companion.newIntent(this, orderId, channelId));
                     }
                     break;
 
@@ -1082,6 +1095,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 }
 
                 break;
+
             //  Old way to navigate Deeplinking flows.
             default:
                 mBundle = intent.getExtras();
