@@ -13,8 +13,8 @@ import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.row_survey_footer.view.*
-import kotlinx.android.synthetic.main.row_survey_question_free_text.view.*
-import kotlinx.android.synthetic.main.row_survey_question_rate_slider.view.*
+import kotlinx.android.synthetic.main.view_survey_question_free_text.view.*
+import kotlinx.android.synthetic.main.view_survey_question_rate_slider.view.*
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyAnswer
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyQuestion
 import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerActivity.Companion.DEFAULT_VALUE_RATE_SLIDER_MAX
@@ -44,8 +44,8 @@ class SurveyQuestionAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             VIEW_TYPE_FOOTER -> FooterViewHolder(LayoutInflater.from(context).inflate(R.layout.row_survey_footer, parent, false))
-            SurveyQuestion.QuestionType.RATE_SLIDER.viewType -> RateSliderViewHolder(LayoutInflater.from(context).inflate(R.layout.row_survey_question_rate_slider, parent, false))
-            else -> FreeTextViewHolder(LayoutInflater.from(context).inflate(R.layout.row_survey_question_free_text, parent, false))
+            SurveyQuestion.QuestionType.RATE_SLIDER.viewType -> RateSliderViewHolder(LayoutInflater.from(context).inflate(R.layout.view_survey_question_rate_slider, parent, false))
+            else -> FreeTextViewHolder(LayoutInflater.from(context).inflate(R.layout.view_survey_question_free_text, parent, false))
         }
     }
 

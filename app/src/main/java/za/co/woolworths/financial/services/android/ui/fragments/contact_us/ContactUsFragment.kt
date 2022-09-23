@@ -109,11 +109,69 @@ class ContactUsFragment : Fragment(), View.OnClickListener {
         questions.add(
             SurveyQuestion(
                 id = 1,
+                type = "NUMERIC",
+                title = "This is a rate slider survey question.",
+                required = true,
+                minValue = 1,
+                maxValue = 10
+            )
+        )
+        questions.add(
+            SurveyQuestion(
+                id = 2,
                 type = "FREE_TEXT",
-                title = "Lorem ipsum sit dolor ip",
+                title = "This is a free text survey question.",
                 required = true
             )
         )
+//        questions.add(
+//            SurveyQuestion(
+//                id = 2,
+//                type = "FREE_TEXT",
+//                title = "This is a free text survey question.",
+//                required = true
+//            )
+//        )
+//        questions.add(
+//            SurveyQuestion(
+//                id = 2,
+//                type = "FREE_TEXT",
+//                title = "This is a free text survey question.",
+//                required = true
+//            )
+//        )
+//        questions.add(
+//            SurveyQuestion(
+//                id = 2,
+//                type = "FREE_TEXT",
+//                title = "This is a free text survey question.",
+//                required = true
+//            )
+//        )
+//        questions.add(
+//            SurveyQuestion(
+//                id = 2,
+//                type = "FREE_TEXT",
+//                title = "This is a free text survey question.",
+//                required = true
+//            )
+//        )
+//        questions.add(
+//            SurveyQuestion(
+//                id = 2,
+//                type = "FREE_TEXT",
+//                title = "This is a free text survey question.",
+//                required = true
+//            )
+//        )
+//        questions.add(
+//            SurveyQuestion(
+//                id = 2,
+//                type = "FREE_TEXT",
+//                title = "This is a free text survey question.",
+//                required = true
+//            )
+//        )
         var survey = SurveyDetails(
             id = 1,
             name = "Test",
