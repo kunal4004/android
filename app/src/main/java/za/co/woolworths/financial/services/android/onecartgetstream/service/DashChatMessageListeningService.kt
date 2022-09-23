@@ -39,9 +39,9 @@ import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
-import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.ocChatMessageCount
-import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.ORDER_PENDING_PICKING
-import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.isOCChatBackgroundServiceRunning
+import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.Companion.ORDER_PENDING_PICKING
+import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.Companion.isOCChatBackgroundServiceRunning
+import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.Companion.ocChatMessageCount
 import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.onecartgetstream.repository.OCToastNotification
 import za.co.woolworths.financial.services.android.ui.extension.bindString
