@@ -16,7 +16,6 @@ import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_my_preferences.*
-import kotlinx.android.synthetic.main.link_card_fragment.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -31,7 +30,7 @@ import za.co.woolworths.financial.services.android.models.repository.AppStateRep
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDeliveryFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
@@ -42,6 +41,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RESULT_CODE_DELETE_ACCOUNT
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAddressView
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator
@@ -169,7 +169,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         val lastDeliveryLocation = Utils.getPreferredDeliveryLocation()
         lastDeliveryLocation?.let { setDeliveryLocation(it) }
 
-        if (Utils.isGooglePlayServicesAvailable() || Utils.isHuaweiMobileServicesAvailable()) {
+        if (Utils.isGooglePlayOrHuaweiMobileServicesAvailable()) {
             val isDeviceIdentityIdPresent = verifyDeviceIdentityId(deviceList)
             updateLinkedDeviceView(isDeviceIdentityIdPresent)
         }
@@ -479,7 +479,8 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                 )
             }
         } else {
-            ScreenManager.presentSSOSignin(activity, DepartmentsFragment.DEPARTMENT_LOGIN_REQUEST)
+            ScreenManager.presentSSOSignin(activity,
+                StandardDeliveryFragment.DEPARTMENT_LOGIN_REQUEST)
         }
 
     }
@@ -500,7 +501,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         shoppingDeliveryLocation?.let {
             setDeliveryAddressView(
                 activity,
-                shoppingDeliveryLocation,
+                shoppingDeliveryLocation.fulfillmentDetails,
                 tvDeliveringTo,
                 tvDeliveryLocation,
                 null

@@ -81,7 +81,7 @@
                 android:layout_marginTop="@dimen/twenty_four_dp"
                 android:background="@drawable/order_add_to_cart_button_bg"
                 android:fontFamily="@font/futura_semi_bold"
-                android:letterSpacing="0.13"
+                android:letterSpacing="0.2"
                 android:text="@string/confirm_details"
                 android:textAllCaps="true"
                 android:textColor="@color/white"

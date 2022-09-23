@@ -124,6 +124,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.credit_card_deli
 import za.co.woolworths.financial.services.android.ui.fragments.help.HelpSectionFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.mypreferences.DeletedSuccessBottomSheetDialog;
 import za.co.woolworths.financial.services.android.ui.fragments.mypreferences.MyPreferencesFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shop.MyListsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersAccountFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.views.NotificationBadge;
@@ -135,8 +136,8 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.SignOutF
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants;
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.util.FirebaseAnalyticsUserProperty;
-import za.co.woolworths.financial.services.android.util.FirebaseManager;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseAnalyticsUserProperty;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
@@ -335,6 +336,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             SwipeRefreshLayout mSwipeToRefreshAccount = view.findViewById(R.id.swipeToRefreshAccount);
             imgCreditCardLayout = view.findViewById(R.id.imgCreditCardLayout);
             RelativeLayout myOrdersRelativeLayout = view.findViewById(R.id.myOrdersRelativeLayout);
+            RelativeLayout myShoppingListRelativeLayout = view.findViewById(R.id.myShoppingListRelativeLayout);
             chatWithAgentFloatingButton = view.findViewById(R.id.chatBubbleFloatingButton);
             onlineIndicatorImageView = view.findViewById(R.id.onlineIndicatorImageView);
             notificationBadge = view.findViewById(R.id.badge);
@@ -376,6 +378,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             helpSectionRelativeLayout.setOnClickListener(this);
             storeLocatorRelativeLayout.setOnClickListener(this);
             myOrdersRelativeLayout.setOnClickListener(this);
+            myShoppingListRelativeLayout.setOnClickListener(this);
             creditReportView.setOnClickListener(this);
             viewApplicationStatusRelativeLayout.setOnClickListener(this);
 
@@ -925,6 +928,10 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             Activity activity = getActivity();
             if (activity == null || mUpdateMyAccount.accountUpdateActive()) return;
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSIGNIN, activity);
+            /* clear all cnc and dash browsing data when user login*/
+            WoolworthsApplication.setCncBrowsingValidatePlaceDetails(null);
+            WoolworthsApplication.setDashBrowsingValidatePlaceDetails(null);
+            KotlinUtils.setBrowsingCncStore(null);
             ScreenManager.presentSSOSignin(getActivity());
         }
     };
@@ -1064,6 +1071,19 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 }
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Acc_My_Orders, activity);
                 break;
+
+            case R.id.myShoppingListRelativeLayout:
+                MyListsFragment fragment = new MyListsFragment();
+                if (activity instanceof BottomNavigationActivity) {
+                    if (getBottomNavigationActivity() != null)
+                        getBottomNavigationActivity().pushFragment(fragment);
+                } else {
+                    if (activity instanceof MyAccountActivity) {
+                        ((MyAccountActivity) activity).replaceFragment(fragment);
+                    }
+                }
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS, activity);
+                break;
             case R.id.creditReport:
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Myaccounts_creditview, activity);
                 startActivity(new Intent(getActivity(), CreditReportTUActivity.class));
@@ -1104,7 +1124,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 if (WoolworthsApplication.getInstance() != null) {
 
                                     if (!Utils.getLinkDeviceConfirmationShown() && verifyAppInstanceId() && deepLinkParams == null
-                                            && Utils.isGooglePlayServicesAvailable()) {
+                                            && Utils.isGooglePlayOrHuaweiMobileServicesAvailable()) {
                                         navigateToLinkDeviceConfirmation(ApplyNowState.STORE_CARD);
                                     } else {
                                         hideView(retryStoreCardLinearLayout);
@@ -1141,7 +1161,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 mErrorHandlerView.showToast();
             }
         } else {
-            if (!Utils.getLinkDeviceConfirmationShown() && verifyAppInstanceId() && deepLinkParams == null && Utils.isGooglePlayServicesAvailable()) {
+            if (!Utils.getLinkDeviceConfirmationShown() && verifyAppInstanceId() && deepLinkParams == null && Utils.isGooglePlayOrHuaweiMobileServicesAvailable()) {
                 navigateToLinkDeviceConfirmation(ApplyNowState.STORE_CARD);
             } else {
                 redirectToAccountSignInActivity(ApplyNowState.STORE_CARD);
@@ -1221,7 +1241,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 FirebaseAnalyticsUserProperty.Companion.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode(), account);
 
                                 if (!Utils.getLinkDeviceConfirmationShown() && verifyAppInstanceId() && deepLinkParams == null
-                                        && Utils.isGooglePlayServicesAvailable()) {
+                                        && Utils.isGooglePlayOrHuaweiMobileServicesAvailable()) {
                                     navigateToLinkDeviceConfirmation(ApplyNowState.PERSONAL_LOAN);
                                 } else {
                                     hideView(retryPersonalLoanLinearLayout);
@@ -1257,7 +1277,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             }
         } else {
             if (!Utils.getLinkDeviceConfirmationShown() && verifyAppInstanceId() && deepLinkParams == null
-                    && Utils.isGooglePlayServicesAvailable()) {
+                    && Utils.isGooglePlayOrHuaweiMobileServicesAvailable()) {
                 navigateToLinkDeviceConfirmation(ApplyNowState.PERSONAL_LOAN);
             } else {
                 redirectToAccountSignInActivity(ApplyNowState.PERSONAL_LOAN);
@@ -1290,7 +1310,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 FirebaseAnalyticsUserProperty.Companion.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.CREDIT_CARD.getGroupCode(), account);
 
                                 if (!Utils.getLinkDeviceConfirmationShown() && verifyAppInstanceId() && deepLinkParams == null
-                                        && Utils.isGooglePlayServicesAvailable()) {
+                                        && Utils.isGooglePlayOrHuaweiMobileServicesAvailable()) {
                                     navigateToLinkDeviceConfirmation(ApplyNowState.SILVER_CREDIT_CARD);
                                 } else {
                                     hideView(retryCreditCardLinearLayout);
@@ -1327,7 +1347,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             }
         } else {
             if (!Utils.getLinkDeviceConfirmationShown() && verifyAppInstanceId() && deepLinkParams == null
-                    && Utils.isGooglePlayServicesAvailable()) {
+                    && Utils.isGooglePlayOrHuaweiMobileServicesAvailable()) {
                 navigateToLinkDeviceConfirmation(ApplyNowState.SILVER_CREDIT_CARD);
             } else {
                 redirectToAccountSignInActivity(ApplyNowState.SILVER_CREDIT_CARD);
@@ -1711,6 +1731,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             clearAllCookies();
             setAccountResponse(activity, null);
             onSignOut();
+            Utils.clearPreferredDeliveryLocation();
             initialize();
             deletedSuccessShowPopup();
         }
@@ -1861,7 +1882,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     @Override
-    public void onPromptDismiss() {
+    public void onPromptDismiss(WMaterialShowcaseView.Feature feature) {
         if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity() != null && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
             try {
                 showSetUpDeliveryPopUp();

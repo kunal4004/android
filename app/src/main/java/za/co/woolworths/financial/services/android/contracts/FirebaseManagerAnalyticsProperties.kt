@@ -383,6 +383,8 @@ open class FirebaseManagerAnalyticsProperties {
         const val SIGN_UP: String = "sign_up"
         const val ADD_SHIPPING_INFO: String = "add_shipping_info"
         const val SCREEN_VIEW_PLP: String = "screen_view"
+        const val ADD_PAYMENT_INFO: String = "add_payment_info"
+        const val PURCHASE: String = "purchase"
 
 
         //Geolocation
@@ -593,6 +595,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val INDEX_VALUE: String = "1"
             const val AFFILIATION_VALUE: String = "WWOneApp"
             const val CREATIVE_NAME_VALUE: String = "Product List"
+            const val PAYMENT_TYPE_VALUE: String = "Gift Card"
             const val SHIPPING_TIER_VALUE_FOOD: String = "time slot"
             const val SHIPPING_TIER_VALUE_MIXED: String = "time slot and value"
             const val SHIPPING_TIER_VALUE_OTHER: String = "value type"

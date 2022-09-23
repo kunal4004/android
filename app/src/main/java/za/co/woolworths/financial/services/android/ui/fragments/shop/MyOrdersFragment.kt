@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,15 +18,14 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Order
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.OrdersAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
-import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorMessageDialogFragment
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.lang.IllegalStateException
 
 class MyOrdersFragment : Fragment(), OrderHistoryErrorDialogFragment.IOrderHistoryErrorDialogDismiss, IPresentOrderDetailInterface {
@@ -244,13 +242,9 @@ class MyOrdersFragment : Fragment(), OrderHistoryErrorDialogFragment.IOrderHisto
     }
 
     override fun presentOrderDetailsPage(item: Order) {
-
-         val orderItenm = Utils.toJson(item)
-         val order = Utils.jsonStringToObject(orderItenm, Order::class.java) as? Order
-
-        order?.let {
-            (activity as? BottomNavigationActivity)?.pushFragment(
-                    OrderDetailsFragment.getInstance(order)
+        item?.let {
+            (requireActivity() as? BottomNavigationActivity)?.pushFragment(
+                    OrderDetailsFragment.getInstance(it.orderId)
             )
         }
     }

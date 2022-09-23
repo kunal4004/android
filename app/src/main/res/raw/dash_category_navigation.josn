@@ -1,0 +1,64 @@
+{
+  "onDemandCategories": [
+    {
+      "categoryName": "Meat, Poultry & Fish",
+      "categoryId": "0",
+      "hasChildren": false,
+      "dimValId": "N-r0vkur",
+      "megaMenuSortPriority": 18,
+      "navigationType": "onDemand",
+      "liquorStoreIds": [
+      ],
+      "imgUrl": "https://tinyurl.com/y23a7p9j"
+    },
+    {
+      "categoryName": "Wine & Bubbles",
+      "categoryId": "33",
+      "hasChildren": false,
+      "dimValId": "N-r0vkur",
+      "megaMenuSortPriority": 20,
+      "navigationType": "onDemand",
+      "liquorStoreIds": [
+      ],
+      "imgUrl": "https://tinyurl.com/yckw854h"
+    },
+    {
+      "categoryName": "Food Cupboard",
+      "categoryId": "33",
+      "hasChildren": false,
+      "dimValId": "N-r0vkur",
+      "megaMenuSortPriority": 20,
+      "navigationType": "onDemand",
+      "liquorStoreIds": [
+      ],
+      "imgUrl": "https://tinyurl.com/5dnwbjh8"
+    },
+    {
+      "categoryName": "Bread Bakery & Desserts",
+      "categoryId": "33",
+      "hasChildren": false,
+      "dimValId": "N-r0vkur",
+      "megaMenuSortPriority": 20,
+      "navigationType": "onDemand",
+      "liquorStoreIds": [
+      ],
+      "imgUrl": "https://tinyurl.com/3jtnwrcd"
+    },
+    {
+      "categoryName": "Flowers & Plants",
+      "categoryId": "25",
+      "hasChildren": false,
+      "dimValId": "N-r0vkur",
+      "megaMenuSortPriority": 19,
+      "navigationType": "onDemand",
+      "liquorStoreIds": [
+      ],
+      "imgUrl": "https://tinyurl.com/2p9xw7ku"
+    }
+  ],
+  "response": {
+    "code": "-1",
+    "desc": "Success"
+  },
+  "httpCode": 200
+}

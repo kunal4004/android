@@ -70,6 +70,12 @@ class ContactUsFragment : Fragment(), View.OnClickListener {
                 else
                     (activity as? MyAccountActivity)?.replaceFragment(ContactUsCustomerServiceFragment())
             }
+            2 -> {
+                if (activity is BottomNavigationActivity)
+                    mBottomNavigator?.pushFragment(ContactUsDashServicesFragment())
+                else
+                    (activity as? MyAccountActivity)?.replaceFragment(ContactUsDashServicesFragment())
+            }
         }
     }
 

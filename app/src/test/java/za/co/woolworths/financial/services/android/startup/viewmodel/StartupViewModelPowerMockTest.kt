@@ -59,7 +59,6 @@ class StartupViewModelPowerMockTest {
         `when`(instrumentationContext.getPackageName()).thenReturn(packageName)
         packageInfo.versionName = packageName
         `when`(instrumentationContext.packageManager).thenReturn(packageManager)
-        doReturn(firebaseAnalytics).`when`(startupViewModel).getFirebaseInstance(instrumentationContext)
     }
 
     @Test
@@ -69,7 +68,6 @@ class StartupViewModelPowerMockTest {
         startupViewModel.setUpEnvironment(instrumentationContext)
         Assert.assertEquals(BuildConfig.ENV, startupViewModel.environment)
         Assert.assertEquals(packageName, startupViewModel.appVersion)
-        Assert.assertThat(startupViewModel.firebaseAnalytics, CoreMatchers.`is`(IsNull.notNullValue()))
     }
 
     @Test
@@ -80,7 +78,6 @@ class StartupViewModelPowerMockTest {
         startupViewModel.setUpEnvironment(instrumentationContext)
         Assert.assertEquals("QA", startupViewModel.environment)
         Assert.assertEquals("6.1.0", startupViewModel.appVersion)
-        Assert.assertThat(startupViewModel.firebaseAnalytics, CoreMatchers.`is`(IsNull.notNullValue()))
     }
 
     @Test

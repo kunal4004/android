@@ -28,6 +28,7 @@ interface ProductDetailsContract {
         fun onCartSummarySuccess(cartSummaryResponse: CartSummaryResponse)
         fun responseFailureHandler(response: Response)
         fun onAddToCartSuccess(addItemToCartResponse: AddItemToCartResponse)
+        fun onAddToCartError(addItemToCartResponse: AddItemToCartResponse)
         fun showOutOfStockInStores()
         fun onFindStoresSuccess(location: List<StoreDetails>)
         fun showProductDetailsLoading()
@@ -46,7 +47,12 @@ interface ProductDetailsContract {
     interface ProductDetailsPresenter {
 
         fun onDestroy()
-        fun loadStockAvailability(storeID: String, multiSKU: String, isDefaultRequest: Boolean)
+        fun loadStockAvailability(
+            storeID: String,
+            multiSKU: String,
+            isDefaultRequest: Boolean,
+            isUserBrowsing: Boolean
+        )
         fun loadProductDetails(productRequest: ProductRequest)
         fun loadCartSummary()
         fun postAddItemToCart(addItemToCart: List<AddItemToCart>)
@@ -60,7 +66,12 @@ interface ProductDetailsContract {
 
         fun getProductDetails(productRequest: ProductRequest, onFinishListener: OnFinishListener)
         fun getCartSummary(onFinishListener: OnFinishListener)
-        fun getStockAvailability(storeID: String, multiSKU: String, onFinishListener: OnFinishListener)
+        fun getStockAvailability(
+            storeID: String,
+            multiSKU: String,
+            onFinishListener: OnFinishListener,
+            isUserBrowsing: Boolean
+        )
         fun postAddItemToCart(addItemToCart: List<AddItemToCart>, onFinishListener: OnFinishListener)
         fun getLocationItems(otherSkus: OtherSkus?, onFinishListener: OnFinishListener)
     }
