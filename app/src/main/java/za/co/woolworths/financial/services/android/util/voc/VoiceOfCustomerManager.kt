@@ -49,7 +49,7 @@ class VoiceOfCustomerManager {
             }, SurveyDetailsResponse::class.java))
         }
 
-        private fun showVocSurvey(context: Context?, survey: SurveyDetails) {
+        fun showVocSurvey(context: Context?, survey: SurveyDetails) {
             if (survey.questions == null || survey.questions.isEmpty()) return
             context?.apply {
                 Intent(this, VoiceOfCustomerActivity::class.java).apply {

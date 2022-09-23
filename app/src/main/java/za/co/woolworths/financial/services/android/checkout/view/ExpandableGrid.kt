@@ -135,6 +135,9 @@ class ExpandableGrid(val fragment: Fragment) {
                     deliveryType
                 )
             }
+            else -> {
+                // Nothing
+            }
         }
     }
 

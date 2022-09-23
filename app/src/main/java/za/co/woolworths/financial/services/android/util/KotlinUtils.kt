@@ -599,6 +599,7 @@ class KotlinUtils {
                         dialogTitleImg = R.drawable.img_dash_delivery
                     }
                 }
+                else -> {}
             }
             val customBottomSheetDialogFragment =
                 CustomBottomSheetDialogFragment.newInstance(
@@ -1135,6 +1136,8 @@ class KotlinUtils {
                         accountOptions?.collectionsStartNewPlanJourney?.creditCard?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.creditCard?.collectionsDynamicUrl
                     exitUrl = accountOptions?.collectionsStartNewPlanJourney?.creditCard?.exitUrl
                 }
+
+                else -> {}
             }
 
             /**
@@ -1417,19 +1420,22 @@ class KotlinUtils {
                 Delivery.STANDARD->{
                     event = VocTriggerEvent.CHCKOUT_CNT_TO_PMNT
                 }
+                else -> {}
             }
             return event
         }
 
          fun showMinCartValueError(activity: AppCompatActivity, minimumBasketAmount: Double?) {
-           showGeneralInfoDialog(
-                activity?.supportFragmentManager,
-                activity.getString(R.string.minspend_error_msg_desc),
-                String.format(activity.getString(R.string.minspend_error_msg_title, minimumBasketAmount)),
-                activity.getString(R.string.got_it),
-                R.drawable.ic_cart,
-                true
-            )
+             activity?.supportFragmentManager?.let {
+                 showGeneralInfoDialog(
+                     it,
+                     activity.getString(R.string.minspend_error_msg_desc),
+                     String.format(activity.getString(R.string.minspend_error_msg_title, minimumBasketAmount)),
+                     activity.getString(R.string.got_it),
+                     R.drawable.ic_cart,
+                     true
+                 )
+             }
         }
 
         @JvmStatic

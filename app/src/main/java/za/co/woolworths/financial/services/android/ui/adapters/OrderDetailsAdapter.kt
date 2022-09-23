@@ -164,7 +164,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                                 else
                                     orderState?.text = orderStatus
                             }
-
+                            else -> {}
                         }
                     }
 
