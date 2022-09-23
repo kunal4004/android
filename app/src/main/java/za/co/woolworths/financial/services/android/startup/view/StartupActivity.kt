@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.startup.view
 
 import android.app.Activity
-import android.app.PendingIntent
 import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Color
@@ -19,7 +18,11 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProviders
 import com.awfs.coordination.R
+import com.google.android.gms.tasks.Task
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
 import com.google.firebase.crashlytics.internal.common.CommonUtils
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.google.gson.Gson
@@ -33,6 +36,7 @@ import za.co.woolworths.financial.services.android.firebase.FirebaseConfigUtils
 import za.co.woolworths.financial.services.android.firebase.model.ConfigData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.Companion.startOCChatService
 import za.co.woolworths.financial.services.android.onecartgetstream.service.DashChatMessageListeningService
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.startup.service.network.StartupApiHelper
@@ -40,7 +44,6 @@ import za.co.woolworths.financial.services.android.startup.service.repository.St
 import za.co.woolworths.financial.services.android.startup.utils.ConfigResource
 import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModel
 import za.co.woolworths.financial.services.android.startup.viewmodel.ViewModelFactory
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.util.*
@@ -266,6 +269,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         } else {
             showNonVideoViewWithErrorLayout()
         }
+        configureDashChatServices()
         //Remove old usage of SharedPreferences data.
      //   startupViewModel.clearSharedPreference(this@StartupActivity)
         AuthenticateUtils.getInstance(this@StartupActivity).enableBiometricForCurrentSession(true)
@@ -571,6 +575,33 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     private fun getForgotPasswordLink(forgotPasswordUri: String) {
         ScreenManager.forgotPassword(this@StartupActivity,forgotPasswordUri)
+    }
+
+
+    private fun configureDashChatServices() {
+        // Ideally, it would be better to just have Firebase read from the JSON file, instead of manually setting those credentials.
+        // TODO: also add check so that this firebase configuration is done only on Google variants, not Huawei, since Huawei uses Push Kit instead of Firebase.
+        val firebaseChatOptions = FirebaseOptions.Builder()
+            .setProjectId(getString(R.string.one_cart_chat))
+            .setApplicationId(getString(R.string.oc_chat_app_id))
+            .setApiKey(getString(R.string.oc_chat_api_key))
+            .build()
+        val chatApp =
+            FirebaseApp.initializeApp(this, firebaseChatOptions, getString(R.string.oc_chat_app))
+        val fbMessaging = chatApp.get(FirebaseMessaging::class.java)
+        fbMessaging.token.addOnCompleteListener { it: Task<String?> ->
+            if (it.isSuccessful) {
+                Utils.setOCChatFCMToken(it.result)
+            } else {
+                Utils.setOCChatFCMToken("")
+            }
+        }
+
+        // Start service to listen to incoming messages from Stream
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            startOCChatService(this)
+
+        }
     }
 
 
