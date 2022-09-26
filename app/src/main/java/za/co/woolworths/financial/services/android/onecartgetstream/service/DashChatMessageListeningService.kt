@@ -577,6 +577,8 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
 
     override fun onDestroy() {
         super.onDestroy()
-        chatClient.disconnect()
+        if (::chatClient.isInitialized){
+            chatClient.disconnect()
+        }
     }
 }
