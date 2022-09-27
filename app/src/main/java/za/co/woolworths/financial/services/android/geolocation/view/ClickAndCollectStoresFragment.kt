@@ -41,6 +41,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.VALIDATE_RESPONSE
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.StoreUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
@@ -152,7 +153,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
         rvStoreList.adapter = activity?.let { activity ->
             StoreListAdapter(
                 activity,
-                KotlinUtils.sortedStoreList(address),
+                StoreUtils.sortedStoreList(address),
                 this
             )
         }
