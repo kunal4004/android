@@ -19,6 +19,7 @@ class StoreListAdapter (
 ) : RecyclerView.Adapter<StoreListAdapter.SavedAddressViewHolder>() {
 
     private var lastSelectedPosition: Int = -1
+    private val PARGO : String = "Pargo"
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SavedAddressViewHolder {
         return SavedAddressViewHolder(
@@ -39,7 +40,13 @@ class StoreListAdapter (
 
     inner class SavedAddressViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindItems(store: Store?, position: Int) {
-            itemView.tvAddressNickName.text = KotlinUtils.capitaliseFirstLetter(store?.storeName)
+            if(store?.locationId != "" && store?.storeName?.contains(PARGO, true) == false) {
+                var pargoStoreName = store.storeName
+                pargoStoreName= "$PARGO $pargoStoreName"
+                itemView.tvAddressNickName.text = KotlinUtils.capitaliseFirstLetter(pargoStoreName)
+            } else {
+                itemView.tvAddressNickName.text = KotlinUtils.capitaliseFirstLetter(store?.storeName)
+            }
             itemView.tvAddress.text = store?.storeAddress
             itemView.txtStoreDistance.text = store?.distance?.let { changeMeterToKM(it) }
             if (lastSelectedPosition == position) {
