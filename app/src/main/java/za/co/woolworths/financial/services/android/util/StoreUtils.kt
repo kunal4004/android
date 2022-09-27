@@ -6,6 +6,8 @@ import java.util.HashMap
 
 class StoreUtils {
     companion object {
+        const val PARGO : String = "Pargo"
+
         enum class StoreDeliveryType(val type: String) {
             OTHER("other"),
             FOOD("food"),

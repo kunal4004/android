@@ -11,6 +11,7 @@ import za.co.woolworths.financial.services.android.common.changeMeterToKM
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.StoreUtils
 
 class StoreListAdapter (
     val context: Context,
@@ -19,7 +20,6 @@ class StoreListAdapter (
 ) : RecyclerView.Adapter<StoreListAdapter.SavedAddressViewHolder>() {
 
     private var lastSelectedPosition: Int = -1
-    private val PARGO : String = "Pargo"
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SavedAddressViewHolder {
         return SavedAddressViewHolder(
@@ -40,9 +40,9 @@ class StoreListAdapter (
 
     inner class SavedAddressViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindItems(store: Store?, position: Int) {
-            if(store?.locationId != "" && store?.storeName?.contains(PARGO, true) == false) {
+            if(store?.locationId != "" && store?.storeName?.contains(StoreUtils.PARGO, true) == false) {
                 var pargoStoreName = store.storeName
-                pargoStoreName= "$PARGO $pargoStoreName"
+                pargoStoreName= "$StoreUtils.PARGO $pargoStoreName"
                 itemView.tvAddressNickName.text = KotlinUtils.capitaliseFirstLetter(pargoStoreName)
             } else {
                 itemView.tvAddressNickName.text = KotlinUtils.capitaliseFirstLetter(store?.storeName)
