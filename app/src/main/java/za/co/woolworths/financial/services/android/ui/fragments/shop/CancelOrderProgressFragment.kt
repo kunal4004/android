@@ -16,10 +16,7 @@ import kotlinx.android.synthetic.main.npc_processing_request_layout.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
-import za.co.woolworths.financial.services.android.models.dto.CancelOrderAnalyticsObject
-import za.co.woolworths.financial.services.android.models.dto.CancelOrderResponse
-import za.co.woolworths.financial.services.android.models.dto.Order
-import za.co.woolworths.financial.services.android.models.dto.OrderDetailsResponse
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CancelOrderProgressActivity
@@ -35,17 +32,21 @@ import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManag
 class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.OnClickListener {
 
     private var orderId: String? = null
-    private var cancelOrderAnalyticsObject: CancelOrderAnalyticsObject? = null
+    private var commarceItemList: ArrayList<CommerceItem>? = null
     private var closeButton:View? = null
+    private var orderItemTotal: Double? = 0.0
+    private var orderShippingTotal: Double? = 0.0
 
     companion object {
         const val ORDER_ID = "ORDER_ID"
         const val REQUEST_CODE_CANCEL_ORDER = 1976
         const val RESULT_CODE_CANCEL_ORDER_SUCCESS = 1970
 
-        fun getInstance(orderId: String, cancelOrderAnalyticsObject: CancelOrderAnalyticsObject?) = CancelOrderProgressFragment().withArgs {
+        fun getInstance(orderId: String, orderItemList: ArrayList<CommerceItem>?, orderItemTotal: Double, orderShippingTotal: Double) = CancelOrderProgressFragment().withArgs {
             putString(ORDER_ID, orderId)
-            putSerializable(AppConstant.ORDER_RESPONSE, cancelOrderAnalyticsObject)
+            putSerializable(AppConstant.ORDER_ITEM_LIST, orderItemList)
+            putSerializable(AppConstant.ORDER_ITEM_TOTAL, orderItemTotal)
+            putSerializable(AppConstant.ORDER_SHIPPING_TOTAL, orderShippingTotal)
         }
     }
 
@@ -57,7 +58,9 @@ class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.On
         super.onCreate(savedInstanceState)
         arguments?.apply {
             orderId = getString(ORDER_ID, "")
-            cancelOrderAnalyticsObject = getSerializable(AppConstant.ORDER_RESPONSE) as CancelOrderAnalyticsObject
+            commarceItemList = getSerializable(AppConstant.ORDER_ITEM_LIST) as ArrayList<CommerceItem>?
+            orderItemTotal = getDouble(AppConstant.ORDER_ITEM_TOTAL, 0.0)
+            orderShippingTotal = getDouble(AppConstant.ORDER_SHIPPING_TOTAL, 0.0)
         }
         closeButton = activity?.findViewById(R.id.btnClose)
     }
@@ -131,11 +134,23 @@ class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.On
         (activity as? CancelOrderProgressActivity)?.triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CANCEL_API_SUCCESS)
     }
 
+ /*   currency
+    items
+    transaction_id
+    value
+
+    shipping
+    refund_type
+    affiliation*/
+
     private fun setEventForCancelOrderForRefund() {
+
+        if(commarceItemList?.isNullOrEmpty() == true) {
+            return
+        }
 
         val cancelOrderParams = Bundle()
 
-        /*main */
         cancelOrderParams.putString(
             FirebaseAnalytics.Param.CURRENCY,
             FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
@@ -143,18 +158,23 @@ class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.On
 
         cancelOrderParams.putString(
             FirebaseAnalytics.Param.TRANSACTION_ID,
-            FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE
+            orderId
         )
 
-        cancelOrderParams.putString(
-            FirebaseAnalytics.Param.VALUE,
-            FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE
-        )
 
-        cancelOrderParams.putString(
-            FirebaseAnalytics.Param.SHIPPING,
-            FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE
-        )
+        orderItemTotal?.let {
+            cancelOrderParams.putDouble(
+                FirebaseAnalytics.Param.VALUE,
+                it
+            )
+        }
+
+        orderShippingTotal?.let {
+            cancelOrderParams.putDouble(
+                FirebaseAnalytics.Param.SHIPPING,
+                it
+            )
+        }
 
         cancelOrderParams.putString(
             FirebaseManagerAnalyticsProperties.PropertyNames.REFUND_TYPE,
@@ -166,14 +186,23 @@ class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.On
             FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE
         )
 
-        val cancelOrderItem = Bundle()
+        for ( commarceItem in commarceItemList!!) {
+            val cancelOrderItem = Bundle()
+            cancelOrderItem.putString(FirebaseAnalytics.Param.ITEM_ID,
+                commarceItem.commerceItemInfo.productId)
 
-        cancelOrderItem.putString(
-            FirebaseAnalytics.Param.ITEM_ID,
-            cancelOrderAnalyticsObject?.itemId
-        )
+            cancelOrderItem.putString(FirebaseAnalytics.Param.ITEM_NAME,
+                commarceItem.commerceItemInfo.productDisplayName)
 
-        cancelOrderParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(cancelOrderItem))
+            cancelOrderItem.putDouble(FirebaseAnalytics.Param.PRICE,
+                commarceItem.priceInfo.amount)
+
+            cancelOrderItem.putInt(FirebaseAnalytics.Param.QUANTITY,
+                commarceItem.commerceItemInfo.quantity)
+
+            cancelOrderParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(cancelOrderItem))
+        }
+
         AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.REFUND, cancelOrderParams)
     }
 

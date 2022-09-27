@@ -142,15 +142,10 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             bindString(R.string.click_and_collect),
             bindString(R.string.dash_delivery)
         )
-
-        setEventForDeliveryTypeAndBrowsingType()
     }
 
-    fun setEventForDeliveryTypeAndBrowsingType(){
-
-        /*this event is triggered only first time and */
-
-        if (KotlinUtils.getPreferredDeliveryType() == null) {
+    fun setEventForDeliveryTypeAndBrowsingType() {
+        if (KotlinUtils.placeId == null || KotlinUtils.getPreferredDeliveryType() == null) {
             return
         }
 
@@ -209,20 +204,22 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                                 this
                             )
                             showBlackToolTip(Delivery.STANDARD)
+                            setEventsForSwitchingBrowsingType(Delivery.STANDARD.name)
                             KotlinUtils.browsingDeliveryType = Delivery.STANDARD
                         }
                         CLICK_AND_COLLECT_TAB.index -> {
                             //Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS, this)
                             showBlackToolTip(Delivery.CNC)
+                            setEventsForSwitchingBrowsingType(Delivery.CNC.name)
                             KotlinUtils.browsingDeliveryType = Delivery.CNC
                         }
                         DASH_TAB.index -> {
                             // Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYORDERS, this)
                             showBlackToolTip(Delivery.DASH)
+                            setEventsForSwitchingBrowsingType(Delivery.DASH.name)
                             KotlinUtils.browsingDeliveryType = Delivery.DASH
                         }
                     }
-                    setEventsForSwitchingBrowsingType(KotlinUtils.browsingDeliveryType?.name)
                     setupToolbar(position)
                 }
                 setAnalyticEventsForBrowseingSwitch()
@@ -287,6 +284,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                                 )
                                 updateCurrentTab(getDeliveryType()?.deliveryType)
                                 setDeliveryView()
+                                setEventForDeliveryTypeAndBrowsingType()
                                 viewLifecycleOwner.lifecycleScope.launch {
                                     delay(DELAY_3000_MS)
                                     Delivery.getType(getDeliveryType()?.deliveryType)?.let {

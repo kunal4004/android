@@ -5,8 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.cancel_order_progress_activity.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.dto.CancelOrderAnalyticsObject
-import za.co.woolworths.financial.services.android.models.dto.OrderDetailsResponse
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.CancelOrderProgressFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
@@ -16,7 +15,9 @@ class CancelOrderProgressActivity : AppCompatActivity() {
 
     var orderId: String = ""
     var isNavigatedFromMyAccounts: Boolean  = false
-    var cancelOrderAnalyticsObject: CancelOrderAnalyticsObject? = null
+    var commarceOrderItemList: ArrayList<CommerceItem>? = null
+    var orderItemTotal: Double = 0.0
+    var orderShippingTotal: Double = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,10 +28,12 @@ class CancelOrderProgressActivity : AppCompatActivity() {
         intent?.extras?.apply {
             orderId = getString(CancelOrderProgressFragment.ORDER_ID, "")
             isNavigatedFromMyAccounts = getBoolean(AppConstant.NAVIGATED_FROM_MY_ACCOUNTS, false)
-            cancelOrderAnalyticsObject = getSerializable(AppConstant.ORDER_RESPONSE) as CancelOrderAnalyticsObject
+            commarceOrderItemList = getSerializable(AppConstant.ORDER_ITEM_LIST) as ArrayList<CommerceItem>?
+            orderItemTotal = getDouble(AppConstant.ORDER_ITEM_TOTAL, 0.0)
+            orderShippingTotal = getDouble(AppConstant.ORDER_SHIPPING_TOTAL, 0.0)
         }
         addFragment(
-                fragment = CancelOrderProgressFragment.getInstance(orderId, cancelOrderAnalyticsObject),
+                fragment = CancelOrderProgressFragment.getInstance(orderId, commarceOrderItemList, orderItemTotal, orderShippingTotal),
                 tag = CancelOrderProgressFragment::class.java.simpleName,
                 containerViewId = R.id.fragmentContainer)
     }

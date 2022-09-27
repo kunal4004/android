@@ -57,12 +57,12 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         }
     }
 
+    private var orderItemList: ArrayList<CommerceItem> = ArrayList<CommerceItem>()
     private var dataList = arrayListOf<OrderDetailsItem>()
     private var argOrderId: String? = null
     private var orderDetailsResponse: OrderDetailsResponse? = null
     var isNavigatedFromMyAccounts: Boolean = false
     private var mBottomNavigator: BottomNavigator? = null
-    private var cancelOrderAnalyticsObject: CancelOrderAnalyticsObject? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -137,10 +137,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
                         mainLayout?.visibility = View.VISIBLE
                         loadingBar?.visibility = View.GONE
                         orderDetailsResponse = ordersResponse
-                        cancelOrderAnalyticsObject = CancelOrderAnalyticsObject(
-                            itemId = ordersResponse?.orderSummary?.orderId,
-                            quantity = 12
-                        )
+
                         bindData(orderDetailsResponse!!)
                     }
                     502 -> {
@@ -267,6 +264,8 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
                                     orderItemLength
                                 )
                             )
+                        orderItemList = ArrayList<CommerceItem>()
+                        orderItemList.add(commerceItem)
                     } catch (e: Exception) {
                         when (e) {
                             is IllegalStateException,
@@ -431,7 +430,9 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
             val intent = Intent(this, CancelOrderProgressActivity::class.java)
             intent.putExtra(CancelOrderProgressFragment.ORDER_ID, argOrderId)
             intent.putExtra(AppConstant.NAVIGATED_FROM_MY_ACCOUNTS, isNavigatedFromMyAccounts)
-            intent.putExtra(AppConstant.ORDER_RESPONSE, cancelOrderAnalyticsObject)
+            intent.putExtra(AppConstant.ORDER_ITEM_LIST, orderItemList)
+            intent.putExtra(AppConstant.ORDER_ITEM_TOTAL, orderDetailsResponse?.orderSummary?.total)
+            intent.putExtra(AppConstant.ORDER_SHIPPING_TOTAL, orderDetailsResponse?.orderSummary?.estimatedDelivery)
             startActivityForResult(intent, CancelOrderProgressFragment.REQUEST_CODE_CANCEL_ORDER)
             overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
         }

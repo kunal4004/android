@@ -496,14 +496,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                     }
                                 }
 
-                                /*Firebase analytics*/
-                                val dashParams = Bundle()
-                                dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_MODE,
-                                    KotlinUtils.getPreferredDeliveryType()?.name)
-                                AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.DASH_DELIVERY_BROWSE_MODE,
-                                    dashParams)
-
-
                                 /*reset browsing data for cnc and dash both once fulfillment location is confirmed*/
                                 WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
                                     validateLocationResponse?.validatePlace)
