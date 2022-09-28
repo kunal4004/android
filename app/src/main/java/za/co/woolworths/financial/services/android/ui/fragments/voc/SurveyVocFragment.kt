@@ -2,22 +2,20 @@ package za.co.woolworths.financial.services.android.ui.fragments.voc
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.Divider
-import androidx.compose.material.Text
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
@@ -37,12 +35,12 @@ import za.co.woolworths.financial.services.android.models.dto.voc.SurveyQuestion
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerActivity
 import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerActivity.Companion.EXTRA_SURVEY_ANSWERS
-import za.co.woolworths.financial.services.android.ui.adapters.SurveyQuestionAdapter
+import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerInterface
 import za.co.woolworths.financial.services.android.ui.compose.contentView
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.GenericActionOrCancelDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.voc.SurveyFooterActionView
 import za.co.woolworths.financial.services.android.ui.views.voc.SurveyQuestionFreeTextView
 import za.co.woolworths.financial.services.android.ui.views.voc.SurveyQuestionRateSliderView
-import za.co.woolworths.financial.services.android.ui.views.voc.SurveyFooterActionView
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.GenericActionOrCancelDialogFragment
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
@@ -50,10 +48,10 @@ class SurveyVocFragment : Fragment(), GenericActionOrCancelDialogFragment.IActio
 
     companion object {
         const val DIALOG_OPT_OUT_ID = 2
+        const val VIEW_TYPE_FOOTER = 3
     }
 
     private var navController: NavController? = null
-    private var surveyQuestionAdapter: SurveyQuestionAdapter? = null
     private var surveyDetails: SurveyDetails? = null
     private val surveyAnswers = HashMap<Long, SurveyAnswer>()
 
@@ -70,7 +68,7 @@ class SurveyVocFragment : Fragment(), GenericActionOrCancelDialogFragment.IActio
         savedInstanceState: Bundle?
     ) = contentView {
         // TODO: move to ViewModel, example: https://medium.com/mobile-app-development-publication/managing-compose-state-variable-with-and-without-viewmodel-8da72abef1e
-        val questions = rememberSaveable { surveyDetails?.questions ?: ArrayList() }
+        val questions = rememberSaveable { getAllowedQuestions(surveyDetails?.questions ?: ArrayList()) }
         var isSubmitEnabled by rememberSaveable {
             mutableStateOf(isSurveyAnswersValid())
         }
@@ -86,7 +84,7 @@ class SurveyVocFragment : Fragment(), GenericActionOrCancelDialogFragment.IActio
                         SurveyQuestion.QuestionType.ofType(questions[index].type)?.viewType
                             ?: SurveyQuestion.QuestionType.FREE_TEXT.viewType
                     }
-                    SurveyQuestionAdapter.VIEW_TYPE_FOOTER
+                    VIEW_TYPE_FOOTER
                 },
                 itemContent = { index ->
                     if (index < questions.size) {
@@ -97,21 +95,15 @@ class SurveyVocFragment : Fragment(), GenericActionOrCancelDialogFragment.IActio
                                 val rateSliderView = SurveyQuestionRateSliderView(LocalContext.current)
                                 rateSliderView.bind(question, getAnswer(question.id)) { questionId, value ->
                                     onInputRateSlider(questionId, value)
-                                    isSubmitEnabled = isSurveyAnswersValid()
+                                    // No need to update submit button's state here,
+                                    // since slider already has a default value, whether it's required or not
                                 }
                                 AndroidView(factory = { rateSliderView })
                             }
                             SurveyQuestion.QuestionType.FREE_TEXT -> {
-//                                // Using an Android View inside of a Compose View
-//                                val freeTextView = SurveyQuestionFreeTextView(LocalContext.current)
-//                                freeTextView.bind(question, getAnswer(question.id)) { questionId, value ->
-//                                    onInputFreeText(questionId, value)
-//                                    isSubmitEnabled = isSurveyAnswersValid()
-//                                }
-//                                AndroidView(factory = { freeTextView })
                                 SurveyQuestionFreeTextView(
-                                    title = question.title ?: "",
-                                    initialText = getAnswer(question.id)?.textAnswer ?: "",
+                                    title = question.title,
+                                    initialText = getAnswer(question.id)?.textAnswer,
                                     placeholder = if (question.required == true) R.string.voc_question_freetext_hint_required else R.string.voc_question_freetext_hint_optional,
                                     onTextChanged = { value ->
                                         onInputFreeText(question.id, value)
@@ -126,7 +118,6 @@ class SurveyVocFragment : Fragment(), GenericActionOrCancelDialogFragment.IActio
                                 .height(8.dp)
                         )
                     } else {
-                        // Footer - Submit or Skip
                         SurveyFooterActionView(
                             isSubmitEnabled = isSubmitEnabled,
                             onSubmitCallback = ::onSubmit,
@@ -138,73 +129,32 @@ class SurveyVocFragment : Fragment(), GenericActionOrCancelDialogFragment.IActio
         }
     }
 
-//    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-//                              savedInstanceState: Bundle?): View? {
-//        return inflater.inflate(R.layout.fragment_survey_voc, container, false)
-//    }
-//
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        super.onViewCreated(view, savedInstanceState)
-//
-//        setupToolbar()
-//        if (surveyQuestionAdapter == null) {
-//            initRecyclerView()
-//        }
-//    }
-//
-//    private fun setupToolbar() {
-//        activity?.apply {
-//            when (this) {
-//                is VoiceOfCustomerInterface -> {
-//                    context?.let {
-//                        setToolbarSkipVisibility(show = true)
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    private fun initRecyclerView() {
-//        if (surveyDetails == null || surveyDetails!!.questions.isNullOrEmpty()) return
-//        context?.let {
-//            rvSurveyQuestions.layoutManager = LinearLayoutManager(it, RecyclerView.VERTICAL, false)
-//            surveyQuestionAdapter = SurveyQuestionAdapter(it, getAllowedQuestions(surveyDetails!!.questions!!), this)
-//        }
-//        rvSurveyQuestions.adapter = surveyQuestionAdapter
-//        addOnRecyclerViewHeightChangeListener()
-//    }
-//
-//    fun addOnRecyclerViewHeightChangeListener() {
-//        rvSurveyQuestions.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
-//            // Update footer spacing if RecyclerView's height changed, when keyboard is shown/hidden for example
-//            if ((bottom - top) != (oldBottom - oldTop)) {
-//                updateSubmitButtonStateAndSpacing()
-//            }
-//        }
-//        // Update spacing on first load
-//        updateSubmitButtonStateAndSpacing()
-//    }
-//
-//    private fun getAllowedQuestions(questions: ArrayList<SurveyQuestion>): List<SurveyQuestion> {
-//        // Array to be updated as new question types are implemented.
-//        // This is just in case the survey contains question types that have not been implemented yet in this version.
-//        val allowedQuestionTypes = arrayOf(
-//                SurveyQuestion.QuestionType.RATE_SLIDER.type,
-//                SurveyQuestion.QuestionType.FREE_TEXT.type
-//        )
-//        return questions.filter { item -> allowedQuestionTypes.contains(item.type) }
-//    }
-
-    private fun updateSubmitButtonStateAndSpacing() {
-        // TODO
-//        surveyQuestionAdapter?.apply {
-//            notifyItemChanged(itemCount - 1, Unit)
-//        }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupToolbar()
     }
 
-//    override fun getRecyclerViewHeight(): Int {
-//        return rvSurveyQuestions.height
-//    }
+    private fun setupToolbar() {
+        activity?.apply {
+            when (this) {
+                is VoiceOfCustomerInterface -> {
+                    context?.let {
+                        setToolbarSkipVisibility(show = true)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getAllowedQuestions(questions: ArrayList<SurveyQuestion>): List<SurveyQuestion> {
+        // Array to be updated as new question types are implemented.
+        // This is just in case the survey contains question types that have not been implemented yet in this version.
+        val allowedQuestionTypes = arrayOf(
+                SurveyQuestion.QuestionType.RATE_SLIDER.type,
+                SurveyQuestion.QuestionType.FREE_TEXT.type
+        )
+        return questions.filter { item -> allowedQuestionTypes.contains(item.type) }
+    }
 
     private fun getAnswer(questionId: Long): SurveyAnswer? {
         var answer = surveyAnswers[questionId]
@@ -229,7 +179,7 @@ class SurveyVocFragment : Fragment(), GenericActionOrCancelDialogFragment.IActio
         return answer
     }
 
-    fun isSurveyAnswersValid(): Boolean {
+    private fun isSurveyAnswersValid(): Boolean {
         val questions = surveyDetails?.questions ?: run { return false }
         for (question: SurveyQuestion in questions) {
             if (question.required == true) {
@@ -248,14 +198,11 @@ class SurveyVocFragment : Fragment(), GenericActionOrCancelDialogFragment.IActio
     }
 
     private fun onInputRateSlider(questionId: Long, value: Int) {
-        // No need to update submit button's state here,
-        // since slider already has a default value, whether it's required or not
         getAnswer(questionId)?.answerId = value
     }
 
     private fun onInputFreeText(questionId: Long, value: String) {
         getAnswer(questionId)?.textAnswer = value
-        updateSubmitButtonStateAndSpacing()
     }
 
     private fun onSubmit() {
