@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.compose.voc
+package za.co.woolworths.financial.services.android.ui.views.voc
 
 import android.content.Context
 import android.util.AttributeSet

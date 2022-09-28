@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.compose.voc
+package za.co.woolworths.financial.services.android.ui.views.voc
 
 import android.content.Context
 import android.text.Editable
@@ -7,13 +7,10 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
-import android.widget.SeekBar
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.view_survey_question_free_text.view.*
-import kotlinx.android.synthetic.main.view_survey_question_rate_slider.view.*
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyAnswer
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyQuestion
-import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerActivity
 
 class SurveyQuestionFreeTextView @JvmOverloads constructor(
     context: Context,
