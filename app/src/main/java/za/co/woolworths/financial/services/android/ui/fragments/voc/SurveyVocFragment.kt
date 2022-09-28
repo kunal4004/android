@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.voc
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
@@ -16,7 +17,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -71,7 +75,9 @@ class SurveyVocFragment : Fragment(), GenericActionOrCancelDialogFragment.IActio
             mutableStateOf(isSurveyAnswersValid())
         }
         LazyColumn(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .background(colorResource(id = R.color.color_separator_lighter_grey))
         ) {
             items(
                 count = questions.size + 1,
@@ -96,16 +102,29 @@ class SurveyVocFragment : Fragment(), GenericActionOrCancelDialogFragment.IActio
                                 AndroidView(factory = { rateSliderView })
                             }
                             SurveyQuestion.QuestionType.FREE_TEXT -> {
-                                // Using an Android View inside of a Compose View
-                                val freeTextView = SurveyQuestionFreeTextView(LocalContext.current)
-                                freeTextView.bind(question, getAnswer(question.id)) { questionId, value ->
-                                    onInputFreeText(questionId, value)
-                                    isSubmitEnabled = isSurveyAnswersValid()
-                                }
-                                AndroidView(factory = { freeTextView })
+//                                // Using an Android View inside of a Compose View
+//                                val freeTextView = SurveyQuestionFreeTextView(LocalContext.current)
+//                                freeTextView.bind(question, getAnswer(question.id)) { questionId, value ->
+//                                    onInputFreeText(questionId, value)
+//                                    isSubmitEnabled = isSurveyAnswersValid()
+//                                }
+//                                AndroidView(factory = { freeTextView })
+                                SurveyQuestionFreeTextView(
+                                    title = question.title ?: "",
+                                    initialText = getAnswer(question.id)?.textAnswer ?: "",
+                                    placeholder = if (question.required == true) R.string.voc_question_freetext_hint_required else R.string.voc_question_freetext_hint_optional,
+                                    onTextChanged = { value ->
+                                        onInputFreeText(question.id, value)
+                                        isSubmitEnabled = isSurveyAnswersValid()
+                                    }
+                                )
                             }
                             else -> {}
                         }
+                        Spacer(
+                            modifier = Modifier
+                                .height(8.dp)
+                        )
                     } else {
                         // Footer - Submit or Skip
                         SurveyFooterActionView(

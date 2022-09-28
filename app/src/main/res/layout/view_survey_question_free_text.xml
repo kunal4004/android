@@ -23,7 +23,7 @@
             android:lineSpacingExtra="@dimen/line_spacing_4sp"
             android:textColor="@color/black"
             android:textSize="@dimen/text_size_20sp"
-            tools:text="Lorem ipsum sit dolor" />
+            tools:text="Lorem ipsum sit dolor Lorem ipsum sit dolor Lorem ipsum sit dolor Lorem ipsum sit dolor Lorem ipsum sit dolor " />
 
         <EditText
             android:id="@+id/etValueFreeText"
@@ -46,10 +46,5 @@
             android:textSize="@dimen/fifteen_sp" />
 
     </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/eight_dp"
-        android:background="@color/color_separator_lighter_grey" />
 
 </LinearLayout>
