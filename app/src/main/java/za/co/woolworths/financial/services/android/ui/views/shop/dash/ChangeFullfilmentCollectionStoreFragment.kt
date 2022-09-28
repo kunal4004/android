@@ -203,7 +203,7 @@ class ChangeFullfilmentCollectionStoreFragment() :
         rvStoreList.adapter = activity?.let { activity ->
             StoreListAdapter(
                 activity,
-                stores,
+                StoreUtils.sortedStoreList(stores),
                 this
             )
         }
