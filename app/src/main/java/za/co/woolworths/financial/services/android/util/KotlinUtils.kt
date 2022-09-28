@@ -122,8 +122,6 @@ class KotlinUtils {
         const val TREATMENT_PLAN = "treamentPlan"
         const val RESULT_CODE_CLOSE_VIEW = 2203
         private var GEO_REQUEST_CODE = -1
-
-
         fun highlightTextInDesc(
             context: Context?,
             spannableTitle: SpannableString,
