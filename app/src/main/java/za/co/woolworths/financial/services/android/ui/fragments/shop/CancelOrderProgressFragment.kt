@@ -134,15 +134,6 @@ class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.On
         (activity as? CancelOrderProgressActivity)?.triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CANCEL_API_SUCCESS)
     }
 
- /*   currency
-    items
-    transaction_id
-    value
-
-    shipping
-    refund_type
-    affiliation*/
-
     private fun setEventForCancelOrderForRefund() {
 
         if(commarceItemList?.isNullOrEmpty() == true) {

@@ -872,7 +872,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun setAnalyticEventsForBrowseingSwitch() {
-         /*Firebase analytics*/
         val dashParams = Bundle()
         dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_MODE,
             KotlinUtils.getPreferredDeliveryType()?.name)
