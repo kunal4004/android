@@ -45,6 +45,7 @@ class GetAPaymentPlanFragment : Fragment() {
             ProductGroupCode.CC -> {
                 binding.treatmentPlanImageView.setImageResource(R.drawable.android_credit_card)
             }
+            else -> {}
         }
 
         with(binding.viewPlanOptionsButton) {

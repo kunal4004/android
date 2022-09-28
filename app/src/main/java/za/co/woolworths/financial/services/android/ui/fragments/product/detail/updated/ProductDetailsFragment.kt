@@ -948,7 +948,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         otherSKUsByGroupKey = this.productDetails?.otherSkus.let { groupOtherSKUsByColor(it) }
         this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
 
-        if (productDetails?.isLiquor && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()) {
+        if (productDetails?.isLiquor == true && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()) {
             KotlinUtils.setLiquorModalShown()
             showLiquorDialog()
         }
@@ -993,7 +993,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 false -> {
                     showProductDetailsLoading()
                     val multiSKUs =
-                        productDetails?.otherSkus.joinToString(separator = "-") { it.sku.toString() }
+                        productDetails?.otherSkus?.joinToString(separator = "-") { it.sku.toString() } ?: ""
                     productDetailsPresenter?.loadStockAvailability(
                         storeIdForInventory!!,
                         multiSKUs,
@@ -1175,6 +1175,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 hasColor = false
                 hasSize = true
             }
+            else -> {}
         }
 
         if (otherSKUsList != null) {
@@ -1706,10 +1707,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onAddToCartError(addItemToCartResponse: AddItemToCartResponse) {
-        if (addItemToCartResponse?.response.code == AppConstant.RESPONSE_ERROR_CODE_1235) {
+        if (addItemToCartResponse?.response?.code == AppConstant.RESPONSE_ERROR_CODE_1235) {
             KotlinUtils.showQuantityLimitErrror(
                 activity?.supportFragmentManager,
-                addItemToCartResponse?.response.desc,
+                addItemToCartResponse?.response?.desc ?: "",
                 "",
                 context
             )

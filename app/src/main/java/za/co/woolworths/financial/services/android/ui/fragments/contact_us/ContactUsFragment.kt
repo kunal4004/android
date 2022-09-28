@@ -10,10 +10,13 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_contact_us.*
+import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetails
+import za.co.woolworths.financial.services.android.models.dto.voc.SurveyQuestion
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 
 class ContactUsFragment : Fragment(), View.OnClickListener {
 
@@ -97,5 +100,26 @@ class ContactUsFragment : Fragment(), View.OnClickListener {
         super.onHiddenChanged(hidden)
         if (!hidden)
             setupToolbar()
+    }
+
+    // TODO: Testing VOC, to be removed
+    override fun onResume() {
+        super.onResume()
+        var questions = ArrayList<SurveyQuestion>()
+        questions.add(
+            SurveyQuestion(
+                id = 1,
+                type = "FREE_TEXT",
+                title = "Lorem ipsum sit dolor ip",
+                required = true
+            )
+        )
+        var survey = SurveyDetails(
+            id = 1,
+            name = "Test",
+            type = "dummy",
+            questions = questions
+        )
+        VoiceOfCustomerManager.showVocSurvey(context, survey)
     }
 }

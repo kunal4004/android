@@ -47,15 +47,17 @@ class ChannelListFragment : Fragment() {
 
     private fun initViewModel() {
         viewModel.state.observe(
-            viewLifecycleOwner,
-            {
-                when (it) {
-                    is State.RedirectToChat -> redirectToChatScreen(it.channelId)
-                    is State.Loading -> showLoading()
-                    is State.Error -> showErrorDialog()
+            viewLifecycleOwner
+        ) {
+            when (it) {
+                is State.RedirectToChat -> redirectToChatScreen(it.channelId)
+                is State.Loading -> showLoading()
+                is State.Error -> showErrorDialog()
+                else -> {
+                    // Nothing
                 }
             }
-        )
+        }
         viewModel.fetchChannels()
     }
 

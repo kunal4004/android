@@ -138,6 +138,9 @@ class ChatViewModel : ViewModel() {
             when (event) {
                 is TypingStartEvent -> currentlyTyping.add(event.user.name)
                 is TypingStopEvent -> currentlyTyping.remove(event.user.name)
+                else -> {
+                    // Nothing
+                }
             }
             when {
                 currentlyTyping.isNotEmpty() -> _otherUserTyping.value =
