@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import com.awfs.coordination.R
@@ -431,7 +430,7 @@ class ProductLandingRouterImpl @Inject constructor(
         try {
             findNavController?.navigate(AccountProductsHomeFragmentDirections.actionAccountProductsHomeFragmentToStoreCardNotReceivedDialogFragment())
         } catch (ex: Exception) {
-            Log.e("exceptOAD", ex.toString())
+          FirebaseManager.logException(ex)
         }
     }
 
