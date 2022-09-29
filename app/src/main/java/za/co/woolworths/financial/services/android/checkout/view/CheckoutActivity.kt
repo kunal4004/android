@@ -45,7 +45,6 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     private var isComingFromCnc: Boolean? = false
     private var mSavedAddressPosition = 0
     var isEditAddressScreenNeeded = true
-    var cartItemList:ArrayList<CommerceItem>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,8 +55,6 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
             isEditAddressScreenNeeded = getBoolean(CheckoutAddressConfirmationFragment.IS_EDIT_ADDRESS_SCREEN, false)
             geoSlotSelection = getBoolean(GEO_SLOT_SELECTION, false)
             dashSlotSelection = getBoolean(DASH_SLOT_SELECTION, false)
-            dashSlotSelection = getBoolean(DASH_SLOT_SELECTION, false)
-            cartItemList = getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as? ArrayList<CommerceItem>?
             whoIsCollectingString =
                 getString(CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS, "")
             isComingFromCnc = getBoolean(IS_COMING_FROM_CNC_SELETION, false)
@@ -76,7 +73,6 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                 baseFragBundle?.putBoolean(LIQUOR_ORDER, getBoolean(LIQUOR_ORDER))
                 baseFragBundle?.putString(NO_LIQUOR_IMAGE_URL, getString(NO_LIQUOR_IMAGE_URL))
             }
-            baseFragBundle?.putSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST, cartItemList)
         }
         loadNavHostFragment()
     }

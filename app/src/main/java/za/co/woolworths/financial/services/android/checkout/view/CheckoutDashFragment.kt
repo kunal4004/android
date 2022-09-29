@@ -116,7 +116,6 @@ class CheckoutDashFragment : Fragment(),
 
     private var liquorImageUrl: String? = ""
     private var liquorOrder: Boolean? = false
-    private var cartItemList: ArrayList<CommerceItem>? = null
 
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -224,8 +223,6 @@ class CheckoutDashFragment : Fragment(),
                         radioBtnAgeConfirmation?.isChecked = true
                     }
                 }
-            }else  if (containsKey(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST)) {
-                cartItemList = getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as ArrayList<CommerceItem>?
             } else {
                 ageConfirmationLayout?.visibility = GONE
                 liquorComplianceBannerLayout?.visibility = GONE
@@ -1119,9 +1116,7 @@ class CheckoutDashFragment : Fragment(),
     }
 
     private fun setEventForDriverTip() {
-        if (cartItemList.isNullOrEmpty() == true) {
-            return
-        }
+
 
         if (orderTotalValue == -1.0) {
             return
@@ -1137,22 +1132,6 @@ class CheckoutDashFragment : Fragment(),
 
         driverTipItemParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.DASH_TIP,
             selectedDriverTipValue)
-
-        for ( cartItem in cartItemList!!) {
-            val driverTipItem = Bundle()
-            driverTipItem.putString(FirebaseAnalytics.Param.ITEM_ID,
-                cartItem.commerceItemInfo.productId)
-
-            driverTipItem.putString(FirebaseAnalytics.Param.ITEM_NAME,
-                cartItem.commerceItemInfo.productDisplayName)
-
-            driverTipItem.putDouble(FirebaseAnalytics.Param.PRICE,
-                cartItem.priceInfo.amount)
-
-            driverTipItem.putInt(FirebaseAnalytics.Param.QUANTITY,
-                cartItem.commerceItemInfo.quantity)
-            driverTipItemParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(driverTipItem))
-        }
 
         AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.DASH_DRIVER_TIP, driverTipItemParams)
     }
