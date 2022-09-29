@@ -692,7 +692,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
             R.drawable.img_delivery_truck))
         changeFulfillmentTitleTextView?.text = bindString(R.string.standard_delivery)
-        changeFulfillmentSubTitleTextView?.text = bindString(R.string.empty)
+        changeFulfillmentSubTitleTextView?.text = bindString(R.string.standard_title_text)
     }
 
     private fun showCollectionTabView() {
@@ -738,7 +738,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             R.color.black))
         editDelivery?.text = getString(R.string.edit)
         changeFulfillmentTitleTextView?.text = bindString(R.string.standard_delivery)
-        changeFulfillmentSubTitleTextView?.text = bindString(R.string.empty)
+        changeFulfillmentSubTitleTextView?.text = bindString(R.string.standard_title_text)
         if (validateLocationResponse != null && validateLocationResponse?.validatePlace?.deliverable == false && progressBar?.visibility == View.GONE) {
             // Show not deliverable Bottom Dialog.
             showNotDeliverablePopUp(R.string.no_location_title,

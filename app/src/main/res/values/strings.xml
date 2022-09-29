@@ -2511,6 +2511,7 @@
     <string name="walkthrough_delivery_details_action">set your delivery address</string>
     <string name="standard_delivery">Standard Delivery</string>
     <string name="click_and_collect">Click &amp; Collect</string>
+    <string name="standard_title_text">Delivery fee determined during checkout.\nAll products available.</string>
     <string name="click_and_collect_title_text">Free Collection. \n Limited shop of %1$s Items.</string>
     <string name="dash_title_text_1">R%1$s Delivery Fee. \n </string>
     <string name="dash_title_text_2">Limited shop of %1$s Items.</string>
@@ -2719,5 +2720,6 @@
 
     <string name="we_need_more_info">We Need More Info</string>
     <string name="enter_street_name">Please enter a street name for this location:</string>
+    <string name="your_shopper_is_trying_to">Your shopper is trying to \ncontact you.</string>
 
 </resources>
