@@ -113,13 +113,13 @@ class StoreCardNotReceivedFragment :
     }
 
     private fun successNotificationView() {
-       // viewModel.setLocalDateTime(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN)
+        viewModel.setLocalDateTime(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN)
         mToolbarHelper?.hideCloseIcon()
         router.routeToConfirmCardNotReceived(findNavController())
     }
 
     private fun dismiss() {
-       // viewModel.setLocalDateTime(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN)
+        viewModel.setLocalDateTime(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN)
         (activity as? StoreCardActivity)?.landingNavController()?.popBackStack()
     }
 
