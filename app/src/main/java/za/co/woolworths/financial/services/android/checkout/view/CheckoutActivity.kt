@@ -20,7 +20,6 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.baseFragBundle
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.*
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.OrderConfirmationFragment
@@ -73,6 +72,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                 baseFragBundle?.putBoolean(LIQUOR_ORDER, getBoolean(LIQUOR_ORDER))
                 baseFragBundle?.putString(NO_LIQUOR_IMAGE_URL, getString(NO_LIQUOR_IMAGE_URL))
             }
+
         }
         loadNavHostFragment()
     }

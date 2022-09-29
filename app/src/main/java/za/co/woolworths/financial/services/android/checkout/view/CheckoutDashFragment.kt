@@ -69,7 +69,6 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
