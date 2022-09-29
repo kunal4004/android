@@ -137,7 +137,6 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
                         mainLayout?.visibility = View.VISIBLE
                         loadingBar?.visibility = View.GONE
                         orderDetailsResponse = ordersResponse
-
                         bindData(orderDetailsResponse!!)
                     }
                     502 -> {

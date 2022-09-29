@@ -1116,8 +1116,6 @@ class CheckoutDashFragment : Fragment(),
     }
 
     private fun setEventForDriverTip() {
-
-
         if (orderTotalValue == -1.0) {
             return
         }

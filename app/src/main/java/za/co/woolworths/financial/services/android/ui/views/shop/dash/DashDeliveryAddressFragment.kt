@@ -905,26 +905,33 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
         val categoryParamsParams = Bundle()
         val slotName = AppConstant.QUICK_LINK.plus(categoryItem?.categoryId)
-         categoryParamsParams.putString(
-            FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_ID,
-            KotlinUtils.getPreferredDeliveryType()?.name
-        )
-        categoryParamsParams.putString(
-            FirebaseManagerAnalyticsProperties.PropertyNames.CONTENT_TYPE,
-            FirebaseManagerAnalyticsProperties.PropertyValues.DASH_MENU_CLICK
-        )
-        categoryParamsParams.putString(
-            FirebaseManagerAnalyticsProperties.PropertyNames.CATEGORY_NAME,
-            FirebaseManagerAnalyticsProperties.PropertyValues.DASH_CATEGORY_NAME
-        )
-        categoryParamsParams.putString(
-            FirebaseManagerAnalyticsProperties.PropertyNames.CONTENT_NAME,
-            categoryItem?.categoryName
-        )
-        categoryParamsParams.putString(
-            FirebaseManagerAnalyticsProperties.PropertyNames.CONTENT_SLOT,
-            slotName
-        )
+
+        categoryParamsParams?.apply {
+
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_ID,
+                KotlinUtils.getPreferredDeliveryType()?.name
+            )
+
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.CONTENT_TYPE,
+                FirebaseManagerAnalyticsProperties.PropertyValues.DASH_MENU_CLICK
+            )
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.CATEGORY_NAME,
+                FirebaseManagerAnalyticsProperties.PropertyValues.DASH_CATEGORY_NAME
+            )
+
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.CONTENT_NAME,
+                categoryItem?.categoryName
+            )
+
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.CONTENT_SLOT,
+                slotName
+            )
+        }
 
         AnalyticsManager.logEvent(
             FirebaseManagerAnalyticsProperties.DASH_SELECT_CONTENT,

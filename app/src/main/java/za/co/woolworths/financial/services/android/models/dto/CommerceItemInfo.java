@@ -8,7 +8,7 @@ import java.io.Serializable;
  * Created by W7099877 on 2018/03/19.
  */
 
-public class CommerceItemInfo implements Serializable {
+public class CommerceItemInfo {
 	public int quantity;
 	public String productId;
 	public String internalImageURL;

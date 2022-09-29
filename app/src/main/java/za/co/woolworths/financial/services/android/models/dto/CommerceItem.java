@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Created by W7099877 on 2018/02/08.
  */
 
-public class CommerceItem implements Serializable {
+public class CommerceItem {
 
 	public PriceInfo priceInfo;
 	public CommerceItemInfo commerceItemInfo;
