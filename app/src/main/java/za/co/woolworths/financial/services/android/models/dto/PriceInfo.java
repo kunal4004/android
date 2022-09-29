@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Created by W7099877 on 2018/02/08.
  */
 
-public class PriceInfo {
+public class PriceInfo implements Serializable {
 
 	public double amount;
 	public double listPrice;
