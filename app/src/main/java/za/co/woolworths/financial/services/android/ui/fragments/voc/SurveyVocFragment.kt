@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.voc
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -110,12 +111,23 @@ class SurveyVocFragment : Fragment(), GenericActionOrCancelDialogFragment.IActio
                                 SurveyQuestion.QuestionType.RATE_SLIDER -> {
                                     // Using an Android View inside of a Compose View
                                     val rateSliderView = SurveyQuestionRateSliderView(LocalContext.current)
+                                    var isTooltipInitialPositionUpdated = false
                                     rateSliderView.bind(question, getAnswer(question.id)) { questionId, value ->
                                         onInputRateSlider(questionId, value)
                                         // No need to update submit button's state here,
                                         // since slider already has a default value, whether it's required or not
                                     }
-                                    AndroidView(factory = { rateSliderView })
+                                    AndroidView(
+                                        factory = { rateSliderView },
+                                        modifier = Modifier.onGloballyPositioned {
+                                            if (!isTooltipInitialPositionUpdated) {
+                                                isTooltipInitialPositionUpdated = true
+                                                rateSliderView.post {
+                                                    rateSliderView.updateSliderTooltipPosition()
+                                                }
+                                            }
+                                        }
+                                    )
                                 }
                                 SurveyQuestion.QuestionType.FREE_TEXT -> {
                                     SurveyQuestionFreeTextView(

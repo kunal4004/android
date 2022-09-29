@@ -540,54 +540,58 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                 required = true
             )
         )
-//        questions.add(
-//            SurveyQuestion(
-//                id = 3,
-//                type = "FREE_TEXT",
-//                title = "This is a free text survey question.",
-//                required = true
-//            )
-//        )
-//        questions.add(
-//            SurveyQuestion(
-//                id = 4,
-//                type = "FREE_TEXT",
-//                title = "This is a free text survey question.",
-//                required = true
-//            )
-//        )
-//        questions.add(
-//            SurveyQuestion(
-//                id = 5,
-//                type = "FREE_TEXT",
-//                title = "This is a free text survey question.",
-//                required = true
-//            )
-//        )
-//        questions.add(
-//            SurveyQuestion(
-//                id = 6,
-//                type = "FREE_TEXT",
-//                title = "This is a free text survey question.",
-//                required = true
-//            )
-//        )
-//        questions.add(
-//            SurveyQuestion(
-//                id = 7,
-//                type = "FREE_TEXT",
-//                title = "This is a free text survey question.",
-//                required = true
-//            )
-//        )
-//        questions.add(
-//            SurveyQuestion(
-//                id = 8,
-//                type = "FREE_TEXT",
-//                title = "This is a free text survey question.",
-//                required = true
-//            )
-//        )
+        questions.add(
+            SurveyQuestion(
+                id = 3,
+                type = "FREE_TEXT",
+                title = "This is a free text survey question.",
+                required = true
+            )
+        )
+        questions.add(
+            SurveyQuestion(
+                id = 4,
+                type = "FREE_TEXT",
+                title = "This is a free text survey question.",
+                required = true
+            )
+        )
+        questions.add(
+            SurveyQuestion(
+                id = 5,
+                type = "NUMERIC",
+                title = "This is a rate slider survey question.",
+                required = true,
+                minValue = 1,
+                maxValue = 11
+            )
+        )
+        questions.add(
+            SurveyQuestion(
+                id = 6,
+                type = "FREE_TEXT",
+                title = "This is a free text survey question.",
+                required = true
+            )
+        )
+        questions.add(
+            SurveyQuestion(
+                id = 7,
+                type = "FREE_TEXT",
+                title = "This is a free text survey question.",
+                required = true
+            )
+        )
+        questions.add(
+            SurveyQuestion(
+                id = 8,
+                type = "NUMERIC",
+                title = "This is a rate slider survey question.",
+                required = true,
+                minValue = 1,
+                maxValue = 11
+            )
+        )
         var survey = SurveyDetails(
             id = 1,
             name = "Test",
