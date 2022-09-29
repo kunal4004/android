@@ -5,7 +5,6 @@ import android.content.Intent
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
-import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -93,7 +92,7 @@ interface IProductLandingRouter {
     fun routeToViewTreatmentPlan(activity: Activity?, viewModel: AccountProductsHomeViewModel?)
     fun routeToStartNewElitePlan(activity: Activity?, viewModel: AccountProductsHomeViewModel?)
     fun routeToCardNotReceivedView(findNavController: NavController?)
-    fun routeToCardNotArrivedFailure(response1: NavController?, response: ServerErrorResponse?)
+    fun routeToCardNotArrivedFailure(findNavController: NavController?, response: ServerErrorResponse?)
     fun routeToConfirmCardNotReceived(findNavController: NavController?)
 }
 
@@ -185,7 +184,7 @@ class ProductLandingRouterImpl @Inject constructor(
     override fun routeToActivateVirtualTempCard(
         activity: Activity,
         isDeviceLinked: Boolean
-    ): CallBack? {
+    ): CallBack {
         var intent: Intent? = null
         linkMyDeviceIfNecessary(
             activity = activity,
@@ -336,7 +335,7 @@ class ProductLandingRouterImpl @Inject constructor(
         }
     }
 
-    fun navigateToMyCardDetailActivity(
+    private fun navigateToMyCardDetailActivity(
         activity: Activity,
         storeCardResponse: StoreCardsResponse,
         requestUnblockStoreCardCall: Boolean = false,
@@ -359,12 +358,12 @@ class ProductLandingRouterImpl @Inject constructor(
     }
 
     override fun routeToServerErrorDialog(
-        activity: Activity?,
+        appCompatActivity: Activity?,
         serverErrorResponse: ServerErrorResponse?
     ) {
         serverErrorResponse?.let { response ->
             showErrorDialog(
-                activity as? AppCompatActivity,
+                appCompatActivity as? AppCompatActivity,
                 response
             )
         }
