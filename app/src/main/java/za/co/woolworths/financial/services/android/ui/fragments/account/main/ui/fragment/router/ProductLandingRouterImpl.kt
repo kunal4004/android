@@ -2,8 +2,10 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -27,6 +29,7 @@ import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Ac
 import za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.HowToUseTemporaryStoreCardActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.StoreCardNotReceivedFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.device_security.linkMyDeviceIfNecessary
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
@@ -62,9 +65,9 @@ interface IProductLandingRouter {
 
     fun routeToLinkNewCard(activity: Activity?): CallBack
     fun routeToManageMyCard(activity: Activity): CallBack
-    fun routeToActivateVirtualTempCard(activity: Activity,isDeviceLinked : Boolean): CallBack?
+    fun routeToActivateVirtualTempCard(activity: Activity, isDeviceLinked: Boolean): CallBack?
     fun routeToGetReplacementCard(activity: Activity?): CallBack?
-    fun routeToBlockCard(activity: Activity,isDeviceLinked : Boolean = true): CallBack
+    fun routeToBlockCard(activity: Activity, isDeviceLinked: Boolean = true): CallBack
     fun routeToHowItWorks(
         activity: Activity?,
         isStaffMemberAndHasTemporaryCard: Boolean,
@@ -77,7 +80,11 @@ interface IProductLandingRouter {
         storeCardsResponse: StoreCardsResponse?
     )
 
-    fun routeToServerErrorDialog(appCompatActivity: Activity?, serverErrorResponse: ServerErrorResponse?)
+    fun routeToServerErrorDialog(
+        appCompatActivity: Activity?,
+        serverErrorResponse: ServerErrorResponse?
+    )
+
     fun routeToManageMyCardDetails(findNavController: NavController)
     fun routeToDefaultErrorMessageDialog(activity: Activity?)
     fun showNoConnectionToast(activity: Activity?)
@@ -85,11 +92,15 @@ interface IProductLandingRouter {
     fun routeToSetupPaymentPlan(activity: Activity?, viewModel: AccountProductsHomeViewModel?)
     fun routeToViewTreatmentPlan(activity: Activity?, viewModel: AccountProductsHomeViewModel?)
     fun routeToStartNewElitePlan(activity: Activity?, viewModel: AccountProductsHomeViewModel?)
+    fun routeToCardNotReceivedView(findNavController: NavController?)
+    fun routeToCardNotArrivedFailure(response1: NavController?, response: ServerErrorResponse?)
+    fun routeToConfirmCardNotReceived(findNavController: NavController?)
 }
 
-sealed class CallBack{
-   data class IntentCallBack(val intent: Intent?): CallBack()
+sealed class CallBack {
+    data class IntentCallBack(val intent: Intent?) : CallBack()
 }
+
 class ProductLandingRouterImpl @Inject constructor(
     private var accountOptions: AccountOptionsImpl,
     private var manageCardImpl: ManageCardFunctionalRequirementImpl,
@@ -171,21 +182,29 @@ class ProductLandingRouterImpl @Inject constructor(
         }
     }
 
-    override fun routeToActivateVirtualTempCard(activity: Activity,isDeviceLinked : Boolean): CallBack? {
-        var intent:Intent? = null
-        linkMyDeviceIfNecessary(activity = activity, isDeviceLinked = isDeviceLinked, ApplyNowState.STORE_CARD, {
-            ACTIVATE_VIRTUAL_CARD_DETAIL = true
-        }, {
+    override fun routeToActivateVirtualTempCard(
+        activity: Activity,
+        isDeviceLinked: Boolean
+    ): CallBack? {
+        var intent: Intent? = null
+        linkMyDeviceIfNecessary(
+            activity = activity,
+            isDeviceLinked = isDeviceLinked,
+            ApplyNowState.STORE_CARD,
+            {
+                ACTIVATE_VIRTUAL_CARD_DETAIL = true
+            },
+            {
 
-            val storeCardResponse =
-                manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
-            intent=  navigateToGetTemporaryStoreCardPopupActivity(
-                activity,
-                storeCardResponse = storeCardResponse
-            )
-            intent
+                val storeCardResponse =
+                    manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
+                intent = navigateToGetTemporaryStoreCardPopupActivity(
+                    activity,
+                    storeCardResponse = storeCardResponse
+                )
+                intent
 
-        })
+            })
         return CallBack.IntentCallBack(intent)
     }
 
@@ -197,39 +216,53 @@ class ProductLandingRouterImpl @Inject constructor(
             GET_REPLACEMENT_CARD_DETAIL = true
         }, {
             val storeCardResponse = manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_GET_CARD, activity)
+            Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_GET_CARD,
+                activity
+            )
             selectStoreActivity = Intent(activity, SelectStoreActivity::class.java)
-            selectStoreActivity?.putExtra(SelectStoreActivity.STORE_DETAILS, Gson().toJson(storeCardResponse)) })
+            selectStoreActivity?.putExtra(
+                SelectStoreActivity.STORE_DETAILS,
+                Gson().toJson(storeCardResponse)
+            )
+        })
         return CallBack.IntentCallBack(selectStoreActivity)
     }
 
     fun navigateToGetReplacementCard(
-        activity: Activity?) {
+        activity: Activity?
+    ) {
         val storeCardResponse = manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
         Utils.triggerFireBaseEvents(
             FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_GET_CARD,
             activity
         )
         val selectStoreActivity = Intent(activity, SelectStoreActivity::class.java)
-        selectStoreActivity.putExtra(SelectStoreActivity.STORE_DETAILS,
+        selectStoreActivity.putExtra(
+            SelectStoreActivity.STORE_DETAILS,
             Gson().toJson(storeCardResponse)
         )
         activity?.startActivity(selectStoreActivity)
     }
 
-    override fun routeToBlockCard(activity: Activity,isDeviceLinked : Boolean): CallBack {
+    override fun routeToBlockCard(activity: Activity, isDeviceLinked: Boolean): CallBack {
         val storeCardResponse = manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
         activity.apply {
-            var openBlockMyCardActivity : Intent? = null
-            linkMyDeviceIfNecessary(activity = activity,isDeviceLinked = isDeviceLinked, state = ApplyNowState.STORE_CARD, {
-                BLOCK_CARD_DETAIL = true
-            }, {
-                openBlockMyCardActivity = Intent(this, BlockMyCardActivity::class.java)
-                openBlockMyCardActivity?.putExtra(
-                    MyCardDetailActivity.STORE_CARD_DETAIL,
-                    Gson().toJson(storeCardResponse)
-                )
-            })
+            var openBlockMyCardActivity: Intent? = null
+            linkMyDeviceIfNecessary(
+                activity = activity,
+                isDeviceLinked = isDeviceLinked,
+                state = ApplyNowState.STORE_CARD,
+                {
+                    BLOCK_CARD_DETAIL = true
+                },
+                {
+                    openBlockMyCardActivity = Intent(this, BlockMyCardActivity::class.java)
+                    openBlockMyCardActivity?.putExtra(
+                        MyCardDetailActivity.STORE_CARD_DETAIL,
+                        Gson().toJson(storeCardResponse)
+                    )
+                })
 
             return CallBack.IntentCallBack(openBlockMyCardActivity)
         }
@@ -278,8 +311,8 @@ class ProductLandingRouterImpl @Inject constructor(
                         it
                     )
                 )
-            }catch (e : Exception){
-              FirebaseManager.logException(e)
+            } catch (e: Exception) {
+                FirebaseManager.logException(e)
             }
         }
     }
@@ -329,11 +362,16 @@ class ProductLandingRouterImpl @Inject constructor(
         activity: Activity?,
         serverErrorResponse: ServerErrorResponse?
     ) {
-        serverErrorResponse?.let { response -> showErrorDialog(activity as? AppCompatActivity, response) }
+        serverErrorResponse?.let { response ->
+            showErrorDialog(
+                activity as? AppCompatActivity,
+                response
+            )
+        }
     }
 
     override fun routeToManageMyCardDetails(findNavController: NavController) {
-            findNavController.navigate(AccountProductsHomeFragmentDirections.actionAccountProductsHomeFragmentToManageMyCardDetailsFragment())
+        findNavController.navigate(AccountProductsHomeFragmentDirections.actionAccountProductsHomeFragmentToManageMyCardDetailsFragment())
     }
 
     override fun routeToDefaultErrorMessageDialog(
@@ -352,7 +390,10 @@ class ProductLandingRouterImpl @Inject constructor(
         findNavController?.navigate(ManageMyCardDetailsFragmentDirections.actionManageMyCardDetailsFragmentToAccountProductsHomeFragment())
     }
 
-    override fun routeToSetupPaymentPlan(activity : Activity?, viewModel: AccountProductsHomeViewModel?) {
+    override fun routeToSetupPaymentPlan(
+        activity: Activity?,
+        viewModel: AccountProductsHomeViewModel?
+    ) {
         activity ?: return
         viewModel ?: return
         val intent = Intent(activity, GetAPaymentPlanActivity::class.java)
@@ -367,17 +408,47 @@ class ProductLandingRouterImpl @Inject constructor(
     ) {
         activity ?: return
         viewModel ?: return
-            val outSystemBuilder = OutSystemBuilder(activity,ProductGroupCode.SC, viewModel.eligibilityPlan)
-            outSystemBuilder.build()
+        val outSystemBuilder =
+            OutSystemBuilder(activity, ProductGroupCode.SC, viewModel.eligibilityPlan)
+        outSystemBuilder.build()
     }
 
-    override fun routeToStartNewElitePlan(activity: Activity?,viewModel: AccountProductsHomeViewModel?) {
-            activity?.apply {
-                val intent = Intent(this, GetAPaymentPlanActivity::class.java)
-                intent.putExtra(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN, viewModel?.eligibilityPlan)
-                startActivityForResult(intent, AccountsOptionFragment.REQUEST_ELITEPLAN)
-                overridePendingTransition(R.anim.slide_from_right, R.anim.stay)
-            }
+    override fun routeToStartNewElitePlan(
+        activity: Activity?,
+        viewModel: AccountProductsHomeViewModel?
+    ) {
+        activity?.apply {
+            val intent = Intent(this, GetAPaymentPlanActivity::class.java)
+            intent.putExtra(
+                ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN,
+                viewModel?.eligibilityPlan
+            )
+            startActivityForResult(intent, AccountsOptionFragment.REQUEST_ELITEPLAN)
+            overridePendingTransition(R.anim.slide_from_right, R.anim.stay)
+        }
+    }
+
+    override fun routeToCardNotReceivedView(findNavController: NavController?) {
+        try {
+            findNavController?.navigate(AccountProductsHomeFragmentDirections.actionAccountProductsHomeFragmentToStoreCardNotReceivedDialogFragment())
+        } catch (ex: Exception) {
+            Log.e("exceptOAD", ex.toString())
+        }
+    }
+
+    override fun routeToCardNotArrivedFailure(
+        findNavController: NavController?,
+        response: ServerErrorResponse?
+    ) {
+        findNavController?.navigate(
+            StoreCardNotReceivedFragmentDirections.actionStoreCardNotReceivedFragmentToStoreCardNotReceivedDialogFragment(
+                response
+            )
+        )
+    }
+
+    override fun routeToConfirmCardNotReceived(findNavController: NavController?) {
+        findNavController?.navigate(StoreCardNotReceivedFragmentDirections.actionStoreCardNotReceivedFragmentToCardNotReceivedConfirmationFragment())
     }
 
     companion object {

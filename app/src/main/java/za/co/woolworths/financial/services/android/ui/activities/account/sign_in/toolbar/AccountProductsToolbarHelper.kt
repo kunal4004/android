@@ -134,4 +134,25 @@ class AccountProductsToolbarHelper(
         setNavigationIconBlack()
         setTitleTextColorBlack()
     }
+
+    fun setCardNotReceivedToolbar(onTap: (View) -> Unit) {
+        binding.apply {
+            navigateBackImageButton.rotation = 0f
+            toolbarTitleTextView.visibility = GONE
+            infoIconImageView.onClick { onTap(it) }
+            closeIconImageButton.onClick { onTap(it) }
+            horizontalDivider.visibility = GONE
+            navigateBackImageButton.visibility = GONE
+            infoIconImageView.visibility = GONE
+            closeIconImageButton.visibility = VISIBLE
+            accountToolbar.setBackgroundColor(Color.WHITE)
+        }
+        setNavigationIconBlack()
+        setTitleTextColorBlack()
+    }
+
+    fun hideCloseIcon(){
+        binding.closeIconImageButton.visibility = GONE
+    }
+
 }

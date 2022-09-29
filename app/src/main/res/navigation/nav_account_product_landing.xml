@@ -53,6 +53,9 @@
         <action
             android:id="@+id/action_accountProductsHomeFragment_to_payMyAccountRetryErrorFragment"
             app:destination="@id/payMyAccountRetryErrorFragment" />
+        <action
+            android:id="@+id/action_accountProductsHomeFragment_to_storeCardNotReceivedDialogFragment"
+            app:destination="@id/storeCardNotReceivedNavigation" />
     </fragment>
 
     <dialog
@@ -77,7 +80,7 @@
         android:id="@+id/removeBlockOnCollectionFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.remove_dc_block.AccountInDelinquencyFragment"
         android:label="RemoveBlockOnCollectionFragment"
-        tools:layout="@layout/remove_block_dc_main_fragment" >
+        tools:layout="@layout/remove_block_dc_main_fragment">
         <action
             android:id="@+id/action_removeBlockOnCollectionFragment_to_accountLandingDialogFragment"
             app:destination="@id/accountLandingDialogFragment" />
@@ -107,7 +110,7 @@
         android:id="@+id/manageMyCardDetailsFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.ManageMyCardDetailsFragment"
         android:label="ManageMyCardDetailsFragment"
-        tools:layout="@layout/manage_card_details_fragment" >
+        tools:layout="@layout/manage_card_details_fragment">
         <action
             android:id="@+id/action_manageMyCardDetailsFragment_to_accountProductsHomeFragment"
             app:destination="@id/accountProductsHomeFragment" />
@@ -128,4 +131,9 @@
         android:name="za.co.woolworths.financial.services.android.ui.views.actionsheet.PayMyAccountRetryErrorFragment"
         android:label="PayMyAccountRetryErrorFragment"
         tools:layout="@layout/pay_my_account_retry_on_error_dialog_fragment" />
+
+    <include
+        android:id="@+id/cardNotReceivedNavigation"
+        app:graph="@navigation/store_card_card_not_received_nav" />
+
 </navigation>

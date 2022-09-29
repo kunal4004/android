@@ -20,8 +20,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dat
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.RetryNetworkRequest
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.ApiResult
+import za.co.woolworths.financial.services.android.util.DateHelper
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.capitaliseFirstLetterInEveryWord
+import za.co.woolworths.financial.services.android.util.MyDateHelper
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
@@ -45,14 +47,14 @@ data class StoreCardInfo(
 class MyAccountsRemoteApiViewModel @Inject constructor(
     private val collection: TreatmentPlanDataSource,
     val dataSource: StoreCardDataSource,
-    private val cardNotReceived: CardNotReceivedDataSource
-) : ViewModel(), IStoreCardDataSource by dataSource,ICardNotReceivedService by cardNotReceived {
+    private val cardNotReceived: CardNotReceivedDataSource,
+    private val dateHelper: MyDateHelper
+) : ViewModel(), IStoreCardDataSource by dataSource,ICardNotReceivedService by cardNotReceived ,
+    DateHelper by dateHelper
+{
 
     var isStoreCardNotReceivedDialogFragmentVisible: Boolean  = false
     var mStoreCardType: StoreCardType = StoreCardType.None
-
-
-
     var mStoreCardFeatureType: StoreCardFeatureType? = null
     var loaderType : LoaderType = LoaderType.LANDING
     var refreshApiModel : RefreshApiModel  = RefreshApiModel()

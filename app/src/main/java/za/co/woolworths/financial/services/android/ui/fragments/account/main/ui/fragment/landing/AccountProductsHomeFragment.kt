@@ -31,9 +31,9 @@ class AccountProductsHomeFragment : Fragment(R.layout.account_products_home_frag
     private lateinit var uiComponent: UIComponent
 
     val homeViewModel: AccountProductsHomeViewModel by activityViewModels()
+
     private var viewBinding : AccountProductsHomeFragmentBinding? = null
-    @Inject
-    lateinit var accountDataClass: AccountDataClass
+    @Inject lateinit var accountDataClass: AccountDataClass
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = AccountProductsHomeFragmentBinding.bind(view)
@@ -45,7 +45,7 @@ class AccountProductsHomeFragment : Fragment(R.layout.account_products_home_frag
             )
         )
 
-        homeViewModel.bottomSheetBehaviorState = BottomSheetBehavior.STATE_COLLAPSED
+         homeViewModel.bottomSheetBehaviorState = BottomSheetBehavior.STATE_COLLAPSED
 
          setupBottomSheet(binding)
 

@@ -2590,11 +2590,11 @@
 
     <string name="product_listing_price_from">From</string>
 
-    <string name="vtsc_card_not_arrived_title">Has Your Card Not\nArrived in the Post?</string>
+    <string name="vtsc_card_not_arrived_title">Has Your Card Not Arrived in the Post?</string>
     <string name="vtsc_card_not_arrived_desc">We do our best to deliver all new cards within 30 days, but sometimes things go wrong. Please let us know if your card has not yet been delivered to you and a customer service agent will be in touch to arrange VIP delivery.</string>
     <string name="vtsc_card_not_arrived_button_caption">MY CARD HASN’T ARRIVED</string>
 
-    <string name="vtsc_card_not_arrived_notified_title">Thanks for Letting Us Know!</string>
+    <string name="vtsc_card_not_arrived_notified_title">Thanks for Letting Us Know</string>
     <string name="vtsc_card_not_arrived_notified_desc">A customer service agent will be in touch to arrange VIP delivery.</string>
 
     <string name="product_details_color_count">+ %d More</string>
@@ -2658,6 +2658,7 @@
     <string name="vtsc_oops_err_title">vtsc_oops_err_title</string>
     <string name="vtsc_oops_error_message">vtsc_oops_error_message</string>
     <string name="vtsc_try_again">vtsc_try_again</string>
+    <string name="vtsc_error_ok">vtsc_error_ok</string>
 
     <!--ContactUs Financial Services -->
     <string name="send_enquiry">Send Us An Enquiry</string>
@@ -2733,5 +2734,6 @@
     <string name="we_need_more_info">We Need More Info</string>
     <string name="enter_street_name">Please enter a street name for this location:</string>
     <string name="your_shopper_is_trying_to">Your shopper is trying to \ncontact you.</string>
+    <string name="my_card_has_arrived">My card has arrived</string>
 
 </resources>

@@ -19,7 +19,7 @@
         android:id="@+id/accountToolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"
-        android:layout_marginTop="@dimen/_14sdp"
+        android:layout_marginTop="@dimen/_27sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
