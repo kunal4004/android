@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.pargo_store_info_bottom_sheet_dialog.*
+import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.util.Utils
 
 class PargoStoreInfoBottomSheetDialog : WBottomSheetDialogFragment() ,
 View.OnClickListener{
@@ -36,6 +38,7 @@ View.OnClickListener{
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.gotItButton -> {
+                Utils.saveFeatureWalkthoughShowcase(WMaterialShowcaseView.Feature.PARGO_STORE)
                 dismiss()
             }
         }

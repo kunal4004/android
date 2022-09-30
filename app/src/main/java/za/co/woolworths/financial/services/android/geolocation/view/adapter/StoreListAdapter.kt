@@ -4,12 +4,14 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.store_row_layout.view.*
 import za.co.woolworths.financial.services.android.common.changeMeterToKM
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.StoreUtils
 
@@ -57,14 +59,20 @@ class StoreListAdapter (
                 itemView.storeSelectorLayout?.setBackgroundResource(R.color.white)
             }
             itemView.storeSelectorLayout?.setOnClickListener {
-                lastSelectedPosition = adapterPosition
-                notifyDataSetChanged()
-                listener.onStoreSelected(store)
+                if(store?.locationId != ""&&!AppInstanceObject.get().featureWalkThrough.pargo_store){
+                    listener.onFirstTimePargo()
+                }
+                else {
+                    lastSelectedPosition = adapterPosition
+                    notifyDataSetChanged()
+                    listener.onStoreSelected(store)
+                }
             }
         }
     }
 
     interface OnStoreSelected {
         fun onStoreSelected(store: Store?)
+        fun onFirstTimePargo()
     }
 }

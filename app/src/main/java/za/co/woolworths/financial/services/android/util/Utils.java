@@ -1177,6 +1177,9 @@ public class Utils {
             case MY_LIST:
                 appInstanceObject.featureWalkThrough.my_lists = true;
                 break;
+            case PARGO_STORE:
+                appInstanceObject.featureWalkThrough.pargo_store = true;
+                break;
             default:
                 break;
         }
