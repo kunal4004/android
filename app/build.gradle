@@ -283,7 +283,7 @@ dependencies {
     implementation 'uk.co.chrisjenx:calligraphy:2.2.0'
     implementation 'me.leolin:ShortcutBadger:1.1.22@aar'
     implementation 'com.daimajia.swipelayout:library:1.2.0'
-    implementation 'com.github.barteksc:android-pdf-viewer:3.2.0-beta.1'
+    implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
     api 'com.google.zxing:core:3.3.3'
 
     api 'com.google.zxing:android-core:3.3.0'
