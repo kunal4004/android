@@ -46,6 +46,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.list.Depart
 import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate
 import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.TAG_CHANGEFULLFILMENT_COLLECTION_STORE_FRAGMENT
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
@@ -260,7 +261,7 @@ class ChangeFullfilmentCollectionStoreFragment() :
     }
 
     override fun onFirstTimePargo() {
-       PargoStoreInfoBottomSheetDialog().show(parentFragmentManager,"ss")
+       PargoStoreInfoBottomSheetDialog().show(parentFragmentManager,TAG_CHANGEFULLFILMENT_COLLECTION_STORE_FRAGMENT)
     }
 
     override fun onMapReady() {
