@@ -66,6 +66,8 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.Shoppin
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.DELIVERY_DATE
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.ORDER_TOTAL_VALUE
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
@@ -1091,6 +1093,7 @@ class CheckoutDashFragment : Fragment(),
                             )
                             return@observe
                         }
+                        setEventForShippingDetails()
                         navigateToPaymentWebpage(response)
                     }
                     is Throwable -> {
@@ -1112,6 +1115,28 @@ class CheckoutDashFragment : Fragment(),
         } else {
             Utils.fadeInFadeOutAnimation(txtContinueToPayment, true)
         }
+    }
+
+    private fun setEventForShippingDetails() {
+        val driverTipItemParams = Bundle()
+        driverTipItemParams.putString(FirebaseAnalytics.Param.CURRENCY,
+            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
+
+        driverTipItemParams.putDouble(ORDER_TOTAL_VALUE,
+            orderTotalValue)
+
+        driverTipItemParams.putString(DELIVERY_DATE,
+            confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.join)
+
+        driverTipItemParams.putString(FirebaseAnalytics.Param.SHIPPING_TIER,
+            FirebaseManagerAnalyticsProperties.PropertyValues.SHIPPING_TIER_VALUE_FOOD)
+
+        driverTipItemParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.DASH_TIP,
+            removeRandFromAmount(selectedDriverTipValue))
+
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.ADD_SHIPPING_INFO,
+            driverTipItemParams)
+
     }
 
     private fun setEventForDriverTip() {
