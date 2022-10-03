@@ -2770,7 +2770,7 @@
     <string name="skin_profile">Skin Profile</string>
     <string name="customer_reviews">Customer Reviews</string>
     <string name="report_reviews">Report Review</string>
-    <string name="report_sub_label">I find this review to contains:</string>
+    <string name="report_sub_label">I find this review to contain:</string>
     <string name="submit_report">Submit Report</string>
     <string name="hint_reason">Please enter a reason here</string>
     <string name="report_moderated">It is currently being moderated.</string>
