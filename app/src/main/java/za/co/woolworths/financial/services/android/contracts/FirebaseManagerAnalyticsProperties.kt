@@ -648,7 +648,7 @@ open class FirebaseManagerAnalyticsProperties {
 
             /*DASH ANALYTICS VALUES*/
             const val DASH_MENU_CLICK: String = "Menu_Click"
-            const val DASH_CATEGORY_NAME: String = "FOOD"
+            const val DASH_CATEGORY_NAME: String = "Food"
             const val DASH_CANCELLED_ORDER: String = "Cancelled_Order"
 
         }

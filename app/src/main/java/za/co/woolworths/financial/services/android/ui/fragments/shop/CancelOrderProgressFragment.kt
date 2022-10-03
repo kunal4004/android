@@ -180,17 +180,19 @@ class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.On
         for ( commarceItem in commarceItemList!!) {
             val cancelOrderItem = Bundle()
             cancelOrderItem.putString(FirebaseAnalytics.Param.ITEM_ID,
-                commarceItem.commerceItemInfo.productId)
+                commarceItem.commerceItemInfo?.productId)
 
             cancelOrderItem.putString(FirebaseAnalytics.Param.ITEM_NAME,
-                commarceItem.commerceItemInfo.productDisplayName)
+                commarceItem.commerceItemInfo?.productDisplayName)
 
-            cancelOrderItem.putDouble(FirebaseAnalytics.Param.PRICE,
-                commarceItem.priceInfo.amount)
+            cancelOrderItem.putString(FirebaseAnalytics.Param.PRICE,
+                commarceItem.priceInfo?.amount?.toString())
 
-            cancelOrderItem.putInt(FirebaseAnalytics.Param.QUANTITY,
-                commarceItem.commerceItemInfo.quantity)
-
+            commarceItem.commerceItemInfo?.quantity?.let {
+                cancelOrderItem.putInt(FirebaseAnalytics.Param.QUANTITY,
+                    it
+                )
+            }
             cancelOrderParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(cancelOrderItem))
         }
 

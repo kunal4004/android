@@ -1124,11 +1124,10 @@ class CheckoutDashFragment : Fragment(),
         driverTipItemParams.putString(FirebaseAnalytics.Param.CURRENCY,
             FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
 
-        driverTipItemParams.putString(FirebaseAnalytics.Param.VALUE,
-            CurrencyFormatter.formatAmountToRandAndCentWithSpace(orderTotalValue))
+        driverTipItemParams.putDouble(FirebaseAnalytics.Param.VALUE, orderTotalValue)
 
         driverTipItemParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.DASH_TIP,
-            selectedDriverTipValue)
+            removeRandFromAmount(selectedDriverTipValue))
 
         AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.DASH_DRIVER_TIP, driverTipItemParams)
     }
