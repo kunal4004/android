@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
-import android.util.Log
 import androidx.lifecycle.LifecycleService
 import com.amplifyframework.AmplifyException
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +23,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.req
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatListAllAgentConversationImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatSubscribeImpl
 import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
-import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.ReceiverManager
 import java.lang.IllegalArgumentException
 

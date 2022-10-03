@@ -231,6 +231,27 @@
                                     android:background="@drawable/ic_caret_black" />
                             </RelativeLayout>
 
+                            <RelativeLayout
+                                android:id="@+id/myShoppingListRelativeLayout"
+                                style="@style/listStyle"
+                                android:background="@drawable/stores_details_background"
+                                android:contentDescription="@string/shop_department_title_order">
+
+                                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                                    android:id="@+id/myShoppingListTextView"
+                                    style="@style/accountsItem"
+                                    android:drawableStart="@drawable/shopping_list_icon"
+                                    android:text="@string/my_shopping_lists" />
+
+                                <ImageView
+                                    android:id="@+id/myShoppingListRow"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:layout_centerVertical="true"
+                                    android:background="@drawable/ic_caret_black" />
+                            </RelativeLayout>
+
 
                             <RelativeLayout
                                 android:id="@+id/openMessageActivity"

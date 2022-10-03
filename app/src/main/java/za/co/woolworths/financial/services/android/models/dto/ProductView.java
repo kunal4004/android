@@ -34,7 +34,7 @@ public class ProductView {
     public RefinementHistory history;
     @SerializedName("isBanners")
     @Expose
-    public Boolean isBanners;
+    public Boolean isBanners = false;
     @SerializedName("pageHeading")
     @Expose
     public String pageHeading;

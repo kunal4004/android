@@ -91,9 +91,7 @@
         android:id="@+id/previousNextBtnLayoutFood"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/twenty_dp"
-        android:layout_marginTop="@dimen/ten_dp"
-        android:layout_marginEnd="@dimen/fourteen_dp"
+        android:padding="@dimen/sixteen_dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@id/dateGridLayoutFood">

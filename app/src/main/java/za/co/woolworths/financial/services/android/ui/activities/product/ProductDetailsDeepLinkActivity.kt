@@ -19,7 +19,6 @@ import kotlinx.android.synthetic.main.activity_deeplink_pdp.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
@@ -38,7 +37,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.u
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.showItemsLimitToastOnAddToCart
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionClickAndCollect
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionDash
 import za.co.woolworths.financial.services.android.util.ToastUtils.ToastInterface
+import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 import java.util.*
 
 /**
@@ -311,7 +312,8 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(),
         productCountMap: ProductCountMap?,
         noOfItems: Int,
     ) {
-        if (productCountMap != null && isDeliveryOptionClickAndCollect() && productCountMap.quantityLimit!!.foodLayoutColour != null) {
+        if (productCountMap != null && (isDeliveryOptionClickAndCollect() || isDeliveryOptionDash())
+            && productCountMap.quantityLimit?.foodLayoutColour != null) {
             showItemsLimitToastOnAddToCart(
                 pdpBottomNavigation,
                 productCountMap,

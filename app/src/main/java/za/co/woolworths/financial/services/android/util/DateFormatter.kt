@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.util
 
 import android.text.TextUtils
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*

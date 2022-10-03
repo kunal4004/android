@@ -80,6 +80,18 @@
         android:label="Checkout Order Confirmation"
         tools:layout="@layout/fragment_order_confirmation">
 
+        <action
+            android:id="@+id/action_OrderConfirmationFragment_to_helpAndSupportFragment"
+            app:destination="@id/HelpAndSupportFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/HelpAndSupportFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.shop.helpandsupport.HelpAndSupportFragment"
+        android:label="Help And Support"
+        tools:layout="@layout/layout_help_and_support_fragement">
+
     </fragment>
 
     <fragment
@@ -197,5 +209,16 @@
         android:name="za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog"
         android:label="fragment_collection_dates_bottom_sheet_dialog"
         tools:layout="@layout/fragment_collection_dates_bottom_sheet_dialog" />
+    <fragment
+        android:id="@+id/checkoutDashFragment"
+        android:name="za.co.woolworths.financial.services.android.checkout.view.CheckoutDashFragment"
+        android:label="CheckoutDashFragment" >
+        <action
+            android:id="@+id/action_checkoutDashFragment_to_errorHandlerBottomSheetDialog"
+            app:destination="@id/errorHandlerBottomSheetDialog" />
+        <action
+            android:id="@+id/action_checkoutDashFragment_to_checkoutPaymentWebFragment"
+            app:destination="@id/checkoutPaymentWebFragment" />
+    </fragment>
 
 </navigation>

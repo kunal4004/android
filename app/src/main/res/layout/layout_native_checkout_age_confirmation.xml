@@ -23,7 +23,7 @@
             android:fontFamily="@font/futura_semi_bold"
             android:text="@string/native_checkout_delivery_age_confirmation_title"
             android:textColor="@color/black"
-            android:textSize="@dimen/twenty_sp" />
+            android:textSize="@dimen/eighteen_sp" />
 
     </com.facebook.shimmer.ShimmerFrameLayout>
 
@@ -85,19 +85,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ageConfirmationDescNoteShimmerFrameLayout">
 
-            <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/radioBtnAgeConfirmation"
-                style="@style/FoodSubstRadioButtonStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:checked="false"
-                android:background="@color/white"
-                app:layout_constrainedWidth="true"
-                android:fontFamily="@font/myriad_pro_semi_bold"
-                android:paddingHorizontal="@dimen/ten_dp"
-                android:text="@string/native_checkout_delivery_age_confirm"
-                android:textColor="@color/black"
-                android:textSize="@dimen/fifteen_sp" />
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/radioBtnAgeConfirmation"
+            style="@style/FoodSubstRadioButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:checked="false"
+            android:fontFamily="@font/myriad_pro_semi_bold"
+            android:paddingHorizontal="@dimen/ten_dp"
+            android:text="@string/native_checkout_delivery_age_confirm"
+            android:textColor="@color/black"
+            android:textSize="@dimen/fifteen_sp"
+            app:layout_constrainedWidth="true" />
 
     </com.facebook.shimmer.ShimmerFrameLayout>
 
@@ -105,20 +105,27 @@
         android:id="@+id/liquorComplianceBannerSeparator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/one_dp"
-        android:visibility="gone"
-        tools:visibility="visible"
         android:layout_marginTop="@dimen/twenty_four_dp"
         android:background="@color/color_12000000"
-        app:layout_constraintTop_toBottomOf="@id/radioGroupAgeConfirmationShimmerFrameLayout" />
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/radioGroupAgeConfirmationShimmerFrameLayout"
+        tools:visibility="visible" />
 
-    <include
-        android:id="@+id/liquorComplianceBannerLayout"
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/liquorComplianceBannerShimmerFrameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        tools:visibility="visible"
+        android:background="@color/shimmer_view_background"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/liquorComplianceBannerSeparator"
-        layout="@layout/liquor_compliance_banner"/>
+        app:layout_constraintTop_toBottomOf="@+id/liquorComplianceBannerSeparator">
+
+        <include
+            android:id="@+id/liquorComplianceBannerLayout"
+            layout="@layout/liquor_compliance_banner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            tools:visibility="visible" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

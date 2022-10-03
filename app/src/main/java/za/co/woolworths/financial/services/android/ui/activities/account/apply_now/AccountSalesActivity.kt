@@ -63,11 +63,11 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
         setupToolbarTopMargin()
         setupBottomSheetBehaviour()
 
-        storeCardApplyNowButton?.setOnClickListener(this)
+        applyNowHeaderButton?.setOnClickListener(this)
         bottomApplyNowButton?.setOnClickListener(this)
         navigateBackImageButton?.setOnClickListener(this)
 
-        AnimationUtilExtension.animateViewPushDown(storeCardApplyNowButton)
+        AnimationUtilExtension.animateViewPushDown(applyNowHeaderButton)
         AnimationUtilExtension.animateViewPushDown(bottomApplyNowButton)
         AnimationUtilExtension.animateViewPushDown(navigateBackImageButton)
         AnimationUtilExtension.animateViewPushDown(cardFrontImageView)
@@ -142,8 +142,8 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
 
     override fun displayHeaderItems(cardHeader: CardHeader?) {
         cardHeader?.apply {
-            storeCardTitleTextView?.text = title
-            storeCardDescriptionTextView?.text = description
+            titleTextView?.text = title
+            descriptionTextView?.text = description
             incAccountSalesFrontLayout?.setBackgroundResource(drawables[0])
             cardFrontImageView?.setImageResource(drawables[1])
             cardBackImageView?.setImageResource(drawables[2])
@@ -173,7 +173,7 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.storeCardApplyNowButton, R.id.bottomApplyNowButton -> {
+            R.id.applyNowHeaderButton, R.id.bottomApplyNowButton -> {
                 mAccountSalesModelImpl?.onApplyNowButtonTapped()?.let { url -> KotlinUtils.openUrlInPhoneBrowser(url, this) }
             }
             R.id.navigateBackImageButton -> onBackPressed()

@@ -2,14 +2,12 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 
 import android.app.Activity.RESULT_OK
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,7 +17,6 @@ import kotlinx.android.synthetic.main.fragment_add_order_to_cart.*
 import kotlinx.android.synthetic.main.fragment_add_order_to_cart.btnBack
 import kotlinx.android.synthetic.main.fragment_add_order_to_cart.loadingBar
 import kotlinx.android.synthetic.main.fragment_add_order_to_cart.toolbarText
-import kotlinx.android.synthetic.main.order_details_fragment.*
 import org.json.JSONObject
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -34,6 +31,7 @@ import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.RESPONSE_ERROR_CODE_1235
 
 
 class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
@@ -63,17 +61,30 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
         private const val ARG_PARAM = "orderDetailsResponse"
         const val QUANTITY_CHANGED = 2019
         const val REQUEST_SUBURB_CHANGE = 1550
-        fun getInstance(orderDetailsResponse: OrderDetailsResponse, order: Order?) = AddOrderToCartFragment().withArgs {
+        fun getInstance(orderDetailsResponse: OrderDetailsResponse) = AddOrderToCartFragment().withArgs {
             putString(ARG_PARAM, Utils.objectToJson(orderDetailsResponse))
-            putString(OrderDetailsFragment.ARG_PARAM, Utils.objectToJson(order))
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let{
+        arguments?.let{ it ->
             orderDetailsResponse = Utils.jsonStringToObject(it.getString(ARG_PARAM), OrderDetailsResponse::class.java) as OrderDetailsResponse
-            order = Utils.jsonStringToObject(it.getString("order"),Order::class.java) as Order?
+            order = orderDetailsResponse?.orderSummary?.let { orderSummary ->
+                Order(
+                    completedDate = orderSummary.completedDate ?: "",
+                    orderCancellable = orderSummary.orderCancellable,
+                    state = orderSummary.state ?: "",
+                    orderId = orderSummary.orderId ?: "",
+                    submittedDate = orderSummary.submittedDate ?: "",
+                    total = orderSummary.total,
+                    taxNoteNumbers = orderSummary.taxNoteNumbers ?: ArrayList(0),
+                    requestCancellation = orderSummary.requestCancellation,
+                    deliveryDates = orderSummary.deliveryDates,
+                    clickAndCollectOrder = orderSummary.clickAndCollectOrder,
+                    deliveryStatus = null // TODO: update oderSummary.deliveryStatus's type, remove null and use value from orderSummary, and test if no regression happens
+                )
+            }
             orderText = getString(R.string.order_page_title_prefix) + order?.orderId
         }
     }
@@ -297,7 +308,11 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
     }
 
     private fun getInventoryStockForStore(storeId: String, multiSku: String): Call<SkusInventoryForStoreResponse> {
-      val skusInventoryForStoreRequest =    OneAppService.getInventorySkuForStore(storeId, multiSku)
+      val skusInventoryForStoreRequest =    OneAppService.getInventorySkuForStore(
+          storeId,
+          multiSku,
+          false
+      )
         skusInventoryForStoreRequest.enqueue(CompletionHandler(object: IResponseListener<SkusInventoryForStoreResponse> {
             override fun onSuccess(skusInventoryForStoreResponse: SkusInventoryForStoreResponse?) {
                 when (skusInventoryForStoreResponse?.httpCode) {
@@ -433,7 +448,8 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
 
                 activity?.onBackPressed()
 
-                if (KotlinUtils.isDeliveryOptionClickAndCollect() && addItemToCartResponse.data[0]?.productCountMap?.quantityLimit?.foodLayoutColour != null) {
+                if ((KotlinUtils.isDeliveryOptionClickAndCollect() || KotlinUtils.isDeliveryOptionDash())
+                    && addItemToCartResponse.data[0]?.productCountMap?.quantityLimit?.foodLayoutColour != null) {
                     addItemToCartResponse.data[0]?.productCountMap?.let {
                         ToastFactory.showItemsLimitToastOnAddToCart(fragment_add_to_order, it, requireActivity(), size) }
                 } else {
@@ -444,6 +460,18 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
                 SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, addItemToCartResponse.response.stsParams, requireActivity())
             }
 
+            AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
+                if (addItemToCartResponse.response.code == RESPONSE_ERROR_CODE_1235 ) {
+                    loadingBar?.visibility = View.GONE
+                    tvAddToCart?.visibility = View.VISIBLE
+                    KotlinUtils.showQuantityLimitErrror(
+                        activity?.supportFragmentManager,
+                        addItemToCartResponse.response.desc,
+                        "",
+                        context
+                    )
+                }
+            }
         }
     }
 
@@ -452,5 +480,4 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
             KotlinUtils.presentEditDeliveryGeoLocationActivity(this, REQUEST_SUBURB_CHANGE)
         }
     }
-
 }

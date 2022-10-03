@@ -4,7 +4,7 @@ import android.content.Context
 import android.location.Geocoder
 import com.huawei.hms.location.GetFromLocationRequest
 import com.huawei.hms.location.LocationServices
-import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.location.model.DynamicGeocoderAddress
 import java.util.*

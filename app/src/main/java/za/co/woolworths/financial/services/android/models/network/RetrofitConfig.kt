@@ -41,7 +41,6 @@ abstract class RetrofitConfig : NetworkConfig() {
                 .baseUrl(BuildConfig.HOST + "/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-
                 .client(httpBuilder.build())
                 .build()
                 .create(ApiInterface::class.java)
