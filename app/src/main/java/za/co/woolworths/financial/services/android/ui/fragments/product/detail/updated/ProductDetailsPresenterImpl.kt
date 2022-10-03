@@ -4,6 +4,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.detail.
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
+import za.co.woolworths.financial.services.android.util.AppConstant
 
 class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDetailsView?, var getInteractor: ProductDetailsContract.ProductDetailsInteractor) : ProductDetailsContract.ProductDetailsPresenter, ProductDetailsContract.ProductDetailsInteractor.OnFinishListener {
 
@@ -113,6 +114,13 @@ class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDe
                                 if (this.response != null)
                                     mainView?.onSessionTokenExpired()
                             }
+
+                            AppConstant.HTTP_EXPECTATION_FAILED_502 ->{
+                                if (response != null) {
+                                    mainView?.onAddToCartError(this)
+                                }
+                            }
+
                             else -> mainView?.responseFailureHandler(this.response)
                         }
 

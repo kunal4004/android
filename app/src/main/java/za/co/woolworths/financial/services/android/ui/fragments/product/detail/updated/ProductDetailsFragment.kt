@@ -1044,7 +1044,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             if (!this.productDetails?.productType.equals(
                     getString(R.string.food_product_type),
                     ignoreCase = true
-                ) && KotlinUtils.getPreferredDeliveryType() == Delivery.CNC
+                ) && (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC
+                        || KotlinUtils.getPreferredDeliveryType() == Delivery.DASH)
             ) {
                 showProductUnavailable()
                 showProductNotAvailableForCollection()
@@ -1974,6 +1975,17 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 }
                 addToCartEvent(productDetails)
             }
+        }
+    }
+
+    override fun onAddToCartError(addItemToCartResponse: AddItemToCartResponse) {
+        if (addItemToCartResponse?.response.code == AppConstant.RESPONSE_ERROR_CODE_1235) {
+            KotlinUtils.showQuantityLimitErrror(
+                activity?.supportFragmentManager,
+                addItemToCartResponse?.response.desc,
+                "",
+                context
+            )
         }
     }
 

@@ -1463,6 +1463,13 @@ interface ApiInterface {
     ): GenericResponse
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/dash/chat/authenticate")
+    fun authenticateOneCart(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String
+    ): Call<OCAuthenticationResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/dash/chat/authenticate")
     suspend fun getOCAuth(
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String

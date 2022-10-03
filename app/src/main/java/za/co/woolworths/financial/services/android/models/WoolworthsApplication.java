@@ -10,9 +10,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Base64;
-import android.util.Log;
-
-import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -20,7 +17,6 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
-
 
 import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
@@ -47,6 +43,7 @@ import za.co.woolworths.financial.services.android.models.dto.RatingsAndReviews;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
+import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
@@ -73,13 +70,11 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static String creditCardType;
     private boolean isOther = false;
     private static int productOfferingId;
-
     private boolean shouldDisplayServerMessage = true;
     public UpdateBankDetail updateBankDetail;
 
     private RxBus bus;
     private static boolean isApplicationInForeground = false;
-
     private Activity mCurrentActivity = null;
 
     private static ValidatePlace validatePlace;
@@ -166,12 +161,14 @@ public class WoolworthsApplication extends Application implements Application.Ac
         getTracker();
         bus = new RxBus();
         vtoSyncServer();
+
     }
 
     private void initializeAnalytics() {
         FirebaseManager.Companion.getInstance();
         HuaweiManager.Companion.getInstance();
     }
+
 
     //#region ShowServerMessage
     public void showServerMessageOrProceed(Activity activity) {
@@ -180,7 +177,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
         try {
             hash = Cryptography.PasswordBasedKeyDerivationFunction2(passphrase, Integer.toString(BuildConfig.VERSION_CODE), 1007, 256);
         } catch (KeyGenerationFailureException | UnsupportedEncodingException e) {
-            Log.e(TAG, e.getMessage());
+
         }
         String hashB64 = Base64.encodeToString(hash, Base64.NO_WRAP);
         if (!AppConfigSingleton.INSTANCE.getAuthenticVersionStamp().isEmpty() && !hashB64.equals(AppConfigSingleton.INSTANCE.getAuthenticVersionStamp())) {
@@ -242,6 +239,10 @@ public class WoolworthsApplication extends Application implements Application.Ac
         if (!isAnyActivityVisible() && ChatAWSAmplify.INSTANCE.isLiveChatBackgroundServiceRunning()) {
             Intent intentDismissService = new Intent(LiveChatService.CHANNEL_ID);
             sendBroadcast(intentDismissService);
+        }
+
+        if (!isAnyActivityVisible() && OCConstant.Companion.isOCChatBackgroundServiceRunning()) {
+            OCConstant.Companion.stopOCChatService(this);
         }
 
     }
