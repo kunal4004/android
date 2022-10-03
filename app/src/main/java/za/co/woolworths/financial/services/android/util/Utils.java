@@ -1596,7 +1596,9 @@ public class Utils {
     public static String getOCChatFCMToken() {
         String token = "";
         try {
-            token = Utils.getSessionDaoValue(OC_CHAT_FCM_TOKEN);
+            if (Utils.getSessionDaoValue(OC_CHAT_FCM_TOKEN) == null)
+                token = "token_not_received";
+            else token = Utils.getSessionDaoValue(OC_CHAT_FCM_TOKEN);
         } catch (Exception ignored) {
             return null;
         }
