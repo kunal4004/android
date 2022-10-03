@@ -25,6 +25,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.p
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeUnfreezeCardItemFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setToast
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.AccountProductsMainFragment
@@ -43,7 +44,6 @@ import javax.inject.Inject
 class StoreCardActivity : AppCompatActivity() {
 
     lateinit var binding: AccountProductLandingActivityBinding
-
     val homeViewModel: AccountProductsHomeViewModel by viewModels()
     val payMyAccountViewModel: PayMyAccountViewModel by viewModels()
     val cardFreezeViewModel: TemporaryFreezeCardViewModel by viewModels()
@@ -93,8 +93,7 @@ class StoreCardActivity : AppCompatActivity() {
     fun getBackIcon() = getToolbarHelper()?.getBackIcon()
 
     fun showToast(@StringRes stringId : Int) {
-        OneAppSnackbar.make(binding.rootContainer.rootView, bindString(stringId).toUpperCase(
-            Locale.getDefault())).show()
+        setToast(binding.rootContainer, stringId)
     }
 
     override fun onDestroy() {
