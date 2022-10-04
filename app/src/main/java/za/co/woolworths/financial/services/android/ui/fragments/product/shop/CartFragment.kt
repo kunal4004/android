@@ -91,6 +91,9 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery.Companion
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItemClick,
     View.OnClickListener, NetworkChangeListener, ToastInterface, IWalkthroughActionListener,
@@ -884,7 +887,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
     private fun setMinimumCartErrorMessage() {
         if(orderSummary?.hasMinimumBasketAmount == false) {
             txt_min_spend_error_msg?.visibility = View.VISIBLE
-            txt_min_spend_error_msg?.text = String.format(getString(R.string.minspend_error_msg_cart, orderSummary?.minimumBasketAmount))
+            txt_min_spend_error_msg?.text = String.format(Locale.getDefault(), requireContext().getString(R.string.minspend_error_msg_cart, orderSummary?.minimumBasketAmount))
             btnCheckOut?.isEnabled = false
             fadeCheckoutButton(true)
         } else {
