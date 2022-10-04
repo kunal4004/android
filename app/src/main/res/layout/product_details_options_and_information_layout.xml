@@ -5,8 +5,7 @@
     android:layout_height="wrap_content"
     android:background="@color/default_background"
     android:orientation="vertical"
-    android:paddingTop="@dimen/eight_dp"
-    android:paddingBottom="@dimen/eight_dp">
+    >
 
     <RelativeLayout
         android:id="@+id/headerProductOptions"
@@ -250,7 +249,7 @@
         android:id="@+id/headerCustomerReview"
         style="@style/card_items_header_layout_style"
         android:layout_height="@dimen/sixty_six_dp"
-        android:layout_marginTop="@dimen/sixteen_dp"
+        android:layout_marginTop="@dimen/eight_dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/productIngredientsInformation">
@@ -341,7 +340,7 @@
         layout="@layout/review_row_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/sixteen_dp"
+        android:layout_marginTop="@dimen/eight_dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/reviewDetailsInformation" />
