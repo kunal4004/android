@@ -132,7 +132,8 @@ class CheckoutDashFragment : Fragment(),
     }
 
     companion object {
-        const val REQUEST_KEY_SELECTED_COLLECTION_DATE: String = "SELECTED_COLLECTION_DATE"
+        private const val REQUEST_KEY_SELECTED_COLLECTION_DATE: String = "SELECTED_COLLECTION_DATE"
+        private const val DEFAULT_AMOUNT: String = "0.0"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -627,7 +628,7 @@ class CheckoutDashFragment : Fragment(),
                         )
                         tipNoteTextView?.visibility = View.VISIBLE
                     } else if (
-                        removeRandFromAmount(selectedDriverTipValue ?: "0.0").toDouble() != 0.0
+                        removeRandFromAmount(selectedDriverTipValue ?: DEFAULT_AMOUNT).toDouble() != 0.0
                         && driverTipOptionsList?.contains(selectedDriverTipValue) == false
                         && index == driverTipOptionsList?.size?.minus(1)
                     ) {
@@ -641,7 +642,7 @@ class CheckoutDashFragment : Fragment(),
                             )
                         )
                         tipNoteTextView?.visibility = View.VISIBLE
-                        titleTextView?.text = "R${removeRandFromAmount(selectedDriverTipValue ?: "0.0").toDouble()}"
+                        titleTextView?.text = "R${removeRandFromAmount(selectedDriverTipValue ?: DEFAULT_AMOUNT).toDouble()}"
                         val image = AppCompatResources.getDrawable(
                             requireContext(),
                             R.drawable.edit_icon_white
@@ -697,7 +698,7 @@ class CheckoutDashFragment : Fragment(),
                         )
                         tipNoteTextView?.visibility = View.VISIBLE
                     } else {
-                        selectedDriverTipValue = "0.0"
+                        selectedDriverTipValue = DEFAULT_AMOUNT
 
                         // Change background of selected Tip to unselect.
                         it.background =
@@ -1229,7 +1230,7 @@ class CheckoutDashFragment : Fragment(),
         val titleTextView: TextView? =
             driverTipTextView?.findViewWithTag(driverTipOptionsList?.lastIndex)
         driverTipOptionsList?.lastIndex?.let { resetAllDriverTip(it) }
-        titleTextView?.text = "R${removeRandFromAmount(tipValue ?: "0.0").toDouble()}"
+        titleTextView?.text = "R${removeRandFromAmount(tipValue ?: DEFAULT_AMOUNT).toDouble()}"
         val image = AppCompatResources.getDrawable(requireContext(), R.drawable.edit_icon_white)
         titleTextView?.setCompoundDrawablesWithIntrinsicBounds(null, null, image, null)
         titleTextView?.compoundDrawablePadding = resources.getDimension(R.dimen.five_dp).toInt()
@@ -1249,13 +1250,13 @@ class CheckoutDashFragment : Fragment(),
     override fun onCancelDialog(previousTipValue: String) {
 
         var index = driverTipOptionsList?.indexOf(selectedDriverTipValue) ?: -1
-        if(index < 0 && removeRandFromAmount(selectedDriverTipValue ?: "0.0").toDouble() > 0.0) {
+        if(index < 0 && removeRandFromAmount(selectedDriverTipValue ?: DEFAULT_AMOUNT).toDouble() > 0.0) {
             index = driverTipOptionsList?.lastIndex ?: -1
         }
         val titleTextView: TextView? = view?.findViewWithTag(index)
         titleTextView?.apply {
             if (index == driverTipOptionsList?.lastIndex) {
-                text = "R${removeRandFromAmount(selectedDriverTipValue ?: "0.0").toDouble()}"
+                text = "R${removeRandFromAmount(selectedDriverTipValue ?: DEFAULT_AMOUNT).toDouble()}"
                 val image = AppCompatResources.getDrawable(requireContext(), R.drawable.edit_icon_white)
                 setCompoundDrawablesWithIntrinsicBounds(null, null, image, null)
                 compoundDrawablePadding = resources.getDimension(R.dimen.five_dp).toInt()
