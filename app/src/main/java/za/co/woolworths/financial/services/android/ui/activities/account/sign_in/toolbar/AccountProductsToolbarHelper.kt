@@ -51,7 +51,7 @@ class AccountProductsToolbarHelper(
             navigateBackImageButton.setOnClickListener {
                 if (viewModel.bottomSheetBehaviorState == BottomSheetBehavior.STATE_EXPANDED){
                     viewModel.setIsBottomSheetBehaviorExpanded(true)
-                    return@setsetOnClickListenerListener
+                    return@setOnClickListener
                 }
                 onTap(it)
             }
