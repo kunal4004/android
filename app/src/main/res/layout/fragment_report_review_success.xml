@@ -54,6 +54,7 @@
         android:layout_marginBottom="@dimen/twenty_four_dp"
         android:background="@drawable/black_button_drawable_state"
         android:fontFamily="@font/futura_semi_bold_ttf"
+        android:letterSpacing="0.1"
         android:gravity="center"
         android:text="@string/report_got_it"
         android:textColor="@color/white"

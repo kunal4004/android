@@ -107,6 +107,7 @@
             android:background="@color/gray"
             android:enabled="false"
             android:fontFamily="@font/futura_semi_bold_ttf"
+            android:letterSpacing="0.1"
             android:text="@string/submit_report"
             android:textAllCaps="true"
             android:textColor="@color/white"
