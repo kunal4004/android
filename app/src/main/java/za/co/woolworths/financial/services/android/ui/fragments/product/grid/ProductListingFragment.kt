@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.gson.JsonSyntaxException
 import com.skydoves.balloon.balloon
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.blp_error_layout.view.*
@@ -301,6 +302,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     }
                 }
             } catch (e: HttpException) {
+                FirebaseManager.logException(e)
+                dismissProgressBar()
+            } catch (e: JsonSyntaxException) {
                 FirebaseManager.logException(e)
                 dismissProgressBar()
             }

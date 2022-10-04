@@ -22,6 +22,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
+import com.google.gson.JsonSyntaxException
 import com.google.maps.GeoApiContext
 import com.google.maps.GeocodingApi
 import dagger.hilt.android.AndroidEntryPoint
@@ -325,6 +326,10 @@ class ConfirmAddressMapFragment :
                     }
                 }
             } catch (e: HttpException) {
+                FirebaseManager.logException(e)
+                binding?.progressBar?.visibility = View.GONE
+                showErrorDialog()
+            } catch (e: JsonSyntaxException) {
                 FirebaseManager.logException(e)
                 binding?.progressBar?.visibility = View.GONE
                 showErrorDialog()

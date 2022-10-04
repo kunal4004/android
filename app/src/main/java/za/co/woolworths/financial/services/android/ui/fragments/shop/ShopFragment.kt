@@ -20,6 +20,7 @@ import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
 import com.daasuu.bl.ArrowDirection
 import com.google.android.material.tabs.TabLayout
+import com.google.gson.JsonSyntaxException
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.black_tool_tip_layout.*
 import kotlinx.android.synthetic.main.fragment_shop.*
@@ -271,6 +272,11 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     tabs_main?.isClickable = true
                     FirebaseManager.logException(e)
                     /*TODO : show error screen*/
+                }
+                catch (e: JsonSyntaxException) {
+                    shopProgressbar?.visibility = View.GONE
+                    tabs_main?.isClickable = true
+                    FirebaseManager.logException(e)
                 }
             }
         }
