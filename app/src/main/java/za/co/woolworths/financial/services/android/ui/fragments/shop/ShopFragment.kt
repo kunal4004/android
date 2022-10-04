@@ -6,6 +6,7 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
@@ -538,11 +539,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
 
         if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-            val fragment = viewpager_main?.adapter?.instantiateItem(
-                viewpager_main,
-                viewpager_main.currentItem
-            ) as? DashDeliveryAddressFragment
-            fragment?.onActivityResult(requestCode, resultCode, data)
             refreshViewPagerFragment()
         }
 
@@ -627,27 +623,22 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     fun refreshViewPagerFragment() {
         when (viewpager_main.currentItem) {
             STANDARD_TAB.index -> {
-                val standardDeliveryFragment =
-                    viewpager_main?.adapter?.instantiateItem(
-                        viewpager_main,
-                        viewpager_main.currentItem
-                    ) as? StandardDeliveryFragment
-                standardDeliveryFragment?.initView()
+                viewpager_main?.adapter?.instantiateItem(
+                    viewpager_main,
+                    viewpager_main.currentItem
+                ) as? StandardDeliveryFragment
             }
             CLICK_AND_COLLECT_TAB.index -> {
-                val changeFullfilmentCollectionStoreFragment =
-                    viewpager_main?.adapter?.instantiateItem(
-                        viewpager_main,
-                        viewpager_main.currentItem
-                    ) as? ChangeFullfilmentCollectionStoreFragment
-                changeFullfilmentCollectionStoreFragment?.init()
+                viewpager_main?.adapter?.instantiateItem(
+                    viewpager_main,
+                    viewpager_main.currentItem
+                ) as? ChangeFullfilmentCollectionStoreFragment
             }
             DASH_TAB.index -> {
-                val dashDeliveryAddressFragment = viewpager_main?.adapter?.instantiateItem(
+                viewpager_main?.adapter?.instantiateItem(
                     viewpager_main,
                     viewpager_main.currentItem
                 ) as? DashDeliveryAddressFragment
-                dashDeliveryAddressFragment?.initViews()
             }
         }
     }
@@ -659,7 +650,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     override fun isSendDeliveryDetails(): Boolean {
         val fromNotification: Boolean = arguments?.getBoolean(ARG_FROM_NOTIFICATION, false) ?: false
-        if(fromNotification) {
+        if (fromNotification) {
             return false
         }
         return true
