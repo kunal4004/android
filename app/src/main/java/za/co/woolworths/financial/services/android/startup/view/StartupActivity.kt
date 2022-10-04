@@ -47,6 +47,7 @@ import za.co.woolworths.financial.services.android.startup.viewmodel.ViewModelFa
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 import za.co.woolworths.financial.services.android.util.pushnotification.PushNotificationManager
 
@@ -269,7 +270,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         } else {
             showNonVideoViewWithErrorLayout()
         }
-        configureDashChatServices()
+         configureDashChatServices()
         //Remove old usage of SharedPreferences data.
      //   startupViewModel.clearSharedPreference(this@StartupActivity)
         AuthenticateUtils.getInstance(this@StartupActivity).enableBiometricForCurrentSession(true)
@@ -579,29 +580,37 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
 
     private fun configureDashChatServices() {
-        // Ideally, it would be better to just have Firebase read from the JSON file, instead of manually setting those credentials.
-        // TODO: also add check so that this firebase configuration is done only on Google variants, not Huawei, since Huawei uses Push Kit instead of Firebase.
-        val firebaseChatOptions = FirebaseOptions.Builder()
-            .setProjectId(getString(R.string.one_cart_chat))
-            .setApplicationId(getString(R.string.oc_chat_app_id))
-            .setApiKey(getString(R.string.oc_chat_api_key))
-            .build()
-        val chatApp =
-            FirebaseApp.initializeApp(this, firebaseChatOptions, getString(R.string.oc_chat_app))
-        val fbMessaging = chatApp.get(FirebaseMessaging::class.java)
-        fbMessaging.token.addOnCompleteListener { it: Task<String?> ->
-            if (it.isSuccessful) {
-                Utils.setOCChatFCMToken(it.result)
-            } else {
-                Utils.setOCChatFCMToken("")
+        try {
+            if (FirebaseApp.getApps(this).none { it.name == getString(R.string.oc_chat_app) }) {
+                // initialize firebase for OneCart, with push notification token listener
+                val firebaseChatOptions = FirebaseOptions.Builder()
+                    .setProjectId(getString(R.string.one_cart_chat))
+                    .setApplicationId(getString(R.string.oc_chat_app_id))
+                    .setApiKey(getString(R.string.oc_chat_api_key))
+                    .build()
+
+                val chatApp =
+                    FirebaseApp.initializeApp(this,
+                        firebaseChatOptions,
+                        getString(R.string.oc_chat_app))
+                val fbMessaging = chatApp.get(FirebaseMessaging::class.java)
+                fbMessaging.token.addOnCompleteListener { it: Task<String?> ->
+                    if (it.isSuccessful) {
+                        Utils.setOCChatFCMToken(it.result)
+                    } else {
+                        Utils.setOCChatFCMToken("")
+                    }
+                }
             }
+            // Start service to listen to incoming messages from Stream
+            if (SessionUtilities.getInstance().isUserAuthenticated) {
+                startOCChatService(this)
+            }
+
+        } catch (e: Exception) {
+            FirebaseManager.logException(e)
         }
 
-        // Start service to listen to incoming messages from Stream
-        if (SessionUtilities.getInstance().isUserAuthenticated) {
-            startOCChatService(this)
-
-        }
     }
 
 
