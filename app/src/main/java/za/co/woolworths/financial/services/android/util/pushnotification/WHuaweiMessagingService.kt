@@ -4,12 +4,14 @@ import android.os.Build
 import com.huawei.hms.push.HmsMessageService
 import com.huawei.hms.push.RemoteMessage
 import za.co.woolworths.financial.services.android.models.fcm.PushNotificationMessageType
+import za.co.woolworths.financial.services.android.util.Utils
 
 class WHuaweiMessagingService: HmsMessageService() {
 
     override fun onNewToken(token: String?) {
         token?.let {
             NotificationUtils.sendRegistrationToServer(it)
+            Utils.setOCChatFCMToken(token)
         }
     }
 
