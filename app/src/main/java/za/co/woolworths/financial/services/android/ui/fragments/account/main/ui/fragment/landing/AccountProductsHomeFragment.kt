@@ -9,6 +9,9 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountProductsHomeFragmentBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.IBottomSheetBehaviour
@@ -16,6 +19,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.com
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.local.AccountDataClass
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountProductLandingDao
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
+import za.co.woolworths.financial.services.android.util.AppConstant
 import javax.inject.Inject
 
 class UIComponent(
@@ -45,10 +49,22 @@ class AccountProductsHomeFragment : Fragment(R.layout.account_products_home_frag
             )
         )
 
-         homeViewModel.bottomSheetBehaviorState = BottomSheetBehavior.STATE_COLLAPSED
-
          setupBottomSheet(binding)
-
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(AppConstant.DELAY_10_MS)
+            homeViewModel.bottomSheetBehaviorState?.let {
+                when (it) {
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+                        val homeIcon = (activity as? StoreCardActivity)?.getBackIcon()
+                        homeIcon?.rotation = 0f
+                        sheetBehavior?.state = it
+                    }
+                    else -> {
+                        sheetBehavior?.state = it
+                    }
+                }
+            }
+        }
     }
 
     private fun setupBottomSheet(binding: AccountProductsHomeFragmentBinding) {

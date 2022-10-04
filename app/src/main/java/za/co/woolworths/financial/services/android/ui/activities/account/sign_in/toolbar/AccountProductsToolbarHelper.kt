@@ -9,15 +9,14 @@ import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import com.awfs.coordination.databinding.AccountProductLandingMainFragmentBinding
+import com.awfs.coordination.databinding.AccountProductLandingToolbarViewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 class AccountProductsToolbarHelper(
-    private val binding: AccountProductLandingMainFragmentBinding,
+    private val binding: AccountProductLandingToolbarViewBinding,
     private val fragment: Fragment?
 ) {
     private val mContext = fragment?.requireContext()
@@ -40,11 +39,11 @@ class AccountProductsToolbarHelper(
     }
 
     fun setOnAccountInArrearsTapListener(onTap: (View) -> Unit) {
-        binding.accountInArrearsTextView.onClick { onTap(binding.accountInArrearsTextView) }
+        binding.accountInArrearsTextView.setOnClickListener { onTap(binding.accountInArrearsTextView) }
     }
     fun setHomeLandingToolbar(viewModel: AccountProductsHomeViewModel, onTap: (View) -> Unit) {
         with(binding) {
-            infoIconImageView.onClick { onTap(it) }
+            infoIconImageView.setOnClickListener { onTap(it) }
             binding.infoIconImageView.visibility = VISIBLE
             binding.horizontalDivider.visibility = GONE
             binding.closeIconImageButton.visibility = GONE
@@ -52,13 +51,13 @@ class AccountProductsToolbarHelper(
             navigateBackImageButton.setOnClickListener {
                 if (viewModel.bottomSheetBehaviorState == BottomSheetBehavior.STATE_EXPANDED){
                     viewModel.setIsBottomSheetBehaviorExpanded(true)
-                    return@setOnClickListener
+                    return@setsetOnClickListenerListener
                 }
                 onTap(it)
             }
             setNavigationIconWhite()
             setTitleTextColorWhite()
-            binding.accountToolbar.setBackgroundColor(Color.TRANSPARENT)
+            binding.accountProductLandingToolbarView.setBackgroundColor(Color.TRANSPARENT)
             when (viewModel.isProductInGoodStanding()) {
                 true -> {
                     toolbarTitleTextView.visibility = VISIBLE
@@ -80,12 +79,12 @@ class AccountProductsToolbarHelper(
     fun setManageMyCardDetailsToolbar(isMultipleStoreCard: Boolean, onTap: (View) -> Unit) {
         getDetailToolbar(R.string.my_card, if (isMultipleStoreCard) "s" else "")
         binding.navigateBackImageButton.rotation = 0f
-        binding.navigateBackImageButton.onClick { onTap(it) }
+        binding.navigateBackImageButton.setOnClickListener { onTap(it) }
         binding.navigateBackImageButton.visibility = VISIBLE
         binding.horizontalDivider.visibility = VISIBLE
         binding.infoIconImageView.visibility = GONE
         binding.closeIconImageButton.visibility = GONE
-        binding.accountToolbar.setBackgroundColor(Color.WHITE)
+        binding.accountProductLandingToolbarView.setBackgroundColor(Color.WHITE)
         setNavigationIconBlack()
         setTitleTextColorBlack()
     }
@@ -124,13 +123,13 @@ class AccountProductsToolbarHelper(
     fun setInformationToolbar(onTap: (View) -> Unit) {
         getDetailToolbar(R.string.information)
         binding.navigateBackImageButton.rotation = 0f
-        binding.infoIconImageView.onClick { onTap(it) }
-        binding.closeIconImageButton.onClick { onTap(it) }
+        binding.infoIconImageView.setOnClickListener { onTap(it) }
+        binding.closeIconImageButton.setOnClickListener { onTap(it) }
         binding.horizontalDivider.visibility = VISIBLE
         binding.navigateBackImageButton.visibility = GONE
         binding.infoIconImageView.visibility = GONE
          binding.closeIconImageButton.visibility = VISIBLE
-        binding.accountToolbar.setBackgroundColor(Color.WHITE)
+        binding.accountProductLandingToolbarView.setBackgroundColor(Color.WHITE)
         setNavigationIconBlack()
         setTitleTextColorBlack()
     }
@@ -139,13 +138,13 @@ class AccountProductsToolbarHelper(
         binding.apply {
             navigateBackImageButton.rotation = 0f
             toolbarTitleTextView.visibility = GONE
-            infoIconImageView.onClick { onTap(it) }
-            closeIconImageButton.onClick { onTap(it) }
+            infoIconImageView.setOnClickListener { onTap(it) }
+            closeIconImageButton.setOnClickListener { onTap(it) }
             horizontalDivider.visibility = GONE
             navigateBackImageButton.visibility = GONE
             infoIconImageView.visibility = GONE
             closeIconImageButton.visibility = VISIBLE
-            accountToolbar.setBackgroundColor(Color.WHITE)
+            accountProductLandingToolbarView.setBackgroundColor(Color.WHITE)
         }
         setNavigationIconBlack()
         setTitleTextColorBlack()
