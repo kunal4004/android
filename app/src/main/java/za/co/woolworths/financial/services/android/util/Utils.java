@@ -1596,13 +1596,21 @@ public class Utils {
     public static String getOCChatFCMToken() {
         String token = "";
         try {
-            if (Utils.getSessionDaoValue(OC_CHAT_FCM_TOKEN) == null)
-                token = "token_not_received";
-            else token = Utils.getSessionDaoValue(OC_CHAT_FCM_TOKEN);
+            token = Utils.getSessionDaoValue(OC_CHAT_FCM_TOKEN);
         } catch (Exception ignored) {
             return null;
         }
 
+        return token;
+    }
+
+    public static String getOCFCMToken() {
+        String token;
+        if (getOCChatFCMToken() != null && (!getOCChatFCMToken().isEmpty())) {
+            token = getOCChatFCMToken();
+        } else {
+            token = "token_not_received";
+        }
         return token;
     }
 

@@ -471,12 +471,12 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                                     .addDevice(
                                         if (Utils.isGooglePlayServicesAvailable())
                                             Device(
-                                                Utils.getOCChatFCMToken(),
+                                                Utils.getOCFCMToken(),
                                                 PushProvider.FIREBASE
                                             )
                                         else
                                             Device (
-                                                Utils.getOCChatFCMToken(), // Since Stream uses Woolworths details for Huawei, we can use our own HMS cached token
+                                                Utils.getOCFCMToken(), // Since Stream uses Woolworths details for Huawei, we can use our own HMS cached token
                                                 PushProvider.HUAWEI
                                             )
                                     )
