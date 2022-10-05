@@ -1330,10 +1330,11 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         )
 
         bundle.putInt(ERROR_TYPE, type)
-        view?.findNavController()?.navigate(
-            R.id.actionOpenErrorHandlerBottomSheetDialog,
-            bundle
-        )
+
+        val errorBottomSheetDialog =  ErrorHandlerBottomSheetDialog.newInstance(bundle)
+        activity?.supportFragmentManager?.let {
+            errorBottomSheetDialog?.show(it, ErrorHandlerBottomSheetDialog::class.java.simpleName)
+        }
     }
 
     fun showErrorDialog() {

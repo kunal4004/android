@@ -9,6 +9,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.error_bottom_sheet_dialog.*
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 
 /**
@@ -30,6 +31,14 @@ class ErrorHandlerBottomSheetDialog : WBottomSheetDialogFragment(),
         const val ERROR_TYPE_CONFIRM_COLLECTION_ADDRESS = 1037
         const val ERROR_TYPE_SHIPPING_DETAILS_COLLECTION = 1038
         const val RESULT_ERROR_CODE_RETRY = "RESULT_ERROR_CODE_RETRY"
+
+        fun newInstance(bundle: Bundle) = ErrorHandlerBottomSheetDialog().apply {
+            withArgs {
+               putString(ERROR_TITLE, bundle.getString(ERROR_TITLE, ""))
+               putString(ERROR_DESCRIPTION, bundle.getString(ERROR_DESCRIPTION, ""))
+               putString(ERROR_TYPE, bundle.getString(ERROR_TYPE, ""))
+            }
+        }
     }
 
     override fun onCreateView(
