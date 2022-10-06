@@ -87,12 +87,12 @@ class GenericActionOrCancelDialogFragment : WBottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ) = contentView {
-        FragmentView(title, description, actionText, cancelText)
+        Render(title, description, actionText, cancelText)
     }
 
     @Preview
     @Composable
-    private fun FragmentView(
+    private fun Render(
         title: String = "",
         description: String = "",
         actionText: String = "",

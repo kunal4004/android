@@ -31,8 +31,6 @@ import za.co.woolworths.financial.services.android.firebase.FirebaseConfigUtils
 import za.co.woolworths.financial.services.android.firebase.model.ConfigData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetails
-import za.co.woolworths.financial.services.android.models.dto.voc.SurveyQuestion
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.startup.service.network.StartupApiHelper
 import za.co.woolworths.financial.services.android.startup.service.repository.StartUpRepository
@@ -42,7 +40,6 @@ import za.co.woolworths.financial.services.android.startup.viewmodel.ViewModelFa
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.util.*
-import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -518,87 +515,6 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     override fun onResume() {
         super.onResume()
         notificationUtils.clearNotifications()
-
-
-        // TODO: Testing VOC, to be removed
-        var questions = ArrayList<SurveyQuestion>()
-        questions.add(
-            SurveyQuestion(
-                id = 1,
-                type = "NUMERIC",
-                title = "This is a rate slider survey question.",
-                required = true,
-                minValue = 1,
-                maxValue = 11
-            )
-        )
-        questions.add(
-            SurveyQuestion(
-                id = 2,
-                type = "FREE_TEXT",
-                title = "This is a free text survey question.",
-                required = true
-            )
-        )
-        questions.add(
-            SurveyQuestion(
-                id = 3,
-                type = "FREE_TEXT",
-                title = "This is a free text survey question.",
-                required = true
-            )
-        )
-        questions.add(
-            SurveyQuestion(
-                id = 4,
-                type = "FREE_TEXT",
-                title = "This is a free text survey question.",
-                required = true
-            )
-        )
-        questions.add(
-            SurveyQuestion(
-                id = 5,
-                type = "NUMERIC",
-                title = "This is a rate slider survey question.",
-                required = true,
-                minValue = 1,
-                maxValue = 11
-            )
-        )
-        questions.add(
-            SurveyQuestion(
-                id = 6,
-                type = "FREE_TEXT",
-                title = "This is a free text survey question.",
-                required = true
-            )
-        )
-        questions.add(
-            SurveyQuestion(
-                id = 7,
-                type = "FREE_TEXT",
-                title = "This is a free text survey question.",
-                required = true
-            )
-        )
-        questions.add(
-            SurveyQuestion(
-                id = 8,
-                type = "NUMERIC",
-                title = "This is a rate slider survey question.",
-                required = true,
-                minValue = 1,
-                maxValue = 11
-            )
-        )
-        var survey = SurveyDetails(
-            id = 1,
-            name = "Test",
-            type = "dummy",
-            questions = questions
-        )
-        VoiceOfCustomerManager.showVocSurvey(this, survey)
     }
 
     private fun forgotPasswordDeeplink() {
