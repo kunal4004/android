@@ -95,6 +95,13 @@ class CurrencyFormatter {
         fun escapeDecimal(amount: Any?): String {
             return (formatAmountToRandAndCent(amount ?: 0 * 100)).replace(Regex("\\.0*$"), "")
         }
+
+        fun formatAmountToRandNoDecimal(amount: Double?): String {
+            val otherSymbols = DecimalFormatSymbols(Locale.getDefault())
+            // Define the maximum number of decimals (number of symbols #)
+            val df = DecimalFormat("#.##########", otherSymbols)
+            return df.format(amount ?: 0.0)
+        }
     }
 
     @VisibleForTesting

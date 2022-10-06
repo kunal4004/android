@@ -91,9 +91,6 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery.Companion
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItemClick,
     View.OnClickListener, NetworkChangeListener, ToastInterface, IWalkthroughActionListener,
@@ -906,10 +903,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                     String.format(
                         getString(
                             R.string.minspend_error_msg_cart,
-                            if (minBasketAmount.toString() == minBasketAmount.toLong().toString())
-                                minBasketAmount.toLong().toString()
-                            else
-                                minBasketAmount.toString()
+                            CurrencyFormatter.formatAmountToRandNoDecimal(minBasketAmount)
                         )
                     )
             }
