@@ -46,6 +46,7 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLoca
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
+import za.co.woolworths.financial.services.android.ui.fragments.poi.MapsPoiBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate
 import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
@@ -55,21 +56,19 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_CONFIRM_ADD
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_ADDRESS2
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LATITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LONGITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
-import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
-import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
-import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LATITUDE
-import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LONGITUDE
-import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
-import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.Constant.Companion.POI
 import za.co.woolworths.financial.services.android.util.Constant.Companion.STREET_NAME
 import za.co.woolworths.financial.services.android.util.Constant.Companion.STREET_NAME_FROM_POI
-import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_ADDRESS2
-
+import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
+import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LATITUDE
+import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LONGITUDE
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -542,9 +541,8 @@ class ConfirmAddressMapFragment :
             if (result == true) {
                 if (isPoiAddress == true) {
                     confirmAddress?.isEnabled = false
-                    findNavController()?.navigate(
-                        R.id.action_confirmAddressMapFragment_to_poiMapBottomSheetDialog
-                    )
+                    MapsPoiBottomSheetDialog().show(requireActivity().supportFragmentManager,
+                        MapsPoiBottomSheetDialog::class.java.simpleName)
                 } else {
                     errorMassageDivider?.visibility = View.VISIBLE
                     errorMessage?.visibility = View.VISIBLE
