@@ -337,12 +337,15 @@ class ProductCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(it
     }
 
     private fun setProductName(productList: ProductList?) = with(itemView) {
-        tvProductName?.maxLines = 3
-        tvProductName?.minLines = 1
         tvProductName?.text = productList?.productName ?: ""
     }
 
     private fun setPromotionalText(productList: ProductList?) = with(itemView) {
+        onlinePromotionalTextView1?.visibility = View.INVISIBLE
+        onlinePromotionalTextView2?.visibility = View.INVISIBLE
+        onlinePromotionalTextView1?.text = ""
+        onlinePromotionalTextView2?.text = ""
+
         if (productList?.promotions?.isEmpty() == false) {
             productList.promotions?.forEachIndexed { i, it ->
                 var editedPromotionalText: String? = it.promotionalText
@@ -354,14 +357,7 @@ class ProductCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(it
                 when (i) {
                     0 -> {
                         onlinePromotionalTextView1?.visibility = View.VISIBLE
-                        val promotionsListCount = productList.promotions?.size ?: 0
                         onlinePromotionalTextView1?.text = Html.fromHtml(editedPromotionalText)
-                        if (promotionsListCount == 1) {
-                            onlinePromotionalTextView1?.maxLines = 2
-                            onlinePromotionalTextView2?.text = ""
-                            onlinePromotionalTextView2?.visibility = View.GONE
-                        } else
-                            onlinePromotionalTextView1?.maxLines = 1
                     }
                     1 -> {
                         onlinePromotionalTextView2?.visibility = View.VISIBLE
@@ -369,9 +365,6 @@ class ProductCarouselItemViewHolder(itemView: View) : RecyclerView.ViewHolder(it
                     }
                 }
             }
-        } else {
-            onlinePromotionalTextView1?.text = ""
-            onlinePromotionalTextView2?.text = ""
         }
     }
 

@@ -14,9 +14,9 @@ android {
     def major = "9"
     def minor = "4"
     def fix = "0"
-    def jobNumberProduction = 197
-    def jobNumberQa = 633
-    def jobNumberFeature = 102
+    def jobNumberProduction = 199
+    def jobNumberQa = 637
+    def jobNumberFeature = 504
 
     buildFeatures {
         dataBinding true
@@ -379,7 +379,8 @@ dependencies {
     // get stream chat Client + offline
     implementation "io.getstream:stream-chat-android-offline:$stream_version"
     implementation "io.getstream:stream-chat-android-pushprovider-firebase:$stream_version"
-    implementation "io.getstream:stream-chat-android-pushprovider-huawei:$stream_version"
+    huaweiQaImplementation "io.getstream:stream-chat-android-pushprovider-huawei:$stream_version"
+    huaweiProductionImplementation "io.getstream:stream-chat-android-pushprovider-huawei:$stream_version"
 
     // Jetpack Compose
     implementation 'androidx.activity:activity-compose:1.5.1'
