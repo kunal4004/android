@@ -18,7 +18,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.GeolocationConfirmAddressBinding
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
@@ -61,8 +60,6 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LONGITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.Constant.Companion.POI
-import za.co.woolworths.financial.services.android.util.Constant.Companion.STREET_NAME
-import za.co.woolworths.financial.services.android.util.Constant.Companion.STREET_NAME_FROM_POI
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
 import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LATITUDE
 import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LONGITUDE
@@ -73,12 +70,11 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ConfirmAddressMapFragment :
-    Fragment(), DynamicMapDelegate, VtoTryAgainListener {
+    Fragment(), DynamicMapDelegate, VtoTryAgainListener, MapsPoiBottomSheetDialog.ClickListner {
 
     private var mAddress: String? = null
     private var placeId: String? = null
     private var deliveryType: String? = null
-    private var latLng: LatLng? = null
     private var mLatitude: String? = null
     private var mLongitude: String? = null
     private var address1: String? = null
@@ -121,9 +117,7 @@ class ConfirmAddressMapFragment :
         view: View, savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
-
         dynamicMapView?.initializeMap(savedInstanceState, this)
-        setPOIResult()
     }
 
     private fun initView() {
@@ -541,7 +535,7 @@ class ConfirmAddressMapFragment :
             if (result == true) {
                 if (isPoiAddress == true) {
                     confirmAddress?.isEnabled = false
-                    MapsPoiBottomSheetDialog().show(requireActivity().supportFragmentManager,
+                    MapsPoiBottomSheetDialog(this@ConfirmAddressMapFragment).show(requireActivity().supportFragmentManager,
                         MapsPoiBottomSheetDialog::class.java.simpleName)
                 } else {
                     errorMassageDivider?.visibility = View.VISIBLE
@@ -824,13 +818,10 @@ class ConfirmAddressMapFragment :
         dynamicMapView?.onSaveInstanceState(outState)
     }
 
-    private fun setPOIResult() {
-        setFragmentResultListener(STREET_NAME_FROM_POI) { _, bundle ->
-            address2 = bundle?.getString(STREET_NAME)
-            address2?.let {
-                confirmAddress?.isEnabled = true
-            }
-        }
+    override fun onConfirmClick(streetName: String) {
+        address2 = streetName
+        if (!address2.isNullOrEmpty())
+            confirmAddress?.isEnabled = true
     }
 }
 
