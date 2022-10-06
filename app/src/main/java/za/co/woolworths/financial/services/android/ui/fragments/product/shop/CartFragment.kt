@@ -420,19 +420,29 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         ) {
             //   - CNAV : Checkout  activity
             val beginCheckoutParams = Bundle()
-            beginCheckoutParams.putString(FirebaseAnalytics.Param.CURRENCY,
-                FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
+            beginCheckoutParams.putString(
+                FirebaseAnalytics.Param.CURRENCY,
+                FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+            )
 
             val beginCheckoutItem = Bundle()
-            beginCheckoutItem.putString(FirebaseAnalytics.Param.QUANTITY,
-                FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE)
-            beginCheckoutItem.putString(FirebaseAnalytics.Param.ITEM_BRAND,
-                FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
+            beginCheckoutItem.putString(
+                FirebaseAnalytics.Param.QUANTITY,
+                FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE
+            )
+            beginCheckoutItem.putString(
+                FirebaseAnalytics.Param.ITEM_BRAND,
+                FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE
+            )
 
-            beginCheckoutParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS,
-                arrayOf(beginCheckoutItem))
-            AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT,
-                beginCheckoutParams)
+            beginCheckoutParams.putParcelableArray(
+                FirebaseAnalytics.Param.ITEMS,
+                arrayOf(beginCheckoutItem)
+            )
+            AnalyticsManager.logEvent(
+                FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT,
+                beginCheckoutParams
+            )
 
             val checkoutActivityIntent = Intent(activity, CheckoutActivity::class.java)
             checkoutActivityIntent.apply {
@@ -469,8 +479,10 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                 liquorCompliance.let {
                     if ((it != null) && it.isLiquorOrder && (AppConfigSingleton.liquor!!.noLiquorImgUrl != null) && !AppConfigSingleton.liquor!!.noLiquorImgUrl.isEmpty()) {
                         putExtra(Constant.LIQUOR_ORDER, it.isLiquorOrder)
-                        putExtra(Constant.NO_LIQUOR_IMAGE_URL,
-                            AppConfigSingleton.liquor!!.noLiquorImgUrl)
+                        putExtra(
+                            Constant.NO_LIQUOR_IMAGE_URL,
+                            AppConfigSingleton.liquor!!.noLiquorImgUrl
+                        )
                     }
                 }
                 activity.startActivityForResult(
@@ -717,10 +729,12 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             for (cartItemGroup: CartItemGroup in emptyCartItemGroups) {
                 cartItems?.remove(cartItemGroup)
             }
-            cartProductAdapter?.notifyAdapter(cartItems,
+            cartProductAdapter?.notifyAdapter(
+                cartItems,
                 orderSummary,
                 voucherDetails,
-                liquorCompliance)
+                liquorCompliance
+            )
         } else {
             cartProductAdapter?.clear()
             resetToolBarIcons()
@@ -885,9 +899,20 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
     }
 
     private fun setMinimumCartErrorMessage() {
-        if(orderSummary?.hasMinimumBasketAmount == false) {
-            txt_min_spend_error_msg?.visibility = View.VISIBLE
-            txt_min_spend_error_msg?.text = String.format(Locale.getDefault(), requireContext().getString(R.string.minspend_error_msg_cart, orderSummary?.minimumBasketAmount))
+        if (orderSummary?.hasMinimumBasketAmount == false) {
+            orderSummary?.minimumBasketAmount?.let { minBasketAmount ->
+                txt_min_spend_error_msg?.visibility = View.VISIBLE
+                txt_min_spend_error_msg?.text =
+                    String.format(
+                        getString(
+                            R.string.minspend_error_msg_cart,
+                            if (minBasketAmount.toString() == minBasketAmount.toLong().toString())
+                                minBasketAmount.toLong().toString()
+                            else
+                                minBasketAmount.toString()
+                        )
+                    )
+            }
             btnCheckOut?.isEnabled = false
             fadeCheckoutButton(true)
         } else {
