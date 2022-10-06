@@ -11,12 +11,16 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -90,6 +94,7 @@ class GenericActionOrCancelDialogFragment : WBottomSheetDialogFragment() {
         Render(title, description, actionText, cancelText)
     }
 
+    @OptIn(ExperimentalComposeUiApi::class)
     @Preview
     @Composable
     private fun Render(
@@ -100,6 +105,10 @@ class GenericActionOrCancelDialogFragment : WBottomSheetDialogFragment() {
     ) {
         Column(
             modifier = Modifier
+                .semantics {
+                    testTagsAsResourceId = true
+                }
+                .testTag(getString(R.string.dialog_confirmorcancel))
                 .fillMaxWidth()
                 .background(color = Color.White),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -117,6 +126,7 @@ class GenericActionOrCancelDialogFragment : WBottomSheetDialogFragment() {
             )
             Text(
                 modifier = Modifier
+                    .testTag(getString(R.string.dialog_confirmorcancel_title))
                     .padding(
                         top = 24.dp,
                         start = 32.dp,
@@ -133,6 +143,7 @@ class GenericActionOrCancelDialogFragment : WBottomSheetDialogFragment() {
             )
             Text(
                 modifier = Modifier
+                    .testTag(getString(R.string.dialog_confirmorcancel_description))
                     .padding(
                         top = 8.dp,
                         start = 32.dp,
@@ -153,6 +164,7 @@ class GenericActionOrCancelDialogFragment : WBottomSheetDialogFragment() {
                 },
                 shape = RectangleShape,
                 modifier = Modifier
+                    .testTag(getString(R.string.dialog_confirmorcancel_action_proceed))
                     .padding(
                         top = 31.dp,
                         start = 32.dp,
@@ -168,6 +180,8 @@ class GenericActionOrCancelDialogFragment : WBottomSheetDialogFragment() {
                 interactionSource = NoRippleInteractionSource()
             ) {
                 Text(
+                    modifier = Modifier
+                        .testTag(getString(R.string.dialog_confirmorcancel_action_proceed_label)),
                     text = actionText,
                     fontSize = 12.sp,
                     fontFamily = FuturaFontFamily,
@@ -181,6 +195,7 @@ class GenericActionOrCancelDialogFragment : WBottomSheetDialogFragment() {
                 },
                 shape = RectangleShape,
                 modifier = Modifier
+                    .testTag(getString(R.string.dialog_confirmorcancel_action_cancel))
                     .padding(
                         top = 8.dp,
                         start = 32.dp,
@@ -197,6 +212,8 @@ class GenericActionOrCancelDialogFragment : WBottomSheetDialogFragment() {
                 interactionSource = NoRippleInteractionSource()
             ) {
                 Text(
+                    modifier = Modifier
+                        .testTag(getString(R.string.dialog_confirmorcancel_action_cancel_label)),
                     text = cancelText,
                     fontSize = 12.sp,
                     fontFamily = FuturaFontFamily,

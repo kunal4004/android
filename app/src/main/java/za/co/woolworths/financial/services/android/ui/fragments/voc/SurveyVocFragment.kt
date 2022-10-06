@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -19,7 +20,10 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -70,6 +74,7 @@ class SurveyVocFragment : Fragment(), GenericActionOrCancelDialogFragment.IActio
         Render()
     }
 
+    @OptIn(ExperimentalComposeUiApi::class)
     @Preview
     @Composable
     fun Render() {
@@ -85,6 +90,10 @@ class SurveyVocFragment : Fragment(), GenericActionOrCancelDialogFragment.IActio
         Column {
             LazyColumn(
                 modifier = Modifier
+                    .semantics {
+                        testTagsAsResourceId = true
+                    }
+                    .testTag(getString(R.string.voc_list_questions))
                     .fillMaxWidth()
                     .weight(weight = 1f, fill = true)
                     .background(colorResource(id = R.color.color_separator_lighter_grey))
@@ -118,18 +127,21 @@ class SurveyVocFragment : Fragment(), GenericActionOrCancelDialogFragment.IActio
                                     }
                                     AndroidView(
                                         factory = { rateSliderView },
-                                        modifier = Modifier.onGloballyPositioned {
-                                            if (!isTooltipInitialPositionUpdated) {
-                                                isTooltipInitialPositionUpdated = true
-                                                rateSliderView.post {
-                                                    rateSliderView.updateSliderTooltipPosition()
+                                        modifier = Modifier
+                                            .testTag(getString(R.string.voc_question_slider))
+                                            .onGloballyPositioned {
+                                                if (!isTooltipInitialPositionUpdated) {
+                                                    isTooltipInitialPositionUpdated = true
+                                                    rateSliderView.post {
+                                                        rateSliderView.updateSliderTooltipPosition()
+                                                    }
                                                 }
                                             }
-                                        }
                                     )
                                 }
                                 SurveyQuestion.QuestionType.FREE_TEXT -> {
                                     SurveyQuestionFreeTextView(
+                                        context,
                                         title = question.title,
                                         initialText = surveyViewModel.getAnswer(question.id)?.textAnswer,
                                         placeholder = if (question.required == true) R.string.voc_question_freetext_hint_required else R.string.voc_question_freetext_hint_optional,
@@ -158,6 +170,7 @@ class SurveyVocFragment : Fragment(), GenericActionOrCancelDialogFragment.IActio
                                 }
                             }
                             SurveyFooterActionView(
+                                context,
                                 isSubmitEnabled = isSubmitEnabled,
                                 onSubmitCallback = ::onSubmit,
                                 onOptOutCallback = ::onOptOut

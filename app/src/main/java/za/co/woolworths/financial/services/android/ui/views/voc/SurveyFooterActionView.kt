@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.views.voc
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -29,12 +31,14 @@ import za.co.woolworths.financial.services.android.ui.compose.NoRippleInteractio
 @Preview
 @Composable
 fun SurveyFooterActionView(
+    context: Context? = null,
     isSubmitEnabled: Boolean = false,
     onSubmitCallback: () -> Unit = {},
     onOptOutCallback: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
+            .testTag(context?.getString(R.string.voc_footer_action) ?: "")
             .background(Color.White)
             .padding(20.dp),
     ) {
@@ -42,6 +46,7 @@ fun SurveyFooterActionView(
             onClick = { if (isSubmitEnabled) onSubmitCallback() },
             shape = RectangleShape,
             modifier = Modifier
+                .testTag(context?.getString(R.string.voc_action_submit) ?: "")
                 .fillMaxWidth()
                 .height(dimensionResource(id = R.dimen.button_style_height))
                 .alpha(if (isSubmitEnabled) 1f else 0.5f),
@@ -53,6 +58,8 @@ fun SurveyFooterActionView(
             interactionSource = NoRippleInteractionSource()
         ) {
             Text(
+                modifier = Modifier
+                    .testTag(context?.getString(R.string.voc_action_submit_label) ?: ""),
                 text = stringResource(id = R.string.voc_survey_submit),
                 fontSize = 12.sp,
                 fontFamily = FuturaFontFamily,
@@ -63,6 +70,7 @@ fun SurveyFooterActionView(
             onClick = onOptOutCallback,
             shape = RectangleShape,
             modifier = Modifier
+                .testTag(context?.getString(R.string.voc_action_optout) ?: "")
                 .padding(top = 14.dp)
                 .fillMaxWidth()
                 .height(dimensionResource(id = R.dimen.button_style_height)),
@@ -74,6 +82,8 @@ fun SurveyFooterActionView(
             interactionSource = NoRippleInteractionSource()
         ) {
             Text(
+                modifier = Modifier
+                    .testTag(context?.getString(R.string.voc_action_optout_label) ?: ""),
                 text = stringResource(id = R.string.voc_survey_opt_out),
                 fontSize = 12.sp,
                 fontFamily = FuturaFontFamily,
