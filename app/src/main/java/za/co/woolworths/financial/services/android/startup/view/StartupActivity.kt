@@ -37,8 +37,6 @@ import za.co.woolworths.financial.services.android.firebase.FirebaseConfigUtils
 import za.co.woolworths.financial.services.android.firebase.model.ConfigData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetails
-import za.co.woolworths.financial.services.android.models.dto.voc.SurveyQuestion
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.Companion.startOCChatService
 import za.co.woolworths.financial.services.android.onecartgetstream.service.DashChatMessageListeningService
@@ -54,7 +52,6 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 import za.co.woolworths.financial.services.android.util.pushnotification.PushNotificationManager
-import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 
 @AndroidEntryPoint
 class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
