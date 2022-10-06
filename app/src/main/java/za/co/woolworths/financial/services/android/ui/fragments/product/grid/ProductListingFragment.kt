@@ -646,7 +646,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             val desc = view.findViewById<TextView>(R.id.desc)
             val close = view.findViewById<Button>(R.id.close)
             val setSuburb = view.findViewById<TextView>(R.id.setSuburb)
-            desc?.text = AppConfigSingleton.liquor?.message ?: ""
+            desc?.text = getString(R.string.liquor_dialog_description_text)
             close?.setOnClickListener { dismiss() }
             setSuburb?.setOnClickListener {
                 dismiss()
