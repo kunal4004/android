@@ -34,10 +34,9 @@ class SurveyQuestionRateSliderView @JvmOverloads constructor(
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 val selectedValue = progress + minValue
                 tvTooltipRateSlider.text = selectedValue.toString()
-                tvTooltipRateSlider.post {
-                    tvTooltipRateSlider.x = sbRateSlider.thumb.bounds.left.toFloat() + (sbRateSlider.thumb.bounds.width() / 2 - tvTooltipRateSlider.width / 2)
+                seekBar?.post {
+                    updateSliderTooltipPosition()
                 }
-                ivTooltipRateSliderBg.x = sbRateSlider.thumb.bounds.left.toFloat() + (sbRateSlider.thumb.bounds.width() / 2 - ivTooltipRateSliderBg.width / 2)
                 callback.invoke(question.id, selectedValue)
             }
 
@@ -53,5 +52,11 @@ class SurveyQuestionRateSliderView @JvmOverloads constructor(
                 sbRateSlider.progress = sbRateSlider.max
             }
         }
+    }
+
+    fun updateSliderTooltipPosition() {
+        tvTooltipRateSlider.x = sbRateSlider.thumb.bounds.left.toFloat() + (sbRateSlider.thumb.bounds.width() / 2 - tvTooltipRateSlider.width / 2)
+        ivTooltipRateSliderBg.x = sbRateSlider.thumb.bounds.left.toFloat() + (sbRateSlider.thumb.bounds.width() / 2 - ivTooltipRateSliderBg.width / 2)
+        tvTooltipRateSlider.bringToFront()
     }
 }
