@@ -104,6 +104,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
+import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
@@ -880,6 +881,23 @@ public class Utils {
         return currentUserObject.shoppingDeliveryLocationHistory;
     }
 
+    public static OrderSummary[] getCachedOrdersPendingPicking() {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        return currentUserObject.myOrdersPendingPicking;
+    }
+
+    public static void setCachedOrdersPendingPicking(OrderSummary[] ordersSummary) {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        currentUserObject.myOrdersPendingPicking = ordersSummary;
+        currentUserObject.save();
+    }
+
+    public static void clearCachedOrdersPendingPicking() {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        currentUserObject.myOrdersPendingPicking = new OrderSummary[0];
+        currentUserObject.save();
+    }
+
     public static void fadeInFadeOutAnimation(final View view, final boolean editMode) {
         Animation animation;
         if (!editMode) {
@@ -1583,6 +1601,16 @@ public class Utils {
             return null;
         }
 
+        return token;
+    }
+
+    public static String getOCFCMToken() {
+        String token;
+        if (getOCChatFCMToken() != null && (!getOCChatFCMToken().isEmpty())) {
+            token = getOCChatFCMToken();
+        } else {
+            token = "token_not_received";
+        }
         return token;
     }
 
