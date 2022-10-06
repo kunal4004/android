@@ -132,7 +132,8 @@ class CheckoutDashFragment : Fragment(),
     }
 
     companion object {
-        const val REQUEST_KEY_SELECTED_COLLECTION_DATE: String = "SELECTED_COLLECTION_DATE"
+        private const val REQUEST_KEY_SELECTED_COLLECTION_DATE: String = "SELECTED_COLLECTION_DATE"
+        private const val DEFAULT_AMOUNT: String = "0.0"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -626,7 +627,9 @@ class CheckoutDashFragment : Fragment(),
                             )
                         )
                         tipNoteTextView?.visibility = View.VISIBLE
-                    } else if (driverTipOptionsList?.contains(selectedDriverTipValue) == false
+                    } else if (
+                        removeRandFromAmount(selectedDriverTipValue ?: DEFAULT_AMOUNT).toDouble() != 0.0
+                        && driverTipOptionsList?.contains(selectedDriverTipValue) == false
                         && index == driverTipOptionsList?.size?.minus(1)
                     ) {
                         /*this is for custom driver tip*/
@@ -639,7 +642,7 @@ class CheckoutDashFragment : Fragment(),
                             )
                         )
                         tipNoteTextView?.visibility = View.VISIBLE
-                        titleTextView?.text = selectedDriverTipValue
+                        titleTextView?.text = "R${removeRandFromAmount(selectedDriverTipValue ?: DEFAULT_AMOUNT).toDouble()}"
                         val image = AppCompatResources.getDrawable(
                             requireContext(),
                             R.drawable.edit_icon_white
@@ -656,9 +659,6 @@ class CheckoutDashFragment : Fragment(),
                 }
                 titleTextView?.setOnClickListener {
                     val amountString = (it as TextView).text as? String
-                    if (selectedDriverTipValue.equals(amountString, ignoreCase = true)) {
-                        return@setOnClickListener
-                    }
 
                     val isSameSelection = resetAllDriverTip(it.tag as? Int ?: 0)
 
@@ -694,6 +694,19 @@ class CheckoutDashFragment : Fragment(),
                             ContextCompat.getColor(
                                 requireContext(),
                                 R.color.white
+                            )
+                        )
+                        tipNoteTextView?.visibility = View.VISIBLE
+                    } else {
+                        selectedDriverTipValue = DEFAULT_AMOUNT
+
+                        // Change background of selected Tip to unselect.
+                        it.background =
+                            bindDrawable(R.drawable.checkout_delivering_title_round_button)
+                        it.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.checkout_delivering_title
                             )
                         )
                         tipNoteTextView?.visibility = View.VISIBLE
@@ -1217,7 +1230,7 @@ class CheckoutDashFragment : Fragment(),
         val titleTextView: TextView? =
             driverTipTextView?.findViewWithTag(driverTipOptionsList?.lastIndex)
         driverTipOptionsList?.lastIndex?.let { resetAllDriverTip(it) }
-        titleTextView?.text = "R$tipValue"
+        titleTextView?.text = "R${removeRandFromAmount(tipValue ?: DEFAULT_AMOUNT).toDouble()}"
         val image = AppCompatResources.getDrawable(requireContext(), R.drawable.edit_icon_white)
         titleTextView?.setCompoundDrawablesWithIntrinsicBounds(null, null, image, null)
         titleTextView?.compoundDrawablePadding = resources.getDimension(R.dimen.five_dp).toInt()
@@ -1236,19 +1249,24 @@ class CheckoutDashFragment : Fragment(),
 
     override fun onCancelDialog(previousTipValue: String) {
 
-        val index = driverTipOptionsList?.indexOf(selectedDriverTipValue)
-        val titleTextView: TextView? = view?.findViewWithTag(index)
-        if (index == driverTipOptionsList?.lastIndex) {
-            titleTextView?.text = selectedDriverTipValue
-            val image = AppCompatResources.getDrawable(requireContext(), R.drawable.edit_icon_white)
-            titleTextView?.setCompoundDrawablesWithIntrinsicBounds(null, null, image, null)
-            titleTextView?.compoundDrawablePadding = resources.getDimension(R.dimen.five_dp).toInt()
+        var index = driverTipOptionsList?.indexOf(selectedDriverTipValue) ?: -1
+        if(index < 0 && removeRandFromAmount(selectedDriverTipValue ?: DEFAULT_AMOUNT).toDouble() > 0.0) {
+            index = driverTipOptionsList?.lastIndex ?: -1
         }
-        titleTextView?.background = bindDrawable(
-            R.drawable.checkout_delivering_title_round_button_pressed
-        )
-        titleTextView?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-        tipNoteTextView?.visibility = View.VISIBLE
+        val titleTextView: TextView? = view?.findViewWithTag(index)
+        titleTextView?.apply {
+            if (index == driverTipOptionsList?.lastIndex) {
+                text = "R${removeRandFromAmount(selectedDriverTipValue ?: DEFAULT_AMOUNT).toDouble()}"
+                val image = AppCompatResources.getDrawable(requireContext(), R.drawable.edit_icon_white)
+                setCompoundDrawablesWithIntrinsicBounds(null, null, image, null)
+                compoundDrawablePadding = resources.getDimension(R.dimen.five_dp).toInt()
+            }
+            background = bindDrawable(
+                R.drawable.checkout_delivering_title_round_button_pressed
+            )
+            setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+            tipNoteTextView?.visibility = View.VISIBLE
+        }
     }
 
     override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {

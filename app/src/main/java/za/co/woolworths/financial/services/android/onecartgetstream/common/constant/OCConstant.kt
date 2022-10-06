@@ -9,16 +9,14 @@ class OCConstant {
 
     companion object {
         const val ORDER_PENDING_PICKING = "PENDING_PICKING"
-        var ocChatMessageCount = 0
+        var ocObserveCountMessage = 0
         var isOCChatBackgroundServiceRunning = false
 
         fun startOCChatService(context: Context?) {
             try {
-                if (!isOCChatBackgroundServiceRunning) {
-                    val chatListeningServiceIntent =
-                        Intent(context, DashChatMessageListeningService::class.java)
-                    context?.startService(chatListeningServiceIntent)
-                }
+                val chatListeningServiceIntent =
+                    Intent(context, DashChatMessageListeningService::class.java)
+                context?.startService(chatListeningServiceIntent)
             } catch (e: Exception) {
                 FirebaseManager.logException(e)
             }
