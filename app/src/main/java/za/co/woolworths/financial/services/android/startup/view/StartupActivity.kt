@@ -36,6 +36,7 @@ import za.co.woolworths.financial.services.android.firebase.FirebaseConfigUtils
 import za.co.woolworths.financial.services.android.firebase.model.ConfigData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.Companion.startOCChatService
 import za.co.woolworths.financial.services.android.onecartgetstream.service.DashChatMessageListeningService
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
@@ -270,7 +271,9 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         } else {
             showNonVideoViewWithErrorLayout()
         }
-         configureDashChatServices()
+        if (startupViewModel.isConnectedToInternet(this@StartupActivity)) {
+            configureDashChatServices()
+        }
         //Remove old usage of SharedPreferences data.
      //   startupViewModel.clearSharedPreference(this@StartupActivity)
         AuthenticateUtils.getInstance(this@StartupActivity).enableBiometricForCurrentSession(true)
@@ -597,13 +600,13 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                 fbMessaging.token.addOnCompleteListener { it: Task<String?> ->
                     if (it.isSuccessful) {
                         Utils.setOCChatFCMToken(it.result)
-                    } else {
-                        Utils.setOCChatFCMToken("")
                     }
+
                 }
             }
             // Start service to listen to incoming messages from Stream
-            if (SessionUtilities.getInstance().isUserAuthenticated) {
+            if (SessionUtilities.getInstance().isUserAuthenticated &&
+                (!OCConstant.isOCChatBackgroundServiceRunning)) {
                 startOCChatService(this)
             }
 

@@ -412,7 +412,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
                     String orderId = appLinkData.get(AppConstant.DP_LINKING_PARAM_STREAM_ORDER_ID).getAsString();
                     String channelId = appLinkData.get(AppConstant.DP_LINKING_PARAM_STREAM_CHANNEL_ID).getAsString();
-                    if (orderId != null && !orderId.isEmpty()) {
+                    if (orderId != null && !orderId.isEmpty() && SessionUtilities.getInstance().isUserAuthenticated()) {
                         startActivity(OCChatActivity.Companion.newIntent(this, orderId, channelId));
                     }
                     break;
