@@ -38,7 +38,7 @@ class SurveyVocViewModel @Inject constructor(): ViewModel() {
     fun getAnswer(questionId: Long): SurveyAnswer? {
         var answer = surveyAnswers[questionId]
         if (answer == null) {
-            val question = surveyDetails!!.questions!!.first { it.id == questionId }
+            val question = surveyDetails?.questions?.firstOrNull { it.id == questionId } ?: return null
             // Set default answer
             answer = when (question.type) {
                 SurveyQuestion.QuestionType.RATE_SLIDER.type -> {
