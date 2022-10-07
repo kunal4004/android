@@ -1604,6 +1604,16 @@ public class Utils {
         return token;
     }
 
+    public static String getOCFCMToken() {
+        String token;
+        if (getOCChatFCMToken() != null && (!getOCChatFCMToken().isEmpty())) {
+            token = getOCChatFCMToken();
+        } else {
+            token = "token_not_received";
+        }
+        return token;
+    }
+
 
 
 
