@@ -75,6 +75,7 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
                 noConnectionLayoutVisibility(VISIBLE)
             }
         }
+
     }
 
     private fun setClient() {
@@ -133,7 +134,10 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
     }
 
     override fun onShowProductListing(categoryId: String, categoryName: String) {
-        (activity as? BottomNavigationActivity)?.pushFragment(ProductListingFragment.newInstance(ProductsRequestParams.SearchType.NAVIGATE, categoryName, categoryId))
+        (activity as? BottomNavigationActivity)?.pushFragment(ProductListingFragment.newInstance(ProductsRequestParams.SearchType.NAVIGATE, categoryName, categoryId,
+            isBrowsing = false,
+            sendDeliveryDetails = false
+        ))
     }
 
     override fun onAddIngredientsToShoppingList(ingredients: String) {

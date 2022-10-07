@@ -67,4 +67,11 @@ class ShippingDetailsBody : Serializable {
 
     @SerializedName("address")
     var address: ConfirmLocationAddress? =null
+
+    @SerializedName("driverTip")
+    var driverTip: Double = 0.0
+
+    var appInstanceId: String? = null
+    var pushNotificationToken: String? = null
+    var tokenProvider: String? = null
 }

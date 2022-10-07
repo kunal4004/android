@@ -19,7 +19,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.ProductOfferingStatus
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.extension.deviceHeight
-import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.eliteplan.EligibilityImpl
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -162,6 +162,7 @@ class AccountSignedInPresenterImpl(
         }
         eligibilityPlan = response.eligibilityPlan
 
+
         if (eligibilityPlan?.productGroupCode == eligibleState) {
             when (eligibilityPlan?.actionText) {
                 ActionText.START_NEW_ELITE_PLAN.value -> {
@@ -231,15 +232,19 @@ class AccountSignedInPresenterImpl(
         showPopupIfNeeded: Boolean
     ) {
         val account = getAccount() ?: return
+
         with(ProductOfferingStatus(account)) {
             mainView?.apply {
+
+                // Construct help list when account is in good standing or in arrears
+                showAccountHelp(getCardProductInformation(isAccountInArrearsState() || isChargedOff()))
+
                 state { status ->
                     when (status) {
 
                         AccountOfferingState.AccountInGoodStanding -> {
                             //when productOfferingGoodStanding == true
                             hideAccountInArrears(account)
-                            showAccountHelp(getCardProductInformation(false))
                         }
 
                         AccountOfferingState.AccountIsInArrears -> showAccountInArrears(
@@ -279,8 +284,9 @@ class AccountSignedInPresenterImpl(
                                 },
                                 {
                                     eligibilityImpl?.eligibilityFailed()
-                                    if (showPopupIfNeeded && !isChargedOffCC()) showAccountInArrears(
+                                    if (showPopupIfNeeded && !isChargedOffCC()){ showAccountInArrears(
                                         account)
+                                    }
                                 })
                         }
                     }

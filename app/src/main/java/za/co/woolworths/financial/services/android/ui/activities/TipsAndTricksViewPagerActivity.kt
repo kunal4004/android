@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.adapters.TipsAndTricksViewPagerAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.activities.ApplyNowActivity
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_BARCODE_ACTIVITY
 import kotlin.properties.Delegates
 
  class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener, ViewPager.OnPageChangeListener {
@@ -116,7 +117,7 @@ import kotlin.properties.Delegates
                 //BARCODE SCAN
                     1 -> {
                         val openBarcodeActivity = Intent(this, BarcodeScanActivity::class.java)
-                        startActivityForResult(openBarcodeActivity, BarcodeScanActivity.BARCODE_ACTIVITY_REQUEST_CODE)
+                        startActivityForResult(openBarcodeActivity, REQUEST_CODE_BARCODE_ACTIVITY)
                         overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
                     }
                 //DELIVERY LOCATION
@@ -216,7 +217,7 @@ import kotlin.properties.Delegates
                 }
 
             }
-        } else if (requestCode == BarcodeScanActivity.BARCODE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == REQUEST_CODE_BARCODE_ACTIVITY && resultCode == Activity.RESULT_OK) {
             setResult(Activity.RESULT_OK, data)
             onBackPressed()
         } else if (requestCode == MyAccountActivity.REQUEST_CODE_MY_ACCOUNT_FRAGMENT) {

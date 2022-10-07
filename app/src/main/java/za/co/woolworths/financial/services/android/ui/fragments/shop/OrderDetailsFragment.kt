@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,13 +24,16 @@ import za.co.woolworths.financial.services.android.contracts.IToastInterface
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.models.network.Parameter
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.activities.CancelOrderProgressActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.adapters.OrderDetailsAdapter
+import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.shop.helpandsupport.HelpAndSupportFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.util.*
@@ -40,22 +44,24 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
     OrderHistoryErrorDialogFragment.IOrderHistoryErrorDialogDismiss, IToastInterface {
 
     companion object {
-        val ARG_PARAM = "order"
+        val PROMO_NOTE_FOOD = "FOOD"
 
-        fun getInstance(order: Order, isNaviagtedFromMyAccount: Boolean = false) =
+        fun getInstance(orderId: String, isNaviagtedFromMyAccount: Boolean = false) =
             OrderDetailsFragment().withArgs {
-                putString(ARG_PARAM, Utils.toJson(order))
+                putString(AppConstant.Keys.ARG_ORDER, orderId)
                 putBoolean(AppConstant.NAVIGATED_FROM_MY_ACCOUNTS, isNaviagtedFromMyAccount)
             }
+
+        fun getInstance(params: Parameter) = OrderDetailsFragment().withArgs {
+            putParcelable(AppConstant.Keys.ARG_NOTIFICATION_PARAMETERS, params)
+        }
     }
 
     private var dataList = arrayListOf<OrderDetailsItem>()
-    private var order: Order? = null
+    private var argOrderId: String? = null
     private var orderDetailsResponse: OrderDetailsResponse? = null
     var isNavigatedFromMyAccounts: Boolean = false
-    private var orderText: String = ""
     private var mBottomNavigator: BottomNavigator? = null
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -67,16 +73,19 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            order = Utils.jsonStringToObject(it.getString("order"), Order::class.java) as Order?
-            orderText = getString(R.string.order_page_title_prefix) + order?.orderId
+            argOrderId = it.getString(AppConstant.Keys.ARG_ORDER, "")
+            val notificationParams: Parameter? = it.getParcelable(AppConstant.Keys.ARG_NOTIFICATION_PARAMETERS) as? Parameter
+            notificationParams?.let { parameter ->
+                argOrderId = parameter.orderId
+            }
             isNavigatedFromMyAccounts = it.getBoolean(AppConstant.NAVIGATED_FROM_MY_ACCOUNTS, false)
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Handler().postDelayed({
-            activity?.runOnUiThread {
+        Handler(Looper.getMainLooper()).postDelayed({
+            requireActivity().runOnUiThread {
                 initViews()
             }
         }, 100)
@@ -99,15 +108,21 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         mBottomNavigator?.apply {
             removeToolbar()
         }
-        toolbarText?.text = orderText
-        btnBack?.setOnClickListener { activity?.onBackPressed() }
+        tvSelectAll?.visibility = View.VISIBLE
+        tvSelectAll?.text = getString(R.string.dash_help)
+        btnBack?.setOnClickListener { requireActivity().onBackPressed() }
         orderDetails.layoutManager = LinearLayoutManager(activity)
         orderItemsBtn.setOnClickListener {
-            (activity as? BottomNavigationActivity)?.pushFragment(
-                AddOrderToCartFragment.getInstance(orderDetailsResponse!!, order)
+            (requireActivity() as? BottomNavigationActivity)?.pushFragment(
+                orderDetailsResponse?.let { AddOrderToCartFragment.getInstance(it) }
             )
         }
-        order?.orderId?.let { orderId -> requestOrderDetails(orderId) }
+        tvSelectAll.setOnClickListener {
+            (requireActivity() as? BottomNavigationActivity)?.pushFragment(
+                HelpAndSupportFragment.newInstance(orderDetailsResponse)
+            )
+        }
+        argOrderId?.let { orderId -> requestOrderDetails(orderId) }
     }
 
     private fun requestOrderDetails(orderId: String): Call<OrderDetailsResponse> {
@@ -126,7 +141,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
                     502 -> {
                         loadingBar.visibility = View.GONE
                         showErrorDialog(
-                            ordersResponse?.response?.desc
+                            ordersResponse.response?.desc
                                 ?: getString(R.string.general_error_desc)
                         )
                     }
@@ -144,7 +159,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
 
     private fun bindData(ordersResponse: OrderDetailsResponse) {
         dataList = buildDataForOrderDetailsView(ordersResponse)
-        orderDetails.adapter = activity?.let { OrderDetailsAdapter(it, this, dataList) }
+        orderDetails.adapter = requireActivity().let { OrderDetailsAdapter(it, this, dataList) }
         VoiceOfCustomerManager.showVocSurveyIfNeeded(
             activity,
             KotlinUtils.vocShoppingHandling(orderDetailsResponse?.orderSummary?.fulfillmentDetails?.deliveryType)
@@ -155,13 +170,30 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         val dataList = arrayListOf<OrderDetailsItem>()
 
         dataList.add(OrderDetailsItem(ordersResponse, OrderDetailsItem.ViewType.ORDER_STATUS))
-        order?.apply {
-            if (taxNoteNumbers.isNotEmpty())
+
+        ordersResponse.orderSummary?.apply {
+            if (!taxNoteNumbers.isNullOrEmpty())
                 dataList.add(OrderDetailsItem(null, OrderDetailsItem.ViewType.VIEW_TAX_INVOICE))
             if (orderCancellable && !requestCancellation)
                 dataList.add(OrderDetailsItem(null, OrderDetailsItem.ViewType.CANCEL_ORDER))
+            if (isChatEnabled)
+                dataList.add(
+                    OrderDetailsItem(
+                        ordersResponse,
+                        OrderDetailsItem.ViewType.CHAT_VIEW
+                    )
+                )
+            if (isDriverTrackingEnabled && (!driverTrackingURL.isNullOrEmpty()))
+                dataList.add(
+                    OrderDetailsItem(
+                        ordersResponse,
+                        OrderDetailsItem.ViewType.TRACK_ORDER
+                    )
+                )
         }
         dataList.add(OrderDetailsItem(null, OrderDetailsItem.ViewType.ADD_TO_LIST_LAYOUT))
+        dataList.add(OrderDetailsItem(ordersResponse, OrderDetailsItem.ViewType.ORDER_TOTAL))
+
         val itemsObject = JSONObject(Gson().toJson(ordersResponse.items))
         val keys = itemsObject.keys()
         while ((keys.hasNext())) {
@@ -250,16 +282,21 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
     }
 
     override fun onAddToList(commerceItemList: MutableList<AddToListRequest>) {
-        NavigateToShoppingList.openShoppingList(activity, commerceItemList, order?.orderId, false)
+        NavigateToShoppingList.openShoppingList(
+            requireActivity(),
+            commerceItemList,
+            argOrderId,
+            false
+        )
     }
 
     override fun onOpenProductDetail(commerceItem: CommerceItem) {
 
         // Move to shop tab.
-        if (!(getActivity() is BottomNavigationActivity)) {
-            return;
+        if (requireActivity() !is BottomNavigationActivity) {
+            return
         }
-        val bottomNavigationActivity = activity as BottomNavigationActivity
+        val bottomNavigationActivity = requireActivity() as BottomNavigationActivity
         bottomNavigationActivity.bottomNavigationById.currentItem =
             BottomNavigationActivity.INDEX_PRODUCT
         val productDetails = ProductDetails()
@@ -274,16 +311,15 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
     }
 
     fun openProductDetailFragment(productName: String?, productDetails: ProductDetails?) {
-        if (activity !is BottomNavigationActivity || !isAdded) {
+        if (requireActivity() !is BottomNavigationActivity || !isAdded) {
             return
         }
-        val gson = Gson()
-        val strProductList = gson.toJson(productDetails)
+        val strProductList = Gson().toJson(productDetails)
         // Move to shop tab first.
-        (activity as BottomNavigationActivity).apply {
+        (requireActivity() as? BottomNavigationActivity)?.apply {
             onShopTabSelected(bottomNavigationById.menu[INDEX_PRODUCT])
         }
-        ScreenManager.openProductDetailFragment(activity, productName, strProductList)
+        ScreenManager.openProductDetailFragment(requireActivity(), productName, strProductList)
     }
 
     override fun onAttach(context: Context) {
@@ -294,10 +330,14 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
     }
 
     override fun onViewTaxInvoice() {
-        (activity as? BottomNavigationActivity)?.pushFragment(
-            TaxInvoiceLIstFragment.getInstance(
-                order?.orderId!!, order?.taxNoteNumbers!!
-            )
+        (requireActivity() as? BottomNavigationActivity)?.pushFragment(
+            orderDetailsResponse?.orderSummary?.let {
+                it.orderId?.let { it1 ->
+                    TaxInvoiceLIstFragment.getInstance(
+                        it1, it.taxNoteNumbers ?: ArrayList(0)
+                    )
+                }
+            }
         )
     }
 
@@ -315,11 +355,26 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
 
         triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CANCEL_ORDER_TAP)
 
-        activity?.apply {
+        requireActivity().apply {
             this@OrderDetailsFragment.childFragmentManager.apply {
                 CancelOrderConfirmationDialogFragment.newInstance(isNavigatedFromMyAccounts)
                     .show(this, CancelOrderConfirmationDialogFragment::class.java.simpleName)
             }
+        }
+    }
+
+    override fun onOpenChatScreen(orderId: String?) {
+        orderId?.let {
+            startActivity(OCChatActivity.newIntent(requireActivity(), it))
+        }
+    }
+
+    override fun onOpenTrackOrderScreen(orderTrackingURL: String) {
+        activity?.apply {startActivity(OrderTrackingWebViewActivity.newIntent(this, orderTrackingURL))
+            overridePendingTransition(
+                R.anim.slide_from_right,
+                R.anim.slide_out_to_left
+            )
         }
     }
 
@@ -328,9 +383,9 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         if (requestCode == CancelOrderProgressFragment.REQUEST_CODE_CANCEL_ORDER
             && resultCode == CancelOrderProgressFragment.RESULT_CODE_CANCEL_ORDER_SUCCESS
         ) {
-            activity?.onBackPressed()
+            requireActivity().onBackPressed()
             // move back to shop fragment and reload my order tab
-            (activity as? BottomNavigationActivity)?.apply {
+            (requireActivity() as? BottomNavigationActivity)?.apply {
                 (currentFragment as? ShopFragment)?.let {
                     onActivityResult(requestCode, resultCode, data)
                 }
@@ -349,22 +404,25 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         }
 
         if (requestCode == BottomNavigationActivity.PDP_REQUEST_CODE && resultCode == AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
-            activity?.setResult(
-                AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE,
-                data
-            )
-            activity?.onBackPressed()
-            activity?.overridePendingTransition(0, 0)
+            requireActivity().apply {
+                setResult(
+                    AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE,
+                    data
+                )
+                onBackPressed()
+                overridePendingTransition(0, 0)
+            }
             return
         }
-        val fragment = activity?.supportFragmentManager?.findFragmentById(R.id.fragmentContainer)
+        val fragment =
+            requireActivity().supportFragmentManager.findFragmentById(R.id.fragmentContainer)
         fragment?.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onCancelOrderConfirmation() {
-        activity?.apply {
+        requireActivity().apply {
             val intent = Intent(this, CancelOrderProgressActivity::class.java)
-            intent.putExtra(CancelOrderProgressFragment.ORDER_ID, order?.orderId)
+            intent.putExtra(CancelOrderProgressFragment.ORDER_ID, argOrderId)
             intent.putExtra(AppConstant.NAVIGATED_FROM_MY_ACCOUNTS, isNavigatedFromMyAccounts)
             startActivityForResult(intent, CancelOrderProgressFragment.REQUEST_CODE_CANCEL_ORDER)
             overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
@@ -373,9 +431,9 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
 
     fun showErrorDialog(errorMessage: String) {
         val dialog = OrderHistoryErrorDialogFragment.newInstance(errorMessage)
-        activity?.apply {
-            this@OrderDetailsFragment.childFragmentManager?.beginTransaction()
-                ?.let { fragmentTransaction ->
+        requireActivity().apply {
+            this@OrderDetailsFragment.childFragmentManager.beginTransaction()
+                .let { fragmentTransaction ->
                     dialog.show(
                         fragmentTransaction,
                         OrderHistoryErrorDialogFragment::class.java.simpleName
@@ -385,7 +443,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
     }
 
     override fun onErrorDialogDismiss() {
-        activity?.onBackPressed()
+        requireActivity().onBackPressed()
     }
 
     override fun onToastButtonClicked(jsonElement: JsonElement?) {
@@ -399,6 +457,6 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        if (!hidden) (activity as? BottomNavigationActivity)?.showBottomNavigationMenu()
+        if (!hidden) (requireActivity() as? BottomNavigationActivity)?.showBottomNavigationMenu()
     }
 }

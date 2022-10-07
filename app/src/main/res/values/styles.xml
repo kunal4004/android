@@ -863,7 +863,7 @@
     <!-- Base application theme. -->
 
     <style name="style_cart_header_title">
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:lineSpacingExtra">0.1sp</item>
         <item name="android:gravity">center_vertical|start</item>
@@ -873,8 +873,7 @@
     <style name="style_cart_header_add_to_list">
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/black</item>
-        <item name="android:lineSpacingExtra">0.1sp</item>
-        <item name="android:gravity">end</item>
+        <item name="android:gravity">center|end</item>
         <item name="WTextView_font">medium</item>
     </style>
 
@@ -1149,6 +1148,17 @@
         <item name="android:letterSpacing">@integer/point_fifteen</item>
     </style>
 
+
+    <style name="my_orders_textview_style_history">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:textSize">@dimen/fourteen_dp</item>
+        <item name="WTextView_font">myriadpro_semibold</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:letterSpacing">@integer/point_eleven</item>
+    </style>
+
     <style name="my_orders_textview_style_2">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -1158,14 +1168,37 @@
         <item name="android:textColor">@color/black40</item>
     </style>
 
+    <style name="promotion_note_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:paddingStart">@dimen/twenty_four_dp</item>
+        <item name="android:paddingTop">@dimen/sixteen_dp</item>
+        <item name="android:paddingBottom">@dimen/sixteen_dp</item>
+        <item name="fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:textColor">@color/color_666666</item>
+        <item name="android:textSize">@dimen/twelve_sp</item>
+    </style>
+
     <style name="my_orders_textview_style_3" parent="my_orders_textview_style_1">
         <item name="android:layout_alignParentRight">true</item>
-        <item name="android:drawableRight">@drawable/ic_caret_black</item>
+        <item name="android:drawableRight">@drawable/ic_order_history_right</item>
         <item name="android:drawablePadding">@dimen/sixteen_dp</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:textSize">14sp</item>
     </style>
+
+    <style name="my_orders_textview_style_order_history" parent="my_orders_textview_style_history">
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:drawableRight">@drawable/ic_order_history_right</item>
+        <item name="android:drawablePadding">@dimen/sixteen_dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
 
     <style name="OrderDetailsActivityStyle" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
@@ -1808,6 +1841,10 @@
     </style>
 
     <style name="myriad_pro_semi_bold_black_15_text_style" parent="myriad_pro_regular_black_15_text_style">
+        <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
+    </style>
+
+    <style name="myriad_pro_semi_bold_black" parent="myriad_pro_regular_black">
         <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
     </style>
 
@@ -2757,4 +2794,21 @@
         <item name="android:windowExitAnimation">@anim/slide_down_anim</item>
     </style>
 
+    <style name="ShopCustomTabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">@dimen/twelve_sp</item>
+        <item name="android:textColor">@color/color_222222</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+    </style>
+
+    <style name="shop_tab_style" parent="Widget.Design.TabLayout">
+        <item name="tabSelectedTextColor">@color/white</item>
+        <item name="android:tabStripEnabled">false</item>
+        <item name="tabIndicatorColor">@null</item>
+        <item name="tabGravity">fill</item>
+        <item name="tabIndicatorHeight">0dp</item>
+        <item name="tabRippleColor">@null</item>
+        <item name="tabBackground">@drawable/shop_tab_color_selector</item>
+        <item name="tabTextAppearance">@style/ShopCustomTabTextAppearance</item>
+    </style>
 </resources>

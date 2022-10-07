@@ -17,7 +17,7 @@
             android:id="@+id/imgUserProfileShimmerFrameLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/shimmer_view_background"
+            android:background="@drawable/bg_cnc_user_image_4"
             android:minWidth="@dimen/fourty_dp"
             android:minHeight="@dimen/fourty_dp"
             android:padding="@dimen/ten_dp"

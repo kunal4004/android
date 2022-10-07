@@ -55,16 +55,28 @@ public class WTextView extends TextView {
 
     @Override
     public void setText(CharSequence text, BufferType type) {
-        String s = text.toString();
-        if (s.split("\\|![lmsb\\?]\\|").length == 1) {
-            super.setText(text, type);
-        } else {
-            super.setText(FontHyperTextParser.getSpannable(s, mFont), BufferType.SPANNABLE);
+        try {
+            if (text != null) {
+                String s = text.toString();
+                if (s == null) {
+                    super.setText("", type);
+                } else if (s.split("\\|![lmsb\\?]\\|").length == 1) {
+                    super.setText(text, type);
+                } else {
+                    super.setText(FontHyperTextParser.getSpannable(s, mFont), BufferType.SPANNABLE);
+                }
+            } else {
+                super.setText("", type);
+            }
+        } catch (Exception e) {
+            super.setText("", type);
         }
     }
 
     public void setText(String s) {
-        if (s.split("\\|![lmsb\\?]\\|").length == 1) {
+        if (s == null) {
+            super.setText("");
+        } else if (s.split("\\|![lmsb\\?]\\|").length == 1) {
             super.setText(FontHyperTextParser.getSpannable(s, mFont), BufferType.SPANNABLE);
         } else {
             super.setText(s);

@@ -3,13 +3,13 @@ package za.co.woolworths.financial.services.android.ui.views.actionsheet
 import android.app.Dialog
 import android.os.Bundle
 import android.view.View
-import com.awfs.coordination.R
 import android.widget.FrameLayout
 import androidx.fragment.app.FragmentManager
+import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.lang.Exception
 
 open class WBottomSheetDialogFragment : BottomSheetDialogFragment() {
@@ -22,15 +22,19 @@ open class WBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
     override fun getTheme(): Int = R.style.BottomSheetDialogTheme
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = context?.let { BottomSheetDialog(it, theme) }!!
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
+        context?.let { BottomSheetDialog(it, theme) }!!
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         dialog?.apply {
             setOnShowListener { dialog ->
-                bottomSheet = (dialog as? BottomSheetDialog)?.findViewById<View>(R.id.design_bottom_sheet) as? FrameLayout?
-                bottomSheet?.let {  sheet ->  BottomSheetBehavior.from(sheet).state = BottomSheetBehavior.STATE_EXPANDED}
+                bottomSheet =
+                    (dialog as? BottomSheetDialog)?.findViewById<View>(R.id.design_bottom_sheet) as? FrameLayout?
+                bottomSheet?.let { sheet ->
+                    BottomSheetBehavior.from(sheet).state = BottomSheetBehavior.STATE_EXPANDED
+                }
             }
 
         }
@@ -43,7 +47,7 @@ open class WBottomSheetDialogFragment : BottomSheetDialogFragment() {
             if (!manager.isDestroyed && !manager.isStateSaved) {
                 super.show(manager, tag)
             }
-        }catch(ex: Exception) {
+        } catch (ex: Exception) {
             FirebaseManager.logException(ex)
         }
     }

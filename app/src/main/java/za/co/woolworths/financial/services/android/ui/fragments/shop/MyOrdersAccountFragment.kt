@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.OrdersAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorMessageDialogFragment
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
 class MyOrdersAccountFragment : Fragment(), IPresentOrderDetailInterface {
 
@@ -231,13 +232,11 @@ class MyOrdersAccountFragment : Fragment(), IPresentOrderDetailInterface {
             setupToolbar()
     }
 
-    override fun presentOrderDetailsPage(item: Order) {
-        activity?.apply {
-            val orderItem = Utils.toJson(item)
-            val order = Utils.jsonStringToObject(orderItem, Order::class.java) as? Order
+    override fun presentOrderDetailsPage(order: Order) {
+        requireActivity().apply {
             order?.let {
-                (activity as? BottomNavigationActivity)?.pushFragment(
-                        OrderDetailsFragment.getInstance(order, true)
+                (this as? BottomNavigationActivity)?.pushFragment(
+                    OrderDetailsFragment.getInstance(it.orderId, true)
                 )
             }
         }

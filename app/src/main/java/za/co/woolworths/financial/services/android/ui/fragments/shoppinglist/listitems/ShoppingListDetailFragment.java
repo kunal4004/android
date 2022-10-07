@@ -11,6 +11,7 @@ import static za.co.woolworths.financial.services.android.ui.fragments.product.d
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_EXPECTATION_FAILED_417;
+import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_EXPECTATION_FAILED_502;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_OK;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_SESSION_TIMEOUT_440;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
@@ -55,7 +56,6 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils;
-import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
@@ -83,6 +83,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.u
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.EmptyCartView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
@@ -93,7 +94,6 @@ import za.co.woolworths.financial.services.android.util.PostItemToCart;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.wenum.Delivery;
 
 public class ShoppingListDetailFragment extends Fragment implements View.OnClickListener, EmptyCartView.EmptyCartInterface, NetworkChangeListener, ToastUtils.ToastInterface, ShoppingListItemsNavigator, IToastInterface, IOnConfirmDeliveryLocationActionListener {
 
@@ -201,7 +201,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         editButtonVisibility();
         view.findViewById(R.id.btnRetry).setOnClickListener(this);
         EmptyCartView emptyCartView = new EmptyCartView(view, this);
-        emptyCartView.setView(getString(R.string.title_empty_shopping_list), getString(R.string.description_empty_shopping_list), getString(R.string.button_empty_shopping_list), R.drawable.emptyshoppinglist);
+        emptyCartView.setView(getString(R.string.title_empty_shopping_list), getString(R.string.description_empty_shopping_list), getString(R.string.button_empty_shopping_list), R.drawable.empty_list_icon);
 
         // Show Bottom Navigation Menu
         Activity activity = getActivity();
@@ -505,10 +505,19 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             }
         } else {
             // else display shopping list toast
-            if (KotlinUtils.Companion.getPreferredDeliveryType() == Delivery.CNC && addItemToCartResponse.data.get(0).productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
-                ToastFactory.Companion.showItemsLimitToastOnAddToCart(rlCheckOut, addItemToCartResponse.data.get(0).productCountMap, activity, size, true);
-            } else {
-                ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
+            switch (KotlinUtils.Companion.getPreferredDeliveryType()) {
+                case DASH:
+                case CNC:
+                    if (addItemToCartResponse.data.get(0).productCountMap.getQuantityLimit() != null
+                            && addItemToCartResponse.data.get(0).productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
+                        ToastFactory.Companion.showItemsLimitToastOnAddToCart(rlCheckOut, addItemToCartResponse.data.get(0).productCountMap, activity, size, true);
+                    } else {
+                        ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
+                    }
+                    break;
+                default:
+                    ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
+                    break;
             }
         }
     }
@@ -1014,10 +1023,19 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             ProductCountMap productCountMap = (ProductCountMap) Utils.jsonStringToObject(data.getStringExtra("ProductCountMap"), ProductCountMap.class);
             int itemsCount = data.getIntExtra("ItemsCount", 0);
 
-            if (KotlinUtils.Companion.getPreferredDeliveryType() == Delivery.CNC && productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
-                ToastFactory.Companion.showItemsLimitToastOnAddToCart(rlCheckOut, productCountMap, activity, itemsCount, true);
-            } else {
-                ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
+            switch (KotlinUtils.Companion.getPreferredDeliveryType()) {
+                case DASH:
+                case CNC:
+                    if ( productCountMap != null && productCountMap.getQuantityLimit() != null &&
+                            productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
+                        ToastFactory.Companion.showItemsLimitToastOnAddToCart(rlCheckOut, productCountMap, activity, itemsCount, true);
+                    } else {
+                        ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
+                    }
+                    break;
+                default:
+                    ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
+                    break;
             }
         }
     }
@@ -1026,17 +1044,17 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         Activity activity = getActivity();
         if (activity == null) return;
         KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
-                activity, resultCode, null, null, false, false, null, null, null, null);
+                activity, resultCode, null, null, false,false, false, null, null, null, null);
     }
 
     private void startActivityToSelectDeliveryLocation(boolean addItemToCartOnFinished) {
         if (getActivity() != null) {
             if (addItemToCartOnFinished) {
                 KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
-                        getActivity(), REQUEST_SUBURB_CHANGE, null, null, false, false, null, null, null, null);
+                        getActivity(), REQUEST_SUBURB_CHANGE, null, null, false, false, false, null, null, null, null);
             } else {
                 KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
-                        getActivity(), 0, null, null, false, false , null, null, null, null );
+                        getActivity(), 0, null, null, false,false, false , null, null, null, null );
             }
             getActivity().overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
         }
@@ -1079,6 +1097,18 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
                             onSessionTokenExpired(addItemToCartResponse.response);
                         break;
 
+                    case HTTP_EXPECTATION_FAILED_502:
+                        if (addItemToCartResponse.response.code.equals(AppConstant.RESPONSE_ERROR_CODE_1235)) {
+                            pbLoadingIndicator.setVisibility(GONE);
+                            KotlinUtils.showQuantityLimitErrror(
+                                    getActivity().getSupportFragmentManager(),
+                                    addItemToCartResponse.response.desc,
+                                    "",
+                                    getContext()
+                            );
+                            enableAddToCartButton(VISIBLE);
+                        }
+                        break;
                     default:
                         if (addItemToCartResponse.response != null)
                             otherHttpCode(addItemToCartResponse.response);
@@ -1115,7 +1145,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     public Call<SkusInventoryForStoreResponse> getInventoryStockForStore(String storeId, String multiSku) {
         setInternetConnectionWasLost(false);
 
-        Call<SkusInventoryForStoreResponse> skusInventoryForStoreResponseCall = OneAppService.INSTANCE.getInventorySkuForStore(storeId, multiSku);
+        Call<SkusInventoryForStoreResponse> skusInventoryForStoreResponseCall = OneAppService.INSTANCE.getInventorySkuForStore(storeId, multiSku, false);
         skusInventoryForStoreResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<SkusInventoryForStoreResponse>() {
             @Override
             public void onSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse) {
@@ -1233,6 +1263,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
                 REQUEST_SUBURB_CHANGE,
                 KotlinUtils.Companion.getPreferredDeliveryType(),
                 GeoUtils.Companion.getPlaceId(),
+                false,
                 false,
                 false,
                 null,

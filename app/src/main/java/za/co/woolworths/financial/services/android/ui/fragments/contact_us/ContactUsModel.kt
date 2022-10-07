@@ -43,4 +43,12 @@ class ContactUsModel {
     fun contactUsCustomerServicesOptions(): ArrayList<ConfigContactUsOptions>? {
         return contactUsList?.get(1)?.options
     }
+
+    fun contactUsDashServices(): ConfigContactUs? {
+        return contactUsList?.get(2)
+    }
+
+    fun contactUsDashServicesOptions(): ArrayList<ConfigContactUsOptions>? {
+        return contactUsList?.get(2)?.options
+    }
 }
