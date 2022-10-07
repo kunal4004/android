@@ -1,9 +1,10 @@
 package za.co.woolworths.financial.services.android.util
 
+
 import android.annotation.SuppressLint
 import android.content.IntentSender
 import android.os.Looper
-import android.util.Log
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import androidx.appcompat.app.AppCompatActivity
 import com.huawei.hms.common.ApiException
 import com.huawei.hms.common.ResolvableApiException
@@ -107,13 +108,15 @@ object FuseLocationAPISingleton {
                                 )
                             }
                         } catch (sie: IntentSender.SendIntentException) {
+                            FirebaseManager.logException(sie)
                         }
 
                     }
                     LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> {
                         val errorMessage =
                             "Location settings are inadequate, and cannot be " + "fixed here. Fix in Settings."
-                        Log.e(TAG, errorMessage)
+                        FirebaseManager.setCrashlyticsString(TAG, errorMessage)
+
                     }
                 }
             }
