@@ -31,11 +31,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.blp_error_layout.view.*
 import kotlinx.android.synthetic.main.fragment_brand_landing.view.*
 import kotlinx.android.synthetic.main.grid_layout.*
-import kotlinx.android.synthetic.main.grid_layout.vtoTryItOnBanner
 import kotlinx.android.synthetic.main.no_connection_handler.*
 import kotlinx.android.synthetic.main.no_connection_handler.view.*
 import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.*
-import kotlinx.android.synthetic.main.try_it_on_banner.*
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
@@ -139,9 +137,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var localDeliveryType: String? = null
     private var localDeliveryTypeForHiddenChange: String? = null
 
-    @OpenTermAndLighting
-    @Inject
-    lateinit var vtoBottomSheetDialog: VtoBottomSheetDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -211,13 +206,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             addFragmentListner()
             isUnSellableItemsRemoved()
             localPlaceId = KotlinUtils.getPreferredPlaceId()
-            imgInfo?.setOnClickListener {
-                vtoBottomSheetDialog.showBottomSheetDialog(
-                    this@ProductListingFragment,
-                    requireActivity(),
-                    true
-                )
-            }
             localDeliveryType = KotlinUtils.getDeliveryType()?.deliveryType
 
         }
@@ -241,12 +229,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             this,
             GeoLocationViewModelFactory(GeoLocationApiHelper())
         ).get(ConfirmAddressViewModel::class.java)
-    }
-
-    private fun showVtoBanner() {
-        if (!mSubCategoryName.isNullOrEmpty() && mSubCategoryName.equals(VTO) && VirtualTryOnUtil.isVtoConfigAvailable()) {
-            vtoTryItOnBanner.visibility = VISIBLE
-        }
     }
 
     private fun addFragmentListner() {
@@ -552,7 +534,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             return
         }
         plp_relativeLayout?.visibility = VISIBLE
-        showVtoBanner()
         val productLists = response.products
         if (mProductList?.isNullOrEmpty() == true)
 
@@ -569,7 +550,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
         if (productLists?.isEmpty() == true) {
             sortAndRefineLayout?.visibility = GONE
-            vtoTryItOnBanner?.visibility = GONE
             if (!listContainHeader()) {
                 val headerProduct = ProductList()
                 headerProduct.rowType = ProductListingViewType.HEADER
@@ -1196,7 +1176,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private fun reloadProductsWithSortAndFilter() {
         productsRecyclerView?.visibility = View.INVISIBLE
         sortAndRefineLayout?.visibility = GONE
-        vtoTryItOnBanner?.visibility = GONE
         startProductRequest()
     }
 
