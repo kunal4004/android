@@ -314,7 +314,6 @@
         android:layout_marginStart="@dimen/_6sdp"
         android:layout_marginEnd="@dimen/_10sdp"
         android:ellipsize="end"
-        android:fontFamily="@font/myriad_pro_regular"
         android:gravity="start|center"
         android:maxLines="1"
         android:textAlignment="gravity"
