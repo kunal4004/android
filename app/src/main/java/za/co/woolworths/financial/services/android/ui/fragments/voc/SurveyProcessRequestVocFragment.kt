@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
@@ -18,19 +19,15 @@ import kotlinx.android.synthetic.main.processing_request_failure_fragment.*
 import kotlinx.android.synthetic.main.processing_request_failure_fragment.processRequestTitleTextView
 import kotlinx.android.synthetic.main.processing_request_failure_fragment.view.*
 import kotlinx.android.synthetic.main.processing_request_fragment.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyAnswer
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetails
-import za.co.woolworths.financial.services.android.models.dto.voc.SurveyQuestion
-import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerActivity
-import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerActivity.Companion.DEFAULT_VALUE_RATE_SLIDER_MAX
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.ProcessYourRequestFragment
-import za.co.woolworths.financial.services.android.util.*
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import za.co.woolworths.financial.services.android.ui.fragments.voc.viewmodel.SurveyProcessRequestVocViewModel
+import za.co.woolworths.financial.services.android.util.ConnectionBroadcastReceiver
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnClickListener {
@@ -41,8 +38,7 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
 
     private var menuItem: MenuItem? = null
     private var navController: NavController? = null
-    private var surveyDetails: SurveyDetails? = null
-    private var surveyAnswers: HashMap<Long, SurveyAnswer>? = null
+    private val surveyProcessRequestViewModel: SurveyProcessRequestVocViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +48,10 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        configureSurveyDetailsAndAnswers()
+        surveyProcessRequestViewModel.configure(
+            details = activity?.intent?.extras?.getSerializable(VoiceOfCustomerActivity.EXTRA_SURVEY_DETAILS) as? SurveyDetails,
+            answers = arguments?.getSerializable(VoiceOfCustomerActivity.EXTRA_SURVEY_ANSWERS) as? HashMap<Long, SurveyAnswer>
+        )
         configureUI()
 
         navController = Navigation.findNavController(view)
@@ -73,49 +72,6 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
         }
 
         autoConnection()
-    }
-
-    private fun configureSurveyDetailsAndAnswers() {
-        surveyDetails = activity?.intent?.extras?.getSerializable(VoiceOfCustomerActivity.EXTRA_SURVEY_DETAILS) as? SurveyDetails
-        arguments?.apply {
-            surveyAnswers = getSerializable(VoiceOfCustomerActivity.EXTRA_SURVEY_ANSWERS) as? HashMap<Long, SurveyAnswer>
-        }
-        surveyDetails?.questions?.forEach { question ->
-            // Pass some data required by Genex
-            surveyAnswers?.get(question.id)?.apply {
-                matrix = question.matrix
-                column = question.column
-                group = question.group
-
-                if (question.type == SurveyQuestion.QuestionType.RATE_SLIDER.type) {
-                    // Add back offset removed to draw slider
-                    answerId?.let {
-                        answerId = it + 1
-                    }
-                }
-
-                // Set default answer value for required questions
-                if (question.required == true) {
-                    when (question.type) {
-                        SurveyQuestion.QuestionType.RATE_SLIDER.type -> {
-                            if (answerId == null) {
-                                answerId = (question.maxValue ?: DEFAULT_VALUE_RATE_SLIDER_MAX)
-                            }
-                        }
-                        SurveyQuestion.QuestionType.FREE_TEXT.type -> {
-                            if (textAnswer == null) {
-                                // Validation is already done on UI
-                                textAnswer = "N/A"
-                            }
-                        }
-                    }
-                }
-
-                if (answerId == null && textAnswer == null) {
-                    surveyAnswers?.remove(question.id)
-                }
-            }
-        }
     }
 
     private fun configureUI() {
@@ -148,26 +104,10 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
         includePMAProcessing?.visibility = VISIBLE
         processRequestTitleTextView?.text = bindString(R.string.voc_processing_request_title)
 
-        if (surveyDetails == null || surveyAnswers == null) {
-            onRequestFailed()
-            return
-        }
-
-        val submitVocSurveyRepliesRequest = OneAppService.submitVocSurveyReplies(surveyDetails!!, surveyAnswers!!)
-        submitVocSurveyRepliesRequest.enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (response.isSuccessful) {
-                    onRequestSuccessful()
-                } else {
-                    onRequestFailed()
-                }
-            }
-
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                onRequestFailed()
-                FirebaseManager.logException(t)
-            }
-        })
+        surveyProcessRequestViewModel.performSubmitSurveyRepliesRequest(
+            onSuccess = ::onRequestSuccessful,
+            onFailed = ::onRequestFailed
+        )
     }
 
     private fun onRequestSuccessful() {

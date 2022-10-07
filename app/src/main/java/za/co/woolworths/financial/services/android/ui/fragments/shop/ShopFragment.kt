@@ -1196,6 +1196,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     navigateToMyListFragment()
                 }
             }
+            else -> {}
         }
     }
 
@@ -1217,6 +1218,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             WMaterialShowcaseView.Feature.MY_LIST -> {
                 showBarcodeScannerFeatureWalkThrough()
             }
+            else -> {}
         }
     }
 

@@ -558,7 +558,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
             mProductList = ArrayList()
         response.history?.apply {
-            if (!categoryDimensions?.isNullOrEmpty()) {
+            if (categoryDimensions?.isNullOrEmpty() == false) {
                 mSubCategoryName = categoryDimensions[categoryDimensions.size - 1].label
             } else if (searchCrumbs?.isNullOrEmpty() == false) {
                 searchCrumbs?.let {

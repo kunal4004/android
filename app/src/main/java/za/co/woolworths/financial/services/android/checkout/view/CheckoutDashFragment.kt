@@ -414,7 +414,7 @@ class CheckoutDashFragment : Fragment(),
         )
 
         checkoutAddAddressNewUserViewModel?.getConfirmLocationDetails(body)
-            .observe(viewLifecycleOwner) { response ->
+            ?.observe(viewLifecycleOwner) { response ->
                 stopShimmerView()
                 when (response) {
                     is ConfirmDeliveryAddressResponse -> {

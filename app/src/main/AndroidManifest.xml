@@ -96,7 +96,8 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
-        tools:replace="label,android:name">
+        tools:replace="label,android:name"
+        android:resizeableActivity="true" >
         <activity
             android:name="za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity"
             android:exported="false"
@@ -309,6 +310,7 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.InternalWebViewActivity"
             android:screenOrientation="portrait"
             android:theme="@style/FaqStyle" />
+
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity"
             android:screenOrientation="portrait"
@@ -480,6 +482,7 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.HowToUseTemporaryStoreCardActivity"
             android:screenOrientation="portrait"
+            android:configChanges="screenSize|orientation"
             android:theme="@style/ShoppingListDetailActivityStyle" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity"
@@ -596,6 +599,9 @@
             android:theme="@style/Theme.AppCompat.NoActionBar"
             android:screenOrientation="portrait"/>
 
+        <activity android:name="za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity"
+            android:theme="@style/storeCardActivityTheme"
+            android:screenOrientation="portrait"/>
 
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"
