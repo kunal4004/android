@@ -11,6 +11,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
@@ -163,6 +164,10 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
     override fun onStoreSelected(mStore: Store?) {
         dataStore = mStore
         tvConfirmStore?.isEnabled = true
+    }
+
+    override fun onFirstTimePargo() {
+        findNavController().navigate( R.id.action_clickAndCollectStoresFragment_to_pargoStoreInfoBottomSheetDialog)
     }
 
     override fun onClick(v: View?) {

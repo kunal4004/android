@@ -153,6 +153,7 @@ public class AppInstanceObject {
         public boolean dash;
         public boolean delivery_details;
         public boolean my_lists;
+        public boolean pargo_store;
 
     }
 

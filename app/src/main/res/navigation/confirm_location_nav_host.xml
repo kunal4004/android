@@ -2,7 +2,8 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/confirm_delivery_location_nav_host">
+    android:id="@+id/confirm_delivery_location_nav_host"
+    app:startDestination="@id/pargoStoreInfoBottomSheetDialog">
 
     <fragment
         android:id="@+id/confirmAddressLocationFragment"
@@ -136,6 +137,9 @@
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
             app:popExitAnim="@anim/slide_to_right"/>
+        <action
+            android:id="@+id/action_clickAndCollectStoresFragment_to_pargoStoreInfoBottomSheetDialog"
+            app:destination="@id/pargoStoreInfoBottomSheetDialog" />
 
     </dialog>
     <fragment
@@ -211,5 +215,9 @@
         android:id="@+id/poiMapBottomSheetDialog"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.poi.MapsPoiBottomSheetDialog"
         android:label="MapsPoiBottomSheetDialog"/>
+    <dialog
+        android:id="@+id/pargoStoreInfoBottomSheetDialog"
+        android:name="za.co.woolworths.financial.services.android.geolocation.view.PargoStoreInfoBottomSheetDialog"
+        android:label="PargoStoreInfoBottomSheetDialog" />
 
 </navigation>
