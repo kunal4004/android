@@ -367,7 +367,8 @@ dependencies {
     implementation "com.google.dagger:hilt-android:2.38.1"
     kapt "com.google.dagger:hilt-android-compiler:2.37"
     implementation 'com.google.maps:google-maps-services:2.0.0'
-
+    implementation 'com.github.corouteam:GlideToVectorYou:v2.0.0'
+  
     // Huawei
     huaweiQaImplementation 'com.huawei.hms:location:6.4.0.300'
     huaweiProductionImplementation 'com.huawei.hms:location:6.4.0.300'

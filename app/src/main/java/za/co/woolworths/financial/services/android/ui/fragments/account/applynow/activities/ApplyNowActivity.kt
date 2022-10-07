@@ -70,12 +70,12 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
     private fun ActivityApplyNowBinding.setupView(content: Content) {
-        incAccountSalesFrontLayout.storeCardDescriptionTextView.text = content.description
-        incAccountSalesFrontLayout.storeCardTitleTextView.text = content.title
+        incAccountSalesFrontLayout.descriptionTextView.text = content.description
+        incAccountSalesFrontLayout.titleTextView.text = content.title
     }
 
     private fun ActivityApplyNowBinding.clickListeners() {
-        incAccountSalesFrontLayout.storeCardApplyNowButton.setOnClickListener(this@ApplyNowActivity)
+        incAccountSalesFrontLayout.applyNowHeaderButton.setOnClickListener(this@ApplyNowActivity)
         incAccountSalesFrontLayout.viewApplicationStatusTextView.setOnClickListener(this@ApplyNowActivity)
         bottomApplyNowButton.setOnClickListener(this@ApplyNowActivity)
         navigateBackImageButton.setOnClickListener(this@ApplyNowActivity)
@@ -166,7 +166,7 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         with(binding) {
             when (v) {
-                incAccountSalesFrontLayout.storeCardApplyNowButton, bottomApplyNowButton -> {
+                incAccountSalesFrontLayout.applyNowHeaderButton, bottomApplyNowButton -> {
                     viewModel.onApplyNowButtonTapped()
                         .let { url ->
                             KotlinUtils.openUrlInPhoneBrowser(
