@@ -110,6 +110,9 @@ class AppConstant {
         const val RESULT_CODE_DELETE_ACCOUNT = 444
         const val FIFTY=50
         const val TEN=10
+
+        // pargo store
+        const val TAG_CHANGEFULLFILMENT_COLLECTION_STORE_FRAGMENT: String = "ChangeFullfilmentCollectionStoreFragment"
     }
 
     class Keys {

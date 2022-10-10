@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_click_and_collect_stores.*
@@ -27,6 +28,7 @@ import za.co.woolworths.financial.services.android.geolocation.model.response.Co
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
+import za.co.woolworths.financial.services.android.geolocation.view.PargoStoreInfoBottomSheetDialog
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.StoreListAdapter
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
@@ -44,6 +46,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.list.Depart
 import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate
 import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.TAG_CHANGEFULLFILMENT_COLLECTION_STORE_FRAGMENT
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
@@ -255,6 +258,10 @@ class ChangeFullfilmentCollectionStoreFragment() :
     override fun onStoreSelected(store: Store?) {
         storeId = store?.storeId
         tvConfirmStore?.isEnabled = true
+    }
+
+    override fun onFirstTimePargo() {
+       PargoStoreInfoBottomSheetDialog().show(parentFragmentManager,TAG_CHANGEFULLFILMENT_COLLECTION_STORE_FRAGMENT)
     }
 
     override fun onMapReady() {

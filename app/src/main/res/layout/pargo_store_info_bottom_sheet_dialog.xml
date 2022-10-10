@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <include
+        android:id="@+id/incSwipeCloseIndicator"
+        layout="@layout/popup_close_header_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:layout_marginEnd="@dimen/sixteen_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/pargoLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/incSwipeCloseIndicator"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/fourty_dp"
+        android:contentDescription="@string/placeholder"
+        android:src="@drawable/ic_pargo_logo" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/pargoInfoTitle"
+        style="@style/absa_page_title_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/pargoLogo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginTop="@dimen/thirty_five_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:layout_marginBottom="@dimen/eight_dp"
+        android:gravity="center"
+        android:text="@string/introducing_pargo_our_new_collection_partner" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/pargoInfoDescription"
+        style="@style/absa_page_description_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/pargoInfoTitle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginTop="@dimen/eight_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:background="@color/white"
+        android:gravity="center"
+        android:text="@string/we_ve_expanded_our_collection_locations_with_pargo_to_offer_you_more_flexibility_and_choice_in_your_shopping_experience" />
+
+    <LinearLayout
+        android:id="@+id/actionsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/pargoInfoDescription"
+        android:layout_marginTop="@dimen/thirty_five_dp"
+        android:orientation="vertical">
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/gotItButton"
+            style="@style/blackButtonStyle"
+            android:layout_marginLeft="@dimen/twenty_four_dp"
+            android:layout_marginRight="@dimen/twenty_four_dp"
+            android:layout_marginBottom="@dimen/twenty_four_dp"
+            android:text="@string/got_it" />
+    </LinearLayout>
+
+</RelativeLayout>
