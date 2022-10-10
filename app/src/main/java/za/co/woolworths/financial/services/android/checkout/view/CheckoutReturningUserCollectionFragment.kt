@@ -32,6 +32,7 @@ import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.loadingBar
 import kotlinx.android.synthetic.main.fragment_cart.*
 import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.*
+import kotlinx.android.synthetic.main.layout_collection_details.*
 import kotlinx.android.synthetic.main.layout_collection_time_details.*
 import kotlinx.android.synthetic.main.layout_collection_user_information.*
 import kotlinx.android.synthetic.main.layout_delivering_to_details.*
@@ -191,6 +192,15 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 radioGroupFoodSubstitution
             ),
 
+            Pair<ShimmerFrameLayout, View>(
+                 collectionDetailsTitleShimmerFrameLayout,
+                 tvCollectionDetailsTitle
+            ),
+
+            Pair<ShimmerFrameLayout, View>(
+                collectionDetailsTextShimmerFrameLayout,
+                tvCollectionDetailsText
+            ),
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationTitleShimmerFrameLayout,
                 txtAgeConfirmationTitle
@@ -655,6 +665,12 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             checkoutCollectingUserInfoLayout.visibility = View.GONE
         }
         checkoutCollectingUserInfoLayout.setOnClickListener(this)
+    }
+
+    private fun collectionDetails() {
+
+
+        tvCollectionDetailsText.text = getString(R.string.collection_details_text) + " 1-3 " + getString(R.string.notify_text_label)
     }
 
     fun initializeDeliveryInstructions() {
