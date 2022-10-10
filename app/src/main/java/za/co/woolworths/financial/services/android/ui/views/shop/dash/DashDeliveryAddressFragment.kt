@@ -899,12 +899,13 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
 
 
     private fun setEventsForCategoryClick(categoryItem: RootCategory) {
-        if (KotlinUtils.placeId == null || KotlinUtils.getPreferredDeliveryType() == null) {
+        if (getDeliveryType()?.deliveryType == null) {
             return
         }
 
         val categoryParamsParams = Bundle()
-        val slotName = AppConstant.QUICK_LINK.plus(categoryItem?.categoryId)
+        val categoryId = categoryItem?.categoryId.toInt().plus(1)
+        val slotName = AppConstant.QUICK_LINK.plus(categoryId)
 
         categoryParamsParams?.apply {
 
