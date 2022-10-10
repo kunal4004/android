@@ -98,11 +98,20 @@
             layout="@layout/sort_and_refine_selection_layout" />
 
         <include
+            android:id="@+id/promotionalTextBanner"
+            layout="@layout/promotional_text_plp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/sortAndRefineLayout"
+            android:visibility="visible" />
+
+
+        <include
             android:id="@+id/vtoTryItOnBanner"
             layout="@layout/try_it_on_banner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/sortAndRefineLayout"
+            android:layout_below="@+id/promotionalTextBanner"
             android:visibility="gone" />
 
 

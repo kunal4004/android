@@ -2722,4 +2722,6 @@
     <string name="enter_street_name">Please enter a street name for this location:</string>
     <string name="your_shopper_is_trying_to">Your shopper is trying to \ncontact you.</string>
 
+    <string name="promotional_text_banner">Extra 5% off when you pay with your Woolies card.\nThis offer is available on selected items. Offer valid for a limited time only. Subject to availability. Discount applies at checkout.T\'s &amp; C\'s apply.</string>
+
 </resources>

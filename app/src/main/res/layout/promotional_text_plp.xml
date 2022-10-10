@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/vtoTryItOnBanner"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <View
+        android:id="@+id/separator"
+        style="@style/bottom_line"
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+       />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/promotionalTextDesc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/promotional_text_banner"
+        android:textColor="@color/vto_description_text_color"
+        android:textSize="@dimen/twelve_sp"
+        android:lineSpacingMultiplier="1.10"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:layout_marginStart="@dimen/ten_dp"
+        android:layout_marginEnd="@dimen/ten_dp"
+        android:textAlignment="center"
+        android:layout_marginTop="14dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/separator"/>
+
+   <!-- <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/imgInfoReadMore"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="Read More"
+
+        android:clickable="true"
+        android:layout_marginEnd="@dimen/ten_dp"
+        android:visibility="visible"/>-->
+
+
+  <!--  <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/imgInfoReadLess"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/ten_dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="Read Less"
+        android:clickable="true"
+        android:visibility="invisible" />
+-->
+</androidx.constraintlayout.widget.ConstraintLayout>

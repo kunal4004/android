@@ -9,13 +9,14 @@ import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.os.Parcelable
+import android.text.method.LinkMovementMethod
 import android.view.*
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.setFragmentResultListener
@@ -34,6 +35,8 @@ import kotlinx.android.synthetic.main.grid_layout.*
 import kotlinx.android.synthetic.main.grid_layout.vtoTryItOnBanner
 import kotlinx.android.synthetic.main.no_connection_handler.*
 import kotlinx.android.synthetic.main.no_connection_handler.view.*
+import kotlinx.android.synthetic.main.order_history_chat_layout.view.*
+import kotlinx.android.synthetic.main.promotional_text_plp.*
 import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.*
 import kotlinx.android.synthetic.main.try_it_on_banner.*
 import kotlinx.coroutines.launch
@@ -247,6 +250,27 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         if (!mSubCategoryName.isNullOrEmpty() && mSubCategoryName.equals(VTO) && VirtualTryOnUtil.isVtoConfigAvailable()) {
             vtoTryItOnBanner.visibility = VISIBLE
         }
+    }
+
+    private fun showPromotionalBanner() {
+        //  if (!mSubCategoryName.isNullOrEmpty()) {
+        val htmlDataPromotionalText =
+            ("<p><span style=\"font-family:arial,helvetica,sans-serif;\"><span style=\"font-size:18px;\">Download the PDF DD Version: <a href=\"https://www.woolworths.co.za/images/elasticera/New_Site/Food/TDD WC.pdf\" onclick=\"window.open(this.href, '', 'resizable=no,status=no,location=no,toolbar=no,menubar=no,fullscreen=no,scrollbars=no,dependent=no'); return false;\">CAPE</a>, <a href=\"https://www.woolworths.co.za/images/elasticera/New_Site/Food/TDD KZN.pdf\" onclick=\"window.open(this.href, '', 'resizable=no,status=no,location=no,toolbar=no,menubar=no,fullscreen=no,scrollbars=no,dependent=no'); return false;\">KZN</a> &amp; <a href=\"https://www.woolworths.co.za/images/elasticera/New_Site/Food/TDD GP.pdf\" onclick=\"window.open(this.href, '', 'resizable=no,status=no,location=no,toolbar=no,menubar=no,fullscreen=no,scrollbars=no,dependent=no'); return false;\">GAUTENG &amp; OTHER PROVINCES</a>.</span></span></p> \n")
+        promotionalTextDesc?.text = HtmlCompat.fromHtml(htmlDataPromotionalText, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        promotionalTextDesc.movementMethod = LinkMovementMethod.getInstance()
+
+      /*  imgInfoReadMore?.setOnClickListener {
+            imgInfoReadMore.visibility = INVISIBLE
+            imgInfoReadLess.visibility = VISIBLE
+            promotionalTextDesc.maxLines = 4
+        }
+
+        imgInfoReadLess?.setOnClickListener {
+            imgInfoReadMore.visibility = VISIBLE
+            imgInfoReadLess.visibility = INVISIBLE
+            promotionalTextDesc.maxLines = 3
+        }*/
+        // }
     }
 
     private fun addFragmentListner() {
@@ -552,6 +576,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             return
         }
         plp_relativeLayout?.visibility = VISIBLE
+        showPromotionalBanner()
         showVtoBanner()
         val productLists = response.products
         if (mProductList?.isNullOrEmpty() == true)
@@ -806,7 +831,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 )
             }
         productsRecyclerView?.apply {
-            if (visibility == View.INVISIBLE)
+            if (visibility == INVISIBLE)
                 visibility = VISIBLE
             layoutManager = mRecyclerViewLayoutManager
             if (state != null) {
@@ -831,7 +856,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             //before setting the updated Adapter, the adapter still remembers
             //the results from the previous listed data. This of course may be different in sizes
             //and therefore we can most likely expect a IndexOutOfBoundsException
-            if (visibility == View.INVISIBLE)
+            if (visibility == INVISIBLE)
                 visibility = VISIBLE
         }
     }
@@ -1194,7 +1219,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     private fun reloadProductsWithSortAndFilter() {
-        productsRecyclerView?.visibility = View.INVISIBLE
+        productsRecyclerView?.visibility = INVISIBLE
         sortAndRefineLayout?.visibility = GONE
         vtoTryItOnBanner?.visibility = GONE
         startProductRequest()
