@@ -392,11 +392,11 @@ class KotlinUtils {
             return calendar.time
         }
 
-        fun removeRandFromAmount(amount: String): String {
-            if (amount.contains("R")) {
+        fun removeRandFromAmount(amount: String?): String {
+            if (amount?.contains("R") == true) {
                 return amount.substring(1)
             }
-            return amount
+            return amount ?: "0.0"
         }
 
         fun toShipByDateFormat(date: Date?): String {
@@ -1402,6 +1402,25 @@ class KotlinUtils {
                 activity.getString(R.string.got_it),
                 R.drawable.ic_cart,
                 true
+            )
+        }
+
+        @JvmStatic
+        fun showQuantityLimitErrror(
+            fragmentManager: FragmentManager?,
+            title: String,
+            desc: String = "Error message",
+            context: Context?
+        ) {
+            if (context == null || fragmentManager == null || getPreferredDeliveryType() != Delivery.DASH) {
+                return
+            }
+            showGeneralInfoDialog(
+                fragmentManager = fragmentManager,
+                description = desc,
+                title = title,
+                actionText = context.getString(R.string.got_it),
+                infoIcon = R.drawable.icon_dash_delivery_scooter
             )
         }
     }

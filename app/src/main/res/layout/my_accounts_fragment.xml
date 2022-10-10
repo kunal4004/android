@@ -240,7 +240,7 @@
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                                     android:id="@+id/myShoppingListTextView"
                                     style="@style/accountsItem"
-                                    android:drawableStart="@drawable/shopping_checklist_icon"
+                                    android:drawableStart="@drawable/shopping_list_icon"
                                     android:text="@string/my_shopping_lists" />
 
                                 <ImageView
