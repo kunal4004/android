@@ -88,22 +88,13 @@
                 app:layout_constraintTop_toBottomOf="@+id/ageConfirmationLayoutCollection" />
 
             <include
-                android:id="@+id/layoutDriverTip"
-                layout="@layout/layout_native_checkout_driver_tip"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/eight_dp"
-                android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@+id/layoutCollectionInstructions" />
-
-            <include
                 android:id="@+id/layoutCheckoutDeliveryOrderSummary"
                 layout="@layout/layout_native_checkout_delivery_order_summary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/eight_dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layoutDriverTip" />
+                app:layout_constraintTop_toBottomOf="@+id/layoutCollectionInstructions" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

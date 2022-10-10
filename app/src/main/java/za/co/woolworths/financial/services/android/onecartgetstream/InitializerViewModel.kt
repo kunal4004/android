@@ -6,12 +6,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.awfs.coordination.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
+import io.getstream.chat.android.client.models.Device
+import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
+import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
+import io.getstream.chat.android.pushprovider.huawei.HuaweiPushDeviceGenerator
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.common.ResourcesProvider
 import za.co.woolworths.financial.services.android.onecartgetstream.common.State
 import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
@@ -20,11 +28,13 @@ import za.co.woolworths.financial.services.android.models.network.Event
 import za.co.woolworths.financial.services.android.models.network.Resource
 import za.co.woolworths.financial.services.android.onecartgetstream.repository.OCAuthRepository
 import za.co.woolworths.financial.services.android.util.NetworkManager
+import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 @HiltViewModel
 class InitializerViewModel @Inject constructor(
-private val ocAuthRepository: OCAuthRepository
+private val ocAuthRepository: OCAuthRepository,
+private val resourcesProvider: ResourcesProvider
 ) : ViewModel() {
 
     private val _state = MutableLiveData<State>()
@@ -51,9 +61,25 @@ private val ocAuthRepository: OCAuthRepository
     }
 
     private fun initChatSdk() {
+
+        val notificationConfig = NotificationConfig(
+            pushDeviceGenerators = listOf(
+                if (Utils.isGooglePlayServicesAvailable())
+                    FirebasePushDeviceGenerator()
+                else
+
+                    HuaweiPushDeviceGenerator(
+                        WoolworthsApplication.getAppContext(),
+                        appId = resourcesProvider.getString(R.string.huawei_app_id).replace("appid=", "")
+
+                    )
+            )
+        )
+
         val client = ChatClient.Builder(AppConfigSingleton.dashConfig?.inAppChat?.apiKey.toString(), WoolworthsApplication.getAppContext())
-                .logLevel(ChatLogLevel.ALL)
-                .build()
+            .logLevel(ChatLogLevel.ALL)
+            .notifications(ChatNotificationHandler(WoolworthsApplication.getAppContext(), notificationConfig))
+            .build()
 
         ChatDomain.Builder(client, WoolworthsApplication.getAppContext())
                 .userPresenceEnabled()
@@ -80,6 +106,30 @@ private val ocAuthRepository: OCAuthRepository
         ChatClient.instance().connectUser(chatUser, token)
                 .enqueue { result ->
                     if (result.isSuccess) {
+                        ChatClient.instance().getDevices().enqueue {
+                            if (it.isSuccess) {
+                                val devices = it.data()
+                                for (device in devices) {
+                                    ChatClient.instance().deleteDevice(device).enqueue()
+                                }
+
+                                ChatClient
+                                    .instance()
+                                    .addDevice(
+                                        if (Utils.isGooglePlayServicesAvailable())
+                                            Device(
+                                                Utils.getOCFCMToken(),
+                                                PushProvider.FIREBASE
+                                            )
+                                        else
+                                            Device (
+                                                Utils.getOCFCMToken(), // Since Stream uses Woolworths details for Huawei, we can use our own HMS cached token
+                                                PushProvider.HUAWEI
+                                            )
+                                    )
+                                    .enqueue()
+                            }
+                        }
                         _state.postValue(State.RedirectToChannels)
                     } else {
                         _state.postValue(State.Error(result.error().message))

@@ -31,6 +31,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import com.awfs.coordination.R;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -48,6 +51,7 @@ import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -463,6 +467,7 @@ public class SSOActivity extends WebViewActivity {
 					if (urlWithoutQueryString.equals(extraQueryStringParams.get("post_logout_redirect_uri"))) {
 						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
 						ServiceTools.Companion.stop(SSOActivity.this, LiveChatService.class);
+						OCConstant.Companion.stopOCChatService(SSOActivity.this);
 						Intent intent = new Intent();
 						setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
 						Utils.setUserKMSIState(false);
@@ -514,6 +519,7 @@ public class SSOActivity extends WebViewActivity {
 				if (SSOActivity.this.path.rawValue().equals(Path.LOGOUT.rawValue())) {
 					KotlinUtils.setUserPropertiesToNull();
 					ServiceTools.Companion.stop(SSOActivity.this, LiveChatService.class);
+					OCConstant.Companion.stopOCChatService(SSOActivity.this);
 					Intent intent = new Intent();
 					setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
 
@@ -606,6 +612,7 @@ public class SSOActivity extends WebViewActivity {
 					extractFormDataAndCloseSSOIfNeeded();
 				}
 			});
+
 		}
 	}
 
@@ -664,6 +671,7 @@ public class SSOActivity extends WebViewActivity {
 					}
 					else {
 						setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
+						startOCDashChatServices();
 						setStSParameters();
 					}
 
@@ -680,6 +688,7 @@ public class SSOActivity extends WebViewActivity {
 			if (!TextUtils.isEmpty(stsParams)) {
 				SessionUtilities.getInstance().setSTSParameters(null);
 			}
+
 			closeActivity();
 
 		} catch (NullPointerException ex) {
@@ -835,6 +844,11 @@ public class SSOActivity extends WebViewActivity {
 	public void onAttachedToWindow() {
 		getTheme().applyStyle(isKMSIChecked ? R.style.SSOActivityKMSIStyle : R.style.SSOActivity, true);
 		super.onAttachedToWindow();
+	}
+
+	private void startOCDashChatServices() {
+		// Start service to listen to incoming messages from Stream
+		OCConstant.Companion.startOCChatService(this);
 	}
 
 }

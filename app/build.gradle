@@ -13,10 +13,10 @@ android {
 
     def major = "9"
     def minor = "4"
-    def fix = "0"
-    def jobNumberProduction = 197
-    def jobNumberQa = 631
-    def jobNumberFeature = 1075
+    def fix = "2"
+    def jobNumberProduction = 200
+    def jobNumberQa = 637
+    def jobNumberFeature = 504
 
     dataBinding {
         enabled = true
@@ -380,6 +380,9 @@ dependencies {
 
     // get stream chat Client + offline
     implementation "io.getstream:stream-chat-android-offline:$stream_version"
+    implementation "io.getstream:stream-chat-android-pushprovider-firebase:$stream_version"
+    huaweiQaImplementation "io.getstream:stream-chat-android-pushprovider-huawei:$stream_version"
+    huaweiProductionImplementation "io.getstream:stream-chat-android-pushprovider-huawei:$stream_version"
 }
 
 apply plugin: 'com.google.gms.google-services'
