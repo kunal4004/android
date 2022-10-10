@@ -909,11 +909,6 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         categoryParamsParams?.apply {
 
             putString(
-                FirebaseManagerAnalyticsProperties.PropertyNames.ITEM_ID,
-                KotlinUtils.getPreferredDeliveryType()?.name
-            )
-
-            putString(
                 FirebaseManagerAnalyticsProperties.PropertyNames.CONTENT_TYPE,
                 FirebaseManagerAnalyticsProperties.PropertyValues.DASH_MENU_CLICK
             )

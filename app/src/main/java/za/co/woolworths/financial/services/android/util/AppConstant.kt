@@ -111,7 +111,7 @@ class AppConstant {
         const val ORDER_ITEM_LIST = "Order_Item_List"
         const val ORDER_ITEM_TOTAL = "Order_Item_Total"
         const val ORDER_SHIPPING_TOTAL = "Order_Shipping_Total"
-        const val QUICK_LINK = "Quick_Link_Slot"
+        const val QUICK_LINK = "Quick_Link_Slot_"
 
         // delete my profile
         const val DELETE_ACCOUNT = "DELETE_ACCOUNT"

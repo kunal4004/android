@@ -145,15 +145,15 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     fun setEventForDeliveryTypeAndBrowsingType() {
-        if (KotlinUtils.placeId == null || KotlinUtils.getPreferredDeliveryType() == null) {
+        if (getDeliveryType()?.deliveryType == null) {
             return
         }
 
         val dashParams = Bundle()
         dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_MODE,
-            KotlinUtils.getPreferredDeliveryType()?.name)
+            KotlinUtils.getPreferredDeliveryType()?.type)
         dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.BROWSE_MODE,
-            KotlinUtils.browsingDeliveryType?.name)
+            KotlinUtils.browsingDeliveryType?.type)
         AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.DASH_DELIVERY_BROWSE_MODE, dashParams)
     }
 
@@ -222,7 +222,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     }
                     setupToolbar(position)
                 }
-                setAnalyticEventsForBrowseingSwitch()
                 shopPagerAdapter?.notifyDataSetChanged()
                 updateTabIconUI(position)
             }
@@ -283,8 +282,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                                     validateLocationResponse?.validatePlace
                                 )
                                 updateCurrentTab(getDeliveryType()?.deliveryType)
-                                setDeliveryView()
                                 setEventForDeliveryTypeAndBrowsingType()
+                                setDeliveryView()
                                 viewLifecycleOwner.lifecycleScope.launch {
                                     delay(DELAY_3000_MS)
                                     Delivery.getType(getDeliveryType()?.deliveryType)?.let {
@@ -526,7 +525,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     override fun permissionGranted(request_code: Int) {
         navigateToBarcode()
-
     }
 
     override fun onRequestPermissionsResult(
@@ -869,16 +867,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 }
             }.start()
         }
-    }
-
-    private fun setAnalyticEventsForBrowseingSwitch() {
-        val dashParams = Bundle()
-        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_MODE,
-            KotlinUtils.getPreferredDeliveryType()?.name)
-        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.BROWSE_MODE,
-            KotlinUtils.browsingDeliveryType?.name)
-        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.DASH_SWITCH_BROWSE_MODE,
-            dashParams)
     }
 
     private fun showStandardDeliveryToolTip() {
