@@ -71,6 +71,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
@@ -117,6 +118,8 @@ class CheckoutDashFragment : Fragment(),
 
     private var liquorImageUrl: String? = ""
     private var liquorOrder: Boolean? = false
+    private var cartItemList: ArrayList<CommerceItem>? = null
+
 
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -224,6 +227,8 @@ class CheckoutDashFragment : Fragment(),
                         radioBtnAgeConfirmation?.isChecked = true
                     }
                 }
+            } else  if (containsKey(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST)) {
+                cartItemList = getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as ArrayList<CommerceItem>?
             } else {
                 ageConfirmationLayout?.visibility = GONE
                 liquorComplianceBannerLayout?.visibility = GONE
@@ -1118,25 +1123,65 @@ class CheckoutDashFragment : Fragment(),
     }
 
     private fun setEventForShippingDetails() {
+        if (cartItemList.isNullOrEmpty() == true) {
+            return
+        }
         val driverTipItemParams = Bundle()
-        driverTipItemParams.putString(FirebaseAnalytics.Param.CURRENCY,
-            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
+        driverTipItemParams.putString(
+            FirebaseAnalytics.Param.CURRENCY,
+            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+        )
 
-        driverTipItemParams.putDouble(ORDER_TOTAL_VALUE,
-            orderTotalValue)
+        driverTipItemParams.putDouble(
+            ORDER_TOTAL_VALUE,
+            orderTotalValue
+        )
 
-        driverTipItemParams.putString(DELIVERY_DATE,
-            confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.join)
+        driverTipItemParams.putString(
+            DELIVERY_DATE,
+            confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.join
+        )
 
-        driverTipItemParams.putString(FirebaseAnalytics.Param.SHIPPING_TIER,
-            FirebaseManagerAnalyticsProperties.PropertyValues.SHIPPING_TIER_VALUE_FOOD)
+        driverTipItemParams.putString(
+            FirebaseAnalytics.Param.SHIPPING_TIER,
+            FirebaseManagerAnalyticsProperties.PropertyValues.SHIPPING_TIER_VALUE_FOOD
+        )
 
-        driverTipItemParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.DASH_TIP,
-            removeRandFromAmount(selectedDriverTipValue))
+        driverTipItemParams.putString(
+            FirebaseManagerAnalyticsProperties.PropertyNames.DASH_TIP,
+            removeRandFromAmount(selectedDriverTipValue)
+        )
 
-        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.ADD_SHIPPING_INFO,
-            driverTipItemParams)
+        for (cartItem in cartItemList!!) {
+            val addShippingInfoItem = Bundle()
+            addShippingInfoItem.putString(
+                FirebaseAnalytics.Param.ITEM_ID,
+                cartItem.commerceItemInfo.productId
+            )
 
+            addShippingInfoItem.putString(
+                FirebaseAnalytics.Param.ITEM_NAME,
+                cartItem.commerceItemInfo.productDisplayName
+            )
+
+            addShippingInfoItem.putDouble(
+                FirebaseAnalytics.Param.PRICE,
+                cartItem.priceInfo.amount
+            )
+
+            addShippingInfoItem.putString(
+                FirebaseAnalytics.Param.ITEM_BRAND,
+                cartItem.commerceItemInfo?.productDisplayName
+            )
+
+            addShippingInfoItem.putInt(
+                FirebaseAnalytics.Param.QUANTITY,
+                cartItem.commerceItemInfo.quantity
+            )
+            driverTipItemParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(addShippingInfoItem))
+        }
+
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.ADD_SHIPPING_INFO, driverTipItemParams)
     }
 
     private fun setEventForDriverTip() {
