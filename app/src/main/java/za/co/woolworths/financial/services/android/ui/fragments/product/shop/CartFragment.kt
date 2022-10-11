@@ -882,9 +882,11 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
     }
 
     private fun setMinimumCartErrorMessage() {
-        if(orderSummary?.hasMinimumBasketAmount == false) {
+        if (orderSummary?.hasMinimumBasketAmount == false) {
             txt_min_spend_error_msg?.visibility = View.VISIBLE
-            txt_min_spend_error_msg?.text = String.format(getString(R.string.minspend_error_msg_cart, orderSummary?.minimumBasketAmount))
+            txt_min_spend_error_msg?.text =
+                String.format(getString(R.string.minspend_error_msg_cart,
+                    orderSummary?.minimumBasketAmount))
             btnCheckOut?.isEnabled = false
             fadeCheckoutButton(true)
         } else {
@@ -1763,7 +1765,10 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
     private fun displayUpSellMessage(data: Data?) {
         if (mRemoveAllItemFromCartTapped) return
         data?.globalMessages?.let {
-            if (it.qualifierMessages == null || it.qualifierMessages.isEmpty()) return
+            if (it.qualifierMessages == null || it.qualifierMessages.isEmpty()) {
+                upSellMessageTextView?.visibility = View.GONE
+                return
+            }
             val qualifierMessage = it.qualifierMessages[0]
             upSellMessageTextView?.text = qualifierMessage
             upSellMessageTextView?.visibility =
