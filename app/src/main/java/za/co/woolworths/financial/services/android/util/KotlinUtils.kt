@@ -394,11 +394,11 @@ class KotlinUtils {
             return calendar.time
         }
 
-        fun removeRandFromAmount(amount: String): String {
-            if (amount.contains("R")) {
+        fun removeRandFromAmount(amount: String?): String {
+            if (amount?.contains("R") == true) {
                 return amount.substring(1)
             }
-            return amount
+            return amount ?: "0.0"
         }
 
         fun toShipByDateFormat(date: Date?): String {
