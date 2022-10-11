@@ -92,11 +92,6 @@ class StoreCardActivity : AppCompatActivity() {
         setToast(binding.rootContainer, stringId)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        homeViewModel.clearSessionDaoKey()
-    }
-
     /**
      * On activity result
      * @param requestCode

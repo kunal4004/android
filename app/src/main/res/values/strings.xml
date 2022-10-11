@@ -2591,7 +2591,7 @@
     <string name="product_listing_price_from">From</string>
 
     <string name="vtsc_card_not_arrived_title">Has Your Card Not Arrived in the Post?</string>
-    <string name="vtsc_card_not_arrived_desc">We do our best to deliver all new cards within 30 days, but sometimes things go wrong. Please let us know if your card has not yet been delivered to you and a customer service agent will be in touch to arrange VIP delivery.</string>
+    <string name="vtsc_card_not_arrived_desc">We do our best to deliver all new cards within 35 days, but sometimes things go wrong. Please let us know if your card has not yet been delivered to you and a customer service agent will be in touch to arrange VIP delivery.</string>
     <string name="vtsc_card_not_arrived_button_caption">MY CARD HASN’T ARRIVED</string>
 
     <string name="vtsc_card_not_arrived_notified_title">Thanks for Letting Us Know</string>

@@ -144,6 +144,7 @@ class AccountProductsToolbarHelper(
             navigateBackImageButton.visibility = GONE
             infoIconImageView.visibility = GONE
             closeIconImageButton.visibility = VISIBLE
+            accountInArrearsTextView.visibility = GONE
             accountProductLandingToolbarView.setBackgroundColor(Color.WHITE)
         }
         setNavigationIconBlack()

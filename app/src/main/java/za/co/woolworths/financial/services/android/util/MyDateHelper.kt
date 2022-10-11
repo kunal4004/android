@@ -22,7 +22,7 @@ class MyDateHelper @Inject constructor(): DateHelper {
     override fun setLocalDateTime(sessionKey: SessionDao.KEY?) {
         val dateTime = LocalDateTime.now().toString()
         val sessionValue = Utils.getSessionDaoValue(sessionKey)
-        if (sessionValue.isNullOrEmpty()) {
+        if (TextUtils.isEmpty(sessionValue)) {
             Utils.sessionDaoSave(sessionKey, dateTime)
         }
     }
