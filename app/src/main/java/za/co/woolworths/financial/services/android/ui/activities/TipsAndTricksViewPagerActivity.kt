@@ -19,8 +19,8 @@ import za.co.woolworths.financial.services.android.ui.activities.account.MyAccou
 import za.co.woolworths.financial.services.android.ui.activities.account.apply_now.AccountSalesActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.TipsAndTricksViewPagerAdapter
+import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.activities.ApplyNowActivity
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_BARCODE_ACTIVITY
 import kotlin.properties.Delegates
@@ -288,7 +288,14 @@ import kotlin.properties.Delegates
     }
 
      private fun redirectToMyAccountsCardsActivity(applyNowState: ApplyNowState) {
-         val intent = Intent(this@TipsAndTricksViewPagerActivity, AccountSalesActivity::class.java)
+         val intent = when(applyNowState){
+             ApplyNowState.BLACK_CREDIT_CARD,ApplyNowState.GOLD_CREDIT_CARD,ApplyNowState.SILVER_CREDIT_CARD->{
+                 Intent(this@TipsAndTricksViewPagerActivity, ApplyNowActivity::class.java)
+             }
+             else->{
+                 Intent(this@TipsAndTricksViewPagerActivity, AccountSalesActivity::class.java)
+             }
+         }
          val bundle = Bundle()
          bundle.putSerializable("APPLY_NOW_STATE", applyNowState)
          bundle.putString("ACCOUNT_INFO", Gson().toJson(accountsResponse))
