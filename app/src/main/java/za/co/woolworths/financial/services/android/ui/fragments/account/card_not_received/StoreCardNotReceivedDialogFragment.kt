@@ -16,7 +16,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.ServerErro
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingBottomSheetFragment
 import za.co.woolworths.financial.services.android.ui.base.onClick
-import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.StoreCardNotReceivedFragment.Companion.CardNotArrivedRequestCode
+import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.StoreCardeNotReceivedFragment.Companion.CardNotArrivedRequestCode
 
 @AndroidEntryPoint
 class StoreCardNotReceivedDialogFragment :
