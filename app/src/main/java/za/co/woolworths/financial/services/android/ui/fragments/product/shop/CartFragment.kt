@@ -1765,7 +1765,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
     private fun displayUpSellMessage(data: Data?) {
         if (mRemoveAllItemFromCartTapped) return
         data?.globalMessages?.let {
-            if (it.qualifierMessages == null || it.qualifierMessages.isEmpty()) {
+            if (it.qualifierMessages.isNullOrEmpty()) {
                 upSellMessageTextView?.visibility = View.GONE
                 return
             }
