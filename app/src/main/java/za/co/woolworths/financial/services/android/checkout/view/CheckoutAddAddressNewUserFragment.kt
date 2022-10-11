@@ -101,7 +101,7 @@ import kotlin.coroutines.CoroutineContext
  * Created by Kunal Uttarwar on 29/05/21.
  */
 class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(),
-    View.OnClickListener, CoroutineScope {
+    View.OnClickListener, CoroutineScope, ErrorHandlerBottomSheetDialog.ClickListener {
 
     private var deliveringOptionsList: List<String>? = null
     private var navController: NavController? = null
@@ -1331,8 +1331,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
         bundle.putInt(ERROR_TYPE, type)
 
-        val errorBottomSheetDialog =  ErrorHandlerBottomSheetDialog.newInstance(bundle)
-        activity?.supportFragmentManager?.let {
+        val errorBottomSheetDialog =  ErrorHandlerBottomSheetDialog.newInstance(bundle, this)
+        requireActivity()?.supportFragmentManager?.let {
             errorBottomSheetDialog?.show(it, ErrorHandlerBottomSheetDialog::class.java.simpleName)
         }
     }
@@ -1568,6 +1568,17 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             }
         }
         unitComplexFloorEditText?.setBackgroundResource(R.drawable.recipient_details_input_edittext_bg)
+    }
+
+    override fun onRetryClick(errorType: Int) {
+       when(errorType) {
+           ERROR_TYPE_ADD_ADDRESS -> {
+               onSaveAddressClicked()
+           }
+           ERROR_TYPE_DELETE_ADDRESS -> {
+               deleteAddress()
+           }
+       }
     }
 
 }
