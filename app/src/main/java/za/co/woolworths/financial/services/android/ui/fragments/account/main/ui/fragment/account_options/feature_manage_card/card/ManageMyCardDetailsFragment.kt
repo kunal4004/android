@@ -150,12 +150,16 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
 
     private fun showItems(feature: StoreCardInfo) {
         mListOfStoreCardOptions?.showListItem(feature) { result ->
+            if (landingController?.currentDestination?.label?.equals(ManageMyCardDetailsFragment::class.java.simpleName) != true) {
+                return@showListItem
+            }
+
             when (result) {
                 is ListCallback.CardNotReceived -> {
                     val dateTime = Utils.getSessionDaoValue(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN)
-                    if (!feature.isPopupVisibleInCardDetailLanding
-                        && !viewModel.hasDaysPassed(dateTime, 35,SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN)
-                        && !result.isCardNotReceived) return@showListItem
+                    if ((!viewModel.hasDaysPassed(dateTime, 35,SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN))
+                        && !result.isCardNotReceived
+                    ) return@showListItem
                     router.routeToCardNotReceivedView(landingController)
                 }
             }

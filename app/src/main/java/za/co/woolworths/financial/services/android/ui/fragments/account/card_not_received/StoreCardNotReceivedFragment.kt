@@ -30,7 +30,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class StoreCardeNotReceivedFragment :
+class StoreCardNotReceivedFragment :
     Fragment(R.layout.store_card_vtsc_card_not_received_fragment) {
 
     private var mToolbarHelper: AccountProductsToolbarHelper? = null
@@ -133,6 +133,6 @@ class StoreCardeNotReceivedFragment :
     }
 
     companion object {
-        val CardNotArrivedRequestCode: String = StoreCardeNotReceivedFragment::class.java.simpleName
+        val CardNotArrivedRequestCode: String = StoreCardNotReceivedFragment::class.java.simpleName
     }
 }
