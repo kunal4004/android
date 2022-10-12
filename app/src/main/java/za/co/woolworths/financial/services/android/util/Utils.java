@@ -96,6 +96,7 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 import za.co.absa.openbankingapi.DecryptionFailureException;
 import za.co.absa.openbankingapi.SymmetricCipher;
 import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials;
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
@@ -860,6 +861,33 @@ public class Utils {
         AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
         currentUserObject.preferredShoppingDeliveryLocation = shoppingDeliveryLocation;
         currentUserObject.save();
+
+        AnalyticsManager.Companion.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.LIQUOR_DELIVERABLE,
+                "" + shoppingDeliveryLocation.fulfillmentDetails.getLiquorDeliverable());
+
+        Map<String, String> fulfillmentStoreType = KotlinUtils.Companion.retriveFulfillmentStoreIdList();
+        for (String type : fulfillmentStoreType.keySet()) {
+            if (type.length() == 1)
+                type = "0$type";
+            switch (type) {
+                case "01": {
+                    AnalyticsManager.Companion.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.FULFILLMENT_FOOD_STORE_KEY_01, retrieveStoreId(type));
+                    break;
+                }
+                case "02": {
+                    AnalyticsManager.Companion.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.FULFILLMENT_FBH_STORE_KEY_02, retrieveStoreId(type));
+                    break;
+                }
+                case "04": {
+                    AnalyticsManager.Companion.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.FULFILLMENT_FBH_STORE_KEY_04, retrieveStoreId(type));
+                    break;
+                }
+                case "07": {
+                    AnalyticsManager.Companion.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.FULFILLMENT_FBH_STORE_KEY_07, retrieveStoreId(type));
+                    break;
+                }
+            }
+        }
     }
 
     public static void clearPreferredDeliveryLocation() {
