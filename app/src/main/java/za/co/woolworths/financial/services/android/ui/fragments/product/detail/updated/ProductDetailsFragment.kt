@@ -1721,8 +1721,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         val addToCartParams = Bundle()
         addToCartParams.putString(FirebaseAnalytics.Param.CURRENCY,
             FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
-        addToCartParams.putString(FirebaseAnalytics.Param.VALUE,
-            productDetails?.price.toString())
+        productDetails?.price?.let { addToCartParams.putDouble(FirebaseAnalytics.Param.VALUE, it.toDouble()) }
         for (products in 0..(productDetails?.otherSkus?.size ?: 0)) {
             val addToCartItem = Bundle()
             addToCartItem.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
@@ -1798,16 +1797,21 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun addToWishlistItemEvent(productDetails: ProductDetails) {
-        val addToWishlistParams = Bundle()
-        addToWishlistParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
-        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
-        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_NAME, productDetails?.productName)
-        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, productDetails?.categoryName)
-        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
-        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_VARIANT, productDetails?.colourSizeVariants)
-        addToWishlistParams.putString(FirebaseAnalytics.Param.PRICE, productDetails?.price.toString())
-        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, productDetails?.categoryName)
-        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.ADD_TO_WISHLIST, addToWishlistParams)
+        val addToWishlistParam = Bundle()
+        addToWishlistParam.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
+        productDetails?.price?.let { addToWishlistParam.putDouble(FirebaseAnalytics.Param.VALUE, it.toDouble()) }
+        for (products in 0..(productDetails?.otherSkus?.size ?: 0)) {
+            val addToWishlistParams = Bundle()
+            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
+            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_NAME, productDetails?.productName)
+            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, productDetails?.categoryName)
+            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
+            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_VARIANT, productDetails?.colourSizeVariants)
+            addToWishlistParams.putString(FirebaseAnalytics.Param.PRICE, productDetails?.price.toString())
+            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, productDetails?.categoryName)
+            addToWishlistParam.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(addToWishlistParams))
+        }
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.ADD_TO_WISHLIST, addToWishlistParam)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

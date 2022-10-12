@@ -85,7 +85,7 @@ class OrderConfirmationFragment : Fragment() {
                                     setupDeliveryOrCollectionDetails(response)
                                     setupOrderTotalDetails(response)
                                     displayVocifNeeded(response)
-
+                                    showPurchaseEvent(response)
                                 }
                                 else -> {
                                     showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
@@ -104,21 +104,12 @@ class OrderConfirmationFragment : Fragment() {
             }, SubmittedOrderResponse::class.java))
     }
 
-    private fun displayVocifNeeded(response: SubmittedOrderResponse) {
-        var deliveryType = response.orderSummary?.fulfillmentDetails?.deliveryType
-        VoiceOfCustomerManager.showVocSurveyIfNeeded(
-            activity,
-            KotlinUtils.vocShoppingHandling(deliveryType)
-        )
-        if ( Delivery.getType(deliveryType) == Delivery.CNC){
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_CConfirm, activity)
-        }
-
+    private fun showPurchaseEvent(response: SubmittedOrderResponse) {
         val purchaseItemParams = Bundle()
         purchaseItemParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
         purchaseItemParams.putString(FirebaseAnalytics.Param.AFFILIATION, FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
         purchaseItemParams.putString(FirebaseAnalytics.Param.TRANSACTION_ID,response.orderSummary?.orderId)
-        purchaseItemParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.ORDER_TOTAL_VALUE, response.orderSummary?.total?.toString())
+        response.orderSummary?.total?.let { purchaseItemParams.putDouble(FirebaseAnalytics.Param.VALUE, it) }
         purchaseItemParams.putString(FirebaseAnalytics.Param.SHIPPING, response.deliveryDetails?.shippingAmount.toString())
 
         val purchaseItem = Bundle()
@@ -134,6 +125,17 @@ class OrderConfirmationFragment : Fragment() {
         purchaseItemParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(purchaseItem))
 
         AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.PURCHASE, purchaseItemParams)
+    }
+
+    private fun displayVocifNeeded(response: SubmittedOrderResponse) {
+        var deliveryType = response.orderSummary?.fulfillmentDetails?.deliveryType
+        VoiceOfCustomerManager.showVocSurveyIfNeeded(
+            activity,
+            KotlinUtils.vocShoppingHandling(deliveryType)
+        )
+        if ( Delivery.getType(deliveryType) == Delivery.CNC){
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_CConfirm, activity)
+        }
     }
 
     private fun showErrorScreen(errorType: Int) {
