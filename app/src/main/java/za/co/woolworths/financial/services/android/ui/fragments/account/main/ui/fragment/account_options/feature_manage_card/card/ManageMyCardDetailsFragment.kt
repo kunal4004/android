@@ -97,7 +97,7 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
             object : OnBackPressedCallback(true /* enabled by default */) {
                 override fun handleOnBackPressed() {
                     viewModel.setRefreshRequestStoreCardCards(true)
-                    router.routeToAccountOptionsProductLanding((activity as? StoreCardActivity)?.landingNavController())
+                    router.routeToAccountOptionsProductLanding(landingController)
                 }
             }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
@@ -160,7 +160,7 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
                     if ((!viewModel.hasDaysPassed(dateTime, 35,SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN))
                         && !result.isCardNotReceived
                     ) return@showListItem
-                    router.routeToCardNotReceivedView(landingController)
+                        router.routeToCardNotReceivedView(landingController, true)
                 }
             }
         }

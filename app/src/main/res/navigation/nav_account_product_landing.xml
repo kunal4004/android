@@ -114,6 +114,10 @@
         <action
             android:id="@+id/action_manageMyCardDetailsFragment_to_accountProductsHomeFragment"
             app:destination="@id/accountProductsHomeFragment" />
+        <action
+            android:id="@+id/action_manageMyCardDetailsFragment_to_storeCardNotReceivedNavigation"
+            app:destination="@id/storeCardNotReceivedNavigation" />
+
     </fragment>
 
     <dialog
@@ -133,7 +137,6 @@
         tools:layout="@layout/pay_my_account_retry_on_error_dialog_fragment" />
 
     <include
-        android:id="@+id/cardNotReceivedNavigation"
         app:graph="@navigation/store_card_card_not_received_nav" />
 
 </navigation>

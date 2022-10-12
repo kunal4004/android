@@ -2,7 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 
 import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat .app.AppCompatActivity
 import androidx.navigation.NavController
 import com.awfs.coordination.R
 import com.google.gson.Gson
@@ -90,7 +90,7 @@ interface IProductLandingRouter {
     fun routeToSetupPaymentPlan(activity: Activity?, viewModel: AccountProductsHomeViewModel?)
     fun routeToViewTreatmentPlan(activity: Activity?, viewModel: AccountProductsHomeViewModel?)
     fun routeToStartNewElitePlan(activity: Activity?, viewModel: AccountProductsHomeViewModel?)
-    fun routeToCardNotReceivedView(findNavController: NavController?)
+    fun routeToCardNotReceivedView(findNavController: NavController?, isManageMyCardSection : Boolean = false)
     fun routeToCardNotArrivedFailure(findNavController: NavController?, response: ServerErrorResponse?)
     fun routeToConfirmCardNotReceived(findNavController: NavController?)
 }
@@ -193,12 +193,9 @@ class ProductLandingRouterImpl @Inject constructor(
                 ACTIVATE_VIRTUAL_CARD_DETAIL = true
             },
             {
-
-                val storeCardResponse =
-                    manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
+                val storeCardResponse = manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
                 intent = navigateToGetTemporaryStoreCardPopupActivity(
-                    activity,
-                    storeCardResponse = storeCardResponse
+                    activity, storeCardResponse = storeCardResponse
                 )
                 intent
 
@@ -426,9 +423,13 @@ class ProductLandingRouterImpl @Inject constructor(
         }
     }
 
-    override fun routeToCardNotReceivedView(findNavController: NavController?) {
+    override fun routeToCardNotReceivedView(findNavController: NavController?, isManageMyCardSection : Boolean) {
         try {
-            findNavController?.navigate(AccountProductsHomeFragmentDirections.actionAccountProductsHomeFragmentToStoreCardNotReceivedDialogFragment())
+            val direction = if (isManageMyCardSection)
+                ManageMyCardDetailsFragmentDirections.actionManageMyCardDetailsFragmentToStoreCardNotReceivedNavigation()
+            else
+                AccountProductsHomeFragmentDirections.actionAccountProductsHomeFragmentToStoreCardNotReceivedDialogFragment()
+            findNavController?.navigate(direction)
         } catch (ex: Exception) {
           FirebaseManager.logException(ex)
         }
