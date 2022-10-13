@@ -80,9 +80,6 @@ class AccountSixMonthArrearsFragment : Fragment(), EligibilityImpl {
         }
         navigateBackImageButton?.setOnClickListener { activity?.onBackPressed() }
 
-        cardDetailImageShimmerFrameLayout?.setShimmer(null)
-        myCardTextViewShimmerFrameLayout?.setShimmer(null)
-        tempFreezeTextViewShimmerFrameLayout?.setShimmer(null)
         bottomView?.visibility = INVISIBLE
     }
 
