@@ -1,9 +1,6 @@
 package za.co.woolworths.financial.services.android.util.location
 
-import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.GoogleApiAvailability
 import za.co.woolworths.financial.services.android.util.Utils
 import java.lang.Exception
 
