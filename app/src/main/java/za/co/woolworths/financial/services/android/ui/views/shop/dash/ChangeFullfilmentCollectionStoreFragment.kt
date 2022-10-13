@@ -359,10 +359,7 @@ class ChangeFullfilmentCollectionStoreFragment() :
                         }
                     }
                 }
-            } catch (e: HttpException) {
-                e.printStackTrace()
-                cncProgressBar?.visibility = View.GONE
-            } catch (e: SocketTimeoutException) {
+            } catch (e: Exception) {
                 e.printStackTrace()
                 cncProgressBar?.visibility = View.GONE
             }

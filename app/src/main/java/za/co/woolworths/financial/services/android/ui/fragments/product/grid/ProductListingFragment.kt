@@ -301,10 +301,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                         }
                     }
                 }
-            } catch (e: HttpException) {
-                FirebaseManager.logException(e)
-                dismissProgressBar()
-            } catch (e: SocketTimeoutException) {
+            } catch (e: Exception) {
                 FirebaseManager.logException(e)
                 dismissProgressBar()
             }
@@ -376,10 +373,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                         }
                     }
                 }
-            } catch (e: HttpException) {
-                e.printStackTrace()
-                dismissProgressBar()
-            } catch (e: SocketTimeoutException) {
+            } catch (e: Exception) {
                 e.printStackTrace()
                 dismissProgressBar()
             }

@@ -585,13 +585,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                             }
                         }
                     }
-                } catch (e: HttpException) {
-                    e.printStackTrace()
-                    progressBar?.visibility = View.GONE
-                    // navigate to shop tab with error scenario
-                    activity?.setResult(REQUEST_CODE)
-                    activity?.finish()
-                } catch (e: SocketTimeoutException) {
+                } catch (e: Exception) {
                     e.printStackTrace()
                     progressBar?.visibility = View.GONE
                     // navigate to shop tab with error scenario
@@ -874,11 +868,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                         }
                     }
                 }
-            } catch (e: HttpException) {
-                FirebaseManager.logException(e)
-                progressBar?.visibility = View.GONE
-                showErrorDialog()
-            } catch (e: SocketTimeoutException) {
+            } catch (e: Exception) {
                 FirebaseManager.logException(e)
                 progressBar?.visibility = View.GONE
                 showErrorDialog()

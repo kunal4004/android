@@ -260,10 +260,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                     setButtonUI(it.length > 1)
                 }
                 progressBar?.visibility = View.GONE
-            } catch (e: HttpException) {
-                FirebaseManager.logException(e)
-                progressBar?.visibility = View.GONE
-            } catch (e: SocketTimeoutException) {
+            } catch (e: Exception) {
                 FirebaseManager.logException(e)
                 progressBar?.visibility = View.GONE
             }
@@ -548,10 +545,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                         }
                     }
                 }
-            } catch (e: HttpException) {
-                FirebaseManager.logException(e)
-                progressBar?.visibility = View.GONE
-            } catch (e: SocketTimeoutException) {
+            } catch (e: Exception) {
                 FirebaseManager.logException(e)
                 progressBar?.visibility = View.GONE
             }
@@ -619,10 +613,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                         }
                     }
                 }
-            } catch (e: HttpException) {
-                progressBar?.visibility = View.GONE
-                FirebaseManager.logException(e)
-            } catch (e: SocketTimeoutException) {
+            } catch (e: Exception) {
                 progressBar?.visibility = View.GONE
                 FirebaseManager.logException(e)
             }

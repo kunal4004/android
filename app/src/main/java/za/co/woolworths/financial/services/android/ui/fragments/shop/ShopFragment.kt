@@ -267,15 +267,11 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                             }
                         }
                     }
-                } catch (e: HttpException) {
+                } catch (e: Exception) {
                     shopProgressbar?.visibility = View.GONE
                     tabs_main?.isClickable = true
                     FirebaseManager.logException(e)
                     /*TODO : show error screen*/
-                } catch (e: SocketTimeoutException) {
-                    shopProgressbar?.visibility = View.GONE
-                    tabs_main?.isClickable = true
-                    FirebaseManager.logException(e)
                 }
             }
         }

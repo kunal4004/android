@@ -255,11 +255,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
                         }
                     }
                 }
-            } catch (e: HttpException) {
-                FirebaseManager.logException(e)
-                clickCollectProgress?.visibility = View.GONE
-                showErrorDialog()
-            } catch (e: SocketTimeoutException) {
+            } catch (e: Exception) {
                 FirebaseManager.logException(e)
                 clickCollectProgress?.visibility = View.GONE
                 showErrorDialog()

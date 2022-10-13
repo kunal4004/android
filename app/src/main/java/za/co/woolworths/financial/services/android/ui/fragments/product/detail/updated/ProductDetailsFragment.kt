@@ -740,10 +740,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         }
                     }
                 }
-            } catch (e: HttpException) {
-                FirebaseManager.logException(e)
-                progressBar?.visibility = View.GONE
-            } catch (e: SocketTimeoutException) {
+            } catch (e: Exception) {
                 FirebaseManager.logException(e)
                 progressBar?.visibility = View.GONE
             }
@@ -786,10 +783,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         }
                     }
                 }
-            } catch (e: HttpException) {
-                e.printStackTrace()
-                progressBar?.visibility = View.GONE
-            } catch (e: SocketTimeoutException) {
+            } catch (e: Exception) {
                 e.printStackTrace()
                 progressBar?.visibility = View.GONE
             }

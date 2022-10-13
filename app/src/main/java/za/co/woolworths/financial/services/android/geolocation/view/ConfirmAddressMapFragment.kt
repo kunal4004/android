@@ -328,11 +328,7 @@ class ConfirmAddressMapFragment :
                         }
                     }
                 }
-            } catch (e: HttpException) {
-                FirebaseManager.logException(e)
-                binding?.progressBar?.visibility = View.GONE
-                showErrorDialog()
-            } catch (e: SocketTimeoutException) {
+            } catch (e: Exception) {
                 FirebaseManager.logException(e)
                 binding?.progressBar?.visibility = View.GONE
                 showErrorDialog()
@@ -467,11 +463,7 @@ class ConfirmAddressMapFragment :
                         }
                     }
                 }
-            } catch (e: HttpException) {
-                binding?.progressBar?.visibility = View.GONE
-                FirebaseManager.logException(e)
-                showErrorDialog()
-            } catch (e: SocketTimeoutException) {
+            } catch (e: Exception) {
                 binding?.progressBar?.visibility = View.GONE
                 FirebaseManager.logException(e)
                 showErrorDialog()
