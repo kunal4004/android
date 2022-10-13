@@ -27,6 +27,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_splash_screen.*
 import kotlinx.android.synthetic.main.activity_startup.*
 import kotlinx.android.synthetic.main.activity_startup_without_video.*
@@ -52,6 +53,7 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseManage
 import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 import za.co.woolworths.financial.services.android.util.pushnotification.PushNotificationManager
 
+@AndroidEntryPoint
 class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     View.OnClickListener {
 
@@ -260,6 +262,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     fun init() {
+        //TODO:: Handle notification for Android R
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationUtils.createNotificationChannelIfNeeded(this)
         }
@@ -563,7 +566,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     override fun onResume() {
         super.onResume()
-        NotificationUtils.clearNotifications(this@StartupActivity)
+        NotificationUtils.clearNotifications(this)
     }
 
     private fun forgotPasswordDeeplink() {
