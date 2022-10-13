@@ -2572,7 +2572,7 @@
         <item quantity="one">This Item Will Be Removed From Your Cart.</item>
         <item quantity="other">@string/these_items_will_be_removed_from_your_cart</item>
     </plurals>
-    <string name="minspend_error_msg_cart">A minimum spend of R%.1f is required to checkout.</string>
+    <string name="minspend_error_msg_cart">A minimum spend of R%s is required to checkout.</string>
     <string name="minspend_error_msg_title">A minimum spend of R%.1f is required to checkout.</string>
     <string name="minspend_error_msg_desc">To complete your purchase, increase your order value, or change your delivery method.</string>
     <string name="min_spend_error_msg_checkout_title">A minimum spend of %d is required to checkout.</string>

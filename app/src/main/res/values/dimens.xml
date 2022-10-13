@@ -263,5 +263,7 @@
     <dimen name="toolbar_height" >@dimen/_48sdp</dimen>
     <dimen name="content_below_toolbar_height" >@dimen/_50sdp</dimen>
     <dimen name="fourty_three_dp">43dp</dimen>
+    <dimen name="eighty_eight_dp">88dp</dimen>
+    <dimen name="_minus8dp">-8dp</dimen>
 </resources>
 
