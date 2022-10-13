@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account
 
 import android.annotation.TargetApi
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Build
@@ -17,7 +18,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.current_location_row_layout.*
 import kotlinx.android.synthetic.main.fragment_link_device_from_account_prod.*
 import kotlinx.android.synthetic.main.layout_link_device_result.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -27,15 +27,13 @@ import za.co.woolworths.financial.services.android.ui.activities.account.LinkDev
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationInterface
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.personal_loan.PersonalLoanFragment
-import za.co.woolworths.financial.services.android.ui.fragments.account.detail.StoreCardOptionsFragment
-import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity
 import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator
-import java.util.*
 
 
 class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
@@ -141,11 +139,16 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
             gotItLinkDeviceConfirmationButton.apply {
                 visibility = View.VISIBLE
                 setOnClickListener {
-                    clearAllFlags()
                     val intent = Intent()
                     intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
-                    activity?.setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
+                    if(StoreCardActivity.FREEZE_CARD_DETAIL){
+                        activity?.setResult(Activity.RESULT_CANCELED, intent)
+                    }else {
+                        activity?.setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
+                    }
+                    clearAllFlags()
                     activity?.finish()
+
                 }
             }
             linkMyDeviceConfirmationButton.apply {
@@ -210,14 +213,17 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
         navigateToLinkDeviceFragment()
     }
 
-    fun clearAllFlags(){
-        MyCardDetailFragment.apply {
+    private fun clearAllFlags(){
+        StoreCardActivity.apply {
+            SHOW_TEMPORARY_FREEZE_DIALOG = false
             FREEZE_CARD_DETAIL = false
+            SHOW_BLOCK_CARD_SCREEN = false
             BLOCK_CARD_DETAIL = false
+            SHOW_PAY_WITH_CARD_SCREEN = false
             PAY_WITH_CARD_DETAIL = false
-        }
-        StoreCardOptionsFragment.apply {
+            SHOW_GET_REPLACEMENT_CARD_SCREEN = false
             GET_REPLACEMENT_CARD_DETAIL = false
+            SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = false
             ACTIVATE_VIRTUAL_CARD_DETAIL = false
         }
         PersonalLoanFragment.apply{
