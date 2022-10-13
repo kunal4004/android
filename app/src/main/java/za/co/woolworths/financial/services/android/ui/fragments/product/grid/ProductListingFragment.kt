@@ -32,10 +32,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.blp_error_layout.view.*
 import kotlinx.android.synthetic.main.fragment_brand_landing.view.*
 import kotlinx.android.synthetic.main.grid_layout.*
-import kotlinx.android.synthetic.main.grid_layout.vtoTryItOnBanner
 import kotlinx.android.synthetic.main.no_connection_handler.*
 import kotlinx.android.synthetic.main.no_connection_handler.view.*
-import kotlinx.android.synthetic.main.order_history_chat_layout.view.*
 import kotlinx.android.synthetic.main.promotional_text_plp.*
 import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.*
 import kotlinx.android.synthetic.main.try_it_on_banner.*
@@ -82,12 +80,10 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYo
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
 import za.co.woolworths.financial.services.android.ui.vto.di.qualifier.OpenTermAndLighting
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoBottomSheetDialog
-import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_417
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
-import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO
 import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.EXTRA_SEND_DELIVERY_DETAILS_PARAMS
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
@@ -142,7 +138,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var localDeliveryType: String? = null
     private var localDeliveryTypeForHiddenChange: String? = null
 
-    @OpenTermAndLighting
+
+            @OpenTermAndLighting
     @Inject
     lateinit var vtoBottomSheetDialog: VtoBottomSheetDialog
 
@@ -246,16 +243,17 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         ).get(ConfirmAddressViewModel::class.java)
     }
 
-    private fun showVtoBanner() {
+   /* private fun showVtoBanner() {
         if (!mSubCategoryName.isNullOrEmpty() && mSubCategoryName.equals(VTO) && VirtualTryOnUtil.isVtoConfigAvailable()) {
             vtoTryItOnBanner.visibility = VISIBLE
         }
-    }
+    }*/
 
     private fun showPromotionalBanner(response: ProductView) {
-
+        promotionalTextBannerLayout?.visibility = VISIBLE
         val htmlDataPromotionalText = response.richText
-           // ("<p><span style=\"font-family:arial,helvetica,sans-serif;\"><span style=\"font-size:18px;\">Download the PDF DD Version: <a href=\"https://www.woolworths.co.za/images/elasticera/New_Site/Food/TDD WC.pdf\" onclick=\"window.open(this.href, '', 'resizable=no,status=no,location=no,toolbar=no,menubar=no,fullscreen=no,scrollbars=no,dependent=no'); return false;\">CAPE</a>, <a href=\"https://www.woolworths.co.za/images/elasticera/New_Site/Food/TDD KZN.pdf\" onclick=\"window.open(this.href, '', 'resizable=no,status=no,location=no,toolbar=no,menubar=no,fullscreen=no,scrollbars=no,dependent=no'); return false;\">KZN</a> &amp; <a href=\"https://www.woolworths.co.za/images/elasticera/New_Site/Food/TDD GP.pdf\" onclick=\"window.open(this.href, '', 'resizable=no,status=no,location=no,toolbar=no,menubar=no,fullscreen=no,scrollbars=no,dependent=no'); return false;\">GAUTENG &amp; OTHER PROVINCES</a>.</span></span></p> \n")
+
+        // ("<p><span style=\"font-family:arial,helvetica,sans-serif;\"><span style=\"font-size:18px;\">Download the PDF DD Version: <a href=\"https://www.woolworths.co.za/images/elasticera/New_Site/Food/TDD WC.pdf\" onclick=\"window.open(this.href, '', 'resizable=no,status=no,location=no,toolbar=no,menubar=no,fullscreen=no,scrollbars=no,dependent=no'); return false;\">CAPE</a>, <a href=\"https://www.woolworths.co.za/images/elasticera/New_Site/Food/TDD KZN.pdf\" onclick=\"window.open(this.href, '', 'resizable=no,status=no,location=no,toolbar=no,menubar=no,fullscreen=no,scrollbars=no,dependent=no'); return false;\">KZN</a> &amp; <a href=\"https://www.woolworths.co.za/images/elasticera/New_Site/Food/TDD GP.pdf\" onclick=\"window.open(this.href, '', 'resizable=no,status=no,location=no,toolbar=no,menubar=no,fullscreen=no,scrollbars=no,dependent=no'); return false;\">GAUTENG &amp; OTHER PROVINCES</a>.</span></span></p> \n")
         promotionalTextDesc?.text = HtmlCompat.fromHtml(htmlDataPromotionalText, HtmlCompat.FROM_HTML_MODE_LEGACY)
         promotionalTextDesc.movementMethod = LinkMovementMethod.getInstance()
 
@@ -567,11 +565,17 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         plp_relativeLayout?.visibility = VISIBLE
 
 
+       /* if(!response.richText.isNullOrEmpty()) {
+            promotionalTextBannerLayout?.visibility = VISIBLE
+            showPromotionalBanner(response)
+        }
+        */
+
         if(!response.richText.isNullOrEmpty()) {
             showPromotionalBanner(response)
         }
 
-        showVtoBanner()
+       // showVtoBanner()
         val productLists = response.products
         if (mProductList?.isNullOrEmpty() == true)
 
@@ -588,7 +592,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
         if (productLists?.isEmpty() == true) {
             sortAndRefineLayout?.visibility = GONE
-            vtoTryItOnBanner?.visibility = GONE
+           // vtoTryItOnBanner?.visibility = GONE
             if (!listContainHeader()) {
                 val headerProduct = ProductList()
                 headerProduct.rowType = ProductListingViewType.HEADER
@@ -1215,7 +1219,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private fun reloadProductsWithSortAndFilter() {
         productsRecyclerView?.visibility = INVISIBLE
         sortAndRefineLayout?.visibility = GONE
-        vtoTryItOnBanner?.visibility = GONE
+        //vtoTryItOnBanner?.visibility = GONE
         startProductRequest()
     }
 
