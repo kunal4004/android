@@ -54,6 +54,10 @@ import za.co.woolworths.financial.services.android.util.ConnectivityLiveData;
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.analytics.HuaweiManager;
 
+import static za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService.CHANNEL_ID;
+
+import javax.inject.Inject;
+
 @HiltAndroidApp
 public class WoolworthsApplication extends Application implements Application.ActivityLifecycleCallbacks, LifecycleObserver {
 
@@ -80,6 +84,8 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static ValidatePlace validatePlace;
     private static ValidatePlace dashValidatePlace;
     private static ValidatePlace cncValidatePlace;
+
+   @Inject ConnectivityLiveData connectivityLiveData;
 
 
     public static String getApiId() {
@@ -129,7 +135,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
 
-        ConnectivityLiveData.INSTANCE.init(this);
         FirebaseApp.initializeApp(getApplicationContext());
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true);
         if (FirebaseCrashlytics.getInstance().didCrashOnPreviousExecution()) {
