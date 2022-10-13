@@ -124,23 +124,23 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         }
 
         disposable?.add(WoolworthsApplication.getInstance()
-                .bus()
-                .toObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { item ->
-                    if (item is BusStation) {
-                        val offerActive = item.offerActive
-                        if (offerActive != null) {
-                            hideCLIView()
-                            handleCreditLimitIncreaseTagStatus(offerActive)
-                        } else if (item.makeApiCall()) {
-                            hideCLIView()
-                            userOfferActiveCallWasCompleted = false
-                            retryConnect()
-                        }
+            .bus()
+            .toObservable()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { item ->
+                if (item is BusStation) {
+                    val offerActive = item.offerActive
+                    if (offerActive != null) {
+                        hideCLIView()
+                        handleCreditLimitIncreaseTagStatus(offerActive)
+                    } else if (item.makeApiCall()) {
+                        hideCLIView()
+                        userOfferActiveCallWasCompleted = false
+                        retryConnect()
                     }
-                })
+                }
+            })
 
         autoConnectToNetwork()
 
@@ -189,7 +189,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
 
     fun disableShimmer() {
         cardDetailImageShimmerFrameLayout?.setShimmer(null)
-        myCardTextViewShimmerFrameLayout?.setShimmer(null)
+        myCardTextViewShimmerFrameLt?.setShimmer(null)
         tempFreezeTextViewShimmerFrameLayout?.setShimmer(null)
     }
 
@@ -218,14 +218,14 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     override fun showStoreCardProgress() {
         val shimmer = Shimmer.AlphaHighlightBuilder().build()
         cardDetailImageShimmerFrameLayout?.setShimmer(shimmer)
-        myCardTextViewShimmerFrameLayout?.setShimmer(shimmer)
+        myCardTextViewShimmerFrameLt?.setShimmer(shimmer)
         tempFreezeTextViewShimmerFrameLayout?.setShimmer(shimmer)
         manageCardGroup?.visibility = GONE
         manageLinkNewCardGroup?.visibility = GONE
         bottomView?.visibility = VISIBLE
         manageMyCardTextView?.visibility = VISIBLE
         cardDetailImageShimmerFrameLayout?.startShimmer()
-        myCardTextViewShimmerFrameLayout?.startShimmer()
+        myCardTextViewShimmerFrameLt?.startShimmer()
         tempFreezeTextViewShimmerFrameLayout?.startShimmer()
         storeCardTagTextView?.visibility = GONE
         storeCardLoaderView?.visibility = VISIBLE
@@ -239,13 +239,13 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         manageCardGroup?.visibility = VISIBLE
         cardDetailImageShimmerFrameLayout?.stopShimmer()
         cardDetailImageShimmerFrameLayout?.setShimmer(null)
-        myCardTextViewShimmerFrameLayout?.stopShimmer()
-        myCardTextViewShimmerFrameLayout?.setShimmer(null)
+        myCardTextViewShimmerFrameLt?.stopShimmer()
+        myCardTextViewShimmerFrameLt?.setShimmer(null)
         tempFreezeTextViewShimmerFrameLayout?.stopShimmer()
         tempFreezeTextViewShimmerFrameLayout?.setShimmer(null)
 
         cardDetailImageShimmerFrameLayout?.invalidate()
-        myCardTextViewShimmerFrameLayout?.invalidate()
+        myCardTextViewShimmerFrameLt?.invalidate()
         tempFreezeTextViewShimmerFrameLayout?.invalidate()
 
         // Boolean check will enable clickable event only when text is "view card"
@@ -731,7 +731,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
             val cardTypes: List<ConfigCreditCardDeliveryCardTypes> = AppConfigSingleton.creditCardDelivery?.cardTypes ?: arrayListOf()
             for ((binNumber, minimumSupportedAppBuildNumber) in cardTypes) {
                 if (binNumber.equals(mCardPresenterImpl?.getAccount()?.accountNumberBin, ignoreCase = true)
-                        && Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)) {
+                    && Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)) {
                     isEnable = true
                 }
             }
