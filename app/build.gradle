@@ -13,10 +13,10 @@ android {
 
     def major = "9"
     def minor = "4"
-    def fix = "0"
-    def jobNumberProduction = 198
-    def jobNumberQa = 634
-    def jobNumberFeature = 493
+    def fix = "2"
+    def jobNumberProduction = 200
+    def jobNumberQa = 637
+    def jobNumberFeature = 1005932
 
     buildFeatures {
         dataBinding true
@@ -49,7 +49,7 @@ android {
         applicationId "com.awfs.coordination"
         manifestPlaceholders = [appLabel: "Woolworths", app_links_host: "www.woolworths.co.za"]
         minSdkVersion 22 //Lollipop 5.1
-        compileSdkVersion 32
+        compileSdkVersion 31
         buildToolsVersion "30.0.3"
         multiDexEnabled true
         versionName(major + "." + minor + "." + fix)
