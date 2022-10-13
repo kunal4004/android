@@ -82,7 +82,7 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.sa
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_ADDRESS2
-import java.net.SocketTimeoutException
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 
 /**
  * Created by Kunal Uttarwar on 24/02/22.
@@ -240,6 +240,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     return
                 else {
                     lastDeliveryType = deliveryType
+                    setEventsForSwitchingDeliveryType(Delivery.CNC.name)
                     openCollectionTab()
                 }
             }
@@ -248,6 +249,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     return
                 else {
                     lastDeliveryType = deliveryType
+                    setEventsForSwitchingDeliveryType( Delivery.STANDARD.name)
                     openGeoDeliveryTab()
                 }
             }
@@ -256,6 +258,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     return
                 else {
                     lastDeliveryType = deliveryType
+                    setEventsForSwitchingDeliveryType(Delivery.DASH.name)
                     openDashTab()
                 }
             }
@@ -264,6 +267,16 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             }
         }
     }
+
+    private fun setEventsForSwitchingDeliveryType(deliveryType: String) {
+        val dashParams = Bundle()
+        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_MODE,
+            deliveryType)
+        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.BROWSE_MODE,
+            KotlinUtils.browsingDeliveryType?.name)
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.DASH_SWITCH_DELIVERY_MODE, dashParams)
+    }
+
 
     private fun moveToTabBeforeApiCalls(receivedDeliveryType: String?) {
         geoDeliveryView?.visibility = View.GONE
@@ -482,7 +495,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                             confirmLocationResponse.orderSummary?.fulfillmentDetails))
                                     }
                                 }
-
 
                                 /*reset browsing data for cnc and dash both once fulfillment location is confirmed*/
                                 WoolworthsApplication.setCncBrowsingValidatePlaceDetails(

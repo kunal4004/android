@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.google.gson.JsonSyntaxException
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_click_and_collect_stores.*
 import kotlinx.android.synthetic.main.fragment_click_and_collect_stores.dynamicMapView
@@ -256,6 +257,10 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
                     }
                 }
             } catch (e: Exception) {
+                FirebaseManager.logException(e)
+                clickCollectProgress?.visibility = View.GONE
+                showErrorDialog()
+            } catch (e:JsonSyntaxException) {
                 FirebaseManager.logException(e)
                 clickCollectProgress?.visibility = View.GONE
                 showErrorDialog()

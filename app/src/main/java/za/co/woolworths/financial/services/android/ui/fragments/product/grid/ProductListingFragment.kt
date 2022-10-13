@@ -26,16 +26,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.gson.JsonSyntaxException
 import com.skydoves.balloon.balloon
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.blp_error_layout.view.*
 import kotlinx.android.synthetic.main.fragment_brand_landing.view.*
 import kotlinx.android.synthetic.main.grid_layout.*
-import kotlinx.android.synthetic.main.grid_layout.vtoTryItOnBanner
 import kotlinx.android.synthetic.main.no_connection_handler.*
 import kotlinx.android.synthetic.main.no_connection_handler.view.*
 import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.*
-import kotlinx.android.synthetic.main.try_it_on_banner.*
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
@@ -77,14 +75,10 @@ import za.co.woolworths.financial.services.android.ui.views.*
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
-import za.co.woolworths.financial.services.android.ui.vto.di.qualifier.OpenTermAndLighting
-import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoBottomSheetDialog
-import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_417
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
-import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO
 import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.EXTRA_SEND_DELIVERY_DETAILS_PARAMS
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
@@ -96,9 +90,8 @@ import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.util.*
-import javax.inject.Inject
 
-@AndroidEntryPoint
+
 open class ProductListingFragment : ProductListingExtensionFragment(), GridNavigator,
     IProductListing, View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected,
     WMaterialShowcaseView.IWalkthroughActionListener,
@@ -140,9 +133,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var localDeliveryType: String? = null
     private var localDeliveryTypeForHiddenChange: String? = null
 
-    @OpenTermAndLighting
-    @Inject
-    lateinit var vtoBottomSheetDialog: VtoBottomSheetDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -212,13 +202,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             addFragmentListner()
             isUnSellableItemsRemoved()
             localPlaceId = KotlinUtils.getPreferredPlaceId()
-            imgInfo?.setOnClickListener {
-                vtoBottomSheetDialog.showBottomSheetDialog(
-                    this@ProductListingFragment,
-                    requireActivity(),
-                    true
-                )
-            }
             localDeliveryType = KotlinUtils.getDeliveryType()?.deliveryType
 
         }
@@ -242,12 +225,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             this,
             GeoLocationViewModelFactory(GeoLocationApiHelper())
         ).get(ConfirmAddressViewModel::class.java)
-    }
-
-    private fun showVtoBanner() {
-        if (!mSubCategoryName.isNullOrEmpty() && mSubCategoryName.equals(VTO) && VirtualTryOnUtil.isVtoConfigAvailable()) {
-            vtoTryItOnBanner.visibility = VISIBLE
-        }
     }
 
     private fun addFragmentListner() {
@@ -302,6 +279,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     }
                 }
             } catch (e: Exception) {
+                FirebaseManager.logException(e)
+                dismissProgressBar()
+            } catch (e: JsonSyntaxException) {
                 FirebaseManager.logException(e)
                 dismissProgressBar()
             }
@@ -553,7 +533,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             return
         }
         plp_relativeLayout?.visibility = VISIBLE
-        showVtoBanner()
         val productLists = response.products
         if (mProductList?.isNullOrEmpty() == true)
 
@@ -570,7 +549,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
         if (productLists?.isEmpty() == true) {
             sortAndRefineLayout?.visibility = GONE
-            vtoTryItOnBanner?.visibility = GONE
             if (!listContainHeader()) {
                 val headerProduct = ProductList()
                 headerProduct.rowType = ProductListingViewType.HEADER
@@ -1197,7 +1175,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private fun reloadProductsWithSortAndFilter() {
         productsRecyclerView?.visibility = View.INVISIBLE
         sortAndRefineLayout?.visibility = GONE
-        vtoTryItOnBanner?.visibility = GONE
         startProductRequest()
     }
 

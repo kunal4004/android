@@ -20,8 +20,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.google.gson.JsonSyntaxException
 import kotlinx.android.synthetic.main.confirm_address_bottom_sheet_dialog.*
 import kotlinx.android.synthetic.main.current_location_row_layout.*
+import kotlinx.android.synthetic.main.fragment_click_and_collect_stores.*
 import kotlinx.android.synthetic.main.no_connection.*
 import kotlinx.android.synthetic.main.no_connection.view.*
 import kotlinx.coroutines.launch
@@ -546,6 +548,9 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                     }
                 }
             } catch (e: Exception) {
+                FirebaseManager.logException(e)
+                progressBar?.visibility = View.GONE
+            } catch (e: JsonSyntaxException) {
                 FirebaseManager.logException(e)
                 progressBar?.visibility = View.GONE
             }

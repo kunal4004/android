@@ -18,10 +18,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.GeolocationConfirmAddressBinding
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
+import com.google.gson.JsonSyntaxException
 import com.google.maps.GeoApiContext
 import com.google.maps.GeocodingApi
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,6 +46,7 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLoca
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
+import za.co.woolworths.financial.services.android.ui.fragments.poi.MapsPoiBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate
 import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
@@ -55,32 +56,26 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_CONFIRM_ADD
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_ADDRESS2
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LATITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LONGITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
-import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import za.co.woolworths.financial.services.android.util.Constant.Companion.POI
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
 import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LATITUDE
 import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LONGITUDE
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-import za.co.woolworths.financial.services.android.util.Constant.Companion.POI
-import za.co.woolworths.financial.services.android.util.Constant.Companion.STREET_NAME
-import za.co.woolworths.financial.services.android.util.Constant.Companion.STREET_NAME_FROM_POI
-import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_ADDRESS2
-import java.net.SocketTimeoutException
-
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class ConfirmAddressMapFragment :
-    Fragment(), DynamicMapDelegate, VtoTryAgainListener {
+    Fragment(), DynamicMapDelegate, VtoTryAgainListener, MapsPoiBottomSheetDialog.ClickListner {
 
     private var mAddress: String? = null
     private var placeId: String? = null
     private var deliveryType: String? = null
-    private var latLng: LatLng? = null
     private var mLatitude: String? = null
     private var mLongitude: String? = null
     private var address1: String? = null
@@ -126,9 +121,7 @@ class ConfirmAddressMapFragment :
         view: View, savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
-
         dynamicMapView?.initializeMap(savedInstanceState, this)
-        setPOIResult()
     }
 
     private fun initView() {
@@ -546,9 +539,8 @@ class ConfirmAddressMapFragment :
             if (result == true) {
                 if (isPoiAddress == true) {
                     confirmAddress?.isEnabled = false
-                    findNavController()?.navigate(
-                        R.id.action_confirmAddressMapFragment_to_poiMapBottomSheetDialog
-                    )
+                    MapsPoiBottomSheetDialog(this@ConfirmAddressMapFragment).show(requireActivity().supportFragmentManager,
+                        MapsPoiBottomSheetDialog::class.java.simpleName)
                 } else {
                     errorMassageDivider?.visibility = View.VISIBLE
                     errorMessage?.visibility = View.VISIBLE
@@ -830,13 +822,10 @@ class ConfirmAddressMapFragment :
         dynamicMapView?.onSaveInstanceState(outState)
     }
 
-    private fun setPOIResult() {
-        setFragmentResultListener(STREET_NAME_FROM_POI) { _, bundle ->
-            address2 = bundle?.getString(STREET_NAME)
-            address2?.let {
-                confirmAddress?.isEnabled = true
-            }
-        }
+    override fun onConfirmClick(streetName: String) {
+        address2 = streetName
+        if (!address2.isNullOrEmpty())
+            confirmAddress?.isEnabled = true
     }
 }
 

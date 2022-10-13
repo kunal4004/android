@@ -128,6 +128,7 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.io.File
 import android.graphics.Bitmap
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.gson.JsonSyntaxException
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
@@ -741,6 +742,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     }
                 }
             } catch (e: Exception) {
+                FirebaseManager.logException(e)
+                progressBar?.visibility = View.GONE
+            } catch (e: JsonSyntaxException) {
                 FirebaseManager.logException(e)
                 progressBar?.visibility = View.GONE
             }
