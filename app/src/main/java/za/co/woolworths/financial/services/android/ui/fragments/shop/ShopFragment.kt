@@ -68,6 +68,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
 import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
@@ -144,6 +145,31 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         )
     }
 
+    fun setEventForDeliveryTypeAndBrowsingType() {
+        if (getDeliveryType()?.deliveryType == null) {
+            return
+        }
+
+        val dashParams = Bundle()
+        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_MODE,
+            KotlinUtils.getPreferredDeliveryType()?.type)
+        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.BROWSE_MODE,
+            KotlinUtils.browsingDeliveryType?.type)
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.DASH_DELIVERY_BROWSE_MODE, dashParams)
+    }
+
+    private fun setEventsForSwitchingBrowsingType(browsingType: String?) {
+        if (KotlinUtils.getPreferredDeliveryType() == null) {
+            return
+        }
+        val dashParams = Bundle()
+        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_MODE,
+            KotlinUtils.getPreferredDeliveryType()?.name)
+        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.BROWSE_MODE,
+            browsingType)
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.DASH_SWITCH_BROWSE_MODE, dashParams)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.apply {
@@ -179,16 +205,19 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                                 this
                             )
                             showBlackToolTip(Delivery.STANDARD)
+                            setEventsForSwitchingBrowsingType(Delivery.STANDARD.name)
                             KotlinUtils.browsingDeliveryType = Delivery.STANDARD
                         }
                         CLICK_AND_COLLECT_TAB.index -> {
                             //Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS, this)
                             showBlackToolTip(Delivery.CNC)
+                            setEventsForSwitchingBrowsingType(Delivery.CNC.name)
                             KotlinUtils.browsingDeliveryType = Delivery.CNC
                         }
                         DASH_TAB.index -> {
                             // Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYORDERS, this)
                             showBlackToolTip(Delivery.DASH)
+                            setEventsForSwitchingBrowsingType(Delivery.DASH.name)
                             KotlinUtils.browsingDeliveryType = Delivery.DASH
                         }
                     }
@@ -254,6 +283,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                                     validateLocationResponse?.validatePlace
                                 )
                                 updateCurrentTab(getDeliveryType()?.deliveryType)
+                                setEventForDeliveryTypeAndBrowsingType()
                                 setDeliveryView()
                                 viewLifecycleOwner.lifecycleScope.launch {
                                     delay(DELAY_3000_MS)
@@ -501,7 +531,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     override fun permissionGranted(request_code: Int) {
         navigateToBarcode()
-
     }
 
     override fun onRequestPermissionsResult(
