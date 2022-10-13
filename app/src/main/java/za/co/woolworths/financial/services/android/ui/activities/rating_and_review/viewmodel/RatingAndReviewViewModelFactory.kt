@@ -8,7 +8,7 @@ class RatingAndReviewViewModelFactory(
         private val ratingAndReviewApiHelper: RatingAndReviewApiHelper)
     : ViewModelProvider.Factory {
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(RatingAndReviewViewModel::class.java)) {
             return RatingAndReviewViewModel(ratingAndReviewApiHelper) as T
         }
