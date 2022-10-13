@@ -21,6 +21,7 @@ import com.skydoves.balloon.balloon
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_dash_delivery.*
 import kotlinx.android.synthetic.main.layout_dash_set_address_fragment.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
@@ -56,6 +57,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.SE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
@@ -881,6 +883,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     }
 
     override fun onDemandNavigationClicked(view: View?, categoryItem: RootCategory) {
+        setEventsForCategoryClick(categoryItem)
         (requireActivity() as? BottomNavigationActivity)?.apply {
             pushFragment(
                 ProductListingFragment.newInstance(
@@ -892,6 +895,44 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                 )
             )
         }
+    }
+
+
+    private fun setEventsForCategoryClick(categoryItem: RootCategory) {
+        if (getDeliveryType()?.deliveryType == null) {
+            return
+        }
+
+        val categoryParamsParams = Bundle()
+        val categoryId = categoryItem?.categoryId.toInt().plus(1)
+        val slotName = AppConstant.QUICK_LINK.plus(categoryId)
+
+        categoryParamsParams?.apply {
+
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.CONTENT_TYPE,
+                FirebaseManagerAnalyticsProperties.PropertyValues.DASH_MENU_CLICK
+            )
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.CATEGORY_NAME,
+                FirebaseManagerAnalyticsProperties.PropertyValues.DASH_CATEGORY_NAME
+            )
+
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.CONTENT_NAME,
+                categoryItem?.categoryName
+            )
+
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.CONTENT_SLOT,
+                slotName
+            )
+        }
+
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.DASH_SELECT_CONTENT,
+            categoryParamsParams
+        )
     }
 
     override fun onDashLandingNavigationClicked(view: View?, item: Banner) {
