@@ -252,25 +252,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
     }
 
-    private fun showPromotionalBanner() {
-        //  if (!mSubCategoryName.isNullOrEmpty()) {
-        val htmlDataPromotionalText =
-            ("<p><span style=\"font-family:arial,helvetica,sans-serif;\"><span style=\"font-size:18px;\">Download the PDF DD Version: <a href=\"https://www.woolworths.co.za/images/elasticera/New_Site/Food/TDD WC.pdf\" onclick=\"window.open(this.href, '', 'resizable=no,status=no,location=no,toolbar=no,menubar=no,fullscreen=no,scrollbars=no,dependent=no'); return false;\">CAPE</a>, <a href=\"https://www.woolworths.co.za/images/elasticera/New_Site/Food/TDD KZN.pdf\" onclick=\"window.open(this.href, '', 'resizable=no,status=no,location=no,toolbar=no,menubar=no,fullscreen=no,scrollbars=no,dependent=no'); return false;\">KZN</a> &amp; <a href=\"https://www.woolworths.co.za/images/elasticera/New_Site/Food/TDD GP.pdf\" onclick=\"window.open(this.href, '', 'resizable=no,status=no,location=no,toolbar=no,menubar=no,fullscreen=no,scrollbars=no,dependent=no'); return false;\">GAUTENG &amp; OTHER PROVINCES</a>.</span></span></p> \n")
+    private fun showPromotionalBanner(response: ProductView) {
+
+        val htmlDataPromotionalText = response.richText
+           // ("<p><span style=\"font-family:arial,helvetica,sans-serif;\"><span style=\"font-size:18px;\">Download the PDF DD Version: <a href=\"https://www.woolworths.co.za/images/elasticera/New_Site/Food/TDD WC.pdf\" onclick=\"window.open(this.href, '', 'resizable=no,status=no,location=no,toolbar=no,menubar=no,fullscreen=no,scrollbars=no,dependent=no'); return false;\">CAPE</a>, <a href=\"https://www.woolworths.co.za/images/elasticera/New_Site/Food/TDD KZN.pdf\" onclick=\"window.open(this.href, '', 'resizable=no,status=no,location=no,toolbar=no,menubar=no,fullscreen=no,scrollbars=no,dependent=no'); return false;\">KZN</a> &amp; <a href=\"https://www.woolworths.co.za/images/elasticera/New_Site/Food/TDD GP.pdf\" onclick=\"window.open(this.href, '', 'resizable=no,status=no,location=no,toolbar=no,menubar=no,fullscreen=no,scrollbars=no,dependent=no'); return false;\">GAUTENG &amp; OTHER PROVINCES</a>.</span></span></p> \n")
         promotionalTextDesc?.text = HtmlCompat.fromHtml(htmlDataPromotionalText, HtmlCompat.FROM_HTML_MODE_LEGACY)
         promotionalTextDesc.movementMethod = LinkMovementMethod.getInstance()
 
-      /*  imgInfoReadMore?.setOnClickListener {
-            imgInfoReadMore.visibility = INVISIBLE
-            imgInfoReadLess.visibility = VISIBLE
-            promotionalTextDesc.maxLines = 4
-        }
 
-        imgInfoReadLess?.setOnClickListener {
-            imgInfoReadMore.visibility = VISIBLE
-            imgInfoReadLess.visibility = INVISIBLE
-            promotionalTextDesc.maxLines = 3
-        }*/
-        // }
     }
 
     private fun addFragmentListner() {
@@ -576,7 +565,12 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             return
         }
         plp_relativeLayout?.visibility = VISIBLE
-        showPromotionalBanner()
+
+
+        if(!response.richText.isNullOrEmpty()) {
+            showPromotionalBanner(response)
+        }
+
         showVtoBanner()
         val productLists = response.products
         if (mProductList?.isNullOrEmpty() == true)
