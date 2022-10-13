@@ -374,7 +374,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     }
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                FirebaseManager.logException(e)
                 dismissProgressBar()
             }
         }

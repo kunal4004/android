@@ -784,7 +784,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     }
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                FirebaseManager.logException(e)
                 progressBar?.visibility = View.GONE
             }
         }
