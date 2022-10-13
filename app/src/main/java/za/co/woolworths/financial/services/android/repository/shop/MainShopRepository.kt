@@ -8,6 +8,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Conf
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDetailsResponse
 import za.co.woolworths.financial.services.android.models.dto.shop.DashCategories
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.Resource
@@ -175,6 +176,35 @@ class MainShopRepository : ShopRepository {
                 } ?: Resource.error(R.string.error_unknown, null)
             } else {
                 Resource.error(R.string.error_unknown, null)
+            }
+        } catch (e: IOException) {
+            FirebaseManager.logException(e)
+            Resource.error(R.string.error_internet_connection, null)
+        }
+    }
+
+    override suspend fun fetchLastDashOrderDetails(): Resource<LastOrderDetailsResponse> {
+        return try {
+            val response = OneAppService.getLastDashOrder()
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    return when (it.httpCode) {
+                        AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 ->
+                            Resource.success(it)
+                        else ->
+                            Resource.error(R.string.error_unknown, it)
+                    }
+                } ?: Resource.error(R.string.error_unknown, null)
+            } else {
+                var errorResponse : LastOrderDetailsResponse? = null
+                try {
+                    errorResponse = Gson().fromJson(
+                        response.errorBody()?.charStream(),
+                        LastOrderDetailsResponse::class.java)
+                } catch (jsonException: JsonParseException) {
+                    FirebaseManager.logException(jsonException)
+                }
+                Resource.error(R.string.error_unknown, errorResponse)
             }
         } catch (e: IOException) {
             FirebaseManager.logException(e)

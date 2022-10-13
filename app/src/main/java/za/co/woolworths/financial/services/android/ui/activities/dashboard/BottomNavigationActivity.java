@@ -457,14 +457,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
     private void deepLinkToOrderDetails(Parameter params) {
         if (SessionUtilities.getInstance().isUserAuthenticated()) {
-            if (INDEX_ACCOUNT != getBottomNavigationById().getCurrentItem()) {
-                getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
-                switchTab(INDEX_ACCOUNT);
-            }
-            pushFragment(new MyOrdersAccountFragment());
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                pushFragment(OrderDetailsFragment.Companion.getInstance(params));
-            }, AppConstant.DELAY_100_MS);
+            pushFragment(OrderDetailsFragment.Companion.getInstance(params));
         }
     }
 
@@ -1036,6 +1029,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             mNavController.clearStackSignOut(new FragNavTransactionOptions.Builder().customAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right).build(), previousTabIndex);
         isNewSession = true;
     }
+
     @Override
     public void cartSummaryAPI() {
     }
