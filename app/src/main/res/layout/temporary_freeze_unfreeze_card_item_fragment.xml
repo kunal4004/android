@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <View
+        android:id="@+id/temporaryFreezeCardDivider"
+        style="@style/menuLandingDividerStyle"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp" />
+
+    <RelativeLayout
+        android:id="@+id/temporaryFreezeCardRelativeLayout"
+        style="@style/accountOptionItemsStyle">
+
+        <ImageView
+            android:id="@+id/storeCardItem3ImageView"
+            style="@style/accountOptionsImageviewStyle"
+            android:src="@drawable/icon_freeze_grey" />
+
+        <TextView
+            android:id="@+id/storeCardItem3TextView"
+            style="@style/accountOptionsLabelStyle"
+            android:layout_width="wrap_content"
+            android:layout_alignTop="@+id/switchTemporaryFreezeCard"
+            android:layout_alignBottom="@+id/switchTemporaryFreezeCard"
+            android:layout_marginStart="21dp"
+            android:layout_marginTop="2dp"
+            android:layout_toEndOf="@+id/storeCardItem3ImageView"
+            android:text="@string/temporary_card_freeze_title" />
+
+        <za.co.woolworths.financial.services.android.ui.views.switcher.SwitchCompatWidget
+            android:id="@+id/switchTemporaryFreezeCard"
+            android:layout_width="@dimen/_46sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+      />
+
+        <ProgressBar
+            android:id="@+id/freezeProgressBar"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:indeterminateTint="@color/black"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>

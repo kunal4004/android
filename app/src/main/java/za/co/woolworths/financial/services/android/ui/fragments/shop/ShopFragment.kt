@@ -20,6 +20,7 @@ import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
 import com.daasuu.bl.ArrowDirection
 import com.google.android.material.tabs.TabLayout
+import com.google.gson.JsonSyntaxException
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.black_tool_tip_layout.*
 import kotlinx.android.synthetic.main.fragment_shop.*
@@ -271,6 +272,11 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     tabs_main?.isClickable = true
                     FirebaseManager.logException(e)
                     /*TODO : show error screen*/
+                }
+                catch (e: JsonSyntaxException) {
+                    shopProgressbar?.visibility = View.GONE
+                    tabs_main?.isClickable = true
+                    FirebaseManager.logException(e)
                 }
             }
         }
@@ -538,11 +544,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
 
         if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-            val fragment = viewpager_main?.adapter?.instantiateItem(
-                viewpager_main,
-                viewpager_main.currentItem
-            ) as? DashDeliveryAddressFragment
-            fragment?.onActivityResult(requestCode, resultCode, data)
             refreshViewPagerFragment()
         }
 
@@ -627,27 +628,22 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     fun refreshViewPagerFragment() {
         when (viewpager_main.currentItem) {
             STANDARD_TAB.index -> {
-                val standardDeliveryFragment =
-                    viewpager_main?.adapter?.instantiateItem(
-                        viewpager_main,
-                        viewpager_main.currentItem
-                    ) as? StandardDeliveryFragment
-                standardDeliveryFragment?.initView()
+                viewpager_main?.adapter?.instantiateItem(
+                    viewpager_main,
+                    viewpager_main.currentItem
+                ) as? StandardDeliveryFragment
             }
             CLICK_AND_COLLECT_TAB.index -> {
-                val changeFullfilmentCollectionStoreFragment =
-                    viewpager_main?.adapter?.instantiateItem(
-                        viewpager_main,
-                        viewpager_main.currentItem
-                    ) as? ChangeFullfilmentCollectionStoreFragment
-                changeFullfilmentCollectionStoreFragment?.init()
+                viewpager_main?.adapter?.instantiateItem(
+                    viewpager_main,
+                    viewpager_main.currentItem
+                ) as? ChangeFullfilmentCollectionStoreFragment
             }
             DASH_TAB.index -> {
-                val dashDeliveryAddressFragment = viewpager_main?.adapter?.instantiateItem(
+                viewpager_main?.adapter?.instantiateItem(
                     viewpager_main,
                     viewpager_main.currentItem
                 ) as? DashDeliveryAddressFragment
-                dashDeliveryAddressFragment?.initViews()
             }
         }
     }
@@ -659,7 +655,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     override fun isSendDeliveryDetails(): Boolean {
         val fromNotification: Boolean = arguments?.getBoolean(ARG_FROM_NOTIFICATION, false) ?: false
-        if(fromNotification) {
+        if (fromNotification) {
             return false
         }
         return true
