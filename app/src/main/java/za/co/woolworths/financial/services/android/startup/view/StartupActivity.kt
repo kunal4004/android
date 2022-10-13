@@ -66,7 +66,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     private var remoteConfigJsonString: String = AppConstant.EMPTY_STRING
     private var isAppSideLoaded = false
 
-    @Inject lateinit var notificationUtils: NotificationUtils
+    @Inject lateinit var notificationUtils : NotificationUtils
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
