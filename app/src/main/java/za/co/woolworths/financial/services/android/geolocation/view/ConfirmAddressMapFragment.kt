@@ -95,6 +95,9 @@ class ConfirmAddressMapFragment :
 
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
+
+    @Inject lateinit var connectivityLiveData: ConnectivityLiveData
+
     private var placeName: String? = null
     private var isMainPlaceName: Boolean? = false
     private var isStreetNumberAndRouteFromSearch: Boolean? = false
@@ -173,7 +176,7 @@ class ConfirmAddressMapFragment :
 
     private fun checkNetwork() {
         activity?.let {
-            ConnectivityLiveData.observe(viewLifecycleOwner) { isNetworkAvailable ->
+            connectivityLiveData.observe(viewLifecycleOwner) { isNetworkAvailable ->
                 binding?.apply {
                     if (isNetworkAvailable) {
                         dynamicMapView?.visibility = View.VISIBLE
