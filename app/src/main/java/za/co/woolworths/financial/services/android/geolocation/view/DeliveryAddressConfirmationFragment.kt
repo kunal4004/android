@@ -82,6 +82,7 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.sa
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_ADDRESS2
+import java.net.SocketTimeoutException
 
 /**
  * Created by Kunal Uttarwar on 24/02/22.
@@ -590,6 +591,12 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     // navigate to shop tab with error scenario
                     activity?.setResult(REQUEST_CODE)
                     activity?.finish()
+                } catch (e: SocketTimeoutException) {
+                    e.printStackTrace()
+                    progressBar?.visibility = View.GONE
+                    // navigate to shop tab with error scenario
+                    activity?.setResult(REQUEST_CODE)
+                    activity?.finish()
                 }
             }
         }
@@ -868,6 +875,10 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     }
                 }
             } catch (e: HttpException) {
+                FirebaseManager.logException(e)
+                progressBar?.visibility = View.GONE
+                showErrorDialog()
+            } catch (e: SocketTimeoutException) {
                 FirebaseManager.logException(e)
                 progressBar?.visibility = View.GONE
                 showErrorDialog()

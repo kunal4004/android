@@ -93,6 +93,7 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseManage
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.net.ConnectException
+import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.util.*
 import javax.inject.Inject
@@ -303,6 +304,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             } catch (e: HttpException) {
                 FirebaseManager.logException(e)
                 dismissProgressBar()
+            } catch (e: SocketTimeoutException) {
+                FirebaseManager.logException(e)
+                dismissProgressBar()
             }
         }
     }
@@ -373,6 +377,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     }
                 }
             } catch (e: HttpException) {
+                e.printStackTrace()
+                dismissProgressBar()
+            } catch (e: SocketTimeoutException) {
                 e.printStackTrace()
                 dismissProgressBar()
             }

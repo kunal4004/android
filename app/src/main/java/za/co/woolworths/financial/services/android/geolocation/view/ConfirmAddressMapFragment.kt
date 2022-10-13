@@ -69,6 +69,7 @@ import za.co.woolworths.financial.services.android.util.Constant.Companion.POI
 import za.co.woolworths.financial.services.android.util.Constant.Companion.STREET_NAME
 import za.co.woolworths.financial.services.android.util.Constant.Companion.STREET_NAME_FROM_POI
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_ADDRESS2
+import java.net.SocketTimeoutException
 
 import javax.inject.Inject
 
@@ -331,6 +332,10 @@ class ConfirmAddressMapFragment :
                 FirebaseManager.logException(e)
                 binding?.progressBar?.visibility = View.GONE
                 showErrorDialog()
+            } catch (e: SocketTimeoutException) {
+                FirebaseManager.logException(e)
+                binding?.progressBar?.visibility = View.GONE
+                showErrorDialog()
             }
         }
     }
@@ -463,6 +468,10 @@ class ConfirmAddressMapFragment :
                     }
                 }
             } catch (e: HttpException) {
+                binding?.progressBar?.visibility = View.GONE
+                FirebaseManager.logException(e)
+                showErrorDialog()
+            } catch (e: SocketTimeoutException) {
                 binding?.progressBar?.visibility = View.GONE
                 FirebaseManager.logException(e)
                 showErrorDialog()

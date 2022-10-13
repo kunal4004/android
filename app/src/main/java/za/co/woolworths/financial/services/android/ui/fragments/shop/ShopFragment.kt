@@ -69,6 +69,7 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.ge
 import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import java.net.SocketTimeoutException
 
 
 /**
@@ -271,6 +272,10 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     tabs_main?.isClickable = true
                     FirebaseManager.logException(e)
                     /*TODO : show error screen*/
+                } catch (e: SocketTimeoutException) {
+                    shopProgressbar?.visibility = View.GONE
+                    tabs_main?.isClickable = true
+                    FirebaseManager.logException(e)
                 }
             }
         }
