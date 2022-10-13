@@ -268,7 +268,12 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     // disable Google address view.
                     autoCompleteTextView?.isEnabled = false
                     autoCompleteTextView?.setBackgroundResource(R.drawable.input_box_inactive_bg)
-                    autoCompleteTextView?.setTextColor(ContextCompat.getColor(requireContext(), R.color.non_editable_edit_text_text_color))
+                    autoCompleteTextView?.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.non_editable_edit_text_text_color
+                        )
+                    )
                     saveAddress.text = getString(R.string.confirm_address)
                 }
             }
@@ -634,7 +639,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                 setSelection(autoCompleteTextView.length())
                 autoCompleteTextView.dismissDropDown()
             }
-            checkIfSelectedProvinceExist(AppConfigSingleton.nativeCheckout?.regions as MutableList<Province>)
+            checkIfSelectedProvinceExist()
+
         }
 
         if (!selectedAddress.savedAddress.suburb.isNullOrEmpty())
@@ -656,30 +662,10 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         }
     }
 
-    fun checkIfSelectedProvinceExist(provinceList: MutableList<Province>) {
-        val localProvince = Province()
+    fun checkIfSelectedProvinceExist() {
         val provinceName = selectedAddress.provinceName
         if (!provinceName.isNullOrEmpty()) {
-            for (provinces in provinceList) {
-                if (provinceName.equals(provinces.name)) {
-                    // province name is matching with the province list from config.
-                    localProvince.apply {
-                        id = provinces.id
-                        name = provinces.name
-                    }
-                    provinceAutocompleteEditText?.setText(provinceName)
-                    selectedAddress.apply {
-                        this.provinceName = localProvince.name ?: ""
-                        savedAddress.region = localProvince.id
-                    }
-                }
-            }
-            if (localProvince.name.isNullOrEmpty()) {
-                // province name is not matching with the province list from config.
-                provinceAutocompleteEditText?.setText("")
-                provinceSuburbEnableType =
-                    ONLY_PROVINCE
-            }
+            provinceAutocompleteEditText?.setText(provinceName)
         } else {
             provinceAutocompleteEditText.setText("")
             provinceSuburbEnableType = ONLY_PROVINCE
