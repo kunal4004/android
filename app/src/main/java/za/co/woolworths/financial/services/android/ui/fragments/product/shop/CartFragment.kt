@@ -122,6 +122,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
     private var voucherDetails: VoucherDetails? = null
     var productCountMap: ProductCountMap? = null
     private var liquorCompliance: LiquorCompliance? = null
+    private var cartItemList = ArrayList<CommerceItem>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -463,6 +464,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                 putExtra(CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY, response)
                 putExtra(CheckoutAddressConfirmationFragment.IS_EDIT_ADDRESS_SCREEN, true)
                 putExtra(CheckoutAddressManagementBaseFragment.DASH_SLOT_SELECTION, true)
+                putExtra(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST, cartItemList)
                 liquorCompliance.let {
                     if ((it != null) && it.isLiquorOrder && (AppConfigSingleton.liquor!!.noLiquorImgUrl != null) && !AppConfigSingleton.liquor!!.noLiquorImgUrl.isEmpty()) {
                         putExtra(Constant.LIQUOR_ORDER, it.isLiquorOrder)
@@ -882,9 +884,11 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
     }
 
     private fun setMinimumCartErrorMessage() {
-        if(orderSummary?.hasMinimumBasketAmount == false) {
+        if (orderSummary?.hasMinimumBasketAmount == false) {
             txt_min_spend_error_msg?.visibility = View.VISIBLE
-            txt_min_spend_error_msg?.text = String.format(getString(R.string.minspend_error_msg_cart, orderSummary?.minimumBasketAmount))
+            txt_min_spend_error_msg?.text =
+                String.format(getString(R.string.minspend_error_msg_cart,
+                    orderSummary?.minimumBasketAmount))
             btnCheckOut?.isEnabled = false
             fadeCheckoutButton(true)
         } else {
@@ -1211,6 +1215,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                             fulfillmentStoreId!!.replace("\"".toRegex(), "")
                         productList.add(commerceItem)
                     }
+                    this.cartItemList = productList
                     cartItemGroup.setCommerceItems(productList)
                 }
                 cartItemGroups.add(cartItemGroup)
@@ -1763,7 +1768,10 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
     private fun displayUpSellMessage(data: Data?) {
         if (mRemoveAllItemFromCartTapped) return
         data?.globalMessages?.let {
-            if (it.qualifierMessages == null || it.qualifierMessages.isEmpty()) return
+            if (it.qualifierMessages.isNullOrEmpty()) {
+                upSellMessageTextView?.visibility = View.GONE
+                return
+            }
             val qualifierMessage = it.qualifierMessages[0]
             upSellMessageTextView?.text = qualifierMessage
             upSellMessageTextView?.visibility =

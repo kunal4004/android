@@ -97,20 +97,12 @@
             android:id="@+id/sortAndRefineLayout"
             layout="@layout/sort_and_refine_selection_layout" />
 
-        <include
-            android:id="@+id/vtoTryItOnBanner"
-            layout="@layout/try_it_on_banner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/sortAndRefineLayout"
-            android:visibility="gone" />
-
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/incConfirmButtonLayout"
-            android:layout_below="@+id/vtoTryItOnBanner"
+            android:layout_below="@+id/sortAndRefineLayout"
             android:layout_alignParentStart="true">
 
             <androidx.recyclerview.widget.RecyclerView
