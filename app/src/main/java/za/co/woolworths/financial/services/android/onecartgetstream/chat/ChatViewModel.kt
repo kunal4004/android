@@ -152,9 +152,16 @@ class ChatViewModel : ViewModel() {
 
 
     fun disconnect() {
-        userWatchingEventsDisposable.dispose()
-        newMessageEventDisposable.dispose()
-        userTypingEvent.dispose()
+        if (::userWatchingEventsDisposable.isInitialized &&
+            ::newMessageEventDisposable.isInitialized &&
+            ::userTypingEvent.isInitialized
+
+        ) {
+            userWatchingEventsDisposable.dispose()
+            newMessageEventDisposable.dispose()
+            userTypingEvent.dispose()
+
+        }
         chatClient.disconnect()
     }
 
