@@ -28,7 +28,7 @@ class AppConstant {
         const val DELAY_2000_MS: Long = 2000
         const val DELAY_3000_MS: Long = 3000
         const val DELAY_4000_MS: Long = 4000
-
+        const val DELAY_20000_MS: Long = 20000
 
         /*****************************************************************************************
          * Durations
@@ -108,7 +108,13 @@ class AppConstant {
         const val TAG_TAX_INVOICE_FRAGMENT: String = "TaxInvoiceFragment"
         const val ORDER_ID: String = "ORDER_ID"
         const val NAVIGATED_FROM_MY_ACCOUNTS = "NAVIGATED_FROM_MY_ACCOUNTS"
+        const val ORDER_ITEM_LIST = "Order_Item_List"
+        const val ORDER_ITEM_TOTAL = "Order_Item_Total"
+        const val ORDER_SHIPPING_TOTAL = "Order_Shipping_Total"
+        const val QUICK_LINK = "Quick Link - Slot "
 
+        const val RED_HEX_COLOR ="#ff0000"
+        const val DEFAULT_TAG_HEX_COLOR="#b2b2b2"
         // delete my profile
         const val DELETE_ACCOUNT = "DELETE_ACCOUNT"
         const val DELETE_ACCOUNT_CONFIRMATION = "DELETE_ACCOUNT_CONFIRMATION"

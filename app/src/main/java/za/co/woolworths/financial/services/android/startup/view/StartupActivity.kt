@@ -27,6 +27,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_splash_screen.*
 import kotlinx.android.synthetic.main.activity_startup.*
 import kotlinx.android.synthetic.main.activity_startup_without_video.*
@@ -36,6 +37,7 @@ import za.co.woolworths.financial.services.android.firebase.FirebaseConfigUtils
 import za.co.woolworths.financial.services.android.firebase.model.ConfigData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant
 import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.Companion.startOCChatService
 import za.co.woolworths.financial.services.android.onecartgetstream.service.DashChatMessageListeningService
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
@@ -51,6 +53,7 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseManage
 import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 import za.co.woolworths.financial.services.android.util.pushnotification.PushNotificationManager
 
+@AndroidEntryPoint
 class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     View.OnClickListener {
 
@@ -259,6 +262,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     fun init() {
+        //TODO:: Handle notification for Android R
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationUtils.createNotificationChannelIfNeeded(this)
         }
@@ -270,7 +274,9 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         } else {
             showNonVideoViewWithErrorLayout()
         }
-         configureDashChatServices()
+        if (startupViewModel.isConnectedToInternet(this@StartupActivity)) {
+            configureDashChatServices()
+        }
         //Remove old usage of SharedPreferences data.
      //   startupViewModel.clearSharedPreference(this@StartupActivity)
         AuthenticateUtils.getInstance(this@StartupActivity).enableBiometricForCurrentSession(true)
@@ -560,7 +566,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     override fun onResume() {
         super.onResume()
-        NotificationUtils.clearNotifications(this@StartupActivity)
+        NotificationUtils.clearNotifications(this)
     }
 
     private fun forgotPasswordDeeplink() {
@@ -597,13 +603,13 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                 fbMessaging.token.addOnCompleteListener { it: Task<String?> ->
                     if (it.isSuccessful) {
                         Utils.setOCChatFCMToken(it.result)
-                    } else {
-                        Utils.setOCChatFCMToken("")
                     }
+
                 }
             }
             // Start service to listen to incoming messages from Stream
-            if (SessionUtilities.getInstance().isUserAuthenticated) {
+            if (SessionUtilities.getInstance().isUserAuthenticated &&
+                (!OCConstant.isOCChatBackgroundServiceRunning)) {
                 startOCChatService(this)
             }
 

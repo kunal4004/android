@@ -48,8 +48,8 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
     }
 
     private fun setPromotionalText(productList: ProductList?) = with(itemView) {
-        if (productList?.promotionsList?.isEmpty() == false) {
-            productList?.promotionsList?.forEachIndexed { i, it ->
+        if (productList?.promotions?.isEmpty() == false) {
+            productList?.promotions?.forEachIndexed { i, it ->
                 var editedPromotionalText: String? = it.promotionalText
                 if (it.promotionalText?.contains(":") == true) {
                     val beforeColon: String? = it.promotionalText?.substringBefore(":")
@@ -59,7 +59,7 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
                 when (i) {
                     0 -> {
                         onlinePromotionalTextView1?.visibility = VISIBLE
-                        val promotionsListCount = productList?.promotionsList?.size ?: 0
+                        val promotionsListCount = productList?.promotions?.size ?: 0
                         onlinePromotionalTextView1?.text = Html.fromHtml(editedPromotionalText)
                         if (promotionsListCount == 1) {
                             onlinePromotionalTextView1?.maxLines = 2
