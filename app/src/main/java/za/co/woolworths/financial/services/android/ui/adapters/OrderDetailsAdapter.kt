@@ -247,7 +247,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
             val orderItemDetail = dataList[position] as? OrderDetailsItem
             val headerText = "${orderItemDetail?.item}${if (orderItemDetail?.orderItemLength!! > 1) "s" else ""}"
             itemView.header?.text = "${orderItemDetail?.orderItemLength} $headerText"
-            isContainsFood = headerText.contains(OrderDetailsFragment.PROMO_NOTE_FOOD)
+            isContainsFood = headerText.contains(OrderDetailsFragment.PROMO_NOTE_FOOD, true)
         }
     }
 

@@ -20,6 +20,7 @@ import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
 import com.daasuu.bl.ArrowDirection
 import com.google.android.material.tabs.TabLayout
+import com.google.gson.JsonSyntaxException
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.black_tool_tip_layout.*
 import kotlinx.android.synthetic.main.fragment_shop.*
@@ -67,6 +68,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
 import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
@@ -143,6 +145,31 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         )
     }
 
+    fun setEventForDeliveryTypeAndBrowsingType() {
+        if (getDeliveryType()?.deliveryType == null) {
+            return
+        }
+
+        val dashParams = Bundle()
+        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_MODE,
+            KotlinUtils.getPreferredDeliveryType()?.type)
+        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.BROWSE_MODE,
+            KotlinUtils.browsingDeliveryType?.type)
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.DASH_DELIVERY_BROWSE_MODE, dashParams)
+    }
+
+    private fun setEventsForSwitchingBrowsingType(browsingType: String?) {
+        if (KotlinUtils.getPreferredDeliveryType() == null) {
+            return
+        }
+        val dashParams = Bundle()
+        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_MODE,
+            KotlinUtils.getPreferredDeliveryType()?.name)
+        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.BROWSE_MODE,
+            browsingType)
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.DASH_SWITCH_BROWSE_MODE, dashParams)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.apply {
@@ -178,16 +205,19 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                                 this
                             )
                             showBlackToolTip(Delivery.STANDARD)
+                            setEventsForSwitchingBrowsingType(Delivery.STANDARD.name)
                             KotlinUtils.browsingDeliveryType = Delivery.STANDARD
                         }
                         CLICK_AND_COLLECT_TAB.index -> {
                             //Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS, this)
                             showBlackToolTip(Delivery.CNC)
+                            setEventsForSwitchingBrowsingType(Delivery.CNC.name)
                             KotlinUtils.browsingDeliveryType = Delivery.CNC
                         }
                         DASH_TAB.index -> {
                             // Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYORDERS, this)
                             showBlackToolTip(Delivery.DASH)
+                            setEventsForSwitchingBrowsingType(Delivery.DASH.name)
                             KotlinUtils.browsingDeliveryType = Delivery.DASH
                         }
                     }
@@ -253,6 +283,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                                     validateLocationResponse?.validatePlace
                                 )
                                 updateCurrentTab(getDeliveryType()?.deliveryType)
+                                setEventForDeliveryTypeAndBrowsingType()
                                 setDeliveryView()
                                 viewLifecycleOwner.lifecycleScope.launch {
                                     delay(DELAY_3000_MS)
@@ -271,6 +302,11 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     tabs_main?.isClickable = true
                     FirebaseManager.logException(e)
                     /*TODO : show error screen*/
+                }
+                catch (e: JsonSyntaxException) {
+                    shopProgressbar?.visibility = View.GONE
+                    tabs_main?.isClickable = true
+                    FirebaseManager.logException(e)
                 }
             }
         }
@@ -495,7 +531,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     override fun permissionGranted(request_code: Int) {
         navigateToBarcode()
-
     }
 
     override fun onRequestPermissionsResult(
@@ -538,11 +573,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
 
         if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-            val fragment = viewpager_main?.adapter?.instantiateItem(
-                viewpager_main,
-                viewpager_main.currentItem
-            ) as? DashDeliveryAddressFragment
-            fragment?.onActivityResult(requestCode, resultCode, data)
             refreshViewPagerFragment()
         }
 
@@ -627,27 +657,22 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     fun refreshViewPagerFragment() {
         when (viewpager_main.currentItem) {
             STANDARD_TAB.index -> {
-                val standardDeliveryFragment =
-                    viewpager_main?.adapter?.instantiateItem(
-                        viewpager_main,
-                        viewpager_main.currentItem
-                    ) as? StandardDeliveryFragment
-                standardDeliveryFragment?.initView()
+                viewpager_main?.adapter?.instantiateItem(
+                    viewpager_main,
+                    viewpager_main.currentItem
+                ) as? StandardDeliveryFragment
             }
             CLICK_AND_COLLECT_TAB.index -> {
-                val changeFullfilmentCollectionStoreFragment =
-                    viewpager_main?.adapter?.instantiateItem(
-                        viewpager_main,
-                        viewpager_main.currentItem
-                    ) as? ChangeFullfilmentCollectionStoreFragment
-                changeFullfilmentCollectionStoreFragment?.init()
+                viewpager_main?.adapter?.instantiateItem(
+                    viewpager_main,
+                    viewpager_main.currentItem
+                ) as? ChangeFullfilmentCollectionStoreFragment
             }
             DASH_TAB.index -> {
-                val dashDeliveryAddressFragment = viewpager_main?.adapter?.instantiateItem(
+                viewpager_main?.adapter?.instantiateItem(
                     viewpager_main,
                     viewpager_main.currentItem
                 ) as? DashDeliveryAddressFragment
-                dashDeliveryAddressFragment?.initViews()
             }
         }
     }
@@ -659,7 +684,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     override fun isSendDeliveryDetails(): Boolean {
         val fromNotification: Boolean = arguments?.getBoolean(ARG_FROM_NOTIFICATION, false) ?: false
-        if(fromNotification) {
+        if (fromNotification) {
             return false
         }
         return true
