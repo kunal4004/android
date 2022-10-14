@@ -3,12 +3,12 @@ package za.co.woolworths.financial.services.android.util
 import android.annotation.SuppressLint
 import android.content.IntentSender
 import android.os.Looper
-import android.util.Log
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import androidx.appcompat.app.AppCompatActivity
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 
 object FuseLocationAPISingleton {
@@ -19,6 +19,7 @@ object FuseLocationAPISingleton {
     const val REQUEST_CHECK_SETTINGS = 1402
 
     private val TAG = FuseLocationAPISingleton.javaClass.simpleName
+
     /**
      * Provides access to the Fused Location Provider API.
      */
@@ -65,7 +66,7 @@ object FuseLocationAPISingleton {
     fun addLocationChangeListener(ILocationProvider: ILocationProvider) {
         this.mLocationCompletedProvider = ILocationProvider
         val mWoolworthInstance: WoolworthsApplication = WoolworthsApplication.getInstance()
-                ?: return
+            ?: return
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mWoolworthInstance)
         mSettingsClient = LocationServices.getSettingsClient(mWoolworthInstance)
@@ -81,31 +82,42 @@ object FuseLocationAPISingleton {
     fun startLocationUpdate() {
         // Begin by checking if the device has the necessary location settings.
         mSettingsClient?.checkLocationSettings(mLocationSettingsRequest)
-                ?.addOnSuccessListener {
-                    mFusedLocationClient?.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper())
-                }
-                ?.addOnFailureListener { e ->
-                    when ((e as? ApiException)?.statusCode) {
-                        LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
-                            try {
-                                mLocationCompletedProvider.onPopUpLocationDialogMethod()
-                                // Show the dialog by calling startResolutionForResult(), and check the
-                                // result in onActivityResult().
+            ?.addOnSuccessListener {
+                mFusedLocationClient?.requestLocationUpdates(
+                    mLocationRequest,
+                    mLocationCallback,
+                    Looper.myLooper()
+                )
+            }
+            ?.addOnFailureListener { e ->
+                when ((e as? ApiException)?.statusCode) {
+                    LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
+                        try {
+                            mLocationCompletedProvider.onPopUpLocationDialogMethod()
+                            // Show the dialog by calling startResolutionForResult(), and check the
+                            // result in onActivityResult().
 
-                                val rae = e as? ResolvableApiException
-                                val activity : AppCompatActivity? = WoolworthsApplication.getInstance().currentActivity as? AppCompatActivity
-                                activity?.let { activity -> rae?.startResolutionForResult(activity, REQUEST_CHECK_SETTINGS)}
-                            } catch (sie: IntentSender.SendIntentException) {
+                            val rae = e as? ResolvableApiException
+                            val activity: AppCompatActivity? =
+                                WoolworthsApplication.getInstance().currentActivity as? AppCompatActivity
+                            activity?.let { activity ->
+                                rae?.startResolutionForResult(
+                                    activity,
+                                    REQUEST_CHECK_SETTINGS
+                                )
                             }
+                        } catch (sie: IntentSender.SendIntentException) {
+                            FirebaseManager.logException(sie)
+                        }
 
-                        }
-                        LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> {
-                            val errorMessage = "Location settings are inadequate, and cannot be " + "fixed here. Fix in Settings."
-                            Log.e(TAG, errorMessage)
-                           // Toast.makeText(activity, errorMessage, Toast.LENGTH_LONG).show()
-                        }
+                    }
+                    LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> {
+                        val errorMessage =
+                            "Location settings are inadequate, and cannot be " + "fixed here. Fix in Settings."
+                        FirebaseManager.setCrashlyticsString(TAG, errorMessage)
                     }
                 }
+            }
     }
 
     /**
@@ -115,7 +127,11 @@ object FuseLocationAPISingleton {
         mLocationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 super.onLocationResult(locationResult)
-                locationResult?.lastLocation?.let { lastLocation -> mLocationCompletedProvider.onLocationChange(lastLocation) }
+                locationResult?.lastLocation?.let { lastLocation ->
+                    mLocationCompletedProvider.onLocationChange(
+                        lastLocation
+                    )
+                }
             }
         }
     }
