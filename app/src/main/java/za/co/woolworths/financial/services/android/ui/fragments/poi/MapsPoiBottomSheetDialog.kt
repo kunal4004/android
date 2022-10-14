@@ -7,20 +7,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
-import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.poi_map_bottom_sheet_dialog.*
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
-import za.co.woolworths.financial.services.android.util.Constant
 
 
-class MapsPoiBottomSheetDialog : WBottomSheetDialogFragment(),
+class MapsPoiBottomSheetDialog(private val clickListner: ClickListner) :
+    WBottomSheetDialogFragment(),
     View.OnClickListener {
+
+    interface ClickListner {
+        fun onConfirmClick(StreetName: String)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
 
         return inflater.inflate(
@@ -44,7 +46,7 @@ class MapsPoiBottomSheetDialog : WBottomSheetDialogFragment(),
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (streetNameEditText.text.toString().length> 4) {
+                if (streetNameEditText.text.toString().length > 4) {
                     context?.let {
                         confirmButton?.isEnabled = true
                         confirmButton?.setBackgroundColor(ContextCompat.getColor(it, R.color.black))
@@ -65,8 +67,6 @@ class MapsPoiBottomSheetDialog : WBottomSheetDialogFragment(),
 
             override fun afterTextChanged(s: Editable?) {
             }
-
-
         })
     }
 
@@ -76,11 +76,7 @@ class MapsPoiBottomSheetDialog : WBottomSheetDialogFragment(),
             R.id.confirmButton -> {
                 val street: String? = streetNameEditText?.text?.toString()
                 if (!street.isNullOrEmpty()) {
-                    setFragmentResult(
-                        Constant.STREET_NAME_FROM_POI, bundleOf(
-                            Constant.STREET_NAME to street
-                        )
-                    )
+                    clickListner.onConfirmClick(street)
                 }
                 dismiss()
             }

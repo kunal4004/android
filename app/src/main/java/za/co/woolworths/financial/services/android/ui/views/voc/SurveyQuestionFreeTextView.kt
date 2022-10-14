@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.views.voc
 
+import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,6 +17,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -29,6 +31,7 @@ import za.co.woolworths.financial.services.android.ui.compose.MyriadProFontFamil
 @Preview
 @Composable
 fun SurveyQuestionFreeTextView(
+    context: Context? = null,
     title: String? = "Lorem ipsum sit dolor",
     initialText: String? = "",
     @StringRes placeholder: Int = R.string.voc_question_freetext_hint_optional,
@@ -36,12 +39,14 @@ fun SurveyQuestionFreeTextView(
 ) {
     Column (
         modifier = Modifier
+            .testTag(context?.getString(R.string.voc_question_freetext) ?: "")
             .fillMaxWidth()
             .background(Color.White)
             .padding(24.dp)
     ) {
         var textState = rememberSaveable { mutableStateOf(initialText ?: "") }
         Text(
+            modifier = Modifier.testTag(context?.getString(R.string.voc_question_freetext_title) ?: ""),
             text = title ?: "",
             fontSize = 20.sp,
             fontFamily = FuturaFontFamily,
@@ -51,6 +56,7 @@ fun SurveyQuestionFreeTextView(
         )
         BasicTextField(
             modifier = Modifier
+                .testTag(context?.getString(R.string.voc_question_freetext_input) ?: "")
                 .fillMaxWidth()
                 .padding(
                     top = 19.dp
