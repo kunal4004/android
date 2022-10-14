@@ -1,0 +1,413 @@
+{
+    "content": [
+        {
+            "order": 0,
+            "title": "Financial Services",
+            "children": [
+                {
+                    "order": 0,
+                    "title": "General Enquiries",
+                    "description": "Store Card, Credit Card & Personal Loan",
+                    "children": [
+                        {
+                            "order": 0,
+                            "title": "Email Us",
+                            "children": [
+                                {
+                                    "order": 0,
+                                    "type": "ACTION_EMAIL_INAPP",
+                                    "title": "Send Us An Enquiry",
+                                    "children": [
+                                        {
+                                            "order": 0,
+                                            "reference": "ENQUIRY_BLACK_CREDIT_CARD_QUERY_EMAIL",
+                                            "title": "Black Credit Card query"
+                                        },
+                                        {
+                                            "order": 1,
+                                            "reference": "ENQUIRY_BLACK_CREDIT_CARD_QUERY_EMAIL",
+                                            "title": "Black Credit Card query"
+                                        },
+                                        {
+                                            "order": 2,
+                                            "reference": "ENQUIRY_COMPLAINT_EMAIL",
+                                            "title": "Complaint"
+                                        },
+                                        {
+                                            "order": 3,
+                                            "reference": "ENQUIRY_CREDIT_CARD_QUERY_EMAIL",
+                                            "title": "Credit Card query"
+                                        },
+                                        {
+                                            "order": 4,
+                                            "reference": "ENQUIRY_WREWARDS_QUERY_EMAIL",
+                                            "title": "WRewards query"
+                                        },
+                                        {
+                                            "order": 5,
+                                            "reference": "ENQUIRY_INSURANCE_CLAIM_EMAIL",
+                                            "title": "Insurance claim"
+                                        },
+                                        {
+                                            "order": 6,
+                                            "reference": "ENQUIRY_PAYMENT_QUERY_EMAIL",
+                                            "title": "Payment query"
+                                        },
+                                        {
+                                            "order": 7,
+                                            "reference": "ENQUIRY_STORE_CARD_PERSONAL_LOAN_QUERY_EMAIL",
+                                            "title": "Store Card & Personal Loan query"
+                                        },
+                                        {
+                                            "order": 8,
+                                            "reference": "ENQUIRY_PROOF_OF_INCOME_EMAIL",
+                                            "title": "Proof of income"
+                                        },
+                                        {
+                                            "order": 9,
+                                            "reference": "ENQUIRY_TECHNICAL_EMAIL",
+                                            "title": "Technical"
+                                        },
+                                        {
+                                            "order": 10,
+                                            "reference": "ENQUIRY_OTHER_EMAIL",
+                                            "title": "Other"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "order": 1,
+                            "title": "Call Us",
+                            "description": "Call centre operating hours:\nDaily 7:30am - 6pm",
+                            "children": [
+                                {
+                                    "order": 0,
+                                    "type": "ACTION_CALL",
+                                    "title": "Local Caller",
+                                    "description": "0861 50 20 20"
+                                },
+                                {
+                                    "order": 1,
+                                    "type": "ACTION_CALL",
+                                    "title": "International Caller",
+                                    "description": "+27 21 411 5000"
+                                }
+                            ]
+                        },
+                        {
+                            "order": 2,
+                            "title": "Chat With Us",
+                            "children": [
+                                {
+                                    "order": 0,
+                                    "type": "ACTION_WHATSAPP_FS",
+                                    "title": "Open Whatsapp Chat"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "order": 1,
+            "title": "Customer Services",
+            "children": [
+                {
+                    "order": 0,
+                    "title": "General Enquiries",
+                    "description": "Products and instore",
+                    "children": [
+                        {
+                            "order": 0,
+                            "title": "Email Us",
+                            "children": [
+                                {
+                                    "order": 0,
+                                    "type": "ACTION_EMAIL_INAPP",
+                                    "title": "Send Us An Enquiry",
+                                    "children": [
+                                        {
+                                            "order": 0,
+                                            "reference": "ENQUIRY_PRODUCT_QUERY_EMAIL",
+                                            "title": "Product Query"
+                                        },
+                                        {
+                                            "order": 1,
+                                            "reference": "ENQUIRY_STORE_QUERY_EMAIL",
+                                            "title": "Store Query"
+                                        },
+                                        {
+                                            "order": 2,
+                                            "reference": "ENQUIRY_CS_COMPLAINT_EMAIL",
+                                            "title": "Complaint"
+                                        },
+                                        {
+                                            "order": 3,
+                                            "reference": "ENQUIRY_CS_TECHNICAL_EMAIL",
+                                            "title": "Technical problem"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "order": 1,
+                            "title": "Call Us",
+                            "description": "Call centre operating hours:\nMonday - Friday: 8am – 5:30pm\nSaturday: 8am – 5pm\nSunday: 9am – 1pm\nPublic Holidays: 9am - 1pm\nChristmas and New Year’s Day: Closed",
+                            "children": [
+                                {
+                                    "order": 0,
+                                    "type": "ACTION_CALL",
+                                    "title": "Local Caller",
+                                    "description": "0860 022 002"
+                                },
+                                {
+                                    "order": 1,
+                                    "type": "ACTION_CALL",
+                                    "title": "International Caller",
+                                    "description": "+27 21 407 7002"
+                                },
+                                {
+                                    "order": 2,
+                                    "type": "ACTION_FAX",
+                                    "title": "Fax",
+                                    "description": "(021) 407 3995"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "order": 1,
+                    "title": "Woolworths Online",
+                    "description": "Website and App shopping",
+                    "children": [
+                        {
+                            "order": 0,
+                            "title": "Email Us",
+                            "children": [
+                                {
+                                    "order": 0,
+                                    "type": "ACTION_EMAIL_INAPP",
+                                    "title": "Send Us An Enquiry",
+                                    "children": [
+                                        {
+                                            "order": 0,
+                                            "reference": "ENQUIRY_SHOP_LOGIN_EMAIL",
+                                            "title": "Online Shop Registration / Login"
+                                        },
+                                        {
+                                            "order": 1,
+                                            "reference": "ENQUIRY_SHOP_DELIVERY_EMAIL",
+                                            "title": "Delivery Queries"
+                                        },
+                                        {
+                                            "order": 2,
+                                            "reference": "ENQUIRY_SHOP_TECHNICAL_PROBLEM_EMAIL",
+                                            "title": "Technical Problem"
+                                        },
+                                        {
+                                            "order": 3,
+                                            "reference": "ENQUIRY_SHOP_ORDER_QUERY_EMAIL",
+                                            "title": "Order Queries"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "order": 1,
+                            "title": "Call Us",
+                            "description": "Call centre operating hours:\nMonday – Friday: 8am – 7:30pm\nSaturday: 8am – 5pm\nSunday: 8am – 2pm\nPublic Holidays: 8am – 5pm\nChristmas and New Year’s Day: Closed",
+                            "children": [
+                                {
+                                    "order": 0,
+                                    "type": "ACTION_CALL",
+                                    "title": "Local Caller",
+                                    "description": "0860 100 987"
+                                },
+                                {
+                                    "order": 1,
+                                    "type": "ACTION_CALL",
+                                    "title": "International Caller",
+                                    "description": "+27 21 407 6137"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "order": 2,
+                    "title": "Dash Services",
+                    "description": "General enquiries, Orders, Deliveries",
+                    "children": [
+                        {
+                            "order": 0,
+                            "title": "Email Us",
+                            "children": [
+                                {
+                                    "order": 0,
+                                    "type": "ACTION_EMAIL_INAPP",
+                                    "title": "Send Us An Enquiry",
+                                    "children": [
+                                        {
+                                            "order": 0,
+                                            "reference": "ENQUIRY_DASH_LOGIN_EMAIL",
+                                            "title": "Online Shop Registration / Login"
+                                        },
+                                        {
+                                            "order": 1,
+                                            "reference": "ENQUIRY_DASH_DELIVERY_EMAIL",
+                                            "title": "Delivery Queries"
+                                        },
+                                        {
+                                            "order": 2,
+                                            "reference": "ENQUIRY_DASH_ORDER_QUERY_EMAIL",
+                                            "title": "Order Queries"
+                                        },
+                                        {
+                                            "order": 3,
+                                            "reference": "ENQUIRY_DASH_TECHNICAL_PROBLEM_EMAIL",
+                                            "title": "Technical Problem"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "order": 1,
+                            "title": "Call Us",
+                            "description": "Call centre operating hours:\nMonday - Friday: 8am - 7:30pm\nSaturday: 8am - 5pm\nSunday: 8am - 2pm\nPublic Holidays: 8am - 5pm\nChristmas and New Year’s Day: Closed",
+                            "children": [
+                                {
+                                    "order": 0,
+                                    "type": "ACTION_CALL",
+                                    "title": "Call Our Call Center",
+                                    "description": "+27 87 210 0305"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "order": 3,
+                    "title": "WRewards",
+                    "children": [
+                        {
+                            "order": 0,
+                            "title": "Email Us",
+                            "children": [
+                                {
+                                    "order": 0,
+                                    "type": "ACTION_EMAIL_INAPP",
+                                    "title": "Send Us An Enquiry",
+                                    "children": [
+                                        {
+                                            "order": 0,
+                                            "reference": "ENQUIRY_REWARDS_CARD_EMAIL",
+                                            "title": "WRewards Card"
+                                        },
+                                        {
+                                            "order": 1,
+                                            "reference": "ENQUIRY_REWARDS_GENERAL_EMAIL",
+                                            "title": "General Enquiries"
+                                        },
+                                        {
+                                            "order": 2,
+                                            "reference": "ENQUIRY_REWARDS_COMPLAINTS_EMAIL",
+                                            "title": "Complaints"
+                                        },
+                                        {
+                                            "order": 3,
+                                            "reference": "ENQUIRY_REWARDS_LITTTLEWORD_EMAIL",
+                                            "title": "Littleworld"
+                                        },
+                                        {
+                                            "order": 4,
+                                            "reference": "ENQUIRY_REWARDS_VOUCHERS_EMAIL",
+                                            "title": "WRewards Loyalty Vouchers"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "order": 1,
+                            "title": "Call Us",
+                            "description": "Call centre operating hours:\nMonday – Friday: 8am – 5:30pm\nSaturday: 8am – 5pm\nSunday: 9am – 1pm\nPublic Holidays: 9am – 1pm\nChristmas and New Year’s Day: Closed",
+                            "children": [
+                                {
+                                    "order": 0,
+                                    "type": "ACTION_CALL",
+                                    "title": "Local Caller",
+                                    "description": "0861 502 050"
+                                },
+                                {
+                                    "order": 0,
+                                    "type": "ACTION_CALL",
+                                    "title": "International Caller",
+                                    "description": "+27 21 407 7003"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "order": 4,
+                    "title": "My School Enquiries",
+                    "children": [
+                        {
+                            "order": 0,
+                            "title": "Email Us",
+                            "children": [
+                                {
+                                    "order": 0,
+                                    "type": "ACTION_EMAIL_INAPP",
+                                    "title": "Send Us An Enquiry",
+                                    "children": [
+                                        {
+                                            "order": 0,
+                                            "reference": "ENQUIRY_MYSCHOOL_CARD_EMAIL",
+                                            "title": "MySchool Card"
+                                        },
+                                        {
+                                            "order": 1,
+                                            "reference": "ENQUIRY_MYSCHOOL_GENERAL_QUERY_EMAIL",
+                                            "title": "General Enquiry"
+                                        },
+                                        {
+                                            "order": 2,
+                                            "reference": "ENQUIRY_MYSCHOOL_COMPLAINTS_EMAIL",
+                                            "title": "Complaints"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "order": 1,
+                            "title": "Call Us",
+                            "description": "Call centre operating hours:\nMonday - Friday: 8am - 5pm\nNo Weekends\nNo Public Holidays",
+                            "children": [
+                                {
+                                    "order": 0,
+                                    "type": "ACTION_CALL",
+                                    "title": "Local Caller",
+                                    "description": "0860 100 445"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "response": {
+        "code": "-1",
+        "desc": "Success"
+    },
+    "httpCode": 200
+}

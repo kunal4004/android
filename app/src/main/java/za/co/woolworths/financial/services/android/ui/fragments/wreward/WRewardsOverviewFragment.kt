@@ -236,7 +236,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
             mSetLeftIn = AnimatorInflater.loadAnimator(this, R.animator.card_flip_in) as? AnimatorSet
 
             mSetLeftIn?.addListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                     super.onAnimationEnd(animation)
                     showVIPLogo()
                 }

@@ -8,6 +8,7 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountSalesBulletItemBinding
 import com.awfs.coordination.databinding.AccountSalesCardBenefitsItemBinding
 import za.co.woolworths.financial.services.android.models.dto.account.applynow.ApplyNowSectionType
+import za.co.woolworths.financial.services.android.models.dto.account.applynow.ApplyNowSectionType.*
 import za.co.woolworths.financial.services.android.models.dto.account.applynow.ChildrenItems
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.utils.loadSvg
 
@@ -43,6 +44,7 @@ class ApplyNowChildrensAdapter(var type: ApplyNowSectionType, var data: List<Chi
         when (type) {
             ApplyNowSectionType.LEFT_ICON_WITH_CONTENT -> {holder.bindLeftIconContent(data[position])}
             ApplyNowSectionType.LIST_UNORDERED -> {holder.bindListUnordered(data[position])}
+            LEFT_ICON_WITH_CONTENT_EXPANDABLE -> {}
         }
     }
 

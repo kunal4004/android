@@ -5,6 +5,7 @@ import retrofit2.http.*
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlanResponse
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
+import za.co.woolworths.financial.services.android.models.dto.account.applynow.ApplyNowModel
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.UnblockStoreCardRequestBody
@@ -114,5 +115,20 @@ interface WfsApiService {
         @Path("emailId") emailId: String,
         @Body body: Any
     ): Response<BlockMyCardResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:86400")
+    @GET("/wfs/app/v4/mobileconfigs/content")
+    suspend fun<Model> queryServiceMobileConfigsContent(
+        @Query("contentId") contentId: String
+    ): Response<Model>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:86400")
+    @GET("/wfs/app/v4/mobileconfigs/content")
+    suspend fun applyNowService(
+        @Query("contentId") contentId: String
+    ): Response<ApplyNowModel>
+
+    @GET("wfs/app/v4/user/creditCardToken")
+    suspend fun getCreditCardToken(): Response<CreditCardTokenResponse>
 
 }
