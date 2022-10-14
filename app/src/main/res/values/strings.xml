@@ -2722,6 +2722,7 @@
     <string name="enter_street_name">Please enter a street name for this location:</string>
     <string name="your_shopper_is_trying_to">Your shopper is trying to \ncontact you.</string>
 
-    <string name="liquor_dialog_description_text">Choose from one of our \nqualifying locations to \npurchase liquor on the app.</string>
+    <string name="liquor_dialog_description_text">WCellar Liquor is available for delivery and \ncollection in selected areas in Gauteng and \nthe Western Cape.</string>
+    <string name="edit_address_button">EDIT ADDRESS</string>
 
 </resources>

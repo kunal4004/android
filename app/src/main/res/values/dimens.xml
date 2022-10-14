@@ -244,5 +244,6 @@
     <dimen name="nine_sp">9sp</dimen>
     <dimen name="hundred_and_thirty_six_dp">136dp</dimen>
     <dimen name="fourty_three_dp">43dp</dimen>
+    <dimen name="three_sp">3sp</dimen>
 </resources>
 
