@@ -75,6 +75,10 @@ class ShopViewModel @Inject constructor(
     private val _lastDashOrder = MutableLiveData<Event<Resource<LastOrderDetailsResponse>>>()
     val lastDashOrder: LiveData<Event<Resource<LastOrderDetailsResponse>>> = _lastDashOrder
 
+    private val _lastDashOrderInProgress = MutableLiveData(false)
+    val lastDashOrderInProgress: LiveData<Boolean>
+        get() = _lastDashOrderInProgress
+
     fun getDashLandingDetails() {
         _dashLandingDetails.value = Event(Resource.loading(null))
         viewModelScope.launch {
@@ -157,9 +161,11 @@ class ShopViewModel @Inject constructor(
 
     fun getLastDashOrderDetails() {
         _lastDashOrder.value = Event(Resource.loading(null))
+        _lastDashOrderInProgress.value = true
         viewModelScope.launch {
             val response = shopRepository.fetchLastDashOrderDetails()
             _lastDashOrder.value = Event(response)
+            _lastDashOrderInProgress.value = false
         }
     }
 

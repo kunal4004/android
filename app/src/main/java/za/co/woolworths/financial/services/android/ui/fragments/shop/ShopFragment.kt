@@ -161,7 +161,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             bindString(R.string.dash_delivery)
         )
 
-        if (shopViewModel.lastDashOrder.value == null && SessionUtilities.getInstance().isUserAuthenticated) {
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
             shopViewModel.getLastDashOrderDetails()
         }
     }
@@ -223,8 +223,14 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         tabs_main?.setupWithViewPager(viewpager_main)
         updateTabIconUI(STANDARD_TAB.index)
         showShopFeatureWalkThrough()
-        shopViewModel.lastDashOrder.value?.peekContent()?.data?.let {
-            addInappNotificationToast(it)
+        addObserverInAppNotificationToast()
+    }
+
+    private fun addObserverInAppNotificationToast() {
+        shopViewModel.lastDashOrder.observe(viewLifecycleOwner) {
+            it.peekContent()?.data?.apply {
+                addInappNotificationToast(this)
+            }
         }
     }
 
@@ -424,11 +430,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         super.onResume()
 
         //verify if the show dash order is true
-        shopViewModel.lastDashOrder.value?.peekContent()?.data?.apply {
-            if (showDashOrder && SessionUtilities.getInstance().isUserAuthenticated) {
-                shopViewModel.getLastDashOrderDetails()
-            }
-        }
+        refreshInAppNotificationToast()
 
         if ((KotlinUtils.isLocationSame == false && KotlinUtils.placeId != null) || WoolworthsApplication.getValidatePlaceDetails() == null) {
             executeValidateSuburb()
@@ -446,6 +448,17 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
         }
         setDeliveryView()
+    }
+
+    private fun refreshInAppNotificationToast() {
+        shopViewModel.lastDashOrder.value?.peekContent()?.data?.apply {
+            if (showDashOrder
+                && SessionUtilities.getInstance().isUserAuthenticated
+                && shopViewModel.lastDashOrderInProgress.value == false
+            ) {
+                shopViewModel.getLastDashOrderDetails()
+            }
+        }
     }
 
     private fun updateCurrentTab(deliveryType: String?) {
@@ -612,6 +625,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     hideToolbar()
                 }, AppConstant.DELAY_1000_MS)
             }
+            refreshInAppNotificationToast()
         } else {
             if (blackToolTipLayout?.isVisible == true) {
                 timer?.cancel()
@@ -677,6 +691,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             ) as? DashDeliveryAddressFragment
             fragment?.onActivityResult(requestCode, resultCode, data)
             refreshViewPagerFragment()
+            // Update Toast if logged in with another user
+            // Use Case: If first user does not have any order, Second user should update Last order details
+            shopViewModel.getLastDashOrderDetails()
         }
 
         if (requestCode == PDP_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
