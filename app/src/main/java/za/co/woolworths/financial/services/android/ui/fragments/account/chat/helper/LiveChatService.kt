@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import android.os.Build
 import androidx.lifecycle.LifecycleService
 import com.amplifyframework.AmplifyException
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -25,9 +26,12 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.req
 import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.ReceiverManager
-import java.lang.IllegalArgumentException
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class LiveChatService : LifecycleService() {
+
+    @Inject lateinit var connectivityLiveData: ConnectivityLiveData
 
     private var receiverManager: ReceiverManager? = null
     private val liveChatDBRepository = LiveChatDBRepository()
@@ -68,7 +72,7 @@ class LiveChatService : LifecycleService() {
     }
 
     private fun connectionDetector() {
-        ConnectivityLiveData.observe(this, { isConnected ->
+        connectivityLiveData.observe(this) { isConnected ->
             when (isConnected
                     && ChatAWSAmplify.isLiveChatBackgroundServiceRunning
                     && WoolworthsApplication.getInstance().currentActivity != null
@@ -93,7 +97,7 @@ class LiveChatService : LifecycleService() {
                     isConnectedToNetwork = false
                 }
             }
-        })
+        }
     }
 
     private fun startLiveChat() {

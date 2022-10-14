@@ -105,16 +105,6 @@
             android:layout_below="@+id/sortAndRefineLayout"
             android:visibility="gone" />
 
-
-      <!--  <include
-            android:id="@+id/vtoTryItOnBanner"
-            layout="@layout/try_it_on_banner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/promotionalTextBanner"
-            android:visibility="gone" />
--->
-
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"

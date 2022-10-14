@@ -8,7 +8,7 @@
     android:background="@drawable/card_header_background">
 
     <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/myCardTextViewShimmerFrameLayout"
+        android:id="@+id/myCardTextViewShimmerFrameLt"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="@+id/startGuide"
@@ -143,7 +143,7 @@
         android:transitionName="accountCardImageViewTransition"
         app:layout_constraintEnd_toStartOf="@+id/imageGuideLineEnd"
         app:layout_constraintStart_toStartOf="@+id/imageGuideLine"
-        app:layout_constraintTop_toBottomOf="@+id/myCardTextViewShimmerFrameLayout">
+        app:layout_constraintTop_toBottomOf="@+id/myCardTextViewShimmerFrameLt">
 
         <ImageView
             android:id="@+id/cardDetailImageView"

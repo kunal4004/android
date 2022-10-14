@@ -144,5 +144,8 @@
     <string name="cliItemContainer">cliItemContainer</string>
     <string name="labelCreditLimitIncreaseStatusDescription">labelCreditLimitIncreaseStatusDescription</string>
     <string name="applicationBeingProcessedImage">applicationBeingProcessedImage</string>
+    <string name="manageCardDotIndicator1">manageCardDotIndicator</string>
+    <string name="manageCardDotIndicator2">manageCardDotIndicator2</string>
+
 
 </resources>

@@ -51,7 +51,6 @@ class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.On
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         state =
             arguments?.getSerializable(ViewTreatmentPlanDialogFragment.APPLY_NOW_STATE) as? ApplyNowState
         eligibilityPlan =
@@ -61,9 +60,7 @@ class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.On
         mTreatmentPlanImpl = ViewTreatmentPlanImpl(
             eligibilityPlan = eligibilityPlan,
             account = presenter?.getAccount(),
-            applyNowState = state,
-            context = requireContext()
-        )
+            applyNowState = state)
 
         val titleDesc = mTreatmentPlanImpl.getTitleAndDescription()
         accountInArrearsTitleTextView?.text = bindString(titleDesc.first)
