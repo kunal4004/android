@@ -2,11 +2,13 @@ package za.co.woolworths.financial.services.android.models.dto;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Created by W7099877 on 2018/03/19.
  */
 
-public class CommerceItemInfo {
+public class CommerceItemInfo implements Serializable {
 	public int quantity;
 	public String productId;
 	public String internalImageURL;

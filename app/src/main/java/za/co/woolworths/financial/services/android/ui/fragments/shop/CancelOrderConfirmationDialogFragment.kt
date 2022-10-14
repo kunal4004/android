@@ -24,7 +24,9 @@ class CancelOrderConfirmationDialogFragment : WBottomSheetDialogFragment() {
     }
 
     companion object {
-        fun newInstance(isNavigatedFromMyAccountFlag: Boolean) = CancelOrderConfirmationDialogFragment().withArgs {
+        fun newInstance(
+            isNavigatedFromMyAccountFlag: Boolean
+        ) = CancelOrderConfirmationDialogFragment().withArgs {
             putBoolean(AppConstant.NAVIGATED_FROM_MY_ACCOUNTS, isNavigatedFromMyAccountFlag)
         }
     }
