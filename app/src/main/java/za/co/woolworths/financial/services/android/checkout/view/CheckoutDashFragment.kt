@@ -13,6 +13,7 @@ import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -28,9 +29,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerFrameLayout
+import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
-import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.loadingBar
+import kotlinx.android.synthetic.main.fragment_cart.*
 import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.*
+import kotlinx.android.synthetic.main.fragment_checkout_returning_user_dash.*
+import kotlinx.android.synthetic.main.fragment_checkout_returning_user_dash.ageConfirmationLayout
+import kotlinx.android.synthetic.main.fragment_checkout_returning_user_dash.checkoutCollectingFromLayout
+import kotlinx.android.synthetic.main.fragment_checkout_returning_user_dash.checkoutCollectingTimeDetailsLayout
+import kotlinx.android.synthetic.main.fragment_checkout_returning_user_dash.continuePaymentTxtShimmerFrameLayout
+import kotlinx.android.synthetic.main.fragment_checkout_returning_user_dash.loadingBar
+import kotlinx.android.synthetic.main.fragment_checkout_returning_user_dash.txtContinueToPayment
 import kotlinx.android.synthetic.main.layout_collection_time_details.*
 import kotlinx.android.synthetic.main.layout_collection_time_details.view.*
 import kotlinx.android.synthetic.main.layout_delivering_to_details.*
@@ -57,9 +66,12 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.Shoppin
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.DELIVERY_DATE
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.ORDER_TOTAL_VALUE
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
@@ -72,6 +84,7 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.removeRandFromAmount
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
@@ -81,6 +94,7 @@ class CheckoutDashFragment : Fragment(),
     ShoppingBagsRadioGroupAdapter.EventListner, View.OnClickListener, CollectionTimeSlotsListener,
     CustomDriverTipBottomSheetDialog.ClickListner, CompoundButton.OnCheckedChangeListener {
 
+    private var orderTotalValue: Double= -1.0
     private var suburbId: String = ""
     private var placesId: String? = ""
     private var storeId: String? = ""
@@ -98,12 +112,14 @@ class CheckoutDashFragment : Fragment(),
     private var shimmerComponentArray: List<Pair<ShimmerFrameLayout, View>> = ArrayList()
     private var navController: NavController? = null
     private var driverTipOptionsList: ArrayList<String>? = null
-    private var selectedDriverTipValue: String? = null
+    private var selectedDriverTipValue: String = "R10"
     private var driverTipTextView: View? = null
     private var mainView: View? = null
 
     private var liquorImageUrl: String? = ""
     private var liquorOrder: Boolean? = false
+    private var cartItemList: ArrayList<CommerceItem>? = null
+
 
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -124,7 +140,8 @@ class CheckoutDashFragment : Fragment(),
     }
 
     companion object {
-        const val REQUEST_KEY_SELECTED_COLLECTION_DATE: String = "SELECTED_COLLECTION_DATE"
+        private const val REQUEST_KEY_SELECTED_COLLECTION_DATE: String = "SELECTED_COLLECTION_DATE"
+        private const val DEFAULT_AMOUNT: String = "0.0"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -211,6 +228,8 @@ class CheckoutDashFragment : Fragment(),
                         radioBtnAgeConfirmation?.isChecked = true
                     }
                 }
+            } else  if (containsKey(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST)) {
+                cartItemList = getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as ArrayList<CommerceItem>?
             } else {
                 ageConfirmationLayout?.visibility = GONE
                 liquorComplianceBannerLayout?.visibility = GONE
@@ -438,6 +457,14 @@ class CheckoutDashFragment : Fragment(),
                                         )
                                     }
                                 }
+
+                                if(response.orderSummary?.hasMinimumBasketAmount == false) {
+                                    KotlinUtils.showMinCartValueError(
+                                        requireActivity() as AppCompatActivity,
+                                        response.orderSummary?.minimumBasketAmount
+                                    )
+                                }
+
                                 initializeFoodSubstitution()
                                 initializeOrderSummary(response.orderSummary)
                                 response.sortedJoinDeliverySlots?.apply {
@@ -445,8 +472,8 @@ class CheckoutDashFragment : Fragment(),
                                     initializeDatesAndTimeSlots(firstAvailableDateSlot)
                                     // Set default time slot selected
                                     var selectedSlotIndex = 0
-                                    if (firstAvailableDateSlot != null) {
-                                        ArrayList(firstAvailableDateSlot?.slots).forEachIndexed { index, slot ->
+                                    firstAvailableDateSlot?.slots?.let {
+                                        ArrayList(it).forEachIndexed { index, slot ->
                                             if (slot.slotId.equals(selectedTimeSlot?.slotId)) {
                                                 selectedSlotIndex = index
                                             }
@@ -598,40 +625,52 @@ class CheckoutDashFragment : Fragment(),
                 val titleTextView: TextView? = driverTipTextView?.findViewById(R.id.titleTv)
                 titleTextView?.tag = index
                 titleTextView?.text = options
-                if (!selectedDriverTipValue.isNullOrEmpty() && selectedDriverTipValue.equals(
-                        options
-                    )
-                ) {
-                    titleTextView?.background =
-                        bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
-                    titleTextView?.setTextColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.white
+
+                if (selectedDriverTipValue.isNotEmpty()) {
+                    if (selectedDriverTipValue == options) {
+                        titleTextView?.background =
+                            bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
+                        titleTextView?.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.white
+                            )
                         )
-                    )
-                    tipNoteTextView?.visibility = View.VISIBLE
-                } else if (!selectedDriverTipValue.isNullOrEmpty() && driverTipOptionsList?.contains(
-                        selectedDriverTipValue
-                    ) == false
-                    && index == driverTipOptionsList?.size?.minus(1)
-                ) {
-                    /*this is for custom driver tip*/
-                    titleTextView?.background =
-                        bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
-                    titleTextView?.setTextColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.white
+                        tipNoteTextView?.visibility = View.VISIBLE
+                    } else if (
+                        removeRandFromAmount(selectedDriverTipValue ?: DEFAULT_AMOUNT).toDouble() != 0.0
+                        && driverTipOptionsList?.contains(selectedDriverTipValue) == false
+                        && index == driverTipOptionsList?.size?.minus(1)
+                    ) {
+                        /*this is for custom driver tip*/
+                        titleTextView?.background =
+                            bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
+                        titleTextView?.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.white
+                            )
                         )
-                    )
-                    tipNoteTextView?.visibility = View.VISIBLE
-                    titleTextView?.text = selectedDriverTipValue
+                        tipNoteTextView?.visibility = View.VISIBLE
+                        titleTextView?.text = "R${removeRandFromAmount(selectedDriverTipValue ?: DEFAULT_AMOUNT).toDouble()}"
+                        val image = AppCompatResources.getDrawable(
+                            requireContext(),
+                            R.drawable.edit_icon_white
+                        )
+                        titleTextView?.setCompoundDrawablesWithIntrinsicBounds(
+                            null,
+                            null,
+                            image,
+                            null
+                        )
+                        titleTextView?.compoundDrawablePadding =
+                            resources.getDimension(R.dimen.five_dp).toInt()
+                    }
                 }
                 titleTextView?.setOnClickListener {
-                    var isSameSelection =
-                        true // Because we want to change this view after the value entered from user.
-                    selectedDriverTipValue = (it as TextView).text as? String
+                    val amountString = (it as TextView).text as? String
+
+                    val isSameSelection = resetAllDriverTip(it.tag as? Int ?: 0)
 
                     if (it.tag == driverTipOptionsList?.lastIndex) {
                         val tipValue =
@@ -654,15 +693,10 @@ class CheckoutDashFragment : Fragment(),
                             requireActivity().supportFragmentManager,
                             CustomDriverTipBottomSheetDialog::class.java.simpleName
                         )
-                    } else {
-                        isSameSelection = resetAllDriverTip(it.tag as Int)
-                        if (isSameSelection) {
-                            selectedDriverTipValue = null
-                            tipNoteTextView?.visibility = GONE
-                        }
-                    }
+                    } else if (!isSameSelection) {
 
-                    if (!isSameSelection) {
+                        selectedDriverTipValue = amountString ?: "R10"
+
                         // Change background of selected Tip as it's not unselection.
                         it.background =
                             bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
@@ -670,6 +704,19 @@ class CheckoutDashFragment : Fragment(),
                             ContextCompat.getColor(
                                 requireContext(),
                                 R.color.white
+                            )
+                        )
+                        tipNoteTextView?.visibility = View.VISIBLE
+                    } else {
+                        selectedDriverTipValue = DEFAULT_AMOUNT
+
+                        // Change background of selected Tip to unselect.
+                        it.background =
+                            bindDrawable(R.drawable.checkout_delivering_title_round_button)
+                        it.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.checkout_delivering_title
                             )
                         )
                         tipNoteTextView?.visibility = View.VISIBLE
@@ -808,6 +855,9 @@ class CheckoutDashFragment : Fragment(),
         if (AppConfigSingleton.nativeCheckout?.currentShoppingBag?.isEnabled == true) {
             switchNeedBags?.visibility = View.VISIBLE
             txtNeedBags?.visibility = View.VISIBLE
+            txtNeedBags?.text = AppConfigSingleton.nativeCheckout?.currentShoppingBag?.title.plus(
+                AppConfigSingleton.nativeCheckout?.currentShoppingBag?.description
+            )
             viewHorizontalSeparator?.visibility = GONE
             newShoppingBagsLayout?.visibility = GONE
             switchNeedBags?.setOnCheckedChangeListener { _, isChecked ->
@@ -928,6 +978,7 @@ class CheckoutDashFragment : Fragment(),
 
                 txtOrderTotalValue?.text =
                     CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.total)
+                orderTotalValue = it.total
             }
         }
     }
@@ -953,21 +1004,21 @@ class CheckoutDashFragment : Fragment(),
                 )
 
                 KotlinUtils.presentEditDeliveryGeoLocationActivity(
-                        requireActivity(),
-                        CheckoutAddAddressReturningUserFragment.SLOT_SELECTION_REQUEST_CODE,
-                        KotlinUtils.getPreferredDeliveryType(),
-                        placesId,
-                        false,
-                        true,
-                        true,
-                        savedAddress,
-                        defaultAddress,
-                        "",
-                        liquorOrder?.let { liquorOrder ->
-                            liquorImageUrl?.let { liquorImageUrl ->
-                                LiquorCompliance(liquorOrder, liquorImageUrl)
-                            }
+                    requireActivity(),
+                    CheckoutAddAddressReturningUserFragment.SLOT_SELECTION_REQUEST_CODE,
+                    KotlinUtils.getPreferredDeliveryType(),
+                    placesId,
+                    false,
+                    true,
+                    true,
+                    savedAddress,
+                    defaultAddress,
+                    "",
+                    liquorOrder?.let { liquorOrder ->
+                        liquorImageUrl?.let { liquorImageUrl ->
+                            LiquorCompliance(liquorOrder, liquorImageUrl)
                         }
+                    }
                 )
                 activity?.finish()
             }
@@ -1037,7 +1088,7 @@ class CheckoutDashFragment : Fragment(),
         if (isRequiredFieldsMissing() || isAgeConfirmationLiquorCompliance()) {
             return
         }
-
+        setEventForDriverTip()
         val body = getShipmentDetailsBody()
         if (TextUtils.isEmpty(body.oddDeliverySlotId) && TextUtils.isEmpty(body.foodDeliverySlotId)
             && TextUtils.isEmpty(body.otherDeliverySlotId)
@@ -1060,6 +1111,7 @@ class CheckoutDashFragment : Fragment(),
                             )
                             return@observe
                         }
+                        setEventForShippingDetails()
                         navigateToPaymentWebpage(response)
                     }
                     is Throwable -> {
@@ -1081,6 +1133,86 @@ class CheckoutDashFragment : Fragment(),
         } else {
             Utils.fadeInFadeOutAnimation(txtContinueToPayment, true)
         }
+    }
+
+    private fun setEventForShippingDetails() {
+        if (cartItemList.isNullOrEmpty() == true) {
+            return
+        }
+        val driverTipItemParams = Bundle()
+        driverTipItemParams.putString(
+            FirebaseAnalytics.Param.CURRENCY,
+            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+        )
+
+        driverTipItemParams.putDouble(
+            ORDER_TOTAL_VALUE,
+            orderTotalValue
+        )
+
+        driverTipItemParams.putString(
+            DELIVERY_DATE,
+            confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.join
+        )
+
+        driverTipItemParams.putString(
+            FirebaseAnalytics.Param.SHIPPING_TIER,
+            FirebaseManagerAnalyticsProperties.PropertyValues.SHIPPING_TIER_VALUE_FOOD
+        )
+
+        driverTipItemParams.putString(
+            FirebaseManagerAnalyticsProperties.PropertyNames.DASH_TIP,
+            removeRandFromAmount(selectedDriverTipValue)
+        )
+
+        for (cartItem in cartItemList!!) {
+            val addShippingInfoItem = Bundle()
+            addShippingInfoItem.putString(
+                FirebaseAnalytics.Param.ITEM_ID,
+                cartItem.commerceItemInfo.productId
+            )
+
+            addShippingInfoItem.putString(
+                FirebaseAnalytics.Param.ITEM_NAME,
+                cartItem.commerceItemInfo.productDisplayName
+            )
+
+            addShippingInfoItem.putDouble(
+                FirebaseAnalytics.Param.PRICE,
+                cartItem.priceInfo.amount
+            )
+
+            addShippingInfoItem.putString(
+                FirebaseAnalytics.Param.ITEM_BRAND,
+                cartItem.commerceItemInfo?.productDisplayName
+            )
+
+            addShippingInfoItem.putInt(
+                FirebaseAnalytics.Param.QUANTITY,
+                cartItem.commerceItemInfo.quantity
+            )
+            driverTipItemParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(addShippingInfoItem))
+        }
+
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.ADD_SHIPPING_INFO, driverTipItemParams)
+    }
+
+    private fun setEventForDriverTip() {
+        if (orderTotalValue == -1.0) {
+            return
+        }
+
+        val driverTipItemParams = Bundle()
+
+        driverTipItemParams.putString(FirebaseAnalytics.Param.CURRENCY,
+            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
+
+        driverTipItemParams.putDouble(FirebaseAnalytics.Param.VALUE, orderTotalValue)
+
+        driverTipItemParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.DASH_TIP,
+            removeRandFromAmount(selectedDriverTipValue))
+
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.DASH_DRIVER_TIP, driverTipItemParams)
     }
 
     private fun presentErrorDialog(title: String, subTitle: String, errorType: Int) {
@@ -1134,14 +1266,15 @@ class CheckoutDashFragment : Fragment(),
         deliveryType = Delivery.DASH.type
         address =
             ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
-        driverTip = removeRandFromAmount(selectedDriverTipValue ?: "0.0").toDouble()
+        driverTip = removeRandFromAmount(selectedDriverTipValue ?: "R10.0").toDouble()
         if (liquorOrder == true) {
             ageConsentConfirmed = true
         }
         KotlinUtils.getUniqueDeviceID {
             pushNotificationToken = Utils.getToken()
             appInstanceId = it
-            tokenProvider = if (Utils.isGooglePlayServicesAvailable()) NotificationUtils.TOKEN_PROVIDER_FIREBASE else NotificationUtils.TOKEN_PROVIDER_HMS
+            tokenProvider =
+                if (Utils.isGooglePlayServicesAvailable()) NotificationUtils.TOKEN_PROVIDER_FIREBASE else NotificationUtils.TOKEN_PROVIDER_HMS
         }
     }
 
@@ -1150,26 +1283,6 @@ class CheckoutDashFragment : Fragment(),
         giftInstructionTxtShimmerFrameLayout.visibility = GONE
         giftInstructionSwitchShimmerFrameLayout.visibility = GONE
         edtTxtInputLayoutGiftInstructions.visibility = GONE
-    }
-
-    private fun isInstructionsMissing(): Boolean {
-        return when (switchSpecialDeliveryInstruction?.isChecked) {
-            true -> {
-                if (TextUtils.isEmpty(edtTxtSpecialDeliveryInstruction?.text.toString())) {
-                    // scroll to instructions layout
-                    checkoutReturningCollectionScrollView?.smoothScrollTo(
-                        0,
-                        layoutCollectionInstructions?.top ?: 0
-                    )
-                    /**
-                     * New requirement to have instructions optional
-                     */
-//                    true
-                    false
-                } else false
-            }
-            else -> false
-        }
     }
 
     private fun isAgeConfirmationLiquorCompliance(): Boolean {
@@ -1209,7 +1322,7 @@ class CheckoutDashFragment : Fragment(),
         val titleTextView: TextView? =
             driverTipTextView?.findViewWithTag(driverTipOptionsList?.lastIndex)
         driverTipOptionsList?.lastIndex?.let { resetAllDriverTip(it) }
-        titleTextView?.text = "R$tipValue "
+        titleTextView?.text = "R${removeRandFromAmount(tipValue ?: DEFAULT_AMOUNT).toDouble()}"
         val image = AppCompatResources.getDrawable(requireContext(), R.drawable.edit_icon_white)
         titleTextView?.setCompoundDrawablesWithIntrinsicBounds(null, null, image, null)
         titleTextView?.compoundDrawablePadding = resources.getDimension(R.dimen.five_dp).toInt()
@@ -1224,6 +1337,28 @@ class CheckoutDashFragment : Fragment(),
         )
         tipNoteTextView?.visibility = View.VISIBLE
         selectedDriverTipValue = tipValue
+    }
+
+    override fun onCancelDialog(previousTipValue: String) {
+
+        var index = driverTipOptionsList?.indexOf(selectedDriverTipValue) ?: -1
+        if(index < 0 && removeRandFromAmount(selectedDriverTipValue ?: DEFAULT_AMOUNT).toDouble() > 0.0) {
+            index = driverTipOptionsList?.lastIndex ?: -1
+        }
+        val titleTextView: TextView? = view?.findViewWithTag(index)
+        titleTextView?.apply {
+            if (index == driverTipOptionsList?.lastIndex) {
+                text = "R${removeRandFromAmount(selectedDriverTipValue ?: DEFAULT_AMOUNT).toDouble()}"
+                val image = AppCompatResources.getDrawable(requireContext(), R.drawable.edit_icon_white)
+                setCompoundDrawablesWithIntrinsicBounds(null, null, image, null)
+                compoundDrawablePadding = resources.getDimension(R.dimen.five_dp).toInt()
+            }
+            background = bindDrawable(
+                R.drawable.checkout_delivering_title_round_button_pressed
+            )
+            setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+            tipNoteTextView?.visibility = View.VISIBLE
+        }
     }
 
     override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {

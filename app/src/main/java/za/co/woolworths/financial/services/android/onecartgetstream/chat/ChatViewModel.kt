@@ -12,6 +12,8 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.observable.Disposable
 import za.co.woolworths.financial.services.android.onecartgetstream.common.ChatState
 
+
+
 class ChatViewModel : ViewModel() {
 
     private val chatClient: ChatClient by lazy { ChatClient.instance() }
@@ -147,9 +149,16 @@ class ChatViewModel : ViewModel() {
 
 
     fun disconnect() {
-        userWatchingEventsDisposable.dispose()
-        newMessageEventDisposable.dispose()
-        userTypingEvent.dispose()
+        if (::userWatchingEventsDisposable.isInitialized &&
+            ::newMessageEventDisposable.isInitialized &&
+            ::userTypingEvent.isInitialized
+
+        ) {
+            userWatchingEventsDisposable.dispose()
+            newMessageEventDisposable.dispose()
+            userTypingEvent.dispose()
+
+        }
         chatClient.disconnect()
     }
 

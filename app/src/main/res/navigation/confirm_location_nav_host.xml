@@ -62,14 +62,6 @@
         <action
             android:id="@+id/actionClickAndCollectStoresFragment"
             app:destination="@id/clickAndCollectStoresFragment" />
-
-        <action
-            android:id="@+id/action_confirmAddressMapFragment_to_poiMapBottomSheetDialog"
-            app:destination="@id/poiMapBottomSheetDialog"
-            app:enterAnim="@anim/slide_in_from_right"
-            app:exitAnim="@anim/slide_to_left"
-            app:popEnterAnim="@anim/slide_from_left"
-            app:popExitAnim="@anim/slide_to_right" />
     </fragment>
 
     <fragment

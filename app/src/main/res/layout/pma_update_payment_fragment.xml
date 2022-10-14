@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clickable="true"
     android:focusable="true">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
     <include
         android:id="@+id/incSwipeCloseIndicator"
@@ -125,10 +128,11 @@
         app:layout_constraintStart_toStartOf="@+id/pmaAmountEnteredTextView"
         app:layout_constraintTop_toBottomOf="@+id/pmaAmountEnteredTextView"
         app:layout_constraintEnd_toEndOf="@id/editAmountImageView"
+        app:layout_constraintBottom_toTopOf="@+id/manageDebitCreditCardItem"
         android:gravity="center"
         android:textSize="@dimen/_10ssp"
-        android:visibility="gone"
-        android:layout_marginTop="-50dp"/>
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:visibility="gone"/>
 
     <EditText
         android:id="@+id/cvvEditTextInput"
@@ -222,6 +226,7 @@
         android:layout_height="@dimen/eighty_five_dp"
         android:layout_marginStart="@dimen/twenty_four_dp"
         android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/_10sdp"
         app:layout_constraintBottom_toTopOf="@+id/horizontalDividerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -342,5 +347,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/amountEndGuideline"
         app:layout_constraintStart_toStartOf="@+id/amountBeginGuideline" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
