@@ -47,7 +47,7 @@ import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 @AndroidEntryPoint
 class StandardDeliveryFragment : DepartmentExtensionFragment() {
 
-    private lateinit var locator: Locator
+    private var locator: Locator? = null
     private var isRootCallInProgress: Boolean = false
     private var location: Location? = null
     private var rootCategoryCall: Call<RootCategories>? = null
@@ -90,7 +90,7 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
     }
 
     fun initView() {
-        locator = Locator(activity as AppCompatActivity)
+        locator = (activity as? AppCompatActivity)?.let { Locator(it) }
 
         isDashEnabled = AppConfigSingleton.dashConfig?.isEnabled ?: false
 
@@ -115,7 +115,7 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
     }
 
     private fun startLocationDiscoveryProcess() {
-        locator.getCurrentLocation { locationEvent ->
+        locator?.getCurrentLocation { locationEvent ->
             when (locationEvent) {
                 is Event.Location -> handleLocationEvent(locationEvent)
                 is Event.Permission -> handlePermissionEvent(locationEvent)
