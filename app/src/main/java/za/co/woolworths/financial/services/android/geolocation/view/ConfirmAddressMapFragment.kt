@@ -321,11 +321,7 @@ class ConfirmAddressMapFragment :
                         }
                     }
                 }
-            } catch (e: HttpException) {
-                FirebaseManager.logException(e)
-                binding?.progressBar?.visibility = View.GONE
-                showErrorDialog()
-            } catch (e: JsonSyntaxException) {
+            } catch (e: Exception) {
                 FirebaseManager.logException(e)
                 binding?.progressBar?.visibility = View.GONE
                 showErrorDialog()
@@ -460,7 +456,7 @@ class ConfirmAddressMapFragment :
                         }
                     }
                 }
-            } catch (e: HttpException) {
+            } catch (e: Exception) {
                 binding?.progressBar?.visibility = View.GONE
                 FirebaseManager.logException(e)
                 showErrorDialog()

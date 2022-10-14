@@ -602,7 +602,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                             }
                         }
                     }
-                } catch (e: HttpException) {
+                } catch (e: Exception) {
                     e.printStackTrace()
                     progressBar?.visibility = View.GONE
                     // navigate to shop tab with error scenario
@@ -885,7 +885,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                         }
                     }
                 }
-            } catch (e: HttpException) {
+            } catch (e: Exception) {
                 FirebaseManager.logException(e)
                 progressBar?.visibility = View.GONE
                 showErrorDialog()

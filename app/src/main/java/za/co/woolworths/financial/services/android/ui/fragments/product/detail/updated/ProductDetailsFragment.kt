@@ -134,6 +134,7 @@ import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManag
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
+import java.net.SocketTimeoutException
 import javax.inject.Inject
 import kotlin.collections.get
 import kotlin.collections.set
@@ -740,7 +741,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         }
                     }
                 }
-            } catch (e: HttpException) {
+            } catch (e: Exception) {
                 FirebaseManager.logException(e)
                 progressBar?.visibility = View.GONE
             } catch (e: JsonSyntaxException) {
@@ -786,8 +787,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         }
                     }
                 }
-            } catch (e: HttpException) {
-                e.printStackTrace()
+            } catch (e: Exception) {
+                FirebaseManager.logException(e)
                 progressBar?.visibility = View.GONE
             }
         }
