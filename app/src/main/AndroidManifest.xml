@@ -116,7 +116,6 @@
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="label,android:name"
         android:resizeableActivity="true" >
-
         <activity
             android:name="za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity"
             android:exported="false"
@@ -199,7 +198,8 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.startup.view.StartupActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/SplashTheme">
+            android:theme="@style/SplashTheme"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -238,14 +238,7 @@
             android:value="@string/maps_google_api_key" /> <!-- Huawei HMS App ID -->
         <meta-data
             android:name="com.huawei.hms.client.appid"
-            android:value="@string/huawei_app_id" /> <!-- Google Analytics -->
-        <receiver
-            android:name="com.google.android.gms.analytics.AnalyticsReceiver"
-            android:enabled="true">
-            <intent-filter>
-                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
-            </intent-filter>
-        </receiver>
+            android:value="@string/huawei_app_id" />
         <receiver
             android:name="za.co.woolworths.financial.services.android.util.SMSReceiver"
             android:exported="true">
@@ -253,6 +246,7 @@
                 <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED" />
             </intent-filter>
         </receiver>
+
         <receiver
             android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
             android:enabled="true"
@@ -263,14 +257,6 @@
         </receiver>
 
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
-
-        <receiver
-            android:name="com.google.android.gms.analytics.AnalyticsReceiver"
-            android:enabled="true">
-            <intent-filter>
-                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
-            </intent-filter>
-        </receiver>
 
         <service
             android:name="com.google.android.gms.analytics.AnalyticsService"

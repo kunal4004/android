@@ -52,6 +52,7 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 import za.co.woolworths.financial.services.android.util.pushnotification.PushNotificationManager
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
@@ -262,7 +263,6 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     fun init() {
-        //TODO:: Handle notification for Android R
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationUtils.createNotificationChannelIfNeeded(this)
         }
@@ -522,7 +522,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                 FirebaseManagerAnalyticsProperties.ScreenNames.DEVICE_SIDELOADED_AT_STARTUP
             )
         } else {
-            if (Utils.checkForBinarySu() && CommonUtils.isRooted(this) && !Util.isDebug(
+            if (Utils.checkForBinarySu() && CommonUtils.isRooted() && !Util.isDebug(
                     this.applicationContext
                 )
             ) {
@@ -566,7 +566,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     override fun onResume() {
         super.onResume()
-        NotificationUtils.clearNotifications(this)
+        NotificationUtils.clearNotifications(this@StartupActivity)
     }
 
     private fun forgotPasswordDeeplink() {
