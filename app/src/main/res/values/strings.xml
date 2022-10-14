@@ -2497,7 +2497,7 @@
     <string name="please_select_the_store_you_are_collecting_from">Please select the store you\nare collecting from.</string>
     <string name="search_by_store_or_location">Search by store or location</string>
     <string name="change">change</string>
-    <string name="near_stores">%d Strores near me.</string>
+    <string name="near_stores">%d Stores near me.</string>
     <string name="where_do_you_want_to_collect">Where do you want to collect?</string>
 
     <!--Dash-->
