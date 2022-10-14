@@ -71,7 +71,9 @@ class StoreCardNotReceivedFragment :
         with(binding) {
             binding.myCardHasArrivedTextView.paintFlags = binding.myCardHasArrivedTextView.paintFlags or Paint.UNDERLINE_TEXT_FLAG
             cardHasNotArrivedTextView.onClick { onCardHasNotArrivedTap() }
-            myCardHasArrivedTextView.onClick { dismiss() }
+            myCardHasArrivedTextView.onClick {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VTSC_CARD_RECEIVED, requireActivity())
+                dismiss() }
         }
     }
 
