@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.annotation.VisibleForTesting
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -29,6 +30,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.loadingBar
+import kotlinx.android.synthetic.main.fragment_cart.*
 import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.*
 import kotlinx.android.synthetic.main.layout_collection_time_details.*
 import kotlinx.android.synthetic.main.layout_collection_user_information.*
@@ -37,7 +39,6 @@ import kotlinx.android.synthetic.main.layout_native_checkout_age_confirmation.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_order_summary.*
-import kotlinx.android.synthetic.main.layout_native_checkout_driver_tip.*
 import kotlinx.android.synthetic.main.liquor_compliance_banner.*
 import kotlinx.android.synthetic.main.new_shopping_bags_layout.*
 import kotlinx.android.synthetic.main.where_are_we_delivering_items.view.*
@@ -315,14 +316,6 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             Pair<ShimmerFrameLayout, View>(
                 imageViewCaretForwardCollectionShimmerFrameLayout,
                 imageViewCaretForwardCollection
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                tipDashDriverTitleShimmerFrameLayout,
-                tipDashDriverTitle
-            ),
-            Pair<ShimmerFrameLayout, View>(
-                tipOptionScrollViewShimmerFrameLayout,
-                tipOptionScrollView
             )
         )
         startShimmerView()
@@ -420,6 +413,12 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                         }
                                     }
                                     collectionTimeSlotsAdapter.setSelectedItem(selectedSlotIndex)
+                                }
+                                if(response.orderSummary?.hasMinimumBasketAmount == false) {
+                                   KotlinUtils.showMinCartValueError(
+                                       requireActivity() as AppCompatActivity,
+                                       response.orderSummary?.minimumBasketAmount
+                                   )
                                 }
                             }
                             else -> {
@@ -674,6 +673,9 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         }
         if (AppConfigSingleton.nativeCheckout?.currentShoppingBag?.isEnabled == true) {
             switchNeedBags?.visibility = View.VISIBLE
+            txtNeedBags?.text = AppConfigSingleton.nativeCheckout?.currentShoppingBag?.title.plus(
+                AppConfigSingleton.nativeCheckout?.currentShoppingBag?.description
+            )
             txtNeedBags?.visibility = View.VISIBLE
             viewHorizontalSeparator?.visibility = View.GONE
             newShoppingBagsLayout?.visibility = View.GONE

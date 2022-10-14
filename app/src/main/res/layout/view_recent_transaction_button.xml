@@ -2,8 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/accountPaymentOptionsRootStyle"
-    android:paddingTop="@dimen/fifteen_dp"
-    android:paddingBottom="@dimen/fifteen_dp">
+    android:paddingTop="@dimen/_15sdp"
+    android:paddingBottom="@dimen/_15sdp">
 
     <ImageView
         android:id="@+id/viewTransactionImageView"

@@ -35,6 +35,7 @@ data class OrderSummary(
     var isChatEnabled: Boolean,
     var isDriverTrackingEnabled: Boolean,
     var shopperName: String?,
+    var shopperId: String?,
     var orderStatus: @RawValue Any,
     var taxNoteNumbers: ArrayList<String>?,
     var requestCancellation: Boolean = false,
@@ -46,5 +47,7 @@ data class OrderSummary(
     var storeDetails: StoreDetails? = null,
     var deliveryStatus: @RawValue Any? = null,
     var totalOrderCount: Double = 0.0,
-    var driverTrackingURL : String? = ""
+    var driverTrackingURL : String? = "",
+    var hasMinimumBasketAmount: Boolean = false,
+    var minimumBasketAmount: Double = 0.0
 ) : Parcelable

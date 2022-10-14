@@ -10,7 +10,7 @@ class ChatTrackFirebaseEvent {
 
     fun chatOnline(applyNowState: ApplyNowState, activityType: ActivityType?, activity: Activity) {
         val propertyName: String? = when (activityType) {
-            ActivityType.ACCOUNT_LANDING, ActivityType.PRODUCT_LANDING -> when (applyNowState) {
+            ActivityType.STORE_CARD_LANDING, ActivityType.ACCOUNT_LANDING, ActivityType.PRODUCT_LANDING -> when (applyNowState) {
                 ApplyNowState.STORE_CARD -> FirebaseManagerAnalyticsProperties.SC_MYACCOUNTS_CHAT_ONLINE
                 ApplyNowState.PERSONAL_LOAN -> FirebaseManagerAnalyticsProperties.PL_MYACCOUNTS_CHAT_ONLINE
                 ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> FirebaseManagerAnalyticsProperties.CC_MYACCOUNTS_CHAT_ONLINE
@@ -41,7 +41,7 @@ class ChatTrackFirebaseEvent {
 
     fun chatBreak(applyNowState: ApplyNowState, activityType: ActivityType?, activity: Activity) {
         val propertyName: String? = when (activityType) {
-            ActivityType.ACCOUNT_LANDING, ActivityType.PRODUCT_LANDING -> when (applyNowState) {
+            ActivityType.STORE_CARD_LANDING, ActivityType.ACCOUNT_LANDING, ActivityType.PRODUCT_LANDING -> when (applyNowState) {
                 ApplyNowState.STORE_CARD -> FirebaseManagerAnalyticsProperties.SC_MYACCOUNTS_CHAT_BREAK
                 ApplyNowState.PERSONAL_LOAN -> FirebaseManagerAnalyticsProperties.PL_MYACCOUNTS_CHAT_BREAK
                 ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> FirebaseManagerAnalyticsProperties.CC_MYACCOUNTS_CHAT_BREAK
@@ -72,7 +72,7 @@ class ChatTrackFirebaseEvent {
 
     fun chatEnd(applyNowState: ApplyNowState, activityType: ActivityType?, activity: Activity) {
         val propertyName: String? = when (activityType) {
-            ActivityType.ACCOUNT_LANDING, ActivityType.PRODUCT_LANDING -> when (applyNowState) {
+            ActivityType.STORE_CARD_LANDING, ActivityType.ACCOUNT_LANDING, ActivityType.PRODUCT_LANDING -> when (applyNowState) {
                 ApplyNowState.STORE_CARD -> FirebaseManagerAnalyticsProperties.SC_MYACCOUNTS_CHAT_END
                 ApplyNowState.PERSONAL_LOAN -> FirebaseManagerAnalyticsProperties.PL_MYACCOUNTS_CHAT_END
                 ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> FirebaseManagerAnalyticsProperties.CC_MYACCOUNTS_CHAT_END
@@ -103,7 +103,7 @@ class ChatTrackFirebaseEvent {
 
     fun chatOffline(applyNowState: ApplyNowState, activityType: ActivityType?, activity: Activity) {
         val propertyName: String? = when (activityType) {
-            ActivityType.ACCOUNT_LANDING, ActivityType.PRODUCT_LANDING -> when (applyNowState) {
+            ActivityType.STORE_CARD_LANDING, ActivityType.ACCOUNT_LANDING, ActivityType.PRODUCT_LANDING -> when (applyNowState) {
                 ApplyNowState.STORE_CARD -> FirebaseManagerAnalyticsProperties.SC_MYACCOUNTS_CHAT_OFFLINE
                 ApplyNowState.PERSONAL_LOAN -> FirebaseManagerAnalyticsProperties.PL_MYACCOUNTS_CHAT_OFFLINE
                 ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> FirebaseManagerAnalyticsProperties.CC_MYACCOUNTS_CHAT_OFFLINE

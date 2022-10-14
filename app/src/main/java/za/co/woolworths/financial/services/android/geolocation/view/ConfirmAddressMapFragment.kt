@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
@@ -17,10 +18,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.GeolocationConfirmAddressBinding
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
+import com.google.gson.JsonSyntaxException
 import com.google.maps.GeoApiContext
 import com.google.maps.GeocodingApi
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,6 +30,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
+import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter.Companion.SEARCH_LENGTH
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
 import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.ROUTE
 import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.STREET_NUMBER
@@ -43,6 +45,8 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.Confirm
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
+import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
+import za.co.woolworths.financial.services.android.ui.fragments.poi.MapsPoiBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate
 import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
@@ -52,31 +56,26 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_CONFIRM_ADD
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_ADDRESS2
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LATITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_LONGITUDE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
-import za.co.woolworths.financial.services.android.util.ConnectivityLiveData
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import za.co.woolworths.financial.services.android.util.Constant.Companion.POI
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
 import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LATITUDE
 import za.co.woolworths.financial.services.android.util.LocalConstant.Companion.DEFAULT_LONGITUDE
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-import za.co.woolworths.financial.services.android.util.Constant.Companion.POI
-import za.co.woolworths.financial.services.android.util.Constant.Companion.STREET_NAME
-import za.co.woolworths.financial.services.android.util.Constant.Companion.STREET_NAME_FROM_POI
-import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_ADDRESS2
-
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class ConfirmAddressMapFragment :
-    Fragment(), DynamicMapDelegate, VtoTryAgainListener {
+    Fragment(), DynamicMapDelegate, VtoTryAgainListener, MapsPoiBottomSheetDialog.ClickListner {
 
     private var mAddress: String? = null
     private var placeId: String? = null
     private var deliveryType: String? = null
-    private var latLng: LatLng? = null
     private var mLatitude: String? = null
     private var mLongitude: String? = null
     private var address1: String? = null
@@ -97,13 +96,16 @@ class ConfirmAddressMapFragment :
 
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
+
+    @Inject lateinit var connectivityLiveData: ConnectivityLiveData
+
     private var placeName: String? = null
     private var isMainPlaceName: Boolean? = false
     private var isStreetNumberAndRouteFromSearch: Boolean? = false
     private var _binding: GeolocationConfirmAddressBinding? = null
     private val binding get() = _binding
     private var isPoiAddress: Boolean? = false
-    private var address2:String?=""
+    private var address2: String? = ""
 
 
     override fun onCreateView(
@@ -119,9 +121,7 @@ class ConfirmAddressMapFragment :
         view: View, savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
-
         dynamicMapView?.initializeMap(savedInstanceState, this)
-        setPOIResult()
     }
 
     private fun initView() {
@@ -177,7 +177,7 @@ class ConfirmAddressMapFragment :
 
     private fun checkNetwork() {
         activity?.let {
-            ConnectivityLiveData.observe(viewLifecycleOwner) { isNetworkAvailable ->
+            connectivityLiveData.observe(viewLifecycleOwner) { isNetworkAvailable ->
                 binding?.apply {
                     if (isNetworkAvailable) {
                         dynamicMapView?.visibility = View.VISIBLE
@@ -209,8 +209,7 @@ class ConfirmAddressMapFragment :
 
     private fun clearAddressText() {
         autoCompleteTextView.setText("")
-        errorMassageDivider.visibility = View.GONE
-        errorMessage.visibility = View.GONE
+        showSearchBarHint()
     }
 
     private fun clearMapDetails() {
@@ -326,6 +325,10 @@ class ConfirmAddressMapFragment :
                 FirebaseManager.logException(e)
                 binding?.progressBar?.visibility = View.GONE
                 showErrorDialog()
+            } catch (e: JsonSyntaxException) {
+                FirebaseManager.logException(e)
+                binding?.progressBar?.visibility = View.GONE
+                showErrorDialog()
             }
         }
     }
@@ -355,7 +358,7 @@ class ConfirmAddressMapFragment :
                 putString(KEY_PLACE_ID, placeId)
                 putString(BundleKeysConstants.DELIVERY_TYPE,
                     deliveryType)
-                if(!address2.isNullOrEmpty()){
+                if (!address2.isNullOrEmpty()) {
                     putString(
                         KEY_ADDRESS2, address2
                     )
@@ -476,6 +479,13 @@ class ConfirmAddressMapFragment :
             binding?.autoCompleteTextView?.apply {
                 setAdapter(placesAdapter)
             }
+            showSearchBarHint()
+            binding?.autoCompleteTextView?.afterTextChanged {
+                if (it.length < SEARCH_LENGTH) {
+                    showSearchBarHint()
+                } else
+                    hideSearchBarHint()
+            }
             binding?.autoCompleteTextView?.onItemClickListener =
                 AdapterView.OnItemClickListener { parent, _, position, _ ->
                     val item = parent.getItemAtPosition(position) as? PlaceAutocomplete
@@ -517,17 +527,36 @@ class ConfirmAddressMapFragment :
         }
     }
 
+    private fun showSearchBarHint() {
+        errorMessage?.visibility = View.GONE
+        errorMassageDivider?.visibility = View.VISIBLE
+        searchBarTipHint?.visibility = View.VISIBLE
+    }
+
+    private fun hideSearchBarHint() {
+        searchBarTipHint?.visibility = View.GONE
+        errorMassageDivider?.visibility = View.GONE
+    }
+
     private fun showSelectedLocationError(result: Boolean?) {
         binding?.apply {
             if (result == true) {
-                if(isPoiAddress==true){
+                if (isPoiAddress == true) {
                     confirmAddress?.isEnabled = false
-                   findNavController()?.navigate(
-                        R.id.action_confirmAddressMapFragment_to_poiMapBottomSheetDialog
-                    )
-                }else{
+                    MapsPoiBottomSheetDialog(this@ConfirmAddressMapFragment).show(requireActivity().supportFragmentManager,
+                        MapsPoiBottomSheetDialog::class.java.simpleName)
+                } else {
                     errorMassageDivider?.visibility = View.VISIBLE
                     errorMessage?.visibility = View.VISIBLE
+                    errorMessage?.text = getString(R.string.geo_loc_error_msg)
+                    errorMessage?.setTextColor(ContextCompat.getColor(
+                        requireContext(),
+                        R.color.red
+                    ))
+                    errorMessage?.setBackgroundColor(ContextCompat.getColor(
+                        requireContext(),
+                        R.color.white
+                    ))
                     confirmAddress?.isEnabled = false
                 }
 
@@ -550,18 +579,18 @@ class ConfirmAddressMapFragment :
             binding?.imgMapMarker?.visibility = View.GONE
             binding?.confirmAddress?.isEnabled = false
             dynamicMapView?.moveCamera(
-                latitude =DEFAULT_LATITUDE,
-               longitude = DEFAULT_LONGITUDE,
+                latitude = DEFAULT_LATITUDE,
+                longitude = DEFAULT_LONGITUDE,
                 zoom = 5f
             )
 
         }
     }
 
-    override fun onMarkerClicked(marker: DynamicMapMarker) { }
+    override fun onMarkerClicked(marker: DynamicMapMarker) {}
 
     private fun moveMapCamera(latitude: Double?, longitude: Double?) {
-        if(latitude!=null && longitude!=null) {
+        if (latitude != null && longitude != null) {
             binding?.imgMapMarker?.visibility = View.VISIBLE
             binding?.confirmAddress?.isEnabled = true
         }
@@ -604,9 +633,9 @@ class ConfirmAddressMapFragment :
             mAddress?.let {
                 if (!isAddressFromSearch) {
                     binding?.autoCompleteTextView?.setText(getString(R.string.geo_map_address,
-                    address1,
-                    city,
-                    state))
+                        address1,
+                        city,
+                        state))
                 }
                 isAddressFromSearch = false
                 binding?.autoCompleteTextView?.dismissDropDown()
@@ -639,7 +668,7 @@ class ConfirmAddressMapFragment :
     }
 
     private fun getStreetNumberAndRoute(placeId: String?) {
-        isPoiAddress=false
+        isPoiAddress = false
         if (placeId.isNullOrEmpty() || placeId == "null") {
             showSelectedLocationError(true)
             return
@@ -671,26 +700,26 @@ class ConfirmAddressMapFragment :
                         }
                     }
                     var type: String? = ""
-                    address2=""
-                    val placeTypes:MutableList<Place.Type>? = response.place.types
+                    address2 = ""
+                    val placeTypes: MutableList<Place.Type>? = response.place.types
                     if (!placeTypes.isNullOrEmpty()) {
                         for (placeType in placeTypes) {
-                            if(placeType.equals(Place.Type.POINT_OF_INTEREST)){
-                                isPoiAddress=true
+                            if (placeType.equals(Place.Type.POINT_OF_INTEREST)) {
+                                isPoiAddress = true
 
                             }
                         }
                     }
 
-                    if(streetNumber.isNullOrEmpty()){
-                        streetNumber=""
+                    if (streetNumber.isNullOrEmpty()) {
+                        streetNumber = ""
                     }
                     if (routeName.isNullOrEmpty()) {
                         routeName = ""
                     }
 
-                    if(isPoiAddress==true&&streetNumber.isNullOrEmpty()&&routeName.isNullOrEmpty()){
-                        type=POI
+                    if (isPoiAddress == true && streetNumber.isNullOrEmpty() && routeName.isNullOrEmpty()) {
+                        type = POI
                     }
 
 
@@ -698,13 +727,13 @@ class ConfirmAddressMapFragment :
                         if (!it.equals("$streetNumber $routeName",
                                 true) && isMainPlaceName == true
                         ) {
-                            sendAddressData(it, "$streetNumber $routeName",type)
+                            sendAddressData(it, "$streetNumber $routeName", type)
                             isMainPlaceName = false
                         } else {
-                            sendAddressData("$streetNumber $routeName",type)
+                            sendAddressData("$streetNumber $routeName", type)
                             isMainPlaceName = false
                         }
-                    } ?: sendAddressData("$streetNumber $routeName",type)
+                    } ?: sendAddressData("$streetNumber $routeName", type)
 
                     try {
                         view?.let {
@@ -738,7 +767,7 @@ class ConfirmAddressMapFragment :
         ).get(ConfirmAddressViewModel::class.java)
     }
 
-    private fun sendAddressData(placeName: String?, apiAddress1: String? = "",type:String?="") {
+    private fun sendAddressData(placeName: String?, apiAddress1: String? = "", type: String? = "") {
         val saveAddressLocationRequest = SaveAddressLocationRequest(
             "$placeName",
             city,
@@ -753,7 +782,7 @@ class ConfirmAddressMapFragment :
             apiAddress1,
             type)
         try {
-            view?.let{
+            view?.let {
                 lifecycleScope.launch {
                     confirmAddressViewModel.postSaveAddress(saveAddressLocationRequest)
                 }
@@ -797,13 +826,10 @@ class ConfirmAddressMapFragment :
         dynamicMapView?.onSaveInstanceState(outState)
     }
 
-    private fun setPOIResult() {
-        setFragmentResultListener(STREET_NAME_FROM_POI) { _, bundle ->
-            address2 = bundle?.getString(STREET_NAME)
-            address2?.let{
-                confirmAddress?.isEnabled=true
-            }
-        }
+    override fun onConfirmClick(streetName: String) {
+        address2 = streetName
+        if (!address2.isNullOrEmpty())
+            confirmAddress?.isEnabled = true
     }
 }
 

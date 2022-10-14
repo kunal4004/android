@@ -7,6 +7,7 @@ import static za.co.woolworths.financial.services.android.models.dao.ApiRequestD
 import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.DELIVERY_OPTION;
 import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.FCM_TOKEN;
 import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.IN_APP_REVIEW;
+import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.OC_CHAT_FCM_TOKEN;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.REMOVE_ALL_BADGE_COUNTER;
 import static za.co.woolworths.financial.services.android.util.RequestInAppReviewKt.requestInAppReview;
 
@@ -103,6 +104,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
+import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
@@ -879,6 +881,23 @@ public class Utils {
         return currentUserObject.shoppingDeliveryLocationHistory;
     }
 
+    public static OrderSummary[] getCachedOrdersPendingPicking() {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        return currentUserObject.myOrdersPendingPicking;
+    }
+
+    public static void setCachedOrdersPendingPicking(OrderSummary[] ordersSummary) {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        currentUserObject.myOrdersPendingPicking = ordersSummary;
+        currentUserObject.save();
+    }
+
+    public static void clearCachedOrdersPendingPicking() {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        currentUserObject.myOrdersPendingPicking = new OrderSummary[0];
+        currentUserObject.save();
+    }
+
     public static void fadeInFadeOutAnimation(final View view, final boolean editMode) {
         Animation animation;
         if (!editMode) {
@@ -1559,6 +1578,44 @@ public class Utils {
 
         return token;
     }
+
+    public static void setOCChatFCMToken(String value) {
+        try {
+            if (TextUtils.isEmpty(value)) {
+                return;
+            }
+            String firstTime = Utils.getSessionDaoValue(OC_CHAT_FCM_TOKEN);
+            if (firstTime == null) {
+                Utils.sessionDaoSave(OC_CHAT_FCM_TOKEN, value);
+            }
+        } catch (Exception ignored) {
+            FirebaseManager.Companion.logException(ignored);
+        }
+    }
+
+    public static String getOCChatFCMToken() {
+        String token = "";
+        try {
+            token = Utils.getSessionDaoValue(OC_CHAT_FCM_TOKEN);
+        } catch (Exception ignored) {
+            return null;
+        }
+
+        return token;
+    }
+
+    public static String getOCFCMToken() {
+        String token;
+        if (getOCChatFCMToken() != null && (!getOCChatFCMToken().isEmpty())) {
+            token = getOCChatFCMToken();
+        } else {
+            token = "token_not_received";
+        }
+        return token;
+    }
+
+
+
 
     public static void setInAppReviewRequested() {
         Utils.sessionDaoSave(IN_APP_REVIEW, "1");
