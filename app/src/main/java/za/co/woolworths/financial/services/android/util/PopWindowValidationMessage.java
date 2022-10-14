@@ -22,13 +22,12 @@ import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
-
 import com.awfs.coordination.R;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 
 public class PopWindowValidationMessage {
 
@@ -196,14 +195,13 @@ public class PopWindowValidationMessage {
 										mView.findViewById(R.id.nativeGoogleMapDivider).setVisibility(View.VISIBLE);
 										break;
 									default:
-										Toast.makeText(mContext, R.string.map_not_available, Toast.LENGTH_LONG).show();
 										break;
 								}
 							}
 						}
 					}
 				} catch (Exception e) {
-					Toast.makeText(mContext, R.string.map_not_available, Toast.LENGTH_LONG).show();
+					FirebaseManager.logException(e);
 				}
 				View.OnClickListener onClickListener= v -> {
 					Location location = Utils.getLastSavedLocation();
