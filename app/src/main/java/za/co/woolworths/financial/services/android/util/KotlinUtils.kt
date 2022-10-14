@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.util
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityOptions
+import android.app.Dialog
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -11,7 +12,9 @@ import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.InsetDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -20,6 +23,7 @@ import android.text.*
 import android.text.style.*
 import android.util.TypedValue
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
@@ -29,12 +33,14 @@ import android.widget.TextView
 import androidx.annotation.RawRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.Group
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import com.awfs.coordination.R
 import com.google.common.reflect.TypeToken
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.installations.FirebaseInstallations
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -87,6 +93,8 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_DASH_TAB
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
@@ -194,7 +202,7 @@ class KotlinUtils {
             }
         }
 
-        private fun AppCompatActivity.setWindowFlag(bits: Int, on: Boolean) {
+        fun AppCompatActivity.setWindowFlag(bits: Int, on: Boolean) {
             val winParams = window?.attributes
             winParams?.apply {
                 flags = if (on) {
@@ -269,6 +277,13 @@ class KotlinUtils {
             view.background = shape
         }
 
+        fun getCardHolderNameSurname(): String? {
+            val jwtDecoded = SessionUtilities.getInstance()?.jwt
+            val name = jwtDecoded?.name?.get(0)
+            val familyName = jwtDecoded?.family_name?.get(0)
+            return "$name $familyName"
+        }
+
         fun dpToPxConverter(dp: Int): Int {
             return (dp * Resources.getSystem().displayMetrics.density).toInt()
         }
@@ -301,10 +316,10 @@ class KotlinUtils {
 
 
         fun capitaliseFirstWordAndLetters(str: String): CharSequence? {
-            val value = str.toLowerCase()
+            val value = str.lowercase()
             val words = value.split(" ").toMutableList()
 
-            var output = words[0].toUpperCase() + " "
+            var output = words[0].uppercase() + " "
             words.removeAt(0)
             for (word in words) {
                 output += word.capitalize() + " "
@@ -393,11 +408,11 @@ class KotlinUtils {
             return calendar.time
         }
 
-        fun removeRandFromAmount(amount: String): String {
-            if (amount.contains("R")) {
+        fun removeRandFromAmount(amount: String?): String {
+            if (amount?.contains("R") == true) {
                 return amount.substring(1)
             }
-            return amount
+            return amount ?: "0.0"
         }
 
         fun toShipByDateFormat(date: Date?): String {
@@ -871,20 +886,28 @@ class KotlinUtils {
             }
         }
 
+        fun String.capitaliseFirstLetterInEveryWord(): String = split(" ").map { it.lowercase().replaceFirstChar { it -> it.titlecase() } }.joinToString(" ")
         fun showGeneralInfoDialog(
             fragmentManager: FragmentManager,
             description: String,
             title: String = "",
             actionText: String = "",
             infoIcon: Int = 0,
+            isFromCheckoutScreen: Boolean = false
         ) {
             val dialog =
-                GeneralInfoDialogFragment.newInstance(description, title, actionText, infoIcon)
+                GeneralInfoDialogFragment.newInstance(description, title, actionText, infoIcon, isFromCheckoutScreen)
             fragmentManager.let { fragmentTransaction ->
                 dialog.show(
                     fragmentTransaction,
                     GeneralInfoDialogFragment::class.java.simpleName
                 )
+            }
+
+            if (isFromCheckoutScreen) {
+                dialog.isCancelable = false
+            } else {
+                dialog.isCancelable = true
             }
         }
 
@@ -948,9 +971,7 @@ class KotlinUtils {
         @SuppressLint("MissingPermission")
         @JvmStatic
         fun setUserPropertiesToNull() {
-            val firebaseInstance =
-                FirebaseAnalytics.getInstance(WoolworthsApplication.getAppContext())
-            firebaseInstance?.apply {
+            AnalyticsManager.apply {
                 setUserProperty(
                     FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_OFFERING,
                     FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
@@ -1144,8 +1165,7 @@ class KotlinUtils {
             elseJob: () -> Unit,
         ) {
             if (MyAccountsFragment.verifyAppInstanceId() &&
-                (Utils.isGooglePlayServicesAvailable() ||
-                        Utils.isHuaweiMobileServicesAvailable())
+                (Utils.isGooglePlayOrHuaweiMobileServicesAvailable())
             ) {
                 doJob()
                 activity?.let {
@@ -1158,6 +1178,8 @@ class KotlinUtils {
                 elseJob()
             }
         }
+
+
 
         fun getPreferredDeliveryType(): Delivery? {
             return Delivery.getType(
@@ -1247,6 +1269,8 @@ class KotlinUtils {
             return fulFillmentStoreId
         }
 
+
+
         fun getUniqueDeviceID(result: (String?) -> Unit) {
             val deviceID = Utils.getSessionDaoValue(KEY.DEVICE_ID)
             when (deviceID.isNullOrEmpty()) {
@@ -1285,10 +1309,16 @@ class KotlinUtils {
         fun hasADayPassed(dateString: String?): Boolean {
             // when dateString = null it means it's the first time to call api
             if (dateString == null) return true
-            val from = LocalDateTime.parse(
-                dateString,
-                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
-            )
+            val from = try {
+                LocalDateTime.parse(
+                    dateString,
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
+                ) }catch (e :Exception) {
+                LocalDateTime.parse(
+                    dateString,
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+                )
+            }
             val today = LocalDateTime.now()
             var period = ChronoUnit.DAYS.between(from, today)
             return if (period >= 1) {
@@ -1390,5 +1420,65 @@ class KotlinUtils {
             }
             return event
         }
+
+         fun showMinCartValueError(activity: AppCompatActivity, minimumBasketAmount: Double?) {
+           showGeneralInfoDialog(
+                activity?.supportFragmentManager,
+                activity.getString(R.string.minspend_error_msg_desc),
+                String.format(activity.getString(R.string.minspend_error_msg_title, minimumBasketAmount)),
+                activity.getString(R.string.got_it),
+                R.drawable.ic_cart,
+                true
+            )
+        }
+
+        @JvmStatic
+        fun showQuantityLimitErrror(
+            fragmentManager: FragmentManager?,
+            title: String,
+            desc: String = "Error message",
+            context: Context?
+        ) {
+            if (context == null || fragmentManager == null || getPreferredDeliveryType() != Delivery.DASH) {
+                return
+            }
+            showGeneralInfoDialog(
+                fragmentManager = fragmentManager,
+                description = desc,
+                title = title,
+                actionText = context.getString(R.string.got_it),
+                infoIcon = R.drawable.icon_dash_delivery_scooter
+            )
+        }
     }
 }
+
+fun Group.setAlphaForGroupdViews(alpha: Float) = referencedIds.forEach {
+    rootView.findViewById<View>(it).alpha = alpha
+}
+
+fun Fragment.setDialogPadding(dialog: Dialog?) {
+    val inset = 10
+    if (dialog != null) {
+        val width = (deviceWidth() - resources.getDimension(R.dimen._48sdp)).toInt()
+        val height = ViewGroup.LayoutParams.WRAP_CONTENT
+        dialog.window?.setLayout(width, height)
+        dialog.window?.setBackgroundDrawable(
+            InsetDrawable(
+                ColorDrawable(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.transparent
+                    )
+                ), inset, inset, inset, inset
+            )
+        )
+    }
+}
+
+
+
+
+
+
+

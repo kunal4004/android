@@ -12,6 +12,7 @@ import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
 import android.widget.CompoundButton
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResultListener
@@ -71,6 +72,7 @@ import za.co.woolworths.financial.services.android.util.ImageManager.Companion.s
 import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.ShoppingCartLiveData
 import java.util.regex.Pattern
@@ -341,6 +343,9 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         }
         if (AppConfigSingleton.nativeCheckout?.currentShoppingBag?.isEnabled == true) {
             switchNeedBags.visibility = VISIBLE
+            txtNeedBags?.text = AppConfigSingleton.nativeCheckout?.currentShoppingBag?.title.plus(
+                AppConfigSingleton.nativeCheckout?.currentShoppingBag?.description
+            )
             txtNeedBags.visibility = VISIBLE
             viewHorizontalSeparator?.visibility = View.GONE
             newShoppingBagsLayout.visibility = GONE
@@ -773,6 +778,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         selectedSlotResponseOther = response
                         showDeliverySlotSelectionView()
                         initializeOrderSummary(response.orderSummary)
+
+                        if(response.orderSummary?.hasMinimumBasketAmount == false) {
+                            KotlinUtils.showMinCartValueError(requireActivity() as AppCompatActivity,
+                                response.orderSummary?.minimumBasketAmount)
+                        }
                     }
                     is Throwable -> {
                         presentErrorDialog(
@@ -1227,6 +1237,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             body.apply {
                 pushNotificationToken = Utils.getToken()
                 appInstanceId = it
+                tokenProvider = if (Utils.isGooglePlayServicesAvailable()) NotificationUtils.TOKEN_PROVIDER_FIREBASE else NotificationUtils.TOKEN_PROVIDER_HMS
             }
         }
         when {

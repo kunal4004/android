@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="huawei_app_id">none-for-google-flavor</string>
+    <string name="install_channel">PlayStore</string>
+    <string name="oc_chat_app_id">1:513058672751:android:1efcba06f24e24bb1b7d9a</string>
+    <string name="oc_chat_api_key">AIzaSyC6syO9-lBDn7dBCguRqRXJcqOG2WAUfIU</string>
+    <string name="oc_chat_app">CHAT_APP</string>
+    <string name="one_cart_chat">onecart-chat</string>
+</resources>
+

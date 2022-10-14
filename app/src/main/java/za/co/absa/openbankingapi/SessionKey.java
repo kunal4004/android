@@ -21,8 +21,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.util.FirebaseManager;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 
 public class SessionKey {
     private static final String OUTPUT_KEY_DERIVATION_ALGORITHM = "AES";

@@ -31,7 +31,8 @@ import java.net.ConnectException
 import java.util.*
 import javax.annotation.Nullable
 
-class PayMyAccountViewModel : ViewModel() {
+
+open class PayMyAccountViewModel: ViewModel() {
 
     private var mQueryServicePostPayU: Call<PayUResponse>? = null
     private var mQueryServiceDeletePaymentMethod: Call<DeleteResponse>? = null

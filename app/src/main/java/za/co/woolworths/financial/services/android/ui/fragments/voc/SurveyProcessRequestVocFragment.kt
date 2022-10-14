@@ -13,7 +13,6 @@ import android.view.View.VISIBLE
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_store_confirmation.*
 import kotlinx.android.synthetic.main.pma_process_detail_layout.*
 import kotlinx.android.synthetic.main.processing_request_failure_fragment.*
 import kotlinx.android.synthetic.main.processing_request_failure_fragment.processRequestTitleTextView
@@ -31,6 +30,7 @@ import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCust
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.ProcessYourRequestFragment
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnClickListener {

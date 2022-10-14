@@ -14,8 +14,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.google.gson.JsonSyntaxException
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_click_and_collect_stores.*
+import kotlinx.android.synthetic.main.fragment_click_and_collect_stores.dynamicMapView
 import kotlinx.android.synthetic.main.geo_location_delivery_address.*
 import kotlinx.android.synthetic.main.no_connection.view.*
 import kotlinx.coroutines.launch
@@ -38,7 +40,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_STORE_LOCATOR
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.VALIDATE_RESPONSE
-import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
@@ -254,6 +256,10 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
                     }
                 }
             } catch (e: HttpException) {
+                FirebaseManager.logException(e)
+                clickCollectProgress?.visibility = View.GONE
+                showErrorDialog()
+            } catch (e:JsonSyntaxException) {
                 FirebaseManager.logException(e)
                 clickCollectProgress?.visibility = View.GONE
                 showErrorDialog()

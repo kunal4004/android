@@ -21,6 +21,7 @@ import com.skydoves.balloon.balloon
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_dash_delivery.*
 import kotlinx.android.synthetic.main.layout_dash_set_address_fragment.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
@@ -49,12 +50,15 @@ import za.co.woolworths.financial.services.android.ui.views.UnsellableItemsBotto
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_502
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_QUERY_INVENTORY_FOR_STORE
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_QUERY_STORE_FINDER
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 import java.net.ConnectException
@@ -443,6 +447,17 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                 SessionUtilities.getInstance()
                                     .setSessionState(SessionDao.SESSION_STATE.INACTIVE)
                                 ScreenManager.presentSSOSignin(requireActivity())
+                            }
+
+                            HTTP_EXPECTATION_FAILED_502 -> {
+                                if (response.response.code == AppConstant.RESPONSE_ERROR_CODE_1235) {
+                                    KotlinUtils.showQuantityLimitErrror(
+                                        activity?.supportFragmentManager,
+                                        response.response.desc,
+                                        "",
+                                        context
+                                    )
+                                }
                             }
                             else -> response?.response?.desc?.let { desc ->
                                 Utils.displayValidationMessage(
@@ -868,16 +883,56 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
     }
 
     override fun onDemandNavigationClicked(view: View?, categoryItem: RootCategory) {
+        setEventsForCategoryClick(categoryItem)
         (requireActivity() as? BottomNavigationActivity)?.apply {
             pushFragment(
                 ProductListingFragment.newInstance(
                     searchType = ProductsRequestParams.SearchType.NAVIGATE,
                     sub_category_name = categoryItem.categoryName,
                     searchTerm = categoryItem.dimValId,
-                    true
+                    isBrowsing = true,
+                    sendDeliveryDetails = arguments?.getBoolean(AppConstant.Keys.ARG_SEND_DELIVERY_DETAILS, false) == true
                 )
             )
         }
+    }
+
+
+    private fun setEventsForCategoryClick(categoryItem: RootCategory) {
+        if (getDeliveryType()?.deliveryType == null) {
+            return
+        }
+
+        val categoryParamsParams = Bundle()
+        val categoryId = categoryItem?.categoryId.toInt().plus(1)
+        val slotName = AppConstant.QUICK_LINK.plus(categoryId)
+
+        categoryParamsParams?.apply {
+
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.CONTENT_TYPE,
+                FirebaseManagerAnalyticsProperties.PropertyValues.DASH_MENU_CLICK
+            )
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.CATEGORY_NAME,
+                FirebaseManagerAnalyticsProperties.PropertyValues.DASH_CATEGORY_NAME
+            )
+
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.CONTENT_NAME,
+                categoryItem?.categoryName
+            )
+
+            putString(
+                FirebaseManagerAnalyticsProperties.PropertyNames.CONTENT_SLOT,
+                slotName
+            )
+        }
+
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.DASH_SELECT_CONTENT,
+            categoryParamsParams
+        )
     }
 
     override fun onDashLandingNavigationClicked(view: View?, item: Banner) {
@@ -887,7 +942,8 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                     searchType = ProductsRequestParams.SearchType.NAVIGATE,
                     sub_category_name = item.displayName,
                     searchTerm = item.navigationState,
-                    true
+                    isBrowsing = true,
+                    sendDeliveryDetails = arguments?.getBoolean(AppConstant.Keys.ARG_SEND_DELIVERY_DETAILS, false) == true
                 )
             )
         }

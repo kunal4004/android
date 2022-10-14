@@ -57,6 +57,7 @@ import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDeleg
 import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapView
 import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator

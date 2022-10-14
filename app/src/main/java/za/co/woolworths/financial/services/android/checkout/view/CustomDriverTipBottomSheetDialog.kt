@@ -1,8 +1,10 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputFilter
 import android.text.InputFilter.LengthFilter
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +29,7 @@ class CustomDriverTipBottomSheetDialog : WBottomSheetDialogFragment() {
 
     interface ClickListner {
         fun onConfirmClick(tipValue: String)
+        fun onCancelDialog(previousTipValue: String)
     }
 
     companion object {
@@ -135,6 +138,11 @@ class CustomDriverTipBottomSheetDialog : WBottomSheetDialogFragment() {
                 CustomProgressBottomSheetDialog::class.java.simpleName
             )
         }
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        clickListner?.onCancelDialog(mTipValue)
     }
 
     private fun getMaxLengthFilter(lengthBeforeDecimal: Int, decimalPlace: Int): Array<InputFilter?> {

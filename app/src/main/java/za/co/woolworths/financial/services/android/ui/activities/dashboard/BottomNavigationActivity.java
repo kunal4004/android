@@ -21,7 +21,6 @@ import static za.co.woolworths.financial.services.android.ui.fragments.product.d
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment.REQUEST_PAYMENT_STATUS;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING;
-import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_NAVIGATE_TO_HELP_AND_SUPPORT;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.MY_LIST_LIST_ID;
@@ -104,6 +103,7 @@ import za.co.woolworths.financial.services.android.models.dto.item_limits.Produc
 import za.co.woolworths.financial.services.android.models.network.Parameter;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
+import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
@@ -121,7 +121,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.MyListsFrag
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersAccountFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.shop.helpandsupport.HelpAndSupportFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
@@ -140,7 +139,6 @@ import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFull
 import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.DeepLinkingUtils;
-import za.co.woolworths.financial.services.android.util.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
@@ -151,6 +149,7 @@ import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.nav.FragNavController;
 import za.co.woolworths.financial.services.android.util.nav.FragNavTransactionOptions;
 
@@ -263,7 +262,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             if (object instanceof LoadState) {
                 String searchProduct = ((LoadState) object).getSearchProduct();
                 if (!TextUtils.isEmpty((searchProduct))) {
-                    pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.SEARCH, "", searchProduct, true));
+                    pushFragment(ProductListingFragment.Companion.newInstance(
+                            ProductsRequestParams.SearchType.SEARCH,
+                            "",
+                            searchProduct,
+                            true,
+                            ((LoadState) object).isSendDeliveryDetails()));
                 }
             } else if (object instanceof CartSummaryResponse) {
                 // product item successfully added to cart
@@ -329,7 +333,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     public void setToast(String message, String cartText, ProductCountMap productCountMap, int noOfItems) {
         if (productCountMap != null
                 && (KotlinUtils.Companion.isDeliveryOptionClickAndCollect()
-                    || KotlinUtils.Companion.isDeliveryOptionDash())
+                || KotlinUtils.Companion.isDeliveryOptionDash())
                 && productCountMap.getQuantityLimit() != null
                 && productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
             ToastFactory.Companion.showItemsLimitToastOnAddToCart(getBottomNavigationById(), productCountMap, this, noOfItems, true);
@@ -397,7 +401,19 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                         arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.ENTRY_POINT, FirebaseManagerAnalyticsProperties.EntryPoint.DEEP_LINK.getValue());
                         arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.DEEP_LINK_URL, linkData.toString());
                         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTDELIVERY, arguments, this);
-                        pushFragment(ProductListingFragment.Companion.newInstance(productSearchTypeAndSearchTerm.getSearchType(), "", productSearchTypeAndSearchTerm.getSearchTerm(), true));
+                        pushFragment(ProductListingFragment.Companion.newInstance(productSearchTypeAndSearchTerm.getSearchType(), "", productSearchTypeAndSearchTerm.getSearchTerm(), true, false));
+                    }
+                    break;
+
+                case AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID:
+                    if (appLinkData.get(AppConstant.DP_LINKING_PARAM_STREAM_ORDER_ID) == null) {
+                        return;
+                    }
+
+                    String orderId = appLinkData.get(AppConstant.DP_LINKING_PARAM_STREAM_ORDER_ID).getAsString();
+                    String channelId = appLinkData.get(AppConstant.DP_LINKING_PARAM_STREAM_CHANNEL_ID).getAsString();
+                    if (orderId != null && !orderId.isEmpty() && SessionUtilities.getInstance().isUserAuthenticated()) {
+                        startActivity(OCChatActivity.Companion.newIntent(this, orderId, channelId));
                     }
                     break;
 
@@ -764,7 +780,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMENU, BottomNavigationActivity.this);
 
         Fragment fragment = mNavController.getCurrentFrag();
-        if (isNewSession &&  fragment instanceof ShopFragment) {
+        if (isNewSession && fragment instanceof ShopFragment) {
             isNewSession = false;
             ((ShopFragment) fragment).setShopDefaultTab();
         }
@@ -1079,6 +1095,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 }
 
                 break;
+
             //  Old way to navigate Deeplinking flows.
             default:
                 mBundle = intent.getExtras();
@@ -1116,9 +1133,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     navigateToTabIndex(BottomNavigationActivity.INDEX_PRODUCT, null);
                     QueryBadgeCounter.getInstance().queryCartSummaryCount();
                     break;
-                }
-                if (resultCode == RESULT_NAVIGATE_TO_HELP_AND_SUPPORT) {
-                    pushFragment(new HelpAndSupportFragment());
+                } else {
+                    navigateToTabIndex(BottomNavigationActivity.INDEX_PRODUCT, null);
+                    QueryBadgeCounter.getInstance().queryCartSummaryCount();
                     break;
                 }
             case REQUEST_CODE_ORDER_DETAILS_PAGE:// Call back when Toast clicked after adding item to shopping list
@@ -1172,7 +1189,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if ((requestCode == REQUEST_CODE_BARCODE_ACTIVITY || requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE) && resultCode == RESULT_OK) {
             ProductsRequestParams.SearchType searchType = ProductsRequestParams.SearchType.valueOf(data.getStringExtra("searchType"));
             String searchTerm = data.getStringExtra("searchTerm");
-            pushFragment(ProductListingFragment.Companion.newInstance(searchType, "", searchTerm, true));
+            pushFragment(ProductListingFragment.Companion.newInstance(searchType, "", searchTerm, true, false));
             return;
         }
 

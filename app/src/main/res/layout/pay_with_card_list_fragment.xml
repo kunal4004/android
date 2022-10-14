@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/payWithCardHeaderDivider"
+        style="@style/menuLandingDividerStyle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RelativeLayout
+        android:id="@+id/payWithCardRelativeLayout"
+        style="@style/accountOptionItemsStyle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/payWithCardIconImageView"
+            style="@style/accountOptionsImageviewStyle"
+            android:alpha="0.3"
+            android:src="@drawable/icon_card" />
+
+        <TextView
+            android:id="@+id/payWithCardCaptionTextView"
+            style="@style/accountOptionsLabelStyle"
+            android:layout_width="wrap_content"
+            android:layout_alignTop="@+id/payWithCardNext"
+            android:layout_alignBottom="@+id/payWithCardNext"
+            android:layout_toEndOf="@+id/payWithCardIconImageView"
+            android:text="@string/pay_with_card" />
+
+        <ImageView
+            android:id="@+id/payWithCardNext"
+            style="@style/accountOptionsNextImageViewStyle"
+            android:src="@drawable/ic_caret_black" />
+
+        <ProgressBar
+            android:id="@+id/payWithCardTokenProgressBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="@dimen/bank_spacing_width"
+            android:indeterminateTint="@color/black"
+            android:visibility="invisible" />
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/payWithCardDivider"
+        style="@style/menuLandingDividerStyle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/payWithCardRelativeLayout" />
+
+    <RelativeLayout
+        android:id="@+id/howItWorksRelativeLayout"
+        style="@style/accountOptionItemsStyle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/payWithCardDivider">
+
+        <ImageView
+            android:id="@+id/howItWorksIconImageView"
+            style="@style/accountOptionsImageviewStyle"
+            android:alpha="0.3"
+            android:src="@drawable/ic_how_to_pay" />
+
+        <TextView
+            android:id="@+id/howItWorksCaptionTextView"
+            style="@style/accountOptionsLabelStyle"
+            android:layout_width="wrap_content"
+            android:layout_alignTop="@+id/howItWorksNext"
+            android:layout_alignBottom="@+id/howItWorksNext"
+            android:layout_toEndOf="@+id/howItWorksIconImageView"
+            android:text="@string/how_it_works" />
+
+        <ImageView
+            android:id="@+id/howItWorksNext"
+            style="@style/accountOptionsNextImageViewStyle"
+            android:src="@drawable/ic_caret_black" />
+
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

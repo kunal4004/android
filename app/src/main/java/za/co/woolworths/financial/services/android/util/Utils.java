@@ -7,6 +7,7 @@ import static za.co.woolworths.financial.services.android.models.dao.ApiRequestD
 import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.DELIVERY_OPTION;
 import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.FCM_TOKEN;
 import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.IN_APP_REVIEW;
+import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.OC_CHAT_FCM_TOKEN;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.REMOVE_ALL_BADGE_COUNTER;
 import static za.co.woolworths.financial.services.android.util.RequestInAppReviewKt.requestInAppReview;
 
@@ -36,7 +37,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -44,8 +44,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -65,10 +63,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.installations.FirebaseInstallations;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -110,6 +104,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
+import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
@@ -126,6 +121,8 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDia
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.Badge;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.QBadgeView;
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.tooltip.TooltipHelper;
 import za.co.woolworths.financial.services.android.util.tooltip.ViewTooltip;
 
@@ -532,32 +529,27 @@ public class Utils {
     }
 
     public static void triggerFireBaseEvents(String eventName, Map<String, String> arguments, Activity activity) {
-        FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
-
         Bundle params = new Bundle();
         for (Map.Entry<String, String> entry : arguments.entrySet()) {
             params.putString(entry.getKey(), entry.getValue());
         }
 
-        mFirebaseAnalytics.logEvent(eventName, params);
+        AnalyticsManager.Companion.logEvent(eventName, params);
         requestInAppReview(eventName, activity);
     }
 
     public static void triggerFireBaseEvents(String eventName, Activity activity) {
-        FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
-        mFirebaseAnalytics.logEvent(eventName, null);
+        AnalyticsManager.Companion.logEvent(eventName, null);
         requestInAppReview(eventName, activity);
     }
 
     public static void setScreenName(Activity activity, String screenName) {
-        FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
-        mFirebaseAnalytics.setCurrentScreen(activity, screenName, null /* class override */);
+        AnalyticsManager.Companion.setCurrentScreen(activity, screenName);
     }
     public static void setScreenName(String screenName) {
-        FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.SCREEN_NAME, screenName);
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle);
+        AnalyticsManager.Companion.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle);
     }
     public static void sendEmail(String emailId, String subject, Context mContext) {
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
@@ -887,6 +879,23 @@ public class Utils {
     public static ArrayList<ShoppingDeliveryLocation> getShoppingDeliveryLocationHistory() {
         AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
         return currentUserObject.shoppingDeliveryLocationHistory;
+    }
+
+    public static OrderSummary[] getCachedOrdersPendingPicking() {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        return currentUserObject.myOrdersPendingPicking;
+    }
+
+    public static void setCachedOrdersPendingPicking(OrderSummary[] ordersSummary) {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        currentUserObject.myOrdersPendingPicking = ordersSummary;
+        currentUserObject.save();
+    }
+
+    public static void clearCachedOrdersPendingPicking() {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        currentUserObject.myOrdersPendingPicking = new OrderSummary[0];
+        currentUserObject.save();
     }
 
     public static void fadeInFadeOutAnimation(final View view, final boolean editMode) {
@@ -1570,6 +1579,44 @@ public class Utils {
         return token;
     }
 
+    public static void setOCChatFCMToken(String value) {
+        try {
+            if (TextUtils.isEmpty(value)) {
+                return;
+            }
+            String firstTime = Utils.getSessionDaoValue(OC_CHAT_FCM_TOKEN);
+            if (firstTime == null) {
+                Utils.sessionDaoSave(OC_CHAT_FCM_TOKEN, value);
+            }
+        } catch (Exception ignored) {
+            FirebaseManager.Companion.logException(ignored);
+        }
+    }
+
+    public static String getOCChatFCMToken() {
+        String token = "";
+        try {
+            token = Utils.getSessionDaoValue(OC_CHAT_FCM_TOKEN);
+        } catch (Exception ignored) {
+            return null;
+        }
+
+        return token;
+    }
+
+    public static String getOCFCMToken() {
+        String token;
+        if (getOCChatFCMToken() != null && (!getOCChatFCMToken().isEmpty())) {
+            token = getOCChatFCMToken();
+        } else {
+            token = "token_not_received";
+        }
+        return token;
+    }
+
+
+
+
     public static void setInAppReviewRequested() {
         Utils.sessionDaoSave(IN_APP_REVIEW, "1");
     }
@@ -1577,6 +1624,10 @@ public class Utils {
     public static boolean isInAppReviewRequested() {
         String firstTime = Utils.getSessionDaoValue(IN_APP_REVIEW);
         return (firstTime != null);
+    }
+
+    public static Boolean isGooglePlayOrHuaweiMobileServicesAvailable() {
+        return isGooglePlayServicesAvailable() || isHuaweiMobileServicesAvailable();
     }
 
     public static Boolean isGooglePlayServicesAvailable() {

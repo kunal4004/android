@@ -12,7 +12,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.integration.remo
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.common.SessionKeyGenerator
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.model.AbsaProxyResponseProperty
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.*
-import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.Utils
 import java.io.UnsupportedEncodingException
 
