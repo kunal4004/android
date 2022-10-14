@@ -4,6 +4,7 @@ import android.location.Location
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
+import com.google.gson.JsonSyntaxException
 import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmDeliveryAddressResponse
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
@@ -134,6 +135,9 @@ class MainShopRepository : ShopRepository {
         } catch (e: IOException) {
             FirebaseManager.logException(e)
             Resource.error(R.string.error_internet_connection, null)
+        } catch (e: JsonSyntaxException) {
+            FirebaseManager.logException(e)
+            Resource.error(R.string.error_unknown, null)
         }
     }
 
