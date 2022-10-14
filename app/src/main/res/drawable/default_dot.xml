@@ -4,7 +4,7 @@
         <shape
             android:innerRadius="0dp"
             android:shape="ring"
-            android:thickness="4dp"
+            android:thickness="@dimen/_4sdp"
             android:useLevel="false">
             <solid android:color="@color/sign_in_register_button_border"/>
         </shape>

@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -72,8 +73,6 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.CartUtils.Companion.filterCommerceItemFromCartResponse
 import za.co.woolworths.financial.services.android.util.CartUtils.Companion.getAppliedVouchersCount
 import za.co.woolworths.financial.services.android.util.CartUtils.Companion.updateItemLimitsBanner
-import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.logException
-import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.setCrashlyticsString
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredDeliveryType
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getPreferredPlaceId
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionClickAndCollect
@@ -84,6 +83,9 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.sh
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.updateCheckOutLink
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter.Companion.instance
 import za.co.woolworths.financial.services.android.util.ToastUtils.ToastInterface
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.Delivery.Companion.getType
 import java.net.ConnectException
@@ -96,8 +98,6 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
 
     private val TAG = this.javaClass.simpleName
     private var mNumberOfListSelected = 0
-    private var localCartCount = 0
-
     private var changeQuantityWasClicked = false
     private var errorMessageWasPopUp = false
     private var onRemoveItemFailed = false
@@ -122,13 +122,13 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
     private var voucherDetails: VoucherDetails? = null
     var productCountMap: ProductCountMap? = null
     private var liquorCompliance: LiquorCompliance? = null
+    private var cartItemList = ArrayList<CommerceItem>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupToolbar()
         initViews()
         hideEditCart()
-        localCartCount = instance.getCartItemCount()
         mChangeQuantityList = ArrayList(0)
         mChangeQuantity = ChangeQuantity()
         mConnectionBroadcast = Utils.connectionBroadCast(
@@ -417,19 +417,37 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                     && !TextUtils.isEmpty(response?.defaultAddressNickname))
         ) {
             //   - CNAV : Checkout  activity
-            Utils.triggerFireBaseEvents(
+            val beginCheckoutParams = Bundle()
+            beginCheckoutParams.putString(
+                FirebaseAnalytics.Param.CURRENCY,
+                FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+            )
+
+            val beginCheckoutItem = Bundle()
+            beginCheckoutItem.putString(
+                FirebaseAnalytics.Param.QUANTITY,
+                FirebaseManagerAnalyticsProperties.PropertyValues.INDEX_VALUE
+            )
+            beginCheckoutItem.putString(
+                FirebaseAnalytics.Param.ITEM_BRAND,
+                FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE
+            )
+
+            beginCheckoutParams.putParcelableArray(
+                FirebaseAnalytics.Param.ITEMS,
+                arrayOf(beginCheckoutItem)
+            )
+            AnalyticsManager.logEvent(
                 FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT,
-                activity
+                beginCheckoutParams
             )
+
             val checkoutActivityIntent = Intent(activity, CheckoutActivity::class.java)
-            checkoutActivityIntent.putExtra(
-                CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
-                response
-            )
-            checkoutActivityIntent.putExtra(
-                CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION,
-                true
-            )
+            checkoutActivityIntent.apply {
+                putExtra(CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY, response)
+                putExtra(CheckoutAddressConfirmationFragment.IS_EDIT_ADDRESS_SCREEN, true)
+                putExtra(CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION, true)
+            }
             if ((liquorCompliance != null) && liquorCompliance!!.isLiquorOrder && (AppConfigSingleton.liquor!!.noLiquorImgUrl != null) && !AppConfigSingleton.liquor!!.noLiquorImgUrl.isEmpty()) {
                 checkoutActivityIntent.putExtra(
                     Constant.LIQUOR_ORDER,
@@ -454,12 +472,16 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             val checkoutActivityIntent = Intent(activity, CheckoutActivity::class.java)
             checkoutActivityIntent.apply {
                 putExtra(CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY, response)
+                putExtra(CheckoutAddressConfirmationFragment.IS_EDIT_ADDRESS_SCREEN, true)
                 putExtra(CheckoutAddressManagementBaseFragment.DASH_SLOT_SELECTION, true)
+                putExtra(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST, cartItemList)
                 liquorCompliance.let {
                     if ((it != null) && it.isLiquorOrder && (AppConfigSingleton.liquor!!.noLiquorImgUrl != null) && !AppConfigSingleton.liquor!!.noLiquorImgUrl.isEmpty()) {
                         putExtra(Constant.LIQUOR_ORDER, it.isLiquorOrder)
-                        putExtra(Constant.NO_LIQUOR_IMAGE_URL,
-                            AppConfigSingleton.liquor!!.noLiquorImgUrl)
+                        putExtra(
+                            Constant.NO_LIQUOR_IMAGE_URL,
+                            AppConfigSingleton.liquor!!.noLiquorImgUrl
+                        )
                     }
                 }
                 activity.startActivityForResult(
@@ -648,10 +670,13 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         orderSummary = cartResponse?.orderSummary
         voucherDetails = cartResponse?.voucherDetails
         productCountMap = cartResponse?.productCountMap
-        liquorCompliance = LiquorCompliance(
-            cartResponse?.liquorOrder ?: false,
-            if (cartResponse?.noLiquorImageUrl != null) cartResponse?.noLiquorImageUrl else ""
-        )
+        liquorCompliance =
+            (if (cartResponse?.noLiquorImageUrl != null) cartResponse?.noLiquorImageUrl else "")?.let {
+                LiquorCompliance(
+                    cartResponse?.liquorOrder ?: false,
+                    it
+                )
+            }
         setItemLimitsBanner()
         if (cartResponse?.cartItems?.size ?: 0 > 0 && cartProductAdapter != null) {
             val emptyCartItemGroups = ArrayList<CartItemGroup>(0)
@@ -703,10 +728,12 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             for (cartItemGroup: CartItemGroup in emptyCartItemGroups) {
                 cartItems?.remove(cartItemGroup)
             }
-            cartProductAdapter?.notifyAdapter(cartItems,
+            cartProductAdapter?.notifyAdapter(
+                cartItems,
                 orderSummary,
                 voucherDetails,
-                liquorCompliance)
+                liquorCompliance
+            )
         } else {
             cartProductAdapter?.clear()
             resetToolBarIcons()
@@ -866,7 +893,28 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             empty_state_template?.visibility = View.VISIBLE
         }
         onChangeQuantityComplete()
+        setMinimumCartErrorMessage()
         setItemLimitsBanner()
+    }
+
+    private fun setMinimumCartErrorMessage() {
+        if (orderSummary?.hasMinimumBasketAmount == false) {
+            orderSummary?.minimumBasketAmount?.let { minBasketAmount ->
+                txt_min_spend_error_msg?.visibility = View.VISIBLE
+                txt_min_spend_error_msg?.text =
+                    String.format(
+                        getString(
+                            R.string.minspend_error_msg_cart,
+                            CurrencyFormatter.formatAmountToRandNoDecimal(minBasketAmount)
+                        )
+                    )
+            }
+            btnCheckOut?.isEnabled = false
+            fadeCheckoutButton(true)
+        } else {
+            txt_min_spend_error_msg?.visibility = View.GONE
+            btnCheckOut?.isEnabled = true
+        }
     }
 
     private fun getUpdatedCommerceItem(
@@ -943,6 +991,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                                         )
                                     }
                                     setItemLimitsBanner()
+                                    instance.queryCartSummaryCount()
                                 }
                                 440 -> {
                                     //TODO:: improve error handling
@@ -994,7 +1043,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         cartProductAdapter?.onChangeQuantityLoad()
         fadeCheckoutButton(true)
         val shoppingCartResponseCall = getChangeQuantity(
-            (changeQuantity)!!
+            changeQuantity
         )
         shoppingCartResponseCall.enqueue(
             CompletionHandler(
@@ -1058,6 +1107,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                                 resetItemDelete(true)
                             }
                             enableItemDelete(false)
+                            setMinimumCartErrorMessage()
                         } catch (ex: Exception) {
                             logException(ex)
                         }
@@ -1138,10 +1188,15 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             cartResponse.productCountMap = data.productCountMap // set delivery location
             cartResponse.liquorOrder = data.liquorOrder
             cartResponse.noLiquorImageUrl = data.noLiquorImageUrl
-            if (cartResponse.orderSummary.fulfillmentDetails?.address?.placeId != null) {
-                Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(cartResponse.orderSummary.fulfillmentDetails))
+            val fulfillmentDetailsObj = cartResponse.orderSummary.fulfillmentDetails
+            if (fulfillmentDetailsObj?.address?.placeId != null) {
+                val shoppingDeliveryLocation = ShoppingDeliveryLocation(fulfillmentDetailsObj)
+                Utils.savePreferredDeliveryLocation(shoppingDeliveryLocation)
+                setDeliveryLocation(shoppingDeliveryLocation)
+            } else {
+                // If user logs out and login with new registration who don't have location.
+                setDeliveryLocation(ShoppingDeliveryLocation(fulfillmentDetailsObj))
             }
-            setDeliveryLocation(Utils.getPreferredDeliveryLocation())
             val itemsObject = JSONObject(Gson().toJson(data.items))
             val keys = itemsObject.keys()
             val cartItemGroups = ArrayList<CartItemGroup>()
@@ -1180,6 +1235,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                             fulfillmentStoreId!!.replace("\"".toRegex(), "")
                         productList.add(commerceItem)
                     }
+                    this.cartItemList = productList
                     cartItemGroup.setCommerceItems(productList)
                 }
                 cartItemGroups.add(cartItemGroup)
@@ -1223,6 +1279,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         )
         val lastDeliveryLocation = Utils.getPreferredDeliveryLocation()
         lastDeliveryLocation?.let { setDeliveryLocation(it) }
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VIEW_CART, requireActivity())
     }
 
     override fun onPause() {
@@ -1323,10 +1380,6 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                     } else {
                         buildAddToCartSuccessToast(rlCheckOut, false, activity, null)
                     }
-                }
-                REQUEST_SUBURB_CHANGE -> {
-                    initializeLoggedInUserCartUI()
-                    loadShoppingCartAndSetDeliveryLocation()
                 }
                 REDEEM_VOUCHERS_REQUEST_CODE, APPLY_PROMO_CODE_REQUEST_CODE -> {
                     val shoppingCartResponse = Utils.strToJson(
@@ -1588,6 +1641,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         }
         updateItemQuantityToMatchStock()
         cartProductAdapter?.updateStockAvailability(cartItems)
+        setMinimumCartErrorMessage()
     }
 
     // If CommerceItem quantity in cart is more then inStock Update quantity to match stock
@@ -1734,7 +1788,10 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
     private fun displayUpSellMessage(data: Data?) {
         if (mRemoveAllItemFromCartTapped) return
         data?.globalMessages?.let {
-            if (it.qualifierMessages == null || it.qualifierMessages.isEmpty()) return
+            if (it.qualifierMessages.isNullOrEmpty()) {
+                upSellMessageTextView?.visibility = View.GONE
+                return
+            }
             val qualifierMessage = it.qualifierMessages[0]
             upSellMessageTextView?.text = qualifierMessage
             upSellMessageTextView?.visibility =

@@ -28,7 +28,7 @@ class AppConstant {
         const val DELAY_2000_MS: Long = 2000
         const val DELAY_3000_MS: Long = 3000
         const val DELAY_4000_MS: Long = 4000
-
+        const val DELAY_20000_MS: Long = 20000
 
         /*****************************************************************************************
          * Durations
@@ -49,6 +49,7 @@ class AppConstant {
         const val HTTP_SESSION_TIMEOUT_440: Int = 440
         const val HTTP_EXPECTATION_FAILED_502: Int = 502
         const val HTTP_SESSION_TIMEOUT_400: Int = 400
+        const val RESPONSE_ERROR_CODE_1235: String = "1235"
 
         /*****************************************************************************************
          * Request/Result Codes
@@ -78,6 +79,10 @@ class AppConstant {
         const val DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT = "Accounts Product Statement"
         const val DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT = "Pay My Account"
         const val DP_LINKING_MY_ACCOUNTS_ORDER_DETAILS = "Order Details"
+        const val DP_LINKING_STREAM_CHAT_CHANNEL_ID = "Stream Chat Channel Id"
+
+        const val DP_LINKING_PARAM_STREAM_ORDER_ID = "orderId"
+        const val DP_LINKING_PARAM_STREAM_CHANNEL_ID = "channelId"
 
         const val PLAY_STORE_URL = "https://play.google.com/store/apps/details?id="
         const val VTO_FACE_NOT_DETECT = "face_not_detect"
@@ -103,11 +108,19 @@ class AppConstant {
         const val TAG_TAX_INVOICE_FRAGMENT: String = "TaxInvoiceFragment"
         const val ORDER_ID: String = "ORDER_ID"
         const val NAVIGATED_FROM_MY_ACCOUNTS = "NAVIGATED_FROM_MY_ACCOUNTS"
+        const val ORDER_ITEM_LIST = "Order_Item_List"
+        const val ORDER_ITEM_TOTAL = "Order_Item_Total"
+        const val ORDER_SHIPPING_TOTAL = "Order_Shipping_Total"
+        const val QUICK_LINK = "Quick Link - Slot "
 
+        const val RED_HEX_COLOR ="#ff0000"
+        const val DEFAULT_TAG_HEX_COLOR="#b2b2b2"
         // delete my profile
         const val DELETE_ACCOUNT = "DELETE_ACCOUNT"
         const val DELETE_ACCOUNT_CONFIRMATION = "DELETE_ACCOUNT_CONFIRMATION"
         const val RESULT_CODE_DELETE_ACCOUNT = 444
+        const val FIFTY=50
+        const val TEN=10
     }
 
     class Keys {
@@ -119,6 +132,7 @@ class AppConstant {
             const val EXTRA_NOTIFICATION_FEATURE = "feature"
             const val EXTRA_NOTIFICATION_PARAMETERS = "parameters"
 
+            const val EXTRA_SEND_DELIVERY_DETAILS_PARAMS = "EXTRA_SEND_DELIVERY_DETAILS_PARAMS"
             const val EXTRA_PRODUCT_NAME = "PRODUCT_NAME"
             const val EXTRA_SEARCH_TYPE = "searchType"
             const val EXTRA_SEARCH_TERM = "searchTerm"
@@ -133,6 +147,10 @@ class AppConstant {
              *****************************************************************************************/
             const val ARG_NOTIFICATION_PARAMETERS: String = "parameters"
             const val ARG_ORDER: String = "order"
+            const val ARG_VALIDATE_PLACE = "validatePlace"
+            const val ARG_SEND_DELIVERY_DETAILS = "sendDeliveryDetails"
+            const val ARG_FROM_NOTIFICATION = "fromNotification"
+
             /*****************************************************************************************
              * Parameters Keys
              * const val PARAM_EXAMPLE_NAME = "PARAM_NAME"

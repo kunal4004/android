@@ -10,7 +10,7 @@ import android.os.Looper
 import android.provider.Settings
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.brightness.contract.ScreenBrightnessInterface
-import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.logException
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.logException
 import java.lang.Exception
 import kotlin.math.roundToInt
 

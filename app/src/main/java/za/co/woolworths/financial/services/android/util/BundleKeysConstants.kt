@@ -11,6 +11,10 @@ class BundleKeysConstants {
         const val STATUS_RESPONSE = "StatusResponse"
         const val PRODUCT_OFFERINGID = "productOfferingId"
 
+        const val ACCOUNT_NUMBER = "accountNumber"
+        const val CARDTYPE = "cardType"
+        const val CREDITCARD_TOKEN = "creditCardToken"
+
         //geo location
         const val KEY_PLACE_ID = "placeId"
         const val KEY_LATITUDE = "latitude"
@@ -37,6 +41,8 @@ class BundleKeysConstants {
         const val PLACE_ID = "placeId"
         const val IS_LIQUOR = "IS_LIQUOR"
         const val NICK_NAME = "nickname"
+        const val KEY_ADDRESS2 = "ADDRESS2"
+
     }
 
 }

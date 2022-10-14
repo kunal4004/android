@@ -22,4 +22,4 @@ class EligibilityPlan(
     val productGroupCode: ProductGroupCode?,
     val actionText: String?,
     val displayText: String?
-    ) : Serializable
+) : Serializable

@@ -77,9 +77,12 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.STANDARD
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.STANDARD_DELIVERY
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.VALIDATE_RESPONSE
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import javax.inject.Inject
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_ADDRESS2
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 
 /**
  * Created by Kunal Uttarwar on 24/02/22.
@@ -105,6 +108,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
     private var whoIsCollecting: WhoIsCollectingDetails? = null
     private var customBottomSheetDialogFragment: CustomBottomSheetDialogFragment? = null
     var store: Store? = null
+    private  var address2:String?=null
 
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
@@ -155,6 +159,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             latitude = getString(KEY_LATITUDE, "")
             longitude = this.getString(KEY_LONGITUDE, "")
             placeId = this.getString(KEY_PLACE_ID, "")
+            address2=this.getString(KEY_ADDRESS2,"")
             isComingFromSlotSelection = this.getBoolean(IS_COMING_FROM_SLOT_SELECTION, false)
             isComingFromCheckout = this.getBoolean(IS_COMING_FROM_CHECKOUT, false)
             lastDeliveryType = this.getString(DELIVERY_TYPE, Delivery.STANDARD.name)
@@ -235,6 +240,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     return
                 else {
                     lastDeliveryType = deliveryType
+                    setEventsForSwitchingDeliveryType(Delivery.CNC.name)
                     openCollectionTab()
                 }
             }
@@ -243,6 +249,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     return
                 else {
                     lastDeliveryType = deliveryType
+                    setEventsForSwitchingDeliveryType( Delivery.STANDARD.name)
                     openGeoDeliveryTab()
                 }
             }
@@ -251,6 +258,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                     return
                 else {
                     lastDeliveryType = deliveryType
+                    setEventsForSwitchingDeliveryType(Delivery.DASH.name)
                     openDashTab()
                 }
             }
@@ -259,6 +267,16 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             }
         }
     }
+
+    private fun setEventsForSwitchingDeliveryType(deliveryType: String) {
+        val dashParams = Bundle()
+        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_MODE,
+            deliveryType)
+        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.BROWSE_MODE,
+            KotlinUtils.browsingDeliveryType?.name)
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.DASH_SWITCH_DELIVERY_MODE, dashParams)
+    }
+
 
     private fun moveToTabBeforeApiCalls(receivedDeliveryType: String?) {
         geoDeliveryView?.visibility = View.GONE
@@ -353,6 +371,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                 latitude = this?.getString(KEY_LATITUDE, "")
                 longitude = this?.getString(KEY_LONGITUDE, "")
                 placeId = this?.getString(KEY_PLACE_ID, "")
+                address2=this?.getString(KEY_ADDRESS2,"")
             }
             placeId?.let { getDeliveryDetailsFromValidateLocation(it, true) }
         }
@@ -411,7 +430,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             if (placeId == null) {
                 return
             }
-            val confirmLocationAddress = ConfirmLocationAddress(placeId)
+            val confirmLocationAddress = ConfirmLocationAddress(placeId,"",address2)
             val confirmLocationRequest = when (deliveryType) {
                 Delivery.STANDARD.name -> {
                     mStoreId = ""
@@ -477,7 +496,6 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                     }
                                 }
 
-
                                 /*reset browsing data for cnc and dash both once fulfillment location is confirmed*/
                                 WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
                                     validateLocationResponse?.validatePlace)
@@ -527,9 +545,9 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
                                                 Delivery.STANDARD.name -> CheckoutAddressManagementBaseFragment.GEO_SLOT_SELECTION
                                                 else -> CheckoutAddressManagementBaseFragment.DASH_SLOT_SELECTION
                                             }
-
                                             checkoutActivityIntent.putExtra(result, true)
-
+                                            checkoutActivityIntent.putExtra(Constant.LIQUOR_ORDER, getLiquorOrder())
+                                            checkoutActivityIntent.putExtra(Constant.NO_LIQUOR_IMAGE_URL, getLiquorImageUrl())
                                             activity?.apply {
                                                 startActivityForResult(
                                                     checkoutActivityIntent,
@@ -590,12 +608,30 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         }
     }
 
+    private fun getLiquorOrder(): Boolean {
+        var liquorOrder = false
+        bundle?.apply {
+            liquorOrder = getBoolean(Constant.LIQUOR_ORDER)
+        }
+        return liquorOrder
+    }
+
+    private fun getLiquorImageUrl(): String {
+        var liquorImageUrl = ""
+        bundle?.apply {
+            liquorImageUrl = getString(Constant.NO_LIQUOR_IMAGE_URL, "")
+        }
+        return liquorImageUrl
+    }
+
     private fun startCheckoutActivity(toJson: String) {
         val checkoutActivityIntent = Intent(activity, CheckoutActivity::class.java)
         checkoutActivityIntent.putExtra(
             CheckoutReturningUserCollectionFragment.KEY_COLLECTING_DETAILS,
             toJson
         )
+        checkoutActivityIntent.putExtra(Constant.LIQUOR_ORDER, getLiquorOrder())
+        checkoutActivityIntent.putExtra(Constant.NO_LIQUOR_IMAGE_URL, getLiquorImageUrl())
         activity?.let {
             startActivityForResult(
                 checkoutActivityIntent,
@@ -656,7 +692,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         deliveryBagIcon?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
             R.drawable.img_delivery_truck))
         changeFulfillmentTitleTextView?.text = bindString(R.string.standard_delivery)
-        changeFulfillmentSubTitleTextView?.text = bindString(R.string.empty)
+        changeFulfillmentSubTitleTextView?.text = bindString(R.string.standard_title_text)
     }
 
     private fun showCollectionTabView() {
@@ -681,10 +717,11 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         val deliveryQuantity =
             validateLocationResponse?.validatePlace?.onDemand?.quantityLimit?.foodMaximumQuantity
 
-        changeFulfillmentSubTitleTextView?.text =
-            if (deliveryFee != null || deliveryQuantity != null) bindString(R.string.dash_title_text,
-                deliveryFee.toString(),
-                deliveryQuantity.toString()) else bindString(R.string.empty)
+        var titleText = if (deliveryFee != null) bindString(R.string.dash_title_text_1,
+            deliveryFee.toString()) else ""
+        titleText += if (deliveryQuantity != null) bindString(R.string.dash_title_text_2,
+            deliveryQuantity.toString()) else ""
+        changeFulfillmentSubTitleTextView?.text = titleText
     }
 
     private fun openGeoDeliveryTab() {
@@ -701,7 +738,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             R.color.black))
         editDelivery?.text = getString(R.string.edit)
         changeFulfillmentTitleTextView?.text = bindString(R.string.standard_delivery)
-        changeFulfillmentSubTitleTextView?.text = bindString(R.string.empty)
+        changeFulfillmentSubTitleTextView?.text = bindString(R.string.standard_title_text)
         if (validateLocationResponse != null && validateLocationResponse?.validatePlace?.deliverable == false && progressBar?.visibility == View.GONE) {
             // Show not deliverable Bottom Dialog.
             showNotDeliverablePopUp(R.string.no_location_title,
@@ -759,10 +796,12 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
         val deliveryQuantity =
             validateLocationResponse?.validatePlace?.onDemand?.quantityLimit?.foodMaximumQuantity
 
-        changeFulfillmentSubTitleTextView?.text =
-            if (deliveryFee != null || deliveryQuantity != null) bindString(R.string.dash_title_text,
-                deliveryFee.toString(),
-                deliveryQuantity.toString()) else bindString(R.string.empty)
+        var titleText = if (deliveryFee != null) bindString(R.string.dash_title_text_1,
+            deliveryFee.toString()) else ""
+        titleText += if (deliveryQuantity != null) bindString(R.string.dash_title_text_2,
+            deliveryQuantity.toString()) else ""
+        changeFulfillmentSubTitleTextView?.text = titleText
+
         val dashDeliverable = validateLocationResponse?.validatePlace?.onDemand?.deliverable
         if (validateLocationResponse != null && (dashDeliverable == null || dashDeliverable == false) && progressBar?.visibility == View.GONE) {
             // Show not deliverable Popup

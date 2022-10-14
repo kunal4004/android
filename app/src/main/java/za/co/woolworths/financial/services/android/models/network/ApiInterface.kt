@@ -46,7 +46,7 @@ import za.co.woolworths.financial.services.android.models.dto.voc.SurveyOptOutBo
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyRepliesBody
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
-import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.data.CardNotReceived
+import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.EmailUsRequest
 
 interface ApiInterface {
@@ -54,7 +54,6 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:7200")
     @GET("wfs/app/v4/user/accounts")
     fun getAccounts(
-
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -632,7 +631,6 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/cartV2")
     fun getShoppingCart(
-
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
     ): Call<ShoppingCartResponse>
@@ -696,8 +694,8 @@ interface ApiInterface {
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
-            @Path("commerceId") commerceId: String,
-            @Body quantity: ChangeQuantity): Call<ShoppingCartResponse>
+            @Path("commerceId") commerceId: String?,
+            @Body quantity: ChangeQuantity?): Call<ShoppingCartResponse>
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
@@ -837,7 +835,7 @@ interface ApiInterface {
             @Query("suburbId") suburbId: String?,
             @Query("storeId") storeId: String?,
             @Query("filterContent") filterContent: Boolean?,
-            @Query("deliveryType") deliveryType: String,
+            @Query("deliveryType") deliveryType: String?,
             @Query("deliveryDetails") deliveryDetails: String?
     ): Call<ProductView>
 
@@ -861,7 +859,7 @@ interface ApiInterface {
             @Query("suburbId") suburbId: String?,
             @Query("storeId") storeId: String?,
             @Query("filterContent") filterContent: Boolean?,
-            @Query("deliveryType") deliveryType: String,
+            @Query("deliveryType") deliveryType: String?,
             @Query("deliveryDetails") deliveryDetails: String?
     ): Call<ProductView>
 
@@ -934,7 +932,7 @@ interface ApiInterface {
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("otpMethod") otpMethod: String): Call<LinkNewCardOTP>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @Headers("Content-Type: application/json", "Accept: application/vnd.appserver.api.v2+json", "Media-Type: application/json")
     @POST("wfs/app/v4/accounts/storecard/linkStoreCard")
     fun linkStoreCard(
             @Header("userAgent") userAgent: String,
@@ -1425,6 +1423,20 @@ interface ApiInterface {
         @Header("userAgentVersion") userAgentVersion: String,
         @Header("sessionToken") sessionToken: String
     ): Call<DeleteAccountResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/dash/chat/authenticate")
+    fun authenticateOneCart(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String
+    ): Call<OCAuthenticationResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/dash/chat/authenticate")
+    suspend fun getOCAuth(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String
+    ): retrofit2.Response<OCAuthenticationResponse>
 
 }
 

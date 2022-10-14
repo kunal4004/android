@@ -5,7 +5,7 @@ import za.co.absa.openbankingapi.DecryptionFailureException
 import za.co.absa.openbankingapi.KeyGenerationFailureException
 import za.co.absa.openbankingapi.SessionKey
 import za.co.absa.openbankingapi.SymmetricCipher
-import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.nio.charset.StandardCharsets

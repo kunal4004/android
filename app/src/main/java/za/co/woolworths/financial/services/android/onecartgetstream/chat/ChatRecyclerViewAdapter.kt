@@ -39,17 +39,30 @@ class ChatRecyclerViewAdapter(private val onClickListener: OnClickListener,initi
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val message = dataSet[position]
         holder.senderTextView.text = message.user.name
-        if (!message.text.isNullOrEmpty()){
-            holder.messageTextView.text = message.text
-            holder.messageTextView.visibility = View.VISIBLE
-            holder.oneCartChatAttachment.visibility = View.GONE
-        } else {
-            holder.messageTextView.visibility = View.GONE
-            holder.oneCartChatAttachment.visibility = View.VISIBLE
-            ImageManager.setPictureWithoutPlaceHolder(holder.oneCartChatAttachment,
-                message.attachments.getOrNull(0)?.imageUrl.toString())
-            holder.oneCartChatAttachment.setOnClickListener {
-                onClickListener.onClick(message.attachments.getOrNull(0)?.imageUrl.toString())
+        when {
+            !message.text.isNullOrEmpty() && !message.attachments.isNullOrEmpty() -> {
+                holder.messageTextView.visibility = View.VISIBLE
+                holder.messageTextView.text = message.text
+                holder.oneCartChatAttachment.visibility = View.VISIBLE
+                ImageManager.setPictureWithoutPlaceHolder(holder.oneCartChatAttachment,
+                    message.attachments.getOrNull(0)?.imageUrl.toString())
+                holder.oneCartChatAttachment.setOnClickListener {
+                    onClickListener.onClick(message.attachments.getOrNull(0)?.imageUrl.toString())
+                }
+            }
+            !message.text.isNullOrEmpty() -> {
+                holder.messageTextView.text = message.text
+                holder.messageTextView.visibility = View.VISIBLE
+                holder.oneCartChatAttachment.visibility = View.GONE
+            }
+            else -> {
+                holder.messageTextView.visibility = View.GONE
+                holder.oneCartChatAttachment.visibility = View.VISIBLE
+                ImageManager.setPictureWithoutPlaceHolder(holder.oneCartChatAttachment,
+                    message.attachments.getOrNull(0)?.imageUrl.toString())
+                holder.oneCartChatAttachment.setOnClickListener {
+                    onClickListener.onClick(message.attachments.getOrNull(0)?.imageUrl.toString())
+                }
             }
         }
 

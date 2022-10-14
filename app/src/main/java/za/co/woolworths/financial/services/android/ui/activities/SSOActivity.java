@@ -31,7 +31,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import com.awfs.coordination.R;
-import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -43,12 +45,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -60,8 +66,10 @@ import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
 import za.co.woolworths.financial.services.android.util.ServiceTools;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager;
 import za.co.woolworths.financial.services.android.util.wenum.ConfirmLocation;
 
+@AndroidEntryPoint
 public class SSOActivity extends WebViewActivity {
 
 	public ErrorHandlerView mErrorHandlerView;
@@ -102,6 +110,9 @@ public class SSOActivity extends WebViewActivity {
 	public static final String IS_USER_BROWSING = "IS_USER_BROWSING";
 	private String forgotPasswordLogin = "login=true&source=oneapp";
 	private String TNC_TITLE = "Woolworths.co.za";
+
+	@Inject
+	NotificationUtils notificationUtils;
 
 	public static final String TAG_EXTRA_QUERYSTRING_PARAMS = "TAG_EXTRA_QUERYSTRING_PARAMS";
 	//Default redirect url used by LOGIN AND LINK CARDS
@@ -463,6 +474,7 @@ public class SSOActivity extends WebViewActivity {
 					if (urlWithoutQueryString.equals(extraQueryStringParams.get("post_logout_redirect_uri"))) {
 						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
 						ServiceTools.Companion.stop(SSOActivity.this, LiveChatService.class);
+						OCConstant.Companion.stopOCChatService(SSOActivity.this);
 						Intent intent = new Intent();
 						setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
 						Utils.setUserKMSIState(false);
@@ -514,6 +526,7 @@ public class SSOActivity extends WebViewActivity {
 				if (SSOActivity.this.path.rawValue().equals(Path.LOGOUT.rawValue())) {
 					KotlinUtils.setUserPropertiesToNull();
 					ServiceTools.Companion.stop(SSOActivity.this, LiveChatService.class);
+					OCConstant.Companion.stopOCChatService(SSOActivity.this);
 					Intent intent = new Intent();
 					setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
 
@@ -606,6 +619,7 @@ public class SSOActivity extends WebViewActivity {
 					extractFormDataAndCloseSSOIfNeeded();
 				}
 			});
+
 		}
 	}
 
@@ -647,7 +661,8 @@ public class SSOActivity extends WebViewActivity {
 					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
 					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.LOGIN, arguments, SSOActivity.this);
 
-					NotificationUtils.getInstance().sendRegistrationToServer();
+					notificationUtils.sendRegistrationToServer();
+
 					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.ACTIVE);
 					QueryBadgeCounter.getInstance().queryBadgeCount();
 					setUserATGId(jwtDecodedModel);
@@ -664,6 +679,7 @@ public class SSOActivity extends WebViewActivity {
 					}
 					else {
 						setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
+						startOCDashChatServices();
 						setStSParameters();
 					}
 
@@ -680,6 +696,7 @@ public class SSOActivity extends WebViewActivity {
 			if (!TextUtils.isEmpty(stsParams)) {
 				SessionUtilities.getInstance().setSTSParameters(null);
 			}
+
 			closeActivity();
 
 		} catch (NullPointerException ex) {
@@ -688,12 +705,10 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	private void setUserATGId(JWTDecodedModel jwtDecodedModel) {
-		FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(SSOActivity.this);
-
 		String atgId = (jwtDecodedModel.AtgId.isJsonArray() ? jwtDecodedModel.AtgId.getAsJsonArray().get(0).getAsString() : jwtDecodedModel.AtgId.getAsString());
-		firebaseAnalytics.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, atgId);
-		firebaseAnalytics.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, jwtDecodedModel.C2Id);
-		firebaseAnalytics.setUserId(atgId);
+		AnalyticsManager.Companion.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, atgId);
+		AnalyticsManager.Companion.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, jwtDecodedModel.C2Id);
+		AnalyticsManager.Companion.setUserId(atgId);
 	}
 
 	private void unknownNetworkFailure(WebView webView, String description) {
@@ -837,6 +852,11 @@ public class SSOActivity extends WebViewActivity {
 	public void onAttachedToWindow() {
 		getTheme().applyStyle(isKMSIChecked ? R.style.SSOActivityKMSIStyle : R.style.SSOActivity, true);
 		super.onAttachedToWindow();
+	}
+
+	private void startOCDashChatServices() {
+		// Start service to listen to incoming messages from Stream
+		OCConstant.Companion.startOCChatService(this);
 	}
 
 }

@@ -16,6 +16,8 @@ import javax.inject.Inject
 class OCChatActivity : AppCompatActivity(R.layout.activity_one_cart_chat_activity) {
 
     private var orderID: String? = ""
+    private var channelId: String? = null
+
     @Inject
     lateinit var errorBottomSheetDialog: CommonErrorBottomSheetDialog
 
@@ -23,6 +25,7 @@ class OCChatActivity : AppCompatActivity(R.layout.activity_one_cart_chat_activit
         super.onCreate(savedInstanceState)
         Utils.updateStatusBarBackground(this)
         orderID = checkNotNull(intent.getStringExtra(ORDER_ID))
+        channelId = intent.getStringExtra(CHANNEL_ID)
 
         if (savedInstanceState != null && lastNonConfigurationInstance == null) {
             // the application process was killed by the OS
@@ -32,6 +35,8 @@ class OCChatActivity : AppCompatActivity(R.layout.activity_one_cart_chat_activit
     }
 
     internal fun getOrderId() = orderID
+
+    internal fun getChannelId() = channelId
 
     override fun onBackPressed() {
         super.onBackPressed()
@@ -55,7 +60,15 @@ class OCChatActivity : AppCompatActivity(R.layout.activity_one_cart_chat_activit
 
     companion object {
         private const val ORDER_ID = "key:oid"
-        fun newIntent(context: Context, orderID: String): Intent =
-            Intent(context, OCChatActivity::class.java).putExtra(ORDER_ID, orderID)
+        private const val CHANNEL_ID = "key:cid"
+
+        @JvmStatic
+        fun newIntent(context: Context, orderID: String, channelId: String? = null): Intent =
+            Intent(context, OCChatActivity::class.java).apply {
+                putExtra(ORDER_ID, orderID)
+                channelId?.let { channelId ->
+                    putExtra(CHANNEL_ID, channelId)
+                }
+            }
     }
 }

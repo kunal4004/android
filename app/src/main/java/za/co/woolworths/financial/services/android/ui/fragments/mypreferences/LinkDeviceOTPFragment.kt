@@ -6,8 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Paint
-import android.location.Address
-import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
@@ -23,7 +21,6 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
-import com.google.firebase.installations.FirebaseInstallations
 import kotlinx.android.synthetic.main.fragment_enter_otp.buttonNext
 import kotlinx.android.synthetic.main.fragment_enter_otp.didNotReceiveOTPTextView
 import kotlinx.android.synthetic.main.fragment_link_device_otp.*
@@ -50,9 +47,17 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.personal_loan.PersonalLoanFragment
-import za.co.woolworths.financial.services.android.ui.fragments.account.detail.StoreCardOptionsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
-import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.ACTIVATE_VIRTUAL_CARD_DETAIL
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.BLOCK_CARD_DETAIL
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.FREEZE_CARD_DETAIL
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.GET_REPLACEMENT_CARD_DETAIL
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.PAY_WITH_CARD_DETAIL
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.SHOW_BLOCK_CARD_SCREEN
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.SHOW_GET_REPLACEMENT_CARD_SCREEN
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.SHOW_PAY_WITH_CARD_SCREEN
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.SHOW_TEMPORARY_FREEZE_DIALOG
 import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextWatcher
 import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
@@ -61,7 +66,7 @@ import za.co.woolworths.financial.services.android.util.location.DynamicGeocoder
 import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator
-import java.util.*
+import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 
 class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeListener {
 
@@ -455,22 +460,18 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
 
     private fun retrieveTokenAndCallLinkDevice() {
         if (TextUtils.isEmpty(Utils.getToken())) {
-            if (Utils.isGooglePlayServicesAvailable() ||
-                Utils.isHuaweiMobileServicesAvailable()) {
-                FirebaseInstallations.getInstance().getToken(true).addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        task.result.token.let {
-                            // Save fb token in DB.
-                            Utils.setToken(it)
-                            sendTokenToLinkDevice(it)
-                            return@addOnCompleteListener
-                        }
+            context?.let { context ->
+                NotificationUtils.getTokenFromMessagingService(
+                    context,
+                    onSuccessCallback = { token ->
+                        Utils.setToken(token)
+                        sendTokenToLinkDevice(token)
+                    },
+                    onFailureCallback = {
+                        showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
                     }
-                    // token is null show error message to user
-                    showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
-                }
-            } else {
-                // token is null show error message to user
+                )
+            } ?: kotlin.run {
                 showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
             }
         } else {
@@ -495,6 +496,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                 locationAddress,
                 true,
                 token,
+                if (Utils.isGooglePlayServicesAvailable()) NotificationUtils.TOKEN_PROVIDER_FIREBASE else NotificationUtils.TOKEN_PROVIDER_HMS,
                 otpNumber,
                 otpMethod
             )
@@ -540,22 +542,22 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                                     ApplyNowState.STORE_CARD,
                                                     ApplyNowState.PERSONAL_LOAN -> {
                                                         when {
-                                                            MyCardDetailFragment.FREEZE_CARD_DETAIL -> {
+                                                            FREEZE_CARD_DETAIL -> {
                                                                 showFreezeStoreCardDialog()
                                                             }
-                                                            MyCardDetailFragment.BLOCK_CARD_DETAIL -> {
+                                                            BLOCK_CARD_DETAIL -> {
                                                                 showBlockStoreCardScreen()
                                                             }
-                                                            MyCardDetailFragment.PAY_WITH_CARD_DETAIL -> {
+                                                            PAY_WITH_CARD_DETAIL -> {
                                                                 showPayWithCardScreen()
                                                             }
-                                                            StoreCardOptionsFragment.GET_REPLACEMENT_CARD_DETAIL -> {
+                                                            GET_REPLACEMENT_CARD_DETAIL -> {
                                                                 showGetReplacementStoreCardScreen()
                                                             }
                                                             StatementFragment.VIEW_STATEMENT_DETAIL -> {
                                                                 showSendStatementScreen()
                                                             }
-                                                            StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL -> {
+                                                            ACTIVATE_VIRTUAL_CARD_DETAIL -> {
                                                                 showActivateVirtualTempCardScreen()
                                                             }
 
@@ -637,26 +639,26 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     }
 
     private fun showFreezeStoreCardDialog(){
-        MyCardDetailFragment.SHOW_TEMPORARY_FREEZE_DIALOG = true
-        MyCardDetailFragment.FREEZE_CARD_DETAIL = false
+        SHOW_TEMPORARY_FREEZE_DIALOG = true
+        FREEZE_CARD_DETAIL = false
         activity?.finish()
     }
 
     private fun showBlockStoreCardScreen(){
-        MyCardDetailFragment.SHOW_BLOCK_CARD_SCREEN = true
-        MyCardDetailFragment.BLOCK_CARD_DETAIL = false
+        SHOW_BLOCK_CARD_SCREEN = true
+        BLOCK_CARD_DETAIL = false
         activity?.finish()
     }
 
     private fun showPayWithCardScreen(){
-        MyCardDetailFragment.SHOW_PAY_WITH_CARD_SCREEN = true
-        MyCardDetailFragment.PAY_WITH_CARD_DETAIL = false
+        SHOW_PAY_WITH_CARD_SCREEN = true
+        PAY_WITH_CARD_DETAIL = false
         activity?.finish()
     }
 
     private fun showGetReplacementStoreCardScreen(){
-        StoreCardOptionsFragment.SHOW_GET_REPLACEMENT_CARD_SCREEN = true
-        StoreCardOptionsFragment.GET_REPLACEMENT_CARD_DETAIL = false
+        SHOW_GET_REPLACEMENT_CARD_SCREEN = true
+        GET_REPLACEMENT_CARD_DETAIL = false
         activity?.finish()
     }
 
@@ -671,8 +673,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         activity?.finish()
     }
     private fun showActivateVirtualTempCardScreen(){
-        StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL = false
-        StoreCardOptionsFragment.SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = true
+        ACTIVATE_VIRTUAL_CARD_DETAIL = false
+        SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = true
         activity?.finish()
     }
 

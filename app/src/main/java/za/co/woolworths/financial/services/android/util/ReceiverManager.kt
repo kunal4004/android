@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.util.Log
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.lang.ref.WeakReference
 import java.util.*
 
