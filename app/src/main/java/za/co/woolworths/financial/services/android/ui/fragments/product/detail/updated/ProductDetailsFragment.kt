@@ -2762,6 +2762,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             Utils.setScreenName(this,
                 FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL)
         }
+        updateReportLikeStatus()
     }
 
     private fun isAllProductsOutOfStock(): Boolean {
