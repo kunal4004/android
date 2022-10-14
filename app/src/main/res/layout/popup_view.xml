@@ -15,47 +15,66 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="151dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:background="@color/white"
-            android:orientation="vertical"
-
-            >
+            android:orientation="vertical">
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/nativeGoogleMap"
                 android:layout_width="match_parent"
-                android:layout_height="75dp"
+                android:layout_height="@dimen/seventy_five_dp"
                 android:background="@color/white"
                 android:gravity="center"
                 android:letterSpacing="0.1"
                 android:text="@string/google_maps"
                 android:textColor="@color/black"
-                android:textSize="12sp"
+                android:textSize="@dimen/twelve_sp"
+                android:visibility="gone"
                 app:WTextView_font="medium_bold" />
 
             <View
+                android:id="@+id/nativeGoogleMapDivider"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginRight="32dp"
-                android:background="#d8d8d8" />
+                android:layout_height="@dimen/one_dp"
+                android:layout_marginLeft="@dimen/thirty_two_dp"
+                android:layout_marginRight="@dimen/thirty_two_dp"
+                android:background="@color/color_D8D8D8"
+                android:visibility="gone" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/nativePetalMap"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/seventy_five_dp"
+                android:background="@color/white"
+                android:gravity="center"
+                android:letterSpacing="0.1"
+                android:text="@string/petal_maps"
+                android:textColor="@color/black"
+                android:textSize="@dimen/twelve_sp"
+                android:visibility="gone"
+                app:WTextView_font="medium_bold" />
+
+            <View
+                android:id="@+id/nativePetalMapDivider"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/one_dp"
+                android:layout_marginLeft="@dimen/thirty_two_dp"
+                android:layout_marginRight="@dimen/thirty_two_dp"
+                android:background="@color/color_D8D8D8"
+                android:visibility="gone" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/cancel"
                 android:layout_width="match_parent"
-                android:layout_height="75dp"
+                android:layout_height="@dimen/seventy_five_dp"
                 android:background="@color/white"
                 android:gravity="center"
                 android:letterSpacing="0.1"
                 android:text="@string/cancel"
                 android:textColor="@color/black"
-                android:textSize="13sp"
-                app:WTextView_font="medium"
-
-                />
+                android:textSize="@dimen/thirteen_sp"
+                app:WTextView_font="medium" />
         </LinearLayout>
-
-
     </RelativeLayout>
 </RelativeLayout>

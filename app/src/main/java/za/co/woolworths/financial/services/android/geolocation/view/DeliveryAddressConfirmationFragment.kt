@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -36,6 +37,7 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
@@ -46,11 +48,12 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.Confirm
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.UnSellableItemsLiveData
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.Province
-import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
-import za.co.woolworths.financial.services.android.models.dto.Suburb
-import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.StorePickupInfoBody
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
@@ -59,6 +62,7 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErro
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.CNC
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DASH
@@ -80,6 +84,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.saveAnonymousUserLocationDetails
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import za.co.woolworths.financial.services.android.viewmodels.ShoppingCartLiveData
 import javax.inject.Inject
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.KEY_ADDRESS2
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
@@ -1042,9 +1047,55 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener, Vt
             isUnSellableItemsRemoved = it
             if (isUnSellableItemsRemoved == true) {
                 sendConfirmLocation()
+                loadShoppingCart()
                 UnSellableItemsLiveData.value = false
             }
         }
+    }
+
+    private fun loadShoppingCart() {
+        val shoppingCartResponseCall = OneAppService.getShoppingCart()
+        shoppingCartResponseCall.enqueue(
+                CompletionHandler(
+                        (object : IResponseListener<ShoppingCartResponse> {
+                            override fun onSuccess(response: ShoppingCartResponse?) {
+                                try {
+                                    when (response?.httpCode) {
+                                        HTTP_OK -> {
+                                            val isNoLiquorOrder = response.data[0].liquorOrder
+                                            if(isNoLiquorOrder == false)
+                                                ShoppingCartLiveData.value = isNoLiquorOrder
+                                        }
+                                        HTTP_SESSION_TIMEOUT_440 -> {
+                                            SessionUtilities.getInstance()
+                                                    .setSessionState(SessionDao.SESSION_STATE.INACTIVE)
+                                            SessionExpiredUtilities.getInstance().showSessionExpireDialog(
+                                                    requireActivity() as AppCompatActivity?,
+                                                    this@DeliveryAddressConfirmationFragment
+                                            )
+                                        }
+                                        else -> {
+                                            response?.response?.let {
+                                                Utils.displayValidationMessage(
+                                                        requireActivity(),
+                                                        CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+                                                        it.desc,
+                                                        true
+                                                )
+                                            }
+                                        }
+                                    }
+                                } catch (ex: Exception) {
+                                    FirebaseManager.logException(ex)
+                                }
+                            }
+
+                            override fun onFailure(error: Throwable?) {
+
+                            }
+                        }), ShoppingCartResponse::class.java
+                )
+        )
     }
 
     private fun showErrorDialog() {
