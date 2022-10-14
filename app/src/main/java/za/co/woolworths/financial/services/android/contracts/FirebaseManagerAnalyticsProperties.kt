@@ -420,6 +420,13 @@ open class FirebaseManagerAnalyticsProperties {
         const val ADDRESS_APARTMENT = "Apartment"
 
 
+         /*Dash*/
+         const val DASH_DELIVERY_BROWSE_MODE = "set_delivery_browse_mode"
+         const val DASH_SWITCH_DELIVERY_MODE = "switch_delivery_mode"
+         const val DASH_SWITCH_BROWSE_MODE = "switch_browse_mode"
+         const val REFUND = "refund"
+         const val DASH_DRIVER_TIP = "dash_driver_tip"
+         const val DASH_SELECT_CONTENT = "select_content"
     }
 
     class PropertyNames {
@@ -516,6 +523,13 @@ open class FirebaseManagerAnalyticsProperties {
             const val CATEGORY_NAME = "category"
             const val SUB_CATEGORY_NAME = "sub_category"
             const val SUB_SUB_CATEGORY_NAME = "sub_sub_category"
+
+            const val DELIVERY_MODE = "delivery_mode"
+            const val BROWSE_MODE = "browse_mode"
+            const val DASH_TIP = "dash_tip"
+            const val REFUND_TYPE = "refund_type"
+            const val CONTENT_NAME = "content_name"
+            const val CONTENT_SLOT = "content_slot"
         }
     }
 
@@ -631,6 +645,11 @@ open class FirebaseManagerAnalyticsProperties {
             const val ACTION_VALUE_CHECKOUT_ADDRESS_DETAILS_COMPLEX: String = "Customer has selected Checkout and ‘Where are we delivering to’ page is displayed - Customer selects ‘Complex / Estate’ under ‘My address details’"
             const val ACTION_VALUE_CHECKOUT_ADDRESS_DETAILS_APARTMENT: String = "Customer has selected Checkout and ‘Where are we delivering to’ page is displayed - Customer selects ‘Apartment’ under ‘My address details’"
             const val ACTION_VALUE_CHECKOUT_ADDRESS_SAVE_ADDRESS: String = "Customer has entered all the relevant details and selects to save their address"
+
+            /*DASH ANALYTICS VALUES*/
+            const val DASH_MENU_CLICK: String = "Menu_Click"
+            const val DASH_CATEGORY_NAME: String = "Food"
+            const val DASH_CANCELLED_ORDER: String = "Cancelled_Order"
 
         }
     }
