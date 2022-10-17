@@ -394,6 +394,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                 bpiCoveredTextView?.visibility = GONE
                 bpiNotCoveredGroup?.visibility = VISIBLE
             }
+            else -> {}
         }
     }
 

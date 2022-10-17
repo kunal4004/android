@@ -86,8 +86,9 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(),
     }
 
     private fun parseDeepLinkData(bundle: Bundle) {
-        val deepLinkData: String = bundle?.getString("parameters", "").replace("\\", "")
-        jsonLinkData = Utils.strToJson(deepLinkData, JsonObject::class.java) as JsonObject
+        bundle?.getString("parameters", "")?.replace("\\", "")?.let { deepLinkData ->
+            jsonLinkData = Utils.strToJson(deepLinkData, JsonObject::class.java) as JsonObject
+        }
     }
 
     private fun handleAppLink(appLinkData: Any?) {

@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlanResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.IStoreCardDataSource
@@ -20,9 +19,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dat
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.RetryNetworkRequest
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.ApiResult
+import za.co.woolworths.financial.services.android.util.DateHelper
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.capitaliseFirstLetterInEveryWord
-import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.MyDateHelper
 import javax.inject.Inject
 
 enum class LoaderType {
@@ -45,14 +45,14 @@ data class StoreCardInfo(
 class MyAccountsRemoteApiViewModel @Inject constructor(
     private val collection: TreatmentPlanDataSource,
     val dataSource: StoreCardDataSource,
-    private val cardNotReceived: CardNotReceivedDataSource
-) : ViewModel(), IStoreCardDataSource by dataSource,ICardNotReceivedService by cardNotReceived {
+    private val cardNotReceived: CardNotReceivedDataSource,
+    private val dateHelper: MyDateHelper
+) : ViewModel(), IStoreCardDataSource by dataSource,ICardNotReceivedService by cardNotReceived ,
+    DateHelper by dateHelper
+{
 
     var isStoreCardNotReceivedDialogFragmentVisible: Boolean  = false
     var mStoreCardType: StoreCardType = StoreCardType.None
-
-
-
     var mStoreCardFeatureType: StoreCardFeatureType? = null
     var loaderType : LoaderType = LoaderType.LANDING
     var refreshApiModel : RefreshApiModel  = RefreshApiModel()
@@ -131,16 +131,9 @@ class MyAccountsRemoteApiViewModel @Inject constructor(
 
     fun handleStoreCardResponseResult(response: StoreCardsResponse): MutableList<StoreCardFeatureType>? {
         dataSource.landingDao.storeCardsData = response
-        resetCardNotReceivedFlagFromDB(response)
         val listOfStoreCards = dataSource.filterPrimaryCardsGetOneVirtualCardAndOnePrimaryCardOrBoth()
         listOfStoreCardFeatureType = listOfStoreCards
         return listOfStoreCards
-    }
-
-    private fun resetCardNotReceivedFlagFromDB(response: StoreCardsResponse) {
-        if (response.storeCardsData?.virtualCard?.cardNotReceived == true) {
-            Utils.sessionDaoSave((SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN), "")
-        }
     }
 
     fun queryServiceCardNotYetReceived() = viewModelScope.launch {

@@ -2497,7 +2497,7 @@
     <string name="please_select_the_store_you_are_collecting_from">Please select the store you\nare collecting from.</string>
     <string name="search_by_store_or_location">Search by store or location</string>
     <string name="change">change</string>
-    <string name="near_stores">%d Strores near me.</string>
+    <string name="near_stores">%d Stores near me.</string>
     <string name="where_do_you_want_to_collect">Where do you want to collect?</string>
 
     <!--Dash-->
@@ -2590,11 +2590,11 @@
 
     <string name="product_listing_price_from">From</string>
 
-    <string name="vtsc_card_not_arrived_title">Has Your Card Not\nArrived in the Post?</string>
-    <string name="vtsc_card_not_arrived_desc">We do our best to deliver all new cards within 30 days, but sometimes things go wrong. Please let us know if your card has not yet been delivered to you and a customer service agent will be in touch to arrange VIP delivery.</string>
+    <string name="vtsc_card_not_arrived_title">Has Your Card Not Arrived in the Post?</string>
+    <string name="vtsc_card_not_arrived_desc">We do our best to deliver all new cards within 35 days, but sometimes things go wrong. Please let us know if your card has not yet been delivered to you and a customer service agent will be in touch to arrange VIP delivery.</string>
     <string name="vtsc_card_not_arrived_button_caption">MY CARD HASN’T ARRIVED</string>
 
-    <string name="vtsc_card_not_arrived_notified_title">Thanks for Letting Us Know!</string>
+    <string name="vtsc_card_not_arrived_notified_title">Thanks for Letting Us Know</string>
     <string name="vtsc_card_not_arrived_notified_desc">A customer service agent will be in touch to arrange VIP delivery.</string>
 
     <string name="product_details_color_count">+ %d More</string>
@@ -2658,6 +2658,7 @@
     <string name="vtsc_oops_err_title">vtsc_oops_err_title</string>
     <string name="vtsc_oops_error_message">vtsc_oops_error_message</string>
     <string name="vtsc_try_again">vtsc_try_again</string>
+    <string name="vtsc_error_ok">vtsc_error_ok</string>
 
     <!--ContactUs Financial Services -->
     <string name="send_enquiry">Send Us An Enquiry</string>
@@ -2733,5 +2734,11 @@
     <string name="we_need_more_info">We Need More Info</string>
     <string name="enter_street_name">Please enter a street name for this location:</string>
     <string name="your_shopper_is_trying_to">Your shopper is trying to \ncontact you.</string>
+    <string name="my_card_has_arrived">My card has arrived</string>
+    <string name="map_not_available">Map app’s not installed</string>
+    <string name="petal_maps">PETAL MAPS</string>
+
+    <string name="liquor_dialog_description_text">WCellar Liquor is available for delivery \nand collection in selected areas in Gauteng and the Western Cape.</string>
+    <string name="edit_address_button">EDIT ADDRESS</string>
 
 </resources>

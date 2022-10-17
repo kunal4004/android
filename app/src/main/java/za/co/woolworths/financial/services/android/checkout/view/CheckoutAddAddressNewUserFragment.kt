@@ -4,10 +4,7 @@ import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
-import android.widget.AdapterView
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -80,6 +77,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.click_and_collec
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_100_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_500_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.FIFTY
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
@@ -692,11 +690,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             suburbEditText?.setText(selectedAddress.savedAddress.suburb)
         }
 
-        when (selectedAddress.savedAddress.postalCode.isNullOrEmpty()) {
-
-            false -> {
-                postalCode.setText(selectedAddress.savedAddress.postalCode)
-            }
+        if (!selectedAddress.savedAddress.postalCode.isNullOrEmpty()) {
+            postalCode.setText(selectedAddress.savedAddress.postalCode)
         }
     }
 
@@ -732,6 +727,12 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     )
                     deliveringAddressTypesErrorMsg?.visibility = View.GONE
                     changeUnitComplexPlaceHolderOnType(selectedDeliveryAddressType)
+                    if (selectedDeliveryAddressType == ADDRESS_APARTMENT) {
+                        scrollView?.postDelayed(
+                            { scrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT) },
+                            DELAY_100_MS
+                        )
+                    }
                 }
                 titleTextView?.setOnClickListener {
                     setFirebaseEvents(titleTextView?.text.toString())

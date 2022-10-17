@@ -99,6 +99,9 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
                                 tag = MyCardBlockedFragment::class.java.simpleName,
                                 containerViewId = R.id.flMyCard)
                         }
+                        else -> {
+                            // Nothing
+                        }
                     }
                 }
             }
