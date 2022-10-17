@@ -53,23 +53,24 @@ class AbsaPinCodeSuccessFragment : AbsaFragmentExtension() {
 
     private fun observeAbsaResult() {
         with(mViewModel) {
-            registerCredentialResponse.observe(viewLifecycleOwner, {
-                    val absaSecureCredentials = AbsaSecureCredentials()
-                    absaSecureCredentials.aliasId = mAliasId
-                    absaSecureCredentials.save()
-                    onRegistrationSuccess()
-                    })
+            registerCredentialResponse.observe(viewLifecycleOwner) {
+                val absaSecureCredentials = AbsaSecureCredentials()
+                absaSecureCredentials.aliasId = mAliasId
+                absaSecureCredentials.save()
+                onRegistrationSuccess()
+            }
 
-            failureHandler.observe(viewLifecycleOwner, { onFailure ->
+            failureHandler.observe(viewLifecycleOwner) { onFailure ->
                 showErrorScreen(ErrorHandlerActivity.COMMON)
-            })
+            }
 
-            isLoading.observe(viewLifecycleOwner, { isLoading ->
-                when(isLoading){
-                 true -> showProgress()
-                 false -> onProgressComplete()
+            isLoading.observe(viewLifecycleOwner) { isLoading ->
+                when (isLoading) {
+                    true -> showProgress()
+                    false -> onProgressComplete()
+                    else -> {}
                 }
-            })
+            }
         }
     }
 

@@ -9,6 +9,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.media.RingtoneManager
 import android.net.Uri
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.awfs.coordination.R
 import com.google.gson.Gson
@@ -57,9 +58,14 @@ class PushNotificationManager {
                 for (item in payload.entries) {
                     intent.putExtra(item.key, item.value)
                 }
+                val pendingIntentFlag =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                        PendingIntent.FLAG_IMMUTABLE
+                    else
+                        PendingIntent.FLAG_UPDATE_CURRENT
                 pendingIntent = PendingIntent.getActivity(
                     context, BottomNavigationActivity.DEEP_LINK_REQUEST_CODE, intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT
+                    pendingIntentFlag
                 )
             } else if (payload.contains(PAYLOAD_STREAM_CHANNEL)) {
                 val streamChannelJson = payload[PAYLOAD_STREAM_CHANNEL]
@@ -69,9 +75,14 @@ class PushNotificationManager {
                 )
                 // Stream Channel's cid needs to be in the format channelType:channelId. For example, messaging:123
                 intent.putExtra(AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID, "${streamChannelParameters[PAYLOAD_STREAM_CHANNEL_TYPE].asString}:${streamChannelParameters[PAYLOAD_STREAM_CHANNEL_ID].asString}")
+                val pendingIntentFlag =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                        PendingIntent.FLAG_IMMUTABLE
+                    else
+                        PendingIntent.FLAG_UPDATE_CURRENT
                 pendingIntent = PendingIntent.getActivity(
                     context, BottomNavigationActivity.DEEP_LINK_REQUEST_CODE, intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT
+                    pendingIntentFlag
                 )
             } else {
                 if (payloadFeature != null && payloadFeature == FEATURE_PRODUCT_LISTING && payloadParameters != null) {
@@ -98,9 +109,14 @@ class PushNotificationManager {
                 for (item in payload.entries) {
                     intent.putExtra(item.key, item.value)
                 }
+                val pendingIntentFlag =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                        PendingIntent.FLAG_IMMUTABLE
+                    else
+                        PendingIntent.FLAG_ONE_SHOT
                 pendingIntent = PendingIntent.getActivity(
                     context, BottomNavigationActivity.DEEP_LINK_REQUEST_CODE, intent,
-                    PendingIntent.FLAG_ONE_SHOT
+                    pendingIntentFlag
                 )
             }
 

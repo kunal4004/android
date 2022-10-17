@@ -259,11 +259,12 @@
     <dimen name="two_hundred_eight_dp">208dp</dimen>
     <dimen name="nine_sp">9sp</dimen>
     <dimen name="hundred_and_thirty_six_dp">136dp</dimen>
+    <dimen name="toolbar_height" >@dimen/_60sdp</dimen>
+    <dimen name="content_below_toolbar_height" >@dimen/_75sdp</dimen>
     <dimen name="one_hundred_eight_dp">108dp</dimen>
-    <dimen name="toolbar_height" >@dimen/_48sdp</dimen>
-    <dimen name="content_below_toolbar_height" >@dimen/_50sdp</dimen>
     <dimen name="fourty_three_dp">43dp</dimen>
     <dimen name="eighty_eight_dp">88dp</dimen>
     <dimen name="_minus8dp">-8dp</dimen>
+    <dimen name="three_sp">3sp</dimen>
 </resources>
 

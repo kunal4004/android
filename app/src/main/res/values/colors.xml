@@ -2,6 +2,7 @@
 <resources>
     <color name="black">#000</color>
     <color name="white">#FFF</color>
+    <color name="toast_black">#171616</color>
     <color name="drawer_color">#333333</color>
     <color name="gray_circle">#CCC</color>
     <color name="light_gray">#EFEFEF</color>

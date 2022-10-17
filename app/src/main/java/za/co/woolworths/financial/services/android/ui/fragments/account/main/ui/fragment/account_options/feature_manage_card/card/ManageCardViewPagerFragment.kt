@@ -53,11 +53,7 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
                             setDotIndicatorVisibility(listOfStoreCardFeatures)
                             val currentPosition = getCardPosition(listOfStoreCardFeatures)
                             if (listOfStoreCardFeatures?.isNotEmpty() == true) {
-                                viewModel.onManageCardPagerFragmentSelected(
-                                    listOfStoreCardFeatures[currentPosition], currentPosition,
-                                    isPopupVisibleInAccountLanding = false,
-                                    isPopupVisibleInCardDetailLanding = false
-                                )
+                                onPagerSelected(listOfStoreCardFeatures,currentPosition, isPopupVisibleInAccountLanding = false, isPopupVisibleInCardDetailLanding = false)
                             }
                             CoroutineScope(Dispatchers.Main).launch {
                                 VoiceOfCustomerManager.showPendingSurveyIfNeeded(requireContext())
@@ -126,7 +122,8 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
                             dotAtPosition1Img.setImageResource(R.drawable.dot_selected)
                         }
                     }
-                    onPagerSelected(position,
+                    onPagerSelected(
+                        position = position,
                         isPopupVisibleInAccountLanding = true,
                         isPopupVisibleInCardDetailLanding = true
                     )
@@ -141,11 +138,6 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
 
         manageCardAdapter?.setItem(viewModel.listOfStoreCardFeatureType)
         setDotIndicatorVisibility(viewModel.listOfStoreCardFeatureType)
-
-        onPagerSelected(cardFreezeViewModel.currentPagePosition.value ?: 0,
-            isPopupVisibleInAccountLanding = false,
-            isPopupVisibleInCardDetailLanding = false
-        )
 
         with(cardItemViewPager) {
                 when (val pagerPosition = cardFreezeViewModel.currentPagePosition.value ?: 0) {
@@ -162,12 +154,17 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
         }
     }
 
-    private fun onPagerSelected(position: Int, isPopupVisibleInAccountLanding : Boolean ,  isPopupVisibleInCardDetailLanding: Boolean) {
-        val listOfPrimaryStoreCards = manageCardAdapter?.getListOfStoreCards()
-        if ((listOfPrimaryStoreCards?.size ?: 0) <= 0)  return
+    private fun onPagerSelected(
+        listOfStoreCardFeatures: MutableList<StoreCardFeatureType>? = null,
+        position: Int,
+        isPopupVisibleInAccountLanding: Boolean,
+        isPopupVisibleInCardDetailLanding: Boolean
+    ) {
+       val cardList  = listOfStoreCardFeatures ?:  manageCardAdapter?.getListOfStoreCards()
+        if ((cardList?.size ?: 0) <= 0)  return
             cardFreezeViewModel.currentPagePosition.value = position
             viewModel.onManageCardPagerFragmentSelected(
-                listOfPrimaryStoreCards?.get(position),
+                cardList?.get(position),
                 position,
                 isPopupVisibleInAccountLanding = isPopupVisibleInAccountLanding,
                 isPopupVisibleInCardDetailLanding = isPopupVisibleInCardDetailLanding
