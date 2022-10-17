@@ -232,9 +232,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private fun showPromotionalBanner(response: ProductView) {
         promotionalTextBannerLayout?.visibility = VISIBLE
         val htmlDataPromotionalText = response.richText
-
-        // ("<p><span style=\"font-family:arial,helvetica,sans-serif;\"><span style=\"font-size:18px;\">Download the PDF DD Version: <a href=\"https://www.woolworths.co.za/images/elasticera/New_Site/Food/TDD WC.pdf\" onclick=\"window.open(this.href, '', 'resizable=no,status=no,location=no,toolbar=no,menubar=no,fullscreen=no,scrollbars=no,dependent=no'); return false;\">CAPE</a>, <a href=\"https://www.woolworths.co.za/images/elasticera/New_Site/Food/TDD KZN.pdf\" onclick=\"window.open(this.href, '', 'resizable=no,status=no,location=no,toolbar=no,menubar=no,fullscreen=no,scrollbars=no,dependent=no'); return false;\">KZN</a> &amp; <a href=\"https://www.woolworths.co.za/images/elasticera/New_Site/Food/TDD GP.pdf\" onclick=\"window.open(this.href, '', 'resizable=no,status=no,location=no,toolbar=no,menubar=no,fullscreen=no,scrollbars=no,dependent=no'); return false;\">GAUTENG &amp; OTHER PROVINCES</a>.</span></span></p> \n")
-        promotionalTextDesc?.text = HtmlCompat.fromHtml(htmlDataPromotionalText, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        promotionalTextDesc?.text =
+            HtmlCompat.fromHtml(htmlDataPromotionalText, HtmlCompat.FROM_HTML_MODE_LEGACY)
         promotionalTextDesc.movementMethod = LinkMovementMethod.getInstance()
     }
 
@@ -545,9 +544,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
         plp_relativeLayout?.visibility = VISIBLE
 
-        if(!response.richText.isNullOrEmpty()) {
+        if (!response.richText.isNullOrEmpty()) {
             showPromotionalBanner(response)
         }
+
         val productLists = response.products
         if (mProductList?.isNullOrEmpty() == true)
 
