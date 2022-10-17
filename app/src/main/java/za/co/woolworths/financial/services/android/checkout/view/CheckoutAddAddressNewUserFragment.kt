@@ -177,14 +177,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                         if (!savedAddress?.city.isNullOrEmpty()) {
                             selectedAddress?.provinceName = savedAddress.city!!
                         } else {
-                            var provinceName: String? = ""
-                            provinceName = getProvinceName(savedAddress.region)
-                            if (!provinceName.isNullOrEmpty()) {
-                                selectedAddress?.provinceName = provinceName
-                            } else {
-                                savedAddress?.region?.let {
-                                    selectedAddress?.provinceName = it
-                                }
+                            if (!savedAddress?.region.isNullOrEmpty()) {
+                                selectedAddress?.provinceName = savedAddress?.region!!
                             }
 
                         }
@@ -216,20 +210,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     ?: getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
             }
         }
-    }
-
-    private fun getProvinceName(provinceId: String?): String {
-        val provinceList =
-            AppConfigSingleton.nativeCheckout?.regions as MutableList<Province>
-        if (!provinceId.isNullOrEmpty()) {
-            for (provinces in provinceList) {
-                if (provinceId == provinces.id) {
-                    // province id is matching with the province list from config.
-                    return provinces.name ?: ""
-                }
-            }
-        }
-        return ""
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
