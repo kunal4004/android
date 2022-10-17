@@ -38,7 +38,6 @@ public class WfsApiInterceptor extends NetworkConfig implements Interceptor {
         if (cacheTime == 0) {
             try {
                 Response originalResponse = chain.proceed(request);
-                new RetrofitException(request.url().toString(), originalResponse.code(), originalResponse).show();  // This will only check if it's a 503 or 404 exception. if not then proceed.
                 return originalResponse.newBuilder()
                         .header("Accept-Encoding", "gzip")
                         .build();
@@ -76,7 +75,6 @@ public class WfsApiInterceptor extends NetworkConfig implements Interceptor {
         Response response = null;
         try {
             response = chain.proceed(request);
-            new RetrofitException(endpoint, response.code(), response).show();  // This will only check if it's a 503 or 404 exception. if not then proceed.
         } catch (Exception exception) {
             if (exception instanceof SocketTimeoutException) {
                 FirebaseManager.logException(exception);

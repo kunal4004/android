@@ -9,8 +9,6 @@ import java.io.Serializable
  */
 
 data class NetworkErrorResponse(
-    @SerializedName("httpCode")
-    var httpCode: Int,
     @SerializedName("redirectURL")
     val redirectURL: String
 ) : Serializable

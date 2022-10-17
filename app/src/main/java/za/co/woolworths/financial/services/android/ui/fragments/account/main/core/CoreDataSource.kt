@@ -126,7 +126,7 @@ enum class ApiError(val value: String) {
 typealias NetworkAPIInvoke<T> = suspend () -> Response<T>
 
 private fun <T> displayMaintenanceScreenIfNeeded(url: String, response: Response<T>): Boolean =
-    RetrofitException(url, response.code(), response).show()
+    RetrofitException(url, response.code(), null, response).show()
 
 inline fun <reified T: Any> parseJson(body: String?): T {
     // handle OkResponse only
