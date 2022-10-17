@@ -2762,6 +2762,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             Utils.setScreenName(this,
                 FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL)
         }
+        updateReportLikeStatus()
     }
 
     private fun isAllProductsOutOfStock(): Boolean {
@@ -3792,10 +3793,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         iv_like.setImageResource(R.drawable.iv_like_selected)
                         RatingAndReviewUtil.likedReviews.add(ratingReviewResponse?.reviews?.get(0)?.id.toString())
                     }
-                } catch (e: HttpException) {
+                } catch (e: Exception) {
                     e.printStackTrace()
                     hideProgressBar()
-                    if (e.code() != 502) {
+                    if (e is HttpException && e.code() != 502) {
                         activity?.supportFragmentManager?.let { fragmentManager ->
                             Utils.showGeneralErrorDialog(
                                 fragmentManager,
