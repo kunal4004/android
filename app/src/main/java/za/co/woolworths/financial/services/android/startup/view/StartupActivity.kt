@@ -264,7 +264,6 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     fun init() {
-        //TODO:: Handle notification for Android R
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationUtils.createNotificationChannelIfNeeded()
         }
@@ -524,7 +523,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                 FirebaseManagerAnalyticsProperties.ScreenNames.DEVICE_SIDELOADED_AT_STARTUP
             )
         } else {
-            if (Utils.checkForBinarySu() && CommonUtils.isRooted(this) && !Util.isDebug(
+            if (Utils.checkForBinarySu() && CommonUtils.isRooted() && !Util.isDebug(
                     this.applicationContext
                 )
             ) {

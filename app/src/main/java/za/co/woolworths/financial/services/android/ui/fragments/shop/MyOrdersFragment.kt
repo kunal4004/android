@@ -103,6 +103,7 @@ class MyOrdersFragment : Fragment(), OrderHistoryErrorDialogFragment.IOrderHisto
             ErrorHandlerView.ACTION_TYPE.RETRY -> {
                 executeOrdersRequest(false)
             }
+            else -> {}
         }
     }
 
