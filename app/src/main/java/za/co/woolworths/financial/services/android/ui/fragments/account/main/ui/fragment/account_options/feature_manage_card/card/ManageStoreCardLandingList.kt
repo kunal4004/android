@@ -11,12 +11,10 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardItemActions
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.StoreCardInfo
-import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.StoreCardNotReceivedDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardUpShellMessage
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
 
 sealed class ListCallback {
@@ -156,19 +154,9 @@ class ManageStoreCardLandingList(
            showLinkNewCardItem(!isTemporaryCardEnabled)
     }
 
-    fun showCardNotReceivedDialog(fragment: Fragment?, viewModel: MyAccountsRemoteApiViewModel) {
+    fun showCardNotReceivedDialog(fragment: Fragment?, viewModel: MyAccountsRemoteApiViewModel,displayCardNotReceivedPopup : () -> Unit) {
         if (viewModel.isStoreCardNotReceivedDialogFragmentVisible) return
-        val dialog = StoreCardNotReceivedDialogFragment.newInstance()
-        try {
-            fragment?.childFragmentManager?.let {
-                dialog.show(
-                    it,
-                    StoreCardNotReceivedDialogFragment::class.java.simpleName
-                )
-            }
-        } catch (e: IllegalStateException) {
-            FirebaseManager.logException(e)
-        }
+        displayCardNotReceivedPopup()
     }
 
     private fun actionForStoreCardUsage1Item(storeCard: StoreCard?): Boolean {

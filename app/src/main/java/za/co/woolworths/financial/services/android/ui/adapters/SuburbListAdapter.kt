@@ -63,6 +63,7 @@ class SuburbListAdapter(
                                     R.color.black60))
                                 itemView.alpha = if (!it.storeDeliverable) 0.5f else 1f
                             }
+                            else -> {}
                         }
                     }
                 }
