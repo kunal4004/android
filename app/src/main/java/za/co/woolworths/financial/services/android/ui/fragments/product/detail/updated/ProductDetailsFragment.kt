@@ -2696,10 +2696,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         liquorDialog?.apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             val view = layoutInflater.inflate(R.layout.liquor_info_dialog, null)
-            val desc = view.findViewById<TextView>(R.id.desc)
             val close = view.findViewById<Button>(R.id.close)
             val setSuburb = view.findViewById<TextView>(R.id.setSuburb)
-            desc?.text = AppConfigSingleton.liquor?.message ?: ""
             close?.setOnClickListener { dismiss() }
             setSuburb?.setOnClickListener {
                 dismiss()

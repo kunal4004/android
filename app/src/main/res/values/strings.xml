@@ -2738,4 +2738,7 @@
     <string name="map_not_available">Map app’s not installed</string>
     <string name="petal_maps">PETAL MAPS</string>
 
+    <string name="liquor_dialog_description_text">WCellar Liquor is available for delivery \nand collection in selected areas in Gauteng and the Western Cape.</string>
+    <string name="edit_address_button">EDIT ADDRESS</string>
+
 </resources>
