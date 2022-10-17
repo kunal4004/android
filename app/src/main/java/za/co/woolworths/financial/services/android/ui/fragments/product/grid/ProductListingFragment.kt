@@ -537,7 +537,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
             mProductList = ArrayList()
         response.history?.apply {
-            if (!categoryDimensions?.isNullOrEmpty()) {
+            if (categoryDimensions?.isNullOrEmpty() == false) {
                 mSubCategoryName = categoryDimensions[categoryDimensions.size - 1].label
             } else if (searchCrumbs?.isNullOrEmpty() == false) {
                 searchCrumbs?.let {
@@ -621,10 +621,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         liquorDialog?.apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             val view = layoutInflater.inflate(R.layout.liquor_info_dialog, null)
-            val desc = view.findViewById<TextView>(R.id.desc)
             val close = view.findViewById<Button>(R.id.close)
             val setSuburb = view.findViewById<TextView>(R.id.setSuburb)
-            desc?.text = AppConfigSingleton.liquor?.message ?: ""
             close?.setOnClickListener { dismiss() }
             setSuburb?.setOnClickListener {
                 dismiss()

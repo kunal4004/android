@@ -19,23 +19,21 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE
-import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeCardViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_account_options_list.card_freeze.TemporaryFreezeUnfreezeCardItemFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setToast
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.AccountProductsMainFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.ACCOUNT_PRODUCT_PAYLOAD
 import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.ui.views.snackbar.OneAppSnackbar
 import za.co.woolworths.financial.services.android.util.ActivityIntentNavigationManager
 import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartDestinationType
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
-import java.util.*
 import javax.inject.Inject
 
 @Suppress("DEPRECATION")
@@ -43,14 +41,12 @@ import javax.inject.Inject
 class StoreCardActivity : AppCompatActivity() {
 
     lateinit var binding: AccountProductLandingActivityBinding
-
     val homeViewModel: AccountProductsHomeViewModel by viewModels()
     val payMyAccountViewModel: PayMyAccountViewModel by viewModels()
     val cardFreezeViewModel: TemporaryFreezeCardViewModel by viewModels()
     val viewModel: MyAccountsRemoteApiViewModel by viewModels()
 
     @Inject lateinit var statusBarCompat: SystemBarCompat
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,13 +89,7 @@ class StoreCardActivity : AppCompatActivity() {
     fun getBackIcon() = getToolbarHelper()?.getBackIcon()
 
     fun showToast(@StringRes stringId : Int) {
-        OneAppSnackbar.make(binding.rootContainer.rootView, bindString(stringId).toUpperCase(
-            Locale.getDefault())).show()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        homeViewModel.clearSessionDaoKey()
+        setToast(binding.rootContainer, stringId)
     }
 
     /**
