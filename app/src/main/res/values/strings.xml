@@ -1922,6 +1922,8 @@
     <string name="dash_track_your_order">Track Your Order</string>
     <string name="dash_email_id">wooliesdash@woolworths.co.za</string>
     <string name="dash_customer_care_no_phone">0860 100 987</string>
+    <string name="push_notification_turn_on_toast_message">PUSH NOTIFICATIONS HELP US SHARE ORDER UPDATES AS THEY HAPPEN.</string>
+    <string name="push_notification_turn_on_text">TURN ON</string>
 
     <string name="app_feature_title"></string>
     <string name="app_feature_get_delivered">Same-day delivery</string>

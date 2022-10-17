@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/fifty_two_dp"
-        android:layout_marginBottom="@dimen/eight_dp"
-        android:layout_marginEnd="@dimen/twenty_four_dp"
         android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/eight_dp"
         android:background="@color/toast_background">
 
 
@@ -20,8 +20,8 @@
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
+            android:layout_marginStart="@dimen/sixteen_dp"
             android:layout_marginEnd="@dimen/five_dp"
-            android:layout_marginStart="16dp"
             android:layout_weight="1"
             android:duplicateParentState="true"
             android:ellipsize="end"
@@ -32,13 +32,14 @@
             android:textColor="@color/white"
             android:textSize="@dimen/twelve_sp"
             android:visibility="visible"
-            app:WTextView_font="myriadpro_regular"/>
+            app:WTextView_font="myriadpro_regular" />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/tvCart"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignTop="@+id/tvView"
+            android:layout_toStartOf="@+id/tvView"
             android:layout_toEndOf="@+id/tvAddToCart"
             android:duplicateParentState="true"
             android:ellipsize="end"
@@ -50,8 +51,26 @@
             android:textColor="@color/white"
             android:textSize="@dimen/thirteen_sp"
             android:visibility="visible"
+            app:WTextView_font="medium_bold" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvFullText"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="@dimen/sixteen_dp"
+            android:layout_marginEnd="@dimen/five_dp"
             android:layout_toStartOf="@+id/tvView"
-            app:WTextView_font="medium_bold"/>
+            android:layout_weight="1"
+            android:duplicateParentState="true"
+            android:gravity="left|center_vertical"
+            android:letterSpacing="0.15"
+            android:text="@string/push_notification_turn_on_toast_message"
+            android:textColor="@color/white"
+            android:textSize="@dimen/twelve_sp"
+            android:visibility="gone"
+            app:WTextView_font="myriadpro_regular" />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/tvView"
@@ -61,16 +80,16 @@
             android:layout_alignBottom="@+id/tvAddToCart"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="@dimen/sixteen_dp"
-            android:textAllCaps="true"
             android:layout_weight="1"
             android:gravity="center"
             android:letterSpacing="0.15"
             android:paddingStart="@dimen/twenty_four_dp"
             android:text="@string/view"
+            android:textAllCaps="true"
             android:textColor="@color/white_color_selector"
-            android:textSize="13sp"
+            android:textSize="@dimen/thirteen_sp"
             android:visibility="visible"
-            app:WTextView_font="medium_bold"/>
+            app:WTextView_font="medium_bold" />
 
     </RelativeLayout>
 </LinearLayout>

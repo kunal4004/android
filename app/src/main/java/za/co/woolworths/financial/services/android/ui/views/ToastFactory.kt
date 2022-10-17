@@ -121,6 +121,52 @@ class ToastFactory {
             return popupWindow
         }
 
+        fun buildPushNotificationAlertToast(
+            activity: Activity,
+            viewLocation: View,
+            toastInterface: IToastInterface,
+        ): PopupWindow? {
+            // inflate your xml layout
+            val inflater =
+                activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as? LayoutInflater
+            val layout = inflater?.inflate(R.layout.add_to_cart_success, null)
+            // set the custom display
+            val tvButtonClick = layout?.findViewById<WTextView>(R.id.tvView)
+            val tvBoldTitle = layout?.findViewById<WTextView>(R.id.tvCart)
+            val tvAddedTo = layout?.findViewById<WTextView>(R.id.tvAddToCart)
+            val tvFullText = layout?.findViewById<WTextView>(R.id.tvFullText)
+            tvAddedTo?.visibility = GONE
+            tvBoldTitle?.visibility = GONE
+            tvFullText?.visibility = VISIBLE
+            tvButtonClick?.text = activity.getString(R.string.push_notification_turn_on_text)
+
+            // initialize your popupWindow and use your custom layout as the view
+            val popupWindow = PopupWindow(
+                layout,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT, true
+            )
+
+            // handle popupWindow click event
+            tvButtonClick?.setOnClickListener {
+                toastInterface.onToastButtonClicked(null)
+                popupWindow.dismiss() // dismiss the window
+            }
+
+            // dismiss the popup window after 3sec
+            popupWindow.isFocusable = false
+            Handler().postDelayed({ popupWindow.dismiss() }, POPUP_DELAY_MILLIS.toLong())
+            viewLocation.post {
+                popupWindow.showAtLocation(
+                    viewLocation,
+                    Gravity.BOTTOM,
+                    0,
+                    convertDpToPixel(getDeviceHeight(activity), activity)
+                )
+            }
+            return popupWindow
+        }
+
         private fun convertDpToPixel(dp: Float, context: Context): Int {
             return (dp * (context.resources?.displayMetrics?.densityDpi?.toFloat()
                 ?.div(DisplayMetrics.DENSITY_DEFAULT)!!)).toInt()
