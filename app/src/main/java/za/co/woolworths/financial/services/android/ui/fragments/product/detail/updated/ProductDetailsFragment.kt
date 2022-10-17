@@ -953,7 +953,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         otherSKUsByGroupKey = this.productDetails?.otherSkus.let { groupOtherSKUsByColor(it) }
         this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
 
-        if (productDetails?.isLiquor && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()) {
+        if (productDetails?.isLiquor == true && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()) {
             KotlinUtils.setLiquorModalShown()
             showLiquorDialog()
         }
@@ -998,7 +998,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 false -> {
                     showProductDetailsLoading()
                     val multiSKUs =
-                        productDetails?.otherSkus.joinToString(separator = "-") { it.sku.toString() }
+                        productDetails?.otherSkus?.joinToString(separator = "-") { it.sku.toString() } ?: ""
                     productDetailsPresenter?.loadStockAvailability(
                         storeIdForInventory!!,
                         multiSKUs,
@@ -1180,6 +1180,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 hasColor = false
                 hasSize = true
             }
+            else -> {}
         }
 
         if (otherSKUsList != null) {
@@ -1711,10 +1712,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onAddToCartError(addItemToCartResponse: AddItemToCartResponse) {
-        if (addItemToCartResponse?.response.code == AppConstant.RESPONSE_ERROR_CODE_1235) {
+        if (addItemToCartResponse?.response?.code == AppConstant.RESPONSE_ERROR_CODE_1235) {
             KotlinUtils.showQuantityLimitErrror(
                 activity?.supportFragmentManager,
-                addItemToCartResponse?.response.desc,
+                addItemToCartResponse?.response?.desc ?: "",
                 "",
                 context
             )
@@ -1726,8 +1727,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         val addToCartParams = Bundle()
         addToCartParams.putString(FirebaseAnalytics.Param.CURRENCY,
             FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
-        addToCartParams.putString(FirebaseAnalytics.Param.VALUE,
-            productDetails?.price.toString())
+        productDetails?.price?.let { addToCartParams.putDouble(FirebaseAnalytics.Param.VALUE, it.toDouble()) }
         for (products in 0..(productDetails?.otherSkus?.size ?: 0)) {
             val addToCartItem = Bundle()
             addToCartItem.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
@@ -1803,16 +1803,21 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun addToWishlistItemEvent(productDetails: ProductDetails) {
-        val addToWishlistParams = Bundle()
-        addToWishlistParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
-        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
-        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_NAME, productDetails?.productName)
-        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, productDetails?.categoryName)
-        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
-        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_VARIANT, productDetails?.colourSizeVariants)
-        addToWishlistParams.putString(FirebaseAnalytics.Param.PRICE, productDetails?.price.toString())
-        addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, productDetails?.categoryName)
-        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.ADD_TO_WISHLIST, addToWishlistParams)
+        val addToWishlistParam = Bundle()
+        addToWishlistParam.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
+        productDetails?.price?.let { addToWishlistParam.putDouble(FirebaseAnalytics.Param.VALUE, it.toDouble()) }
+        for (products in 0..(productDetails?.otherSkus?.size ?: 0)) {
+            val addToWishlistParams = Bundle()
+            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_ID, productDetails?.productId)
+            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_NAME, productDetails?.productName)
+            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, productDetails?.categoryName)
+            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_BRAND, productDetails?.brandText)
+            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_VARIANT, productDetails?.colourSizeVariants)
+            addToWishlistParams.putString(FirebaseAnalytics.Param.PRICE, productDetails?.price.toString())
+            addToWishlistParams.putString(FirebaseAnalytics.Param.ITEM_LIST_NAME, productDetails?.categoryName)
+            addToWishlistParam.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(addToWishlistParams))
+        }
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.ADD_TO_WISHLIST, addToWishlistParam)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -2692,10 +2697,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         liquorDialog?.apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             val view = layoutInflater.inflate(R.layout.liquor_info_dialog, null)
-            val desc = view.findViewById<TextView>(R.id.desc)
             val close = view.findViewById<Button>(R.id.close)
             val setSuburb = view.findViewById<TextView>(R.id.setSuburb)
-            desc?.text = AppConfigSingleton.liquor?.message ?: ""
             close?.setOnClickListener { dismiss() }
             setSuburb?.setOnClickListener {
                 dismiss()

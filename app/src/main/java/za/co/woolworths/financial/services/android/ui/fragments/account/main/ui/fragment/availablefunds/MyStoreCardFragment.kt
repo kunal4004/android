@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
@@ -20,7 +21,7 @@ import za.co.woolworths.financial.services.android.onecartgetstream.common.navig
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.toolbar.AccountProductsToolbarHelper
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.OutSystemBuilder
-import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
+import za.co.woolworths.financial.services.android.ui.base.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.WBottomSheetBehaviour
@@ -40,9 +41,7 @@ import java.net.ConnectException
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MyStoreCardFragment @Inject constructor() :
-    ViewBindingFragment<FragmentAvailableFundBinding>(FragmentAvailableFundBinding::inflate),
-    View.OnClickListener {
+class MyStoreCardFragment @Inject constructor() : Fragment(R.layout.fragment_available_fund){
 
     private lateinit var mOutSystemBuilder: OutSystemBuilder
     private lateinit var mDisplayInArrearsPopup: DisplayInArrearsPopup
@@ -70,33 +69,50 @@ class MyStoreCardFragment @Inject constructor() :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.availableFunds.setUpView()
-        statusBarCompat.setLightStatusAndNavigationBar()
-        KotlinUtils.setTransparentStatusBar(requireActivity() as? StoreCardActivity)
-        setupToolbar()
-        subscribeObserver()
-        setGuideline()
-        setAccountInArrearsUI()
-        setBackground()
-        setInArrearsPopup()
-        clickListeners()
-        autoConnectPMA()
-        setFragmentResultListener()
-        navigateToDeepLinkView()
-        with(mDisplayInArrearsPopup) {
-            collectCheckEligibilityResult{}
-            viewLifecycleOwner.lifecycleScope.launch {
-                setupInArrearsPopup(homeViewModel.showAccountInArrearsPopup)
+        val binding = FragmentAvailableFundBinding.bind(view)
+        with(binding) {
+            viewModel.availableFunds.setUpView()
+            statusBarCompat.setLightStatusAndNavigationBar()
+            KotlinUtils.setTransparentStatusBar(requireActivity() as? StoreCardActivity)
+            setupToolbar()
+            subscribeObserver()
+            setGuideline()
+            setAccountInArrearsUI()
+            setBackground()
+            setInArrearsPopup()
+            autoConnectPMA()
+            setFragmentResultListener()
+            navigateToDeepLinkView()
+            with(mDisplayInArrearsPopup) {
+                collectCheckEligibilityResult {}
+                viewLifecycleOwner.lifecycleScope.launch {
+                    setupInArrearsPopup(homeViewModel.showAccountInArrearsPopup)
+                }
             }
+
+            onItemClick()
         }
     }
 
-    private fun showProgress(isLoading: Boolean) {
-        binding.incPayMyAccountButton.viewPaymentOptionTextShimmerLayout.loadingState(isLoading)
-        binding.incPayMyAccountButton.viewPaymentOptionImageShimmerLayout.loadingState(isLoading)
+    private fun FragmentAvailableFundBinding.onItemClick() {
+        with(homeViewModel) {
+            incViewStatementButton.root.onClick {
+                navigateToStatementActivity(activity, product)
+            }
+
+            incRecentTransactionButton.root.onClick {
+                product?.let { navigateToRecentTransactionActivity(activity, it, cardType = it.productGroupCode) }
+            }
+            incPayMyAccountButton.root.onClick { onPayMyAccountButtonTap() }
+        }
     }
 
-    private fun setupToolbar() {
+    private fun FragmentAvailableFundBinding.showProgress(isLoading: Boolean) {
+        incPayMyAccountButton.viewPaymentOptionTextShimmerLayout.loadingState(isLoading)
+        incPayMyAccountButton.viewPaymentOptionImageShimmerLayout.loadingState(isLoading)
+    }
+
+    private fun FragmentAvailableFundBinding.setupToolbar() {
         viewLifecycleOwner.lifecycleScope.launch {
             mToolbarHelper?.setHomeLandingToolbar(homeViewModel) { view ->
                 when (view.id) {
@@ -108,25 +124,21 @@ class MyStoreCardFragment @Inject constructor() :
         mToolbarHelper?.setOnAccountInArrearsTapListener {}
     }
 
-    private fun clickListeners() {
-        binding.incViewStatementButton.root.setOnClickListener(this)
-        binding.incRecentTransactionButton.root.setOnClickListener(this)
-        binding.incPayMyAccountButton.root.setOnClickListener(this)
+
+
+    private fun FragmentAvailableFundBinding.setBackground() {
+       availableFundBackground.setBackgroundResource(R.drawable.store_card_background)
     }
 
-    private fun setBackground() {
-        binding.availableFundBackground.setBackgroundResource(R.drawable.store_card_background)
+    private fun FragmentAvailableFundBinding.setAccountInArrearsUI() {
+        paymentOverdueGroup.visibility = homeViewModel.isUiVisible()
     }
 
-    private fun setAccountInArrearsUI() {
-        binding.paymentOverdueGroup.visibility = homeViewModel.isUiVisible()
-    }
-
-    private fun subscribeObserver() {
+    private fun FragmentAvailableFundBinding.subscribeObserver() {
         with(viewModel) {
             command.observe(viewLifecycleOwner) { item ->
                 when (item) {
-                    is AvailableFundsCommand.SetViewDetails -> binding.setBalances(item)
+                    is AvailableFundsCommand.SetViewDetails -> setBalances(item)
                     else -> return@observe
                 }
             }
@@ -143,11 +155,9 @@ class MyStoreCardFragment @Inject constructor() :
     /**
      * Set dynamic guideline when overdue amount, payable now is visible
      */
-    private fun setGuideline() {
-        with(binding) {
-            bottomStartGuide.setGuidelinePercent(bottomSheet.buttonsTopGuideline)
-            bottomSliderGuideline.setGuidelinePercent(bottomSheet.buttonsBottomGuideline)
-        }
+    private fun FragmentAvailableFundBinding.setGuideline() {
+        bottomStartGuide.setGuidelinePercent(bottomSheet.buttonsTopGuideline)
+        bottomSliderGuideline.setGuidelinePercent(bottomSheet.buttonsBottomGuideline)
     }
 
     private fun navigateToInformation() {
@@ -171,30 +181,9 @@ class MyStoreCardFragment @Inject constructor() :
         }
     }
 
-    override fun onClick(view: View?) {
-        with(homeViewModel) {
-            when (view) {
-                binding.incViewStatementButton.root -> { navigateToStatementActivity(activity, product) }
-                binding.incRecentTransactionButton.root -> {
-                    product?.let {
-                        navigateToRecentTransactionActivity(
-                            activity,
-                            product,
-                            cardType = it.productGroupCode
-                        )
-                    }
-                }
-
-                binding.incPayMyAccountButton.root -> onPayMyAccountButtonTap()
-
-                else -> Unit
-            }
-        }
-    }
-
-    private fun onPayMyAccountButtonTap() {
+    private fun FragmentAvailableFundBinding.onPayMyAccountButtonTap() {
         pmaButton.payMyAccountViewModel = payMyAccountViewModel
-        pmaButton.isShimmerEnabled = binding.incPayMyAccountButton.viewPaymentOptionImageShimmerLayout.isShimmerStarted == true
+        pmaButton.isShimmerEnabled = incPayMyAccountButton.viewPaymentOptionImageShimmerLayout.isShimmerStarted == true
         pmaButton.onTap(
             FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC
         ) { navigateFrom ->
@@ -207,13 +196,12 @@ class MyStoreCardFragment @Inject constructor() :
     }
 }
 
-    private fun queryPaymentMethod() {
+    private fun FragmentAvailableFundBinding.queryPaymentMethod() {
         when (!payMyAccountViewModel.isQueryPayUPaymentMethodComplete) {
             true -> {
                 showProgress(true)
                 val cardInfo = payMyAccountViewModel.getCardDetail()
-                val account: Pair<ApplyNowState, Account>? =
-                    Pair(ApplyNowState.STORE_CARD, homeViewModel.product ?: Account())
+                val account: Pair<ApplyNowState, Account>? = Pair(ApplyNowState.STORE_CARD, homeViewModel.product ?: Account())
                 val amountEntered = account?.second?.amountOverdue?.let { amountDue ->
                     Utils.removeNegativeSymbol(
                         CurrencyFormatter.formatAmountToRandAndCent(amountDue)
@@ -234,7 +222,7 @@ class MyStoreCardFragment @Inject constructor() :
                         payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
                         navigateToDeepLinkView(
                             AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT,
-                            binding.incPayMyAccountButton.root
+                            incPayMyAccountButton.root
                         )
                     }, { onSessionExpired ->
                         if (!isAdded) return@queryServicePayUPaymentMethod
@@ -286,7 +274,7 @@ class MyStoreCardFragment @Inject constructor() :
         }
     }
 
-    fun navigateToDeepLinkView() {
+    fun FragmentAvailableFundBinding.navigateToDeepLinkView() {
         if (activity is AccountSignedInActivity) {
             viewLifecycleOwner.lifecycleScope.launch {
                 delay(AppConstant.DELAY_100_MS)
@@ -295,7 +283,7 @@ class MyStoreCardFragment @Inject constructor() :
                     when (deepLinkingObject?.get("feature")?.asString) {
                         AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT -> {
                             deleteDeepLinkData()
-                            binding.incViewStatementButton.root.performClick()
+                            incViewStatementButton.root.performClick()
                         }
                     }
                 }
@@ -303,10 +291,10 @@ class MyStoreCardFragment @Inject constructor() :
         }
     }
 
-    private fun autoConnectPMA() {
+    private fun FragmentAvailableFundBinding.autoConnectPMA() {
             ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(
                 requireActivity(),
-                this,
+                this@MyStoreCardFragment,
                 object : ConnectionBroadcastReceiver() {
                     override fun onConnectionChanged(hasConnection: Boolean) {
                         when (hasConnection || !payMyAccountViewModel.isQueryPayUPaymentMethodComplete) {
@@ -336,7 +324,7 @@ class MyStoreCardFragment @Inject constructor() :
         }
     }
 
-    private fun setFragmentResultListener() {
+    private fun FragmentAvailableFundBinding.setFragmentResultListener() {
         viewLifecycleOwner.lifecycleScope.launch {
             setFragmentResultListener(requestKeyAccountLandingDialog) { _, bundle ->
                 when (bundle.getInt(requestKeyAccountLandingDialog, 0)) {
@@ -356,7 +344,7 @@ class MyStoreCardFragment @Inject constructor() :
          Then proceed with pma journey routine. Otherwise, pma journey will not launch.
       */
 
-    private fun autoTapPayMyAccountButton() {
+    private fun FragmentAvailableFundBinding.autoTapPayMyAccountButton() {
         viewLifecycleOwner.lifecycleScope.launch {
             delay(AppConstant.DELAY_200_MS)
             onPayMyAccountButtonTap()

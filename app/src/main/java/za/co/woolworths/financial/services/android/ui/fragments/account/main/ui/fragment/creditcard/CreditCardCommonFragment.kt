@@ -43,6 +43,7 @@ class CreditCardCommonFragment: AvailableFundsFragment() {
 //                        else -> handleUnknownHttpResponse(it.apiError?.value)
                     }
                 }
+                else -> {}
             }
         }
     }

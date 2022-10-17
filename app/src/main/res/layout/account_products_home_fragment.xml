@@ -43,7 +43,6 @@
             android:id="@+id/closeIndicator"
             android:layout_width="@dimen/_60sdp"
             android:layout_marginTop="@dimen/_16sdp"
-            android:layout_marginBottom="@dimen/_32sdp"
             android:layout_height="@dimen/_6sdp"
             android:background="@drawable/half_round_grey_corner"
             app:layout_constraintEnd_toEndOf="parent"
