@@ -155,7 +155,7 @@ class BPIOverviewOverviewImpl(private val arguments: Bundle?) :
         return arguments?.let { Gson().fromJson(it.getString(ACCOUNT_INFO), Account::class.java) }
     }
 
-    override fun navigateToOverviewDetail(): Pair<BalanceProtectionInsuranceOverview, Boolean> {
+    override fun navigateToOverviewDetail(): Pair<BalanceProtectionInsuranceOverview?, Boolean> {
         val insuranceType = getInsuranceType()
         val hasOneInsuranceTypeItem = insuranceType.isNotEmpty() && insuranceType.size == 1 && !insuranceType[0].covered
         val insuranceTypeItem = coveredUncoveredList()?.get(0)

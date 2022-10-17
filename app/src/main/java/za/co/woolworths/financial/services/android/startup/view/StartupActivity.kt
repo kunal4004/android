@@ -50,8 +50,8 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDe
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
-import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 import za.co.woolworths.financial.services.android.util.pushnotification.PushNotificationManager
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
@@ -65,6 +65,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     private var actionUrlSecond: String? = AppConstant.EMPTY_STRING
     private var remoteConfigJsonString: String = AppConstant.EMPTY_STRING
     private var isAppSideLoaded = false
+
+    @Inject lateinit var notificationUtils : NotificationUtils
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -262,9 +264,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     fun init() {
-        //TODO:: Handle notification for Android R
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationUtils.createNotificationChannelIfNeeded(this)
+            notificationUtils.createNotificationChannelIfNeeded()
         }
         // Disable first time launch splash video screen, remove to enable video on startup
         startupViewModel.setSessionDao(SessionDao.KEY.SPLASH_VIDEO, "1")
@@ -522,7 +523,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                 FirebaseManagerAnalyticsProperties.ScreenNames.DEVICE_SIDELOADED_AT_STARTUP
             )
         } else {
-            if (Utils.checkForBinarySu() && CommonUtils.isRooted(this) && !Util.isDebug(
+            if (Utils.checkForBinarySu() && CommonUtils.isRooted() && !Util.isDebug(
                     this.applicationContext
                 )
             ) {
@@ -566,7 +567,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     override fun onResume() {
         super.onResume()
-        NotificationUtils.clearNotifications(this)
+        notificationUtils.clearNotifications()
     }
 
     private fun forgotPasswordDeeplink() {

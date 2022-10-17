@@ -9,7 +9,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_30sdp"
-        android:layout_marginTop="@dimen/twenty_nine_dp"
         android:fontFamily="@font/futura_semi_bold"
         android:text="@string/my_card"
         android:textAllCaps="true"
@@ -22,8 +21,7 @@
         android:id="@+id/manageCardText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/twenty_nine_dp"
-        android:layout_marginEnd="@dimen/_24sdp"
+        android:layout_marginEnd="@dimen/_13sdp"
         android:fontFamily="@font/futura_medium"
         android:letterSpacing="0.1"
         android:text="@string/manage_my_card_title"
@@ -50,7 +48,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constrainedHeight="true"
-        app:layout_constraintGuide_begin="@dimen/fifty_eight_dp" />
+        app:layout_constraintGuide_begin="@dimen/_20sdp" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/manageCardFragmentContainerView"

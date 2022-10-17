@@ -31,7 +31,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/_20sdp">
+                android:layout_marginBottom="@dimen/_14sdp">
 
                 <ImageView
                     android:id="@+id/logoIncreaseLimit"
@@ -76,10 +76,9 @@
                 android:id="@+id/description_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_12sdp"
                 android:layout_marginBottom="@dimen/_24sdp"
                 android:fontFamily="@font/myriad_pro_regular_otf"
-                android:lineSpacingExtra="1.2dp"
+                android:lineSpacingExtra="@dimen/_2sdp"
                 android:lineSpacingMultiplier="1.1"
                 android:text="@string/increase_limit_desc"
                 android:textColor="@color/offer_active_desc"

@@ -42,6 +42,7 @@ class EmailUsLoadingActivity : AppCompatActivity(), View.OnClickListener {
                 is ApiResult.Error -> {
                     handleError(it.exception.toString())
                 }
+                else -> {}
             }
         }
     }

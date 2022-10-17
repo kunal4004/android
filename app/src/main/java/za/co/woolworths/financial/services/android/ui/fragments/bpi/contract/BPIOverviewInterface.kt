@@ -11,5 +11,5 @@ interface BPIOverviewInterface {
     fun coveredList(): MutableList<BalanceProtectionInsuranceOverview>
     fun effectiveDate(effectiveDate : String?): String
     fun getAccount(): Account?
-    fun navigateToOverviewDetail(): Pair<BalanceProtectionInsuranceOverview, Boolean>
+    fun navigateToOverviewDetail(): Pair<BalanceProtectionInsuranceOverview?, Boolean>
 }
