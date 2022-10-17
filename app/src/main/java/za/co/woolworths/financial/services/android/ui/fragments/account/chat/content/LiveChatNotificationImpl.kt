@@ -85,7 +85,8 @@ class LiveChatNotificationImpl : ILiveChatNotification {
             manager?.createNotificationChannel(serviceChannel)
 
             val notificationIntent = Intent()
-            val pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0)
+            val pendingIntentFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_IMMUTABLE else 0
+            val pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, pendingIntentFlag)
             return context?.let {
                 NotificationCompat.Builder(it, LiveChatService.CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_notification)

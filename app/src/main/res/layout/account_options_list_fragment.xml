@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:id="@+id/accountOptionsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/accountOptionTextView"
+            style="@style/accountOptionHeaderStyle"
+            android:paddingStart="@dimen/_24sdp"
+            android:paddingEnd="@dimen/_24sdp"
+            android:text="@string/account_options_label"
+            tools:ignore="UnknownIdInLayout" />
+
+        <View
+            android:id="@+id/viewTreatmentPlanDivider"
+            style="@style/accountOptionsDivider"
+            android:visibility="gone" />
+
+        <RelativeLayout
+            android:id="@+id/viewTreatmentPlanLinearLayout"
+            style="@style/accountOptionItemsStyle"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/viewTreatmentPlanLogoImageView"
+                style="@style/accountOptionsImageviewStyle"
+                android:src="@drawable/icon_limit" />
+
+            <TextView
+                android:id="@+id/viewTreatmentPlanTextView"
+                style="@style/accountOptionsLabelStyle"
+                android:text="@string/view_treatment_plan_caption" />
+
+            <ImageView
+                android:id="@+id/viewTreatmentPlanNext"
+                style="@style/accountOptionsNextImageViewStyle"
+                android:src="@drawable/ic_caret_black" />
+
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/showPaymentPlanDivider"
+            style="@style/accountOptionsDivider"
+            android:visibility="gone" />
+
+        <RelativeLayout
+            android:id="@+id/setupTreatmentPlanView"
+            style="@style/accountOptionItemsStyle"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/setupTreatmentPlanImageView"
+                style="@style/accountOptionsImageviewStyle"
+                android:src="@drawable/icon_limit" />
+
+            <TextView
+                android:id="@+id/setupTreatmentPlanTextView"
+                style="@style/accountOptionsLabelStyle"
+                android:layout_alignTop="@+id/setupTreatmentPlanImageView"
+                android:layout_alignBottom="@+id/setupTreatmentPlanImageView"
+                android:layout_toStartOf="@+id/setupTreatmentPlanRightArrowImageView"
+                android:layout_toEndOf="@+id/setupTreatmentPlanImageView"
+                android:text="@string/set_up_payment_plan_title" />
+
+
+            <ImageView
+                android:id="@+id/setupTreatmentPlanRightArrowImageView"
+                style="@style/accountOptionsNextImageViewStyle"
+                android:src="@drawable/ic_caret_black" />
+        </RelativeLayout>
+
+        <View android:id="@+id/paymentOptionView" style="@style/accountOptionsDivider" />
+
+        <RelativeLayout
+            android:id="@+id/payMyAccountRelativeLayout"
+            style="@style/accountOptionItemsStyle">
+
+            <ImageView
+                android:id="@+id/payMyAccountImageView"
+                style="@style/accountOptionsImageviewStyle"
+                android:contentDescription="@string/payment_option_title"
+                android:src="@drawable/payment_options_grey" />
+
+            <TextView
+                android:id="@+id/payMyAccountTextView"
+                style="@style/accountOptionsLabelStyle"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@+id/paymentOptionArrowImageView"
+                android:layout_toEndOf="@+id/payMyAccountImageView"
+                android:text="@string/payment_option_title" />
+
+            <ImageView
+                android:id="@+id/paymentOptionArrowImageView"
+                style="@style/accountOptionsNextImageViewStyle"
+                android:src="@drawable/ic_caret_black" />
+        </RelativeLayout>
+
+        <View style="@style/accountOptionsDivider" />
+
+        <RelativeLayout
+            android:id="@+id/balanceProtectionInsuranceRelativeLayout"
+            style="@style/accountOptionItemsStyle">
+
+            <ImageView
+                android:id="@+id/balanceProtectionInsuranceImageView"
+                style="@style/accountOptionsImageviewStyle"
+                android:alpha="0.3"
+                android:src="@drawable/insurance" />
+
+            <TextView
+                android:id="@+id/balanceProtectionInsuranceTextView"
+                style="@style/accountOptionsLabelStyle"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@+id/balanceProtectionInsuranceTag"
+                android:layout_toEndOf="@+id/balanceProtectionInsuranceImageView"
+                android:text="@string/balance_protection_insurance" />
+
+            <include
+                android:id="@+id/balanceProtectionInsuranceTag"
+                layout="@layout/balance_protection_insurance_tag_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true" />
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/loanWithdrawalDivider"
+            style="@style/accountOptionsDivider" />
+
+        <RelativeLayout
+            android:id="@+id/withdrawCashView"
+            style="@style/accountOptionItemsStyle"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/withdrawCashImageView"
+                style="@style/accountOptionsImageviewStyle"
+                android:alpha="0.3"
+                android:src="@drawable/money" />
+
+            <TextView
+                android:id="@+id/withdrawCashTextView"
+                style="@style/accountOptionsLabelStyle"
+                android:layout_alignTop="@+id/withdrawCashImageView"
+                android:layout_alignBottom="@+id/withdrawCashImageView"
+                android:layout_toStartOf="@+id/withdrawCashArrowImageView"
+                android:layout_toEndOf="@+id/withdrawCashImageView"
+                android:text="@string/instore_withdraw_cash_now" />
+
+            <ImageView
+                android:id="@+id/withdrawCashArrowImageView"
+                style="@style/accountOptionsNextImageViewStyle"
+                android:src="@drawable/ic_caret_black" />
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/debitOrderDivider"
+            style="@style/accountOptionsDivider" />
+
+        <RelativeLayout
+            android:id="@+id/debitOrderRelativeLayout"
+            style="@style/accountOptionItemsStyle">
+
+            <ImageView
+                android:id="@+id/debitOrderImageView"
+                style="@style/accountOptionsImageviewStyle"
+                android:alpha="0.3"
+                android:src="@drawable/ic_debit_order" />
+
+            <TextView
+                android:id="@+id/debitOrderTextView"
+                style="@style/accountOptionsLabelStyle"
+                android:layout_alignTop="@+id/debitOrderImageView"
+                android:layout_alignBottom="@+id/debitOrderImageView"
+                android:layout_toEndOf="@+id/debitOrderImageView"
+                android:text="@string/debit_orders" />
+
+
+            <TextView
+                android:id="@+id/debitOrderIsActiveTextView"
+                style="@style/accountOptionsTagStyle"
+                android:text="@string/active" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/accountOptionsSkeleton"
+        style="@style/accountOptionItemsStyle"
+        android:visibility="gone"
+        android:layout_alignTop="@+id/accountOptionsLayout"
+        android:layout_alignBottom="@+id/accountOptionsLayout">
+
+        <include layout="@layout/account_options_skeleton" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+</RelativeLayout>

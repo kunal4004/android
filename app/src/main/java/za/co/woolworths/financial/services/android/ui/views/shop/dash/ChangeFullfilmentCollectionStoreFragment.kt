@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.google.gson.JsonSyntaxException
 import kotlinx.android.synthetic.main.fragment_click_and_collect_stores.*
 import kotlinx.android.synthetic.main.fragment_click_and_collect_stores.view.*
 import kotlinx.android.synthetic.main.fragment_shop_department.*
@@ -190,6 +191,9 @@ class ChangeFullfilmentCollectionStoreFragment() :
             } catch (e: Exception) {
                 e.printStackTrace()
                 cncProgressBar?.visibility = View.GONE
+            } catch (e: JsonSyntaxException) {
+                e.printStackTrace()
+                cncProgressBar?.visibility = View.GONE
             }
         }
     }
@@ -260,7 +264,7 @@ class ChangeFullfilmentCollectionStoreFragment() :
     override fun onMapReady() {
         dynamicMapView?.setAllGesturesEnabled(false)
         val addressStoreList = WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
-        if (addressStoreList != null && !addressStoreList?.isEmpty()) {
+        if (addressStoreList != null && addressStoreList?.isEmpty() == false) {
             GeoUtils.showFirstFourLocationInMap(addressStoreList, dynamicMapView, context)
         } else if (updatedAddressStoreList?.isEmpty() == false)  {
             GeoUtils.showFirstFourLocationInMap(updatedAddressStoreList, dynamicMapView, context)

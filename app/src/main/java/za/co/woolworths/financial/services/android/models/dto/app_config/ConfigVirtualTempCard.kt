@@ -10,6 +10,7 @@ data class ConfigVirtualTempCard(
         val cardDisplayTitle: String? = null,
         val barcodeDisplayTitle: String? = null,
         val barcodeDisplaySubtitle: String? = null,
+        val primaryCardBlockRequired: Boolean = true,
         val replacementCardSuccessfullyOrderedTitle: String? = null,
         val replacementCardSuccessfullyOrderedDescription: String? = null,
         var isEnabled: Boolean = false

@@ -25,6 +25,9 @@ import com.daimajia.swipe.util.Attributes;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
@@ -43,10 +46,11 @@ import za.co.woolworths.financial.services.android.ui.adapters.MesssagesListAdap
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
-import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils;
+import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+@AndroidEntryPoint
 public class MessagesActivity extends AppCompatActivity implements MesssagesListAdapter.MessageClickListener {
 	public RecyclerView messsageListview;
 	public MesssagesListAdapter adapter = null;
@@ -68,6 +72,9 @@ public class MessagesActivity extends AppCompatActivity implements MesssagesList
 	private Call<DeleteMessageResponse>  mDeleteMessageRequest;
 	private Call<MessageResponse> mMessageAsyncRequest;
 	private Call<MessageResponse> mMoreMessageAsyncRequest;
+
+	@Inject
+	NotificationUtils notificationUtils;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -271,7 +278,7 @@ public class MessagesActivity extends AppCompatActivity implements MesssagesList
 		LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
 				new IntentFilter(Utils.PUSH_NOTIFICATION));
 		// clear the notification area when the app is opened
-		NotificationUtils.clearNotifications(getApplicationContext());
+		notificationUtils.clearNotifications();
 	}
 
 	@Override

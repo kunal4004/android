@@ -36,8 +36,6 @@ data class ProductList(
     @JvmField
     var otherSkus: List<OtherSkus>? = null,
 
-    var promotionsList: ArrayList<Promotions>? = null,
-
     var promotions: ArrayList<Promotions>? = null,
 
     @JvmField
