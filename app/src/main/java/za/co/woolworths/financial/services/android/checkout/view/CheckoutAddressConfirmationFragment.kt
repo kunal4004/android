@@ -779,6 +779,9 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                     fulfillmentStores = selectedSuburb.fulfillmentStores
                 }
             }
+            else -> {
+                // Nothing
+            }
         }
 
         val province = Province()

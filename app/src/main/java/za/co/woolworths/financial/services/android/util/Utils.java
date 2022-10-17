@@ -984,6 +984,7 @@ public class Utils {
         Utils.removeFromDb(SessionDao.KEY.STORES_USER_SEARCH);
         Utils.removeFromDb(SessionDao.KEY.STORES_USER_LAST_LOCATION);
         Utils.removeFromDb(SessionDao.KEY.LIVE_CHAT_EXTRAS);
+        Utils.removeFromDb(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN);
 
         AppInstanceObject appInstanceObject = AppInstanceObject.get();
         appInstanceObject.setDefaultInAppChatTipAcknowledgements();

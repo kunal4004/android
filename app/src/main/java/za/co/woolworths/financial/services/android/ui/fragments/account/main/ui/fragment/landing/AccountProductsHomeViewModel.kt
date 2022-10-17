@@ -137,8 +137,4 @@ class AccountProductsHomeViewModel @Inject constructor(
     fun emitViewTreatmentPlanPopupInArrearsFromConfig() {
         viewTreatmentPlan?.getPopupData(eligibilityPlan)
     }
-
-    fun clearSessionDaoKey(){
-        Utils.sessionDaoSave((SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN), "")
-    }
 }

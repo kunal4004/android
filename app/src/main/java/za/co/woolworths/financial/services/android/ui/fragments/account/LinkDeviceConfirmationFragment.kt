@@ -96,6 +96,7 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
                     linkDeviceConfirmationTitle?.text = deviceSecurity?.creditCard?.primaryDeviceConfirmation?.title
                     linkDeviceConfirmationDesc?.text = deviceSecurity?.creditCard?.primaryDeviceConfirmation?.description
                 }
+                else -> {}
             }
         }
     }

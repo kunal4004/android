@@ -13,6 +13,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.dom
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.ManageCardFunctionalRequirementImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.IProductLandingRouter
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
+import za.co.woolworths.financial.services.android.util.DateHelper
+import za.co.woolworths.financial.services.android.util.MyDateHelper
 import javax.inject.Singleton
 
 @Module
@@ -44,4 +46,8 @@ object FragmentModule {
 
     @Provides
     fun provideStoreCardNavigator(): IStoreCardNavigator = StoreCardNavigator()
+
+    @Provides
+    fun provideDateHelper(): MyDateHelper = MyDateHelper()
+
 }
