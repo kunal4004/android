@@ -201,6 +201,9 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
             ErrorHandlerView.ACTION_TYPE.CALL_NOW -> {
 
             }
+            else -> {
+                // Nothing
+            }
         }
     }
 
