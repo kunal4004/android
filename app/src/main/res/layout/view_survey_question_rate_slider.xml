@@ -93,9 +93,4 @@
 
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/eight_dp"
-        android:background="@color/color_separator_lighter_grey" />
-
 </LinearLayout>

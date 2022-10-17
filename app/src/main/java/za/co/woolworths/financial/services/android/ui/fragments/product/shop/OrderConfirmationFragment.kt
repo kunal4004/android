@@ -218,6 +218,7 @@ class OrderConfirmationFragment : Fragment() {
                     }
                     setUpDashOrderDetailsLayout(response)
                 }
+                else -> {}
             }
 
             if (response?.deliveryDetails?.deliveryInfos?.size == 2) {

@@ -904,7 +904,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
         }
 
         val categoryParamsParams = Bundle()
-        val categoryId = categoryItem?.categoryId.toInt().plus(1)
+        val categoryId = categoryItem?.categoryId?.toInt()?.plus(1)
         val slotName = AppConstant.QUICK_LINK.plus(categoryId)
 
         categoryParamsParams?.apply {

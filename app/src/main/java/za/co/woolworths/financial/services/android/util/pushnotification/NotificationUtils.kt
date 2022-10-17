@@ -117,9 +117,13 @@ class NotificationUtils {
                 //this notification channel was not found, remove any other channels that exists
                 val notificationChannels = notificationManager.notificationChannels
                 notificationChannels.forEach(Consumer { notificationChannel: NotificationChannel ->
-                    notificationManager.deleteNotificationChannel(
-                        notificationChannel.id
-                    )
+                    try {
+                        notificationManager.deleteNotificationChannel(
+                            notificationChannel.id
+                        )
+                    } catch (e: IllegalArgumentException) {
+                        FirebaseManager.logException(e)
+                    }
                 })
             }
             val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
