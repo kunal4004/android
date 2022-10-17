@@ -48,6 +48,7 @@
         android:layout_marginTop="@dimen/_16sdp"
         android:gravity="center"
         android:text="@string/unfreeze_store_card_description"
+        android:textColor="@color/permanent_card_block_desc_color"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
         app:layout_constraintTop_toBottomOf="@id/title" />
