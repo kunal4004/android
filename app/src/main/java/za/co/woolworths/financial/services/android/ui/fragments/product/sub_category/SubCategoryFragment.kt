@@ -16,7 +16,6 @@ import com.awfs.coordination.databinding.ExpandableSubCategoryFragmentBinding
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.AppConfigSingleton.brandLandingPage
 import za.co.woolworths.financial.services.android.models.BrandNavigationDetails
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.dto.Response
@@ -26,6 +25,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPictureCenterInside
 import za.co.woolworths.financial.services.android.util.Utils
@@ -56,6 +56,7 @@ class SubCategoryFragment :
     private var version: String? = null
     private var isLocationEnabled: Boolean = false
     private var location: Location? = null
+    private var viewModel: SubCategoryViewModel? = null
 
     override fun getLayoutId(): Int {
         return R.layout.expandable_sub_category_fragment
@@ -63,8 +64,9 @@ class SubCategoryFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
+        viewModel = getViewModel()
         viewModel?.navigator = this
+        setHasOptionsMenu(true)
         val bundle = this.arguments
         mSubCategories = ArrayList()
         if (bundle != null) {
@@ -107,9 +109,7 @@ class SubCategoryFragment :
     }
 
     override fun getViewModel(): SubCategoryViewModel {
-        return ViewModelProviders.of(this).get(
-            SubCategoryViewModel::class.java
-        )
+        return if (viewModel == null) setupViewModel() else viewModel!!
     }
 
     override fun getBindingVariable(): Int {
@@ -118,10 +118,10 @@ class SubCategoryFragment :
 
     override fun bindSubCategoryResult(
         subCategoryList: List<SubCategory>,
-        latestVersionParam: String
+        latestVersionParam: String,
     ) {
         version = latestVersionParam
-        if (viewModel.childItem()) { // child item
+        if (viewModel?.childItem() == true) { // child item
             val subCategoryChildList: MutableList<SubCategoryChild> = ArrayList()
             for (subCat in subCategoryList) {
                 val subCategoryChild = SubCategoryChild()
@@ -143,7 +143,7 @@ class SubCategoryFragment :
     }
 
     override fun unhandledResponseHandler(response: Response) {
-        if (viewModel.childItem()) {
+        if (viewModel?.childItem() == true) {
             mAdapter?.hideChildItemProgressBar()
             subcategoryOtherHttpResponse(response)
         } else {
@@ -155,6 +155,11 @@ class SubCategoryFragment :
                 subcategoryOtherHttpResponse(response)
             }
         }
+    }
+
+    private fun setupViewModel(): SubCategoryViewModel {
+        return ViewModelProviders.of(this).get(
+            SubCategoryViewModel::class.java)
     }
 
     private fun subcategoryOtherHttpResponse(response: Response) {
@@ -179,7 +184,7 @@ class SubCategoryFragment :
     }
 
     override fun onLoad() {
-        if (!viewModel.childItem()) {
+        if (viewModel?.childItem() == false) {
             showProgressBar(true)
         }
     }
@@ -196,10 +201,15 @@ class SubCategoryFragment :
 
         val subCategoryModel = mSubCategoryListModel?.get(mSelectedHeaderPosition)
         val arguments = HashMap<String, String>()
-        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CATEGORY_NAME] = mRootCategory?.categoryName!!
-        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SUB_CATEGORY_NAME] = subCategoryModel?.name.toString()
-        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SUB_SUB_CATEGORY_NAME] =  subCategory.getCategoryName()
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SCREEN_VIEW_PLP,arguments, activity)
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.CATEGORY_NAME] =
+            mRootCategory?.categoryName!!
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SUB_CATEGORY_NAME] =
+            subCategoryModel?.name.toString()
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SUB_SUB_CATEGORY_NAME] =
+            subCategory.getCategoryName()
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SCREEN_VIEW_PLP,
+            arguments,
+            activity)
         val brandNavigationDetails = BrandNavigationDetails(
             brandText = subCategory.categoryName,
             displayName = subCategory.categoryName,
@@ -210,7 +220,10 @@ class SubCategoryFragment :
             ProductsRequestParams.SearchType.NAVIGATE,
             subCategory.dimValId,
             subCategory.categoryName,
-            brandNavigationDetails
+            brandNavigationDetails,
+            isBrowsing = true,
+            sendDeliveryDetails = this.arguments?.getBoolean(AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS,
+                false)
         ))
     }
 
@@ -224,7 +237,7 @@ class SubCategoryFragment :
     override fun retrieveChildItem(
         holder: ParentSubCategoryViewHolder,
         subCategory: SubCategory,
-        selectedHeaderPosition: Int
+        selectedHeaderPosition: Int,
     ) {
         mSelectedHeaderPosition = selectedHeaderPosition
         mParentViewHolder = holder
@@ -259,10 +272,10 @@ class SubCategoryFragment :
         if (isNetworkConnected) {
             mErrorHandlerView?.hideErrorHandler()
             //ChildItem params determine whether to perform header or child operation
-            viewModel.setChildItem(childItem)
-            viewModel.fetchSubCategory(categoryId, version, isLocationEnabled, location)
+            viewModel?.setChildItem(childItem)
+            viewModel?.fetchSubCategory(categoryId, version, isLocationEnabled, location)
         } else {
-            if (!viewModel.childItem()) {
+            if (viewModel?.childItem() == false) {
                 connectionFailureUI("e")
             }
         }
@@ -286,7 +299,6 @@ class SubCategoryFragment :
         subHeaderCategory.setImgUrl(mRootCategory?.imgUrl)
         subHeaderCategory.setHasChildren(false)
         mSubCategories?.add(0, subHeaderCategory)
-        val expandableSubCategory = viewDataBinding?.rcvDrillCategory
         mSubCategoryListModel = ArrayList()
         mSubCategories?.let {
             for (subCategory in it) {

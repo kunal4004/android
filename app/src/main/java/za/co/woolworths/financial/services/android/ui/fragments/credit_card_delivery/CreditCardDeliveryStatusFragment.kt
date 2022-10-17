@@ -11,9 +11,7 @@ import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_status_layout.*
 import kotlinx.android.synthetic.main.credit_card_delivery_status_layout.imgCreditCard
-import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
@@ -81,7 +79,7 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
                 val deliveryDayTimeDrawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_time24)
                 deliveryDayAndTime.setCompoundDrawablesWithIntrinsicBounds(deliveryDayTimeDrawable, null, null, null)
                 statusResponse?.slotDetails?.appointmentDate?.let {
-                    if (it == "" || it == null) {
+                    if (it.isEmpty()) {
                         deliveryDayAndTime.text = ""
                     } else {
                         val deliveryDayTimeDrawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_time24)
@@ -116,6 +114,7 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
             CreditCardDeliveryStatus.APPOINTMENT_SCHEDULED -> {
                 cardReceivedOrAppointmentScheduled()
             }
+            else -> {}
         }
         deliveryStatusDescription.text = statusResponse?.deliveryStatus?.displayCopy
     }
@@ -123,7 +122,7 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
     private fun cardReceivedOrAppointmentScheduled() {
         manageDeliveryLayout.visibility = View.VISIBLE
         trackDeliveryLayout.visibility = View.VISIBLE
-        splitAndApplyFormatedDate(statusResponse?.slotDetails?.appointmentDate)
+        statusResponse?.slotDetails?.appointmentDate?.let { splitAndApplyFormatedDate(it) }
         val manageDeliveryDrawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_delivery_truck)
         manageDeliveryDrawable?.alpha = 77
         manageDeliveryText.setCompoundDrawablesWithIntrinsicBounds(manageDeliveryDrawable, null, ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_caret_black), null)
@@ -132,6 +131,7 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
     }
 
     private fun splitAndApplyFormatedDate(appointmentDate: String?) {
+        if (appointmentDate.isNullOrBlank()) return
         val parts: List<String>? = appointmentDate?.split("-")
         deliveryDayAndTime.text = WFormatter.convertDayShortToLong(appointmentDate).plus(", ").plus(statusResponse?.slotDetails?.slot)
         deliveryStatusTitle.text = bindString(R.string.delivery_confirmation)

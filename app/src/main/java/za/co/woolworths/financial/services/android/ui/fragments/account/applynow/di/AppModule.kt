@@ -25,7 +25,7 @@ import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import android.net.*
 import android.os.Build
 import androidx.lifecycle.LiveData
-import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import javax.inject.Inject
 
 //TODO:: delete class and edit imports once Store card enhancements merged to dev

@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.detail.
 
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
+import za.co.woolworths.financial.services.android.util.AppConstant
 
 class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDetailsView?, var getInteractor: ProductDetailsContract.ProductDetailsInteractor) : ProductDetailsContract.ProductDetailsPresenter, ProductDetailsContract.ProductDetailsInteractor.OnFinishListener {
 
@@ -16,11 +17,16 @@ class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDe
         mainView = null
     }
 
-    override fun loadStockAvailability(storeID: String, multiSKU: String, isDefaultRequest: Boolean) {
+    override fun loadStockAvailability(
+        storeID: String,
+        multiSKU: String,
+        isDefaultRequest: Boolean,
+        isUserBrowsing: Boolean
+    ) {
         this.isDefaultRequest = isDefaultRequest;
         mainView?.apply {
             showProgressBar()
-            getInteractor.getStockAvailability(storeID, multiSKU, this@ProductDetailsPresenterImpl)
+            getInteractor.getStockAvailability(storeID, multiSKU, this@ProductDetailsPresenterImpl, isUserBrowsing)
         }
     }
 
@@ -102,6 +108,13 @@ class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDe
                                 if (this.response != null)
                                     mainView?.onSessionTokenExpired()
                             }
+
+                            AppConstant.HTTP_EXPECTATION_FAILED_502 ->{
+                                if (response != null) {
+                                    mainView?.onAddToCartError(this)
+                                }
+                            }
+
                             else -> mainView?.responseFailureHandler(this.response)
                         }
 

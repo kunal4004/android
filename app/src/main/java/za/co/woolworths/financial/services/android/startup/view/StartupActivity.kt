@@ -18,9 +18,16 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProviders
 import com.awfs.coordination.R
+import com.google.android.gms.tasks.Task
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
 import com.google.firebase.crashlytics.internal.common.CommonUtils
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
+import com.google.gson.Gson
+import com.google.gson.JsonObject
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_splash_screen.*
 import kotlinx.android.synthetic.main.activity_startup.*
 import kotlinx.android.synthetic.main.activity_startup_without_video.*
@@ -30,6 +37,9 @@ import za.co.woolworths.financial.services.android.firebase.FirebaseConfigUtils
 import za.co.woolworths.financial.services.android.firebase.model.ConfigData
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant
+import za.co.woolworths.financial.services.android.onecartgetstream.common.constant.OCConstant.Companion.startOCChatService
+import za.co.woolworths.financial.services.android.onecartgetstream.service.DashChatMessageListeningService
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.startup.service.network.StartupApiHelper
 import za.co.woolworths.financial.services.android.startup.service.repository.StartUpRepository
@@ -39,7 +49,11 @@ import za.co.woolworths.financial.services.android.startup.viewmodel.ViewModelFa
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import za.co.woolworths.financial.services.android.util.pushnotification.PushNotificationManager
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     View.OnClickListener {
 
@@ -51,6 +65,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     private var actionUrlSecond: String? = AppConstant.EMPTY_STRING
     private var remoteConfigJsonString: String = AppConstant.EMPTY_STRING
     private var isAppSideLoaded = false
+
+    @Inject lateinit var notificationUtils : NotificationUtils
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -249,7 +265,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     fun init() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationUtils.createNotificationChannelIfNeeded(this)
+            notificationUtils.createNotificationChannelIfNeeded()
         }
         // Disable first time launch splash video screen, remove to enable video on startup
         startupViewModel.setSessionDao(SessionDao.KEY.SPLASH_VIDEO, "1")
@@ -258,6 +274,9 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
             startupViewModel.setUpFirebaseEvents()
         } else {
             showNonVideoViewWithErrorLayout()
+        }
+        if (startupViewModel.isConnectedToInternet(this@StartupActivity)) {
+            configureDashChatServices()
         }
         //Remove old usage of SharedPreferences data.
      //   startupViewModel.clearSharedPreference(this@StartupActivity)
@@ -452,6 +471,46 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                 "parameters" to "{\"url\": \"${appLinkData}\"}"
             )
             ScreenManager.presentMain(this@StartupActivity, bundle)
+        } else if (appLinkData is Bundle && appLinkData.containsKey(AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID)) {
+            // Push notification created by Messaging Service, when app was active and foreground
+            val channelId = appLinkData[AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID] as String
+            DashChatMessageListeningService.getOrderIdForChannel(
+                this,
+                channelId,
+                onSuccess = { orderId ->
+                    val bundle = bundleOf(
+                        "feature" to AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID,
+                        "parameters" to "{\"${AppConstant.DP_LINKING_PARAM_STREAM_ORDER_ID}\": \"${orderId}\", \"${AppConstant.DP_LINKING_PARAM_STREAM_CHANNEL_ID}\": \"${channelId}\"}"
+                    )
+                    ScreenManager.presentMain(this@StartupActivity, bundle)
+                },
+                onFailure = {
+                    ScreenManager.presentMain(this@StartupActivity)
+                }
+            )
+        } else if (appLinkData is Bundle && appLinkData.containsKey(PushNotificationManager.PAYLOAD_STREAM_CHANNEL)) {
+            // Push notification created by OS, when app was inactive
+            val streamChannelJson = appLinkData[PushNotificationManager.PAYLOAD_STREAM_CHANNEL] as String
+            val streamChannelParameters = Gson().fromJson(
+                streamChannelJson,
+                JsonObject::class.java
+            )
+            // Stream Channel's cid needs to be in the format channelType:channelId. For example, messaging:123
+            val channelId = "${streamChannelParameters[PushNotificationManager.PAYLOAD_STREAM_CHANNEL_TYPE].asString}:${streamChannelParameters[PushNotificationManager.PAYLOAD_STREAM_CHANNEL_ID].asString}"
+            DashChatMessageListeningService.getOrderIdForChannel(
+                this,
+                channelId,
+                onSuccess = { orderId ->
+                    val bundle = bundleOf(
+                        "feature" to AppConstant.DP_LINKING_STREAM_CHAT_CHANNEL_ID,
+                        "parameters" to "{\"${AppConstant.DP_LINKING_PARAM_STREAM_ORDER_ID}\": \"${orderId}\", \"${AppConstant.DP_LINKING_PARAM_STREAM_CHANNEL_ID}\": \"${channelId}\"}"
+                    )
+                    ScreenManager.presentMain(this@StartupActivity, bundle)
+                },
+                onFailure = {
+                    ScreenManager.presentMain(this@StartupActivity)
+                }
+            )
         } else {
             ScreenManager.presentMain(this@StartupActivity, appLinkData as Bundle)
         }
@@ -464,7 +523,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                 FirebaseManagerAnalyticsProperties.ScreenNames.DEVICE_SIDELOADED_AT_STARTUP
             )
         } else {
-            if (Utils.checkForBinarySu() && CommonUtils.isRooted(this) && !Util.isDebug(
+            if (Utils.checkForBinarySu() && CommonUtils.isRooted() && !Util.isDebug(
                     this.applicationContext
                 )
             ) {
@@ -508,7 +567,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     override fun onResume() {
         super.onResume()
-        NotificationUtils.clearNotifications(this@StartupActivity)
+        notificationUtils.clearNotifications()
     }
 
     private fun forgotPasswordDeeplink() {
@@ -524,6 +583,41 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     private fun getForgotPasswordLink(forgotPasswordUri: String) {
         ScreenManager.forgotPassword(this@StartupActivity,forgotPasswordUri)
+    }
+
+
+    private fun configureDashChatServices() {
+        try {
+            if (FirebaseApp.getApps(this).none { it.name == getString(R.string.oc_chat_app) }) {
+                // initialize firebase for OneCart, with push notification token listener
+                val firebaseChatOptions = FirebaseOptions.Builder()
+                    .setProjectId(getString(R.string.one_cart_chat))
+                    .setApplicationId(getString(R.string.oc_chat_app_id))
+                    .setApiKey(getString(R.string.oc_chat_api_key))
+                    .build()
+
+                val chatApp =
+                    FirebaseApp.initializeApp(this,
+                        firebaseChatOptions,
+                        getString(R.string.oc_chat_app))
+                val fbMessaging = chatApp.get(FirebaseMessaging::class.java)
+                fbMessaging.token.addOnCompleteListener { it: Task<String?> ->
+                    if (it.isSuccessful) {
+                        Utils.setOCChatFCMToken(it.result)
+                    }
+
+                }
+            }
+            // Start service to listen to incoming messages from Stream
+            if (SessionUtilities.getInstance().isUserAuthenticated &&
+                (!OCConstant.isOCChatBackgroundServiceRunning)) {
+                startOCChatService(this)
+            }
+
+        } catch (e: Exception) {
+            FirebaseManager.logException(e)
+        }
+
     }
 
 

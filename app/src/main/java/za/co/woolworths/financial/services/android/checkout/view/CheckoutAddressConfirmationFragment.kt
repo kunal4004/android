@@ -18,16 +18,13 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.add_to_list_content.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation_click_and_collect.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation_delivery.*
-import kotlinx.android.synthetic.main.checkout_new_user_address_details.*
-import kotlinx.android.synthetic.main.suburb_selector_fragment.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.*
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.FOOD
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.OTHER
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_IS_WHO_IS_COLLECTING
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutStoreSelectionAdapter
@@ -45,7 +42,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.shop.Che
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
-import za.co.woolworths.financial.services.android.util.DeliveryType
 import java.net.HttpURLConnection
 
 
@@ -80,6 +76,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         const val ADD_A_NEW_ADDRESS_REQUEST_KEY = "addNewAddress"
         const val ADD_NEW_ADDRESS_KEY = "addNewAddress"
         const val SAVED_ADDRESS_KEY = "savedAddress"
+        const val IS_EDIT_ADDRESS_SCREEN = "isEditAddressScreenNeeded"
         const val UNSELLABLE_CHANGE_STORE_REQUEST_KEY = "unsellableChangeStore"
         const val STORE_SELECTION_REQUEST_KEY = "storeSelectionResponse"
         const val CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY = "confirmDeliveryAddressResponse"
@@ -781,6 +778,9 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                     storeAddress = localStoreAddress
                     fulfillmentStores = selectedSuburb.fulfillmentStores
                 }
+            }
+            else -> {
+                // Nothing
             }
         }
 

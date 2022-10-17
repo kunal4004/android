@@ -4,15 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@color/orders_bg"
     android:clickable="true">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/product_category_image_height"
         android:background="?attr/selectableItemBackground"
-        android:layout_marginBottom="@dimen/sixteen_dp"
-        >
+        android:layout_marginBottom="@dimen/sixteen_dp">
 
         <ImageView
             android:id="@+id/imProductCategory"

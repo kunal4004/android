@@ -9,6 +9,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.error_bottom_sheet_dialog.*
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 
 /**
@@ -16,6 +17,8 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomS
  */
 class ErrorHandlerBottomSheetDialog : WBottomSheetDialogFragment(),
     View.OnClickListener {
+
+    private var mclickListener: ClickListener? = null
 
     companion object {
 
@@ -30,6 +33,20 @@ class ErrorHandlerBottomSheetDialog : WBottomSheetDialogFragment(),
         const val ERROR_TYPE_CONFIRM_COLLECTION_ADDRESS = 1037
         const val ERROR_TYPE_SHIPPING_DETAILS_COLLECTION = 1038
         const val RESULT_ERROR_CODE_RETRY = "RESULT_ERROR_CODE_RETRY"
+
+        fun newInstance(bundle: Bundle, clickListener: ClickListener) = ErrorHandlerBottomSheetDialog().apply {
+            withArgs {
+               putString(ERROR_TITLE, bundle.getString(ERROR_TITLE, ""))
+               putString(ERROR_DESCRIPTION, bundle.getString(ERROR_DESCRIPTION, ""))
+               putString(ERROR_TYPE, bundle.getString(ERROR_TYPE, ""))
+            }
+            mclickListener = clickListener
+        }
+    }
+    
+
+    interface  ClickListener{
+        fun onRetryClick(errorType:Int)
     }
 
     override fun onCreateView(
@@ -79,6 +96,9 @@ class ErrorHandlerBottomSheetDialog : WBottomSheetDialogFragment(),
         when (v?.id) {
             R.id.actionButton -> {
                 setFragmentResult(RESULT_ERROR_CODE_RETRY, bundleOf("bundle" to errorType))
+                errorType?.let {
+                    mclickListener?.onRetryClick(it)
+                }
                 dismiss()
             }
             R.id.cancelButton -> {

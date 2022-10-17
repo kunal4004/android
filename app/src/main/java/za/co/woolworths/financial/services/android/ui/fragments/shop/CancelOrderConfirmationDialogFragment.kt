@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.cancel_order_confirmation_dialog.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -23,7 +24,9 @@ class CancelOrderConfirmationDialogFragment : WBottomSheetDialogFragment() {
     }
 
     companion object {
-        fun newInstance(isNavigatedFromMyAccountFlag: Boolean) = CancelOrderConfirmationDialogFragment().withArgs {
+        fun newInstance(
+            isNavigatedFromMyAccountFlag: Boolean
+        ) = CancelOrderConfirmationDialogFragment().withArgs {
             putBoolean(AppConstant.NAVIGATED_FROM_MY_ACCOUNTS, isNavigatedFromMyAccountFlag)
         }
     }
@@ -59,6 +62,7 @@ class CancelOrderConfirmationDialogFragment : WBottomSheetDialogFragment() {
         arguments?.apply {
             isNavigatedFromMyAccounts = getBoolean(AppConstant.NAVIGATED_FROM_MY_ACCOUNTS, false)
         }
+        initializeCancelReasonColor()
     }
 
 
@@ -68,4 +72,48 @@ class CancelOrderConfirmationDialogFragment : WBottomSheetDialogFragment() {
         Utils.triggerFireBaseEvents(if (isNavigatedFromMyAccounts) FirebaseManagerAnalyticsProperties.Acc_My_Orders_Cancel_Order else FirebaseManagerAnalyticsProperties.SHOP_MY_ORDERS_CANCEL_ORDER, arguments, requireActivity())
     }
 
+    private fun setCancelButtonUI(activated: Boolean) {
+        if (activated) {
+            confirmCancelOrder.setBackgroundColor(ContextCompat.getColor(requireActivity(), R.color.black))
+            confirmCancelOrder.isEnabled = true
+        } else {
+            confirmCancelOrder?.setBackgroundColor(ContextCompat.getColor(requireActivity(), R.color.color_A9A9A9))
+            confirmCancelOrder.isEnabled = false
+        }
+    }
+
+    private fun initializeCancelReasonColor() {
+        cancelReasons?.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.radioBtnNeedItems -> {
+                    radioBtnNeedItems?.setTextColor(ContextCompat.getColor(requireActivity(), R.color.black))
+                    radioBtnForgotSomething?.setTextColor(ContextCompat.getColor(requireActivity(), R.color.color_666666))
+                    radioBtnNeedPlace?.setTextColor(ContextCompat.getColor(requireActivity(), R.color.color_666666))
+                    radioBtnOther?.setTextColor(ContextCompat.getColor(requireActivity(), R.color.color_666666))
+                    setCancelButtonUI(true)
+                }
+                R.id.radioBtnForgotSomething -> {
+                    radioBtnForgotSomething?.setTextColor(ContextCompat.getColor(requireActivity(), R.color.black))
+                    radioBtnNeedItems?.setTextColor(ContextCompat.getColor(requireActivity(), R.color.color_666666))
+                    radioBtnNeedPlace?.setTextColor(ContextCompat.getColor(requireActivity(), R.color.color_666666))
+                    radioBtnOther?.setTextColor(ContextCompat.getColor(requireActivity(), R.color.color_666666))
+                    setCancelButtonUI(true)
+                }
+                R.id.radioBtnNeedPlace -> {
+                    radioBtnNeedPlace?.setTextColor(ContextCompat.getColor(requireActivity(), R.color.black))
+                    radioBtnForgotSomething?.setTextColor(ContextCompat.getColor(requireActivity(), R.color.color_666666))
+                    radioBtnNeedItems?.setTextColor(ContextCompat.getColor(requireActivity(), R.color.color_666666))
+                    radioBtnOther?.setTextColor(ContextCompat.getColor(requireActivity(), R.color.color_666666))
+                    setCancelButtonUI(true)
+                }
+                R.id.radioBtnOther -> {
+                    radioBtnOther?.setTextColor(ContextCompat.getColor(requireActivity(), R.color.black))
+                    radioBtnNeedPlace?.setTextColor(ContextCompat.getColor(requireActivity(), R.color.color_666666))
+                    radioBtnForgotSomething?.setTextColor(ContextCompat.getColor(requireActivity(), R.color.color_666666))
+                    radioBtnNeedItems?.setTextColor(ContextCompat.getColor(requireActivity(), R.color.color_666666))
+                    setCancelButtonUI(true)
+                }
+            }
+        }
+    }
 }

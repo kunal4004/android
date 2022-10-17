@@ -61,7 +61,7 @@ class PfCameraImpl private constructor(builder: Builder) : PfCamera() {
 
         override fun compare(lhs: android.util.Size?, rhs: android.util.Size?): Int {
             // Do cast here to ensure the multiplications won't overflow.
-            return signum(lhs?.width?.toLong()!! * lhs?.height!! - rhs?.width?.toLong()!! * rhs?.height)
+            return signum(lhs?.width?.toLong()!! * lhs?.height!! - rhs?.width?.toLong()!! * rhs?.height!!)
 
         }
     }

@@ -1,0 +1,371 @@
+{
+  "productCatalogues": [
+    {
+      "name": "Banner Carousel",
+      "headerText": "Shop by Preference",
+      "banners": [
+        {
+          "displayName": "Vegan",
+          "navigationState": "N-6lwvyn",
+          "externalImageRefV2": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0m7VJgL9Qhv7LXs9R5Jg0PY0Bid6DOX1PTA&usqp=CAU",
+          "filterContent": false
+        },
+        {
+          "displayName": "Fruits",
+          "navigationState": "N-14dx7ht",
+          "externalImageRefV2": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQygmaZNUtzIAjs0shE0CTVJV4Yk3Kk5ReZhA&usqp=CAU",
+          "filterContent": false
+        },
+        {
+          "displayName": "Carb Clever",
+          "navigationState": "N-1ele3tm",
+          "externalImageRefV2": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvwwBrtzYov1JhRO23Zr3H17csw_RFKK0frw&usqp=CAU",
+          "filterContent": false
+        },
+        {
+          "displayName": "Indian",
+          "navigationState": "N-o0yrlk",
+          "externalImageRefV2": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCo9a2fEzKYKywRIUp9pi3wlY6NTFicEaN0Q&usqp=CAU",
+          "filterContent": false
+        }
+      ]
+    },
+    {
+      "name": "Long Banners Carousel",
+      "headerText": "Todays with Woolies",
+      "banners": [
+        {
+          "displayName": "Make it Sizzle",
+          "subTitle": "Everything you need for the ultimate Braai.",
+          "navigationState": "N-1kp5owg",
+          "externalImageRefV2": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7ZvXlKjswR1NQxnWrRKVA7t-dOM0vcD15HA&usqp=CAU",
+          "filterContent": false
+        },
+        {
+          "displayName": "Easy Plant-Based Deliciousness",
+          "subTitle": "Vegan and Vegaterian dishes made easy.",
+          "navigationState": "N-6lwvyn",
+          "externalImageRefV2": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMHU1VpMsbfs-yFK4oMhMrPKN6iuAxnmGPCg&usqp=CAU",
+          "filterContent": false
+        },
+        {
+          "displayName": "Easy Snacking",
+          "subTitle": "Balanced variaty of sweet andsavoury snacks.",
+          "navigationState": "N-1gib9pk",
+          "externalImageRefV2": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmfrYiah4XLXZUlcops3mqSpc-OcSG5baaEw&usqp=CAU",
+          "filterContent": false
+        },
+        {
+          "displayName": "Wine & Bubbles",
+          "subTitle": "Celebrate moments that matter.",
+          "navigationState": "N-1xn9kx4",
+          "externalImageRefV2": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJh8yZFkP60iPysy8T8Y6bJ0ld5uY1PgW9Xg&usqp=CAU",
+          "filterContent": false
+        }
+      ]
+    },
+    {
+      "name": "Product Carousel",
+      "headerText": "Gifting Inspiration",
+      "products": [
+        {
+          "isRnREnabled": false,
+          "productId": "6009182707657",
+          "productName": "Mini Ginger Cookies 30 g",
+          "externalImageRef": "https://assets.woolworthsstatic.co.za/Mini-Ginger-Cookies-30-g-6009182707657.jpg?V=kb1C&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDE4LTEwLTExLzYwMDkxODI3MDc2NTdfaGVyby5qcGcifQ&",
+          "externalImageRefV2": "https://assets.woolworthsstatic.co.za/Mini-Ginger-Cookies-30-g-6009182707657.jpg?V=kb1C&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDE4LTEwLTExLzYwMDkxODI3MDc2NTdfaGVyby5qcGcifQ&",
+          "imagePath": "https://www.woolworths.co.za/images/elasticera/products/hero/2018-10-11/6009182707657_hero.jpg",
+          "isLiquor": false,
+          "price": "11.99",
+          "productType": "foodProducts",
+          "sku": "6009182707657",
+          "promotions": [],
+          "brandHeaderDescription": ""
+        },
+        {
+          "isRnREnabled": false,
+          "productId": "6009223195009",
+          "productName": "Mini Oat Crunchies 150 g",
+          "externalImageRef": "https://assets.woolworthsstatic.co.za/Mini-Oat-Crunchies-150-g-6009223195009.jpg?V=buKH&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTA2LTAyLzYwMDkyMjMxOTUwMDlfaGVyby5qcGcifQ&",
+          "externalImageRefV2": "https://assets.woolworthsstatic.co.za/Mini-Oat-Crunchies-150-g-6009223195009.jpg?V=buKH&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTA2LTAyLzYwMDkyMjMxOTUwMDlfaGVyby5qcGcifQ&",
+          "imagePath": "https://www.woolworths.co.za/images/elasticera/products/hero/2021-06-02/6009223195009_hero.jpg",
+          "isLiquor": false,
+          "price": "32.99",
+          "productType": "foodProducts",
+          "sku": "6009223195009",
+          "promotions": [],
+          "brandHeaderDescription": ""
+        },
+        {
+          "isRnREnabled": false,
+          "productId": "6009189506291",
+          "productName": "Mini Yoghurt Digestives 30 g",
+          "externalImageRef": "https://assets.woolworthsstatic.co.za/Mini-Yoghurt-Digestives-30-g-6009189506291.jpg?V=mlJK&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTA2LTI0LzYwMDkxODk1MDYyOTFfaGVyby5qcGcifQ&",
+          "externalImageRefV2": "https://assets.woolworthsstatic.co.za/Mini-Yoghurt-Digestives-30-g-6009189506291.jpg?V=mlJK&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTA2LTI0LzYwMDkxODk1MDYyOTFfaGVyby5qcGcifQ&",
+          "imagePath": "https://www.woolworths.co.za/images/elasticera/products/hero/2021-06-24/6009189506291_hero.jpg",
+          "isLiquor": false,
+          "price": "12.99",
+          "productType": "foodProducts",
+          "sku": "6009189506291",
+          "promotions": [],
+          "brandHeaderDescription": ""
+        },
+        {
+          "isRnREnabled": true,
+          "averageRating": "5.0",
+          "reviewCount": "1",
+          "productId": "6009189506246",
+          "productName": "Mini Chocolate Digestives 30 g",
+          "externalImageRef": "https://assets.woolworthsstatic.co.za/Mini-Chocolate-Digestives-30-g-6009189506246.jpg?V=fur0&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTA2LTI0LzYwMDkxODk1MDYyNDZfaGVyby5qcGcifQ&",
+          "externalImageRefV2": "https://assets.woolworthsstatic.co.za/Mini-Chocolate-Digestives-30-g-6009189506246.jpg?V=fur0&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTA2LTI0LzYwMDkxODk1MDYyNDZfaGVyby5qcGcifQ&",
+          "imagePath": "https://www.woolworths.co.za/images/elasticera/products/hero/2021-06-24/6009189506246_hero.jpg",
+          "isLiquor": false,
+          "price": "12.99",
+          "productType": "foodProducts",
+          "sku": "6009189506246",
+          "promotions": [],
+          "brandHeaderDescription": ""
+        },
+        {
+          "isRnREnabled": true,
+          "averageRating": "5.0",
+          "reviewCount": "1",
+          "productId": "6009195025717",
+          "productName": "Palmiers 160 g",
+          "externalImageRef": "https://assets.woolworthsstatic.co.za/Palmiers-160-g-6009195025717.jpg?V=E8lb&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIyLTAzLTA3LzYwMDkxOTUwMjU3MTdfaGVyby5qcGcifQ&",
+          "externalImageRefV2": "https://assets.woolworthsstatic.co.za/Palmiers-160-g-6009195025717.jpg?V=E8lb&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIyLTAzLTA3LzYwMDkxOTUwMjU3MTdfaGVyby5qcGcifQ&",
+          "imagePath": "https://www.woolworths.co.za/images/elasticera/products/hero/2022-03-07/6009195025717_hero.jpg",
+          "isLiquor": false,
+          "price": "45.99",
+          "productType": "foodProducts",
+          "sku": "6009195025717",
+          "promotions": [],
+          "brandHeaderDescription": ""
+        },
+        {
+          "isRnREnabled": false,
+          "productId": "6009182004657",
+          "productName": "Yoghurt Dipped Crunchies 200 g",
+          "externalImageRef": "https://assets.woolworthsstatic.co.za/Yoghurt-Dipped-Crunchies-200-g-6009182004657.jpg?V=uR3L&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIwLTA3LTAyLzYwMDkxODIwMDQ2NTdfaGVyby5qcGcifQ&",
+          "externalImageRefV2": "https://assets.woolworthsstatic.co.za/Yoghurt-Dipped-Crunchies-200-g-6009182004657.jpg?V=uR3L&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIwLTA3LTAyLzYwMDkxODIwMDQ2NTdfaGVyby5qcGcifQ&",
+          "imagePath": "https://www.woolworths.co.za/images/elasticera/products/hero/2020-07-02/6009182004657_hero.jpg",
+          "isLiquor": false,
+          "price": "49.99",
+          "productType": "foodProducts",
+          "sku": "6009182004657",
+          "promotions": [],
+          "brandHeaderDescription": ""
+        },
+        {
+          "isRnREnabled": false,
+          "productId": "6009175106443",
+          "productName": "Yoghurt Digestives 200 g",
+          "externalImageRef": "https://assets.woolworthsstatic.co.za/Yoghurt-Digestives-200-g-6009175106443.jpg?V=Xzz6&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTA2LTI0LzYwMDkxNzUxMDY0NDNfaGVyby5qcGcifQ&",
+          "externalImageRefV2": "https://assets.woolworthsstatic.co.za/Yoghurt-Digestives-200-g-6009175106443.jpg?V=Xzz6&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTA2LTI0LzYwMDkxNzUxMDY0NDNfaGVyby5qcGcifQ&",
+          "imagePath": "https://www.woolworths.co.za/images/elasticera/products/hero/2021-06-24/6009175106443_hero.jpg",
+          "isLiquor": false,
+          "price": "37.99",
+          "productType": "foodProducts",
+          "sku": "6009175106443",
+          "promotions": [],
+          "brandHeaderDescription": ""
+        }
+      ]
+    },
+    {
+      "name": "Banner Grid",
+      "headerText": "Shop by Promotions",
+      "banners": [
+        {
+          "displayName": "",
+          "navigationState": "N-cov4tf",
+          "externalImageRefV2": "https://assets.woolworthsstatic.co.za/eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvY29udGVudC9sYW5kaW5nX3BhZ2VzL0Zvb2RfMjAyMC9Gb29kX0Rlc2t0b3BfV2VlazI2X0Jhbm5lcjA2LmpwZyJ9.jpg?&q=75",
+          "filterContent": false
+        },
+        {
+          "displayName": "",
+          "navigationState": "N-1z13bde",
+          "externalImageRefV2": "https://assets.woolworthsstatic.co.za/eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvY29udGVudC9sYW5kaW5nX3BhZ2VzL0Zvb2RfMjAyMS9ERF9EZXNrdG9wXzRVUHNtYWxsX0Jhbm5lcjAxLmpwZyJ9.jpg?&q=75",
+          "filterContent": false
+        },
+        {
+          "displayName": "",
+          "navigationState": "N-8uulckZeros7t",
+          "externalImageRefV2": "https://assets.woolworthsstatic.co.za/eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvY29udGVudC9sYW5kaW5nX3BhZ2VzL0Zvb2RfMjAyMC9Gb29kX0Rlc2t0b3BfV2VlazI2X0Jhbm5lcjA4LmpwZyJ9.jpg?&q=75",
+          "filterContent": false
+        },
+        {
+          "displayName": "",
+          "navigationState": "N-8uulckZ17zinix",
+          "externalImageRefV2": "https://assets.woolworthsstatic.co.za/eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvY29udGVudC9sYW5kaW5nX3BhZ2VzL0Zvb2RfMjAyMC9Gb29kX0Rlc2t0b3BfV2VlazI2X0Jhbm5lcjA5LmpwZyJ9.jpg?&q=75",
+          "filterContent": false
+        }
+      ]
+    },
+    {
+      "name": "Long Banners List",
+      "headerText": "Shop by Occasion",
+      "banners": [
+        {
+          "displayName": "Make it Sizzle",
+          "subTitle": "Everything you need for the ultimate Braai.",
+          "navigationState": "N-1kp5owg",
+          "externalImageRefV2": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7ZvXlKjswR1NQxnWrRKVA7t-dOM0vcD15HA&usqp=CAU",
+          "filterContent": false
+        },
+        {
+          "displayName": "Easy Plant-Based Deliciousness",
+          "subTitle": "Vegan and Vegaterian dishes made easy.",
+          "navigationState": "N-8uulckZeros7t",
+          "externalImageRefV2": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMHU1VpMsbfs-yFK4oMhMrPKN6iuAxnmGPCg&usqp=CAU",
+          "filterContent": false
+        },
+        {
+          "displayName": "Easy Snacking",
+          "subTitle": "Balanced variaty of sweet andsavoury snacks.",
+          "navigationState": "N-1gib9pk",
+          "externalImageRefV2": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmfrYiah4XLXZUlcops3mqSpc-OcSG5baaEw&usqp=CAU",
+          "filterContent": false
+        },
+        {
+          "displayName": "Wine & Bubbles",
+          "subTitle": "Celebrate moments that matter.",
+          "navigationState": "N-1xn9kx4",
+          "externalImageRefV2": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJh8yZFkP60iPysy8T8Y6bJ0ld5uY1PgW9Xg&usqp=CAU",
+          "filterContent": false
+        }
+      ]
+    },
+    {
+      "name": "Product Carousel",
+      "headerText": "Trending",
+      "products": [
+        {
+          "isRnREnabled": false,
+          "productId": "20160074",
+          "productName": "Basil Pesto 125 g",
+          "externalImageRef": "https://assets.woolworthsstatic.co.za/Basil-Pesto-125-g-20160074.jpg?V=qp8S&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTA0LTIxLzIwMTYwMDc0X2hlcm8uanBnIn0&",
+          "externalImageRefV2": "https://assets.woolworthsstatic.co.za/Basil-Pesto-125-g-20160074.jpg?V=qp8S&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTA0LTIxLzIwMTYwMDc0X2hlcm8uanBnIn0&",
+          "imagePath": "https://www-win-qa.woolworths.co.za/images/elasticera/products/hero/2021-04-21/20160074_hero.jpg",
+          "isLiquor": false,
+          "price": "56.99",
+          "productType": "foodProducts",
+          "sku": "20160074",
+          "promotions": [],
+          "brandHeaderDescription": ""
+        },
+        {
+          "isRnREnabled": false,
+          "productId": "6009189863189",
+          "productName": "Baby Marrow Spaghetti 300 g",
+          "externalImageRef": "https://assets.woolworthsstatic.co.za/Baby-Marrow-Spaghetti-300-g-6009189863189.jpg?V=g2@z&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIwLTAyLTI1LzYwMDkxODk4NjMxODlfaGVyby5qcGcifQ&",
+          "externalImageRefV2": "https://assets.woolworthsstatic.co.za/Baby-Marrow-Spaghetti-300-g-6009189863189.jpg?V=g2@z&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIwLTAyLTI1LzYwMDkxODk4NjMxODlfaGVyby5qcGcifQ&",
+          "imagePath": "https://www-win-qa.woolworths.co.za/images/elasticera/products/hero/2020-02-25/6009189863189_hero.jpg",
+          "isLiquor": false,
+          "price": "29.99",
+          "productType": "foodProducts",
+          "sku": "6009189863189",
+          "promotions": [],
+          "promotionImages": {
+            "vitality": "https://www-win-qa.woolworths.co.za/images/flashes/vitality_new_new.png"
+          },
+          "brandHeaderDescription": ""
+        },
+        {
+          "isRnREnabled": false,
+          "productId": "6009184396286",
+          "productName": "Fresh Sweet & Sour Stir-Fry Sauce 100 g",
+          "externalImageRef": "https://assets.woolworthsstatic.co.za/Fresh-Sweet-Sour-Stir-Fry-Sauce-100-g-6009184396286.jpg?V=v6CW&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTAyLTIzLzYwMDkxODQzOTYyODZfaGVyby5qcGcifQ&",
+          "externalImageRefV2": "https://assets.woolworthsstatic.co.za/Fresh-Sweet-Sour-Stir-Fry-Sauce-100-g-6009184396286.jpg?V=v6CW&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTAyLTIzLzYwMDkxODQzOTYyODZfaGVyby5qcGcifQ&",
+          "imagePath": "https://www-win-qa.woolworths.co.za/images/elasticera/products/hero/2021-02-23/6009184396286_hero.jpg",
+          "isLiquor": false,
+          "price": "19.99",
+          "productType": "foodProducts",
+          "sku": "6009184396286",
+          "promotions": [],
+          "brandHeaderDescription": ""
+        },
+        {
+          "isRnREnabled": false,
+          "productId": "6009184979663",
+          "productName": "Cauliflower Couscous 380 g",
+          "externalImageRef": "https://assets.woolworthsstatic.co.za/Cauliflower-Couscous-380-g-6009184979663.jpg?V=VhPv&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIwLTAyLTI1LzYwMDkxODQ5Nzk2NjNfaGVyby5qcGcifQ&",
+          "externalImageRefV2": "https://assets.woolworthsstatic.co.za/Cauliflower-Couscous-380-g-6009184979663.jpg?V=VhPv&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIwLTAyLTI1LzYwMDkxODQ5Nzk2NjNfaGVyby5qcGcifQ&",
+          "imagePath": "https://www-win-qa.woolworths.co.za/images/elasticera/products/hero/2020-02-25/6009184979663_hero.jpg",
+          "isLiquor": false,
+          "price": "32.00",
+          "productType": "foodProducts",
+          "sku": "6009184979663",
+          "promotions": [],
+          "promotionImages": {
+            "vitality": "https://www-win-qa.woolworths.co.za/images/flashes/vitality_new_new.png"
+          },
+          "brandHeaderDescription": ""
+        },
+        {
+          "isRnREnabled": false,
+          "productId": "20040000",
+          "productName": "Fresh Pour Over Cheese Sauce 200 g",
+          "externalImageRef": "https://assets.woolworthsstatic.co.za/Fresh-Pour-Over-Cheese-Sauce-200-g-20040000.jpg?V=Hvjk&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTA2LTE4LzIwMDQwMDAwX2hlcm8uanBnIn0&",
+          "externalImageRefV2": "https://assets.woolworthsstatic.co.za/Fresh-Pour-Over-Cheese-Sauce-200-g-20040000.jpg?V=Hvjk&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTA2LTE4LzIwMDQwMDAwX2hlcm8uanBnIn0&",
+          "imagePath": "https://www-win-qa.woolworths.co.za/images/elasticera/products/hero/2021-06-18/20040000_hero.jpg",
+          "isLiquor": false,
+          "price": "38.99",
+          "productType": "foodProducts",
+          "sku": "20040000",
+          "promotions": [],
+          "brandHeaderDescription": ""
+        },
+        {
+          "isRnREnabled": true,
+          "averageRating": "4.0",
+          "reviewCount": "1",
+          "productId": "20120825",
+          "productName": "Fresh Spinach & Ricotta Ravioli 250 g",
+          "externalImageRef": "https://assets.woolworthsstatic.co.za/Fresh-Spinach-Ricotta-Ravioli-250-g-20120825.jpg?V=Beun&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTA1LTA2LzIwMTIwODI1X2hlcm8uanBnIn0&",
+          "externalImageRefV2": "https://assets.woolworthsstatic.co.za/Fresh-Spinach-Ricotta-Ravioli-250-g-20120825.jpg?V=Beun&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTA1LTA2LzIwMTIwODI1X2hlcm8uanBnIn0&",
+          "imagePath": "https://www-win-qa.woolworths.co.za/images/elasticera/products/hero/2021-05-06/20120825_hero.jpg",
+          "isLiquor": false,
+          "price": "74.99",
+          "productType": "foodProducts",
+          "sku": "20120825",
+          "promotions": [],
+          "brandHeaderDescription": ""
+        },
+        {
+          "isRnREnabled": false,
+          "productId": "20094621",
+          "productName": "Fresh Napoletana Sauce 200 g",
+          "externalImageRef": "https://assets.woolworthsstatic.co.za/Fresh-Napoletana-Sauce-200-g-20094621.jpg?V=gkTB&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTAyLTAxLzIwMDk0NjIxX2hlcm8uanBnIn0&",
+          "externalImageRefV2": "https://assets.woolworthsstatic.co.za/Fresh-Napoletana-Sauce-200-g-20094621.jpg?V=gkTB&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTAyLTAxLzIwMDk0NjIxX2hlcm8uanBnIn0&",
+          "imagePath": "https://www-win-qa.woolworths.co.za/images/elasticera/products/hero/2021-02-01/20094621_hero.jpg",
+          "isLiquor": false,
+          "price": "38.99",
+          "productType": "foodProducts",
+          "sku": "20094621",
+          "promotions": [],
+          "brandHeaderDescription": ""
+        },
+        {
+          "isRnREnabled": false,
+          "productId": "20102142",
+          "productName": "Fresh Pour Over Cheese Sauce 400 g",
+          "externalImageRef": "https://assets.woolworthsstatic.co.za/Fresh-Pour-Over-Cheese-Sauce-400-g-20102142.jpg?V=dq95&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTA2LTE4LzIwMTAyMTQyX2hlcm8uanBnIn0&",
+          "externalImageRefV2": "https://assets.woolworthsstatic.co.za/Fresh-Pour-Over-Cheese-Sauce-400-g-20102142.jpg?V=dq95&o=eyJidWNrZXQiOiJ3dy1vbmxpbmUtaW1hZ2UtcmVzaXplIiwia2V5IjoiaW1hZ2VzL2VsYXN0aWNlcmEvcHJvZHVjdHMvaGVyby8yMDIxLTA2LTE4LzIwMTAyMTQyX2hlcm8uanBnIn0&",
+          "imagePath": "https://www-win-qa.woolworths.co.za/images/elasticera/products/hero/2021-06-18/20102142_hero.jpg",
+          "isLiquor": false,
+          "price": "58.99",
+          "productType": "foodProducts",
+          "sku": "20102142",
+          "promotions": [],
+          "brandHeaderDescription": ""
+        }
+      ]
+    }
+  ],
+  "response": {
+    "code": "-1",
+    "desc": "Success"
+  },
+  "httpCode": 200
+}

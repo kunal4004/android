@@ -15,7 +15,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FACE_NOT_DETECT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FAIL_IMAGE_LOAD
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_INVALID_IMAGE_PATH
-import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import java.util.*
 import javax.inject.Inject
 
@@ -71,14 +71,16 @@ class ApplyVtoImageRepositoryImpl @Inject constructor(
 
                                 }
                                 try {
-                                    context?.contentResolver.openInputStream(uri!!)
+                                    context?.contentResolver?.openInputStream(uri!!)
                                         .use { imageStream ->
                                             val bitmap = BitmapFactory.decodeStream(imageStream)
-                                            val matrix: Matrix =
-                                                SdkUtility.getRotationMatrixByExif(
-                                                    context?.contentResolver,
-                                                    uri
-                                                )
+                                            val matrix: Matrix? =
+                                                context?.contentResolver?.let { contentResolver ->
+                                                    SdkUtility.getRotationMatrixByExif(
+                                                        contentResolver,
+                                                        uri
+                                                    )
+                                                }
                                             val selectedImage =
                                                 Bitmap.createBitmap(
                                                     bitmap,

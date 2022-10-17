@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.util
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityOptions
+import android.app.Dialog
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -11,7 +12,9 @@ import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.InsetDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -20,20 +23,24 @@ import android.text.*
 import android.text.style.*
 import android.util.TypedValue
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.annotation.RawRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.Group
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import com.awfs.coordination.R
 import com.google.common.reflect.TypeToken
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.installations.FirebaseInstallations
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -44,8 +51,11 @@ import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_COLLECTING_DETAILS
-import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
+import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
+import za.co.woolworths.financial.services.android.geolocation.network.model.Store
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.accountOptions
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.liquor
@@ -59,6 +69,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.Transactio
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionHeader
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionItem
 import za.co.woolworths.financial.services.android.models.dto.app_config.chat.ConfigTradingHours
+import za.co.woolworths.financial.services.android.models.dto.cart.FulfillmentDetails
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity
@@ -69,7 +80,7 @@ import za.co.woolworths.financial.services.android.ui.extension.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiFailureHandler
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
-import za.co.woolworths.financial.services.android.ui.views.WTextView
+import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.CLIErrorMessageButtonDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ErrorMessageDialog
@@ -77,10 +88,13 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DEFAULT_ADDRESS
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CHECKOUT
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CNC_SELETION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_SLOT_SELECTION
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_FROM_DASH_TAB
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.PLACE_ID
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
-import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
@@ -99,12 +113,22 @@ import kotlin.coroutines.CoroutineContext
 class KotlinUtils {
     companion object {
 
-        const val DELAY: Long = 900
+        var isStoreSelectedForBrowsing: Boolean = false
+        var placeId: String? = null
+        var isLocationSame: Boolean? = false
+        var isDeliveryLocationTabCrossClicked: Boolean? = false
+        var isCncTabCrossClicked: Boolean? = false
+        var isDashTabCrossClicked: Boolean? = false
+        var isComingFromCncTab: Boolean? = false
+        var fullfillmentTypeClicked: String? = ""
+        var browsingDeliveryType: Delivery? = getPreferredDeliveryType()
+        @JvmStatic
+        var browsingCncStore: Store? = null
         const val collectionsIdUrl = "woolworths.wfs.co.za/CustomerCollections/IdVerification"
         const val COLLECTIONS_EXIT_URL = "collectionsExitUrl"
         const val TREATMENT_PLAN = "treamentPlan"
         const val RESULT_CODE_CLOSE_VIEW = 2203
-        var GEO_REQUEST_CODE = -1
+        private var GEO_REQUEST_CODE = -1
 
 
         fun highlightTextInDesc(
@@ -178,7 +202,7 @@ class KotlinUtils {
             }
         }
 
-        private fun AppCompatActivity.setWindowFlag(bits: Int, on: Boolean) {
+        fun AppCompatActivity.setWindowFlag(bits: Int, on: Boolean) {
             val winParams = window?.attributes
             winParams?.apply {
                 flags = if (on) {
@@ -253,6 +277,13 @@ class KotlinUtils {
             view.background = shape
         }
 
+        fun getCardHolderNameSurname(): String? {
+            val jwtDecoded = SessionUtilities.getInstance()?.jwt
+            val name = jwtDecoded?.name?.get(0)
+            val familyName = jwtDecoded?.family_name?.get(0)
+            return "$name $familyName"
+        }
+
         fun dpToPxConverter(dp: Int): Int {
             return (dp * Resources.getSystem().displayMetrics.density).toInt()
         }
@@ -271,7 +302,9 @@ class KotlinUtils {
             return ""
         }
 
-        fun capitaliseFirstLetter(str: String): CharSequence? {
+        fun capitaliseFirstLetter(str: String?): CharSequence? {
+            if (str.isNullOrEmpty())
+                return str
             val value = str.toLowerCase()
             val words = value.split(" ").toMutableList()
             var output = ""
@@ -283,10 +316,10 @@ class KotlinUtils {
 
 
         fun capitaliseFirstWordAndLetters(str: String): CharSequence? {
-            val value = str.toLowerCase()
+            val value = str.lowercase()
             val words = value.split(" ").toMutableList()
 
-            var output = words[0].toUpperCase() + " "
+            var output = words[0].uppercase() + " "
             words.removeAt(0)
             for (word in words) {
                 output += word.capitalize() + " "
@@ -375,6 +408,13 @@ class KotlinUtils {
             return calendar.time
         }
 
+        fun removeRandFromAmount(amount: String?): String {
+            if (amount?.contains("R") == true) {
+                return amount.substring(1)
+            }
+            return amount ?: "0.0"
+        }
+
         fun toShipByDateFormat(date: Date?): String {
             return SimpleDateFormat("dd-MM-yyy").format(date)
         }
@@ -384,9 +424,10 @@ class KotlinUtils {
             requestCode: Int,
             delivery: Delivery? = Delivery.STANDARD,
             placeId: String? = null,
+            isFromDashTab: Boolean = false,
             isComingFromCheckout: Boolean = false,
             isComingFromSlotSelection: Boolean = false,
-            savedAddressResposne: SavedAddressResponse? = null,
+            savedAddressResponse: SavedAddressResponse? = null,
             defaultAddress: Address? = null,
             whoISCollecting: String? = null,
             liquorCompliance: LiquorCompliance? = null
@@ -395,15 +436,18 @@ class KotlinUtils {
             activity?.apply {
                 val mIntent = Intent(this, EditDeliveryLocationActivity::class.java)
                 val mBundle = Bundle()
+                // todo Change this logic to add everything in bundle as this is exceeding 1mb limit of bundle.
                 if (liquorCompliance != null && liquorCompliance.isLiquorOrder && liquor!=null && liquor!!.noLiquorImgUrl != null && !liquor!!.noLiquorImgUrl.isEmpty()) {
                     mBundle.putBoolean(Constant.LIQUOR_ORDER, liquorCompliance.isLiquorOrder)
                     mBundle.putString(Constant.NO_LIQUOR_IMAGE_URL, liquor!!.noLiquorImgUrl)
                 }
                 mBundle.putString(DELIVERY_TYPE, delivery.toString())
                 mBundle.putString(PLACE_ID, placeId)
+                mBundle.putBoolean(IS_FROM_DASH_TAB, isFromDashTab)
                 mBundle.putBoolean(IS_COMING_FROM_CHECKOUT, isComingFromCheckout)
+                mBundle.putBoolean(IS_COMING_FROM_CNC_SELETION, isComingFromCheckout)
                 mBundle.putBoolean(IS_COMING_FROM_SLOT_SELECTION, isComingFromSlotSelection)
-                mBundle.putSerializable(SAVED_ADDRESS_RESPONSE, savedAddressResposne)
+                mBundle.putSerializable(SAVED_ADDRESS_RESPONSE, savedAddressResponse)
                 mBundle.putSerializable(DEFAULT_ADDRESS, defaultAddress)
                 mBundle.putString(KEY_COLLECTING_DETAILS, whoISCollecting)
                 mIntent.putExtra(BUNDLE, mBundle)
@@ -415,32 +459,211 @@ class KotlinUtils {
 
         fun setDeliveryAddressView(
             context: Activity?,
-            shoppingDeliveryLocation: ShoppingDeliveryLocation,
-            tvDeliveringTo: WTextView,
-            tvDeliveryLocation: WTextView,
+            fulfillmentDetails: FulfillmentDetails,
+            tvDeliveringTo: TextView,
+            tvDeliveryLocation: TextView,
             deliverLocationIcon: ImageView?,
         ) {
-            with(shoppingDeliveryLocation?.fulfillmentDetails) {
+            with(fulfillmentDetails) {
                 when (Delivery?.getType(deliveryType)) {
                     Delivery.CNC -> {
                         tvDeliveringTo?.text =
                             context?.resources?.getString(R.string.collecting_from)
                         tvDeliveryLocation?.text =
-                            context?.resources?.getString(R.string.store) + storeName?.let { convertToTitleCase(it) } ?: ""
+                            capitaliseFirstLetter(context?.resources?.getString(R.string.store) + storeName)
 
                         tvDeliveryLocation?.visibility = View.VISIBLE
-                        deliverLocationIcon?.setBackgroundResource(R.drawable.icon_basket)
+                        deliverLocationIcon?.setImageResource(R.drawable.ic_collection_circle)
                     }
                     Delivery.STANDARD -> {
-                        tvDeliveringTo.text = context?.resources?.getString(R.string.delivering_to)
-                        tvDeliveryLocation.text =
-                            address?.address1?.let { convertToTitleCase(it) } ?: ""
+                        tvDeliveringTo.text =
+                            context?.resources?.getString(R.string.standard_delivery)
+                        tvDeliveryLocation?.text = capitaliseFirstLetter(address?.address1 ?: "")
 
-                        tvDeliveryLocation.visibility = View.VISIBLE
-                        deliverLocationIcon?.setBackgroundResource(R.drawable.icon_delivery)
+                        tvDeliveryLocation?.visibility = View.VISIBLE
+                        deliverLocationIcon?.setImageResource(R.drawable.ic_delivery_circle)
+                    }
+                    Delivery.DASH -> {
+                        val timeSlot: String? =
+                            WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.firstAvailableFoodDeliveryTime
+                        if (timeSlot == null) {
+                            tvDeliveringTo?.text =
+                                context?.resources?.getString(R.string.dash_delivery_bold)
+                        } else {
+                            tvDeliveringTo?.text =
+                                context?.resources?.getString(R.string.dash_delivery_bold)
+                                    .plus("\t" + timeSlot)
+                        }
+                        tvDeliveryLocation?.text =
+                            capitaliseFirstLetter(WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
+                                ?: address?.address1 ?: "")
+                        tvDeliveryLocation?.visibility = View.VISIBLE
+                        deliverLocationIcon?.setImageResource(R.drawable.ic_dash_delivery_circle)
                     }
                     else -> {
+                        tvDeliveringTo.text =
+                            context?.resources?.getString(R.string.standard_delivery)
+                        tvDeliveryLocation?.text =
+                            context?.resources?.getString(R.string.default_location)
+
+                        tvDeliveryLocation?.visibility = View.VISIBLE
+                        deliverLocationIcon?.setImageResource(R.drawable.ic_delivery_circle)
                     }
+                }
+            }
+        }
+
+        fun setDeliveryAddressViewFoShop(
+            context: Activity?,
+            fulfillmentDetails: FulfillmentDetails,
+            tvDeliveringTo: TextView,
+            tvDeliveryLocation: TextView,
+            deliverLocationIcon: ImageView?,
+        ) {
+            with(fulfillmentDetails) {
+                when (Delivery?.getType(deliveryType)) {
+                    Delivery.CNC -> {
+                        tvDeliveringTo?.text =
+                            context?.resources?.getString(R.string.click_collect)
+                        tvDeliveryLocation?.text =
+                            capitaliseFirstLetter(context?.resources?.getString(R.string.store) + storeName)
+
+                        tvDeliveryLocation?.visibility = View.VISIBLE
+                        deliverLocationIcon?.setImageResource(R.drawable.ic_collection_circle)
+                    }
+                    Delivery.STANDARD -> {
+                        tvDeliveringTo.text =
+                            context?.resources?.getString(R.string.standard_delivery)
+                        tvDeliveryLocation?.text = capitaliseFirstLetter(address?.address1 ?: "")
+
+                        tvDeliveryLocation?.visibility = View.VISIBLE
+                        deliverLocationIcon?.setImageResource(R.drawable.ic_delivery_circle)
+                    }
+                    Delivery.DASH -> {
+                        val timeSlot: String? =
+                            WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.firstAvailableFoodDeliveryTime
+                        tvDeliveringTo?.text =
+                            context?.resources?.getString(R.string.dash_delivery_bold)
+                        if (timeSlot == null) {
+                            tvDeliveryLocation?.text =
+                                capitaliseFirstLetter(WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
+                                    ?: address?.address1 ?: "")
+                        } else {
+                            tvDeliveryLocation?.text = timeSlot.plus("\t\u2022\t").plus(
+                                capitaliseFirstLetter(WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.address1
+                                    ?: address?.address1 ?: ""))
+                        }
+                        tvDeliveryLocation?.visibility = View.VISIBLE
+                        deliverLocationIcon?.setImageResource(R.drawable.ic_dash_delivery_circle)
+                    }
+                    else -> {
+                        tvDeliveringTo.text =
+                            context?.resources?.getString(R.string.standard_delivery)
+                        tvDeliveryLocation?.text =
+                            context?.resources?.getString(R.string.default_location)
+
+                        tvDeliveryLocation?.visibility = View.VISIBLE
+                        deliverLocationIcon?.setImageResource(R.drawable.ic_delivery_circle)
+                    }
+                }
+            }
+        }
+
+        fun showChangeDeliveryTypeDialog(context: Context, requireFragmentManager: FragmentManager, deliveryType: Delivery?) {
+            var dialogTitle = ""
+            var dialogSubTitle: CharSequence = ""
+            var dialogBtnText = ""
+            var dialogTitleImg: Int = R.drawable.img_delivery_truck
+            when (deliveryType) {
+                Delivery.STANDARD -> {
+                    context.apply {
+                        dialogTitle = getString(R.string.change_your_delivery_method_title)
+                        dialogSubTitle = getText(R.string.change_your_delivery_method_standard)
+                        dialogBtnText = getString(R.string.continue_with_standard_delivery)
+                        dialogTitleImg = R.drawable.img_delivery_truck
+                    }
+                }
+                Delivery.CNC -> {
+                    context.apply {
+                        dialogTitle = getString(R.string.change_your_delivery_method_title)
+                        dialogSubTitle = getText(R.string.change_your_delivery_method_cnc)
+                        dialogBtnText = getString(R.string.continue_with_cnc_delivery)
+                        dialogTitleImg = R.drawable.img_collection_bag
+                    }
+                }
+                Delivery.DASH -> {
+                    context.apply {
+                        dialogTitle = getString(R.string.change_your_delivery_method_title)
+                        dialogSubTitle = getText(R.string.change_your_delivery_method_dash)
+                        dialogBtnText = getString(R.string.continue_with_dash_delivery)
+                        dialogTitleImg = R.drawable.img_dash_delivery
+                    }
+                }
+                else -> {}
+            }
+            val customBottomSheetDialogFragment =
+                CustomBottomSheetDialogFragment.newInstance(
+                    dialogTitle,
+                    dialogSubTitle,
+                    dialogBtnText,
+                    dialogTitleImg,
+                    null)
+            customBottomSheetDialogFragment.show(requireFragmentManager,
+                CustomBottomSheetDialogFragment::class.java.simpleName)
+        }
+
+        fun getUnsellableList(validatePlace: ValidatePlace?, deliveryType: Delivery?): MutableList<UnSellableCommerceItem>? {
+            return when (deliveryType) {
+                Delivery.STANDARD -> {
+                    validatePlace?.unSellableCommerceItems
+                }
+                Delivery.CNC -> {
+                    browsingCncStore?.storeId?.let { checkStoreHasUnsellable(validatePlace, it) }
+                }
+                Delivery.DASH -> {
+                    validatePlace?.onDemand?.unSellableCommerceItems
+                }
+                else -> validatePlace?.unSellableCommerceItems
+            }
+        }
+
+        private fun checkStoreHasUnsellable(validatePlace: ValidatePlace?, mStoreId: String): MutableList<UnSellableCommerceItem>? {
+            validatePlace?.stores?.forEach {
+                if (it.storeId.equals(mStoreId)) {
+                    return it.unSellableCommerceItems
+                }
+            }
+            return null
+        }
+
+        fun getConfirmLocationRequest(deliveryType: Delivery?): ConfirmLocationRequest {
+            return when (deliveryType) {
+                Delivery.STANDARD -> {
+                    ConfirmLocationRequest(BundleKeysConstants.STANDARD,
+                        ConfirmLocationAddress(WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId ?: getPreferredPlaceId()),
+                        "")
+                }
+                Delivery.CNC -> {
+                    ConfirmLocationRequest(BundleKeysConstants.CNC,
+                        ConfirmLocationAddress(if (WoolworthsApplication.getCncBrowsingValidatePlaceDetails() != null)
+                            WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.placeDetails?.placeId
+                        else WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId),
+                        browsingCncStore?.storeId)
+                }
+                Delivery.DASH -> {
+                    ConfirmLocationRequest(BundleKeysConstants.DASH,
+                        ConfirmLocationAddress(if (WoolworthsApplication.getDashBrowsingValidatePlaceDetails() != null)
+                            WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.placeDetails?.placeId
+                        else WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId),
+                        if (WoolworthsApplication.getDashBrowsingValidatePlaceDetails() != null)
+                            WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.onDemand?.storeId
+                        else WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.storeId
+                    )
+                }
+                else -> {
+                    ConfirmLocationRequest(BundleKeysConstants.STANDARD,
+                        ConfirmLocationAddress(WoolworthsApplication.getValidatePlaceDetails()?.placeDetails?.placeId),
+                        "")
                 }
             }
         }
@@ -613,7 +836,7 @@ class KotlinUtils {
             return currentTime.after(openingTime) && currentTime.before(closingTime)
         }
 
-        fun getInAppTradingHoursForToday(tradingHours: MutableList<ConfigTradingHours>?): ConfigTradingHours {
+        private fun getInAppTradingHoursForToday(tradingHours: MutableList<ConfigTradingHours>?): ConfigTradingHours {
             var tradingHoursForToday: ConfigTradingHours? = null
             tradingHours?.let {
                 it.forEach { tradingHours ->
@@ -664,20 +887,28 @@ class KotlinUtils {
             }
         }
 
+        fun String.capitaliseFirstLetterInEveryWord(): String = split(" ").map { it.lowercase().replaceFirstChar { it -> it.titlecase() } }.joinToString(" ")
         fun showGeneralInfoDialog(
             fragmentManager: FragmentManager,
             description: String,
             title: String = "",
             actionText: String = "",
             infoIcon: Int = 0,
+            isFromCheckoutScreen: Boolean = false
         ) {
             val dialog =
-                GeneralInfoDialogFragment.newInstance(description, title, actionText, infoIcon)
+                GeneralInfoDialogFragment.newInstance(description, title, actionText, infoIcon, isFromCheckoutScreen)
             fragmentManager.let { fragmentTransaction ->
                 dialog.show(
                     fragmentTransaction,
                     GeneralInfoDialogFragment::class.java.simpleName
                 )
+            }
+
+            if (isFromCheckoutScreen) {
+                dialog.isCancelable = false
+            } else {
+                dialog.isCancelable = true
             }
         }
 
@@ -734,12 +965,14 @@ class KotlinUtils {
             return getPreferredDeliveryType() == Delivery.CNC
         }
 
+        fun isDeliveryOptionDash(): Boolean {
+            return getPreferredDeliveryType() == Delivery.DASH
+        }
+
         @SuppressLint("MissingPermission")
         @JvmStatic
         fun setUserPropertiesToNull() {
-            val firebaseInstance =
-                FirebaseAnalytics.getInstance(WoolworthsApplication.getAppContext())
-            firebaseInstance?.apply {
+            AnalyticsManager.apply {
                 setUserProperty(
                     FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_OFFERING,
                     FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
@@ -903,6 +1136,8 @@ class KotlinUtils {
                         accountOptions?.collectionsStartNewPlanJourney?.creditCard?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.creditCard?.collectionsDynamicUrl
                     exitUrl = accountOptions?.collectionsStartNewPlanJourney?.creditCard?.exitUrl
                 }
+
+                else -> {}
             }
 
             /**
@@ -933,8 +1168,7 @@ class KotlinUtils {
             elseJob: () -> Unit,
         ) {
             if (MyAccountsFragment.verifyAppInstanceId() &&
-                (Utils.isGooglePlayServicesAvailable() ||
-                        Utils.isHuaweiMobileServicesAvailable())
+                (Utils.isGooglePlayOrHuaweiMobileServicesAvailable())
             ) {
                 doJob()
                 activity?.let {
@@ -948,17 +1182,67 @@ class KotlinUtils {
             }
         }
 
+
+
         fun getPreferredDeliveryType(): Delivery? {
             return Delivery.getType(
-                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType ?: ""
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType ?: Delivery.STANDARD.type
             )
+        }
+
+        fun getDeliveryType(): FulfillmentDetails? {
+            return if (SessionUtilities.getInstance().isUserAuthenticated) {
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails
+            } else {
+                getAnonymousUserLocationDetails()?.fulfillmentDetails
+            }
+        }
+
+         fun getDeliveryDetails(isUserBrowsing : Boolean): String? {
+            //TODO: Update condition to when browsing delivery is true
+            return if (isUserBrowsing) {
+                when (browsingDeliveryType) {
+                    Delivery.CNC -> {
+                        browsingCncStore?.deliveryDetails ?: getPreferredCnCStore()?.deliveryDetails ?: ""
+                    }
+                    Delivery.DASH -> {
+                         WoolworthsApplication.getDashBrowsingValidatePlaceDetails()?.onDemand?.deliveryDetails
+                             ?: WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.deliveryDetails ?: ""
+                    }
+                    Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails()?.deliveryDetails ?: ""
+                    else -> WoolworthsApplication.getValidatePlaceDetails()?.deliveryDetails ?: ""
+                }
+            } else {
+                when (getPreferredDeliveryType()) {
+                    Delivery.CNC -> {
+                         getPreferredCnCStore()?.deliveryDetails ?: ""
+                    }
+                    Delivery.DASH -> {
+                        WoolworthsApplication.getValidatePlaceDetails()?.onDemand?.deliveryDetails ?: ""
+                    }
+                    Delivery.STANDARD -> WoolworthsApplication.getValidatePlaceDetails()?.deliveryDetails ?: ""
+                    else -> WoolworthsApplication.getValidatePlaceDetails()?.deliveryDetails ?: ""
+                }
+            }
+        }
+
+        private fun getPreferredCnCStore(): Store? {
+            val deliveryType = getDeliveryType()
+            for (store in WoolworthsApplication.getValidatePlaceDetails()?.stores ?: ArrayList()) {
+                deliveryType?.let {
+                    if (it.storeId == store.storeId) {
+                        return store
+                    }
+                }
+            }
+            return null
         }
 
         fun getPreferredPlaceId(): String {
             return Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId ?: ""
         }
 
-        fun getPreferredStoreName(): String {
+        private fun getPreferredStoreName(): String {
             return Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName ?: ""
         }
 
@@ -968,10 +1252,7 @@ class KotlinUtils {
 
         fun getPreferredDeliveryAddressOrStoreName(): String {
             return when (getPreferredDeliveryType()) {
-                Delivery.CNC ->
-                    getPreferredStoreName()
-                Delivery.STANDARD ->
-                    getPreferredStoreName()
+                Delivery.CNC, Delivery.STANDARD, Delivery.DASH -> getPreferredStoreName()
                 else -> ""
             }
         }
@@ -990,6 +1271,8 @@ class KotlinUtils {
             }
             return fulFillmentStoreId
         }
+
+
 
         fun getUniqueDeviceID(result: (String?) -> Unit) {
             val deviceID = Utils.getSessionDaoValue(KEY.DEVICE_ID)
@@ -1029,10 +1312,16 @@ class KotlinUtils {
         fun hasADayPassed(dateString: String?): Boolean {
             // when dateString = null it means it's the first time to call api
             if (dateString == null) return true
-            val from = LocalDateTime.parse(
-                dateString,
-                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
-            )
+            val from = try {
+                LocalDateTime.parse(
+                    dateString,
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
+                ) }catch (e :Exception) {
+                LocalDateTime.parse(
+                    dateString,
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+                )
+            }
             val today = LocalDateTime.now()
             var period = ChronoUnit.DAYS.between(from, today)
             return if (period >= 1) {
@@ -1128,8 +1417,74 @@ class KotlinUtils {
                 Delivery.CNC->{
                     event = VocTriggerEvent.SHOP_CLICK_COLLECT_CONFIRM
                 }
+                Delivery.STANDARD->{
+                    event = VocTriggerEvent.CHCKOUT_CNT_TO_PMNT
+                }
+                else -> {}
             }
             return event
         }
+
+         fun showMinCartValueError(activity: AppCompatActivity, minimumBasketAmount: Double?) {
+             activity?.supportFragmentManager?.let {
+                 showGeneralInfoDialog(
+                     it,
+                     activity.getString(R.string.minspend_error_msg_desc),
+                     String.format(activity.getString(R.string.minspend_error_msg_title, minimumBasketAmount)),
+                     activity.getString(R.string.got_it),
+                     R.drawable.ic_cart,
+                     true
+                 )
+             }
+        }
+
+        @JvmStatic
+        fun showQuantityLimitErrror(
+            fragmentManager: FragmentManager?,
+            title: String,
+            desc: String = "Error message",
+            context: Context?
+        ) {
+            if (context == null || fragmentManager == null || getPreferredDeliveryType() != Delivery.DASH) {
+                return
+            }
+            showGeneralInfoDialog(
+                fragmentManager = fragmentManager,
+                description = desc,
+                title = title,
+                actionText = context.getString(R.string.got_it),
+                infoIcon = R.drawable.icon_dash_delivery_scooter
+            )
+        }
     }
 }
+
+fun Group.setAlphaForGroupdViews(alpha: Float) = referencedIds.forEach {
+    rootView.findViewById<View>(it).alpha = alpha
+}
+
+fun Fragment.setDialogPadding(dialog: Dialog?) {
+    val inset = 10
+    if (dialog != null) {
+        val width = (deviceWidth() - resources.getDimension(R.dimen._48sdp)).toInt()
+        val height = ViewGroup.LayoutParams.WRAP_CONTENT
+        dialog.window?.setLayout(width, height)
+        dialog.window?.setBackgroundDrawable(
+            InsetDrawable(
+                ColorDrawable(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.transparent
+                    )
+                ), inset, inset, inset, inset
+            )
+        )
+    }
+}
+
+
+
+
+
+
+

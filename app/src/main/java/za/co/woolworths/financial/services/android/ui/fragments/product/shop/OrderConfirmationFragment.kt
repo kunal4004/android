@@ -11,12 +11,20 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import com.google.firebase.analytics.FirebaseAnalytics
+import kotlinx.android.synthetic.main.dash_order_details_layout.*
 import kotlinx.android.synthetic.main.delivering_to_collection_from.*
+import kotlinx.android.synthetic.main.delivering_to_collection_from.foodDeliveryLinearLayout
+import kotlinx.android.synthetic.main.delivering_to_collection_from.optionImage
+import kotlinx.android.synthetic.main.delivering_to_collection_from.optionTitle
+import kotlinx.android.synthetic.main.delivering_to_dashing_from.*
 import kotlinx.android.synthetic.main.fragment_order_confirmation.*
-import kotlinx.android.synthetic.main.order_details_bottom_sheet.*
+import kotlinx.android.synthetic.main.order_details_bottom_sheet.addShoppingListButton
+import kotlinx.android.synthetic.main.order_details_bottom_sheet.itemsRecyclerView
 import kotlinx.android.synthetic.main.other_order_details.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
@@ -28,8 +36,8 @@ import za.co.woolworths.financial.services.android.models.dto.cart.OrderItems
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ItemsOrderListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.WrewardsBottomSheetFragment
@@ -38,6 +46,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
@@ -75,9 +84,8 @@ class OrderConfirmationFragment : Fragment() {
                                     response.orderSummary?.orderId?.let { setToolbar(it) }
                                     setupDeliveryOrCollectionDetails(response)
                                     setupOrderTotalDetails(response)
-                                    setupOrderDetailsBottomSheet(response)
                                     displayVocifNeeded(response)
-
+                                    showPurchaseEvent(response)
                                 }
                                 else -> {
                                     showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
@@ -94,6 +102,29 @@ class OrderConfirmationFragment : Fragment() {
                     showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
                 }
             }, SubmittedOrderResponse::class.java))
+    }
+
+    private fun showPurchaseEvent(response: SubmittedOrderResponse) {
+        val purchaseItemParams = Bundle()
+        purchaseItemParams.putString(FirebaseAnalytics.Param.CURRENCY, FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
+        purchaseItemParams.putString(FirebaseAnalytics.Param.AFFILIATION, FirebaseManagerAnalyticsProperties.PropertyValues.AFFILIATION_VALUE)
+        purchaseItemParams.putString(FirebaseAnalytics.Param.TRANSACTION_ID,response.orderSummary?.orderId)
+        response.orderSummary?.total?.let { purchaseItemParams.putDouble(FirebaseAnalytics.Param.VALUE, it) }
+        purchaseItemParams.putString(FirebaseAnalytics.Param.SHIPPING, response.deliveryDetails?.shippingAmount.toString())
+
+        val purchaseItem = Bundle()
+        purchaseItem.putString(FirebaseAnalytics.Param.ITEM_ID, response.items?.other?.get(0)?.productId)
+        purchaseItem.putString(FirebaseAnalytics.Param.ITEM_NAME, response.items?.other?.get(0)?.productDisplayName)
+        purchaseItem.putString(FirebaseAnalytics.Param.QUANTITY, response.items?.other?.get(0)?.commerceItemInfo?.quantity.toString())
+        response.items?.other?.get(0)?.priceInfo?.amount?.let {
+            purchaseItem.putDouble(FirebaseAnalytics.Param.PRICE,
+                it
+            )
+        }
+        purchaseItem.putString(FirebaseAnalytics.Param.ITEM_VARIANT, response.items?.other?.get(0)?.color)
+        purchaseItemParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(purchaseItem))
+
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.PURCHASE, purchaseItemParams)
     }
 
     private fun displayVocifNeeded(response: SubmittedOrderResponse) {
@@ -116,46 +147,78 @@ class OrderConfirmationFragment : Fragment() {
     }
 
     private fun setToolbar(orderId: String) {
-        if (activity is CartCheckoutActivity) {
-            (activity as? CartCheckoutActivity)?.apply {
-                showTitleWithCrossButton(bindString(R.string.order_details_toolbar_title, orderId))
-            }
-        }
-        (activity as? CheckoutActivity)?.apply {
-            showTitleWithCrossButton(bindString(R.string.order_details_toolbar_title, orderId))
+        orderIdText.text = bindString(R.string.order_details_toolbar_title, orderId)
+        btnClose?.setOnClickListener { requireActivity().onBackPressed() }
+
+        helpTextView?.setOnClickListener {
+            findNavController()?.navigate(R.id.action_OrderConfirmationFragment_to_helpAndSupportFragment)
         }
     }
 
     private fun setupDeliveryOrCollectionDetails(response: SubmittedOrderResponse?) {
         context?.let {
-            deliveryCollectionDetailsConstraintLayout.visibility = VISIBLE
             when (Delivery.getType(response?.orderSummary?.fulfillmentDetails?.deliveryType)) {
                 Delivery.CNC -> {
+                    deliveryCollectionDetailsConstraintLayout?.visibility = VISIBLE
+                    dashOrderDetailsLayout?.visibility = VISIBLE
                     optionImage.background =
-                        AppCompatResources.getDrawable(it, R.drawable.icon_collection_grey_bg)
+                        AppCompatResources.getDrawable(it, R.drawable.ic_collection_bag)
                     optionTitle?.text = it.getText(R.string.collecting_from)
                     deliveryTextView?.text = it.getText(R.string.collection_semicolon)
                     optionLocation?.text =
                         response?.orderSummary?.fulfillmentDetails?.storeName?.let {
-                            convertToTitleCase(
-                                it
-                            )
+                            convertToTitleCase(it)
                         } ?: ""
+                    standardEnroutetextView.text = it.getText(R.string.collection_status)
+                    collectedOrDeliveredTextView.text = it.getText(R.string.status_collected)
+                    setUpDashOrderDetailsLayout(response)
+                    continueBrowsingStandardLinearLayout.setOnClickListener {
+                        requireActivity()?.setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
+                        requireActivity()?.finish()
+                    }
                 }
                 Delivery.STANDARD -> {
+                    deliveryCollectionDetailsConstraintLayout?.visibility = VISIBLE
+                    dashOrderDetailsLayout?.visibility = VISIBLE
                     optionImage?.background =
-                        AppCompatResources.getDrawable(it, R.drawable.icon_delivery_grey_bg)
+                        AppCompatResources.getDrawable(it, R.drawable.ic_icon_standard_delivery_truck)
                     optionTitle?.text = it.getText(R.string.delivering_to)
                     deliveryTextView?.text = it.getText(R.string.delivery_semicolon)
                     optionLocation?.text =
                         response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
-                            convertToTitleCase(
-                                it
-                            )
+                            convertToTitleCase(it)
                         } ?: ""
+                    continueBrowsingStandardLinearLayout.setOnClickListener {
+                        requireActivity()?.setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
+                        requireActivity()?.finish()
+                    }
+                    standardEnroutetextView.text = it.getText(R.string.dash_status_en_route)
+                    collectedOrDeliveredTextView.text = it.getText(R.string.dash_status_delivered)
+                    setUpStandardOrderDetailsLayout(response)
+
                 }
-                else -> {
+                Delivery.DASH -> {
+                    dashDeliveryConstraintLayout?.visibility = VISIBLE
+                    dashOrderDetailsLayout?.visibility = VISIBLE
+                    optionImage?.background =
+                            AppCompatResources.getDrawable(it, R.drawable.icon_dash_delivery_scooter)
+                    optionTitle?.text = it.getText(R.string.dashing_to)
+                    optionLocationTitle?.text =
+                        response?.orderSummary?.fulfillmentDetails?.address?.address1?.let {
+                            convertToTitleCase(it)
+                        }
+                            ?: ""
+                    dashFoodDeliveryDateTimeTextView?.text = applyBoldBeforeComma(
+                        response
+                            ?.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
+                    )
+                    continueBrowsingLinearLayout.setOnClickListener {
+                        requireActivity()?.setResult(CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING)
+                        requireActivity()?.finish()
+                    }
+                    setUpDashOrderDetailsLayout(response)
                 }
+                else -> {}
             }
 
             if (response?.deliveryDetails?.deliveryInfos?.size == 2) {
@@ -166,19 +229,23 @@ class OrderConfirmationFragment : Fragment() {
                     response
                         .deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
                 )
-                otherDeliveryDateTimeTextView?.text =
+                otherDeliveryDateTimeTextView?.text = applyBoldBeforeComma(
                     response.deliveryDetails?.deliveryInfos?.get(1)?.deliveryDateAndTime
+                )
             } else if (response?.deliveryDetails?.deliveryInfos?.size == 1) {
                 oneDeliveryLinearLayout?.visibility = VISIBLE
                 foodDeliveryLinearLayout?.visibility = GONE
                 otherDeliveryLinearLayout?.visibility = GONE
-                deliveryDateTimeTextView?.text =
-                    response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
+                deliveryDateTimeTextView?.text = applyBoldBeforeComma(
+                    response
+                        .deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
+                )
             }
         }
     }
 
     private fun setupOrderTotalDetails(response: SubmittedOrderResponse?) {
+
         otherOrderDetailsConstraintLayout?.visibility = VISIBLE
 
         orderTotalTextView?.text = CurrencyFormatter
@@ -198,24 +265,6 @@ class OrderConfirmationFragment : Fragment() {
             discountsSeparator?.visibility = GONE
         }
 
-        val companyDiscount = response?.orderSummary?.discountDetails?.companyDiscount
-        if (companyDiscount != null && companyDiscount > 0) {
-            companyDiscountTextView?.text = "- ".plus(
-                CurrencyFormatter
-                    .formatAmountToRandAndCentWithSpace(companyDiscount)
-            )
-        } else {
-            companyDiscountLinearLayout?.visibility = GONE
-            companyDiscountSeparator?.visibility = GONE
-        }
-
-        wRewardsVouchersLinearLayout?.visibility =
-            if ((response?.orderSummary?.discountDetails?.voucherDiscount
-                    ?: 0.0) > 0.0
-            ) VISIBLE else GONE
-        wRewardsVouchersTextView?.text = CurrencyFormatter
-            .formatAmountToRandAndCentWithSpace(response?.orderSummary?.discountDetails?.voucherDiscount)
-
         val totalDiscount = response?.orderSummary?.discountDetails?.totalDiscount
         if (totalDiscount != null && totalDiscount > 0) {
             totalDiscountTextView?.text = "- ".plus(
@@ -227,9 +276,6 @@ class OrderConfirmationFragment : Fragment() {
             totalDiscountSeparator?.visibility = GONE
         }
 
-        deliveryFeeTextView?.text = CurrencyFormatter
-            .formatAmountToRandAndCentWithSpace(response?.deliveryDetails?.shippingAmount)
-
         // Commenting this Till Jan-2022 Release as per WOP-13825
         /*if (response?.wfsCardDetails?.isWFSCardAvailable == false) {
             if (response.orderSummary?.discountDetails?.wrewardsDiscount!! > 0.0) {
@@ -240,59 +286,112 @@ class OrderConfirmationFragment : Fragment() {
         } else {*/
         missedRewardsLinearLayout?.visibility = GONE
         //}
-    }
-
-    private fun setupOrderDetailsBottomSheet(response: SubmittedOrderResponse?) {
 
         when (Delivery.getType(response?.orderSummary?.fulfillmentDetails?.deliveryType)) {
-            Delivery.CNC -> {
-                deliveryLocationText?.text =
-                    context?.getText(R.string.collection_location_semicolon)
-                deliveryOrderDetailsTextView?.text = context?.getText(R.string.collection_semicolon)
-            }
             Delivery.STANDARD -> {
-                deliveryLocationText?.text = context?.getText(R.string.delivery_location_semicolon)
-                deliveryOrderDetailsTextView?.text = context?.getText(R.string.delivery_semicolon)
+                driverTipLinearLayout.visibility = GONE
+                driverTipSeparator.visibility = GONE
+
+                val companyDiscount = response?.orderSummary?.discountDetails?.companyDiscount
+                if (companyDiscount != null && companyDiscount > 0) {
+                    companyDiscountTextView?.text =
+                        "- ".plus(CurrencyFormatter.formatAmountToRandAndCentWithSpace(
+                            companyDiscount))
+                } else {
+                    companyDiscountLinearLayout?.visibility = GONE
+                    companyDiscountSeparator?.visibility = GONE
+                }
+                val wRewardsVouchers = response?.orderSummary?.discountDetails?.voucherDiscount
+                        ?: 0.0
+                if (wRewardsVouchers > 0.0) {
+                    wRewardsVouchersTextView?.text = CurrencyFormatter
+                            .formatAmountToRandAndCentWithSpace(response?.orderSummary?.discountDetails?.voucherDiscount)
+                } else {
+                    wRewardsVouchersLinearLayout?.visibility = GONE
+                    wRewardsVouchersSeparator?.visibility = GONE
+                }
+
+                deliveryFeeTextView?.text = CurrencyFormatter
+                    .formatAmountToRandAndCentWithSpace(response?.deliveryDetails?.shippingAmount)
+            }
+            Delivery.CNC -> {
+                driverTipLinearLayout.visibility = GONE
+                driverTipSeparator.visibility = GONE
+
+                val companyDiscount = response?.orderSummary?.discountDetails?.companyDiscount
+                if (companyDiscount != null && companyDiscount > 0) {
+                    companyDiscountTextView?.text =
+                        "- ".plus(CurrencyFormatter.formatAmountToRandAndCentWithSpace(
+                            companyDiscount))
+                } else {
+                    companyDiscountLinearLayout?.visibility = GONE
+                    companyDiscountSeparator?.visibility = GONE
+                }
+
+                val wRewardsVouchers = response?.orderSummary?.discountDetails?.voucherDiscount
+                        ?: 0.0
+                if (wRewardsVouchers > 0.0) {
+                    wRewardsVouchersTextView?.text = CurrencyFormatter
+                            .formatAmountToRandAndCentWithSpace(response?.orderSummary?.discountDetails?.voucherDiscount)
+                } else {
+                    wRewardsVouchersLinearLayout?.visibility = GONE
+                    wRewardsVouchersSeparator?.visibility = GONE
+                }
+
+                val deliveryFee = response?.deliveryDetails?.shippingAmount
+                if (deliveryFee != null && deliveryFee > 0.0) {
+                    deliveryFeeTextView?.text = CurrencyFormatter
+                        .formatAmountToRandAndCentWithSpace(deliveryFee)
+                } else {
+                    deliveryFeeLinearLayout?.visibility = GONE
+                    deliveryFeeSeparator?.visibility = GONE
+                }
+            }
+            Delivery.DASH -> {
+                companyDiscountLinearLayout.visibility = GONE
+                companyDiscountSeparator?.visibility = GONE
+                wRewardsVouchersLinearLayout.visibility = GONE
+                wRewardsVouchersSeparator.visibility = GONE
+                deliveryFeeTextView?.text =
+                    CurrencyFormatter.formatAmountToRandAndCentWithSpace(response?.deliveryDetails?.shippingAmount)
+
+                val driverTip = response?.orderSummary?.tip?:0.00
+                if (driverTip > 0) {
+                    driverTipTextView?.text =
+                            CurrencyFormatter
+                                    .formatAmountToRandAndCentWithSpace(driverTip)
+                } else {
+                    driverTipLinearLayout?.visibility = GONE
+                    driverTipSeparator?.visibility = GONE
+                }
             }
             else -> {
             }
         }
+    }
 
-        bottomSheetScrollView?.visibility = VISIBLE
-        orderStatusTextView?.text = response?.orderSummary?.state
-        deliveryLocationTextView?.text =
-            optionLocation.text?.let { convertToTitleCase(it as String) }
-
-        if (response?.deliveryDetails?.deliveryInfos?.size == 2) {
-            oneDeliveryBottomSheetLinearLayout?.visibility = GONE
-            foodDeliveryLinearLayout?.visibility = VISIBLE
-            otherDeliveryBottomSheetLinearLayout?.visibility = VISIBLE
-            foodDeliveryDateTimeBottomSheetTextView?.text = applyBoldBeforeComma(
-                response
-                    .deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
-            )
-            otherDeliveryDateTimeBottomSheetTextView?.text =
-                response.deliveryDetails?.deliveryInfos?.get(1)?.deliveryDateAndTime
-        } else if (response?.deliveryDetails?.deliveryInfos?.size == 1) {
-            oneDeliveryBottomSheetLinearLayout?.visibility = VISIBLE
-            foodDeliveryBottomSheetLinearLayout?.visibility = GONE
-            otherDeliveryBottomSheetLinearLayout?.visibility = GONE
-            deliveryDateTimeBottomSheetTextView?.text =
-                response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
-        }
-
-        setNumberAndCostItemsBottomSheet(response?.items)
+    private fun setUpDashOrderDetailsLayout(response: SubmittedOrderResponse?) {
+        setFoodItemCount(response?.items)
 
         initRecyclerView(response?.items)
 
         handleAddToShoppingListButton()
     }
 
+    private fun setFoodItemCount(items: OrderItems?) {
+        val other: Int = items?.other?.size ?: 0
+        val food: Int = items?.food?.size ?: 0
+        val number: Int = other.plus(food)
+        foodNumberItemsTextView?.text = if (number > 1)
+            bindString(R.string.food_number_items, number.toString())
+        else
+            bindString(R.string.food_number_item, number.toString())
+    }
+
     private fun handleAddToShoppingListButton() {
         if (itemsOrder.isNullOrEmpty()) {
             return
         }
-
         val listOfItems = ArrayList<AddToListRequest>()
         itemsOrder!!.forEach {
             val item = AddToListRequest()
@@ -311,13 +410,10 @@ class OrderConfirmationFragment : Fragment() {
     }
 
     private fun initRecyclerView(items: OrderItems?) {
-
         initialiseItemsOrder(items)
-
         if (itemsOrder.isNullOrEmpty()) {
             return
         }
-
         context?.let {
             itemsRecyclerView.layoutManager = LinearLayoutManager(it, RecyclerView.VERTICAL, false)
             itemsOrderListAdapter = ItemsOrderListAdapter(itemsOrder!!)
@@ -334,15 +430,22 @@ class OrderConfirmationFragment : Fragment() {
         }
     }
 
+    private fun setUpStandardOrderDetailsLayout(response: SubmittedOrderResponse?) {
+        setNumberAndCostItemsBottomSheet(response?.items)
+
+        initRecyclerView(response?.items)
+
+        handleAddToShoppingListButton()
+    }
+
     private fun setNumberAndCostItemsBottomSheet(items: OrderItems?) {
         val other: Int = items?.other?.size ?: 0
         val food: Int = items?.food?.size ?: 0
         val number: Int = other.plus(food)
-        numberItemsTextView?.text = if (number > 1)
+        foodNumberItemsTextView?.text = if (number > 1)
             bindString(R.string.number_items, number.toString())
         else
             bindString(R.string.number_item, number.toString())
-        costItemsTextView?.text = orderTotalTextView.text
     }
 
     private fun setMissedRewardsSavings(amount: Double) {
@@ -351,14 +454,12 @@ class OrderConfirmationFragment : Fragment() {
             .formatAmountToRandAndCentWithSpace(amount)
 
         wrewardsIconImageView?.setOnClickListener {
-            Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.CHECKOUT_MISSED_WREWARD_SAVINGS,
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_MISSED_WREWARD_SAVINGS,
                 hashMapOf(
                     FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
                             FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_WREWARDS_SAVING
                 ),
-                activity
-            )
+                activity)
             val bottomSheetFragment = WrewardsBottomSheetFragment(activity)
 
             val bundle = Bundle()

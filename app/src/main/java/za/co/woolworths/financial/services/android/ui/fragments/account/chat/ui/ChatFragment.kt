@@ -16,7 +16,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.chat_activity.*
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.chat_fragment.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
@@ -24,7 +24,6 @@ import za.co.woolworths.financial.services.android.models.dto.chat.amplify.Sessi
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.APP_SCREEN
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.FEATURE_NAME
@@ -35,8 +34,11 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.mod
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SenderMessage
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatSendMessageImpl
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.keyboard.SoftKeyboardObserver
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
 
     companion object {
@@ -44,6 +46,8 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
         const val CARD: String = "CARD"
         const val SESSION_TYPE = "SESSION_TYPE"
     }
+
+    @Inject lateinit var connectivityLiveData: ConnectivityLiveData
 
     var mChatAdapter: WChatAdapter? = null
     var productOfferingId: String? = null
@@ -183,6 +187,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                 }
                 SessionStateType.ONLINE -> {
                     chatBoxEditText?.isEnabled = true
+                    chatBoxEditText?.setHint(R.string.start_typing)
                     isAgentDisconnected(false)
                     toggleSendMessageButton(true)
                     displayEndSessionButton(true)
@@ -257,7 +262,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
 
     private fun autoConnectToNetwork() {
         activity?.let { activity ->
-            ConnectivityLiveData.observe(viewLifecycleOwner, { isNetworkAvailable ->
+            connectivityLiveData.observe(viewLifecycleOwner) { isNetworkAvailable ->
                 if (isNetworkAvailable && !isConnectedToNetwork) {
                     isConnectedToNetwork = true
                     with(chatViewModel) {
@@ -280,7 +285,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                     if (!isNetworkAvailable)
                         isConnectedToNetwork = false
                 }
-            })
+            }
         }
     }
 

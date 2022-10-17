@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/color_F5F5F5"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/orders_bg">
+    android:layout_height="match_parent">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rclDepartment"
+        android:background="@color/white"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="@dimen/sixteen_dp"
-        android:layout_marginEnd="@dimen/sixteen_dp"
-        android:background="@android:color/transparent"
+        android:paddingHorizontal="@dimen/sixteen_dp"
         android:clipToPadding="false"
         android:fastScrollEnabled="true"
         android:overScrollMode="never"
+        android:layout_marginTop="@dimen/eight_dp"
         android:paddingTop="@dimen/sixteen_dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
