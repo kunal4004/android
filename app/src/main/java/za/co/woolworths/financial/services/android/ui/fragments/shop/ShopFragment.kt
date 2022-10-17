@@ -144,7 +144,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         DASH_TAB(2)
     }
 
-    private val shopViewModel: ShopViewModel by viewModels(
+    protected val shopViewModel: ShopViewModel by viewModels(
         ownerProducer = { this }
     )
 
@@ -495,6 +495,10 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 shopViewModel.getLastDashOrderDetails()
             }
         }
+    }
+
+    public fun makeLastDashOrderDetailsCall() {
+        shopViewModel.getLastDashOrderDetails()
     }
 
     private fun updateCurrentTab(deliveryType: String?) {
