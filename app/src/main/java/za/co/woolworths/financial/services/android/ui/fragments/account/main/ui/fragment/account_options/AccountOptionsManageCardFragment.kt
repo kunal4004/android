@@ -10,9 +10,9 @@ import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountOptionsManageCardFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.LoaderType
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.extension.onClick
@@ -42,14 +42,11 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
         val AccountOptionsLandingKey: String by lazy { AccountOptionsManageCardFragment::class.java.simpleName }
     }
 
-    @Inject
-    lateinit var router: ProductLandingRouterImpl
+    @Inject lateinit var router: ProductLandingRouterImpl
 
-    @Inject
-    lateinit var connectivityLiveData: ConnectivityLiveData
+    @Inject lateinit var connectivityLiveData: ConnectivityLiveData
 
-    @Inject
-    lateinit var storeCardActivityResultCallback: StoreCardActivityResultCallback
+    @Inject lateinit var storeCardActivityResultCallback: StoreCardActivityResultCallback
 
     private lateinit var mOnItemClickListener: ManageCardItemListener
     private lateinit var mHeaderItems: ManageCardLandingHeaderItems
@@ -219,16 +216,20 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.onViewPagerPageChangeListener.collect { feature ->
+            viewModel.onViewPagerPageChangeListener.collectLatest { feature ->
                 setCardLabel()
                 mHeaderItems.showHeaderItem(feature)
                 mItemList.showListItem(feature) { result ->
                     when (result) {
                         is ListCallback.CardNotReceived -> {
-                            if (result.isCardNotReceived && feature.isPopupVisibleInCardDetailLanding) mItemList.showCardNotReceivedDialog(
+                            val dateTime = Utils.getSessionDaoValue(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN)
+                            if (result.isCardNotReceived
+                                && feature.isPopupVisibleInCardDetailLanding
+                                && viewModel.hasDaysPassed(dateTime, 35,SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN))
+                                mItemList.showCardNotReceivedDialog(
                                 this@AccountOptionsManageCardFragment,
                                 viewModel
-                            )
+                            ){ router.routeToCardNotReceivedView(landingController) }
                         }
                     }
                 }

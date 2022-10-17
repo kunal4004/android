@@ -194,7 +194,7 @@ open class AvailableFundsFragment :
                     *  this should be deleted after payMyAccountViewModel refactor */
                     payMyAccountViewModel.setPMACardInfo(viewModel.getCardDetail())
                 }
-
+                else -> {}
             }
         }
     }

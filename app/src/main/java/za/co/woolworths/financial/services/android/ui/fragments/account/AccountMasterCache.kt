@@ -15,6 +15,7 @@ object AccountMasterCache {
             AccountsProductGroupCode.STORE_CARD -> accountDetailsForStoreCardProduct = response
             AccountsProductGroupCode.CREDIT_CARD -> accountDetailsForCreditCardProduct = response
             AccountsProductGroupCode.PERSONAL_LOAN -> accountDetailsForPersonalLoanProduct = response
+            else -> {}
         }
     }
 

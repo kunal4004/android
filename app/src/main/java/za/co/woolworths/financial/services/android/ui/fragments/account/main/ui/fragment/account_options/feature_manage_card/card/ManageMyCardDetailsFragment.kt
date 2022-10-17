@@ -12,6 +12,7 @@ import com.awfs.coordination.databinding.ManageCardDetailsFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.StoreCardInfo
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.SystemBarCompat
@@ -25,6 +26,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.CallBack
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.router.ProductLandingRouterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.BetterActivityResult
+import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -42,8 +44,9 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
 
     @Inject lateinit var storeCardActivityResultCallback : StoreCardActivityResultCallback
 
-    private val activityLauncher = BetterActivityResult.registerActivityForResult(this)
+    private val landingController by lazy { (requireActivity() as? StoreCardActivity)?.landingNavController() }
 
+    private val activityLauncher = BetterActivityResult.registerActivityForResult(this)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -94,7 +97,7 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
             object : OnBackPressedCallback(true /* enabled by default */) {
                 override fun handleOnBackPressed() {
                     viewModel.setRefreshRequestStoreCardCards(true)
-                    router.routeToAccountOptionsProductLanding((activity as? StoreCardActivity)?.landingNavController())
+                    router.routeToAccountOptionsProductLanding(landingController)
                 }
             }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
@@ -147,13 +150,17 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
 
     private fun showItems(feature: StoreCardInfo) {
         mListOfStoreCardOptions?.showListItem(feature) { result ->
+            if (landingController?.currentDestination?.label?.equals(ManageMyCardDetailsFragment::class.java.simpleName) != true) {
+                return@showListItem
+            }
+
             when (result) {
                 is ListCallback.CardNotReceived -> {
-                    if (!feature.isPopupVisibleInCardDetailLanding) return@showListItem
-                    if (result.isCardNotReceived) mListOfStoreCardOptions?.showCardNotReceivedDialog(
-                        this@ManageMyCardDetailsFragment,
-                        viewModel
-                    )
+                    val dateTime = Utils.getSessionDaoValue(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN)
+                    if ((!viewModel.hasDaysPassed(dateTime, 35,SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN))
+                        && !result.isCardNotReceived
+                    ) return@showListItem
+                        router.routeToCardNotReceivedView(landingController, true)
                 }
             }
         }

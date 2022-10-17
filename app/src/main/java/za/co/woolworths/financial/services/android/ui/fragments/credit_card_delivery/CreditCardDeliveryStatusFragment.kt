@@ -114,6 +114,7 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
             CreditCardDeliveryStatus.APPOINTMENT_SCHEDULED -> {
                 cardReceivedOrAppointmentScheduled()
             }
+            else -> {}
         }
         deliveryStatusDescription.text = statusResponse?.deliveryStatus?.displayCopy
     }
