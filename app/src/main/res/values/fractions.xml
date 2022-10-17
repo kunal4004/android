@@ -17,4 +17,14 @@
     <item name="point_five" format="float" type="integer">0.5</item>
     <item name="one_point_five" format="float" type="integer">1.5</item>
     <item name="my_account_apply_now_bottom_sheet_slider_peek_height" format="float" type="integer">0.7</item>
+
+    <item name="account_good_standing_button_start_guideline" type="dimen" format="float">0.525</item>
+    <item name="account_not_good_standing_button_start_guideline" type="dimen" format="float">0.60</item>
+
+    <item name="account_good_standing_button_end_guideline" type="dimen" format="float">0.66</item>
+    <item name="account_not_good_standing_end_guideline" type="dimen" format="float">0.75</item>
+
+    <item name="peek_height_good_standing" type="dimen" format="float">0.72</item>
+    <item name="peek_height_not_good_standing" type="dimen" format="float">0.80</item>
+
 </resources>
