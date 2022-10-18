@@ -120,6 +120,9 @@ class ProductInformationActivity : AppCompatActivity() {
                             tag = ProductSizeGuideFragment::class.java.simpleName,
                             containerViewId = R.id.fragmentContainer)
                 }
+                else -> {
+                    // Nothing
+                }
             }
         }
     }

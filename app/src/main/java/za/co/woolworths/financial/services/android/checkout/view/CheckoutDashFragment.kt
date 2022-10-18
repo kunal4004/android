@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerFrameLayout
+import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.fragment_cart.*
 import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.*
@@ -65,9 +66,12 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.Shoppin
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.DELIVERY_DATE
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.ORDER_TOTAL_VALUE
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.LiquorCompliance
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
@@ -80,15 +84,18 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.removeRandFromAmount
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
+import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import za.co.woolworths.financial.services.android.viewmodels.ShoppingCartLiveData
 import java.util.regex.Pattern
 
 class CheckoutDashFragment : Fragment(),
     ShoppingBagsRadioGroupAdapter.EventListner, View.OnClickListener, CollectionTimeSlotsListener,
     CustomDriverTipBottomSheetDialog.ClickListner, CompoundButton.OnCheckedChangeListener {
 
+    private var orderTotalValue: Double= -1.0
     private var suburbId: String = ""
     private var placesId: String? = ""
     private var storeId: String? = ""
@@ -112,6 +119,8 @@ class CheckoutDashFragment : Fragment(),
 
     private var liquorImageUrl: String? = ""
     private var liquorOrder: Boolean? = false
+    private var cartItemList: ArrayList<CommerceItem>? = null
+
 
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -166,6 +175,7 @@ class CheckoutDashFragment : Fragment(),
         setupViewModel()
         initializeDashingToView()
         initializeDashTimeSlots()
+        isUnSellableLiquorItemRemoved()
         getLiquorComplianceDetails()
         hideGiftOption()
         hideInstructionLayout()
@@ -173,6 +183,16 @@ class CheckoutDashFragment : Fragment(),
         setFragmentResults()
         txtContinueToPayment?.setOnClickListener(this)
         checkoutCollectingFromLayout?.setOnClickListener(this)
+    }
+
+    private fun isUnSellableLiquorItemRemoved() {
+        ShoppingCartLiveData.observe(viewLifecycleOwner) { isLiquorOrder ->
+            if (isLiquorOrder == false) {
+                ageConfirmationLayout?.visibility = View.GONE
+                liquorComplianceBannerLayout?.visibility = View.GONE
+                ShoppingCartLiveData.value = true
+            }
+        }
     }
 
     private fun hideInstructionLayout() {
@@ -220,6 +240,8 @@ class CheckoutDashFragment : Fragment(),
                         radioBtnAgeConfirmation?.isChecked = true
                     }
                 }
+            } else  if (containsKey(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST)) {
+                cartItemList = getSerializable(CheckoutAddressManagementBaseFragment.CART_ITEM_LIST) as ArrayList<CommerceItem>?
             } else {
                 ageConfirmationLayout?.visibility = GONE
                 liquorComplianceBannerLayout?.visibility = GONE
@@ -414,7 +436,7 @@ class CheckoutDashFragment : Fragment(),
         )
 
         checkoutAddAddressNewUserViewModel?.getConfirmLocationDetails(body)
-            .observe(viewLifecycleOwner) { response ->
+            ?.observe(viewLifecycleOwner) { response ->
                 stopShimmerView()
                 when (response) {
                     is ConfirmDeliveryAddressResponse -> {
@@ -968,6 +990,7 @@ class CheckoutDashFragment : Fragment(),
 
                 txtOrderTotalValue?.text =
                     CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.total)
+                orderTotalValue = it.total
             }
         }
     }
@@ -1077,7 +1100,7 @@ class CheckoutDashFragment : Fragment(),
         if (isRequiredFieldsMissing() || isAgeConfirmationLiquorCompliance()) {
             return
         }
-
+        setEventForDriverTip()
         val body = getShipmentDetailsBody()
         if (TextUtils.isEmpty(body.oddDeliverySlotId) && TextUtils.isEmpty(body.foodDeliverySlotId)
             && TextUtils.isEmpty(body.otherDeliverySlotId)
@@ -1100,6 +1123,7 @@ class CheckoutDashFragment : Fragment(),
                             )
                             return@observe
                         }
+                        setEventForShippingDetails()
                         navigateToPaymentWebpage(response)
                     }
                     is Throwable -> {
@@ -1121,6 +1145,86 @@ class CheckoutDashFragment : Fragment(),
         } else {
             Utils.fadeInFadeOutAnimation(txtContinueToPayment, true)
         }
+    }
+
+    private fun setEventForShippingDetails() {
+        if (cartItemList.isNullOrEmpty() == true) {
+            return
+        }
+        val driverTipItemParams = Bundle()
+        driverTipItemParams.putString(
+            FirebaseAnalytics.Param.CURRENCY,
+            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE
+        )
+
+        driverTipItemParams.putDouble(
+            ORDER_TOTAL_VALUE,
+            orderTotalValue
+        )
+
+        driverTipItemParams.putString(
+            DELIVERY_DATE,
+            confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.join
+        )
+
+        driverTipItemParams.putString(
+            FirebaseAnalytics.Param.SHIPPING_TIER,
+            FirebaseManagerAnalyticsProperties.PropertyValues.SHIPPING_TIER_VALUE_FOOD
+        )
+
+        driverTipItemParams.putString(
+            FirebaseManagerAnalyticsProperties.PropertyNames.DASH_TIP,
+            removeRandFromAmount(selectedDriverTipValue)
+        )
+
+        for (cartItem in cartItemList!!) {
+            val addShippingInfoItem = Bundle()
+            addShippingInfoItem.putString(
+                FirebaseAnalytics.Param.ITEM_ID,
+                cartItem.commerceItemInfo.productId
+            )
+
+            addShippingInfoItem.putString(
+                FirebaseAnalytics.Param.ITEM_NAME,
+                cartItem.commerceItemInfo.productDisplayName
+            )
+
+            addShippingInfoItem.putDouble(
+                FirebaseAnalytics.Param.PRICE,
+                cartItem.priceInfo.amount
+            )
+
+            addShippingInfoItem.putString(
+                FirebaseAnalytics.Param.ITEM_BRAND,
+                cartItem.commerceItemInfo?.productDisplayName
+            )
+
+            addShippingInfoItem.putInt(
+                FirebaseAnalytics.Param.QUANTITY,
+                cartItem.commerceItemInfo.quantity
+            )
+            driverTipItemParams.putParcelableArray(FirebaseAnalytics.Param.ITEMS, arrayOf(addShippingInfoItem))
+        }
+
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.ADD_SHIPPING_INFO, driverTipItemParams)
+    }
+
+    private fun setEventForDriverTip() {
+        if (orderTotalValue == -1.0) {
+            return
+        }
+
+        val driverTipItemParams = Bundle()
+
+        driverTipItemParams.putString(FirebaseAnalytics.Param.CURRENCY,
+            FirebaseManagerAnalyticsProperties.PropertyValues.CURRENCY_VALUE)
+
+        driverTipItemParams.putDouble(FirebaseAnalytics.Param.VALUE, orderTotalValue)
+
+        driverTipItemParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.DASH_TIP,
+            removeRandFromAmount(selectedDriverTipValue))
+
+        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.DASH_DRIVER_TIP, driverTipItemParams)
     }
 
     private fun presentErrorDialog(title: String, subTitle: String, errorType: Int) {

@@ -138,6 +138,9 @@ class ChatViewModel : ViewModel() {
             when (event) {
                 is TypingStartEvent -> currentlyTyping.add(event.user.name)
                 is TypingStopEvent -> currentlyTyping.remove(event.user.name)
+                else -> {
+                    // Nothing
+                }
             }
             when {
                 currentlyTyping.isNotEmpty() -> _otherUserTyping.value =
@@ -149,9 +152,16 @@ class ChatViewModel : ViewModel() {
 
 
     fun disconnect() {
-        userWatchingEventsDisposable.dispose()
-        newMessageEventDisposable.dispose()
-        userTypingEvent.dispose()
+        if (::userWatchingEventsDisposable.isInitialized &&
+            ::newMessageEventDisposable.isInitialized &&
+            ::userTypingEvent.isInitialized
+
+        ) {
+            userWatchingEventsDisposable.dispose()
+            newMessageEventDisposable.dispose()
+            userTypingEvent.dispose()
+
+        }
         chatClient.disconnect()
     }
 

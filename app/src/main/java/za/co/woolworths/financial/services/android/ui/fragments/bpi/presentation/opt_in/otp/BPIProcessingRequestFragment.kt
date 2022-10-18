@@ -73,7 +73,7 @@ class BPIProcessingRequestFragment : Fragment(), IProgressAnimationState {
 
             })
 
-            failureHandler.observe(viewLifecycleOwner, { result ->
+            failureHandler.observe(viewLifecycleOwner) { result ->
                 when (result) {
                     is FailureHandler.NoInternetConnection -> {
                         ErrorHandlerView(requireContext()).showToast()
@@ -86,8 +86,9 @@ class BPIProcessingRequestFragment : Fragment(), IProgressAnimationState {
                         isApiResultSuccess(false)
                         navigateErrorScreen()
                     }
+                    else -> {}
                 }
-            })
+            }
         }
     }
 
