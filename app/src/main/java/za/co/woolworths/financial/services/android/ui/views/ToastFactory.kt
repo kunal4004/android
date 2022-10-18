@@ -45,7 +45,9 @@ class ToastFactory {
 
     companion object {
         private const val POPUP_DELAY_MILLIS = 3000
+        private const val POPUP_DELAY_MILLIS_15000 = 15000
         private const val POPUP_3000_DELAY_MILLIS: Long = 3000
+        private const val POPUP_MARGIN_BOTTOM = 25
 
         fun buildShoppingListToast(
             activity: Activity,
@@ -155,13 +157,13 @@ class ToastFactory {
 
             // dismiss the popup window after 3sec
             popupWindow.isFocusable = false
-            Handler().postDelayed({ popupWindow.dismiss() }, POPUP_DELAY_MILLIS.toLong())
+            Handler().postDelayed({ popupWindow.dismiss() }, POPUP_DELAY_MILLIS_15000.toLong())
             viewLocation.post {
                 popupWindow.showAtLocation(
                     viewLocation,
                     Gravity.BOTTOM,
                     0,
-                    convertDpToPixel(getDeviceHeight(activity), activity)
+                    convertDpToPixel(getDeviceHeight(activity) + POPUP_MARGIN_BOTTOM, activity)
                 )
             }
             return popupWindow

@@ -5,8 +5,10 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.text.*
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
@@ -96,6 +98,7 @@ import za.co.woolworths.financial.services.android.util.pushnotification.Notific
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.ShoppingCartLiveData
 import java.util.regex.Pattern
+import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.deliverySummaryScrollView as deliverySummaryScrollView1
 
 
 class CheckoutDashFragment : Fragment(),
@@ -1358,10 +1361,32 @@ class CheckoutDashFragment : Fragment(),
             }
             true
         } else {
-            if (context != null)
-                NotificationManagerCompat.from(context!!).areNotificationsEnabled()
+            if (requireContext() != null)
+                NotificationManagerCompat.from(requireContext()).areNotificationsEnabled()
             else false
         }
+    }
+
+    fun openAppNotificationSettings(context: Context) {
+        val intent = Intent().apply {
+            when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> {
+                    action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+                    putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                }
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> {
+                    action = "android.settings.APP_NOTIFICATION_SETTINGS"
+                    putExtra("app_package", context.packageName)
+                    putExtra("app_uid", context.applicationInfo.uid)
+                }
+                else -> {
+                    action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                    addCategory(Intent.CATEGORY_DEFAULT)
+                    data = Uri.parse("package:" + context.packageName)
+                }
+            }
+        }
+        context.startActivity(intent)
     }
 
     override fun onConfirmClick(tipValue: String) {
@@ -1431,6 +1456,6 @@ class CheckoutDashFragment : Fragment(),
 
     override fun onToastButtonClicked(jsonElement: JsonElement?) {
         // Open settings screen for turning on push notification.
-
+        openAppNotificationSettings(requireActivity())
     }
 }
