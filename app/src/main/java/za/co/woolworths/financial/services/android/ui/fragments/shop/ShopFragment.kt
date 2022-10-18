@@ -338,7 +338,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         params.orderId?.let { orderId ->
             inAppNotificationView?.inappOrderNotificationTitle?.text = requireContext().getString(
                 R.string.inapp_order_notification_title,
-                orderId.replace("o", "")
+                orderId
             )
         }
         inAppNotificationView?.inappOrderNotificationSubitle?.text =
@@ -497,7 +497,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
     }
 
-    public fun makeLastDashOrderDetailsCall() {
+    fun makeLastDashOrderDetailsCall() {
         shopViewModel.getLastDashOrderDetails()
     }
 
