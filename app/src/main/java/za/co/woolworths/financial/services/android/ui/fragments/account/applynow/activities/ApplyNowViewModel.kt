@@ -14,7 +14,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.applynow
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.IApplyNowBottomSheetImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.data.ApplyNowRepo
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.data.IApplyNowRepo
-import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.utils.getViewStateFlowForNetworkCall
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.getViewStateFlowForNetworkCall
 import javax.inject.Inject
 
 @HiltViewModel
