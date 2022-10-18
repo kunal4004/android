@@ -157,6 +157,7 @@ public class AppInstanceObject {
         public boolean delivery_details;
         public boolean my_lists;
         public boolean pargo_store;
+        public boolean new_fbh_cnc;
 
     }
 

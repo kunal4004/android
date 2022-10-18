@@ -31,6 +31,7 @@ import static za.co.woolworths.financial.services.android.ui.fragments.wreward.W
 import static za.co.woolworths.financial.services.android.util.AppConstant.DP_LINKING_MY_ACCOUNTS_ORDER_DETAILS;
 import static za.co.woolworths.financial.services.android.util.AppConstant.REQUEST_CODE_BARCODE_ACTIVITY;
 import static za.co.woolworths.financial.services.android.util.AppConstant.REQUEST_CODE_ORDER_DETAILS_PAGE;
+import static za.co.woolworths.financial.services.android.util.AppConstant.TAG_FBH_CNC_FRAGMENT;
 import static za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
@@ -89,8 +90,10 @@ import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
+import za.co.woolworths.financial.services.android.geolocation.view.FBHInfoBottomSheetDialog;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.BrandNavigationDetails;
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
@@ -786,6 +789,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
     }
 
+    private void firstTimeFBHCNCIntroDialog() {
+        FBHInfoBottomSheetDialog fbh = new FBHInfoBottomSheetDialog();
+        fbh.show(getSupportFragmentManager(), TAG_FBH_CNC_FRAGMENT);
+    }
+
     private void replaceAccountIcon(@NonNull MenuItem item) {
         if (accountNavigationView != null) {
             if (ChatAWSAmplify.INSTANCE.isLiveChatBackgroundServiceRunning()
@@ -830,6 +838,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                         shopFragment.scrollToTop();
                     }
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMENU, BottomNavigationActivity.this);
+                    if(!AppInstanceObject.get().featureWalkThrough.new_fbh_cnc) {
+                        firstTimeFBHCNCIntroDialog();
+                    }
                     break;
 
                 case R.id.navigate_to_cart:
