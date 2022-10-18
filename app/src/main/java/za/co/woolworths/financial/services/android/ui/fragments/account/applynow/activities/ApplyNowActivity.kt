@@ -19,7 +19,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.applynow.A
 import za.co.woolworths.financial.services.android.models.dto.account.applynow.Content
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.adapters.ApplyNowFragAdapter
-import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.utils.ViewState
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.ViewState
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 

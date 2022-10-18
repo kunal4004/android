@@ -4,7 +4,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.applyno
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-
 import dagger.hilt.android.components.ViewModelComponent
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.ApplyNowBottomSheetImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.data.ApplyNowRemoteDataSource
