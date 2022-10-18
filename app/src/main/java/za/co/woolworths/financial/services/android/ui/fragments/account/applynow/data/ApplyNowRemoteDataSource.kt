@@ -1,6 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.applynow.data
 
-import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.utils.CoreDataSource
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.CoreDataSource
 import javax.inject.Inject
 
 class ApplyNowRemoteDataSource @Inject constructor(
