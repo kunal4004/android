@@ -8,15 +8,21 @@ import javax.inject.Inject
 
 interface IRouter {
     fun push(fragment: Fragment, isPushFragmentUp : Boolean = false)
+    fun popBack()
 }
 
 class LandingRouter @Inject constructor(private val activity: Activity) : IRouter {
 
-    override fun push(fragment: Fragment, isPushedUp : Boolean) {
+    override fun push(fragment: Fragment, isPushFragmentUp : Boolean) {
             when (activity) {
-                is BottomNavigationActivity -> if (isPushedUp) activity.pushFragment(fragment) else activity.pushFragment(fragment)
+                is BottomNavigationActivity -> if (isPushFragmentUp) activity.pushFragmentSlideUp(fragment)
+                    else activity.pushFragment(fragment)
                 is MyAccountActivity -> activity.replaceFragment(fragment)
             }
+    }
+
+    override fun popBack() {
+        activity.onBackPressed()
     }
 
 }

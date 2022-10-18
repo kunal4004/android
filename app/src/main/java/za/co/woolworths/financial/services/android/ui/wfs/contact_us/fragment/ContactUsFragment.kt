@@ -12,7 +12,6 @@ import za.co.woolworths.financial.services.android.ui.wfs.contact_us.helper.JSON
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.screen.ContactUsCategoryScreen
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.viewmodel.ContactUsViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.core.LandingRouter
-import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.MobileConfigRemoteContentModel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import javax.inject.Inject
 
@@ -22,24 +21,33 @@ class ContactUsFragment : Fragment() {
     val viewModel: ContactUsViewModel by activityViewModels()
     lateinit var reader: JSONResourceReader
 
-    @Inject
-    lateinit var router: LandingRouter
+    @Inject lateinit var router: LandingRouter
+    @Inject lateinit var toolbar: ContactUsToolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setToolbar()
         reader = JSONResourceReader(resources, R.raw.contact_us)
-        val jsonObj: MobileConfigRemoteContentModel = reader.constructUsingGson(MobileConfigRemoteContentModel::class.java)
-        viewModel.setMobileConfigRemoteContentModel(jsonObj)
+        viewModel.setMobileConfigRemoteContentModel(reader)
         viewModel.queryServiceContactUs()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?)
     = contentView { OneAppTheme {
-            ContactUsCategoryScreen(viewModel) { item ->
-                viewModel.setSubCategoryItem(item)
-                router.push(ContactUsGeneralEnquiriesFragment())
+            ContactUsCategoryScreen(viewModel) { title, item ->
+                viewModel.setSubCategoryItem(Pair(title, item))
+                router.push(ContactUsSubCategoryFragment())
             }
         }
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) setToolbar()
+    }
+
+    private fun setToolbar() {
+        toolbar.setToolbar(getString(R.string.contact_us))
     }
 }
 

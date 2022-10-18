@@ -6,8 +6,8 @@ import kotlinx.android.parcel.Parcelize
 import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
 
 @Parcelize
-data class MobileConfigRemoteContentModel(
-    var content: MutableList<Content>,
+data class RemoteMobileConfigModel(
+    var content: MutableList<Content>?,
     var response: ServerErrorResponse,
     var httpCode: Int
 ) : Parcelable
@@ -26,6 +26,7 @@ data class ChildrenItem(
     var order: Float? = null,
     var title: String? = null,
     var description: String? = null,
+    var reference: String? = null,
     var type: ContactUsType? = null,
     var children: MutableList<Children> = mutableListOf()
 ) : Parcelable

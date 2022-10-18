@@ -34,7 +34,6 @@ class ContactUsFinancialServiceFragment : Fragment(), View.OnClickListener {
 
     companion object {
         private const val REQUEST_CALL = 1
-
     }
 
     private var callIntent: Intent? = null

@@ -1,21 +1,20 @@
 package za.co.woolworths.financial.services.android.ui.wfs.contact_us.viewmodel
 
-import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.helper.JSONResourceReader
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.usecase.ContactUsRepository
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.usecase.IContactUsRepository
-import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.Children
 import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.ChildrenItem
 import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.Content
-import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.MobileConfigRemoteContentModel
+import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.RemoteMobileConfigModel
+import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,27 +22,49 @@ class ContactUsViewModel @Inject constructor(private val repository: ContactUsRe
     ViewModel(),
     IContactUsRepository by repository {
 
-    var subCategories: MutableList<ChildrenItem> = mutableListOf()
+    var contentListFromRawFolder: MutableList<Content>? = null
+    var wasEnquiryListOpenedFromEmailFragment : Boolean = false
 
-    var contactUsList: MutableList<Content> = mutableListOf()
+    var enquiryList: MutableList<ChildrenItem> = mutableListOf()
 
-    var state by mutableStateOf(mutableListOf<Content>())
-        private set
+    var subCategories:  Pair<String, MutableList<ChildrenItem>> = Pair("", mutableListOf())
+
+    private val _contentList = MutableSharedFlow<MutableList<Content>>()
+    val contentList = _contentList.asSharedFlow()
+
+    private val _isLoadingSharedFlow = MutableSharedFlow<Boolean>()
+    val isLoadingSharedFlow = _isLoadingSharedFlow.asSharedFlow()
+
+    private val _isFailureSharedFlow = MutableSharedFlow<Throwable>()
+    val isFailureSharedFlow = _isFailureSharedFlow.asSharedFlow()
 
     fun queryServiceContactUs() {
         viewModelScope.launch {
             queryServiceContactUsContentFromMobileConfig().collectLatest { result ->
-                Log.e("resultZmal", "${Gson().toJson(result)}")
+               with(result){
+                   renderNoConnection {  }
+                   renderLoading { viewModelScope.launch { _isLoadingSharedFlow.emit(isLoading)} }
+                   renderSuccess { viewModelScope.launch { _contentList.emit(output.content ?: mutableListOf())}}
+                   renderFailure { _isFailureSharedFlow.tryEmit(throwable) }
+               }
             }
         }
     }
 
-    fun setMobileConfigRemoteContentModel(content: MobileConfigRemoteContentModel) {
-        contactUsList = content.content
+    fun setMobileConfigRemoteContentModel(reader: JSONResourceReader) {
+       val config = reader.constructUsingGson(RemoteMobileConfigModel::class.java)
+        contentListFromRawFolder = config.content
     }
 
-    fun setSubCategoryItem(children: MutableList<ChildrenItem>) {
+    fun setSubCategoryItem(children : Pair<String, MutableList<ChildrenItem>>) {
         subCategories = children
     }
 
+    fun setEnquiryTypeList(children: MutableList<ChildrenItem>) {
+        enquiryList = children
+    }
+
+    fun call(phoneNumber : String?) {
+        Utils.makeCall(phoneNumber)
+    }
 }

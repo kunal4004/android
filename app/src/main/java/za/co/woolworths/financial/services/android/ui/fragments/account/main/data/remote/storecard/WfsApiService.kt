@@ -12,6 +12,7 @@ import za.co.woolworths.financial.services.android.models.dto.npc.UnblockStoreCa
 import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
+import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.RemoteMobileConfigModel
 
 interface WfsApiService {
     @Headers(
@@ -116,11 +117,11 @@ interface WfsApiService {
         @Body body: Any
     ): Response<BlockMyCardResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:86400")
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("/wfs/app/v4/mobileconfigs/content")
-    suspend fun<Model> queryServiceMobileConfigsContent(
+    suspend fun queryServiceMobileConfigsContent(
         @Query("contentId") contentId: String
-    ): Response<Model>
+    ): Response<RemoteMobileConfigModel>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:86400")
     @GET("/wfs/app/v4/mobileconfigs/content")

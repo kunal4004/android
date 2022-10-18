@@ -15,7 +15,7 @@ fun ShimmerEffect(content: @Composable (Brush) -> Unit) {
         targetValue = 1000f,
         animationSpec = infiniteRepeatable(
             animation = tween(
-                durationMillis = 1000,
+                durationMillis = 1500,
                 easing = FastOutSlowInEasing
             ),
             repeatMode = RepeatMode.Reverse

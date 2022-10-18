@@ -70,7 +70,7 @@ class EnquiriesListFragment : Fragment(), EnquiriesListAdapter.ItemListener {
                         mBottomNavigator?.pushFragment(EmailUsFragment())
                     }
             }.apply {
-                selectedEnquiry?.value = contactUsModel.value?.contactUsFinancialServicesEmail()!![pos]
+                selectedEnquiry?.value = contactUsModel.value?.contactUsFinancialServicesEmail()?.get(pos)
             }
         }
     }

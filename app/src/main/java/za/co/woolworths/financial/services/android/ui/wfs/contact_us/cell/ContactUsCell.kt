@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.wfs.contact_us.cell
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.selection.selectable
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -9,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.wfs.component.*
 import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.Children
+import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.ChildrenItem
 
 @Composable
 fun TitleLabelItem(title: String?) {
@@ -40,8 +42,10 @@ fun TitleDescriptionAndNextArrowItem(children: Children) {
 
 @Composable
 fun LeftIconTitleDescriptionAndNextArrowItem(item: Children) {
-    Row(modifier = Modifier.fillMaxWidth()
-        .padding(start = 24.dp, top = 16.dp, bottom = 16.dp, end = 13.dp),
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 24.dp, top = 16.dp, bottom = 16.dp, end = 13.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         MyIcon(id = item.type?.iconId(), modifier = Modifier.padding(end = 16.dp))
@@ -50,5 +54,29 @@ fun LeftIconTitleDescriptionAndNextArrowItem(item: Children) {
             item.description?.let { description -> TitleSmallText(description) }
         }
         MyIcon(id = R.drawable.ic_caret_black, contentDescriptionId = R.string.next_arrow)
+    }
+}
+
+@Composable
+fun TextWithRadioButtonOption(
+    item: ChildrenItem,
+    selectedOption: ChildrenItem,
+    onOptionSelected: (ChildrenItem) -> Unit,
+    onSelected: (ChildrenItem) -> Unit
+) {
+    Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .selectable(selected = (item == selectedOption),
+                    onClick = { onOptionSelected(item)
+                        onSelected(item)}),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(modifier = Modifier.weight(1f).padding(start = 24.dp, end = 2.dp)
+            ) { item.title?.let { TitleSmallText(it) } }
+            CheckedUncheckedRadioButton(isChecked = item == selectedOption)
+        }
+        DividerThicknessOne()
     }
 }
