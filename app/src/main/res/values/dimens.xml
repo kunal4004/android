@@ -263,5 +263,6 @@
     <dimen name="fourty_three_dp">43dp</dimen>
     <dimen name="eighty_eight_dp">88dp</dimen>
     <dimen name="_minus8dp">-8dp</dimen>
+    <dimen name="three_sp">3sp</dimen>
 </resources>
 
