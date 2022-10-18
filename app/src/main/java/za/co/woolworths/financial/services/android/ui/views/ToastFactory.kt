@@ -5,27 +5,28 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Color
 import android.graphics.Point
 import android.graphics.drawable.GradientDrawable
 import android.os.Handler
 import android.os.Looper
+import android.util.DisplayMetrics
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.*
 import android.widget.LinearLayout
 import android.widget.PopupWindow
-import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.contracts.IToastInterface
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment
-import android.util.DisplayMetrics
-import android.view.View.*
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import com.google.gson.*
+import com.awfs.coordination.R
+import com.google.gson.JsonArray
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import kotlinx.coroutines.GlobalScope
+import za.co.woolworths.financial.services.android.contracts.IToastInterface
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
@@ -35,11 +36,11 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.hel
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_TOAST
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.ReceiverManager
 import za.co.woolworths.financial.services.android.util.ScreenManager
-import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
 class ToastFactory {
 
@@ -131,16 +132,9 @@ class ToastFactory {
             // inflate your xml layout
             val inflater =
                 activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as? LayoutInflater
-            val layout = inflater?.inflate(R.layout.add_to_cart_success, null)
+            val layout = inflater?.inflate(R.layout.push_notification_toast_layout, null)
             // set the custom display
             val tvButtonClick = layout?.findViewById<WTextView>(R.id.tvView)
-            val tvBoldTitle = layout?.findViewById<WTextView>(R.id.tvCart)
-            val tvAddedTo = layout?.findViewById<WTextView>(R.id.tvAddToCart)
-            val tvFullText = layout?.findViewById<WTextView>(R.id.tvFullText)
-            tvAddedTo?.visibility = GONE
-            tvBoldTitle?.visibility = GONE
-            tvFullText?.visibility = VISIBLE
-            tvButtonClick?.text = activity.getString(R.string.push_notification_turn_on_text)
 
             // initialize your popupWindow and use your custom layout as the view
             val popupWindow = PopupWindow(
