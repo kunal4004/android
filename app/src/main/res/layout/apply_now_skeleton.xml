@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:fillViewport="true"
+    android:scrollbars="none"
+    android:layout_margin="@dimen/_24sdp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="@dimen/_50sdp"
+        >
+
+        <View
+            android:id="@+id/title"
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="@dimen/_8sdp"
+            android:background="@drawable/facebook_shimmer_textview_place_holder_bg"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <include
+            layout="@layout/apply_now_card_benefits_skeleton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_20sdp"
+            />
+
+        <include
+            layout="@layout/apply_now_card_benefits_skeleton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_20sdp"
+            />
+
+        <include
+            layout="@layout/apply_now_card_benefits_skeleton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_20sdp"
+            />
+
+        <include
+            layout="@layout/apply_now_card_benefits_skeleton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_20sdp"
+            />
+
+        <include
+            layout="@layout/apply_now_card_benefits_skeleton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_20sdp"
+            />
+        <View
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_30sdp"
+            android:background="@drawable/facebook_shimmer_textview_place_holder_bg" />
+
+        <include
+            layout="@layout/apply_now_more_benefits_skeleton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_20sdp"
+            />
+        <include
+            layout="@layout/apply_now_more_benefits_skeleton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_20sdp"
+            />
+        <include
+            layout="@layout/apply_now_more_benefits_skeleton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_20sdp"
+            />
+        <include
+            layout="@layout/apply_now_more_benefits_skeleton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_20sdp"
+            />
+        <include
+            layout="@layout/apply_now_more_benefits_skeleton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_20sdp"
+            />
+
+
+        <View
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_30sdp"
+            android:background="@drawable/facebook_shimmer_textview_place_holder_bg" />
+        <include
+            layout="@layout/apply_now_card_section_skeleton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_20sdp"
+            />
+
+    </LinearLayout>
+</ScrollView>
