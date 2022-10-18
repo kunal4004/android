@@ -22,12 +22,15 @@
         <action
             android:id="@+id/action_accountOptionsManageCardFragment_to_generalErrorDialogPopupFragment"
             app:destination="@id/generalErrorDialogPopupFragment" />
+        <action
+            android:id="@+id/action_accountOptionsManageCardFragment_to_storeCardNotReceivedDialogFragment"
+            app:destination="@id/storeCardNotReceivedDialogFragment" />
     </fragment>
     <fragment
         android:id="@+id/manageCardViewPagerFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.ManageCardViewPagerFragment"
         android:label="ManageCardViewPagerFragment"
-        tools:layout="@layout/manage_card_viewpager_fragment" >
+        tools:layout="@layout/manage_card_viewpager_fragment">
         <action
             android:id="@+id/action_manageCardViewPagerFragment_to_accountOptionsManageCardFragment2"
             app:destination="@id/accountOptionsManageCardFragment"
@@ -48,7 +51,7 @@
         android:id="@+id/payWithCardListFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card.PayWithCardListFragment"
         android:label="PayWithCardListFragment"
-        tools:layout="@layout/pay_with_card_list_fragment" >
+        tools:layout="@layout/pay_with_card_list_fragment">
         <action
             android:id="@+id/action_payWithCardListFragment_to_scanBarcodeToPayDialogFragment"
             app:destination="@id/scanBarcodeToPayDialogFragment" />
@@ -57,10 +60,15 @@
         android:id="@+id/scanBarcodeToPayDialogFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.detail.ScanBarcodeToPayDialogFragment"
         android:label="ScanBarcodeToPayDialogFragment"
-        tools:layout="@layout/scan_barcode_to_pay_dialog" >
+        tools:layout="@layout/scan_barcode_to_pay_dialog">
         <argument
             android:name="storeCardResponse"
             app:argType="za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse" />
     </dialog>
+    <fragment
+        android:id="@+id/storeCardNotReceivedDialogFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.StoreCardNotReceivedFragment"
+        android:label="StoreCardNotReceivedDialogFragment"
+        tools:layout="@layout/store_card_vtsc_card_not_received_fragment" />
 
 </navigation>
