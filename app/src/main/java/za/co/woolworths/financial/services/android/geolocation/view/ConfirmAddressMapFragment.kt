@@ -11,6 +11,7 @@ import android.widget.AdapterView
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
@@ -92,7 +93,8 @@ class ConfirmAddressMapFragment :
     private var isAddressFromSearch: Boolean = false
     private var isMoveMapCameraFirstTime: Boolean? = true
     private var isAddressSearch: Boolean? = false
-    private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
+
+    val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
 
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
@@ -134,7 +136,6 @@ class ConfirmAddressMapFragment :
         isComingFromCheckout = args.mapData.isComingFromCheckout
         isFromDashTab = args.mapData.isFromDashTab
         deliveryType = args.mapData.deliveryType
-        setUpViewModel()
         clearAddress()
         confirmAddressClick()
         addFragmentListner()
@@ -758,13 +759,6 @@ class ConfirmAddressMapFragment :
 
     override fun tryAgain() {
         initView()
-    }
-
-    private fun setUpViewModel() {
-        confirmAddressViewModel = ViewModelProvider(
-            this,
-            GeoLocationViewModelFactory(GeoLocationApiHelper())
-        ).get(ConfirmAddressViewModel::class.java)
     }
 
     private fun sendAddressData(placeName: String?, apiAddress1: String? = "", type: String? = "") {
