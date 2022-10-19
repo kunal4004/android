@@ -5,18 +5,16 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.cor
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.getViewStateFlowForNetworkCall
 import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.IMobileConfigsContentDataSource
 import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.MobileConfigsContentDataSource
-import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.RemoteMobileConfigModel
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ContactUsRemoteModel
 import javax.inject.Inject
 
 interface IContactUsRepository {
-    suspend fun queryServiceContactUsContentFromMobileConfig(): Flow<ViewState<RemoteMobileConfigModel>>
+    suspend fun queryServiceContactUsContentFromMobileConfig(): Flow<ViewState<ContactUsRemoteModel>>
 }
 
 class ContactUsRepository @Inject constructor(private val source: MobileConfigsContentDataSource) :
     IContactUsRepository,
     IMobileConfigsContentDataSource by source {
-
     override suspend fun queryServiceContactUsContentFromMobileConfig() =
         getViewStateFlowForNetworkCall { fetchContactUsConfigFromMobileConfig() }
-
 }

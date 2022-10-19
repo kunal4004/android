@@ -17,9 +17,9 @@ import za.co.woolworths.financial.services.android.ui.wfs.component.*
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.cell.TitleDescriptionAndNextArrowItem
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.cell.TitleLabelItem
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.viewmodel.ContactUsViewModel
-import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.ChildrenItem
-import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.Content
-import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.RemoteMobileConfigModel
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ChildrenItem
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.Content
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ContactUsRemoteModel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.TitleSmall
 
 sealed class ContactUsEvent {
@@ -31,21 +31,30 @@ sealed class ContactUsEvent {
 @Composable
 fun ContactUsCategoryScreen(viewModel: ContactUsViewModel, onEventSelected: (ContactUsEvent) -> Unit)
 {
-    // This will cause re-composition on every network state change
-    val connectivity by connectivityState()
+    // TODO:: Too many conditional statement for network request, find a way to group them in a single state
+    // that allows re-composition
+    val connectivity by connectivityState()//     This will cause re-composition on every network state change
     val isConnected = connectivity === ConnectionState.Available
 
-    val configList : RemoteMobileConfigModel? = viewModel.remoteMobileConfig
+    val configList : ContactUsRemoteModel? = viewModel.remoteMobileConfig
     val remoteFailureResponse = viewModel.remoteFailureResponse
 
     if (viewModel.isLoadingSharedFlow){
         ContactUsLoadingShimmer (viewModel.getShimmerModel())
     } else {
-        if (remoteFailureResponse is ServerErrorResponse){
-            onEventSelected(ContactUsEvent.Response(remoteFailureResponse))
+        if (viewModel.unknownFailure is Throwable){
+            onEventSelected(ContactUsEvent.Response(ServerErrorResponse(
+                desc = stringResource(id = R.string.oops_error_message))))
+            viewModel.unknownFailure = null
             return
         }
-        if (configList is RemoteMobileConfigModel) {
+
+        if (remoteFailureResponse is ServerErrorResponse){
+            onEventSelected(ContactUsEvent.Response(remoteFailureResponse))
+            viewModel.remoteFailureResponse = null
+            return
+        }
+        if (configList is ContactUsRemoteModel) {
             CategoryList(configList.content ?: mutableListOf(), onEventSelected)
         }
    }

@@ -12,22 +12,15 @@ import za.co.woolworths.financial.services.android.models.dto.account.ServerErro
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.*
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.usecase.ContactUsRepository
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.usecase.IContactUsRepository
-import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.ChildrenItem
-import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.ContactUsType
-import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.Content
-import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.RemoteMobileConfigModel
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ChildrenItem
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ContactUsType
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.Content
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ContactUsRemoteModel
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
 
-sealed class ContactUsResult {
-    data class Loading(val isLoading: Boolean = false) : ContactUsResult()
-    data class Response(val serverErrorResponse: ServerErrorResponse? = null) : ContactUsResult()
-    data class Success(val contactUsModel: RemoteMobileConfigModel? = null) : ContactUsResult()
-}
-
 @HiltViewModel
-class ContactUsViewModel @Inject constructor(private val repository: ContactUsRepository) :
-    ViewModel(),
+class ContactUsViewModel @Inject constructor(private val repository: ContactUsRepository) : ViewModel(),
     IContactUsRepository by repository {
 
     var enquiryList: MutableList<ChildrenItem> = mutableListOf()
@@ -37,8 +30,8 @@ class ContactUsViewModel @Inject constructor(private val repository: ContactUsRe
     var isLoadingSharedFlow by mutableStateOf(true)
 
     var remoteFailureResponse: ServerErrorResponse? by mutableStateOf(null)
-    var remoteMobileConfig: RemoteMobileConfigModel? by mutableStateOf(null)
-    var isFailureSharedFlow: Throwable? by mutableStateOf(Throwable())
+    var remoteMobileConfig: ContactUsRemoteModel? by mutableStateOf(null)
+    var unknownFailure: Throwable? by mutableStateOf(null)
 
     fun queryServiceContactUs() {
         viewModelScope.launch {
@@ -47,7 +40,7 @@ class ContactUsViewModel @Inject constructor(private val repository: ContactUsRe
                    renderHttpFailureFromServer {  }
                    renderLoading { isLoadingSharedFlow = isLoading }
                    renderSuccess { viewModelScope.launch { remoteMobileConfig = output }}
-                   renderFailure { isFailureSharedFlow = throwable }
+                   renderFailure { unknownFailure = throwable }
                    renderHttpFailureFromServer { remoteFailureResponse = output.response }
                }
             }

@@ -9,8 +9,8 @@ import za.co.woolworths.financial.services.android.ui.wfs.component.*
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.cell.LeftIconTitleDescriptionAndNextArrowItem
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.cell.TitleLabelItem
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.viewmodel.ContactUsViewModel
-import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.Children
-import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.ChildrenItem
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.Children
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ChildrenItem
 
 @Composable
 fun ContactUsSubCategoryScreen(viewModel: ContactUsViewModel, onSelected: (Children) -> Unit) {

@@ -14,7 +14,7 @@ import za.co.woolworths.financial.services.android.ui.wfs.contact_us.viewmodel.C
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.screen.ContactUsSubCategoryScreen
 import za.co.woolworths.financial.services.android.ui.wfs.core.LandingRouter
-import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.ContactUsType
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ContactUsType
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 import javax.inject.Inject
@@ -40,7 +40,7 @@ class ContactUsSubCategoryFragment : Fragment() {
                     ContactUsType.ACTION_EMAIL_INAPP -> {
                         viewModel.setEnquiryTypeList(children.children)
                         router.push(ContactUsSelectEmailEnquiryTypeFragment(), true) }
-                    ContactUsType.ACTION_CALL -> viewModel.call(children.description)
+                    ContactUsType.ACTION_CALL, ContactUsType.ACTION_FAX -> viewModel.call(children.description)
                     ContactUsType.ACTION_WHATSAPP_FS -> whatsappChat()
                     ContactUsType.NONE, null -> Unit
                 }

@@ -12,13 +12,15 @@ interface IContactUsToolbar {
 class ContactUsToolbar @Inject constructor(private val activity: Activity) : IContactUsToolbar  {
 
     override fun setToolbar(title: String) {
-            when (activity) {
+        with(activity) {
+            when (this) {
                 is BottomNavigationActivity -> {
-                    activity.setTitle(title)
-                    activity.displayToolbar()
-                    activity.showBackNavigationIcon(true)
+                    setTitle(title)
+                    displayToolbar()
+                    showBackNavigationIcon(true)
                 }
-                is MyAccountActivity -> activity.setToolbarTitle(title)
+                is MyAccountActivity -> setToolbarTitle(title)
+            }
         }
     }
 

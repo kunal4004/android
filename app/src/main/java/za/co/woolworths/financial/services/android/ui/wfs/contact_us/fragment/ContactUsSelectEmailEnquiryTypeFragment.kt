@@ -55,7 +55,7 @@ class ContactUsSelectEmailEnquiryTypeFragment : Fragment() {
                             router.push(EmailUsFragment())
                         }
                     }.apply {
-                        selectedEnquiry?.value  = ConfigOptions(key = childrenItem.reference ?: "", displayName = childrenItem.title ?: "", value = childrenItem.description ?: "")
+                        selectedEnquiry?.value = ConfigOptions(key = childrenItem.reference ?: "", displayName = childrenItem.title ?: "", value = childrenItem.description ?: "")
                     }
                 }
             }

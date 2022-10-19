@@ -9,8 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.wfs.component.*
-import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.Children
-import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.ChildrenItem
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.Children
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ChildrenItem
 
 @Composable
 fun TitleLabelItem(title: String?) {

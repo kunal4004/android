@@ -6,7 +6,7 @@ import androidx.compose.runtime.remember
 import za.co.woolworths.financial.services.android.ui.wfs.component.BoxBackground
 import za.co.woolworths.financial.services.android.ui.wfs.component.ListColumn
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.cell.TextWithRadioButtonOption
-import za.co.woolworths.financial.services.android.ui.wfs.mobileconfig.ChildrenItem
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ChildrenItem
 
 @Composable
 fun SelectEnquiryTypeList(radioOptionsList: MutableList<ChildrenItem>, onSelected : (ChildrenItem) -> Unit) {
