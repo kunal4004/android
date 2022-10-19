@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.util.barcode.AutoFocusMode
 import za.co.woolworths.financial.services.android.util.barcode.CodeScanner
 import za.co.woolworths.financial.services.android.util.barcode.CodeScannerView
 import android.net.Uri
+import android.view.WindowManager
 import za.co.woolworths.financial.services.android.ui.views.alert.OnHideAlertListener
 import za.co.woolworths.financial.services.android.util.DeepLinkingUtils
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
@@ -35,8 +36,9 @@ open class BarcodeScanFragment : BarcodeScanExtension(), OnHideAlertListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        (activity as? BarcodeScanActivity)?.setHomeIndicator(false)
-
+        activity?.apply {
+            (this as? BarcodeScanActivity)?.binding?.setHomeIndicator(false)
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
