@@ -6,9 +6,7 @@ import android.content.Intent
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -16,17 +14,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.ConfirmAddressBottomSheetDialogBinding
 import com.google.gson.JsonSyntaxException
-import kotlinx.android.synthetic.main.confirm_address_bottom_sheet_dialog.*
-import kotlinx.android.synthetic.main.current_location_row_layout.*
-import kotlinx.android.synthetic.main.fragment_click_and_collect_stores.*
-import kotlinx.android.synthetic.main.no_connection.*
-import kotlinx.android.synthetic.main.no_connection.view.*
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
@@ -37,12 +30,10 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.geolocation.model.MapData
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
-import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.network.model.ConfirmAddressStoreLocator
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.SavedAddressAdapter
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
-import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -71,8 +62,10 @@ import za.co.woolworths.financial.services.android.util.location.Locator
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.*
 
-class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected,
+class ConfirmAddressFragment : Fragment(R.layout.confirm_address_bottom_sheet_dialog), SavedAddressAdapter.OnAddressSelected,
     View.OnClickListener {
+
+    private lateinit var binding: ConfirmAddressBottomSheetDialogBinding
     private lateinit var locator: Locator
     private var mPosition: Int = 0
     private var savedAddressResponse: SavedAddressResponse? = null
@@ -108,64 +101,61 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.confirm_address_bottom_sheet_dialog, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = ConfirmAddressBottomSheetDialogBinding.bind(view)
         locator = Locator(activity as AppCompatActivity)
-        initViews()
+        binding.initViews()
         addFragmentListener()
     }
 
     override fun onResume() {
         super.onResume()
         checkForLocationPermissionAndSetLocationAddress()
+        binding.updateInitialStateOnResume()
+    }
+
+    private fun ConfirmAddressBottomSheetDialogBinding.updateInitialStateOnResume() {
         if (SessionUtilities.getInstance().isUserAuthenticated) {
-            inSavedAddress?.visibility = View.GONE
+            inSavedAddress?.root?.visibility = View.GONE
             tvConfirmAddress?.visibility = View.VISIBLE
             if (confirmAddressViewModel.isConnectedToInternet(requireActivity()))
                 fetchAddress()
             else {
-                noAddressConnectionLayout?.visibility = View.VISIBLE
-                noAddressConnectionLayout?.no_connection_layout?.visibility = View.VISIBLE
+                noAddressConnectionLayout?.root?.visibility = View.VISIBLE
+                noAddressConnectionLayout?.noConnectionLayout?.visibility = View.VISIBLE
             }
             rvSavedAddressList?.visibility = View.VISIBLE
         } else {
-            inSavedAddress?.visibility = View.VISIBLE
+            inSavedAddress?.root?.visibility = View.VISIBLE
             tvConfirmAddress?.visibility = View.GONE
             rvSavedAddressList?.visibility = View.GONE
         }
     }
 
-    private fun initViews() {
-        tvConfirmAddress?.setOnClickListener(this)
-        inCurrentLocation?.setOnClickListener(this)
-        inSavedAddress?.setOnClickListener(this)
-        backButton?.setOnClickListener(this)
-        enterNewAddress?.setOnClickListener(this)
+    private fun ConfirmAddressBottomSheetDialogBinding.initViews() {
+        tvConfirmAddress?.setOnClickListener(this@ConfirmAddressFragment)
+        inCurrentLocation?.root?.setOnClickListener(this@ConfirmAddressFragment)
+        inSavedAddress?.root?.setOnClickListener(this@ConfirmAddressFragment)
+        backButton?.setOnClickListener(this@ConfirmAddressFragment)
+        enterNewAddress?.setOnClickListener(this@ConfirmAddressFragment)
 
         if (SessionUtilities.getInstance().isUserAuthenticated) {
-            inSavedAddress?.visibility = View.GONE
+            inSavedAddress?.root?.visibility = View.GONE
             tvConfirmAddress?.visibility = View.VISIBLE
             if (confirmAddressViewModel.isConnectedToInternet(requireActivity()))
-                fetchAddress()
+                binding.fetchAddress()
             else {
-                noAddressConnectionLayout?.visibility = View.VISIBLE
-                noAddressConnectionLayout?.no_connection_layout?.visibility = View.VISIBLE
+                noAddressConnectionLayout?.root?.visibility = View.VISIBLE
+                noAddressConnectionLayout?.noConnectionLayout?.visibility = View.VISIBLE
             }
         } else {
-            inSavedAddress?.visibility = View.VISIBLE
+            inSavedAddress?.root?.visibility = View.VISIBLE
             tvConfirmAddress?.visibility = View.GONE
         }
-        setButtonUI(false)
-        no_connection_layout?.btnRetry?.setOnClickListener {
-            initViews()
+        binding.setButtonUI(false)
+        noAddressConnectionLayout?.btnRetry?.setOnClickListener {
+            binding.initViews()
         }
     }
 
@@ -196,7 +186,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
     private fun startLocationDiscoveryProcess() {
         locator.getCurrentLocation { locationEvent ->
             when (locationEvent) {
-                is Event.Location -> handleLocationEvent(locationEvent)
+                is Event.Location -> binding.handleLocationEvent(locationEvent)
                 is Event.Permission -> handlePermissionEvent(locationEvent)
             }
         }
@@ -205,27 +195,27 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
     private fun handlePermissionEvent(permissionEvent: Event.Permission) {
         if (permissionEvent.event == EventType.LOCATION_PERMISSION_NOT_GRANTED) {
             Utils.saveLastLocation(null, activity)
-            handleLocationEvent(null)
+            binding.handleLocationEvent(null)
         }
     }
 
-    private fun handleLocationEvent(locationEvent: Event.Location?) {
+    private fun ConfirmAddressBottomSheetDialogBinding.handleLocationEvent(locationEvent: Event.Location?) {
         Utils.saveLastLocation(locationEvent?.locationData, context)
         mLastLocation = locationEvent?.locationData
         mLastLocation?.let {
             DynamicGeocoder.getAddressFromLocation(activity, it.latitude, it.longitude) { address ->
                 address?.let { address ->
-                    tvCurrentLocation?.text = address.addressLine
+                    inCurrentLocation?.tvCurrentLocation?.text = address.addressLine
                 } ?: kotlin.run {
-                    hideCurrentLocation()
+                    binding.hideCurrentLocation()
                 }
             }
         } ?: kotlin.run {
-            hideCurrentLocation()
+            binding.hideCurrentLocation()
         }
     }
 
-    private fun fetchAddress() {
+    private fun ConfirmAddressBottomSheetDialogBinding.fetchAddress() {
         lifecycleScope.launch {
             progressBar?.visibility = View.VISIBLE
             try {
@@ -242,16 +232,16 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                             val defaultAddress = defaultAddressOptional.get()
                             addressList.remove(defaultAddress)
                             addressList.add(0, defaultAddress)
-                            setAddressUI(addressList)
+                            binding.setAddressUI(addressList)
                         } else {
-                            setAddressUI(addressList)
+                            binding.setAddressUI(addressList)
                         }
                     } else {
-                        setAddressUI(addressList)
+                        binding.setAddressUI(addressList)
                     }
                 }
                 savedAddressResponse?.defaultAddressNickname?.let {
-                    setButtonUI(it.length > 1)
+                    binding.setButtonUI(it.length > 1)
                 }
                 progressBar?.visibility = View.GONE
             } catch (e: HttpException) {
@@ -262,7 +252,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         }
     }
 
-    private fun setAddressUI(address: ArrayList<Address>) {
+    private fun ConfirmAddressBottomSheetDialogBinding.setAddressUI(address: ArrayList<Address>) {
         rvSavedAddressList?.layoutManager =
             activity?.let { activity -> LinearLayoutManager(activity) }
         rvSavedAddressList?.adapter = activity?.let { activity ->
@@ -270,12 +260,12 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 activity,
                 address,
                 savedAddressResponse?.defaultAddressNickname,
-                this,
+                this@ConfirmAddressFragment,
             )
         }
     }
 
-    private fun setButtonUI(activated: Boolean) {
+    private fun ConfirmAddressBottomSheetDialogBinding.setButtonUI(activated: Boolean) {
         if (activated) {
             tvConfirmAddress?.setBackgroundColor(ContextCompat.getColor(requireActivity(),
                 R.color.black))
@@ -286,19 +276,19 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
 
     }
 
-    private fun hideCurrentLocation() {
-        inCurrentLocation?.visibility = View.GONE
+    private fun ConfirmAddressBottomSheetDialogBinding.hideCurrentLocation() {
+        inCurrentLocation?.root?.visibility = View.GONE
         currentLocDiv?.visibility = View.GONE
     }
 
     override fun onAddressSelected(address: Address, position: Int) {
         selectedAddress = address
         mPosition = position
-        setButtonUI(true)
+        binding.setButtonUI(true)
         if (address.verified) {
-            tvConfirmAddress?.text = getString(R.string.confirm)
+            binding.tvConfirmAddress?.text = getString(R.string.confirm)
         } else {
-            tvConfirmAddress?.text = getString(R.string.update_address)
+            binding.tvConfirmAddress?.text = getString(R.string.update_address)
         }
     }
 
@@ -320,9 +310,9 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                     ),
                     activity)
 
-                if (progressBar.visibility == View.GONE
+                if (binding.progressBar.visibility == View.GONE
                     && selectedAddress != null
-                    && tvConfirmAddress?.text == getString(R.string.update_address)
+                    && binding.tvConfirmAddress?.text == getString(R.string.update_address)
                 ) {
                     savedAddressResponse?.let {
 
@@ -338,13 +328,13 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                     }
                     return
                 }
-                if (progressBar.visibility == View.GONE
+                if (binding.progressBar.visibility == View.GONE
                     && selectedAddress != null
-                    && tvConfirmAddress?.text == getString(R.string.confirm)
+                    && binding.tvConfirmAddress?.text == getString(R.string.confirm)
                 ) {
                     selectedAddress.let {
                         if (it.placesId != null) {
-                            validateLocation(it)
+                            binding.validateLocation(it)
                         } else
                             return
                     }
@@ -448,7 +438,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         }
     }
 
-    private fun validateLocation(address: Address) {
+    private fun ConfirmAddressBottomSheetDialogBinding.validateLocation(address: Address) {
         if (address.placesId.isNullOrEmpty())
             return
 
@@ -470,7 +460,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                                             address.placesId?.equals(getDeliveryType()?.address?.placeId) // changing black tooltip flag as user changes in his location.
                                         if (getDeliveryType() == null) {
                                             // User don't have any location (signin or signout both) that's why we are setting new location.
-                                            confirmSetAddress(validateLocationResponse,
+                                            binding.confirmSetAddress(validateLocationResponse,
                                                 address.placesId!!, BundleKeysConstants.DASH)
                                         } else {
                                             // User has location. Means only changing browsing location.
@@ -550,7 +540,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         }
     }
 
-    private fun confirmSetAddress(
+    private fun ConfirmAddressBottomSheetDialogBinding.confirmSetAddress(
         validateLocationResponse: ValidateLocationResponse,
         placeId: String,
         currentDeliveryType: String,
