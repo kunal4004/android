@@ -3,11 +3,14 @@ package za.co.woolworths.financial.services.android.geolocation.viewmodel
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
+import javax.inject.Inject
 
-class ConfirmAddressViewModel(private val geoLocationApiHelper: GeoLocationApiHelper) :
+@HiltViewModel
+class ConfirmAddressViewModel @Inject constructor(private val geoLocationApiHelper: GeoLocationApiHelper) :
     ViewModel() {
 
     suspend fun getSavedAddress() =
