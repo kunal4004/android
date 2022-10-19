@@ -38,7 +38,6 @@ class ContactUsSubCategoryFragment : Fragment() {
             ContactUsSubCategoryScreen(viewModel) { children ->
                 when (children.type) {
                     ContactUsType.ACTION_EMAIL_INAPP -> {
-                        viewModel.wasEnquiryListOpenedFromEmailFragment = false
                         viewModel.setEnquiryTypeList(children.children)
                         router.push(ContactUsSelectEmailEnquiryTypeFragment(), true) }
                     ContactUsType.ACTION_CALL -> viewModel.call(children.description)
@@ -57,17 +56,17 @@ class ContactUsSubCategoryFragment : Fragment() {
     }
 
     private fun setToolbar() {
-      toolbar.setToolbar(viewModel.subCategories.first)
+        viewModel.subCategories.first?.let { toolbar.setToolbar(it) }
     }
 
    private fun whatsappChat(){
         if (!WhatsAppChatToUs().isCustomerServiceAvailable) {
             val whatsAppUnavailableFragment = WhatsAppUnavailableFragment()
-            activity?.supportFragmentManager?.let { supportFragmentManager -> whatsAppUnavailableFragment.show(supportFragmentManager, WhatsAppUnavailableFragment::class.java.simpleName) }
+             whatsAppUnavailableFragment.show(requireActivity().supportFragmentManager, WhatsAppUnavailableFragment::class.java.simpleName)
             return
         }
-        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_CONTACT_US, this) }
-        ScreenManager.presentWhatsAppChatToUsActivity(activity,
+         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_CONTACT_US, requireActivity())
+        ScreenManager.presentWhatsAppChatToUsActivity(requireActivity(),
             WhatsAppChatToUs.FEATURE_WHATSAPP,
             WhatsAppChatToUs.CONTACT_US
         )

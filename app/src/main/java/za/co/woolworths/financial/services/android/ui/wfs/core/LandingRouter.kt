@@ -8,7 +8,6 @@ import javax.inject.Inject
 
 interface IRouter {
     fun push(fragment: Fragment, isPushFragmentUp : Boolean = false)
-    fun popBack()
 }
 
 class LandingRouter @Inject constructor(private val activity: Activity) : IRouter {
@@ -19,10 +18,6 @@ class LandingRouter @Inject constructor(private val activity: Activity) : IRoute
                     else activity.pushFragment(fragment)
                 is MyAccountActivity -> activity.replaceFragment(fragment)
             }
-    }
-
-    override fun popBack() {
-        activity.onBackPressed()
     }
 
 }

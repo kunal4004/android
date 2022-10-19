@@ -33,12 +33,12 @@ data class ChildrenItem(
 
 @Parcelize
 data class Content(
-    var order: Float,
-    var reference: String,
-    var title: String,
-    var description: String?,
-    var imageUrl: String,
-    var children: MutableList<Children>
+    var order: Float? = null,
+    var reference: String? = null,
+    var title: String? = null,
+    var description: String? = null,
+    var imageUrl: String?  = null,
+    var children: MutableList<Children> = mutableListOf()
 ) : Parcelable
 
 enum class ContactUsType(private val type: String?) {
@@ -52,5 +52,25 @@ enum class ContactUsType(private val type: String?) {
         ACTION_CALL.type -> R.drawable.ic_phone
         ACTION_WHATSAPP_FS.type -> R.drawable.icon_whatsapp_black
         else -> R.drawable.ic_phone
+    }
+
+    fun getShimmerModel(): MutableList<Content> {
+        val contentList = mutableListOf<Content>()
+        val content = Content()
+        val children = mutableListOf<Children>()
+        children.add(Children(title = ".", description = "."))
+        content.children = children
+        contentList.add(content)
+        val content1 = Content()
+        val children1 = mutableListOf<Children>()
+        children1.add(Children(title = ".", description = "."))
+        children1.add(Children(title = ".", description = "."))
+        children1.add(Children(title = ".", description = "."))
+        children1.add(Children(title = ".", description = "."))
+        children1.add(Children(title = ".", description = "."))
+        children1.add(Children(title = ".", description = "."))
+        content1.children = children1
+        contentList.add(content1)
+        return contentList
     }
 }
