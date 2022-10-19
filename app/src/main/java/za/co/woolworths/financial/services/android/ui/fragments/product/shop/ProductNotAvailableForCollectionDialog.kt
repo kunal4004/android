@@ -1,17 +1,16 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.shop
 
-import android.content.DialogInterface
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.product_not_available_for_collection_dialog.*
+import com.awfs.coordination.databinding.ProductNotAvailableForCollectionDialogBinding
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 
 class ProductNotAvailableForCollectionDialog : WBottomSheetDialogFragment() {
 
+    private lateinit var binding: ProductNotAvailableForCollectionDialogBinding
     private var listener: IProductNotAvailableForCollectionDialogListener? = null
 
     interface IProductNotAvailableForCollectionDialogListener {
@@ -34,21 +33,24 @@ class ProductNotAvailableForCollectionDialog : WBottomSheetDialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.product_not_available_for_collection_dialog, container, false)
+        binding = ProductNotAvailableForCollectionDialogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        findInStore?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-        findInStore?.setOnClickListener {
-            listener?.onFindInStore()
-            dismissAllowingStateLoss()
-        }
 
-        changeDeliveryOption?.setOnClickListener {
-            listener?.onChangeDeliveryOption()
-            dismissAllowingStateLoss()
-        }
+        with(binding) {
+            findInStore?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            findInStore?.setOnClickListener {
+                listener?.onFindInStore()
+                dismissAllowingStateLoss()
+            }
 
+            changeDeliveryOption?.setOnClickListener {
+                listener?.onChangeDeliveryOption()
+                dismissAllowingStateLoss()
+            }
+        }
     }
 }

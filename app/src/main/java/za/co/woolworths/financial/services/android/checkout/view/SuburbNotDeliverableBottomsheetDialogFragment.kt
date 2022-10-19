@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_suburb_not_deliverable_bottomsheet_dialog.*
+import com.awfs.coordination.databinding.FragmentSuburbNotDeliverableBottomsheetDialogBinding
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 
@@ -21,24 +21,22 @@ class SuburbNotDeliverableBottomsheetDialogFragment : WBottomSheetDialogFragment
         const val ERROR_CODE = "ERROR_CODE"
     }
 
+    private lateinit var binding: FragmentSuburbNotDeliverableBottomsheetDialogBinding
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(
-            R.layout.fragment_suburb_not_deliverable_bottomsheet_dialog,
-            container,
-            false
-        )
+        binding = FragmentSuburbNotDeliverableBottomsheetDialogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        init()
+        binding.init()
     }
 
-    private fun init() {
+    private fun FragmentSuburbNotDeliverableBottomsheetDialogBinding.init() {
         when (arguments?.getString(ERROR_CODE, "")) {
             ERROR_CODE_SUBURB_NOT_FOUND -> {
                 tvDescription?.visibility = View.GONE
@@ -49,8 +47,8 @@ class SuburbNotDeliverableBottomsheetDialogFragment : WBottomSheetDialogFragment
             }
         }
 
-        tvDismiss.setOnClickListener(this)
-        buttonChangeAddress.setOnClickListener(this)
+        tvDismiss.setOnClickListener(this@SuburbNotDeliverableBottomsheetDialogFragment)
+        buttonChangeAddress.setOnClickListener(this@SuburbNotDeliverableBottomsheetDialogFragment)
     }
 
     override fun onClick(v: View?) {

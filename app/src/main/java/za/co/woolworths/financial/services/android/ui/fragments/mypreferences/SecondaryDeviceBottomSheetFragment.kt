@@ -6,36 +6,42 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_secondary_device_bottom_sheet.*
-import kotlinx.android.synthetic.main.fragment_unlink_primary_device_bottom_sheet.unlinkDeviceCancel
+import com.awfs.coordination.databinding.FragmentSecondaryDeviceBottomSheetBinding
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class SecondaryDeviceBottomSheetFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
+    private lateinit var binding: FragmentSecondaryDeviceBottomSheetBinding
     private var newPrimaryDevice: UserDevice? = null
     private var oldPrimaryDevice: UserDevice? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_secondary_device_bottom_sheet, container, false)
+        binding = FragmentSecondaryDeviceBottomSheetBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        arguments?.apply {
-            newPrimaryDevice = getSerializable(ViewAllLinkedDevicesFragment.NEW_DEVICE) as UserDevice?
-            oldPrimaryDevice = getSerializable(ViewAllLinkedDevicesFragment.OLD_DEVICE) as UserDevice?
-            unlinkDeviceTitle.text = newPrimaryDevice?.deviceName
-        }
 
-        unlinkDeviceCancel.setOnClickListener {
-            dismissAllowingStateLoss()
-            AnimationUtilExtension.animateViewPushDown(it)
+        with(binding) {
+            arguments?.apply {
+                newPrimaryDevice =
+                    getSerializable(ViewAllLinkedDevicesFragment.NEW_DEVICE) as UserDevice?
+                oldPrimaryDevice =
+                    getSerializable(ViewAllLinkedDevicesFragment.OLD_DEVICE) as UserDevice?
+                unlinkDeviceTitle.text = newPrimaryDevice?.deviceName
+            }
+
+            unlinkDeviceCancel.setOnClickListener {
+                dismissAllowingStateLoss()
+                AnimationUtilExtension.animateViewPushDown(it)
+            }
+            changePrimaryDeviceLayout.setOnClickListener(this@SecondaryDeviceBottomSheetFragment)
+            deleteDeviceLayout.setOnClickListener(this@SecondaryDeviceBottomSheetFragment)
         }
-        changePrimaryDeviceLayout.setOnClickListener(this)
-        deleteDeviceLayout.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
