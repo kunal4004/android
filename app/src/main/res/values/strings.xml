@@ -2721,6 +2721,18 @@
     <string name="upshell_message_activate_virtual_card_title">Activate Virtual Card</string>
     <string name="virtual_temp_card_detail">Your new card has been issued and will be delivered to you. Activate your Virtual Temp Card and use it to pay in-store</string>
 
+
+    <string name="we_need_more_info">We Need More Info</string>
+    <string name="enter_street_name">Please enter a street name for this location:</string>
+    <string name="your_shopper_is_trying_to">Your shopper is trying to \ncontact you.</string>
+    <string name="my_card_has_arrived">My card has arrived</string>
+    <string name="map_not_available">Map app’s not installed</string>
+    <string name="petal_maps">PETAL MAPS</string>
+
+    <string name="liquor_dialog_description_text">WCellar Liquor is available for delivery \nand collection in selected areas in Gauteng and the Western Cape.</string>
+    <string name="edit_address_button">EDIT ADDRESS</string>
+    <string name="promotional_text_banner">Extra 5% off when you pay with your Woolies card.\nThis offer is available on selected items. Offer valid for a limited time only. Subject to availability. Discount applies at checkout.T\'s &amp; C\'s apply.</string>
+
     <string name="already_have_a_wrewards_card">Already have a wrewards card?</string>
     <string name="add_it_now">Add it now</string>
     <string name="sign_up">SIGN UP</string>
@@ -2795,15 +2807,5 @@
     <string name="reported">REPORTED</string>
     <string name="a_report_for_this_review_has_already_been_submitted">A report for this review has already been submitted.</string>
 
-    <string name="we_need_more_info">We Need More Info</string>
-    <string name="enter_street_name">Please enter a street name for this location:</string>
-    <string name="your_shopper_is_trying_to">Your shopper is trying to \ncontact you.</string>
-    <string name="my_card_has_arrived">My card has arrived</string>
-    <string name="map_not_available">Map app’s not installed</string>
-    <string name="petal_maps">PETAL MAPS</string>
-
-    <string name="liquor_dialog_description_text">WCellar Liquor is available for delivery \nand collection in selected areas in Gauteng and the Western Cape.</string>
-    <string name="edit_address_button">EDIT ADDRESS</string>
-    <string name="promotional_text_banner">Extra 5% off when you pay with your Woolies card.\nThis offer is available on selected items. Offer valid for a limited time only. Subject to availability. Discount applies at checkout.T\'s &amp; C\'s apply.</string>
 
 </resources>
