@@ -1289,6 +1289,20 @@
         <item name="WTextView_font">medium_bold</item>
     </style>
 
+    <style name="calender_title_text_style">
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/sixteen_dp</item>
+        <item name="WTextView_font">medium_bold</item>
+    </style>
+
+    <style name="calender_details_text_style">
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/sixteen_dp</item>
+        <item name="fontFamily">@font/myriad_pro_regular</item>
+    </style>
+
     <style name="absa_page_title_style" parent="absa_page_title_text_style">
         <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
         <item name="android:layout_width">0dp</item>

@@ -1199,6 +1199,9 @@ public class Utils {
             case PARGO_STORE:
                 appInstanceObject.featureWalkThrough.pargo_store = true;
                 break;
+            case NEW_FBH_CNC:
+                appInstanceObject.featureWalkThrough.new_fbh_cnc = true;
+                break;
             default:
                 break;
         }
