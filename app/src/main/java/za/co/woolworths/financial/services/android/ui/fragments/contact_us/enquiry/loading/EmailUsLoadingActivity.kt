@@ -36,7 +36,7 @@ class EmailUsLoadingActivity : AppCompatActivity(), View.OnClickListener {
                     if (it.data.httpCode == 200) {
                         handleSuccess()
                     } else {
-                        handleError(it.data.response?.message!!)
+                        handleError(it.data.response?.desc ?: getString(R.string.oops_error_message))
                     }
                 }
                 is ApiResult.Error -> {
