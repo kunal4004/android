@@ -608,6 +608,20 @@
             android:theme="@style/FaqStyle"
             android:screenOrientation="portrait"/>
 
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.ReportReviewActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.MoreReviewActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.ReviewerInfoDetailsActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
+
+
     </application>
 
     <queries>

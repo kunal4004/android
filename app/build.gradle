@@ -393,6 +393,8 @@ dependencies {
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.2.1'
 
     implementation 'androidx.work:work-runtime:2.7.1'
+    implementation 'androidx.paging:paging-common-ktx:3.0.1'
+    implementation 'androidx.paging:paging-runtime-ktx:3.0.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
