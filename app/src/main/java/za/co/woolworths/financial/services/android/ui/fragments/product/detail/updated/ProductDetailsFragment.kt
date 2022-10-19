@@ -196,7 +196,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private val vtoApplyEffectOnImageViewModel: VtoApplyEffectOnImageViewModel? by activityViewModels()
     private val liveCameraViewModel: LiveCameraViewModel? by activityViewModels()
     private val dataPrefViewModel: DataPrefViewModel? by activityViewModels()
-    private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
+    private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
     private var makeupCamera: MakeupCam? = null
     private var isObserveImageData: Boolean = false
     private var isRefreshImageEffectLiveCamera: Boolean = false
@@ -275,7 +275,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         super.onViewCreated(view, savedInstanceState)
         mFuseLocationAPISingleton = FuseLocationAPISingleton
         initViews()
-        setUpConfirmAddressViewModel()
         addFragmentListner()
         setUniqueIds()
         productDetails?.let { addViewItemEvent(it) }
@@ -311,13 +310,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun onAttach(context: Context) {
         super.onAttach(context)
         setUpToolBar()
-    }
-
-    private fun setUpConfirmAddressViewModel() {
-        confirmAddressViewModel = ViewModelProvider(
-            this,
-            GeoLocationViewModelFactory(GeoLocationApiHelper())
-        ).get(ConfirmAddressViewModel::class.java)
     }
 
     private fun initViews() {

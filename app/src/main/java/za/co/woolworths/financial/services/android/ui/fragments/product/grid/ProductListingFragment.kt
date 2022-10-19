@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -131,7 +132,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var deliveryType: Delivery? = null
     private var placeId: String? = null
     private var isUnSellableItemsRemoved: Boolean? = false
-    private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
+    private val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
     private var localDeliveryType: String? = null
     private var localDeliveryTypeForHiddenChange: String? = null
 
@@ -198,7 +199,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             toolbarTitleText =
                 if (mSubCategoryName?.isEmpty() == true) mSearchTerm else mSubCategoryName
             updateToolbarTitle()
-            setUpConfirmAddressViewModel()
             startProductRequest()
             setUniqueIds()
             addFragmentListner()
@@ -220,13 +220,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         layout_error_blp?.btn_retry_it?.setOnClickListener {
             startProductRequest()
         }
-    }
-
-    private fun setUpConfirmAddressViewModel() {
-        confirmAddressViewModel = ViewModelProvider(
-            this,
-            GeoLocationViewModelFactory(GeoLocationApiHelper())
-        ).get(ConfirmAddressViewModel::class.java)
     }
 
     private fun showPromotionalBanner(response: ProductView) {
