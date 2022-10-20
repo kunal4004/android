@@ -10,6 +10,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDel
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFullfilmentCollectionStoreFragment
 import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashDeliveryAddressFragment
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.ARG_SEND_DELIVERY_DETAILS
 import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.ARG_VALIDATE_PLACE
 
@@ -30,7 +31,8 @@ class ShopPagerAdapter(
             0 -> {
                 val standardDeliveryFragment = StandardDeliveryFragment()
                 standardDeliveryFragment.arguments = bundleOf(
-                    ARG_SEND_DELIVERY_DETAILS to listener.isSendDeliveryDetails()
+                    AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS to
+                            listener.isSendDeliveryDetails()
                 )
                 standardDeliveryFragment
             }
@@ -38,7 +40,8 @@ class ShopPagerAdapter(
                 val collectionFragment = ChangeFullfilmentCollectionStoreFragment()
                 collectionFragment.arguments = bundleOf(
                     ARG_VALIDATE_PLACE to validatePlace,
-                    ARG_SEND_DELIVERY_DETAILS to listener.isSendDeliveryDetails()
+                    AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS to
+                            listener.isSendDeliveryDetails()
                 )
                 collectionFragment
             }
