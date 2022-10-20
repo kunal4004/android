@@ -50,6 +50,7 @@ class EnquiriesListFragment : Fragment(), EnquiriesListAdapter.ItemListener {
                     adapter = EnquiriesListAdapter(this, emailList!!,selectedIndex)
                     binding.rcvEnquiries.adapter = adapter
                 }
+                else -> {}
             }
         }
     }

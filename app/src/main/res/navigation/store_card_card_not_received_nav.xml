@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/storeCardNotReceivedNavigation"
+    app:startDestination="@id/storeCardNotReceivedFragment">
+
+    <fragment
+        android:id="@+id/storeCardNotReceivedFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.StoreCardNotReceivedFragment"
+        android:label="storeCardNotReceivedFragment"
+        tools:layout="@layout/store_card_vtsc_card_not_received_fragment">
+        <action
+            android:id="@+id/action_storeCardNotReceivedFragment_to_cardNotReceivedConfirmationFragment"
+            app:destination="@id/cardNotReceivedConfirmationFragment" />
+        <action
+            android:id="@+id/action_storeCardNotReceivedFragment_to_storeCardNotReceivedDialogFragment"
+            app:destination="@id/storeCardNotReceivedDialogFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/cardNotReceivedConfirmationFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.CardNotReceivedConfirmationFragment"
+        android:label="CardNotReceivedConfirmationFragment"
+        tools:layout="@layout/card_not_arrived_fragment" />
+    <dialog
+        android:id="@+id/storeCardNotReceivedDialogFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.StoreCardNotReceivedDialogFragment"
+        android:label="StoreCardNotReceivedDialogFragment"
+        tools:layout="@layout/store_card_card_not_received_dialog_fragment" >
+        <argument
+            android:name="response"
+            app:argType="za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse"
+            app:nullable="true" />
+    </dialog>
+</navigation>

@@ -9,6 +9,7 @@ import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.os.Parcelable
+import android.text.method.LinkMovementMethod
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -16,6 +17,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.setFragmentResultListener
@@ -33,6 +35,7 @@ import kotlinx.android.synthetic.main.fragment_brand_landing.view.*
 import kotlinx.android.synthetic.main.grid_layout.*
 import kotlinx.android.synthetic.main.no_connection_handler.*
 import kotlinx.android.synthetic.main.no_connection_handler.view.*
+import kotlinx.android.synthetic.main.promotional_text_plp.*
 import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.*
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -224,6 +227,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             this,
             GeoLocationViewModelFactory(GeoLocationApiHelper())
         ).get(ConfirmAddressViewModel::class.java)
+    }
+
+    private fun showPromotionalBanner(response: ProductView) {
+        promotionalTextBannerLayout?.visibility = VISIBLE
+        val htmlDataPromotionalText = response.richText
+        promotionalTextDesc?.text =
+            HtmlCompat.fromHtml(htmlDataPromotionalText, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        promotionalTextDesc.movementMethod = LinkMovementMethod.getInstance()
     }
 
     private fun addFragmentListner() {
@@ -532,12 +543,17 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             return
         }
         plp_relativeLayout?.visibility = VISIBLE
+
+        if (!response.richText.isNullOrEmpty()) {
+            showPromotionalBanner(response)
+        }
+
         val productLists = response.products
         if (mProductList?.isNullOrEmpty() == true)
 
             mProductList = ArrayList()
         response.history?.apply {
-            if (!categoryDimensions?.isNullOrEmpty()) {
+            if (categoryDimensions?.isNullOrEmpty() == false) {
                 mSubCategoryName = categoryDimensions[categoryDimensions.size - 1].label
             } else if (searchCrumbs?.isNullOrEmpty() == false) {
                 searchCrumbs?.let {
@@ -621,10 +637,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         liquorDialog?.apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             val view = layoutInflater.inflate(R.layout.liquor_info_dialog, null)
-            val desc = view.findViewById<TextView>(R.id.desc)
             val close = view.findViewById<Button>(R.id.close)
             val setSuburb = view.findViewById<TextView>(R.id.setSuburb)
-            desc?.text = AppConfigSingleton.liquor?.message ?: ""
             close?.setOnClickListener { dismiss() }
             setSuburb?.setOnClickListener {
                 dismiss()

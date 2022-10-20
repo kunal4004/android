@@ -24,7 +24,7 @@ class AccountProductsMainFragment : Fragment(R.layout.account_product_landing_ma
         super.onViewCreated(view, savedInstanceState)
         val binding = AccountProductLandingMainFragmentBinding.bind(view)
         requireActivity().window?.let {window -> WindowCompat.setDecorFitsSystemWindows(window, false) }
-        mToolbarContainer = AccountProductsToolbarHelper(binding, this@AccountProductsMainFragment)
+        mToolbarContainer = AccountProductsToolbarHelper(binding.accountProductLandingToolbarView, this@AccountProductsMainFragment)
         setupLandingScreen()
     }
 

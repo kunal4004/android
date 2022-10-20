@@ -57,6 +57,9 @@ class InitializerFragment : Fragment() {
                     Status.ERROR -> {
                         showErrorDialog()
                     }
+                    else -> {
+                        // Nothing
+                    }
                 }
             }
         }
@@ -70,6 +73,9 @@ class InitializerFragment : Fragment() {
                 is State.RedirectToChannels -> redirectToChannelsScreen()
                 is State.Loading -> showLoading()
                 is State.Error -> showErrorDialog()
+                else -> {
+                    // Nothing
+                }
             }
         }
 
