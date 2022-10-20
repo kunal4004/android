@@ -7,6 +7,7 @@ class Constant {
         const val queryServiceGetPaymentMethod = "queryServiceGetPaymentMethod"
         const val LIQUOR_ORDER = "LIQUOR_ORDER"
         const val NO_LIQUOR_IMAGE_URL = "NO_LIQUOR_IMAGE_URL"
+        const val RATING  = "Rating"
         const val POI = "poi"
         const val COMPLEX_ESTATE="Complex/Estate"
         const val HOUSE="House"
