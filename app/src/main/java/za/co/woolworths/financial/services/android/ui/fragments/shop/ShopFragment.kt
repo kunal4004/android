@@ -340,14 +340,13 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         inAppNotificationView?.inappOrderNotificationIcon?.apply {
             setTag(R.id.inappOrderNotificationIcon, params)
             // Chat enabled STATUS == PACKING i.e. CONFIRMED
-//            if (params.isChatEnabled) {
-            if (ORDER_STATUS_PACKING.equals(params.orderStatus, ignoreCase = true)) {
+            if (params.isChatEnabled) {
                 visibility = View.VISIBLE
                 setImageResource(R.drawable.ic_chat_icon)
                 setOnClickListener(this@ShopFragment)
             }
             // Driver tracking enabled STATUS == EN-ROUTE
-            else if (ORDER_STATUS_EN_ROUTE.equals(params.orderStatus, ignoreCase = true)) {
+            else if (params.isDriverTrackingEnabled) {
                 visibility = View.VISIBLE
                 setImageResource(R.drawable.ic_white_location)
                 setOnClickListener(this@ShopFragment)
@@ -1415,11 +1414,11 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 val params = v.getTag(R.id.inappOrderNotificationIcon) as? LastOrderDetailsResponse
                 params?.apply {
                     // Chat
-                    if (ORDER_STATUS_PACKING.equals(orderStatus, ignoreCase = true)) {
+                    if (params.isChatEnabled) {
                         navigateToChat(orderId)
                     }
                     // Driver tracking
-                    else if (ORDER_STATUS_EN_ROUTE.equals(orderStatus, ignoreCase = true)) {
+                    else if (params.isDriverTrackingEnabled) {
                         driverTrackingURL?.let { navigateToOrderTrackingScreen(it) }
                     }
                 }
