@@ -74,6 +74,7 @@ class StoreCardNavigator @Inject constructor() : IStoreCardNavigator {
             ApplyNowState.PERSONAL_LOAN->{
                 activity?.apply { FirebaseEventDetailManager.tapped(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANTRANSACTIONS ,this) }
             }
+            else -> {}
         }
     }
     private fun statementsEvent(activity: Activity?,applyNowState: ApplyNowState){
@@ -86,6 +87,7 @@ class StoreCardNavigator @Inject constructor() : IStoreCardNavigator {
             ApplyNowState.PERSONAL_LOAN->{
                 activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANSTATEMENTS, this) }
             }
+            else -> {}
         }
     }
 }

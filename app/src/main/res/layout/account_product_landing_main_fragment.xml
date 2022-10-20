@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/accountToolbar"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/productNavigationContainerView"
@@ -15,93 +19,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/accountToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/toolbar_height"
-        android:layout_marginTop="@dimen/_14sdp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/navigateBackImageButton"
-            style="@style/selectableImageButtonRippleStyle"
-            android:layout_width="@dimen/icon_dimens"
-            android:layout_height="@dimen/icon_dimens"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="@dimen/margin_start"
-            android:layout_centerVertical="true"
-            android:background="@android:color/transparent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/back_white"/>
-
-        <TextView
-            android:id="@+id/toolbarTitleTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/futura_semi_bold_ttf"
-            android:letterSpacing="0.2"
-            android:text="@string/title_how_to_pay"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_11ssp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/infoIconImageView"
-            android:layout_width="@dimen/icon_dimens"
-            android:layout_height="@dimen/icon_dimens"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:adjustViewBounds="true"
-            android:layout_marginEnd="@dimen/margin_end"
-            android:background="@android:color/transparent"
-            android:scaleType="fitCenter"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/info_white" />
-
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/closeIconImageButton"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            style="@style/closeIconStyle" />
-
-        <TextView
-            android:id="@+id/accountInArrearsTextView"
-            style="@style/accountInArrearsTextViewStyle"
-            android:fontFamily="@font/futura_semi_bold_ttf"
-            android:paddingStart="@dimen/_7sdp"
-            android:paddingTop="@dimen/_4sdp"
-            android:paddingEnd="@dimen/_7sdp"
-            android:paddingBottom="@dimen/_4sdp"
-            android:text="@string/account_in_arrears"
-            android:textSize="@dimen/_11ssp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <View
-        android:id="@+id/horizontalDivider"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/_1sdp"
-        android:background="@color/dark_divider"
-        android:elevation="@dimen/_1sdp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/accountToolbar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+    <include
+        android:id="@+id/accountProductLandingToolbarView"
+        layout="@layout/account_product_landing_toolbar_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -98,8 +98,8 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
         // Array to be updated as new question types are implemented.
         // This is just in case the survey contains question types that have not been implemented yet in this version.
         val allowedQuestionTypes = arrayOf(
-                SurveyQuestion.QuestionType.RATE_SLIDER.type,
-                SurveyQuestion.QuestionType.FREE_TEXT.type
+            SurveyQuestion.QuestionType.RATE_SLIDER.type,
+            SurveyQuestion.QuestionType.FREE_TEXT.type
         )
         return questions.filter { item -> allowedQuestionTypes.contains(item.type) }
     }
@@ -122,13 +122,13 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
             answer = when (question.type) {
                 SurveyQuestion.QuestionType.RATE_SLIDER.type -> {
                     SurveyAnswer(
-                            questionId = question.id,
-                            answerId = question.maxValue
+                        questionId = question.id,
+                        answerId = question.maxValue
                     )
                 }
                 else -> {
                     SurveyAnswer(
-                            questionId = question.id
+                        questionId = question.id
                     )
                 }
             }
@@ -169,22 +169,22 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
     override fun onSubmit() {
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VOC_SUBMIT, activity)
         navController?.navigate(
-                R.id.action_surveyVocFragment_to_surveyProcessRequestVocFragment,
-                bundleOf(
-                        EXTRA_SURVEY_ANSWERS to surveyAnswers
-                )
+            R.id.action_surveyVocFragment_to_surveyProcessRequestVocFragment,
+            bundleOf(
+                EXTRA_SURVEY_ANSWERS to surveyAnswers
+            )
         )
     }
 
     override fun onOptOut() {
         activity?.let {
             val dialog = GenericActionOrCancelDialogFragment.newInstance(
-                    dialogId = DIALOG_OPT_OUT_ID,
-                    title = getString(R.string.voc_opt_out_dialog_title),
-                    desc = getString(R.string.voc_opt_out_dialog_desc),
-                    actionButtonText = getString(R.string.voc_opt_out_dialog_action),
-                    cancelButtonText = getString(R.string.voc_opt_out_dialog_cancel),
-                    this
+                dialogId = DIALOG_OPT_OUT_ID,
+                title = getString(R.string.voc_opt_out_dialog_title),
+                desc = getString(R.string.voc_opt_out_dialog_desc),
+                actionButtonText = getString(R.string.voc_opt_out_dialog_action),
+                cancelButtonText = getString(R.string.voc_opt_out_dialog_cancel),
+                this
             )
             dialog.show(it.supportFragmentManager, GenericActionOrCancelDialogFragment::class.java.simpleName)
         }

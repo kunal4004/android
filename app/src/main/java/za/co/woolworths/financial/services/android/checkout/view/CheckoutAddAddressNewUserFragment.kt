@@ -656,11 +656,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             suburbEditText?.setText(selectedAddress.savedAddress.suburb)
         }
 
-        when (selectedAddress.savedAddress.postalCode.isNullOrEmpty()) {
-
-            false -> {
-                postalCode.setText(selectedAddress.savedAddress.postalCode)
-            }
+        if (!selectedAddress.savedAddress.postalCode.isNullOrEmpty()) {
+            postalCode.setText(selectedAddress.savedAddress.postalCode)
         }
     }
 

@@ -15,8 +15,8 @@ android {
     def minor = "5"
     def fix = "0"
     def jobNumberProduction = 200
-    def jobNumberQa = 639
-    def jobNumberFeature = 599
+    def jobNumberQa = 643
+    def jobNumberFeature = 504
 
     buildFeatures {
         dataBinding true
@@ -49,6 +49,7 @@ android {
         applicationId "com.awfs.coordination"
         manifestPlaceholders = [appLabel: "Woolworths", app_links_host: "www.woolworths.co.za"]
         minSdkVersion 22 //Lollipop 5.1
+        targetSdkVersion 33
         compileSdkVersion 32
         buildToolsVersion "30.0.3"
         multiDexEnabled true
@@ -245,7 +246,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.android.gms:play-services-location:18.0.0'
     implementation 'com.google.android.gms:play-services-gcm:17.0.0'
-    implementation 'com.google.android.gms:play-services-analytics:17.0.0'
+    implementation 'com.google.android.gms:play-services-analytics:18.0.1'
 
     //noinspection GradleCompatible
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
@@ -298,7 +299,7 @@ dependencies {
     implementation 'com.github.MasayukiSuda:BubbleLayout:v1.2.1'
 
     // Import the Firebase BoM
-    implementation platform('com.google.firebase:firebase-bom:28.4.0')
+    implementation platform('com.google.firebase:firebase-bom:30.3.1')
     implementation 'io.grpc:grpc-okhttp:1.32.2'
     implementation 'com.google.firebase:firebase-messaging-ktx'
     implementation 'com.google.firebase:firebase-core'
@@ -360,7 +361,8 @@ dependencies {
     implementation "com.google.dagger:hilt-android:2.38.1"
     kapt "com.google.dagger:hilt-android-compiler:2.37"
     implementation 'com.google.maps:google-maps-services:2.0.0'
-
+    implementation 'com.github.corouteam:GlideToVectorYou:v2.0.0'
+  
     // Huawei
     huaweiQaImplementation 'com.huawei.hms:location:6.4.0.300'
     huaweiProductionImplementation 'com.huawei.hms:location:6.4.0.300'
@@ -376,6 +378,8 @@ dependencies {
     implementation "io.getstream:stream-chat-android-pushprovider-firebase:$stream_version"
     huaweiQaImplementation "io.getstream:stream-chat-android-pushprovider-huawei:$stream_version"
     huaweiProductionImplementation "io.getstream:stream-chat-android-pushprovider-huawei:$stream_version"
+
+    implementation 'androidx.work:work-runtime:2.7.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

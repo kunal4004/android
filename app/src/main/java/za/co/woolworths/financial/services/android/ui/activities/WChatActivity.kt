@@ -77,7 +77,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
         initUI()
 
         with(chatViewModel) {
-            isCustomerSignOut.observe(this@WChatActivity, { isSignOut ->
+            isCustomerSignOut.observe(this@WChatActivity) { isSignOut ->
                 when (topVisibleFragment) {
                     is ChatFragment -> {
                         when (isSignOut) {
@@ -91,15 +91,21 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
                                         closeChatWindow()
                                     }
                                 }
+                            else -> {
+                                // Nothing
+                            }
                         }
                     }
                     is ChatRetrieveABSACardTokenFragment -> {
                         when (isSignOut) {
                             true -> GlobalScope.doAfterDelay(DELAY) { closeChatWindow() }
+                            else -> {
+                                // Nothing
+                            }
                         }
                     }
                 }
-            })
+            }
         }
 
         mSubscribeToMessageReceiver = object : BroadcastReceiver() {

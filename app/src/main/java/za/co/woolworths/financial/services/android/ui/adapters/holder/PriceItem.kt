@@ -31,7 +31,7 @@ class PriceItem {
                 with(priceType) {
                     when {
                         isNullOrEmpty() -> priceText = CurrencyFormatter.formatAmountToRandAndCentWithSpace(price)
-                        this?.toLowerCase(Locale.getDefault()).contains("from", true) -> priceText = "From " +CurrencyFormatter.formatAmountToRandAndCentWithSpace(price)
+                        (this?.lowercase(Locale.getDefault()) ?: "").contains("from", true) -> priceText = "From " +CurrencyFormatter.formatAmountToRandAndCentWithSpace(price)
                         this.contains("Kilogram", true) -> {
                             tvWasOrKgPrice.apply {
                                 text = "( ${CurrencyFormatter.formatAmountToRandAndCentWithSpace(kilogramPrice)} /kg)"

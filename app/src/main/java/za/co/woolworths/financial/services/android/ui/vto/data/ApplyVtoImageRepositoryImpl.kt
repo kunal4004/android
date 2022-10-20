@@ -71,14 +71,16 @@ class ApplyVtoImageRepositoryImpl @Inject constructor(
 
                                 }
                                 try {
-                                    context?.contentResolver.openInputStream(uri!!)
+                                    context?.contentResolver?.openInputStream(uri!!)
                                         .use { imageStream ->
                                             val bitmap = BitmapFactory.decodeStream(imageStream)
-                                            val matrix: Matrix =
-                                                SdkUtility.getRotationMatrixByExif(
-                                                    context?.contentResolver,
-                                                    uri
-                                                )
+                                            val matrix: Matrix? =
+                                                context?.contentResolver?.let { contentResolver ->
+                                                    SdkUtility.getRotationMatrixByExif(
+                                                        contentResolver,
+                                                        uri
+                                                    )
+                                                }
                                             val selectedImage =
                                                 Bitmap.createBitmap(
                                                     bitmap,
