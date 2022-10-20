@@ -9,9 +9,15 @@ import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.dto.SortOption
 import kotlinx.android.synthetic.main.sort_opitions_item.view.*
 
-class SortOptionsAdapter(val context: Context, var sortOptions: ArrayList<SortOption>, var listner: OnSortOptionSelected) : RecyclerView.Adapter<SortOptionsAdapter.SortOptionViewHolder>() {
+class SortOptionsAdapter(
+    val context: Context,
+    var sortOptions: ArrayList<SortOption>,
+    var listner: OnSortOptionSelected
+) : RecyclerView.Adapter<SortOptionsAdapter.SortOptionViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SortOptionViewHolder {
-        return SortOptionViewHolder(LayoutInflater.from(context).inflate(R.layout.sort_opitions_item, parent, false))
+        return SortOptionViewHolder(
+            LayoutInflater.from(context).inflate(R.layout.sort_opitions_item, parent, false)
+        )
     }
 
     override fun getItemCount(): Int {

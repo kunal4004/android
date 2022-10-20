@@ -68,6 +68,7 @@ import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import java.net.SocketTimeoutException
 import java.util.*
 
 class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected,
@@ -261,11 +262,10 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                     setButtonUI(it.length > 1)
                 }
                 progressBar?.visibility = View.GONE
-            } catch (e: HttpException) {
+            } catch (e: Exception) {
                 FirebaseManager.logException(e)
                 progressBar?.visibility = View.GONE
             }
-
         }
     }
 
@@ -547,7 +547,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                         }
                     }
                 }
-            } catch (e: HttpException) {
+            } catch (e: Exception) {
                 FirebaseManager.logException(e)
                 progressBar?.visibility = View.GONE
             } catch (e: JsonSyntaxException) {
@@ -618,7 +618,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                         }
                     }
                 }
-            } catch (e: HttpException) {
+            } catch (e: Exception) {
                 progressBar?.visibility = View.GONE
                 FirebaseManager.logException(e)
             }
