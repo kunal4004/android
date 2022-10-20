@@ -46,7 +46,9 @@ import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDeleg
 import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import java.net.SocketTimeoutException
 
 class ChangeFullfilmentCollectionStoreFragment() :
     DepartmentExtensionFragment(), DynamicMapDelegate,
@@ -362,8 +364,8 @@ class ChangeFullfilmentCollectionStoreFragment() :
                         }
                     }
                 }
-            } catch (e: HttpException) {
-                e.printStackTrace()
+            } catch (e: Exception) {
+                FirebaseManager.logException(e)
                 cncProgressBar?.visibility = View.GONE
             }
         }

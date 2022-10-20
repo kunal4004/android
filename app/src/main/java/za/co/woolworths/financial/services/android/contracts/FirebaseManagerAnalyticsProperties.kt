@@ -531,6 +531,12 @@ open class FirebaseManagerAnalyticsProperties {
             const val REFUND_TYPE = "refund_type"
             const val CONTENT_NAME = "content_name"
             const val CONTENT_SLOT = "content_slot"
+
+            const val FULFILLMENT_FOOD_STORE_KEY_01 = "food_ffstore"
+            const val FULFILLMENT_FBH_STORE_KEY_02 = "other02_ffstore"
+            const val FULFILLMENT_FBH_STORE_KEY_04 = "other04_ffstore"
+            const val FULFILLMENT_FBH_STORE_KEY_07 = "other07_ffstore"
+            const val LIQUOR_DELIVERABLE = "liquor_deliverable"
         }
     }
 

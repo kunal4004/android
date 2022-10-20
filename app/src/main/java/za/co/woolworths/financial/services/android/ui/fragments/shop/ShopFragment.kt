@@ -69,6 +69,7 @@ import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_L
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import java.net.SocketTimeoutException
 
 
 /**
@@ -290,7 +291,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                             }
                         }
                     }
-                } catch (e: HttpException) {
+                } catch (e: Exception) {
                     shopProgressbar?.visibility = View.GONE
                     tabs_main?.isClickable = true
                     FirebaseManager.logException(e)

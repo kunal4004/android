@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.models.network;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
@@ -11,7 +12,9 @@ import okhttp3.ResponseBody;
 import okio.Buffer;
 import za.co.woolworths.financial.services.android.models.dao.ApiRequestDao;
 import za.co.woolworths.financial.services.android.models.dao.ApiResponseDao;
+import za.co.woolworths.financial.services.android.ui.activities.maintenance.NetworkRuntimeExceptionViewController;
 import za.co.woolworths.financial.services.android.util.GZIPCompression;
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager;
 
 /**
  * Created by eesajacobs on 2016/12/29.
@@ -33,10 +36,18 @@ public class WfsApiInterceptor extends NetworkConfig implements Interceptor {
 
         // getForceNetworkUpdate() will force the request to update
         if (cacheTime == 0) {
-            Response originalResponse = chain.proceed(request);
-            return originalResponse.newBuilder()
-                    .header("Accept-Encoding", "gzip")
-                    .build();
+            try {
+                Response originalResponse = chain.proceed(request);
+                return originalResponse.newBuilder()
+                        .header("Accept-Encoding", "gzip")
+                        .build();
+            } catch (Exception exception) {
+                if (exception instanceof SocketTimeoutException) {
+                    FirebaseManager.logException(exception);
+                    new NetworkRuntimeExceptionViewController().openSocketTimeOutDialog();
+                }
+                throw exception;
+            }
         }
 
         final String endpoint = request.url().toString();
@@ -61,7 +72,16 @@ public class WfsApiInterceptor extends NetworkConfig implements Interceptor {
         }
 
         //cache does not exist. Proceed with service call.
-        Response response = chain.proceed(request);
+        Response response = null;
+        try {
+            response = chain.proceed(request);
+        } catch (Exception exception) {
+            if (exception instanceof SocketTimeoutException) {
+                FirebaseManager.logException(exception);
+                new NetworkRuntimeExceptionViewController().openSocketTimeOutDialog();
+            }
+            throw exception;
+        }
 
         //save the newly created apiRequestDao
         apiRequestDao.save();
