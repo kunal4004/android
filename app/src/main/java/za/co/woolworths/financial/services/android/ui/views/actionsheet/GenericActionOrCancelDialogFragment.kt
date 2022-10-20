@@ -1,38 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.views.actionsheet
 
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTagsAsResourceId
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.ui.compose.FuturaFontFamily
-import za.co.woolworths.financial.services.android.ui.compose.MyriadProFontFamily
-import za.co.woolworths.financial.services.android.ui.compose.NoRippleInteractionSource
-import za.co.woolworths.financial.services.android.ui.compose.contentView
+import kotlinx.android.synthetic.main.dialog_generic_action_or_cancel.*
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
 class GenericActionOrCancelDialogFragment : WBottomSheetDialogFragment() {
@@ -51,12 +25,12 @@ class GenericActionOrCancelDialogFragment : WBottomSheetDialogFragment() {
         private var listener: IActionOrCancel? = null
 
         fun newInstance(
-                dialogId: Int,
-                title: String,
-                desc: String,
-                actionButtonText: String,
-                cancelButtonText: String,
-                onActionListener: IActionOrCancel
+            dialogId: Int,
+            title: String,
+            desc: String,
+            actionButtonText: String,
+            cancelButtonText: String,
+            onActionListener: IActionOrCancel
         ): GenericActionOrCancelDialogFragment {
             listener = onActionListener
             return GenericActionOrCancelDialogFragment().withArgs {
@@ -69,161 +43,29 @@ class GenericActionOrCancelDialogFragment : WBottomSheetDialogFragment() {
         }
     }
 
-    var dialogId = -1
-    lateinit var title: String
-    lateinit var description: String
-    lateinit var actionText: String
-    lateinit var cancelText: String
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.dialog_generic_action_or_cancel, container, false)
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        var dialogId = -1
         arguments?.let {
             dialogId = it.getInt(ARG_DIALOG_ID)
-            title = it.getString(ARG_TITLE) ?: ""
-            description = it.getString(ARG_DESC) ?: ""
-            actionText = it.getString(ARG_ACTION_TEXT) ?: ""
-            cancelText = it.getString(ARG_CANCEL_TEXT) ?: ""
+            tvTitle.text = it.getString(ARG_TITLE)
+            tvDescription.text = it.getString(ARG_DESC)
+            tvAction.text = it.getString(ARG_ACTION_TEXT)
+            tvCancel.text = it.getString(ARG_CANCEL_TEXT)
         }
+
+        tvAction.setOnClickListener {
+            listener?.onDialogActionClicked(dialogId)
+            dismissAllowingStateLoss()
+        }
+
+        tvCancel.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+        tvCancel.setOnClickListener { dismissAllowingStateLoss() }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ) = contentView {
-        Render(title, description, actionText, cancelText)
-    }
-
-    @OptIn(ExperimentalComposeUiApi::class)
-    @Preview
-    @Composable
-    private fun Render(
-        title: String = "",
-        description: String = "",
-        actionText: String = "",
-        cancelText: String = ""
-    ) {
-        Column(
-            modifier = Modifier
-                .semantics {
-                    testTagsAsResourceId = true
-                }
-                .testTag(getString(R.string.dialog_confirmorcancel))
-                .fillMaxWidth()
-                .background(color = Color.White),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(3.5.dp))
-                    .background(
-                        color = colorResource(id = R.color.color_E5E5E5)
-                    )
-                    .size(
-                        width = 56.dp,
-                        height = 6.dp
-                    )
-            )
-            Text(
-                modifier = Modifier
-                    .testTag(getString(R.string.dialog_confirmorcancel_title))
-                    .padding(
-                        top = 24.dp,
-                        start = 32.dp,
-                        end = 32.dp
-                    ),
-                text = title,
-                fontSize = 20.sp,
-                fontFamily = FuturaFontFamily,
-                fontWeight = FontWeight.SemiBold,
-                lineHeight = 28.sp,
-                color = Color.Black,
-                textAlign = TextAlign.Center,
-                letterSpacing = 0.29.sp
-            )
-            Text(
-                modifier = Modifier
-                    .testTag(getString(R.string.dialog_confirmorcancel_description))
-                    .padding(
-                        top = 8.dp,
-                        start = 32.dp,
-                        end = 32.dp
-                    ),
-                text = description,
-                fontSize = 16.sp,
-                fontFamily = MyriadProFontFamily,
-                fontWeight = FontWeight.Normal,
-                lineHeight = 21.sp,
-                color = colorResource(id = R.color.color_7f7f7f),
-                textAlign = TextAlign.Center
-            )
-            Button(
-                onClick = {
-                    listener?.onDialogActionClicked(dialogId)
-                    dismissAllowingStateLoss()
-                },
-                shape = RectangleShape,
-                modifier = Modifier
-                    .testTag(getString(R.string.dialog_confirmorcancel_action_proceed))
-                    .padding(
-                        top = 31.dp,
-                        start = 32.dp,
-                        end = 32.dp
-                    )
-                    .fillMaxWidth()
-                    .height(dimensionResource(id = R.dimen.button_style_height)),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color.Black,
-                    contentColor = Color.White
-                ),
-                elevation = null,
-                interactionSource = NoRippleInteractionSource()
-            ) {
-                Text(
-                    modifier = Modifier
-                        .testTag(getString(R.string.dialog_confirmorcancel_action_proceed_label)),
-                    text = actionText,
-                    fontSize = 12.sp,
-                    fontFamily = FuturaFontFamily,
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = 2.sp
-                )
-            }
-            Button(
-                onClick = {
-                    dismissAllowingStateLoss()
-                },
-                shape = RectangleShape,
-                modifier = Modifier
-                    .testTag(getString(R.string.dialog_confirmorcancel_action_cancel))
-                    .padding(
-                        top = 8.dp,
-                        start = 32.dp,
-                        end = 32.dp,
-                        bottom = 8.dp
-                    )
-                    .fillMaxWidth()
-                    .height(dimensionResource(id = R.dimen.button_style_height)),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color.Transparent,
-                    contentColor = colorResource(R.color.color_7f7f7f)
-                ),
-                elevation = null,
-                interactionSource = NoRippleInteractionSource()
-            ) {
-                Text(
-                    modifier = Modifier
-                        .testTag(getString(R.string.dialog_confirmorcancel_action_cancel_label)),
-                    text = cancelText,
-                    fontSize = 12.sp,
-                    fontFamily = FuturaFontFamily,
-                    fontWeight = FontWeight.Medium,
-                    style = TextStyle(
-                        textDecoration = TextDecoration.Underline,
-                        letterSpacing = 1.sp
-                    )
-                )
-            }
-        }
-    }
 }
