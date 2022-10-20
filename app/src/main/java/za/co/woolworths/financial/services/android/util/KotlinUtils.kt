@@ -1288,7 +1288,16 @@ class KotlinUtils {
             return fulFillmentStoreId
         }
 
-
+        fun retriveFulfillmentStoreIdList(): Map<String, String>? {
+            var fulfillmentDetails: Map<String, String>? = null
+            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.fulfillmentStores?.let {
+                fulfillmentDetails = Gson().fromJson<Map<String, String>>(
+                    it,
+                    object : com.google.gson.reflect.TypeToken<Map<String, String>>() {}.type
+                )
+            }
+            return fulfillmentDetails
+        }
 
         fun getUniqueDeviceID(result: (String?) -> Unit) {
             val deviceID = Utils.getSessionDaoValue(KEY.DEVICE_ID)
