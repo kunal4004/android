@@ -1,17 +1,17 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog
 
-import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.out_of_stock_message_dialog.*
+import com.awfs.coordination.databinding.OutOfStockMessageDialogBinding
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 
 class OutOfStockMessageDialogFragment : WBottomSheetDialogFragment() {
+
+    private lateinit var binding: OutOfStockMessageDialogBinding
     private var listener: IOutOfStockMessageDialogDismissListener? = null
 
     interface IOutOfStockMessageDialogDismissListener {
@@ -38,14 +38,17 @@ class OutOfStockMessageDialogFragment : WBottomSheetDialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.out_of_stock_message_dialog, container, false)
+        binding = OutOfStockMessageDialogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        description.text = outOfStockMessage
-        btnOk.setOnClickListener {
-            dismissAllowingStateLoss()
+        with(binding) {
+            description.text = outOfStockMessage
+            btnOk.setOnClickListener {
+                dismissAllowingStateLoss()
+            }
         }
     }
 

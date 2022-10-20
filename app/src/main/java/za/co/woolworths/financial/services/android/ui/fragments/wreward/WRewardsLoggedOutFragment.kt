@@ -1,17 +1,18 @@
 package za.co.woolworths.financial.services.android.ui.fragments.wreward
 
-import android.os.Bundle
-import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.util.Utils
 import android.animation.ObjectAnimator
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.wreward_logout_fragment.*
 import kotlinx.android.synthetic.main.wreward_sign_out_content.*
-import android.view.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
+import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.Utils
 
 class WRewardsLoggedOutFragment : WRewardOnBoardingFragment(), View.OnClickListener {
 

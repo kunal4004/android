@@ -1,22 +1,21 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.content.Context
-import androidx.recyclerview.widget.RecyclerView
 import android.text.TextUtils.isEmpty
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.my_orders_past_orders_header.view.*
-import kotlinx.android.synthetic.main.orders_to_cart_commerce_item.view.*
+import com.awfs.coordination.databinding.MyOrdersPastOrdersHeaderBinding
+import com.awfs.coordination.databinding.OrdersToCartCommerceItemBinding
 import za.co.woolworths.financial.services.android.models.dto.OrderDetailsItem
 import za.co.woolworths.financial.services.android.models.dto.OrderHistoryCommerceItem
 import za.co.woolworths.financial.services.android.ui.adapters.holder.OrdersBaseViewHolder
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.WFormatter
 
 class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var dataList: ArrayList<OrderDetailsItem>) : RecyclerView.Adapter<OrdersBaseViewHolder>() {
 
@@ -25,12 +24,18 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrdersBaseViewHolder {
         return when (viewType) {
             OrderDetailsItem.ViewType.HEADER.value -> {
-                HeaderViewHolder(LayoutInflater.from(context).inflate(R.layout.my_orders_past_orders_header, parent, false))
+                HeaderViewHolder(
+                    MyOrdersPastOrdersHeaderBinding.inflate(LayoutInflater.from(context), parent, false)
+                )
             }
             OrderDetailsItem.ViewType.COMMERCE_ITEM.value -> {
-                OrderItemViewHolder(LayoutInflater.from(context).inflate(R.layout.orders_to_cart_commerce_item, parent, false))
+                OrderItemViewHolder(
+                    OrdersToCartCommerceItemBinding.inflate(LayoutInflater.from(context), parent, false)
+                )
             }
-            else -> HeaderViewHolder(LayoutInflater.from(context).inflate(R.layout.my_orders_past_orders_header, parent, false))
+            else -> HeaderViewHolder(
+                MyOrdersPastOrdersHeaderBinding.inflate(LayoutInflater.from(context), parent, false)
+            )
         }
     }
 
@@ -42,14 +47,14 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
     }
 
 
-    inner class OrderItemViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
+    inner class OrderItemViewHolder(val binding: OrdersToCartCommerceItemBinding) : OrdersBaseViewHolder(binding.root) {
         override fun bind(position: Int) {
             val item = dataList[position].item as OrderHistoryCommerceItem
-            setProductImage(itemView.cartProductImage, item.commerceItemInfo.externalImageRefV2)
-            itemView.tvTitle.text = item.commerceItemInfo.productDisplayName
-            itemView.tvQuantity.text = item.userQuantity.toString()
-            itemView.tvPrice.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item.priceInfo.amount)
-            itemView.selector.isChecked = item.isSelected
+            setProductImage(binding.cartProductImage, item.commerceItemInfo.externalImageRefV2)
+            binding.tvTitle.text = item.commerceItemInfo.productDisplayName
+            binding.tvQuantity.text = item.userQuantity.toString()
+            binding.tvPrice.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item.priceInfo.amount)
+            binding.selector.isChecked = item.isSelected
 
             // Set Color and Size START
             var sizeColor: String? = item.color
@@ -60,51 +65,51 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
             else if (!sizeColor.isEmpty() && !item.size.isEmpty() && !item.size.equals("NO SZ", ignoreCase = true))
                 sizeColor = sizeColor + ", " + item.size
 
-            itemView.tvColorSize.setText(sizeColor)
-            itemView.tvColorSize.setVisibility(View.VISIBLE)
+            binding.tvColorSize.setText(sizeColor)
+            binding.tvColorSize.setVisibility(View.VISIBLE)
             /****
              * item.userShouldSetSuburb - is set to true when user did not select any suburb
              */
 
 
             if (userShouldSetSuburb()) {
-                itemView.tvProductAvailability.setVisibility(View.GONE)
-                itemView.llQuantity.setVisibility(View.VISIBLE)
-                itemView.llQuantity.setAlpha(1.0f)
-                itemView.selector.setEnabled(true)
+                binding.tvProductAvailability.setVisibility(View.GONE)
+                binding.llQuantity.setVisibility(View.VISIBLE)
+                binding.llQuantity.setAlpha(1.0f)
+                binding.selector.setEnabled(true)
                 adapterClickable(true)
-                itemView.selector.setAlpha(1.0f)
-                itemView.llQuantity.setEnabled(true)
+                binding.selector.setAlpha(1.0f)
+                binding.llQuantity.setEnabled(true)
             } else {
                 if (item != null) {
                     val productInStock = item.quantityInStock != 0
-                    itemView.llQuantity.setAlpha(if (productInStock) 1.0f else 0.5f)
-                    itemView.tvQuantity.setAlpha(if (productInStock) 1.0f else 0.5f)
-                    itemView.selector.setEnabled(productInStock)
-                    itemView.imPrice.setAlpha(if (productInStock) 1.0f else 0.5f)
+                    binding.llQuantity.setAlpha(if (productInStock) 1.0f else 0.5f)
+                    binding.tvQuantity.setAlpha(if (productInStock) 1.0f else 0.5f)
+                    binding.selector.setEnabled(productInStock)
+                    binding.imPrice.setAlpha(if (productInStock) 1.0f else 0.5f)
                     if (item.inventoryCallCompleted) {
                         val inventoryQueryStatus = item.quantityInStock
                         if (inventoryQueryStatus == -1) {
-                            itemView.llQuantity.setVisibility(View.GONE)
-                            itemView.selector.setVisibility(View.GONE)
-                            itemView.imPrice.setAlpha(0.5f)
-                            itemView.tvColorSize.setVisibility(View.GONE)
-                            itemView.tvProductAvailability.setVisibility(View.VISIBLE)
-                            itemView.tvPrice.setAlpha(0f)
-                            itemView.tvPrice.setVisibility(View.GONE)
-                            Utils.setBackgroundColor(itemView.tvProductAvailability, R.drawable.round_amber_corner, R.string.out_of_stock)
+                            binding.llQuantity.setVisibility(View.GONE)
+                            binding.selector.setVisibility(View.GONE)
+                            binding.imPrice.setAlpha(0.5f)
+                            binding.tvColorSize.setVisibility(View.GONE)
+                            binding.tvProductAvailability.setVisibility(View.VISIBLE)
+                            binding.tvPrice.setAlpha(0f)
+                            binding.tvPrice.setVisibility(View.GONE)
+                            Utils.setBackgroundColor(binding.tvProductAvailability, R.drawable.round_amber_corner, R.string.out_of_stock)
                         } else {
-                            itemView.llQuantity.setVisibility(if (item.quantityInStock == 0) View.GONE else View.VISIBLE)
-                            itemView.tvProductAvailability.setVisibility(if (item.quantityInStock == 0) View.VISIBLE else View.GONE)
-                            itemView.selector.setVisibility(if (item.quantityInStock == 0) View.GONE else View.VISIBLE)
-                            itemView.tvPrice.setVisibility(if (item.quantityInStock == 0) View.GONE else View.VISIBLE)
-                            itemView.tvPrice.setAlpha(1f)
-                            itemView.tvColorSize.setVisibility(View.VISIBLE)
-                            Utils.setBackgroundColor(itemView.tvProductAvailability, R.drawable.round_amber_corner, R.string.out_of_stock)
+                            binding.llQuantity.setVisibility(if (item.quantityInStock == 0) View.GONE else View.VISIBLE)
+                            binding.tvProductAvailability.setVisibility(if (item.quantityInStock == 0) View.VISIBLE else View.GONE)
+                            binding.selector.setVisibility(if (item.quantityInStock == 0) View.GONE else View.VISIBLE)
+                            binding.tvPrice.setVisibility(if (item.quantityInStock == 0) View.GONE else View.VISIBLE)
+                            binding.tvPrice.setAlpha(1f)
+                            binding.tvColorSize.setVisibility(View.VISIBLE)
+                            Utils.setBackgroundColor(binding.tvProductAvailability, R.drawable.round_amber_corner, R.string.out_of_stock)
                         }
                     } else {
-                        itemView.llQuantity.setVisibility(View.VISIBLE)
-                        itemView.tvProductAvailability.setVisibility(View.GONE)
+                        binding.llQuantity.setVisibility(View.VISIBLE)
+                        binding.tvProductAvailability.setVisibility(View.GONE)
                     }
                 }
             }
@@ -113,13 +118,13 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
 
             if (!userShouldSetSuburb())
                 if (!item.inventoryCallCompleted) {
-                    itemView.llQuantity.setAlpha(0.5f)
-                    itemView.tvQuantity.setAlpha(0.5f)
-                    itemView.imPrice.setAlpha(0.5f)
+                    binding.llQuantity.setAlpha(0.5f)
+                    binding.tvQuantity.setAlpha(0.5f)
+                    binding.imPrice.setAlpha(0.5f)
                 }
 
             // Set Color and Size END
-            itemView.selector.setOnClickListener(View.OnClickListener {
+            binding.selector.setOnClickListener(View.OnClickListener {
 
                 if (enableClickEvent(item)) return@OnClickListener
                 if (!mAdapterIsClickable) return@OnClickListener
@@ -143,7 +148,7 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
             })
 
 
-            itemView.llQuantity.setOnClickListener(View.OnClickListener {
+            binding.llQuantity.setOnClickListener(View.OnClickListener {
                 if (enableClickEvent(item)) return@OnClickListener
                 if (!mAdapterIsClickable) return@OnClickListener
                 if (userShouldSetSuburb()) {
@@ -160,11 +165,11 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
 
     }
 
-    inner class HeaderViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
+    inner class HeaderViewHolder(val binding: MyOrdersPastOrdersHeaderBinding) : OrdersBaseViewHolder(binding.root) {
         override fun bind(position: Int) {
             val orderDetailsItem  = dataList[position] as? OrderDetailsItem
             val headerText  = "${orderDetailsItem?.item}${if (orderDetailsItem?.orderItemLength!! > 1) "S" else "" }"
-            itemView.header?.text =headerText
+            binding.header?.text =headerText
         }
 
     }

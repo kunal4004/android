@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -18,9 +17,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.checkout_address_confirmation.*
-import kotlinx.android.synthetic.main.checkout_address_confirmation_click_and_collect.*
-import kotlinx.android.synthetic.main.checkout_address_confirmation_delivery.*
+import com.awfs.coordination.databinding.CheckoutAddressConfirmationBinding
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.FOOD
@@ -44,16 +41,16 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.DELIVERY_TYPE
 import java.net.HttpURLConnection
 
-
 /**
  * Created by Kunal Uttarwar on 16/06/21.
  *
  * not usefull now
  */
-class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragment(),
+class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragment(R.layout.checkout_address_confirmation),
     View.OnClickListener,
     CheckoutAddressConfirmationListAdapter.EventListner, SuburbListAdapter.ISuburbSelector {
 
+    private lateinit var binding: CheckoutAddressConfirmationBinding
     private var savedAddress: SavedAddressResponse? = null
     private var selectedAddress: Address? = null
     private var checkoutAddressConfirmationListAdapter: CheckoutAddressConfirmationListAdapter? =
@@ -83,16 +80,9 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         const val DEFAULT_STORE_ID = "-1"
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.checkout_address_confirmation, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = CheckoutAddressConfirmationBinding.bind(view)
         if (navController == null)
             navController = Navigation.findNavController(view)
 
@@ -113,7 +103,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.deliveryTab -> {
-                if (loadingProgressBar.visibility == View.GONE && isDeliverySelected == false) {
+                if (binding.loadingProgressBar.visibility == View.GONE && isDeliverySelected == false) {
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_DELIVERY,
                         hashMapOf(
                             FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
@@ -126,7 +116,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 }
             }
             R.id.collectionTab -> {
-                if (loadingProgressBar.visibility == View.GONE && isDeliverySelected == true) {
+                if (binding.loadingProgressBar.visibility == View.GONE && isDeliverySelected == true) {
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_COLLECTION,
                         hashMapOf(
                             FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
@@ -146,10 +136,10 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 navigateToAddAddress()
             }
             R.id.btnAddressConfirmation -> {
-                if (loadingProgressBar.visibility == View.GONE) {
+                if (binding.loadingProgressBar.visibility == View.GONE) {
                     if (isDeliverySelected == true) {
                         if (checkoutAddressConfirmationListAdapter?.checkedItemPosition == -1)
-                            addNewAddressErrorMsg.visibility = View.VISIBLE
+                            binding.addressConfirmationDelivery.addNewAddressErrorMsg.visibility = View.VISIBLE
                         else {
                             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_DELIVERY_CONFIRM_BTN,
                                 hashMapOf(
@@ -161,7 +151,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                         }
                     } else {
                         // This is when user clicks on collection journey.
-                        if (btnAddressConfirmation.text.equals(getString(R.string.change_suburb))) {
+                        if (binding.btnAddressConfirmation.text.equals(getString(R.string.change_suburb))) {
                             //Zero stores and user clicks on change suburb.
 
                         } else if (selectedSuburb.storeAddress != null) {
@@ -177,12 +167,12 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 }
             }
             R.id.changeProvinceTextView -> {
-                if (loadingProgressBar.visibility == View.GONE) {
+                if (binding.loadingProgressBar.visibility == View.GONE) {
                     changeLocation()
                 }
             }
             R.id.changeTextView -> {
-                if (loadingProgressBar.visibility == View.GONE) {
+                if (binding.loadingProgressBar.visibility == View.GONE) {
                     changeLocation()
                 }
             }
@@ -246,7 +236,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
 
     private fun setConfirmSelection() {
         selectedSuburb.storeAddress.suburbId?.let { storeId ->
-            loadingProgressBar.visibility = View.VISIBLE
+            binding.loadingProgressBar.visibility = View.VISIBLE
             activity?.window?.setFlags(
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
@@ -258,7 +248,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 )
             )
                 .observe(viewLifecycleOwner, { response ->
-                    loadingProgressBar.visibility = View.GONE
+                    binding.loadingProgressBar.visibility = View.GONE
                     activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                     when (response) {
                         is ConfirmSelectionResponse -> {
@@ -326,28 +316,28 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
 
     private fun showCollectionTab(suburbId: String?) {
         isDeliverySelected = false
-        collectionTab.setBackgroundResource(R.drawable.delivery_round_btn_white)
-        deliveryTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
-        addressConfirmationDelivery.visibility = View.GONE
-        suburbSelectionLayout.visibility = View.GONE
+        binding.collectionTab.setBackgroundResource(R.drawable.delivery_round_btn_white)
+        binding.deliveryTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
+        binding.addressConfirmationDelivery.root.visibility = View.GONE
+        binding.suburbSelectionLayout.root.visibility = View.GONE
         if (selectedSuburb.storeAddress == null) {
             removeMarginToStoreListView()
         } else
             setMarginToStoreListView()
         fetchStoreListFromValidateSelectedSuburb(suburbId)
-        if (!earliestDateValue?.text.isNullOrEmpty()) {
-            showEarliestCollectionView(earliestDateValue?.text.toString())
+        if (!binding.earliestDateValue?.text.isNullOrEmpty()) {
+            showEarliestCollectionView(binding.earliestDateValue?.text.toString())
         }
     }
 
     private fun showDeliveryTab() {
         isDeliverySelected = true
-        deliveryTab.setBackgroundResource(R.drawable.delivery_round_btn_white)
-        collectionTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
-        addressConfirmationDelivery.visibility = View.VISIBLE
-        btnConfirmLayout.visibility = View.VISIBLE
-        suburbSelectionLayout.visibility = View.GONE
-        addressConfirmationClicknCollect.visibility = View.GONE
+        binding.deliveryTab.setBackgroundResource(R.drawable.delivery_round_btn_white)
+        binding.collectionTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
+        binding.addressConfirmationDelivery.root.visibility = View.VISIBLE
+        binding.btnConfirmLayout.visibility = View.VISIBLE
+        binding.suburbSelectionLayout.root.visibility = View.GONE
+        binding.addressConfirmationClicknCollect.root.visibility = View.GONE
         if (isConfirmDeliveryResponse) {
             showEarliestDeliveryDates()
         } else
@@ -473,15 +463,15 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         } else {
             showCollectionTab(localSuburbId)
         }
-        deliveryTab.setOnClickListener(this)
-        collectionTab.setOnClickListener(this)
-        plusImgAddAddress.setOnClickListener(this)
-        addNewAddressTextView.setOnClickListener(this)
-        btnAddressConfirmation.setOnClickListener(this)
-        changeProvinceTextView.setOnClickListener(this)
-        changeTextView.setOnClickListener(this)
+        binding.deliveryTab.setOnClickListener(this)
+        binding.collectionTab.setOnClickListener(this)
+        binding.addressConfirmationDelivery.plusImgAddAddress.setOnClickListener(this)
+        binding.addressConfirmationDelivery.addNewAddressTextView.setOnClickListener(this)
+        binding.btnAddressConfirmation.setOnClickListener(this)
+        binding.changeProvinceTextView.setOnClickListener(this)
+        binding.addressConfirmationClicknCollect.changeTextView.setOnClickListener(this)
 
-        storeInputValue?.apply {
+        binding.addressConfirmationClicknCollect.storeInputValue?.apply {
             addTextChangedListener {
                 storeListAdapter?.filter?.filter(it.toString())
             }
@@ -504,9 +494,9 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 hideEarliestDeliveryView()
             } else {
                 showEarliestDeliveryView()
-                foodItemsDeliveryDateLayout.visibility = View.GONE
-                otherItemsDeliveryDateLayout.visibility = View.GONE
-                earliestDateValue.text = foodItemDate
+                binding.foodItemsDeliveryDateLayout.visibility = View.GONE
+                binding.otherItemsDeliveryDateLayout.visibility = View.GONE
+                binding.earliestDateValue.text = foodItemDate
             }
         } else if (fulfillmentsType?.join == OTHER.type && fulfillmentsType.other == OTHER.type) {
             //Mixed Basket
@@ -518,20 +508,20 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             if (foodItemDate.isNullOrEmpty() && otherItemDate.isNullOrEmpty()) {
                 hideEarliestDeliveryView()
             } else if (foodItemDate.isNullOrEmpty() || otherItemDate.isNullOrEmpty()) {
-                foodItemsDeliveryDateLayout.visibility = View.GONE
-                otherItemsDeliveryDateLayout.visibility = View.GONE
-                earliestDateValue.text =
+                binding.foodItemsDeliveryDateLayout.visibility = View.GONE
+                binding.otherItemsDeliveryDateLayout.visibility = View.GONE
+                binding.earliestDateValue.text =
                     if (foodItemDate?.isEmpty() == true) otherItemDate else foodItemDate
             } else {
-                foodItemsDeliveryDateLayout.visibility =
+                binding.foodItemsDeliveryDateLayout.visibility =
                     if (foodItemDate.isNullOrEmpty()) View.GONE else View.VISIBLE
-                otherItemsDeliveryDateLayout.visibility =
+                binding.otherItemsDeliveryDateLayout.visibility =
                     if (otherItemDate.isNullOrEmpty()) View.GONE else View.VISIBLE
-                if (foodItemsDeliveryDateLayout.visibility == View.GONE || otherItemsDeliveryDateLayout.visibility == View.GONE) {
-                    earliestDateValue.text = foodItemDate ?: otherItemDate
+                if (binding.foodItemsDeliveryDateLayout.visibility == View.GONE || binding.otherItemsDeliveryDateLayout.visibility == View.GONE) {
+                    binding.earliestDateValue.text = foodItemDate ?: otherItemDate
                 } else {
-                    foodItemsDeliveryDate.text = foodItemDate
-                    otherItemsDeliveryDate.text = otherItemDate
+                    binding.foodItemsDeliveryDate.text = foodItemDate
+                    binding.otherItemsDeliveryDate.text = otherItemDate
                 }
             }
 
@@ -543,9 +533,9 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 hideEarliestDeliveryView()
             } else {
                 showEarliestDeliveryView()
-                foodItemsDeliveryDateLayout.visibility = View.GONE
-                otherItemsDeliveryDateLayout.visibility = View.GONE
-                earliestDateValue.text = otherItemDate
+                binding.foodItemsDeliveryDateLayout.visibility = View.GONE
+                binding.otherItemsDeliveryDateLayout.visibility = View.GONE
+                binding.earliestDateValue.text = otherItemDate
             }
         } else {
             hideEarliestDeliveryView()
@@ -553,35 +543,35 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     }
 
     private fun showEarliestDeliveryView() {
-        deliveryDateLayout.visibility = View.VISIBLE
-        earliestDateTitle.text = bindString(R.string.earliest_delivery_date)
-        earliestDateValue.text = ""
+        binding.deliveryDateLayout.visibility = View.VISIBLE
+        binding.earliestDateTitle.text = bindString(R.string.earliest_delivery_date)
+        binding.earliestDateValue.text = ""
     }
 
     private fun hideEarliestDeliveryView() {
-        deliveryDateLayout.visibility = View.GONE
+        binding.deliveryDateLayout.visibility = View.GONE
     }
 
     private fun showEarliestCollectionView(dateValue: String) {
-        earliestDateTitle.text = bindString(R.string.earliest_collection_date)
-        earliestDateValue?.text = dateValue
+        binding.earliestDateTitle.text = bindString(R.string.earliest_collection_date)
+        binding.earliestDateValue?.text = dateValue
         if (dateValue.isNullOrEmpty()) {
-            deliveryDateLayout.visibility = View.GONE
+            binding.deliveryDateLayout.visibility = View.GONE
         } else
-            deliveryDateLayout.visibility = View.VISIBLE
-        foodItemsDeliveryDateLayout.visibility = View.GONE
-        otherItemsDeliveryDateLayout.visibility = View.GONE
+            binding.deliveryDateLayout.visibility = View.VISIBLE
+        binding.foodItemsDeliveryDateLayout.visibility = View.GONE
+        binding.otherItemsDeliveryDateLayout.visibility = View.GONE
     }
 
     private fun initialiseDeliveryAddressRecyclerView() {
         setRecyclerViewMaximumHeight(
-            saveAddressRecyclerView.layoutParams,
+            binding.addressConfirmationDelivery.saveAddressRecyclerView.layoutParams,
             savedAddress?.addresses?.size ?: 0
         )
         checkoutAddressConfirmationListAdapter = null
         checkoutAddressConfirmationListAdapter =
             CheckoutAddressConfirmationListAdapter(savedAddress, navController, this, activity)
-        saveAddressRecyclerView?.apply {
+        binding.addressConfirmationDelivery.saveAddressRecyclerView?.apply {
             addItemDecoration(object : ItemDecoration() {})
             layoutManager = activity?.let { LinearLayoutManager(it) }
             checkoutAddressConfirmationListAdapter?.let { adapter = it }
@@ -601,27 +591,27 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             viewGroupParams.height = totalRowHeight
         else
             viewGroupParams.height = recyclerViewSpace
-        saveAddressRecyclerView.layoutParams = viewGroupParams
+        binding.addressConfirmationDelivery.saveAddressRecyclerView.layoutParams = viewGroupParams
     }
 
     private fun hideDeliveryAddressListView() {
-        btnAddressConfirmation.text = bindString(R.string.add_address)
-        whereWeDeliveringTitle.text = bindString(R.string.no_saved_addresses)
-        saveAddressRecyclerView.visibility = View.GONE
-        addressListPartition.visibility = View.GONE
-        plusImgAddAddress.visibility = View.GONE
-        confirmAddressPartition.visibility = View.GONE
-        addNewAddressTextView.visibility = View.GONE
+        binding.btnAddressConfirmation.text = bindString(R.string.add_address)
+        binding.addressConfirmationDelivery.whereWeDeliveringTitle.text = bindString(R.string.no_saved_addresses)
+        binding.addressConfirmationDelivery.saveAddressRecyclerView.visibility = View.GONE
+        binding.addressConfirmationDelivery.addressListPartition.visibility = View.GONE
+        binding.addressConfirmationDelivery.plusImgAddAddress.visibility = View.GONE
+        binding.confirmAddressPartition.visibility = View.GONE
+        binding.addressConfirmationDelivery.addNewAddressTextView.visibility = View.GONE
     }
 
     private fun showDeliveryAddressListView() {
-        saveAddressRecyclerView.visibility = View.VISIBLE
-        addressListPartition.visibility = View.VISIBLE
-        plusImgAddAddress.visibility = View.VISIBLE
-        addNewAddressTextView.visibility = View.VISIBLE
-        confirmAddressPartition.visibility = View.VISIBLE
-        btnAddressConfirmation.text = bindString(R.string.confirm)
-        whereWeDeliveringTitle.text = bindString(R.string.where_should_we_deliver)
+        binding.addressConfirmationDelivery.saveAddressRecyclerView.visibility = View.VISIBLE
+        binding.addressConfirmationDelivery.addressListPartition.visibility = View.VISIBLE
+        binding.addressConfirmationDelivery.plusImgAddAddress.visibility = View.VISIBLE
+        binding.addressConfirmationDelivery.addNewAddressTextView.visibility = View.VISIBLE
+        binding.confirmAddressPartition.visibility = View.VISIBLE
+        binding.btnAddressConfirmation.text = bindString(R.string.confirm)
+        binding.addressConfirmationDelivery.whereWeDeliveringTitle.text = bindString(R.string.where_should_we_deliver)
     }
 
     private fun fetchStoreListFromValidateSelectedSuburb(suburbId: String?) {
@@ -629,8 +619,8 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             // This means collection tab clicked for the first time.
 
         } else if (suburbId.isNullOrEmpty()) {
-            clickNCollectTitleLayout.visibility = View.VISIBLE
-            addressConfirmationClicknCollect.visibility = View.VISIBLE
+            binding.addressConfirmationClicknCollect.clickNCollectTitleLayout.visibility = View.VISIBLE
+            binding.addressConfirmationClicknCollect.root.visibility = View.VISIBLE
             showStoreList()
         } else if (localSuburbId != suburbId) { //equals means only tab change happens. No suburb changed.
             localSuburbId = suburbId
@@ -639,17 +629,17 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                     .observe(viewLifecycleOwner, {
                         when (it.responseStatus) {
                             ResponseStatus.SUCCESS -> {
-                                loadingProgressBar.visibility = View.GONE
-                                clickNCollectTitleLayout.visibility = View.VISIBLE
-                                addressConfirmationClicknCollect.visibility = View.VISIBLE
+                                binding.loadingProgressBar.visibility = View.GONE
+                                binding.addressConfirmationClicknCollect.clickNCollectTitleLayout.visibility = View.VISIBLE
+                                binding.addressConfirmationClicknCollect.root.visibility = View.VISIBLE
                                 if (it?.data != null) {
                                     validatedSuburbProductResponse =
                                         (it.data as? ValidateSelectedSuburbResponse)?.validatedSuburbProducts
                                     if (validatedSuburbProductResponse != null) {
                                         if (validatedSuburbProductResponse?.stores?.isNotEmpty() == true) {
-                                            changeTextView.visibility = View.VISIBLE
-                                            changeProvinceTextView.visibility = View.GONE
-                                            btnAddressConfirmation.text =
+                                            binding.addressConfirmationClicknCollect.changeTextView.visibility = View.VISIBLE
+                                            binding.changeProvinceTextView.visibility = View.GONE
+                                            binding.btnAddressConfirmation.text =
                                                 getString(R.string.confirm)
                                         }
                                         showStoreList()
@@ -657,52 +647,52 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                 }
                             }
                             ResponseStatus.LOADING -> {
-                                loadingProgressBar.visibility = View.VISIBLE
-                                changeTextView.visibility = View.GONE
-                                btnAddressConfirmation.text = getString(R.string.change_suburb)
-                                changeProvinceTextView.visibility = View.VISIBLE
-                                storesFoundTitle.visibility = View.GONE
+                                binding.loadingProgressBar.visibility = View.VISIBLE
+                                binding.addressConfirmationClicknCollect.changeTextView.visibility = View.GONE
+                                binding.btnAddressConfirmation.text = getString(R.string.change_suburb)
+                                binding.changeProvinceTextView.visibility = View.VISIBLE
+                                binding.addressConfirmationClicknCollect.storesFoundTitle.visibility = View.GONE
                             }
                             ResponseStatus.ERROR -> {
-                                loadingProgressBar.visibility = View.GONE
-                                changeTextView.visibility = View.VISIBLE
-                                btnAddressConfirmation.text = getString(R.string.change_suburb)
+                                binding.loadingProgressBar.visibility = View.GONE
+                                binding.addressConfirmationClicknCollect.changeTextView.visibility = View.VISIBLE
+                                binding.btnAddressConfirmation.text = getString(R.string.change_suburb)
                             }
                         }
                     })
             }
         } else if (localSuburbId != null && validatedSuburbProductResponse != null) {
-            clickNCollectTitleLayout.visibility = View.VISIBLE
-            addressConfirmationClicknCollect.visibility = View.VISIBLE
+            binding.addressConfirmationClicknCollect.clickNCollectTitleLayout.visibility = View.VISIBLE
+            binding.addressConfirmationClicknCollect.root.visibility = View.VISIBLE
             showStoreList()
         }
     }
 
     private fun setMarginToStoreListView() {
-        btnConfirmLayout.visibility = View.VISIBLE
-        val param = addressConfirmationClicknCollect.layoutParams as ViewGroup.MarginLayoutParams
+        binding.btnConfirmLayout.visibility = View.VISIBLE
+        val param = binding.addressConfirmationClicknCollect.root.layoutParams as ViewGroup.MarginLayoutParams
         param.setMargins(0, 192, 0, 104)
-        addressConfirmationClicknCollect.layoutParams = param
+        binding.addressConfirmationClicknCollect.root.layoutParams = param
     }
 
     private fun removeMarginToStoreListView() {
-        btnConfirmLayout.visibility = View.GONE
-        val param = addressConfirmationClicknCollect.layoutParams as ViewGroup.MarginLayoutParams
+        binding.btnConfirmLayout.visibility = View.GONE
+        val param = binding.addressConfirmationClicknCollect.root.layoutParams as ViewGroup.MarginLayoutParams
         param.setMargins(0, 192, 0, 10)
-        addressConfirmationClicknCollect.layoutParams = param
+        binding.addressConfirmationClicknCollect.root.layoutParams = param
     }
 
     private fun showStoreList() {
         if (!validatedSuburbProductResponse?.stores.isNullOrEmpty()) {
-            searchLayout.visibility = View.VISIBLE
-            storeInputValue.text.clear()
-            changeTextView.visibility = View.VISIBLE
-            changeProvinceTextView.visibility = View.GONE
-            btnAddressConfirmation.text = getString(R.string.confirm)
+            binding.addressConfirmationClicknCollect.searchLayout.visibility = View.VISIBLE
+            binding.addressConfirmationClicknCollect.storeInputValue.text.clear()
+            binding.addressConfirmationClicknCollect.changeTextView.visibility = View.VISIBLE
+            binding.changeProvinceTextView.visibility = View.GONE
+            binding.btnAddressConfirmation.text = getString(R.string.confirm)
         } else {
-            changeTextView.visibility = View.GONE
-            changeProvinceTextView.visibility = View.VISIBLE
-            btnAddressConfirmation.text = getString(R.string.change_suburb)
+            binding.addressConfirmationClicknCollect.changeTextView.visibility = View.GONE
+            binding.changeProvinceTextView.visibility = View.VISIBLE
+            binding.btnAddressConfirmation.text = getString(R.string.change_suburb)
         }
         showEarliestCollectionView(validateStoreList?.firstAvailableFoodDeliveryDate ?: "")
         storeListAdapter =
@@ -713,17 +703,17 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                     storeListAdapter?.checkedItemPosition ?: -1
                 )
             }
-        rcvStoreRecyclerView?.apply {
+        binding.addressConfirmationClicknCollect.rcvStoreRecyclerView?.apply {
             val storesCount = (validatedSuburbProductResponse?.stores?.size ?: 0)
             if (storesCount == 0) {
                 setMarginToStoreListView()
-                changeTextView.visibility = View.GONE
-                btnAddressConfirmation.text = getString(R.string.change_suburb)
-                changeProvinceTextView.visibility = View.VISIBLE
+                binding.addressConfirmationClicknCollect.changeTextView.visibility = View.GONE
+                binding.btnAddressConfirmation.text = getString(R.string.change_suburb)
+                binding.changeProvinceTextView.visibility = View.VISIBLE
             } else
-                changeProvinceTextView.visibility = View.GONE
-            storesFoundTitle.visibility = View.VISIBLE
-            storesFoundTitle.text =
+                binding.changeProvinceTextView.visibility = View.GONE
+            binding.addressConfirmationClicknCollect.storesFoundTitle.visibility = View.VISIBLE
+            binding.addressConfirmationClicknCollect.storesFoundTitle.text =
                 resources.getQuantityString(R.plurals.stores_near_me, storesCount, storesCount)
             layoutManager = activity?.let { LinearLayoutManager(it) }
             storeListAdapter?.let { adapter = it }
@@ -817,28 +807,28 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     }
 
     override fun hideErrorView() {
-        addNewAddressErrorMsg.visibility = View.GONE
+        binding.addressConfirmationDelivery.addNewAddressErrorMsg.visibility = View.GONE
     }
 
     override fun changeAddress(address: Address) {
         // Save instance of selected address to pass to other screens
         selectedAddress = address
         if (!isConfirmDeliveryResponse || savedAddress?.defaultAddressNickname != address.nickname) {
-            deliveryDateLayout.visibility = View.GONE
+            binding.deliveryDateLayout.visibility = View.GONE
         } else
             showEarliestDeliveryDates()
     }
 
     private fun callChangeAddressApi() {
         selectedAddress?.nickname?.let { nickname ->
-            loadingProgressBar.visibility = View.VISIBLE
+            binding.loadingProgressBar.visibility = View.VISIBLE
             activity?.window?.setFlags(
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
             )
             checkoutAddAddressNewUserViewModel.changeAddress(nickname)
                 .observe(viewLifecycleOwner, { response ->
-                    loadingProgressBar.visibility = View.GONE
+                    binding.loadingProgressBar.visibility = View.GONE
                     activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                     when (response) {
                         is ChangeAddressResponse -> {

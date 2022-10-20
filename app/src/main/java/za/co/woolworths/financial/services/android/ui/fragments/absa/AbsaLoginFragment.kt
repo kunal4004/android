@@ -12,7 +12,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.fragment.app.viewModels
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.absa_login_fragment.*
+import com.awfs.coordination.databinding.AbsaLoginFragmentBinding
 import za.co.absa.openbankingapi.woolworths.integration.AbsaContentEncryptionRequest
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
@@ -29,8 +29,9 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDia
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.numberkeyboard.NumberKeyboardListener
 
-class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDialogListener {
+class AbsaLoginFragment : AbsaFragmentExtension(R.layout.absa_login_fragment), NumberKeyboardListener, IDialogListener {
 
+    private lateinit var binding: AbsaLoginFragmentBinding
     private var mCreditCardNumber: String? = null
     private var mPinImageViewList: MutableList<ImageView>? = null
     private val mViewModel: AbsaIntegrationViewModel by viewModels()
@@ -44,10 +45,6 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.absa_login_fragment, container, false)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -56,13 +53,17 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViewsAndEvents()
-        createTextListener(edtEnterATMPin)
-        clearPinImage(mPinImageViewList!!)
-        absaResultObserver()
+        binding = AbsaLoginFragmentBinding.bind(view)
+
+        with(binding) {
+            initViewsAndEvents()
+            createTextListener(edtEnterATMPin)
+            clearPinImage(mPinImageViewList!!)
+            absaResultObserver()
+        }
     }
 
-    private fun absaResultObserver() {
+    private fun AbsaLoginFragmentBinding.absaResultObserver() {
        with(mViewModel){
            loginResponseProperty.observe(viewLifecycleOwner) { loginResponse ->
                inProgress(false)
@@ -122,7 +123,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
         }
     }
 
-    private fun initViewsAndEvents() {
+    private fun AbsaLoginFragmentBinding.initViewsAndEvents() {
 
         arguments?.apply {
             if (containsKey("creditCardToken")) {
@@ -144,15 +145,15 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
                 val openDialogFragment =
                         GotITDialogFragment.newInstance(getString(R.string.forgot_passcode),
                                 getString(R.string.forgot_passcode_dialog_desc), getString(R.string.cancel),
-                                this, getString(R.string.reset_passcode))
+                                this@AbsaLoginFragment, getString(R.string.reset_passcode))
                 openDialogFragment.show(it.supportFragmentManager, GotITDialogFragment::class.java.simpleName)
             }
         }
-        numberKeyboard.setListener(this)
+        numberKeyboard.setListener(this@AbsaLoginFragment)
         mPinImageViewList = mutableListOf(ivPin1, ivPin2, ivPin3, ivPin4, ivPin5)
     }
 
-    private fun requestToLogin() {
+    private fun AbsaLoginFragmentBinding.requestToLogin() {
         if ((edtEnterATMPin.length() - 1) < MAXIMUM_PIN_ALLOWED)
             return
 
@@ -160,7 +161,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
         mViewModel.fetchLogin(userPin)
     }
 
-    private fun successHandler(nonce: String?, esessionid: String?) {
+    private fun AbsaLoginFragmentBinding.successHandler(nonce: String?, esessionid: String?) {
 
         activity?.apply {
             Intent(activity, AbsaStatementsActivity::class.java).let {
@@ -178,7 +179,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
         clearPin()
     }
 
-    private fun failureHandler(message: String?) {
+    private fun AbsaLoginFragmentBinding.failureHandler(message: String?) {
         // message?.let { tapAndNavigateBackErrorDialog(it) }
         activity?.apply {
             when {
@@ -202,7 +203,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
         clearPin()
     }
 
-    private fun createTextListener(edtEnterATMPin: EditText?) {
+    private fun AbsaLoginFragmentBinding.createTextListener(edtEnterATMPin: EditText?) {
         var previousLength = 0
         edtEnterATMPin?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
@@ -223,7 +224,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
         })
     }
 
-    private fun updateEnteredPin(pinEnteredLength: Int, listOfPin: MutableList<ImageView>) {
+    private fun AbsaLoginFragmentBinding.updateEnteredPin(pinEnteredLength: Int, listOfPin: MutableList<ImageView>) {
         if (pinEnteredLength > -1) {
             listOfPin[pinEnteredLength].setImageResource(R.drawable.pin_fill)
             if (pinEnteredLength == MAXIMUM_PIN_ALLOWED) {
@@ -231,7 +232,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
         }
     }
 
-    private fun deletePin(pinEnteredLength: Int, listOfPin: MutableList<ImageView>) {
+    private fun AbsaLoginFragmentBinding.deletePin(pinEnteredLength: Int, listOfPin: MutableList<ImageView>) {
         if (pinEnteredLength > -1) {
             listOfPin[pinEnteredLength].setImageResource(R.drawable.pin_empty)
             if (pinEnteredLength <= MAXIMUM_PIN_ALLOWED) {
@@ -240,7 +241,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
         }
     }
 
-    private fun clearPinImage(listOfPin: MutableList<ImageView>) {
+    private fun AbsaLoginFragmentBinding.clearPinImage(listOfPin: MutableList<ImageView>) {
         listOfPin.forEach {
             it.setImageResource(R.drawable.pin_empty)
         }
@@ -248,10 +249,10 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
 
     override fun onResume() {
         super.onResume()
-        clearPin()
+        binding.clearPin()
     }
 
-    private fun clearPin() {
+    private fun AbsaLoginFragmentBinding.clearPin() {
         edtEnterATMPin?.apply {
             clearPinImage(mPinImageViewList!!)
             text.clear()
@@ -285,7 +286,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
         if (requestCode == ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE) {
             when (resultCode) {
                 ErrorHandlerActivity.RESULT_RETRY -> {
-                    clearPin()
+                    binding.clearPin()
                     alwaysHideWindowSoftInputMode()
                 }
             }
@@ -293,20 +294,25 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
     }
 
     override fun onNumberClicked(number: Int) {
+        with(binding) {
+            if (pbLoginProgress.visibility == VISIBLE)
+                return
 
-        if (pbLoginProgress.visibility == VISIBLE)
-            return
-
-        edtEnterATMPin.text = Editable.Factory.getInstance().newEditable(edtEnterATMPin.text.append(number.toString()))
-        requestToLogin()
+            edtEnterATMPin.text = Editable.Factory.getInstance()
+                .newEditable(edtEnterATMPin.text.append(number.toString()))
+            requestToLogin()
+        }
     }
 
     override fun onLeftAuxButtonClicked() {
     }
 
     override fun onRightAuxButtonClicked() {
-        if (edtEnterATMPin.text.isNotEmpty() && pbLoginProgress.visibility != VISIBLE)
-            edtEnterATMPin.text = Editable.Factory.getInstance().newEditable(edtEnterATMPin.text.substring(0, edtEnterATMPin.text.length - 1))
+        with(binding) {
+            if (edtEnterATMPin.text.isNotEmpty() && pbLoginProgress.visibility != VISIBLE)
+                edtEnterATMPin.text = Editable.Factory.getInstance()
+                    .newEditable(edtEnterATMPin.text.substring(0, edtEnterATMPin.text.length - 1))
+        }
     }
 
     override fun onDialogButtonAction() {

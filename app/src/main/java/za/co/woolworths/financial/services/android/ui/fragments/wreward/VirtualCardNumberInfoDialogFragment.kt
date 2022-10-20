@@ -4,8 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.virtual_card_number_info_dialog.*
+import com.awfs.coordination.databinding.VirtualCardNumberInfoDialogBinding
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 
 class VirtualCardNumberInfoDialogFragment : WBottomSheetDialogFragment() {
@@ -14,13 +13,16 @@ class VirtualCardNumberInfoDialogFragment : WBottomSheetDialogFragment() {
         fun newInstance() = VirtualCardNumberInfoDialogFragment()
     }
 
+    private lateinit var binding: VirtualCardNumberInfoDialogBinding
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.virtual_card_number_info_dialog, container, false)
+        binding = VirtualCardNumberInfoDialogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        gotItButton.setOnClickListener {
+        binding.gotItButton.setOnClickListener {
             dismissAllowingStateLoss()
         }
     }

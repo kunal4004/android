@@ -5,16 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.error_dialog_fragment.*
-import kotlinx.android.synthetic.main.root_device_info_fragment.*
-import kotlinx.android.synthetic.main.root_device_info_fragment.tvDescription
+import com.awfs.coordination.databinding.ErrorDialogFragmentBinding
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 
 class OrderHistoryErrorDialogFragment : WBottomSheetDialogFragment() {
 
+    private lateinit var binding: ErrorDialogFragmentBinding
     private var mDescription: String? = null
     private var listener: IOrderHistoryErrorDialogDismiss? = null
 
@@ -42,13 +39,16 @@ class OrderHistoryErrorDialogFragment : WBottomSheetDialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.error_dialog_fragment, container, false)
+        binding = ErrorDialogFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tvDescription?.text = mDescription
-        okButtonTapped?.setOnClickListener { dismissAllowingStateLoss() }
+        with(binding) {
+            tvDescription?.text = mDescription
+            okButtonTapped?.setOnClickListener { dismissAllowingStateLoss() }
+        }
     }
 
     override fun onDismiss(dialog: DialogInterface) {

@@ -30,7 +30,7 @@ class BarcodeManualScanFragment : BarcodeScanExtension() {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         activity?.apply {
-            (this as? BarcodeScanActivity)?.setHomeIndicator(true)
+            (this as? BarcodeScanActivity)?.binding?.setHomeIndicator(true)
             window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         }
     }

@@ -5,9 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.credit_card_cancel_delivery_confirmation_dialog.cancel
-import kotlinx.android.synthetic.main.credit_card_setup_delivery_now.*
-import kotlinx.android.synthetic.main.credit_card_setup_delivery_now.title
+import com.awfs.coordination.databinding.CreditCardSetupDeliveryNowBinding
 import za.co.woolworths.financial.services.android.analytic.FirebaseCreditCardDeliveryEvent
 import za.co.woolworths.financial.services.android.contracts.ISetUpDeliveryNowLIstner
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -23,6 +21,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class SetUpDeliveryNowDialog() : WBottomSheetDialogFragment(), View.OnClickListener {
 
+    private lateinit var binding: CreditCardSetupDeliveryNowBinding
     private var mApplyNowState: ApplyNowState? = null
     private var mFirebaseCreditCardDeliveryEvent: FirebaseCreditCardDeliveryEvent? = null
     private var deliveredToName: String? = ""
@@ -37,16 +36,16 @@ class SetUpDeliveryNowDialog() : WBottomSheetDialogFragment(), View.OnClickListe
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        super.onCreate(savedInstanceState)
-        return inflater.inflate(R.layout.credit_card_setup_delivery_now, container, false)
+        binding = CreditCardSetupDeliveryNowBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        init()
+        binding.init()
     }
 
-    private fun init() {
+    private fun CreditCardSetupDeliveryNowBinding.init() {
         mApplyNowState = applyNowState()
         mFirebaseCreditCardDeliveryEvent = activity?.let { FirebaseCreditCardDeliveryEvent(mApplyNowState, it) }
         deliveredToName = SessionUtilities.getInstance()?.jwt?.name?.get(0)
@@ -66,8 +65,8 @@ class SetUpDeliveryNowDialog() : WBottomSheetDialogFragment(), View.OnClickListe
             }
         }
 
-        cancel.setOnClickListener(this)
-        setUpDeliveryNow.setOnClickListener(this)
+        cancel.setOnClickListener(this@SetUpDeliveryNowDialog)
+        setUpDeliveryNow.setOnClickListener(this@SetUpDeliveryNowDialog)
         val nameTitleText1 = bindString(R.string.hey_with_space)
         title?.text = nameTitleText1.plus(deliveredToName).plus(bindString(R.string.title_subdesc_setup_cc_delivery).plus(creditCardName).plus("?"))
     }
