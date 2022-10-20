@@ -15,13 +15,12 @@ android {
     def minor = "5"
     def fix = "0"
     def jobNumberProduction = 200
-    def jobNumberQa = 641
+    def jobNumberQa = 643
     def jobNumberFeature = 504
 
     buildFeatures {
         dataBinding true
         viewBinding true
-        compose = true
     }
 
     compileOptions {
@@ -29,10 +28,6 @@ android {
         coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion "$compose_version"
     }
 
     kotlinOptions {
@@ -363,8 +358,8 @@ dependencies {
     implementation "androidx.datastore:datastore-preferences:1.0.0"
 
     // Hilt DI
-    implementation "com.google.dagger:hilt-android:$hilt_version"
-    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+    implementation "com.google.dagger:hilt-android:2.38.1"
+    kapt "com.google.dagger:hilt-android-compiler:2.37"
     implementation 'com.google.maps:google-maps-services:2.0.0'
     implementation 'com.github.corouteam:GlideToVectorYou:v2.0.0'
   
@@ -383,14 +378,6 @@ dependencies {
     implementation "io.getstream:stream-chat-android-pushprovider-firebase:$stream_version"
     huaweiQaImplementation "io.getstream:stream-chat-android-pushprovider-huawei:$stream_version"
     huaweiProductionImplementation "io.getstream:stream-chat-android-pushprovider-huawei:$stream_version"
-
-    // Jetpack Compose
-    implementation 'androidx.activity:activity-compose:1.5.1'
-    implementation 'androidx.compose.material:material:1.2.1'
-    implementation 'androidx.compose.animation:animation:1.2.1'
-    implementation 'androidx.compose.ui:ui-tooling:1.2.1'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1'
-    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.2.1'
 
     implementation 'androidx.work:work-runtime:2.7.1'
     implementation 'androidx.paging:paging-common-ktx:3.0.1'
