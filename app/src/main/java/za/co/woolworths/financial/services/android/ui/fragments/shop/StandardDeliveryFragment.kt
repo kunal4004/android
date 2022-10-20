@@ -255,6 +255,8 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
                     SubCategoryFragment.KEY_ARGS_ROOT_CATEGORY,
                     Utils.toJson(rootCategory)
                 )
+                bundle.putBoolean(AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS,
+                    arguments?.getBoolean(AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false) ?: false)
                 bundle.putString(SubCategoryFragment.KEY_ARGS_VERSION, version)
                 bundle.putBoolean(
                     SubCategoryFragment.KEY_ARGS_IS_LOCATION_ENABLED,
