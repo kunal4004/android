@@ -117,10 +117,10 @@
         android:layout_marginBottom="24dp"
         android:adjustViewBounds="true"
         app:layout_constraintBottom_toTopOf="@+id/headerTextView"
-        app:layout_constraintDimensionRatio="1.4:1.1"
+        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@+id/end_guideline"
         app:layout_constraintStart_toStartOf="@+id/start_guideline"
-        app:srcCompat="@drawable/black_cc_envelope" />
+        app:srcCompat="@drawable/store_card_not_delivered_icon" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
