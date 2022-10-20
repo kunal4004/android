@@ -593,8 +593,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                         }
                     }
                 } catch (e: Exception) {
-                    e.printStackTrace()
-                    progressBar?.visibility = View.GONE
+                    progressBar.visibility = View.GONE
                     // navigate to shop tab with error scenario
                     activity?.setResult(REQUEST_CODE)
                     activity?.finish()
@@ -867,7 +866,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                 }
             } catch (e: Exception) {
                 FirebaseManager.logException(e)
-                binding.progressBar?.visibility = View.GONE
+                binding.progressBar.visibility = View.GONE
                 binding.showErrorDialog()
             }
         }

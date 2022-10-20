@@ -37,9 +37,9 @@ open class CompletionHandler<T>(private val requestListener: IResponseListener<T
     override fun onFailure(call: Call<T>, throwable: Throwable) {
         if (!call.isCanceled) {
             this.requestListener?.onFailure(throwable)
-            RetrofitException(call.request().url.toString(), throwable, throwable).show()
+            RetrofitException(call.request().url.toString(), throwable, throwable, null).show()
         }
     }
 
-    private fun displayMaintenanceScreenIfNeeded(url:String, response: Response<T>): Boolean = RetrofitException(url, response.code(), response).show()
+    private fun displayMaintenanceScreenIfNeeded(url:String, response: Response<T>): Boolean = RetrofitException(url, response.code(),null, response).show()
 }

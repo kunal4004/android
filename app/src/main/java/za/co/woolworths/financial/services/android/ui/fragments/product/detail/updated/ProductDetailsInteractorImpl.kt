@@ -42,6 +42,10 @@ class ProductDetailsInteractorImpl() : ProductDetailsContract.ProductDetailsInte
         }
     }
 
+    override fun getRaringNReview(productID: String, limit: Int, offset: Int, onFinishListener: ProductDetailsContract.ProductDetailsInteractor.OnFinishListener) {
+        request(OneAppService.getRatingNReview(productID,limit,offset), onFinishListener)
+    }
+
     private inline fun <reified RESPONSE_OBJECT> request(call: Call<RESPONSE_OBJECT>, requestListener: ProductDetailsContract.ProductDetailsInteractor.OnFinishListener) {
         val classType: Class<RESPONSE_OBJECT> = RESPONSE_OBJECT::class.java
         call.enqueue(CompletionHandler(object : IResponseListener<RESPONSE_OBJECT> {
