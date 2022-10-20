@@ -32,6 +32,7 @@ import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPReq
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPResponse
 import za.co.woolworths.financial.services.android.models.dto.pma.DeleteResponse
 import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.models.dto.shop.DashCategories
 import za.co.woolworths.financial.services.android.models.dto.size_guide.SizeGuideResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest
@@ -48,6 +49,7 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 import za.co.woolworths.financial.services.android.onecartgetstream.model.OCAuthenticationResponse
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.EmailUsRequest
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewFeedback
 
 interface ApiInterface {
 
@@ -1424,6 +1426,39 @@ interface ApiInterface {
         @Header("sessionToken") sessionToken: String
     ): Call<DeleteAccountResponse>
 
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
+    @GET("/retail-ratings-reviews/app/v1")
+    fun getRatingNReview(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Query("productId") productId: String,
+        @Query("limit") limit: Int,
+        @Query("offset") offset: Int
+    ): Call<RatingAndReviewData>
+
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
+    @GET("/retail-ratings-reviews/app/v1")
+    suspend fun getMoreReviews(
+            @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
+            @Query("productId") productId: String,
+            @Query("limit") limit: Int,
+            @Query("offset") offset: Int,
+            @Query("sort") sort: String?,
+            @Query("refinement") refinement: String?
+
+    ): RatingAndReviewData
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
+    @POST("/retail-ratings-reviews/app/v1/submitFeedback")
+    suspend fun submitFeedback(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body reviewFeedback: ReviewFeedback
+
+    ): GenericResponse
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/dash/chat/authenticate")
     fun authenticateOneCart(

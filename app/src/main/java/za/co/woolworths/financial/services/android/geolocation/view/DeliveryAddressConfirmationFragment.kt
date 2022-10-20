@@ -592,7 +592,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                             }
                         }
                     }
-                } catch (e: HttpException) {
+                } catch (e: Exception) {
                     progressBar.visibility = View.GONE
                     // navigate to shop tab with error scenario
                     activity?.setResult(REQUEST_CODE)
@@ -864,7 +864,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                         }
                     }
                 }
-            } catch (e: HttpException) {
+            } catch (e: Exception) {
                 FirebaseManager.logException(e)
                 binding.progressBar.visibility = View.GONE
                 binding.showErrorDialog()

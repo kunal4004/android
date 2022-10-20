@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <include
+        android:id="@+id/ratingstatics"
+        layout="@layout/ratings_ratingdetails"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@+id/sort_and_refine"
+        layout="@layout/sort_and_refine_selection_layout"
+        app:layout_constraintTop_toBottomOf="@+id/ratingstatics"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/eight_dp"
+        android:layout_width="match_parent"
+        android:layout_marginBottom="@dimen/one_dp"
+        android:layout_height="@dimen/store_card_text_field_height_50_dp" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

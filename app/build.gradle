@@ -362,7 +362,7 @@ dependencies {
     kapt "com.google.dagger:hilt-android-compiler:2.37"
     implementation 'com.google.maps:google-maps-services:2.0.0'
     implementation 'com.github.corouteam:GlideToVectorYou:v2.0.0'
-  
+
     // Huawei
     huaweiQaImplementation 'com.huawei.hms:location:6.4.0.300'
     huaweiProductionImplementation 'com.huawei.hms:location:6.4.0.300'
@@ -380,6 +380,8 @@ dependencies {
     huaweiProductionImplementation "io.getstream:stream-chat-android-pushprovider-huawei:$stream_version"
 
     implementation 'androidx.work:work-runtime:2.7.1'
+    implementation 'androidx.paging:paging-common-ktx:3.0.1'
+    implementation 'androidx.paging:paging-runtime-ktx:3.0.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
