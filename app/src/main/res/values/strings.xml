@@ -560,6 +560,7 @@
     <string name="account_details_reference_number">Reference Number:</string>
     <string name="account_details_swift_code">Swift Code:</string>
     <string name="refine">REFINE</string>
+    <string name="filter">FILTER</string>
     <string name="sort_by">SORT BY</string>
     <string name="refinement_show_me">show me</string>
     <string name="refinement_filter_by">filter by</string>
@@ -1922,6 +1923,8 @@
     <string name="dash_track_your_order">Track Your Order</string>
     <string name="dash_email_id">wooliesdash@woolworths.co.za</string>
     <string name="dash_customer_care_no_phone">0860 100 987</string>
+    <string name="push_notification_turn_on_toast_message">PUSH NOTIFICATIONS HELP US SHARE ORDER UPDATES AS THEY HAPPEN.</string>
+    <string name="push_notification_turn_on_text">TURN ON</string>
 
     <string name="app_feature_title"></string>
     <string name="app_feature_get_delivered">Same-day delivery</string>
@@ -2200,16 +2203,6 @@
     <string name="reward_shake_tap_label">Not scanning? Tap here or shake to max brightness</string>
     <string name="credit_card_title">Credit Card</string>
 
-    <string name="already_have_a_wrewards_card">Already have a wrewards card?</string>
-    <string name="add_it_now">Add it now</string>
-    <string name="sign_up">SIGN UP</string>
-    <string name="wrewards_logo_rewards">REWARDS</string>
-    <string name="wrewards_logo_w">W</string>
-    <string name="payment_order_confirmed">Order Confirmed</string>
-    <string name="submitted_order_error_something_went_wrong">Your order was successful,  but we’re having trouble displaying the details here.</string>
-    <string name="submitted_order_error_message">Please try again, or check your order history under Account details later.</string>
-    <string name="submitted_order_error_continue_shopping">CONTINUE SHOPPING</string>
-    <string name="select_your_preferred_delivery_time_error">Please select a delivery timeslot.</string>
 
     <string name="absa_mobile_app_pin_blocked_title">Mobile App PIN Is Now\nBlocked</string>
     <string name="absa_mobile_app_pin_blocked_desc_block_1">To release the hold on your PIN, please contact customer service on 086 150 2020 or email queries@wfs.co.za.</string>
@@ -2743,5 +2736,80 @@
     <string name="liquor_dialog_description_text">WCellar Liquor is available for delivery \nand collection in selected areas in Gauteng and the Western Cape.</string>
     <string name="edit_address_button">EDIT ADDRESS</string>
     <string name="promotional_text_banner">Extra 5% off when you pay with your Woolies card.\nThis offer is available on selected items. Offer valid for a limited time only. Subject to availability. Discount applies at checkout.T\'s &amp; C\'s apply.</string>
+
+    <string name="already_have_a_wrewards_card">Already have a wrewards card?</string>
+    <string name="add_it_now">Add it now</string>
+    <string name="sign_up">SIGN UP</string>
+    <string name="wrewards_logo_rewards">REWARDS</string>
+    <string name="wrewards_logo_w">W</string>
+    <string name="payment_order_confirmed">Order Confirmed</string>
+    <string name="submitted_order_error_something_went_wrong">Your order was successful,  but we’re having trouble displaying the details here.</string>
+    <string name="submitted_order_error_message">Please try again, or check your order history under Account details later.</string>
+    <string name="submitted_order_error_continue_shopping">CONTINUE SHOPPING</string>
+    <string name="select_your_preferred_delivery_time_error">Please select a delivery timeslot.</string>
+
+
+    <!--  Rating and Review Feature -->
+    <string name="percent_recommend_to_friend">%s Would recommend this product to a friend</string>
+    <string name="ratings_details">Ratings Details</string>
+    <string name="rating_details">Rating Details</string>
+    <plurals name="no_review">
+        <item quantity="one">%d Review</item>
+        <item quantity="other">%d Reviews</item>
+    </plurals>
+    <plurals name="customer_review">
+        <item quantity="one">Customer Review (%d)</item>
+        <item quantity="other">Customer Reviews (%d)</item>
+    </plurals>
+    <plurals name="review_found">
+        <item quantity="one">REVIEW FOUND </item>
+        <item quantity="other">REVIEWS FOUND </item>
+    </plurals>
+    <plurals name="more_review">
+        <item quantity="one">%d MORE REVIEW</item>
+        <item quantity="other">%d MORE REVIEWS</item>
+    </plurals>
+    <string name="verified_buyer">Verified Buyer</string>
+    <string name="view_skin_profile">VIEW SKIN PROFILE</string>
+    <string name="verified_staff_member">Verified Staff Member</string>
+    <string name="report">REPORT</string>
+    <string name="thumbnail">thumbnail</string>
+    <string name="was_this_review_helpful">Was this Review Helpful?</string>
+    <string name="is_there_an_issue_with_this_review">Is there an issue with this review?</string>
+    <string name="why_would_you_like_to_report_this_review">Why would you like to report this review?</string>
+    <string name="skin_shade">Skin Shade:</string>
+    <string name="skin_type">Skin Type:</string>
+    <string name="skin_concerns">Skin Concerns:</string>
+    <string name="perfect_skin_label">Perfect for my skin!</string>
+    <string name="verified_buyer_label">Verified Buyer</string>
+    <string name="runs_small">Runs Small</string>
+    <string name="true_size">True To Size</string>
+    <string name="run_large">Runs Large</string>
+    <string name="fit">Fit:</string>
+    <string name="product_quality">Product Quality:</string>
+    <string name="review_details">REVIEW DETAIL</string>
+    <string name="close_btn">CLOSE</string>
+    <string name="star_1">1</string>
+    <string name="star_2">2</string>
+    <string name="star_3">3</string>
+    <string name="star_4">4</string>
+    <string name="star_5">5</string>
+    <string name="star_0">0</string>
+    <string name="slash">/</string>
+    <string name="skin_profile">Skin Profile</string>
+    <string name="customer_reviews">Customer Reviews</string>
+    <string name="report_reviews">Report Review</string>
+    <string name="report_sub_label">I find this review to contain:</string>
+    <string name="submit_report">Submit Report</string>
+    <string name="hint_reason">Please enter a reason here</string>
+    <string name="report_moderated">It is currently being moderated.</string>
+    <string name="your_report_on_this_review_has_been_submitted_we_will_review_your_concern_and_will_notify_you_once_action_has_been_taken">Your report on this review has been submitted.\nWe will review your concern and will notify you once action has been taken.</string>
+    <string name="report_submit">Report Submitted</string>
+    <string name="report_got_it">GOT IT</string>
+    <string name="failed_more_reviews">FAILED TO LOAD MORE REVIEWS</string>
+    <string name="retry_txt">RETRY</string>
+    <string name="reported">REPORTED</string>
+    <string name="a_report_for_this_review_has_already_been_submitted">A report for this review has already been submitted.</string>
+
 
 </resources>

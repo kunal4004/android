@@ -1,14 +1,15 @@
 package za.co.woolworths.financial.services.android.ui.activities.maintenance
 
 import android.content.Intent
+import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorMessageDialogWithTitleFragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorMessageDialogWithTitleFragment
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
-import java.lang.IllegalStateException
 
 open class NetworkRuntimeExceptionViewController : HandlerThread(NetworkRuntimeExceptionViewController::class.java.simpleName) {
 
@@ -24,6 +25,22 @@ open class NetworkRuntimeExceptionViewController : HandlerThread(NetworkRuntimeE
             navigateToRuntimeActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             appInstance.startActivity(navigateToRuntimeActivity)
             quit()
+        }
+        handler?.sendEmptyMessage(0)
+    }
+
+    fun openWebViewErrorScreen(redirectURL: String) {
+        start()
+        handler = Handler(looper)
+        handler?.post {
+            val appInstance = WoolworthsApplication.getInstance() ?: return@post
+            val navigateToWebViewActivity = Intent(appInstance, MaintenanceWebViewActivity::class.java)
+            val bundle = Bundle()
+            bundle.putString("link", redirectURL)
+            navigateToWebViewActivity.putExtra(BundleKeysConstants.BUNDLE, bundle)
+            navigateToWebViewActivity.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+            navigateToWebViewActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            appInstance.startActivity(navigateToWebViewActivity)
         }
         handler?.sendEmptyMessage(0)
     }

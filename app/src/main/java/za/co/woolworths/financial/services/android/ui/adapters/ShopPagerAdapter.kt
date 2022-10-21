@@ -6,11 +6,10 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.PagerAdapter
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
-import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFullfilmentCollectionStoreFragment
-import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashDeliveryAddressFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDeliveryFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
+import za.co.woolworths.financial.services.android.ui.views.shop.dash.ChangeFullfilmentCollectionStoreFragment
+import za.co.woolworths.financial.services.android.ui.views.shop.dash.DashDeliveryAddressFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.ARG_SEND_DELIVERY_DETAILS
 import za.co.woolworths.financial.services.android.util.AppConstant.Keys.Companion.ARG_VALIDATE_PLACE

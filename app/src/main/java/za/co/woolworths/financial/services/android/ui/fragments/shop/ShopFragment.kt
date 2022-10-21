@@ -81,6 +81,7 @@ import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManag
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
+import java.net.SocketTimeoutException
 
 
 /**
@@ -134,8 +135,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     companion object {
         private const val LOGIN_MY_LIST_REQUEST_CODE = 9876
         private const val DASH_DIVIDER = 1.25
-        private const val ORDER_STATUS_PACKING = "PACKING"
-        private const val ORDER_STATUS_EN_ROUTE = "EN-ROUTE"
     }
 
     enum class SelectedTabIndex(val index: Int) {
@@ -421,7 +420,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                             }
                         }
                     }
-                } catch (e: HttpException) {
+                } catch (e: Exception) {
                     shopProgressbar?.visibility = View.GONE
                     tabs_main?.isClickable = true
                     FirebaseManager.logException(e)

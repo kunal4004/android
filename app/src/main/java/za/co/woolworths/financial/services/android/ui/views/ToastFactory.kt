@@ -5,27 +5,28 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Color
 import android.graphics.Point
 import android.graphics.drawable.GradientDrawable
 import android.os.Handler
 import android.os.Looper
+import android.util.DisplayMetrics
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.*
 import android.widget.LinearLayout
 import android.widget.PopupWindow
-import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.contracts.IToastInterface
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment
-import android.util.DisplayMetrics
-import android.view.View.*
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import com.google.gson.*
+import com.awfs.coordination.R
+import com.google.gson.JsonArray
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import kotlinx.coroutines.GlobalScope
+import za.co.woolworths.financial.services.android.contracts.IToastInterface
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
@@ -35,17 +36,19 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.hel
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_TOAST
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
+import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.ReceiverManager
 import za.co.woolworths.financial.services.android.util.ScreenManager
-import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 
 class ToastFactory {
 
     companion object {
         private const val POPUP_DELAY_MILLIS = 3000
+        private const val POPUP_DELAY_MILLIS_15000 = 15000
         private const val POPUP_3000_DELAY_MILLIS: Long = 3000
+        private const val POPUP_MARGIN_BOTTOM = 25
 
         fun buildShoppingListToast(
             activity: Activity,
@@ -118,6 +121,45 @@ class ToastFactory {
                 0,
                 convertDpToPixel(getDeviceHeight(activity), context)
             )
+            return popupWindow
+        }
+
+        fun buildPushNotificationAlertToast(
+            activity: Activity,
+            viewLocation: View,
+            toastInterface: IToastInterface,
+        ): PopupWindow? {
+            // inflate your xml layout
+            val inflater =
+                activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as? LayoutInflater
+            val layout = inflater?.inflate(R.layout.push_notification_toast_layout, null)
+            // set the custom display
+            val tvButtonClick = layout?.findViewById<WTextView>(R.id.tvView)
+
+            // initialize your popupWindow and use your custom layout as the view
+            val popupWindow = PopupWindow(
+                layout,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT, true
+            )
+
+            // handle popupWindow click event
+            tvButtonClick?.setOnClickListener {
+                toastInterface.onToastButtonClicked(null)
+                popupWindow.dismiss() // dismiss the window
+            }
+
+            // dismiss the popup window after 3sec
+            popupWindow.isFocusable = false
+            Handler().postDelayed({ popupWindow.dismiss() }, POPUP_DELAY_MILLIS_15000.toLong())
+            viewLocation.post {
+                popupWindow.showAtLocation(
+                    viewLocation,
+                    Gravity.BOTTOM,
+                    0,
+                    convertDpToPixel(getDeviceHeight(activity) + POPUP_MARGIN_BOTTOM, activity)
+                )
+            }
             return popupWindow
         }
 
