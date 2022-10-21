@@ -38,7 +38,6 @@ import kotlinx.android.synthetic.main.no_connection_handler.view.*
 import kotlinx.android.synthetic.main.promotional_text_plp.*
 import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.*
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.chanel.views.ChanelNavigationClickListener
 import za.co.woolworths.financial.services.android.chanel.views.adapter.BrandLandingAdapter
@@ -1550,7 +1549,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                                     }
                                 }
                             } else {
-                                val addToCartBalloon by balloon(AddedToCartBalloonFactory::class)
+                                val addToCartBalloon by balloon<AddedToCartBalloonFactory>()
                                 val bottomView =
                                     (activity as? BottomNavigationActivity)?.bottomNavigationById
                                 val buttonView: Button =

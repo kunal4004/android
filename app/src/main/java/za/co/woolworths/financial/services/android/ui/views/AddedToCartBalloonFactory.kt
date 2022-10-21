@@ -7,7 +7,7 @@ import com.awfs.coordination.R
 import com.skydoves.balloon.*
 
 class AddedToCartBalloonFactory : Balloon.Factory() {
-    override fun create(context: Context, lifecycle: LifecycleOwner): Balloon {
+    override fun create(context: Context, lifecycle: LifecycleOwner?): Balloon {
         return createBalloon(context) {
             setLayout(R.layout.add_to_cart_toast_layout)
             setArrowSize(0)

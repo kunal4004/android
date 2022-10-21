@@ -386,6 +386,10 @@ class ChangeFullfilmentCollectionStoreFragment() :
                     SubCategoryFragment.KEY_ARGS_IS_LOCATION_ENABLED,
                     if (context != null) Utils.isLocationEnabled(context) else false
                 )
+                bundle.putBoolean(
+                    AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS,
+                    arguments?.getBoolean(AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false) ?: false
+                )
                 //     location?.let { bundle.putParcelable(SubCategoryFragment.KEY_ARGS_LOCATION, it) }
                 drillDownCategoryFragment.arguments = bundle
                 return drillDownCategoryFragment
