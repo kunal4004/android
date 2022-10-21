@@ -504,21 +504,25 @@ class ConfirmAddressMapFragment :
                             FetchPlaceRequest.builder(placeId.toString(), it)
                                 .setSessionToken(item?.token).build()
                         }
-                    request.let { placeRequest ->
-                        placesClient.fetchPlace(placeRequest)
-                            .addOnSuccessListener { response ->
-                                hideKeyboard(requireActivity())
-                                autoCompleteTextView?.clearFocus()
-                                val place = response.place
-                                try {
-                                    isAddressSearch = true
-                                    moveMapCamera(place.latLng?.latitude, place.latLng?.longitude)
-                                } catch (e: Exception) {
-                                    FirebaseManager.logException(e)
-                                }
-                            }.addOnFailureListener {
-                                showErrorDialog()
-                            }
+                    try {
+                        request.let { placeRequest ->
+                            placesClient.fetchPlace(placeRequest)
+                                    .addOnSuccessListener { response ->
+                                        hideKeyboard(requireActivity())
+                                        autoCompleteTextView?.clearFocus()
+                                        val place = response.place
+                                        try {
+                                            isAddressSearch = true
+                                            moveMapCamera(place.latLng?.latitude, place.latLng?.longitude)
+                                        } catch (e: Exception) {
+                                            FirebaseManager.logException(e)
+                                        }
+                                    }.addOnFailureListener {
+                                        showErrorDialog()
+                                    }
+                        }
+                    } catch (e: Exception) {
+                        FirebaseManager.logException(e)
                     }
                 }
         }
