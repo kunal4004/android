@@ -21,6 +21,7 @@ import static za.co.woolworths.financial.services.android.ui.fragments.product.d
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment.REQUEST_PAYMENT_STATUS;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.MY_LIST_LIST_ID;
@@ -1123,12 +1124,23 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 }
 
             case REQUEST_PAYMENT_STATUS:
+                if (resultCode == REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING) {
                     navigateToTabIndex(BottomNavigationActivity.INDEX_PRODUCT, null);
                     QueryBadgeCounter.getInstance().queryCartSummaryCount();
-                    if(getCurrentFragment() instanceof ShopFragment) {
-                        ShopFragment fragment = (ShopFragment) getCurrentFragment();
-                        fragment.makeLastDashOrderDetailsCall();
-                    }
+                    break;
+                }
+                else if (resultCode == RESULT_RELOAD_CART) {
+                    getCurrentFragment().onActivityResult(requestCode, resultCode, data);
+                }
+                else if(getCurrentFragment() instanceof ShopFragment) {
+                    ShopFragment fragment = (ShopFragment) getCurrentFragment();
+                    fragment.makeLastDashOrderDetailsCall();
+                }
+                else {
+                    navigateToTabIndex(BottomNavigationActivity.INDEX_PRODUCT, null);
+                    QueryBadgeCounter.getInstance().queryCartSummaryCount();
+                    break;
+                }
                     break;
             case REQUEST_CODE_ORDER_DETAILS_PAGE:// Call back when Toast clicked after adding item to shopping list
             case SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE:

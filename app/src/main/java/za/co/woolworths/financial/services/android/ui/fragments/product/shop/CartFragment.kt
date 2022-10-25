@@ -1355,7 +1355,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             reloadFragment()
             return
         } else if (requestCode == PDP_LOCATION_CHANGED_BACK_PRESSED_CODE || requestCode == ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE) {
-            checkLocationChangeAndReload()
+            reloadFragment()
         }
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
@@ -1407,7 +1407,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         if (requestCode == REQUEST_PAYMENT_STATUS) {
             when (resultCode) {
                 CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY -> reloadFragment()
-                CheckOutFragment.RESULT_RELOAD_CART -> checkLocationChangeAndReload()
+                CheckOutFragment.RESULT_RELOAD_CART -> reloadFragment()
                 Activity.RESULT_OK -> requireActivity().onBackPressed()
                 Activity.RESULT_CANCELED -> reloadFragment()
             }
@@ -1430,9 +1430,9 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         }
     }
 
-    private fun checkLocationChangeAndReload() {
+    /* private fun checkLocationChangeAndReload() {
         //TODO: need to refactor
-        /* ShoppingDeliveryLocation deliveryLocation = Utils.getPreferredDeliveryLocation();
+         ShoppingDeliveryLocation deliveryLocation = Utils.getPreferredDeliveryLocation();
         String currentSuburbId = null;
         String currentStoreId = null;
         int currentCartCount = QueryBadgeCounter.getInstance().getCartCount();
@@ -1457,8 +1457,8 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             return;
         } else if (productCountMap != null && productCountMap.getTotalProductCount() != currentCartCount) {
             reloadFragment();
-        }*/
-    }
+        }
+    }*/
 
     private fun loadShoppingCartAndSetDeliveryLocation() {
         val lastDeliveryLocation = Utils.getPreferredDeliveryLocation()
