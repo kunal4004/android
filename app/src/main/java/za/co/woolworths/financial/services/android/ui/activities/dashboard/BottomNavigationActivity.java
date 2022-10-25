@@ -458,14 +458,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
     private void deepLinkToOrderDetails(Parameter params) {
         if (SessionUtilities.getInstance().isUserAuthenticated()) {
-            if (INDEX_ACCOUNT != getBottomNavigationById().getCurrentItem()) {
-                getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
-                switchTab(INDEX_ACCOUNT);
-            }
-            pushFragment(new MyOrdersAccountFragment());
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                pushFragment(OrderDetailsFragment.Companion.getInstance(params));
-            }, AppConstant.DELAY_100_MS);
+            pushFragment(OrderDetailsFragment.Companion.getInstance(params));
         }
     }
 
@@ -1037,6 +1030,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             mNavController.clearStackSignOut(new FragNavTransactionOptions.Builder().customAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right).build(), previousTabIndex);
         isNewSession = true;
     }
+
     @Override
     public void cartSummaryAPI() {
     }
@@ -1138,11 +1132,16 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 else if (resultCode == RESULT_RELOAD_CART) {
                     getCurrentFragment().onActivityResult(requestCode, resultCode, data);
                 }
+                else if(getCurrentFragment() instanceof ShopFragment) {
+                    ShopFragment fragment = (ShopFragment) getCurrentFragment();
+                    fragment.makeLastDashOrderDetailsCall();
+                }
                 else {
                     navigateToTabIndex(BottomNavigationActivity.INDEX_PRODUCT, null);
                     QueryBadgeCounter.getInstance().queryCartSummaryCount();
                     break;
                 }
+                    break;
             case REQUEST_CODE_ORDER_DETAILS_PAGE:// Call back when Toast clicked after adding item to shopping list
             case SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE:
                 navigateToMyList(requestCode, resultCode, data);
