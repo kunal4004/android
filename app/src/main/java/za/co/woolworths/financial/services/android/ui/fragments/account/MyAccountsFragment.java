@@ -39,6 +39,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
@@ -160,6 +161,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private RelativeLayout applyCreditCardView;
     private RelativeLayout applyStoreCardView;
     private RelativeLayout applyPersonalCardView;
+    private RelativeLayout applyPetInsuranceCardView;
     private RelativeLayout linkedCreditCardView;
     private RelativeLayout linkedStoreCardView;
     private RelativeLayout linkedPersonalCardView;
@@ -243,6 +245,10 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private View applyNowSpacingView;
     private TextView appVersionNameInfoTextView;
     private TextView fspNumberInfoTextView;
+    private ProgressBar progressPetInsurance;
+    private AppCompatTextView tvPetInsuranceCovered;
+    private AppCompatTextView tvPetInsuranceHelped;
+    private AppCompatTextView tvPetInsuranceApply;
 
     public MyAccountsFragment() {
         // Required empty public constructor
@@ -301,6 +307,11 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             applyStoreCardView = view.findViewById(R.id.applyStoreCard);
             applyCreditCardView = view.findViewById(R.id.applyCrediCard);
             applyPersonalCardView = view.findViewById(R.id.applyPersonalLoan);
+            applyPetInsuranceCardView = view.findViewById(R.id.applyPetInsurance);
+            progressPetInsurance = view.findViewById(R.id.progressPetInsurance);
+            tvPetInsuranceCovered = view.findViewById(R.id.tv_pet_insurance_covered);
+            tvPetInsuranceHelped = view.findViewById(R.id.tv_pet_insurance_help);
+            tvPetInsuranceApply = view.findViewById(R.id.tv_pet_insurance_apply);
             linkedCreditCardView = view.findViewById(R.id.linkedCrediCard);
             linkedStoreCardView = view.findViewById(R.id.linkedStoreCard);
             linkedAccountBottomDivider = view.findViewById(R.id.linkedAccountBottomDivider);
@@ -368,6 +379,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
             openMessageActivity.setOnClickListener(this);
             contactUs.setOnClickListener(this);
+            tvPetInsuranceHelped.setOnClickListener(this);
+            applyPetInsuranceCardView.setOnClickListener(this);
             applyPersonalCardView.setOnClickListener(this);
             applyStoreCardView.setOnClickListener(this);
             applyCreditCardView.setOnClickListener(this);
@@ -990,6 +1003,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             case R.id.applyPersonalLoan:
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANAPPLYNOW, activity);
                 redirectToMyAccountsCardsActivity(ApplyNowState.PERSONAL_LOAN);
+                break;
+            case R.id.applyPetInsurance:
                 break;
             case R.id.linkedStoreCard:
                 navigateToLinkedStoreCard();
@@ -1927,6 +1942,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             applyStoreCardView.setContentDescription(getString(R.string.apply_store_card_layout));
             applyCreditCardView.setContentDescription(getString(R.string.apply_credit_card_layout));
             applyPersonalCardView.setContentDescription(getString(R.string.apply_personal_loan_layout));
+            applyPetInsuranceCardView.setContentDescription(getString(R.string.apply_pet_insurance_layout));
             openMessageActivity.setContentDescription(getString(R.string.messages_layout));
             storeLocatorRelativeLayout.setContentDescription(getString(R.string.store_locator_layout));
             helpSectionRelativeLayout.setContentDescription(getString(R.string.need_help_layout));
