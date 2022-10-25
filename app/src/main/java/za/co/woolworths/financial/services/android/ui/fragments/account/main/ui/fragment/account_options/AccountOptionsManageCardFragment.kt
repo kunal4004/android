@@ -223,7 +223,7 @@ class AccountOptionsManageCardFragment : Fragment(R.layout.account_options_manag
                     when (result) {
                         is ListCallback.CardNotReceived -> {
                             val dateTime = Utils.getSessionDaoValue(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN)
-                            if (result.isCardNotReceived
+                            if (result.isCardNotReceivedFlowNeeded
                                 && feature.isPopupVisibleInCardDetailLanding
                                 && viewModel.hasDaysPassed(dateTime, 35,SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN))
                                 mItemList.showCardNotReceivedDialog(

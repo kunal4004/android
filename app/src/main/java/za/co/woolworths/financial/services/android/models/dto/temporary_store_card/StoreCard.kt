@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.models.dto.temporary_store_card
 
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -18,7 +19,8 @@ data class StoreCard(
     val dateOpened: String,
     val dateLastMaintained: String,
     var blockType: String? = "",
-    var cardNotReceived: Boolean = false,
+    @SerializedName("cardNotReceived")
+    var isCardNotReceivedFlowNeeded: Boolean = false,
     var actions: MutableList<ActionButton>?
 ):Parcelable
 
