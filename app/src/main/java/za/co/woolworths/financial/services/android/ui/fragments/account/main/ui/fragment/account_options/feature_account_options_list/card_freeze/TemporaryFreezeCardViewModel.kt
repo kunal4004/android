@@ -86,11 +86,11 @@ class TemporaryFreezeCardViewModel @Inject constructor(private val storeCardData
             )
         }
 
-    fun isCardNotReceived(storeCard: StoreCard?): Boolean {
+    fun isCardNotReceivedFlowNeeded(storeCard: StoreCard?): Boolean {
         val shouldNotifyUserByEmail =
             Utils.getSessionDaoValue(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN)
                 .isNullOrEmpty()
-        return (storeCard?.cardNotReceived == true && shouldNotifyUserByEmail)
+        return (storeCard?.isCardNotReceivedFlowNeeded == true && shouldNotifyUserByEmail)
     }
 
     fun resetCardPosition() {
