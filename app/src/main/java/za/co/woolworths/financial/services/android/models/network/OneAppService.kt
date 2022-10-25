@@ -50,6 +50,7 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.net.URLEncoder
 import retrofit2.adapter.rxjava2.Result.response
+import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDetailsResponse
 
 object OneAppService : RetrofitConfig() {
 
@@ -1207,6 +1208,12 @@ object OneAppService : RetrofitConfig() {
     suspend fun getOCAuthData(): retrofit2.Response<OCAuthenticationResponse> {
         return withContext(Dispatchers.IO) {
             mApiInterface.getOCAuth(getSessionToken(), getDeviceIdentityToken())
+        }
+    }
+
+    suspend fun getLastDashOrder(): retrofit2.Response<LastOrderDetailsResponse>  {
+        return withContext(Dispatchers.IO) {
+            mApiInterface.getLastDashOrder(getSessionToken(), getDeviceIdentityToken())
         }
     }
 }
