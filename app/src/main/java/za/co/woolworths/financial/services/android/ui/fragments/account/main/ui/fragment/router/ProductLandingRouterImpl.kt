@@ -193,12 +193,14 @@ class ProductLandingRouterImpl @Inject constructor(
                 ACTIVATE_VIRTUAL_CARD_DETAIL = true
             },
             {
-                val storeCardResponse = manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
-                intent = navigateToGetTemporaryStoreCardPopupActivity(
-                    activity, storeCardResponse = storeCardResponse
-                )
-                intent
-
+                if (manageCardImpl.isActivateVirtualTempCard()) {
+                    val storeCardResponse =
+                        manageCardImpl.getStoreCardsResponse() ?: StoreCardsResponse()
+                    intent = navigateToGetTemporaryStoreCardPopupActivity(
+                        activity, storeCardResponse = storeCardResponse
+                    )
+                    intent
+                }
             })
         return CallBack.IntentCallBack(intent)
     }

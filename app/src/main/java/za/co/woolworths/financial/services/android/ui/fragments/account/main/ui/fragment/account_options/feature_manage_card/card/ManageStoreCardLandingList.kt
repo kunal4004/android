@@ -18,7 +18,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.
 
 
 sealed class ListCallback {
-    data class CardNotReceived(val isCardNotReceived: Boolean) : ListCallback()
+    data class CardNotReceived(val isCardNotReceivedFlowNeeded: Boolean) : ListCallback()
 }
 
 class ManageStoreCardLandingList(
@@ -98,7 +98,7 @@ class ManageStoreCardLandingList(
         includeListOptions.payWithCardFragmentContainerView.visibility = VISIBLE
         callback(
             ListCallback.CardNotReceived(
-                isCardNotReceived = cardFreezeViewModel.isCardNotReceived(
+                isCardNotReceivedFlowNeeded = cardFreezeViewModel.isCardNotReceivedFlowNeeded(
                     featureType.storeCard
                 )
             )
