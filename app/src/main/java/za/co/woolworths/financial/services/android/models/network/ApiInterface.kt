@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.models.dto.credit_card_delive
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.PossibleAddressResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.ScheduleDeliveryRequest
+import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDetailsResponse
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkDeviceBody
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAllLinkedDeviceResponse
@@ -1473,5 +1474,10 @@ interface ApiInterface {
         @Header("deviceIdentityToken") deviceIdentityToken: String
     ): retrofit2.Response<OCAuthenticationResponse>
 
+    @GET("wfs/app/v4/order/previousorder")
+    suspend fun getLastDashOrder(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String
+    ) : retrofit2.Response<LastOrderDetailsResponse>
 }
 

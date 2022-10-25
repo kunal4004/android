@@ -1856,7 +1856,7 @@
     <string name="chat_to_us_label">CHAT TO US</string>
 
     <string name="earliest_delivery_date">Earliest Delivery date:</string>
-    <string name="earliest_delivery_dates">Earliest Delivery Dates:</string>
+    <string name="earliest_delivery_dates">Earliest Standard Delivery Dates:</string>
     <string name="food_items">Food Items</string>
     <string name="fashion_beauty_home">Fashion, Beauty &amp; Home</string>
     <string name="get_your_free_credit_report">View Free Credit Report &amp; More</string>
@@ -2710,7 +2710,7 @@
     <string name="dash_order">Dash Order:</string>
     <string name="dash_email_type">plain/text</string>
 
-         <!--one cart stream chat -->
+    <!--one cart stream chat -->
     <string name="type_a_message">Type a message</string>
     <string name="currently_active">Currently Active</string>
     <string name="currently_in_active">Currently Inactive</string>
@@ -2718,15 +2718,17 @@
     <string name="one_cart_chat_order_id">ORDER #%s</string>
     <string name="generic_error_something_wrong_newline">Unfortunately,\n Something Went Wrong</string>
     <string name="one_cart_chat_error_disc">We can’t seem to reach your shopper.\n Give them a few moments, and try again.</string>
-<string name="frozen_primary_card">Frozen Primary Card</string>
+    <string name="frozen_primary_card">Frozen Primary Card</string>
     <string name="upshell_message_freeze_title">Freeze Card to Activate</string>
     <string name="upshell_message_activate_virtual_card_title">Activate Virtual Card</string>
     <string name="virtual_temp_card_detail">Your new card has been issued and will be delivered to you. Activate your Virtual Temp Card and use it to pay in-store</string>
 
-
     <string name="we_need_more_info">We Need More Info</string>
     <string name="enter_street_name">Please enter a street name for this location:</string>
     <string name="your_shopper_is_trying_to">Your shopper is trying to \ncontact you.</string>
+
+    <string name="inapp_order_notification_title">Dash Delivery Order #%s</string>
+
     <string name="my_card_has_arrived">My card has arrived</string>
     <string name="map_not_available">Map app’s not installed</string>
     <string name="petal_maps">PETAL MAPS</string>

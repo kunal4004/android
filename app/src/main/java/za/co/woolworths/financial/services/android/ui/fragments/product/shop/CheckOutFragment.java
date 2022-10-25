@@ -55,7 +55,7 @@ import za.co.woolworths.financial.services.android.util.wenum.ConfirmLocation;
 
 public class CheckOutFragment extends Fragment {
 
-    public static int REQUEST_CART_REFRESH_ON_DESTROY = 9;
+    public static int REQUEST_CART_REFRESH_ON_DESTROY = 1739;
     public static final int REQUEST_CHECKOUT_ON_DESTROY = 107;
     public static final int RESULT_RELOAD_CART = 108;
     public static final int RESULT_EMPTY_CART = 109;
