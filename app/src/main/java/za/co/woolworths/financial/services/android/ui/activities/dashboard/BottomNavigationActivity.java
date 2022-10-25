@@ -900,7 +900,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if (!mNavController.isRootFragment()) {
             mNavController.popFragment(new FragNavTransactionOptions.Builder().customAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right).build());
         } else {
-            super.onBackPressed();
+            if (!isFinishing())
+                super.onBackPressed();
         }
     }
 
