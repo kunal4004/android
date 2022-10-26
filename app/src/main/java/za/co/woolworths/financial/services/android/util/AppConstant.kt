@@ -49,6 +49,8 @@ class AppConstant {
         const val HTTP_SESSION_TIMEOUT_440: Int = 440
         const val HTTP_EXPECTATION_FAILED_502: Int = 502
         const val HTTP_SESSION_TIMEOUT_400: Int = 400
+        const val HTTP_NOT_FOUND_404: Int = 404
+        const val HTTP_SERVICE_UNAVAILABLE_503: Int = 503
         const val RESPONSE_ERROR_CODE_1235: String = "1235"
 
         /*****************************************************************************************
@@ -108,7 +110,13 @@ class AppConstant {
         const val TAG_TAX_INVOICE_FRAGMENT: String = "TaxInvoiceFragment"
         const val ORDER_ID: String = "ORDER_ID"
         const val NAVIGATED_FROM_MY_ACCOUNTS = "NAVIGATED_FROM_MY_ACCOUNTS"
+        const val ORDER_ITEM_LIST = "Order_Item_List"
+        const val ORDER_ITEM_TOTAL = "Order_Item_Total"
+        const val ORDER_SHIPPING_TOTAL = "Order_Shipping_Total"
+        const val QUICK_LINK = "Quick Link - Slot "
 
+        const val RED_HEX_COLOR ="#ff0000"
+        const val DEFAULT_TAG_HEX_COLOR="#b2b2b2"
         // delete my profile
         const val DELETE_ACCOUNT = "DELETE_ACCOUNT"
         const val DELETE_ACCOUNT_CONFIRMATION = "DELETE_ACCOUNT_CONFIRMATION"

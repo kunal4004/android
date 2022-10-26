@@ -20,8 +20,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.google.gson.JsonSyntaxException
 import kotlinx.android.synthetic.main.confirm_address_bottom_sheet_dialog.*
 import kotlinx.android.synthetic.main.current_location_row_layout.*
+import kotlinx.android.synthetic.main.fragment_click_and_collect_stores.*
 import kotlinx.android.synthetic.main.no_connection.*
 import kotlinx.android.synthetic.main.no_connection.view.*
 import kotlinx.coroutines.launch
@@ -66,6 +68,7 @@ import za.co.woolworths.financial.services.android.util.location.Event
 import za.co.woolworths.financial.services.android.util.location.EventType
 import za.co.woolworths.financial.services.android.util.location.Locator
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import java.net.SocketTimeoutException
 import java.util.*
 
 class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected,
@@ -259,11 +262,10 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                     setButtonUI(it.length > 1)
                 }
                 progressBar?.visibility = View.GONE
-            } catch (e: HttpException) {
+            } catch (e: Exception) {
                 FirebaseManager.logException(e)
                 progressBar?.visibility = View.GONE
             }
-
         }
     }
 
@@ -545,7 +547,10 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                         }
                     }
                 }
-            } catch (e: HttpException) {
+            } catch (e: Exception) {
+                FirebaseManager.logException(e)
+                progressBar?.visibility = View.GONE
+            } catch (e: JsonSyntaxException) {
                 FirebaseManager.logException(e)
                 progressBar?.visibility = View.GONE
             }
@@ -613,7 +618,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                         }
                     }
                 }
-            } catch (e: HttpException) {
+            } catch (e: Exception) {
                 progressBar?.visibility = View.GONE
                 FirebaseManager.logException(e)
             }

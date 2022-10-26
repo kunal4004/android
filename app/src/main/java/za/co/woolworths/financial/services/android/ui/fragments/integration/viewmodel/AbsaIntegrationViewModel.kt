@@ -212,6 +212,7 @@ class AbsaIntegrationViewModel : ViewModel() {
                                            }
                                        }
                                    }
+                                   else -> {}
                                }
                            }
                         }

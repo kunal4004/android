@@ -47,7 +47,7 @@ import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 @AndroidEntryPoint
 class StandardDeliveryFragment : DepartmentExtensionFragment() {
 
-    private lateinit var locator: Locator
+    private var locator: Locator? = null
     private var isRootCallInProgress: Boolean = false
     private var location: Location? = null
     private var rootCategoryCall: Call<RootCategories>? = null
@@ -90,7 +90,7 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
     }
 
     fun initView() {
-        locator = Locator(activity as AppCompatActivity)
+        locator = (activity as? AppCompatActivity)?.let { Locator(it) }
 
         isDashEnabled = AppConfigSingleton.dashConfig?.isEnabled ?: false
 
@@ -115,7 +115,7 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
     }
 
     private fun startLocationDiscoveryProcess() {
-        locator.getCurrentLocation { locationEvent ->
+        locator?.getCurrentLocation { locationEvent ->
             when (locationEvent) {
                 is Event.Location -> handleLocationEvent(locationEvent)
                 is Event.Permission -> handlePermissionEvent(locationEvent)
@@ -255,10 +255,16 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
                     SubCategoryFragment.KEY_ARGS_ROOT_CATEGORY,
                     Utils.toJson(rootCategory)
                 )
+                bundle.putBoolean(AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS,
+                    arguments?.getBoolean(AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false) ?: false)
                 bundle.putString(SubCategoryFragment.KEY_ARGS_VERSION, version)
                 bundle.putBoolean(
                     SubCategoryFragment.KEY_ARGS_IS_LOCATION_ENABLED,
                     if (context != null) Utils.isLocationEnabled(context) else false
+                )
+                bundle.putBoolean(
+                    AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS,
+                    arguments?.getBoolean(AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false) ?: false
                 )
                 location?.let { bundle.putParcelable(SubCategoryFragment.KEY_ARGS_LOCATION, it) }
                 drillDownCategoryFragment.arguments = bundle

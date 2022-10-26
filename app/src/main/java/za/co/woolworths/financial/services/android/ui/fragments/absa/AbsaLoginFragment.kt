@@ -64,32 +64,53 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
 
     private fun absaResultObserver() {
        with(mViewModel){
-           loginResponseProperty.observe(viewLifecycleOwner, { loginResponse ->
+           loginResponseProperty.observe(viewLifecycleOwner) { loginResponse ->
                inProgress(false)
-               loginResponse?.apply { successHandler(nonce,esessionid)  }
-           })
+               loginResponse?.apply { successHandler(nonce, esessionid) }
+           }
 
-           failureHandler.observe(viewLifecycleOwner, { failure ->
-               activity?:return@observe
+           failureHandler.observe(viewLifecycleOwner) { failure ->
+               activity ?: return@observe
                clearPin()
                inProgress(false)
-               activity?.apply { FirebaseEventDetailManager.pin(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this) }
-               when(failure){
-                    is AbsaApiFailureHandler.HttpException,
-                    is AbsaApiFailureHandler.Exception  -> {
-                        activity?.apply { FirebaseEventDetailManager.undefined(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this) }
-                        showErrorScreen(ErrorHandlerActivity.COMMON)
-                    }
-                    is AbsaApiFailureHandler.NoInternetApiFailure -> {
-                        ErrorHandlerView(activity).showToast()
-                        activity?.apply { FirebaseEventDetailManager.network(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this) }
-                    }
-                    is AbsaApiFailureHandler.FeatureValidateCardAndPin.InvalidAbsaLoginStatusCode -> {
-                        activity?.apply { FirebaseEventDetailManager.pin(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this) }
-                        failureHandler(failure.message)
-                    }
-                }
-           })
+               activity?.apply {
+                   FirebaseEventDetailManager.pin(
+                       FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS,
+                       this
+                   )
+               }
+               when (failure) {
+                   is AbsaApiFailureHandler.HttpException,
+                   is AbsaApiFailureHandler.Exception -> {
+                       activity?.apply {
+                           FirebaseEventDetailManager.undefined(
+                               FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS,
+                               this
+                           )
+                       }
+                       showErrorScreen(ErrorHandlerActivity.COMMON)
+                   }
+                   is AbsaApiFailureHandler.NoInternetApiFailure -> {
+                       ErrorHandlerView(activity).showToast()
+                       activity?.apply {
+                           FirebaseEventDetailManager.network(
+                               FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS,
+                               this
+                           )
+                       }
+                   }
+                   is AbsaApiFailureHandler.FeatureValidateCardAndPin.InvalidAbsaLoginStatusCode -> {
+                       activity?.apply {
+                           FirebaseEventDetailManager.pin(
+                               FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS,
+                               this
+                           )
+                       }
+                       failureHandler(failure.message)
+                   }
+                   else -> {}
+               }
+           }
 
            isLoading.observe(viewLifecycleOwner, { isLoading ->
                pbLoginProgress?.visibility = when(isLoading){

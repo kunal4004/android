@@ -8,12 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.google.gson.JsonSyntaxException
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_click_and_collect_stores.*
 import kotlinx.android.synthetic.main.fragment_click_and_collect_stores.dynamicMapView
@@ -22,12 +23,10 @@ import kotlinx.android.synthetic.main.no_connection.view.*
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.StoreListAdapter
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
-import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate
 import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
@@ -42,6 +41,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import java.net.SocketTimeoutException
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -49,7 +49,6 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
     StoreListAdapter.OnStoreSelected, View.OnClickListener, TextWatcher, VtoTryAgainListener {
 
     private var mValidateLocationResponse: ValidateLocationResponse? = null
-    private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     private var dataStore: Store? = null
     private var bundle: Bundle? = null
     private var validateLocationResponse: ValidateLocationResponse? = null
@@ -57,6 +56,8 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
     private var isComingFromConfirmAddress: Boolean? = false
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
+
+    val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
 
     companion object {
         fun newInstance(bundle: Bundle?) =
@@ -92,7 +93,6 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setUpViewModel()
         dynamicMapView?.initializeMap(savedInstanceState, this)
         tvConfirmStore?.setOnClickListener(this)
         ivCross?.setOnClickListener(this)
@@ -254,19 +254,16 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
                         }
                     }
                 }
-            } catch (e: HttpException) {
+            } catch (e: Exception) {
+                FirebaseManager.logException(e)
+                clickCollectProgress?.visibility = View.GONE
+                showErrorDialog()
+            } catch (e:JsonSyntaxException) {
                 FirebaseManager.logException(e)
                 clickCollectProgress?.visibility = View.GONE
                 showErrorDialog()
             }
         }
-    }
-
-    private fun setUpViewModel() {
-        confirmAddressViewModel = ViewModelProvider(
-            this,
-            GeoLocationViewModelFactory(GeoLocationApiHelper())
-        ).get(ConfirmAddressViewModel::class.java)
     }
 
     private fun showErrorDialog() {
