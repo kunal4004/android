@@ -21,6 +21,7 @@ import static za.co.woolworths.financial.services.android.ui.fragments.product.d
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment.REQUEST_PAYMENT_STATUS;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_CONTINUE_SHOPPING;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.MY_LIST_LIST_ID;
@@ -457,14 +458,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
     private void deepLinkToOrderDetails(Parameter params) {
         if (SessionUtilities.getInstance().isUserAuthenticated()) {
-            if (INDEX_ACCOUNT != getBottomNavigationById().getCurrentItem()) {
-                getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
-                switchTab(INDEX_ACCOUNT);
-            }
-            pushFragment(new MyOrdersAccountFragment());
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                pushFragment(OrderDetailsFragment.Companion.getInstance(params));
-            }, AppConstant.DELAY_100_MS);
+            pushFragment(OrderDetailsFragment.Companion.getInstance(params));
         }
     }
 
@@ -906,7 +900,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if (!mNavController.isRootFragment()) {
             mNavController.popFragment(new FragNavTransactionOptions.Builder().customAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right).build());
         } else {
-            super.onBackPressed();
+            if (!isFinishing())
+                super.onBackPressed();
         }
     }
 
@@ -1036,6 +1031,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             mNavController.clearStackSignOut(new FragNavTransactionOptions.Builder().customAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right).build(), previousTabIndex);
         isNewSession = true;
     }
+
     @Override
     public void cartSummaryAPI() {
     }
@@ -1133,11 +1129,20 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     navigateToTabIndex(BottomNavigationActivity.INDEX_PRODUCT, null);
                     QueryBadgeCounter.getInstance().queryCartSummaryCount();
                     break;
-                } else {
+                }
+                else if (resultCode == RESULT_RELOAD_CART) {
+                    getCurrentFragment().onActivityResult(requestCode, resultCode, data);
+                }
+                else if(getCurrentFragment() instanceof ShopFragment) {
+                    ShopFragment fragment = (ShopFragment) getCurrentFragment();
+                    fragment.makeLastDashOrderDetailsCall();
+                }
+                else {
                     navigateToTabIndex(BottomNavigationActivity.INDEX_PRODUCT, null);
                     QueryBadgeCounter.getInstance().queryCartSummaryCount();
                     break;
                 }
+                    break;
             case REQUEST_CODE_ORDER_DETAILS_PAGE:// Call back when Toast clicked after adding item to shopping list
             case SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE:
                 navigateToMyList(requestCode, resultCode, data);
