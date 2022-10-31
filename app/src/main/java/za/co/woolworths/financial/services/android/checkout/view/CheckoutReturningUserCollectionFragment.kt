@@ -385,6 +385,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                         when (response.httpCode ?: 400) {
                             AppConstant.HTTP_OK -> {
                                 storePickupInfoResponse = response
+                                collectionDetails()
                                 if (!isAdded) {
                                     return@observe
                                 }
@@ -659,9 +660,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     private fun collectionDetails() {
-
-
-        tvCollectionDetailsText.text = getString(R.string.collection_details_text) + " 1-3 " + getString(R.string.notify_text_label)
+        val deliveryInDays = storePickupInfoResponse?.openDayDeliverySlots?.get(0)?.deliveryInDays
+        tvCollectionDetailsText.text = getString(R.string.collection_details_text) + " "+ deliveryInDays +" " + getString(R.string.notify_text_label)
     }
 
     fun initializeDeliveryInstructions() {

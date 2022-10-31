@@ -316,7 +316,7 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
                 if (btnCheckOut?.isEnabled == true && orderSummary != null) {
                     val deliveryType =
                         getType(Utils.getPreferredDeliveryLocation().fulfillmentDetails.deliveryType)
-
+                    productCountMap?.quantityLimit?.allowsCheckout = true
                     if ((deliveryType === Delivery.CNC) && (productCountMap != null)
                         && (productCountMap?.quantityLimit != null)
                         && !productCountMap?.quantityLimit?.allowsCheckout!!
