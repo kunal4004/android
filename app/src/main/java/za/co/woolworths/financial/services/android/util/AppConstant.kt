@@ -118,6 +118,7 @@ class AppConstant {
 
         // pargo store
         const val TAG_CHANGEFULLFILMENT_COLLECTION_STORE_FRAGMENT: String = "ChangeFullfilmentCollectionStoreFragment"
+        const val TAG_FBH_CNC_FRAGMENT: String = "FBHCNC"
     }
 
     class Keys {
