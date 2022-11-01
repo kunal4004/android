@@ -157,10 +157,13 @@ class ManageMyCardDetailsFragment : Fragment(R.layout.manage_card_details_fragme
             when (result) {
                 is ListCallback.CardNotReceived -> {
                     val dateTime = Utils.getSessionDaoValue(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN)
-                    if ((!viewModel.hasDaysPassed(dateTime, 35,SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN))
-                        && !result.isCardNotReceived
-                    ) return@showListItem
-                        router.routeToCardNotReceivedView(landingController, true)
+                    if (
+                        !viewModel.hasDaysPassed(dateTime, 35,SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN) ||
+                        !result.isCardNotReceivedFlowNeeded
+                    ) {
+                        return@showListItem
+                    }
+                    router.routeToCardNotReceivedView(landingController, true)
                 }
             }
         }

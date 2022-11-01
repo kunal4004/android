@@ -5,6 +5,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Conf
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDetailsResponse
 import za.co.woolworths.financial.services.android.models.dto.shop.DashCategories
 import za.co.woolworths.financial.services.android.models.network.Resource
 
@@ -17,4 +18,5 @@ interface ShopRepository {
     suspend fun validateLocation(placeId: String): Resource<ValidateLocationResponse>
     suspend fun confirmPlace(confirmLocationRequest: ConfirmLocationRequest): Resource<ConfirmDeliveryAddressResponse>
     suspend fun callStoreFinder(sku: String, startRadius: String?, endRadius: String?): Resource<LocationResponse>
+    suspend fun fetchLastDashOrderDetails(): Resource<LastOrderDetailsResponse>
 }

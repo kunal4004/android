@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutInappNotification"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/sixteen_dp"
+    android:layout_marginVertical="@dimen/sixteen_dp"
+    android:minHeight="@dimen/fourty_eight_dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/inappOrderNotificationContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/eight_dp"
+        android:background="@drawable/bg_black_round_corner_4"
+        android:minHeight="@dimen/fourty_eight_dp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/inappOrderNotificationIcon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_goneMarginEnd="0dp">
+
+        <ImageView
+            android:id="@+id/inappNotificationStartIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/sixteen_dp"
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            android:src="@drawable/icon_scooter_white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/inappOrderNotificationTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/eight_dp"
+            android:fontFamily="@font/myriad_pro_regular"
+            android:layout_marginHorizontal="@dimen/twelve_dp"
+            android:textColor="@color/white"
+            android:textSize="@dimen/twelve_sp"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toStartOf="@+id/inappNotificationEndIcon"
+            app:layout_constraintStart_toEndOf="@id/inappNotificationStartIcon"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Dash Delivery Order #362182477" />
+
+        <TextView
+            android:id="@+id/inappOrderNotificationSubitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/eight_dp"
+            android:fontFamily="@font/myriad_pro_semi_bold"
+            android:textColor="@color/white"
+            android:textSize="@dimen/fourteen_sp"
+            android:textAllCaps="true"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/inappNotificationEndIcon"
+            app:layout_constraintStart_toStartOf="@id/inappOrderNotificationTitle"
+            app:layout_constraintTop_toBottomOf="@id/inappOrderNotificationTitle"
+            tools:text="PACKING" />
+
+        <ImageView
+            android:id="@+id/inappNotificationEndIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/sixteen_dp"
+            android:src="@drawable/ic_white_chevron_right"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/inappOrderNotificationIcon"
+        android:layout_width="@dimen/fourty_eight_dp"
+        android:layout_height="@dimen/fourty_eight_dp"
+        android:background="@drawable/bg_black_round_corner_4"
+        android:padding="@dimen/fourteen_dp"
+        android:src="@drawable/ic_chat_icon"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/inappOrderNotificationContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/inappOrderNotificationContainer"
+        app:layout_goneMarginEnd="0dp"
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
