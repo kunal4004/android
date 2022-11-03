@@ -859,6 +859,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                             moveToTab(deliveryType)
                         }
                         else -> {
+                            if(!isAdded && !isVisible) return@launch
                             binding.showErrorDialog()
 
                         }
@@ -866,6 +867,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                 }
             } catch (e: Exception) {
                 FirebaseManager.logException(e)
+                if(!isAdded && !isVisible) return@launch
                 binding.progressBar.visibility = View.GONE
                 binding.showErrorDialog()
             }
@@ -1078,10 +1080,11 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     }
 
     private fun GeoLocationDeliveryAddressBinding.showErrorDialog() {
-        geoDeliveryTab.isEnabled = false
-        geoCollectTab.isEnabled = false
+        if(!isAdded && !isVisible) return
+        geoDeliveryTab?.isEnabled = false
+        geoCollectTab?.isEnabled = false
         requireActivity().resources?.apply {
-            vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
+            vtoErrorBottomSheetDialog?.showErrorBottomSheetDialog(
                 this@DeliveryAddressConfirmationFragment,
                 requireActivity(),
                 getString(R.string.vto_generic_error),
