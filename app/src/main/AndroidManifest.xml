@@ -21,11 +21,13 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.FLASHLIGHT" />
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:ignore="ProtectedPermissions" />
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" /> <!-- To check application on background or not for KITKAT -->
     <uses-permission android:name="android.permission.GET_TASKS" /> <!-- Don't require camera, as this requires a rear camera. This allows it to work on the Nexus 7 -->
-    <uses-permission
-        android:name="com.huawei.appmarket.service.commondata.permission.GET_COMMON_DATA"/>
+    <uses-permission android:name="com.huawei.appmarket.service.commondata.permission.GET_COMMON_DATA" />
+
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
@@ -82,7 +84,32 @@
         <intent>
             <action android:name="android.intent.action.SENDTO" />
         </intent>
+    </queries>
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
 
+            <data android:scheme="mailto" />
+        </intent>
+
+        <!-- Gallery -->
+        <intent>
+            <action android:name="android.intent.action.GET_CONTENT" />
+        </intent>
+        <!-- Camera -->
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+
+            <category android:name="android.intent.category.BROWSABLE" />
+
+            <data android:scheme="https" />
+        </intent>
+        <intent>
+            <action android:name="com.huawei.hms.core.aidlservice" />
+        </intent>
     </queries>
 
     <application
@@ -94,14 +121,19 @@
         android:label="${appLabel}"
         android:largeHeap="true"
         android:networkSecurityConfig="@xml/network_security_config"
+        android:resizeableActivity="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
-        tools:replace="label,android:name"
-        android:resizeableActivity="true" >
+        tools:replace="label,android:name">
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.fragments.account.pet_insurance.activities.PetInsuranceActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/FaqStyle"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.fragments.account.applynow.activities.ApplyNowActivity"
             android:theme="@style/salesPageMainStyle" />
@@ -126,13 +158,10 @@
             android:resource="@color/black" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="@string/default_notification_channel_id" />
-
-        <!-- Use this flag to disable automatic screen reporting -->
+            android:value="@string/default_notification_channel_id" /> <!-- Use this flag to disable automatic screen reporting -->
         <meta-data
             android:name="google_analytics_automatic_screen_reporting_enabled"
             android:value="false" />
-
 
         <service
             android:name="za.co.woolworths.financial.services.android.util.pushnotification.WFirebaseMessagingService"
@@ -141,35 +170,24 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service> <!-- ./Firebase Notifications -->
-
         <meta-data
             android:name="push_kit_auto_init_enabled"
-            android:value="true"/>
-
+            android:value="true" />
         <meta-data
             android:name="install_channel"
-            android:value="@string/install_channel">
-        </meta-data>
-
+            android:value="@string/install_channel" />
         <meta-data
             android:name="mobilesdk_app_id"
-            android:value="@string/oc_chat_app_id">
-        </meta-data>
-
+            android:value="@string/oc_chat_app_id" />
         <meta-data
             android:name="current_key"
-            android:value="@string/oc_chat_api_key">
-        </meta-data>
-
+            android:value="@string/oc_chat_api_key" />
         <meta-data
             android:name="chat_app"
-            android:value="@string/oc_chat_app">
-        </meta-data>
-
+            android:value="@string/oc_chat_app" />
         <meta-data
             android:name="one_cart_chat"
-            android:value="@string/one_cart_chat">
-        </meta-data>
+            android:value="@string/one_cart_chat" />
 
         <service
             android:name="za.co.woolworths.financial.services.android.util.pushnotification.WHuaweiMessagingService"
@@ -181,11 +199,12 @@
 
         <activity
             android:name="za.co.woolworths.financial.services.android.startup.view.StartupActivity"
+            android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/SplashTheme"
-            android:exported="true">
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter
@@ -205,6 +224,7 @@
                 android:autoVerify="true"
                 android:order="2">
                 <action android:name="OPEN_ACTIVITY_1" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -219,8 +239,7 @@
         <!-- Google Maps API Key -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/maps_google_api_key" />
-        <!-- Huawei HMS App ID -->
+            android:value="@string/maps_google_api_key" /> <!-- Huawei HMS App ID -->
         <meta-data
             android:name="com.huawei.hms.client.appid"
             android:value="@string/huawei_app_id" />
@@ -232,7 +251,6 @@
                 <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
             android:enabled="true"
@@ -243,7 +261,6 @@
         </receiver>
 
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
-
         <service
             android:name="com.google.android.gms.analytics.AnalyticsService"
             android:enabled="true"
@@ -253,7 +270,6 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.SearchStoresActivity"
             android:screenOrientation="portrait"
             android:theme="@style/StoreSearch" />
-
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.maintenance.MaintenanceWebViewActivity"
             android:screenOrientation="portrait"
@@ -349,8 +365,8 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity"
             android:label="@string/title_activity_bottom_navigation"
-            android:screenOrientation="portrait"
             android:launchMode="singleInstance"
+            android:screenOrientation="portrait"
             android:theme="@style/bottomNavigationStyle"
             android:windowSoftInputMode="adjustNothing" />
         <activity
@@ -360,9 +376,8 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"
-            android:theme="@style/Cart" />
-
+            android:theme="@style/Cart"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity"
             android:screenOrientation="portrait"
@@ -402,13 +417,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/DebitOrder" />
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.PortraitAppCompatActivity" />
-
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.maintenance.MaintenanceMessageActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/RuntimeExceptionActivityStyle" />
-
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"
@@ -475,8 +488,8 @@
 
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.HowToUseTemporaryStoreCardActivity"
-            android:screenOrientation="portrait"
             android:configChanges="screenSize|orientation"
+            android:screenOrientation="portrait"
             android:theme="@style/ShoppingListDetailActivityStyle" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity"
@@ -519,11 +532,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/ShoppingListDetailActivityStyle"
             android:windowSoftInputMode="adjustResize" />
+
         <service
             android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService"
             android:enabled="true"
             android:label="liveChatFollowMeService" />
-
         <service
             android:name="za.co.woolworths.financial.services.android.onecartgetstream.service.DashChatMessageListeningService"
             android:enabled="true"
@@ -584,22 +597,22 @@
             android:screenOrientation="portrait"
             android:theme="@style/VocStyle"
             android:windowSoftInputMode="adjustResize" />
-
-        <activity android:name="za.co.woolworths.financial.services.android.ui.vto.ui.gallery.BrowseFullScreenImageActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:screenOrientation="portrait" />
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.vto.ui.gallery.BrowseFullScreenImageActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.GetAPaymentPlanActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name="za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity"
-            android:theme="@style/storeCardActivityTheme"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/storeCardActivityTheme" />
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.fragments.account.fica.FicaActivity"
             android:screenOrientation="portrait"
@@ -607,16 +620,15 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.loading.EmailUsLoadingActivity"
-            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.fragments.shop.OrderTrackingWebViewActivity"
-            android:theme="@style/FaqStyle"
-            android:screenOrientation="portrait"/>
-
+            android:screenOrientation="portrait"
+            android:theme="@style/FaqStyle" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.ReportReviewActivity"
             android:exported="true"
-            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.MoreReviewActivity"
             android:exported="true"
@@ -625,35 +637,6 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.ReviewerInfoDetailsActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
-
-
     </application>
-
-    <queries>
-        <intent>
-            <action android:name="android.intent.action.SENDTO" />
-            <data android:scheme="mailto"/>
-        </intent>
-
-
-        <!-- Gallery -->
-        <intent>
-            <action android:name="android.intent.action.GET_CONTENT" />
-        </intent>
-        <!-- Camera -->
-        <intent>
-            <action android:name="android.media.action.IMAGE_CAPTURE" />
-        </intent>
-
-        <intent>
-            <action android:name="android.intent.action.VIEW" />
-            <category android:name="android.intent.category.BROWSABLE" />
-            <data android:scheme="https" />
-        </intent>
-
-        <intent>
-            <action android:name="com.huawei.hms.core.aidlservice" />
-        </intent>
-    </queries>
 
 </manifest>

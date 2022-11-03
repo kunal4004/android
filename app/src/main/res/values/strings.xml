@@ -7,6 +7,7 @@
 
     <string name="credit_card">CREDIT CARD</string>
     <string name="personal_loan">PERSONAL LOAN</string>
+    <string name="pet_insurance">PET INSURANCE</string>
     <string name="available_funds">Available Funds</string>
     <string name="total_amount_due">Total Amount Due</string>
     <string name="deduction_day">Deduction Day:</string>
@@ -960,6 +961,7 @@
     <string name="activate">ACTIVATE</string>
     <string name="linked_personal_loan_layout">Linked Personal Loan</string>
     <string name="apply_personal_loan_layout">Apply Personal Loan</string>
+    <string name="apply_pet_insurance_layout">Apply Pet Insurance</string>
     <string name="messages_layout">Messages</string>
     <string name="store_locator_layout">Store Locator</string>
     <string name="need_help_layout">Need Help</string>
@@ -2811,5 +2813,11 @@
     <string name="reported">REPORTED</string>
     <string name="a_report_for_this_review_has_already_been_submitted">A report for this review has already been submitted.</string>
 
-
+    <!--Pet Insurance -->
+    <string name="pet_insurance_dialog_title">What You’ll Need To Get Started</string>
+    <string name="pet_insurance_dialog_id">South African ID Number</string>
+    <string name="pet_insurance_dialog_id_desc">Pet Insurance is available for individuals 18 years or old with a valid SA ID number.</string>
+    <string name="pet_insurance_dialog_bank">Personal Banking Details</string>
+    <string name="pet_insurance_dialog_bank_desc">You’ll need these on hand to setup a recurring debit order.</string>
+    <string name="pet_insurance_covered">.Covered</string>
 </resources>
