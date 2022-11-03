@@ -862,8 +862,10 @@ public class Utils {
         currentUserObject.preferredShoppingDeliveryLocation = shoppingDeliveryLocation;
         currentUserObject.save();
 
-        AnalyticsManager.Companion.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.LIQUOR_DELIVERABLE,
-                "" + shoppingDeliveryLocation.fulfillmentDetails.getLiquorDeliverable());
+        if (shoppingDeliveryLocation != null && shoppingDeliveryLocation.fulfillmentDetails != null) {
+            AnalyticsManager.Companion.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.LIQUOR_DELIVERABLE,
+                    "" + shoppingDeliveryLocation.fulfillmentDetails.getLiquorDeliverable());
+        }
 
         Map<String, String> fulfillmentStoreType = KotlinUtils.Companion.retriveFulfillmentStoreIdList();
         for (String type : fulfillmentStoreType.keySet()) {
