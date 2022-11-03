@@ -1,7 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 import android.app.Activity.RESULT_OK
+import android.content.BroadcastReceiver
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -22,6 +24,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
 import com.daasuu.bl.ArrowDirection
@@ -50,6 +53,8 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListsRespo
 import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDetailsResponse
 import za.co.woolworths.financial.services.android.models.network.Parameter
 import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
+import za.co.woolworths.financial.services.android.receivers.DashOrderReceiver.Companion.ACTION_LAST_DASH_ORDER
+import za.co.woolworths.financial.services.android.receivers.DashOrderReceiverListener
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
@@ -91,8 +96,10 @@ import java.net.SocketTimeoutException
 @AndroidEntryPoint
 class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     OnChildFragmentEvents,
-    WMaterialShowcaseView.IWalkthroughActionListener, View.OnClickListener {
+    WMaterialShowcaseView.IWalkthroughActionListener, View.OnClickListener,
+    DashOrderReceiverListener{
 
+    private val dashOrderReceiver: BroadcastReceiver? = null
     val confirmAddressViewModel : ConfirmAddressViewModel by activityViewModels()
 
     private var timer: CountDownTimer? = null
@@ -146,6 +153,22 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     protected val shopViewModel: ShopViewModel by viewModels(
         ownerProducer = { this }
     )
+
+    override fun onStart() {
+        super.onStart()
+        dashOrderReceiver?.let {
+            LocalBroadcastManager.getInstance(requireContext()).registerReceiver(
+                it, IntentFilter(ACTION_LAST_DASH_ORDER)
+            )
+        }
+    }
+
+    override fun onStop() {
+        dashOrderReceiver?.let {
+            LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(it)
+        }
+        super.onStop()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -1439,5 +1462,15 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 R.anim.slide_out_to_left
             )
         }
+    }
+
+    override fun updateUnreadMessageCount(unreadMsgCount: Int) {
+        inAppNotificationView?.inappOrderNotificationChatCount?.text = unreadMsgCount.toString()
+        inAppNotificationView?.inappOrderNotificationChatCount?.visibility =
+            if(unreadMsgCount <= 0) View.GONE else VISIBLE
+    }
+
+    override fun updateLastDashOrder() {
+        makeLastDashOrderDetailsCall()
     }
 }
