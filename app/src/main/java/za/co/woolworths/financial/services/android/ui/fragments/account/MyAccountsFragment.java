@@ -94,6 +94,8 @@ import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuran
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState;
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus;
 import za.co.woolworths.financial.services.android.models.dto.account.FicaModel;
+import za.co.woolworths.financial.services.android.models.dto.account.InsuranceProducts;
+import za.co.woolworths.financial.services.android.models.dto.account.PetInsuranceModel;
 import za.co.woolworths.financial.services.android.models.dto.account.Products;
 import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigCreditCardDeliveryCardTypes;
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse;
@@ -103,6 +105,7 @@ import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAll
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
+import za.co.woolworths.financial.services.android.models.repository.AppConfigRepository;
 import za.co.woolworths.financial.services.android.models.repository.AppStateRepository;
 import za.co.woolworths.financial.services.android.ui.activities.CreditReportTUActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
@@ -123,6 +126,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.c
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountCardDetailPresenterImpl;
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.fica.FicaActivity;
+import za.co.woolworths.financial.services.android.ui.fragments.account.pet_insurance.activities.PetInsuranceActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.ContactUsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.SetUpDeliveryNowDialog;
 import za.co.woolworths.financial.services.android.ui.fragments.help.HelpSectionFragment;
@@ -246,9 +250,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private TextView appVersionNameInfoTextView;
     private TextView fspNumberInfoTextView;
     private ProgressBar progressPetInsurance;
-    private AppCompatTextView tvPetInsuranceCovered;
-    private AppCompatTextView tvPetInsuranceHelped;
-    private AppCompatTextView tvPetInsuranceApply;
+    private TextView tvPetInsuranceCovered;
+    private TextView tvPetInsuranceHelped;
+    private TextView tvPetInsuranceApply;
 
     public MyAccountsFragment() {
         // Required empty public constructor
@@ -532,6 +536,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     private void initialize() {
         ficaRequest();
+        petInsuranceRequest();
         this.mAccountResponse = null;
         new AppStateRepository().saveLinkedDevices(new ArrayList(0));
         this.hideAllLayers();
@@ -1630,6 +1635,48 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
                 }
             });
+        }
+    }
+    public void petInsuranceRequest() {
+        if (SessionUtilities.getInstance().isUserAuthenticated() && KotlinUtils.Companion.isPetInsuranceEnabled()) {
+            applyPetInsuranceCardView.setVisibility(View.VISIBLE);
+            progressPetInsurance.setVisibility(View.VISIBLE);
+            OneAppService.INSTANCE.getPetInsuranceResponse().enqueue(new Callback<PetInsuranceModel>() {
+                @Override
+                public void onResponse(Call<PetInsuranceModel> call, Response<PetInsuranceModel> response) {
+                    progressPetInsurance.setVisibility(View.GONE);
+                    if (getActivity() != null) {
+                        PetInsuranceModel petInsuranceModel = response.body();
+                        if (petInsuranceModel != null) {
+                            for (InsuranceProducts insuranceProduct : petInsuranceModel.getInsuranceProducts()) {
+                                if (insuranceProduct.getType().equals("pet")){
+                                    petInsuranceCheck(insuranceProduct);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<PetInsuranceModel> call, Throwable t) {
+
+                }
+            });
+        }else{
+            applyPetInsuranceCardView.setVisibility(View.GONE);
+        }
+    }
+    private void petInsuranceCheck(InsuranceProducts insuranceProduct) {
+        if (insuranceProduct.getEligible() && !insuranceProduct.getCovered()){
+            tvPetInsuranceApply.setVisibility(View.VISIBLE);
+            tvPetInsuranceCovered.setVisibility(View.GONE);
+            tvPetInsuranceHelped.setVisibility(View.GONE);
+        }else if (!insuranceProduct.getEligible() && insuranceProduct.getCovered()){
+            tvPetInsuranceApply.setVisibility(View.GONE);
+            tvPetInsuranceCovered.setVisibility(View.VISIBLE);
+            tvPetInsuranceHelped.setVisibility(View.VISIBLE);
+        }else {
+            applyPetInsuranceCardView.setVisibility(View.GONE);
         }
     }
 

@@ -1378,6 +1378,9 @@ class KotlinUtils {
         fun isFicaEnabled(): Boolean {
             return Utils.isFeatureEnabled(accountOptions?.ficaRefresh?.minimumSupportedAppBuildNumber)
         }
+        fun isPetInsuranceEnabled(): Boolean {
+            return Utils.isFeatureEnabled(accountOptions?.insuranceProducts?.minimumSupportedAppBuildNumber)
+        }
 
         fun saveAnonymousUserLocationDetails(shoppingDeliveryLocation: ShoppingDeliveryLocation) {
             Utils.sessionDaoSave(
