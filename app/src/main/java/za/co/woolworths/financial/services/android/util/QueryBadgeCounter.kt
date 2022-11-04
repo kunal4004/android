@@ -95,6 +95,7 @@ class QueryBadgeCounter : Observable() {
                 when (response?.httpCode) {
                     200 -> {
                         response.data.get(0)?.apply {
+                            if (totalItemsCount != null)
                             setCartCount(totalItemsCount)
                         }
                     }
