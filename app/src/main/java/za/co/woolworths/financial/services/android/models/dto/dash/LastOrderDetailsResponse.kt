@@ -31,8 +31,8 @@ class LastOrderDetailsResponse(
     @SerializedName("orderStatus")
     var orderStatus: String? = null,
 
-    @SerializedName("driverTrackingURL")
-    var driverTrackingURL: String? = null,
+    @SerializedName("driverTrackingUrl")
+    var driverTrackingUrl: String? = null,
 
     @SerializedName("isChatEnabled")
     var isChatEnabled: Boolean = false,
