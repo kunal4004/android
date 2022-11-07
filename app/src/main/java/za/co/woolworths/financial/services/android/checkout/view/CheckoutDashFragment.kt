@@ -1415,7 +1415,7 @@ class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_
     override fun onResume() {
         super.onResume()
         if (!areNotificationsEnabled()) {
-            buildPushNotificationAlertToast(requireActivity(), deliverySummaryScrollView, this)
+            buildPushNotificationAlertToast(requireActivity(), binding.deliverySummaryScrollView, this)
         }
     }
 
