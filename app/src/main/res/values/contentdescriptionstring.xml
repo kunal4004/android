@@ -170,4 +170,62 @@
     <string name="next_arrow">next_arrow</string>
     <string name="failure_icon">failure_icon</string>
 
+    <string name="store_card_overlay_my_cards_text_label">store_card_overlay_my_cards_text_label</string>
+    <string name="store_card_overlay_manage_my_cards_action_button">store_card_overlay_manage_my_cards_action_button</string>
+    <string name="inactive_store_card_image_on_overlay">inactive_store_card_image_on_overlay</string>
+    <string name="inactive_store_card_image_text_label_on_overlay">inactive_store_card_image_text_label_on_overlay</string>
+    <string name="get_replacement_card_action_button_card_icon_image_on_overlay">get_replacement_card_action_button_card_icon_image_on_overlay</string>
+    <string name="get_replacement_card_action_button_directional_arrow_on_overlay">get_replacement_card_action_button_directional_arrow_on_overlay</string>
+    <string name="link_new_card_action_button_link_icon_image_on_overlay">link_new_card_action_button_link_icon_image_on_overlay</string>
+    <string name="link_new_card_action_button_text_label_on_overlay">link_new_card_action_button_text_label_on_overlay</string>
+    <string name="link_new_card_action_button_directional_arrow_on_overlay">link_new_card_action_button_directional_arrow_on_overlay</string>
+    <string name="active_store_card_image_on_overlay">active_store_card_image_on_overlay</string>
+    <string name="active_store_card_image_embossed_user_name_on_overlay">active_store_card_image_embossed_user_name_on_overlay</string>
+    <string name="temporary_card_freeze_switch_button_snowflake_icon_image_on_overlay">temporary_card_freeze_switch_button_snowflake_icon_image_on_overlay</string>
+    <string name="block_card_action_button_text_label_on_overlay">block_card_action_button_text_label_on_overlay</string>
+    <string name="block_card_action_button_directional_arrow_on_overlay">block_card_action_button_directional_arrow_on_overlay</string>
+    <string name="block_card_action_button_card_icon_image_on_overlay">block_card_action_button_card_icon_image_on_overlay</string>
+    <string name="freeze_card_upsell_card_image_text_label_on_overlay">freeze_card_upsell_card_image_text_label_on_overlay</string>
+
+    <string name="freeze_card_upsell_card_image_action_button_text_label_on_overlay">freeze_card_upsell_card_image_action_button_text_label_on_overlay</string>
+    <string name="freeze_card_upsell_card_image_action_button_on_overlay">freeze_card_upsell_card_image_action_button_on_overlay</string>
+    <string name="temporary_card_freeze_switch_button_disabled_on_overlay">temporary_card_freeze_switch_button_disabled_on_overlay</string>
+    <string name="activate_vtsc_action_button_icon_image_on_overlay">activate_vtsc_action_button_icon_image_on_overlay</string>
+    <string name="temporary_card_freeze_switch_button_icon_image_on_overlay">temporary_card_freeze_switch_button_icon_image_on_overlay</string>
+    <string name="activate_vtsc_action_button_text_label_on_overlay">activate_vtsc_action_button_text_label_on_overlay</string>
+    <string name="temporary_card_freeze_switch_button_enabled_on_overlay">temporary_card_freeze_switch_button_enabled_on_overlay</string>
+    <string name="temporary_card_freeze_switch_button_text_label_on_overlay">temporary_card_freeze_switch_button_text_label_on_overlay</string>
+    <string name="activate_vtsc_action_button_directional_arrow_on_overlay">activate_vtsc_action_button_directional_arrow_on_overlay</string>
+    <string name="activate_vtsc_upsell_card_image_on_overlay">activate_vtsc_upsell_card_image_on_overlay</string>
+    <string name="activate_vtsc_upsell_card_image_text_label_on_overlay">activate_vtsc_upsell_card_image_text_label_on_overlay</string>
+    <string name="activate_vtsc_upsell_card_image_action_button_text_label_on_overlay">activate_vtsc_upsell_card_image_action_button_text_label_on_overlay</string>
+    <string name="activate_vtsc_upsell_card_image_action_button_on_overlay">activate_vtsc_upsell_card_image_action_button_on_overlay</string>
+
+    <string name="active_vtsc_card_image_temp_card_label_text_on_overlay">active_vtsc_card_image_temp_card_label_text_on_overlay</string>
+    <string name="active_vtsc_card_image_embossed_name_label_text_on_overlay">active_vtsc_card_image_embossed_name_label_text_on_overlay</string>
+    <string name="pay_with_card_vtsc_action_button_card_icon_image_on_overlay">pay_with_card_vtsc_action_button_card_icon_image_on_overlay</string>
+    <string name="pay_with_card_vtsc_action_button_text_label_on_overlay">pay_with_card_vtsc_action_button_text_label_on_overlay</string>
+    <string name="pay_with_card_vtsc_action_button_directional_arrow_on_overlay">pay_with_card_vtsc_action_button_directional_arrow_on_overlay</string>
+    <string name="how_it_works_vtsc_action_button_document_icon_image_on_overlay">how_it_works_vtsc_action_button_document_icon_image_on_overlay</string>
+    <string name="how_it_works_vtsc_action_button_text_label_on_overlay">how_it_works_vtsc_action_button_text_label_on_overlay</string>
+    <string name="how_it_works_vtsc_action_button_directional_arrow_on_overlay">how_it_works_vtsc_action_button_directional_arrow_on_overlay</string>
+    <string name="frozen_store_card_image_on_overlay">frozen_store_card_image_on_overlay</string>
+    <string name="page_dot_indicator_for_active_temp_store_card_on_overlay">page_dot_indicator_for_active_temp_store_card_on_overlay</string>
+    <string name="page_dot_indicator_for_primary_store_card_on_overlay">page_dot_indicator_for_primary_store_card_on_overlay</string>
+    <string name="active_temp_store_card_overlay_image">active_temp_store_card_overlay_image</string>
+    <string name="active_temp_store_card_label_for_overlay_image">active_temp_store_card_label_for_overlay_image</string>
+    <string name="embossed_user_name_for_active_temp_store_card_on_overlay_image">embossed_user_name_for_active_temp_store_card_on_overlay_image</string>
+    <string name="active_vtsc_card_image_on_overlay">active_vtsc_card_image_on_overlay</string>
+
+    <string name="title_text_has_your_card_not_arrived_in_the_post">title_text_has_your_card_not_arrived_in_the_post</string>
+    <string name="copy_text_has_your_card_not_arrived_in_the_post">copy_text_has_your_card_not_arrived_in_the_post</string>
+    <string name="button_my_card_hasnt_arrived">button_my_card_hasnt_arrived</string>
+    <string name="button_my_card_has_arrived">button_my_card_has_arrived</string>
+    <string name="title_text_thanks_for_letting_us_know">title_text_thanks_for_letting_us_know</string>
+    <string name="copy_text_thanks_for_letting_us_know">copy_text_thanks_for_letting_us_know</string>
+    <string name="button_thanks_for_letting_us_know">button_thanks_for_letting_us_know</string>
+    <string name="vtsc_oops_err_title">vtsc_oops_err_title</string>
+    <string name="vtsc_oops_error_message">vtsc_oops_error_message</string>
+    <string name="vtsc_try_again">vtsc_try_again</string>
+    <string name="vtsc_error_ok">vtsc_error_ok</string>
 </resources>

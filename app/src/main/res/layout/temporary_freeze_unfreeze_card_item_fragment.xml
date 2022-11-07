@@ -17,6 +17,7 @@
         <ImageView
             android:id="@+id/storeCardItem3ImageView"
             style="@style/accountOptionsImageviewStyle"
+            android:contentDescription="@string/temporary_card_freeze_switch_button_snowflake_icon_image_on_overlay"
             android:src="@drawable/icon_freeze_grey" />
 
         <TextView
@@ -28,6 +29,7 @@
             android:layout_marginStart="21dp"
             android:layout_marginTop="2dp"
             android:layout_toEndOf="@+id/storeCardItem3ImageView"
+            android:contentDescription="@string/temporary_card_freeze_switch_button_text_label_on_overlay"
             android:text="@string/temporary_card_freeze_title" />
 
         <za.co.woolworths.financial.services.android.ui.views.switcher.SwitchCompatWidget
@@ -36,7 +38,7 @@
             android:layout_height="@dimen/_24sdp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-      />
+            android:contentDescription="@string/temporary_card_freeze_switch_button_disabled_on_overlay" />
 
         <ProgressBar
             android:id="@+id/freezeProgressBar"
