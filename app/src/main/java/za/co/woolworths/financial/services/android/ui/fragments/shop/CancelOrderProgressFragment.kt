@@ -129,7 +129,7 @@ class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.On
     fun onCancelOrderSuccess() {
         setEventForCancelOrderForRefund()
         getProgressState()?.animateSuccessEnd(true)
-        processRequestDescriptionTextView.visibility = View.GONE
+        processRequestDescriptionTextView?.visibility = View.GONE
         processRequestTitleTextView?.text = bindString(R.string.cancel_order_success_title)
         (activity as? CancelOrderProgressActivity)?.triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CANCEL_API_SUCCESS)
     }
