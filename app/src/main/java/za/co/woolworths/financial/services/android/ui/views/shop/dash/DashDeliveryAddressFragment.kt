@@ -489,7 +489,7 @@ class DashDeliveryAddressFragment : Fragment(R.layout.fragment_dash_delivery), I
                                         }
                                     }
                                     else -> {
-                                        val addToCartBalloon by balloon(AddedToCartBalloonFactory::class)
+                                        val addToCartBalloon by balloon<AddedToCartBalloonFactory>()
                                         val bottomView =
                                             (requireActivity() as? BottomNavigationActivity)?.bottomNavigationById
                                         val buttonView: Button =

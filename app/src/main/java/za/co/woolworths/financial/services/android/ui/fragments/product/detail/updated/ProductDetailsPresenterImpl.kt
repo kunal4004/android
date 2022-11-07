@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated
 
+
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
 import za.co.woolworths.financial.services.android.util.AppConstant
 
@@ -33,6 +35,10 @@ class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDe
     override fun loadProductDetails(productRequest: ProductRequest) {
         mainView?.showProductDetailsLoading()
         getInteractor.getProductDetails(productRequest, this)
+    }
+
+    override fun loadRatingNReview(productID: String, limit: Int, offset: Int) {
+        getInteractor.getRaringNReview(productID, limit, offset, this)
     }
 
     override fun postAddItemToCart(addItemToCart: List<AddItemToCart>) {
@@ -134,6 +140,19 @@ class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDe
 
                         }
                         else -> mainView?.responseFailureHandler(this.response)
+                    }
+                }
+                is RatingAndReviewData -> {
+                    (this).apply {
+                        when (this.httpCode) {
+                            200 -> mainView?.onGetRatingNReviewSuccess(this)
+                            else -> this.response?.let {
+                                mainView?.apply {
+                                    onGetRatingNReviewFailed(it, httpCode)
+                                    hideProgressBar()
+                                }
+                            }
+                        }
                     }
                 }
             }

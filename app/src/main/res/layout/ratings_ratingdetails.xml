@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/color_FFFFFF">
+
+    <View
+        android:id="@+id/close_top"
+        android:layout_width="@dimen/fifty_dp"
+        android:layout_height="@dimen/six_dp"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:background="@color/bpi_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/rating_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/twenty_dp"
+        android:layout_marginTop="@dimen/fifteen_dp"
+        android:fontFamily="@font/futura_bold"
+        android:letterSpacing="@string/star_0"
+        android:text="@string/ratings_details"
+        android:textColor="@color/no_active_card_title"
+        android:textSize="@dimen/twenty_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/close_top" />
+
+    <include
+        android:id="@+id/pdpratings"
+        layout="@layout/pdp_rating_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_dp"
+        android:layout_marginTop="@dimen/twenty_dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rating_details" />
+
+    <TextView
+        android:id="@+id/tvRecommendPercent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_dp"
+        android:layout_marginTop="@dimen/twenty_dp"
+        style="@style/card_item_semi_bold_text_style"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tvRecommendTxtValue"
+        app:layout_constraintTop_toBottomOf="@+id/pdpratings" />
+
+    <TextView
+        android:id="@+id/tvRecommendTxtValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:textAlignment="center"
+        android:textColor="@color/card_details_value_color"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintStart_toEndOf="@+id/tvRecommendPercent"
+        app:layout_constraintTop_toBottomOf="@+id/pdpratings" />
+
+    <View
+        android:background="@color/layout_background_gray"
+        android:id="@+id/view_1"
+        android:layout_marginLeft="@dimen/twenty_dp"
+        android:layout_marginRight="@dimen/twenty_dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvRecommendPercent"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/one_dp">
+    </View>
+
+    <TextView
+        android:id="@+id/star5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:fontFamily="@font/futura_bold"
+        android:letterSpacing="1"
+        android:text="@string/star_5"
+        android:drawableEnd="@drawable/rating_bar_bg"
+        android:textAlignment="center"
+        android:textColor="@color/no_active_card_title"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view_1" />
+
+    <ProgressBar
+        android:id="@+id/progressbar_5"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="@dimen/five_dp"
+        android:layout_marginStart="@dimen/eight_dp"
+        android:layout_marginTop="@dimen/twenty_five_dp"
+        android:max="100"
+        android:progressDrawable="@drawable/progress_bar"
+        app:layout_constraintEnd_toStartOf="@+id/tv_5_starRating_count"
+        app:layout_constraintStart_toEndOf="@+id/star5"
+        app:layout_constraintTop_toBottomOf="@+id/view_1" />
+
+    <TextView
+        android:id="@+id/tv_5_starRating_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_dp"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:textAlignment="center"
+        android:text="@string/star_0"
+        android:textColor="@color/no_active_card_title"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/progressbar_5"
+        app:layout_constraintTop_toBottomOf="@+id/view_1" />
+
+    <TextView
+        android:id="@+id/star4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:fontFamily="@font/futura_bold"
+        android:letterSpacing="1"
+        android:text="@string/star_4"
+        android:drawableEnd="@drawable/rating_bar_bg"
+        android:textAlignment="center"
+        android:textColor="@color/no_active_card_title"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/star5" />
+
+    <ProgressBar
+        android:id="@+id/progressbar_4"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="@dimen/five_dp"
+        android:layout_marginStart="@dimen/eight_dp"
+        android:layout_marginTop="@dimen/twenty_five_dp"
+        android:max="100"
+        android:progressDrawable="@drawable/progress_bar"
+        app:layout_constraintEnd_toStartOf="@+id/tv_4_starRating_count"
+        app:layout_constraintStart_toEndOf="@+id/star4"
+        app:layout_constraintTop_toBottomOf="@+id/star5" />
+
+    <TextView
+        android:id="@+id/tv_4_starRating_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_dp"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:text="@string/star_0"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:textColor="@color/no_active_card_title"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/progressbar_4"
+        app:layout_constraintTop_toBottomOf="@+id/star5" />
+
+    <TextView
+        android:id="@+id/star3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:fontFamily="@font/futura_bold"
+        android:letterSpacing="1"
+        android:text="@string/star_3"
+        android:drawableEnd="@drawable/rating_bar_bg"
+        android:textAlignment="center"
+        android:textColor="@color/no_active_card_title"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/star4" />
+
+    <ProgressBar
+        android:id="@+id/progressbar_3"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="@dimen/five_dp"
+        android:layout_marginStart="@dimen/eight_dp"
+        android:layout_marginTop="@dimen/twenty_five_dp"
+        android:max="100"
+        android:progressDrawable="@drawable/progress_bar"
+        app:layout_constraintEnd_toStartOf="@+id/tv_3_starRating_count"
+        app:layout_constraintStart_toEndOf="@+id/star3"
+        app:layout_constraintTop_toBottomOf="@+id/star4" />
+
+    <TextView
+        android:id="@+id/tv_3_starRating_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_dp"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:textColor="@color/no_active_card_title"
+        android:textSize="@dimen/twelve_sp"
+        android:text="@string/star_0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/progressbar_3"
+        app:layout_constraintTop_toBottomOf="@+id/star4" />
+
+    <TextView
+        android:id="@+id/star2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:fontFamily="@font/futura_bold"
+        android:letterSpacing="1"
+        android:text="@string/star_2"
+        android:drawableEnd="@drawable/rating_bar_bg"
+        android:textAlignment="center"
+        android:textColor="@color/no_active_card_title"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/star3" />
+
+    <ProgressBar
+        android:id="@+id/progressbar_2"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="@dimen/five_dp"
+        android:layout_marginStart="@dimen/eight_dp"
+        android:layout_marginTop="@dimen/twenty_five_dp"
+        android:max="100"
+        android:progressDrawable="@drawable/progress_bar"
+        app:layout_constraintEnd_toStartOf="@+id/tv_2_starRating_count"
+        app:layout_constraintStart_toEndOf="@+id/star2"
+        app:layout_constraintTop_toBottomOf="@+id/star3" />
+
+    <TextView
+        android:id="@+id/tv_2_starRating_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_dp"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:textColor="@color/no_active_card_title"
+        android:textSize="@dimen/twelve_sp"
+        android:text="@string/star_0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/progressbar_2"
+        app:layout_constraintTop_toBottomOf="@+id/star3" />
+
+    <TextView
+        android:id="@+id/star1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:fontFamily="@font/futura_bold"
+        android:letterSpacing="1"
+        android:text="@string/star_1"
+        android:drawableEnd="@drawable/rating_bar_bg"
+        android:textAlignment="center"
+        android:textColor="@color/no_active_card_title"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/star2" />
+
+    <ProgressBar
+        android:id="@+id/progressbar_1"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="@dimen/five_dp"
+        android:layout_marginStart="@dimen/eight_dp"
+        android:layout_marginTop="@dimen/twenty_five_dp"
+        android:max="100"
+        android:progressDrawable="@drawable/progress_bar"
+        app:layout_constraintEnd_toStartOf="@+id/tv_1_starRating_count"
+        app:layout_constraintStart_toEndOf="@+id/star1"
+        app:layout_constraintTop_toBottomOf="@+id/star2" />
+
+    <TextView
+        android:id="@+id/tv_1_starRating_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_dp"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:textAlignment="center"
+        android:textColor="@color/no_active_card_title"
+        android:textSize="@dimen/twelve_sp"
+        android:text="@string/star_0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/progressbar_1"
+        app:layout_constraintTop_toBottomOf="@+id/star2" />
+
+    <View
+        android:background="@color/layout_background_gray"
+        android:id="@+id/view_2"
+        android:layout_marginLeft="@dimen/twenty_dp"
+        android:layout_marginRight="@dimen/twenty_dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_1_starRating_count"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/one_dp">
+    </View>
+
+    <TextView
+        android:id="@+id/close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:fontFamily="@font/futura_medium"
+        android:text="@string/close_btn"
+        android:paddingBottom="@dimen/sixteen_dp"
+        android:textSize="@dimen/twelve_sp"
+        android:textColor="@color/no_active_card_title"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/view_2" />
+</androidx.constraintlayout.widget.ConstraintLayout>

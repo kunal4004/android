@@ -11,6 +11,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Conf
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDetailsResponse
 import za.co.woolworths.financial.services.android.models.dto.shop.DashCategories
 import za.co.woolworths.financial.services.android.models.network.Event
 import za.co.woolworths.financial.services.android.models.network.Resource
@@ -27,26 +28,28 @@ class ShopViewModel @Inject constructor(
 
     private val _isOnDemandCategoriesAvailable = MutableLiveData(false)
     val isOnDemandCategoriesAvailable: LiveData<Boolean>
-    get() = _isOnDemandCategoriesAvailable
+        get() = _isOnDemandCategoriesAvailable
 
     private val _isDashCategoriesAvailable = MutableLiveData(false)
     val isDashCategoriesAvailable: LiveData<Boolean>
-    get() = _isDashCategoriesAvailable
+        get() = _isDashCategoriesAvailable
 
     private val _location = MutableLiveData<Location?>()
     val location: LiveData<Location?>
-    get() = _location
+        get() = _location
 
     private val _productList = MutableLiveData<ProductList?>()
     val productList: LiveData<ProductList?>
-    get() = _productList
+        get() = _productList
 
     private val _addItemToCart = MutableLiveData<AddItemToCart?>()
     val addItemToCart: LiveData<AddItemToCart?>
-    get() = _addItemToCart
+        get() = _addItemToCart
 
-    private val _inventorySkuForStore = MutableLiveData<Event<Resource<SkusInventoryForStoreResponse>>>()
-    val inventorySkuForStore: LiveData<Event<Resource<SkusInventoryForStoreResponse>>> = _inventorySkuForStore
+    private val _inventorySkuForStore =
+        MutableLiveData<Event<Resource<SkusInventoryForStoreResponse>>>()
+    val inventorySkuForStore: LiveData<Event<Resource<SkusInventoryForStoreResponse>>> =
+        _inventorySkuForStore
 
     private val _addItemToCartResp = MutableLiveData<Event<Resource<AddItemToCartResponse>>>()
     val addItemToCartResp: LiveData<Event<Resource<AddItemToCartResponse>>> = _addItemToCartResp
@@ -58,13 +61,23 @@ class ShopViewModel @Inject constructor(
     val dashLandingDetails: LiveData<Event<Resource<DashCategories>>> = _dashLandingDetails
 
     private val _validatePlaceDetails = MutableLiveData<Event<Resource<ValidateLocationResponse>>>()
-    val validatePlaceDetails: LiveData<Event<Resource<ValidateLocationResponse>>> = _validatePlaceDetails
+    val validatePlaceDetails: LiveData<Event<Resource<ValidateLocationResponse>>> =
+        _validatePlaceDetails
 
-    private val _confirmPlaceDetails = MutableLiveData<Event<Resource<ConfirmDeliveryAddressResponse>>>()
-    val confirmPlaceDetails: LiveData<Event<Resource<ConfirmDeliveryAddressResponse>>> = _confirmPlaceDetails
+    private val _confirmPlaceDetails =
+        MutableLiveData<Event<Resource<ConfirmDeliveryAddressResponse>>>()
+    val confirmPlaceDetails: LiveData<Event<Resource<ConfirmDeliveryAddressResponse>>> =
+        _confirmPlaceDetails
 
     private val _productStoreFinder = MutableLiveData<Event<Resource<LocationResponse>>>()
     val productStoreFinder: LiveData<Event<Resource<LocationResponse>>> = _productStoreFinder
+
+    private val _lastDashOrder = MutableLiveData<Event<Resource<LastOrderDetailsResponse>>>()
+    val lastDashOrder: LiveData<Event<Resource<LastOrderDetailsResponse>>> = _lastDashOrder
+
+    private val _lastDashOrderInProgress = MutableLiveData(false)
+    val lastDashOrderInProgress: LiveData<Boolean>
+        get() = _lastDashOrderInProgress
 
     fun getDashLandingDetails() {
         _dashLandingDetails.value = Event(Resource.loading(null))
@@ -103,7 +116,7 @@ class ShopViewModel @Inject constructor(
         viewModelScope.launch {
             val response = shopRepository.addItemsToCart(mAddItemsToCart)
             _addItemToCartResp.value = Event(response)
-            if(response.data?.httpCode == AppConstant.HTTP_OK) {
+            if (response.data?.httpCode == AppConstant.HTTP_OK) {
                 // Ensure counter is always updated after a successful add to cart
                 QueryBadgeCounter.instance.queryCartSummaryCount()
             }
@@ -144,6 +157,16 @@ class ShopViewModel @Inject constructor(
 
     fun setProductList(productList: ProductList) {
         _productList.value = productList
+    }
+
+    fun getLastDashOrderDetails() {
+        _lastDashOrder.value = Event(Resource.loading(null))
+        _lastDashOrderInProgress.value = true
+        viewModelScope.launch {
+            val response = shopRepository.fetchLastDashOrderDetails()
+            _lastDashOrder.value = Event(response)
+            _lastDashOrderInProgress.value = false
+        }
     }
 
 
