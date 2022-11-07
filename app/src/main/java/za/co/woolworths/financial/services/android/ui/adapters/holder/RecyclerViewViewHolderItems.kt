@@ -14,10 +14,11 @@ import kotlinx.android.synthetic.main.product_listing_promotional_images.view.*
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.Utils
-
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.product_listing_page_row, parent, false)) {
 
@@ -29,6 +30,7 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
             setBrandText(this, nextProduct, previousProduct)
             setBrandHeaderDescriptionText(this)
             setPromotionalText(this)
+            setRatingAndReviewCount(this)
             val priceItem = PriceItem()
             priceItem.setPrice(productList, itemView)
             setProductVariant(this)
@@ -47,9 +49,32 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
         tvProductName?.text = productList?.productName ?: ""
     }
 
+
+    private fun setRatingAndReviewCount(productList: ProductList) = with(itemView) {
+       if (RatingAndReviewUtil.isRatingAndReviewConfigavailbel() &&
+           productList.isRnREnabled == true
+       ) {
+               val ratings:Float = productList.averageRating!!.toFloat()
+               if (ratings == 0.0f) {
+                   rating_bar.visibility = View.INVISIBLE
+                   txt_rating_count.visibility = View.INVISIBLE
+               } else {
+                   rating_bar.visibility = VISIBLE
+                   txt_rating_count.visibility = VISIBLE
+                   rating_bar.rating = KotlinUtils.getUpdatedUtils(productList.averageRating!!.toFloat())
+                   txt_rating_count.text = String.format("(\t%s\t)",productList.reviewCount)
+               }
+
+       }  else {
+           rating_bar.visibility = View.INVISIBLE
+           txt_rating_count.visibility = View.INVISIBLE
+       }
+
+    }
+
     private fun setPromotionalText(productList: ProductList?) = with(itemView) {
-        if (productList?.promotionsList?.isEmpty() == false) {
-            productList?.promotionsList?.forEachIndexed { i, it ->
+        if (productList?.promotions?.isEmpty() == false) {
+            productList?.promotions?.forEachIndexed { i, it ->
                 var editedPromotionalText: String? = it.promotionalText
                 if (it.promotionalText?.contains(":") == true) {
                     val beforeColon: String? = it.promotionalText?.substringBefore(":")
@@ -59,7 +84,7 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
                 when (i) {
                     0 -> {
                         onlinePromotionalTextView1?.visibility = VISIBLE
-                        val promotionsListCount = productList?.promotionsList?.size ?: 0
+                        val promotionsListCount = productList?.promotions?.size ?: 0
                         onlinePromotionalTextView1?.text = Html.fromHtml(editedPromotionalText)
                         if (promotionsListCount == 1) {
                             onlinePromotionalTextView1?.maxLines = 2

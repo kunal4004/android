@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/vtoTryItOnBanner"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <View
+        android:id="@+id/separator"
+        style="@style/bottom_line"
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/promotionalTextDesc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:lineSpacingMultiplier="1.10"
+        android:textAlignment="center"
+        android:textColor="@color/color_666666"
+        android:textColorLink="@color/color_666666"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/separator" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

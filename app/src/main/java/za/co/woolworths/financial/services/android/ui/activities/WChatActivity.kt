@@ -18,6 +18,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.chat_activity.*
 import kotlinx.android.synthetic.main.chat_fragment.*
 import kotlinx.coroutines.GlobalScope
@@ -44,6 +45,7 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.util.*
 
+@AndroidEntryPoint
 class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener {
 
     private var mSubscribeToMessageReceiver: BroadcastReceiver? = null
@@ -75,7 +77,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
         initUI()
 
         with(chatViewModel) {
-            isCustomerSignOut.observe(this@WChatActivity, { isSignOut ->
+            isCustomerSignOut.observe(this@WChatActivity) { isSignOut ->
                 when (topVisibleFragment) {
                     is ChatFragment -> {
                         when (isSignOut) {
@@ -89,15 +91,21 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
                                         closeChatWindow()
                                     }
                                 }
+                            else -> {
+                                // Nothing
+                            }
                         }
                     }
                     is ChatRetrieveABSACardTokenFragment -> {
                         when (isSignOut) {
                             true -> GlobalScope.doAfterDelay(DELAY) { closeChatWindow() }
+                            else -> {
+                                // Nothing
+                            }
                         }
                     }
                 }
-            })
+            }
         }
 
         mSubscribeToMessageReceiver = object : BroadcastReceiver() {

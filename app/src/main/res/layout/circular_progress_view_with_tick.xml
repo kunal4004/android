@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:CircleProgressView="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/progress_bar"
+    android:layout_width="@dimen/eighty_dp"
+    android:layout_height="@dimen/eighty_dp"
+    android:layout_marginBottom="56dp"
+    app:layout_constraintBottom_toTopOf="@+id/progressTitle"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent">
+
+    <za.co.woolworths.financial.services.android.ui.views.tick_animation.CircleProgressView
+        android:id="@+id/circularProgressIndicator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        CircleProgressView:cpv_autoTextSize="true"
+        CircleProgressView:cpv_barColor="@color/black"
+        CircleProgressView:cpv_barColor1="@color/black"
+        CircleProgressView:cpv_barColor2="@color/black"
+        CircleProgressView:cpv_barColor3="@color/black"
+        CircleProgressView:cpv_barStartEndLineColor="@color/black"
+        CircleProgressView:cpv_barWidth="4dp"
+        CircleProgressView:cpv_direction="CW"
+        CircleProgressView:cpv_innerContourColor="@color/black"
+        CircleProgressView:cpv_innerContourSize="0dp"
+        CircleProgressView:cpv_maxValue="100"
+        CircleProgressView:cpv_maxValueAllowed="100"
+        CircleProgressView:cpv_minValueAllowed="0"
+        CircleProgressView:cpv_outerContourSize="0dp"
+        CircleProgressView:cpv_rimColor="@color/grey_bg"
+        CircleProgressView:cpv_rimWidth="4dp"
+        CircleProgressView:cpv_seekMode="false"
+        CircleProgressView:cpv_showUnit="false"
+        CircleProgressView:cpv_spin="true"
+        CircleProgressView:cpv_spinBarLength="200"
+        CircleProgressView:cpv_spinColor="@color/black"
+        CircleProgressView:cpv_spinSpeed="5"
+        CircleProgressView:cpv_textColor="@android:color/transparent"
+        CircleProgressView:cpv_textScale="1"
+        CircleProgressView:cpv_unit="%"
+        CircleProgressView:cpv_unitColor="@color/black"
+        CircleProgressView:cpv_unitPosition="right_top"
+        CircleProgressView:cpv_unitScale="1"
+        CircleProgressView:cpv_value="0" />
+
+    <za.co.woolworths.financial.services.android.ui.views.tick_animation.SuccessTickView
+        android:id="@+id/successTickView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/imFailureIcon"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:srcCompat="@drawable/npc_failure_icon" />
+
+</FrameLayout>

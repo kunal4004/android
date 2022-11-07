@@ -25,12 +25,12 @@ class GenericActionOrCancelDialogFragment : WBottomSheetDialogFragment() {
         private var listener: IActionOrCancel? = null
 
         fun newInstance(
-                dialogId: Int,
-                title: String,
-                desc: String,
-                actionButtonText: String,
-                cancelButtonText: String,
-                onActionListener: IActionOrCancel
+            dialogId: Int,
+            title: String,
+            desc: String,
+            actionButtonText: String,
+            cancelButtonText: String,
+            onActionListener: IActionOrCancel
         ): GenericActionOrCancelDialogFragment {
             listener = onActionListener
             return GenericActionOrCancelDialogFragment().withArgs {

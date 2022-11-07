@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.util
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityOptions
+import android.app.Dialog
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -11,7 +12,9 @@ import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.InsetDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -20,6 +23,7 @@ import android.text.*
 import android.text.style.*
 import android.util.TypedValue
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
@@ -29,7 +33,10 @@ import android.widget.TextView
 import androidx.annotation.RawRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.Group
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import com.awfs.coordination.R
@@ -102,6 +109,7 @@ import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
+import kotlin.math.roundToInt
 
 class KotlinUtils {
     companion object {
@@ -123,6 +131,12 @@ class KotlinUtils {
         const val RESULT_CODE_CLOSE_VIEW = 2203
         private var GEO_REQUEST_CODE = -1
 
+        const val REVIEW_DATA = "reviewData"
+        const val PROD_ID = "prod_id"
+        const val REVIEW_REPORT: String = "reviewReport"
+        const val REWIEW = "review"
+        const val HELPFULNESS = "helpfulness"
+        const val POSITIVE = "Positive"
 
         fun highlightTextInDesc(
             context: Context?,
@@ -195,7 +209,7 @@ class KotlinUtils {
             }
         }
 
-        private fun AppCompatActivity.setWindowFlag(bits: Int, on: Boolean) {
+        fun AppCompatActivity.setWindowFlag(bits: Int, on: Boolean) {
             val winParams = window?.attributes
             winParams?.apply {
                 flags = if (on) {
@@ -270,6 +284,13 @@ class KotlinUtils {
             view.background = shape
         }
 
+        fun getCardHolderNameSurname(): String? {
+            val jwtDecoded = SessionUtilities.getInstance()?.jwt
+            val name = jwtDecoded?.name?.get(0)
+            val familyName = jwtDecoded?.family_name?.get(0)
+            return "$name $familyName"
+        }
+
         fun dpToPxConverter(dp: Int): Int {
             return (dp * Resources.getSystem().displayMetrics.density).toInt()
         }
@@ -302,10 +323,10 @@ class KotlinUtils {
 
 
         fun capitaliseFirstWordAndLetters(str: String): CharSequence? {
-            val value = str.toLowerCase()
+            val value = str.lowercase()
             val words = value.split(" ").toMutableList()
 
-            var output = words[0].toUpperCase() + " "
+            var output = words[0].uppercase() + " "
             words.removeAt(0)
             for (word in words) {
                 output += word.capitalize() + " "
@@ -394,11 +415,11 @@ class KotlinUtils {
             return calendar.time
         }
 
-        fun removeRandFromAmount(amount: String): String {
-            if (amount.contains("R")) {
+        fun removeRandFromAmount(amount: String?): String {
+            if (amount?.contains("R") == true) {
                 return amount.substring(1)
             }
-            return amount
+            return amount ?: "0.0"
         }
 
         fun toShipByDateFormat(date: Date?): String {
@@ -585,6 +606,7 @@ class KotlinUtils {
                         dialogTitleImg = R.drawable.img_dash_delivery
                     }
                 }
+                else -> {}
             }
             val customBottomSheetDialogFragment =
                 CustomBottomSheetDialogFragment.newInstance(
@@ -872,6 +894,7 @@ class KotlinUtils {
             }
         }
 
+        fun String.capitaliseFirstLetterInEveryWord(): String = split(" ").map { it.lowercase().replaceFirstChar { it -> it.titlecase() } }.joinToString(" ")
         fun showGeneralInfoDialog(
             fragmentManager: FragmentManager,
             description: String,
@@ -1120,6 +1143,8 @@ class KotlinUtils {
                         accountOptions?.collectionsStartNewPlanJourney?.creditCard?.collectionsUrl to accountOptions?.showTreatmentPlanJourney?.creditCard?.collectionsDynamicUrl
                     exitUrl = accountOptions?.collectionsStartNewPlanJourney?.creditCard?.exitUrl
                 }
+
+                else -> {}
             }
 
             /**
@@ -1164,7 +1189,18 @@ class KotlinUtils {
             }
         }
 
-        fun getPreferredDeliveryType(): Delivery? {
+         fun getUpdatedUtils(rating:Float) :Float{
+             val completeValue: Int =  rating.toInt() %10
+             val decimalValue:Int = ((rating %1)*10).toInt()
+
+            if (decimalValue >= 0 && decimalValue <= 2) {
+                return completeValue.toFloat()
+            } else if (decimalValue > 2 && decimalValue <= 7) {
+                return (completeValue + .5).toFloat()
+            }
+            return rating.roundToInt().toFloat()
+        }
+          fun getPreferredDeliveryType(): Delivery? {
             return Delivery.getType(
                 Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType ?: Delivery.STANDARD.type
             )
@@ -1252,6 +1288,17 @@ class KotlinUtils {
             return fulFillmentStoreId
         }
 
+        fun retriveFulfillmentStoreIdList(): Map<String, String>? {
+            var fulfillmentDetails: Map<String, String>? = null
+            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.fulfillmentStores?.let {
+                fulfillmentDetails = Gson().fromJson<Map<String, String>>(
+                    it,
+                    object : com.google.gson.reflect.TypeToken<Map<String, String>>() {}.type
+                )
+            }
+            return fulfillmentDetails
+        }
+
         fun getUniqueDeviceID(result: (String?) -> Unit) {
             val deviceID = Utils.getSessionDaoValue(KEY.DEVICE_ID)
             when (deviceID.isNullOrEmpty()) {
@@ -1290,10 +1337,16 @@ class KotlinUtils {
         fun hasADayPassed(dateString: String?): Boolean {
             // when dateString = null it means it's the first time to call api
             if (dateString == null) return true
-            val from = LocalDateTime.parse(
-                dateString,
-                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
-            )
+            val from = try {
+                LocalDateTime.parse(
+                    dateString,
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
+                ) }catch (e :Exception) {
+                LocalDateTime.parse(
+                    dateString,
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+                )
+            }
             val today = LocalDateTime.now()
             var period = ChronoUnit.DAYS.between(from, today)
             return if (period >= 1) {
@@ -1392,19 +1445,22 @@ class KotlinUtils {
                 Delivery.STANDARD->{
                     event = VocTriggerEvent.CHCKOUT_CNT_TO_PMNT
                 }
+                else -> {}
             }
             return event
         }
 
          fun showMinCartValueError(activity: AppCompatActivity, minimumBasketAmount: Double?) {
-           showGeneralInfoDialog(
-                activity?.supportFragmentManager,
-                activity.getString(R.string.minspend_error_msg_desc),
-                String.format(activity.getString(R.string.minspend_error_msg_title, minimumBasketAmount)),
-                activity.getString(R.string.got_it),
-                R.drawable.ic_cart,
-                true
-            )
+             activity?.supportFragmentManager?.let {
+                 showGeneralInfoDialog(
+                     it,
+                     activity.getString(R.string.minspend_error_msg_desc),
+                     String.format(activity.getString(R.string.minspend_error_msg_title, minimumBasketAmount)),
+                     activity.getString(R.string.got_it),
+                     R.drawable.ic_cart,
+                     true
+                 )
+             }
         }
 
         @JvmStatic
@@ -1427,3 +1483,33 @@ class KotlinUtils {
         }
     }
 }
+
+fun Group.setAlphaForGroupdViews(alpha: Float) = referencedIds.forEach {
+    rootView.findViewById<View>(it).alpha = alpha
+}
+
+fun Fragment.setDialogPadding(dialog: Dialog?) {
+    val inset = 10
+    if (dialog != null) {
+        val width = (deviceWidth() - resources.getDimension(R.dimen._48sdp)).toInt()
+        val height = ViewGroup.LayoutParams.WRAP_CONTENT
+        dialog.window?.setLayout(width, height)
+        dialog.window?.setBackgroundDrawable(
+            InsetDrawable(
+                ColorDrawable(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.transparent
+                    )
+                ), inset, inset, inset, inset
+            )
+        )
+    }
+}
+
+
+
+
+
+
+
