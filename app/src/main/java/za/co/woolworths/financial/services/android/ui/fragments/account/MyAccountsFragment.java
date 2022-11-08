@@ -111,6 +111,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CreditReportTUA
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.apply_now.AccountSalesActivity;
@@ -126,7 +127,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.c
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountCardDetailPresenterImpl;
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.fica.FicaActivity;
-import za.co.woolworths.financial.services.android.ui.fragments.account.pet_insurance.activities.PetInsuranceActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.ContactUsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.SetUpDeliveryNowDialog;
 import za.co.woolworths.financial.services.android.ui.fragments.help.HelpSectionFragment;
@@ -190,6 +190,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     public static final int RESULT_CODE_LINK_DEVICE = 5432;
     public static final int RESULT_CODE_DEVICE_LINKED = 5431;
     public static final int RELOAD_ACCOUNT_RESULT_CODE = 55555;
+    public static final int PET_INSURANCE_REQUEST_CODE = 1212;
 
     private final List<String> unavailableAccounts;
     public static AccountsResponse mAccountResponse; //purely referenced to be passed forward as Intent Extra
@@ -1010,6 +1011,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 redirectToMyAccountsCardsActivity(ApplyNowState.PERSONAL_LOAN);
                 break;
             case R.id.applyPetInsurance:
+                navigateToPEtInsurance();
                 break;
             case R.id.linkedStoreCard:
                 navigateToLinkedStoreCard();
@@ -1116,6 +1118,12 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 break;
 
         }
+    }
+
+    private void navigateToPEtInsurance() {
+        Intent intent = new Intent(getActivity(), WInternalWebPageActivity.class);
+        getActivity().startActivityForResult(intent, PET_INSURANCE_REQUEST_CODE);
+        getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
     }
 
     private void navigateToLinkedStoreCard() {
@@ -1639,12 +1647,10 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
     public void petInsuranceRequest() {
         if (SessionUtilities.getInstance().isUserAuthenticated() && KotlinUtils.Companion.isPetInsuranceEnabled()) {
-            applyPetInsuranceCardView.setVisibility(View.VISIBLE);
-            progressPetInsurance.setVisibility(View.VISIBLE);
+            petInsuranceShowLoading();
             OneAppService.INSTANCE.getPetInsuranceResponse().enqueue(new Callback<PetInsuranceModel>() {
                 @Override
                 public void onResponse(Call<PetInsuranceModel> call, Response<PetInsuranceModel> response) {
-                    progressPetInsurance.setVisibility(View.GONE);
                     if (getActivity() != null) {
                         PetInsuranceModel petInsuranceModel = response.body();
                         if (petInsuranceModel != null) {
@@ -1666,7 +1672,17 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             applyPetInsuranceCardView.setVisibility(View.GONE);
         }
     }
+
+    private void petInsuranceShowLoading() {
+        applyPetInsuranceCardView.setVisibility(View.VISIBLE);
+        progressPetInsurance.setVisibility(View.VISIBLE);
+        tvPetInsuranceApply.setVisibility(View.GONE);
+        tvPetInsuranceCovered.setVisibility(View.GONE);
+        tvPetInsuranceHelped.setVisibility(View.GONE);
+    }
+
     private void petInsuranceCheck(InsuranceProducts insuranceProduct) {
+        progressPetInsurance.setVisibility(View.GONE);
         if (insuranceProduct.getEligible() && !insuranceProduct.getCovered()){
             tvPetInsuranceApply.setVisibility(View.VISIBLE);
             tvPetInsuranceCovered.setVisibility(View.GONE);
@@ -1736,22 +1752,23 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        //TODO: Comment what's actually happening here.
-
-        if (resultCode == RELOAD_ACCOUNT_RESULT_CODE) {
-            if (mUpdateMyAccount != null) {
-                mUpdateMyAccount.setRefreshType(UpdateMyAccount.RefreshAccountType.SWIPE_TO_REFRESH);
-                loadAccounts(true);
-                return;
-            }
-        }
 
         if (requestCode == ScreenManager.BIOMETRICS_LAUNCH_VALUE) {
             if (!isPromptsShown && isAccountsCallMade) {
                 isActivityInForeground = true;
                 showFeatureWalkthroughPrompts();
             }
-        } else if (resultCode == RESULT_CODE_LINK_DEVICE) {
+        }else if (requestCode == PET_INSURANCE_REQUEST_CODE){
+            if (resultCode == Activity.RESULT_OK){
+                petInsuranceRequest();
+            }
+        }else if (resultCode == RELOAD_ACCOUNT_RESULT_CODE) {
+            if (mUpdateMyAccount != null) {
+                mUpdateMyAccount.setRefreshType(UpdateMyAccount.RefreshAccountType.SWIPE_TO_REFRESH);
+                loadAccounts(true);
+                return;
+            }
+        }else if (resultCode == RESULT_CODE_LINK_DEVICE) {
             Serializable intentResult = data.getSerializableExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE);
             if (!(intentResult instanceof ApplyNowState)) {
                 return;
