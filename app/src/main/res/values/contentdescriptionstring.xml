@@ -146,6 +146,7 @@
     <string name="applicationBeingProcessedImage">applicationBeingProcessedImage</string>
     <string name="manageCardDotIndicator1">manageCardDotIndicator</string>
     <string name="manageCardDotIndicator2">manageCardDotIndicator2</string>
+
     <!-- Voice of Customer -->
     <string name="voc_list_questions">voc_list_questions</string>
     <string name="voc_question_slider">voc_question_slider</string>

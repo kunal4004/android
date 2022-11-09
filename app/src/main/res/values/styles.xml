@@ -1929,7 +1929,7 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:gravity">center</item>
         <item name="android:fontFamily">@font/myriad_pro_semi_bold_otf</item>
-        <item name="android:textSize">@dimen/_13sdp</item>
+        <item name="android:textSize">@dimen/_12ssp</item>
         <item name="android:paddingTop">@dimen/_1sdp</item>
         <item name="android:paddingBottom">@dimen/_1sdp</item>
         <item name="android:alpha">0.7</item>
@@ -2973,6 +2973,61 @@
         <item name="android:visibility">gone</item>
         <item name="android:background">@color/white</item>
         <item name="android:layout_height">@dimen/_10sdp</item>
+    </style>
+
+
+    <style name="pdp_no_of_review_text_style" parent="android:Theme">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textColor">#80000000</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:paddingEnd">0dp</item>
+    </style>
+
+    <style name="pdpRatingBar" parent="@android:style/Widget.RatingBar">
+        <item name="android:minHeight">12dp</item>
+        <item name="android:minWidth">16dp</item>
+        <item name="android:progressDrawable">@drawable/pdp_rating_bar_bg</item>
+    </style>
+
+    <style
+        name="reviewCount">
+        <item name="android:fontFamily">@font/futura_medium</item>
+        <item name="android:textColor">#80000000</item>
+        <item name="android:textSize">@dimen/ten_sp</item>
+    </style>
+
+
+    <style name="StarRating" parent="@android:style/Widget.RatingBar">
+        <item name="android:minHeight">12dp</item>
+        <item name="android:minWidth">16dp</item>
+        <item name="android:progressDrawable">@drawable/rating_bar_bg</item>
+    </style>
+
+    <style name="toolbar_title" >
+        <item name="android:textColor">@color/black</item>
+        <item name="fontFamily">@font/futura_semi_bold_ttf</item>
+        <item name="android:textSize">@dimen/twelve_dp</item>
+    </style>
+
+
+    <style name="myriad_pro_semi_bold_49BB77_15_text_style" >
+        <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
+        <item name="android:textSize">@dimen/fifteen_sp</item>
+        <item name="android:textColor">@color/color_49BB77</item>
+    </style>
+
+    <style name="myriad_pro_semi_bold_777777_15_text_style" >
+        <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
+        <item name="android:textSize">@dimen/fifteen_sp</item>
+        <item name="android:textColor">@color/account_card_desc_grey_color</item>
+    </style>
+
+    <style name="black_check_style">
+        <item name="colorAccent">@color/black</item>
     </style>
 
     <style name="ShopCustomTabTextAppearance" parent="TextAppearance.Design.Tab">

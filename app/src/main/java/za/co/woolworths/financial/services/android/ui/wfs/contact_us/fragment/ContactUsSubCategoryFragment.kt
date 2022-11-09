@@ -3,13 +3,14 @@ package za.co.woolworths.financial.services.android.ui.wfs.contact_us.fragment
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs
-import za.co.woolworths.financial.services.android.ui.compose.contentView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WhatsAppUnavailableFragment
+import za.co.woolworths.financial.services.android.ui.wfs.common.contentView
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.viewmodel.ContactUsViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.screen.ContactUsSubCategoryScreen
@@ -33,8 +34,9 @@ class ContactUsSubCategoryFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ) = contentView {
-        OneAppTheme {
+    ) = contentView(ViewCompositionStrategy.DisposeOnLifecycleDestroyed(viewLifecycleOwner)) {
+
+    OneAppTheme {
             ContactUsSubCategoryScreen(viewModel) { children ->
                 when (children.type) {
                     ContactUsType.ACTION_EMAIL_INAPP -> {

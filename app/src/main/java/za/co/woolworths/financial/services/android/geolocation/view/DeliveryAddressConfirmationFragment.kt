@@ -449,6 +449,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                     val confirmLocationResponse =
                         confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
                     progressBar.visibility = View.GONE
+                    if(!isAdded || !isVisible) return@launch
                     if (confirmLocationResponse != null) {
                         when (confirmLocationResponse.httpCode) {
                             HTTP_OK -> {
@@ -592,7 +593,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                             }
                         }
                     }
-                } catch (e: HttpException) {
+                } catch (e: Exception) {
                     progressBar.visibility = View.GONE
                     // navigate to shop tab with error scenario
                     activity?.setResult(REQUEST_CODE)
@@ -859,13 +860,15 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                             moveToTab(deliveryType)
                         }
                         else -> {
+                            if(!isAdded && !isVisible) return@launch
                             binding.showErrorDialog()
 
                         }
                     }
                 }
-            } catch (e: HttpException) {
+            } catch (e: Exception) {
                 FirebaseManager.logException(e)
+                if(!isAdded && !isVisible) return@launch
                 binding.progressBar.visibility = View.GONE
                 binding.showErrorDialog()
             }
@@ -1078,10 +1081,11 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     }
 
     private fun GeoLocationDeliveryAddressBinding.showErrorDialog() {
-        geoDeliveryTab.isEnabled = false
-        geoCollectTab.isEnabled = false
+        if(!isAdded && !isVisible) return
+        geoDeliveryTab?.isEnabled = false
+        geoCollectTab?.isEnabled = false
         requireActivity().resources?.apply {
-            vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
+            vtoErrorBottomSheetDialog?.showErrorBottomSheetDialog(
                 this@DeliveryAddressConfirmationFragment,
                 requireActivity(),
                 getString(R.string.vto_generic_error),

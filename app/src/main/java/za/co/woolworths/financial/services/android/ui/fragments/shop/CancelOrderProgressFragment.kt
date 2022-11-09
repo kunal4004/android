@@ -185,8 +185,10 @@ class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.On
             cancelOrderItem.putString(FirebaseAnalytics.Param.ITEM_NAME,
                 commarceItem.commerceItemInfo?.productDisplayName)
 
-            cancelOrderItem.putString(FirebaseAnalytics.Param.PRICE,
-                commarceItem.priceInfo?.amount?.toString())
+            commarceItem.priceInfo?.amount?.let {
+                cancelOrderItem.putDouble(FirebaseAnalytics.Param.PRICE,
+                        it)
+            }
 
             commarceItem.commerceItemInfo?.quantity?.let {
                 cancelOrderItem.putInt(FirebaseAnalytics.Param.QUANTITY,

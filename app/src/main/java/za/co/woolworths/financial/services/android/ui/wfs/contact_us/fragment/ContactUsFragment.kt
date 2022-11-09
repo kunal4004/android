@@ -4,11 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
-import za.co.woolworths.financial.services.android.ui.compose.contentView
+import za.co.woolworths.financial.services.android.ui.wfs.common.contentView
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.screen.ContactUsCategoryScreen
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.screen.ContactUsEvent
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.viewmodel.ContactUsViewModel
@@ -25,17 +26,20 @@ class ContactUsFragment : Fragment() {
     @Inject lateinit var toolbar: ContactUsToolbar
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?)
-    = contentView { OneAppTheme {
+            = contentView(ViewCompositionStrategy.DisposeOnLifecycleDestroyed(viewLifecycleOwner)) {
+        OneAppTheme {
             ContactUsCategoryScreen(viewModel) { event ->
-                when(event){
+                when (event) {
                     is ContactUsEvent.CategoryItemClicked -> {
                         viewModel.setSubCategoryItem(event.details)
-                        router.push(ContactUsSubCategoryFragment())}
+                        router.push(ContactUsSubCategoryFragment())
+                    }
                     else -> activity?.onBackPressed()
                 }
             }
         }
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

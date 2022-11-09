@@ -17,11 +17,14 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.awfs.coordination.R;
+import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingReviewResponse;
 import za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatDetailActivity;
@@ -29,6 +32,10 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment;
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Reviews;
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.MoreReviewActivity;
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.ReportReviewActivity;
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.ReviewerInfoDetailsActivity;
 
 /**
  * Created by eesajacobs on 2016/11/30.
@@ -275,5 +282,53 @@ public class ScreenManager {
     public static void presentToActionView(Activity activity, String actionURL) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(actionURL));
         activity.startActivity(intent);
+    }
+
+    public static void presentReviewDetail(Activity activity, RatingReviewResponse ratingReviewResponse) {
+        Gson gson = new Gson();
+        String ratingReviewResponseData = gson.toJson(ratingReviewResponse);
+        Bundle bundle = new Bundle();
+        bundle.putString(KotlinUtils.REVIEW_DATA, ratingReviewResponseData);
+        naviagteToReviewInfoDetailsActivity(activity, bundle);
+    }
+
+    public static void presentRatingAndReviewDetail(Activity activity,
+                                                    String prodId) {
+        Bundle bundle = new Bundle();
+        bundle.putString(KotlinUtils.PROD_ID, prodId);
+        naviagteToMoreReviewsActivity(activity, bundle);
+    }
+
+    public static void presentReportReview(Activity activity, ArrayList<String> reportReviewOptions, Reviews reviews) {
+        naviagteToReportReviewActivity(activity, reportReviewOptions, reviews);
+    }
+
+    private static void naviagteToReviewInfoDetailsActivity(Activity activity, Bundle bundle) {
+        Intent intent = new Intent(activity, ReviewerInfoDetailsActivity.class);
+        intent.putExtras(bundle);
+        activity.startActivityForResult(intent, 0);
+        activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+
+    }
+
+    private static void naviagteToMoreReviewsActivity(Activity activity, Bundle bundle) {
+        Intent intent = new Intent(activity, MoreReviewActivity.class);
+        intent.putExtras(bundle);
+        activity.startActivityForResult(intent, 0);
+        activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+
+    }
+
+    private static void naviagteToReportReviewActivity(Activity activity, ArrayList<String> reportReviews, Reviews reviews) {
+        Intent intent = new Intent(activity, ReportReviewActivity.class);
+        Gson gson = new Gson();
+        String reviewData = gson.toJson(reviews);
+        Bundle bundle = new Bundle();
+        bundle.putString(KotlinUtils.REVIEW_DATA,reviewData);
+        bundle.putStringArrayList(KotlinUtils.REVIEW_REPORT, reportReviews);
+        intent.putExtras(bundle);
+        activity.startActivityForResult(intent, 0);
+        activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+
     }
 }

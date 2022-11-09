@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_FFFFFF">
+
+    <View
+        android:id="@+id/close_top"
+        android:layout_width="@dimen/fifty_dp"
+        android:layout_height="@dimen/six_dp"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:background="@color/bpi_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/skin_profile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/twenty_dp"
+        android:layout_marginTop="@dimen/thirty_dp"
+        android:fontFamily="@font/futura_medium"
+        android:letterSpacing="0"
+        android:textColor="@color/no_active_card_title"
+        android:textSize="@dimen/twenty_five_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/close_top" />
+
+    <include
+        android:id="@+id/skin_profile_layout"
+        layout="@layout/skin_profile_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/skin_profile"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/skin_profile"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:fontFamily="@font/futura_medium"
+        android:alpha="0.5"
+        android:paddingBottom="@dimen/sixteen_dp"
+        android:text="@string/close_btn"
+        android:textColor="@color/offer_title"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/skin_profile_layout" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -14,9 +15,9 @@ import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigOptions
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
-import za.co.woolworths.financial.services.android.ui.compose.contentView
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.emailus.EmailUsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.list.EnquiriesListViewModel
+import za.co.woolworths.financial.services.android.ui.wfs.common.contentView
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.screen.SelectEnquiryTypeList
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.viewmodel.ContactUsViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.core.LandingRouter
@@ -45,8 +46,9 @@ class ContactUsSelectEmailEnquiryTypeFragment : Fragment() {
             mBottomNavigator = context
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) = contentView {
-        OneAppTheme {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?)
+            = contentView(ViewCompositionStrategy.DisposeOnLifecycleDestroyed(viewLifecycleOwner)) {
+    OneAppTheme {
             SelectEnquiryTypeList(viewModel.enquiryList) { childrenItem ->
                 enquiryViewModel.apply {
                     (activity is BottomNavigationActivity).apply {

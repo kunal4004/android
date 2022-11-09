@@ -9,5 +9,6 @@ data class ConfigDashConfig(
         val minimumSupportedAppBuildNumber: Int?,
         var isEnabled: Boolean = false,
         val driverTip: DriverTip,
-        var inAppChat: OneCartConfigInAppChat? = null
+        var inAppChat: OneCartConfigInAppChat? = null,
+        var inAppChatHuaweiPNData: InAppChatHuaweiPNConfig? = null
 ): Parcelable
