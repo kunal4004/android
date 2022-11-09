@@ -414,7 +414,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     }
                     if (RatingAndReviewUtil.reportedReviews.contains(it.id.toString())) {
                         tvReport?.setTextColor(Color.RED)
-                        tvReport?.text = resources.getString(R.string.reported)
+                        tvReport?.text = resources?.getString(R.string.reported)
                         tvReport?.setTypeface(tvReport.typeface, Typeface.BOLD)
                         tvReport?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
                     }
@@ -509,7 +509,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     R.id.tvSkinProfile -> viewSkinProfileDialog()
                     R.id.btViewMoreReview -> navigateToMoreReviewsScreen()
                     R.id.tvTotalReviews -> {
-                        if (tvTotalReviews.text != ZERO_REVIEWS) navigateToMoreReviewsScreen()
+                        if (tvTotalReviews?.text != ZERO_REVIEWS) navigateToMoreReviewsScreen()
                     }
                     R.id.tvReport -> navigateToReportReviewScreen()
                     R.id.iv_like -> likeButtonClicked()
@@ -1376,16 +1376,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 onlinePromotionalTextView3?.visibility = View.GONE
             }
             if (it.isRnREnabled!= null && it.isRnREnabled && RatingAndReviewUtil.isRatingAndReviewConfigavailbel()) {
-                ratingBarTop.rating = it.averageRating
-                tvTotalReviews.text = resources.getQuantityString(
+                ratingBarTop?.rating = it.averageRating
+                tvTotalReviews?.text = resources.getQuantityString(
                     R.plurals.no_review,
                     it.reviewCount,
                     it.reviewCount
                 )
-                ratingBarTop.visibility = View.VISIBLE
-                tvTotalReviews.visibility = View.VISIBLE
+                ratingBarTop?.visibility = View.VISIBLE
+                tvTotalReviews?.visibility = View.VISIBLE
                 prodId = it.productId
-                tvTotalReviews.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                tvTotalReviews?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
             } else {
                 hideRatingAndReview()
             }
@@ -1436,7 +1436,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         else {
                             btViewMoreReview?.visibility = View.GONE
                         }
-                        tvTotalReviews.text =
+                        tvTotalReviews?.text =
                             resources.getQuantityString(
                                 R.plurals.no_review,
                                 reviewCount,
