@@ -410,13 +410,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             if (ratingReviewResponse?.reviews?.isNotEmpty() == true) {
                 ratingReviewResponse?.reviews?.get(0)?.let {
                     if (RatingAndReviewUtil.likedReviews.contains(it.id.toString())) {
-                        iv_like.setImageResource(R.drawable.iv_like_selected)
+                        iv_like?.setImageResource(R.drawable.iv_like_selected)
                     }
                     if (RatingAndReviewUtil.reportedReviews.contains(it.id.toString())) {
-                        tvReport.setTextColor(Color.RED)
-                        tvReport.text = resources.getString(R.string.reported)
+                        tvReport?.setTextColor(Color.RED)
+                        tvReport?.text = resources.getString(R.string.reported)
                         tvReport?.setTypeface(tvReport.typeface, Typeface.BOLD)
-                        tvReport.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                        tvReport?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
                     }
                 }
 
@@ -2964,8 +2964,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             showRatingAndReview()
             setReviewUI(ratingNReview.data[0])
             ratingReviewResponse = ratingNReview.data[0]
-            scrollView.post {
-                scrollView.fullScroll(View.FOCUS_DOWN)
+            scrollView?.post {
+                scrollView?.fullScroll(View.FOCUS_DOWN)
             }
         } else
             hideRatingAndReview()
