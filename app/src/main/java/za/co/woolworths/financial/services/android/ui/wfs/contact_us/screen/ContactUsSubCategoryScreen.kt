@@ -5,9 +5,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import za.co.woolworths.financial.services.android.ui.wfs.component.*
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.cell.LeftIconTitleDescriptionAndNextArrowItem
-import za.co.woolworths.financial.services.android.ui.wfs.contact_us.cell.TitleLabelItem
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.cell.LabelTitle
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.viewmodel.ContactUsViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.Children
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ChildrenItem
@@ -21,10 +22,16 @@ fun ContactUsSubCategoryScreen(viewModel: ContactUsViewModel, onSelected: (Child
 fun SubCategoryList(listOfChildren: MutableList<ChildrenItem>, onSelected: (Children) -> Unit) {
     BoxBackground {
         ListColumn(list = listOfChildren) { item ->
-                TitleLabelItem(title = item.title)
+                LabelTitle(LabelProperties(label = item.title,
+                    modifier = Modifier.padding(
+                    start = 24.dp,
+                    end = 24.dp,
+                    top = 22.dp,
+                    bottom = 20.dp
+                )))
                 Column(Modifier.padding(start = 24.dp, end = 15.dp)) {
                     item.description?.let { desc ->
-                        TitleSmallText(desc)
+                        LabelSmall(LabelProperties(label = desc))
                         Spacer(modifier = Modifier.height(24.dp))
                     }
                 }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.wfs.component.*
@@ -13,13 +14,36 @@ import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.Child
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ChildrenItem
 
 @Composable
-fun TitleLabelItem(title: String?) {
-    TitleLargeText(
-        text = title ?: "", modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 24.dp, top = 22.dp, bottom = 20.dp, end = 15.dp)
+fun LabelTitle(params: LabelProperties) {
+    LabelTitleLarge(
+        params = LabelProperties(
+            label = params.label,
+            stringId = params.stringId,
+            fontSize = params.fontSize,
+            isUpperCased = params.isUpperCased,
+            letterSpacing = params.letterSpacing,
+            modifier = params.modifier
+            .fillMaxWidth(),
+            textColor = params.textColor,
+            textAlign = params.textAlign)
     )
 }
+
+@Composable
+fun LabelMediumText(params: LabelProperties){
+    LabelMedium(
+        LabelProperties(
+            label = params.label,
+            isUpperCased = params.isUpperCased,
+            textDecoration = params.textDecoration,
+            stringId = params.stringId,
+            textAlign = TextAlign.Center,
+            textColor = params.textColor,
+            letterSpacing = params.letterSpacing,
+            modifier = params.modifier
+            .fillMaxWidth()
+            .padding(start = 24.dp, top = 22.dp, bottom = 20.dp, end = 15.dp))
+    )}
 
 @Composable
 fun TitleDescriptionAndNextArrowItem(children: Children) {
@@ -33,8 +57,8 @@ fun TitleDescriptionAndNextArrowItem(children: Children) {
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
-            children.title?.let { title -> TitleMediumText(title) }
-            children.description?.let { description -> TitleSmallText(description) }
+            LabelMedium(LabelProperties(label = children.title))
+            LabelSmall(LabelProperties(label = children.description))
         }
         MyIcon(id = R.drawable.ic_caret_black, contentDescriptionId = R.string.next_arrow)
     }
@@ -50,8 +74,8 @@ fun LeftIconTitleDescriptionAndNextArrowItem(item: Children) {
     ) {
         MyIcon(id = item.type?.iconId(), modifier = Modifier.padding(end = 16.dp))
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            item.title?.let { TitleMediumText(item.title) }
-            item.description?.let { description -> TitleSmallText(description) }
+           LabelMedium(LabelProperties(label = item.title))
+           LabelSmall(LabelProperties(label = item.description))
         }
         MyIcon(id = R.drawable.ic_caret_black, contentDescriptionId = R.string.next_arrow)
     }
@@ -74,7 +98,7 @@ fun TextWithRadioButtonOption(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(modifier = Modifier.weight(1f).padding(start = 24.dp, end = 2.dp)
-            ) { item.title?.let { TitleSmallText(it) } }
+            ) { LabelSmall(LabelProperties(label =  item.title))  }
             CheckedUncheckedRadioButton(isChecked = item == selectedOption)
         }
         DividerThicknessOne()

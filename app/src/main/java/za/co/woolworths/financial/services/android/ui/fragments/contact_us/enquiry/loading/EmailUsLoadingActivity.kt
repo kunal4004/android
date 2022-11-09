@@ -53,7 +53,7 @@ class EmailUsLoadingActivity : AppCompatActivity(), View.OnClickListener {
             btnEmailUsLoadingDismiss.visibility = VISIBLE
             btnEmailUsLoadingGotIt.text = bindString(R.string.retry)
             tvEmailUsLoadingTitle.text = bindString(R.string.enquiry_failed)
-            tvEmailUsLoadingDesc.text = bindString(R.string.enquiry_failed_retry)
+            tvEmailUsLoadingDesc.text = error
             ivEmailUsLoading.setImageResource(R.drawable.ic_error_icon)
 
         }

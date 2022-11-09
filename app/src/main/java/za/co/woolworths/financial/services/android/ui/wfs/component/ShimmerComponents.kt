@@ -10,6 +10,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.Content
 
 @Composable
 fun ShimmerTitleDescriptionAndNextArrowItem(brush : Brush) {
@@ -56,4 +57,26 @@ fun ShimmerIconLabel(boxSize : Dp = 24.dp, brush : Brush){
         .size(boxSize)
         .clip(MaterialTheme.shapes.small)
         .background(brush = brush))
+}
+
+
+@Composable
+fun LoadingShimmerList(contentList: MutableList<Content>) {
+    ShimmerEffect { brush ->
+        BoxBackground {
+            ListColumn(list = contentList) { item ->
+                Column {
+                    ShimmerTextLabel(brush = brush)
+                    DividerThicknessOne()
+                }
+                val size = item.children.size.minus(1)
+                item.children.forEachIndexed { index, _ ->
+                    Column {
+                        ShimmerTitleDescriptionAndNextArrowItem(brush = brush)
+                        if (index == (size)) DividerThicknessEight() else DividerThicknessOne()
+                    }
+                }
+            }
+        }
+    }
 }

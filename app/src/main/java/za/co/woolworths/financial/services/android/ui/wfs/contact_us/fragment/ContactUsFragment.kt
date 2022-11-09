@@ -9,13 +9,11 @@ import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.ui.compose.contentView
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.error_handler.GeneralErrorDialogPopupFragment
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.screen.ContactUsCategoryScreen
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.screen.ContactUsEvent
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.viewmodel.ContactUsViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.core.LandingRouter
 import za.co.woolworths.financial.services.android.ui.wfs.theme.OneAppTheme
-import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -33,14 +31,7 @@ class ContactUsFragment : Fragment() {
                     is ContactUsEvent.CategoryItemClicked -> {
                         viewModel.setSubCategoryItem(event.details)
                         router.push(ContactUsSubCategoryFragment())}
-                    is ContactUsEvent.Response -> {
-                        try {
-                            val error = GeneralErrorDialogPopupFragment.newInstance(event.serverErrorResponse)
-                            error.show(requireActivity().supportFragmentManager, GeneralErrorDialogPopupFragment::class.java.simpleName)
-                        }catch (e : Exception){
-                            FirebaseManager.logException(e)
-                        }
-                    }
+                    else -> activity?.onBackPressed()
                 }
             }
         }

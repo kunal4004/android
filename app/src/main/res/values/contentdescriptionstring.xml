@@ -167,5 +167,6 @@
     <string name="dialog_confirmorcancel_action_cancel">dialog_confirmorcancel_action_cancel</string>
     <string name="dialog_confirmorcancel_action_cancel_label">dialog_confirmorcancel_action_cancel_label</string>
     <string name="next_arrow">next_arrow</string>
+    <string name="failure_icon">failure_icon</string>
 
 </resources>

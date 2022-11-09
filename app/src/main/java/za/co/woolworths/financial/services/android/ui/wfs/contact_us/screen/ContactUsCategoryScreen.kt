@@ -8,64 +8,72 @@ import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.awfs.coordination.R
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
+import za.co.woolworths.financial.services.android.ui.wfs.common.ButtonEvent
 import za.co.woolworths.financial.services.android.ui.wfs.common.ConnectionState
+import za.co.woolworths.financial.services.android.ui.wfs.common.FailureScenario
 import za.co.woolworths.financial.services.android.ui.wfs.common.connectivityState
 import za.co.woolworths.financial.services.android.ui.wfs.component.*
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.cell.LabelTitle
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.cell.TitleDescriptionAndNextArrowItem
-import za.co.woolworths.financial.services.android.ui.wfs.contact_us.cell.TitleLabelItem
-import za.co.woolworths.financial.services.android.ui.wfs.contact_us.viewmodel.ContactUsViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ChildrenItem
-import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.Content
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ContactUsRemoteModel
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.Content
+import za.co.woolworths.financial.services.android.ui.wfs.contact_us.viewmodel.ContactUsViewModel
 import za.co.woolworths.financial.services.android.ui.wfs.theme.TitleSmall
 
 sealed class ContactUsEvent {
-    data class CategoryItemClicked(val details: Pair<String?, MutableList<ChildrenItem>>) : ContactUsEvent()
-    data class Response(val serverErrorResponse: ServerErrorResponse) : ContactUsEvent()
+    object Dismiss : ContactUsEvent()
+    data class CategoryItemClicked(val details: Pair<String?, MutableList<ChildrenItem>>) :
+        ContactUsEvent()
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
-fun ContactUsCategoryScreen(viewModel: ContactUsViewModel, onEventSelected: (ContactUsEvent) -> Unit)
-{
-    // TODO:: Too many conditional statement for network request, find a way to group them in a single state
-    // that allows re-composition
-    val connectivity by connectivityState()//     This will cause re-composition on every network state change
+fun ContactUsCategoryScreen(
+    viewModel: ContactUsViewModel,
+    onEventSelected: (ContactUsEvent) -> Unit
+) {
+    val connectivity by connectivityState() //This will cause re-composition on every network state change
     val isConnected = connectivity === ConnectionState.Available
 
-    val configList : ContactUsRemoteModel? = viewModel.remoteMobileConfig
-    val remoteFailureResponse = viewModel.remoteFailureResponse
+    with(viewModel) {
+        val content = contactUsSuccessModel?.content
+        when (isLoadingSharedFlow) {
+            true -> LoadingShimmerList(viewModel.getShimmerModel())
+            false -> when {
+                errorThrowable is Throwable -> FailureScenario(labelDescriptionWithPhoneNumber(description = stringResource(id = R.string.oops_error_message)))
+                    { event -> when (event) {
+                        ButtonEvent.Retry -> { queryServiceContactUs() }
+                        ButtonEvent.Dismiss -> { onEventSelected(ContactUsEvent.Dismiss) }
+                    }
+                }
 
-    if (viewModel.isLoadingSharedFlow){
-        ContactUsLoadingShimmer (viewModel.getShimmerModel())
-    } else {
-        if (viewModel.unknownFailure is Throwable){
-            onEventSelected(ContactUsEvent.Response(ServerErrorResponse(
-                desc = stringResource(id = R.string.oops_error_message))))
-            viewModel.unknownFailure = null
-            return
+                serverErrorResponse is ServerErrorResponse -> FailureScenario(
+                 labelDescriptionWithPhoneNumber(serverErrorResponse?.desc))
+                { event -> when (event) {
+                        ButtonEvent.Retry -> { queryServiceContactUs() }
+                        ButtonEvent.Dismiss -> { onEventSelected(ContactUsEvent.Dismiss) }
+                    }
+                }
+
+                contactUsSuccessModel is ContactUsRemoteModel -> CategoryList(content ?: mutableListOf(), onEventSelected)
+            }
         }
 
-        if (remoteFailureResponse is ServerErrorResponse){
-            onEventSelected(ContactUsEvent.Response(remoteFailureResponse))
-            viewModel.remoteFailureResponse = null
-            return
-        }
-        if (configList is ContactUsRemoteModel) {
-            CategoryList(configList.content ?: mutableListOf(), onEventSelected)
-        }
-   }
-
-    if (isConnected) {
-        LaunchedEffect(true) {
-            if (configList?.content.isNullOrEmpty())
-                viewModel.queryServiceContactUs()
+        if (isConnected) {
+            LaunchedEffect(true) {
+                if (content.isNullOrEmpty())
+                    queryServiceContactUs()
+            }
         }
     }
 }
+
 
 @SuppressLint("RememberReturnType")
 @Composable
@@ -76,42 +84,47 @@ fun CategoryList(
     BoxBackground {
         ListColumn(list = contentList) { item ->
             Column {
-                TitleLabelItem(item.title)
+                LabelTitle(
+                    LabelProperties(
+                        label = item.title,
+                        modifier = Modifier.padding(
+                            start = 24.dp,
+                            end = 24.dp,
+                            top = 22.dp,
+                            bottom = 20.dp
+                        )
+                    )
+                )
                 DividerThicknessOne()
             }
             val size = item.children.size.minus(1)
             item.children.forEachIndexed { index, child ->
-                val title =  if (item.title.equals(stringResource(id = R.string.contact_us_financial_services), ignoreCase = true)) item.title else child.title ?: ""
-               Column  {
-                   Box(modifier = Modifier.clickable(
-                       interactionSource = remember { MutableInteractionSource() },
-                       indication = rememberRipple(bounded = true, color = TitleSmall), // You can also change the color and radius of the ripple
-                       onClick = {onSelected(ContactUsEvent.CategoryItemClicked(Pair(title, child.children)))}
-                   )) {
-                       TitleDescriptionAndNextArrowItem(child)
-                   }
-                   if (index == size) DividerThicknessEight() else DividerThicknessOne()
-               }
-            }
-        }
-    }
-}
-
-@Composable
-fun ContactUsLoadingShimmer(contentList: MutableList<Content>) {
-    ShimmerEffect { brush ->
-        BoxBackground {
-            ListColumn(list = contentList) { item ->
+                val title = if (item.title.equals(
+                        stringResource(id = R.string.contact_us_financial_services),
+                        ignoreCase = true
+                    )
+                ) item.title else child.title ?: ""
                 Column {
-                    ShimmerTextLabel(brush = brush)
-                    DividerThicknessOne()
-                }
-                val size = item.children.size.minus(1)
-                item.children.forEachIndexed { index, _ ->
-                    Column {
-                        ShimmerTitleDescriptionAndNextArrowItem(brush = brush)
-                        if (index == (size)) DividerThicknessEight() else DividerThicknessOne()
+                    Box(modifier = Modifier.clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = rememberRipple(
+                            bounded = true,
+                            color = TitleSmall
+                        ), // You can also change the color and radius of the ripple
+                        onClick = {
+                            onSelected(
+                                ContactUsEvent.CategoryItemClicked(
+                                    Pair(
+                                        title,
+                                        child.children
+                                    )
+                                )
+                            )
+                        }
+                    )) {
+                        TitleDescriptionAndNextArrowItem(child)
                     }
+                    if (index == size) DividerThicknessEight() else DividerThicknessOne()
                 }
             }
         }
