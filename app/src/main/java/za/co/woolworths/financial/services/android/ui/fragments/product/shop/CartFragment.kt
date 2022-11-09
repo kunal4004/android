@@ -363,6 +363,8 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
         btnEditCart?.setText(if (isEditMode) R.string.done else R.string.edit)
         btnClearCart?.visibility = if (isEditMode) View.VISIBLE else View.GONE
         setDeliveryLocationEnabled(!isEditMode)
+        if (!isEditMode)
+            setMinimumCartErrorMessage()
     }
 
     private fun dismissProgress() {
@@ -911,9 +913,11 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
             }
             btnCheckOut?.isEnabled = false
             fadeCheckoutButton(true)
+            enableEditCart()
         } else {
             txt_min_spend_error_msg?.visibility = View.GONE
-            btnCheckOut?.isEnabled = true
+            if (btnEditCart?.text?.equals(R.string.edit) == false)
+                btnCheckOut?.isEnabled = true
         }
     }
 
@@ -1999,9 +2003,9 @@ class CartFragment : Fragment(R.layout.fragment_cart), CartProductAdapter.OnItem
     }
 
     fun enableItemDelete(enable: Boolean) {
+        fadeCheckoutButton(!enable)
         enableEditCart(enable)
-        fadeCheckoutButton(enable)
-        setDeliveryLocationEnabled(!enable)
+        setDeliveryLocationEnabled(enable)
     }
 
     companion object {
