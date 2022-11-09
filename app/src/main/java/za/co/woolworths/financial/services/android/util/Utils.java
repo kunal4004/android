@@ -862,29 +862,33 @@ public class Utils {
         currentUserObject.preferredShoppingDeliveryLocation = shoppingDeliveryLocation;
         currentUserObject.save();
 
-        AnalyticsManager.Companion.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.LIQUOR_DELIVERABLE,
-                "" + shoppingDeliveryLocation.fulfillmentDetails.getLiquorDeliverable());
+        if (shoppingDeliveryLocation != null && shoppingDeliveryLocation.fulfillmentDetails != null) {
+            AnalyticsManager.Companion.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.LIQUOR_DELIVERABLE,
+                    "" + shoppingDeliveryLocation.fulfillmentDetails.getLiquorDeliverable());
+        }
 
         Map<String, String> fulfillmentStoreType = KotlinUtils.Companion.retriveFulfillmentStoreIdList();
-        for (String type : fulfillmentStoreType.keySet()) {
-            if (type.length() == 1)
-                type = "0$type";
-            switch (type) {
-                case "01": {
-                    AnalyticsManager.Companion.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.FULFILLMENT_FOOD_STORE_KEY_01, retrieveStoreId(type));
-                    break;
-                }
-                case "02": {
-                    AnalyticsManager.Companion.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.FULFILLMENT_FBH_STORE_KEY_02, retrieveStoreId(type));
-                    break;
-                }
-                case "04": {
-                    AnalyticsManager.Companion.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.FULFILLMENT_FBH_STORE_KEY_04, retrieveStoreId(type));
-                    break;
-                }
-                case "07": {
-                    AnalyticsManager.Companion.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.FULFILLMENT_FBH_STORE_KEY_07, retrieveStoreId(type));
-                    break;
+        if (fulfillmentStoreType != null && !fulfillmentStoreType.isEmpty()) {
+            for (String type : fulfillmentStoreType.keySet()) {
+                if (type.length() == 1)
+                    type = "0$type";
+                switch (type) {
+                    case "01": {
+                        AnalyticsManager.Companion.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.FULFILLMENT_FOOD_STORE_KEY_01, retrieveStoreId(type));
+                        break;
+                    }
+                    case "02": {
+                        AnalyticsManager.Companion.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.FULFILLMENT_FBH_STORE_KEY_02, retrieveStoreId(type));
+                        break;
+                    }
+                    case "04": {
+                        AnalyticsManager.Companion.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.FULFILLMENT_FBH_STORE_KEY_04, retrieveStoreId(type));
+                        break;
+                    }
+                    case "07": {
+                        AnalyticsManager.Companion.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.FULFILLMENT_FBH_STORE_KEY_07, retrieveStoreId(type));
+                        break;
+                    }
                 }
             }
         }
