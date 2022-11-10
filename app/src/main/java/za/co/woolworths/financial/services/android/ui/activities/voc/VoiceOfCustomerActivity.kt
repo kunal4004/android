@@ -7,13 +7,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.activity_voice_of_customer.*
+import com.awfs.coordination.databinding.ActivityVoiceOfCustomerBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GenericActionOrCancelDialogFragment
 import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
-class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, GenericActionOrCancelDialogFragment.IActionOrCancel {
+class VoiceOfCustomerActivity : AppCompatActivity(R.layout.activity_voice_of_customer), VoiceOfCustomerInterface, GenericActionOrCancelDialogFragment.IActionOrCancel {
 
     companion object {
         const val EXTRA_SURVEY_DETAILS = "extraSurveyDetails"
@@ -23,6 +23,7 @@ class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, G
         const val DEFAULT_VALUE_RATE_SLIDER_MAX = 11
     }
 
+    private lateinit var binding: ActivityVoiceOfCustomerBinding
     private var navigationHost: NavController? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +31,8 @@ class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, G
         overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
 
         Utils.updateStatusBarBackground(this)
-        setContentView(R.layout.activity_voice_of_customer)
+        binding = ActivityVoiceOfCustomerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val vocNavHostFrag = supportFragmentManager.findFragmentById(R.id.vocNavHostFrag) as NavHostFragment?
         if (vocNavHostFrag != null) {
@@ -45,7 +47,7 @@ class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, G
     }
 
     private fun setActionBar() {
-        setSupportActionBar(vocToolbar)
+        setSupportActionBar(binding.vocToolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowTitleEnabled(false)
@@ -84,9 +86,11 @@ class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, G
     }
 
     override fun setToolbarSkipVisibility(show: Boolean) {
-        if (vocToolbar == null) return
-        tvSkipSurvey.visibility = if (show) View.VISIBLE else View.GONE
-        tvSkipSurvey.setOnClickListener { onSkipSurveyClicked() }
+        binding.apply {
+            if (vocToolbar == null) return
+            tvSkipSurvey.visibility = if (show) View.VISIBLE else View.GONE
+            tvSkipSurvey.setOnClickListener { onSkipSurveyClicked() }
+        }
     }
 
     fun hideToolbarBackButton() {

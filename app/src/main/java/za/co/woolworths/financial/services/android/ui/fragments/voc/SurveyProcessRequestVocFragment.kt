@@ -14,11 +14,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.pma_process_detail_layout.*
-import kotlinx.android.synthetic.main.processing_request_failure_fragment.*
-import kotlinx.android.synthetic.main.processing_request_failure_fragment.processRequestTitleTextView
-import kotlinx.android.synthetic.main.processing_request_failure_fragment.view.*
-import kotlinx.android.synthetic.main.processing_request_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyAnswer
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetails
 import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerActivity
@@ -58,17 +53,19 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
 
         circularProgressListener({}, {}) // onSuccess(), onFailure()
 
-        btnRetryProcessPayment?.apply {
-            setOnClickListener(this@SurveyProcessRequestVocFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
-        }
+        binding.processRequestNavHostFragment.includePMAProcessingFailure.apply {
+            btnRetryProcessPayment?.apply {
+                setOnClickListener(this@SurveyProcessRequestVocFragment)
+                AnimationUtilExtension.animateViewPushDown(this)
+            }
 
-        callCenterNumberTextView?.apply {
-            visibility = VISIBLE
-            text = bindString(R.string.cancel)
-            setOnClickListener(this@SurveyProcessRequestVocFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
-            paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
+            callCenterNumberTextView?.apply {
+                visibility = VISIBLE
+                text = bindString(R.string.cancel)
+                setOnClickListener(this@SurveyProcessRequestVocFragment)
+                AnimationUtilExtension.animateViewPushDown(this)
+                paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
+            }
         }
 
         autoConnection()
@@ -79,8 +76,11 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
             setToolbarSkipVisibility(show = false)
             hideToolbarBackButton()
         }
-        processRequestTitleTextView?.text = bindString(R.string.voc_processing_request_title)
-        processRequestDescriptionTextView?.text = bindString(R.string.voc_processing_request_desc)
+        binding.processRequestNavHostFragment.includePMAProcessing.apply {
+            processRequestTitleTextView?.text = bindString(R.string.voc_processing_request_title)
+            processRequestDescriptionTextView?.text =
+                bindString(R.string.voc_processing_request_desc)
+        }
     }
 
     private fun autoConnection() {
@@ -99,10 +99,13 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
     private fun performSurveyAnswerRequest() {
         menuItem?.isVisible = false
         startSpinning()
-        includePMAProcessingSuccess?.visibility = GONE
-        includePMAProcessingFailure?.visibility = GONE
-        includePMAProcessing?.visibility = VISIBLE
-        processRequestTitleTextView?.text = bindString(R.string.voc_processing_request_title)
+
+        binding.processRequestNavHostFragment.apply {
+            includePMAProcessingSuccess?.root?.visibility = GONE
+            includePMAProcessingFailure?.root?.visibility = GONE
+            includePMAProcessing?.root?.visibility = VISIBLE
+            includePMAProcessing?.processRequestTitleTextView?.text = bindString(R.string.voc_processing_request_title)
+        }
 
         surveyProcessRequestViewModel.performSubmitSurveyRepliesRequest(
             onSuccess = ::onRequestSuccessful,
@@ -112,8 +115,10 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
 
     private fun onRequestSuccessful() {
         stopSpinning(true)
-        processRequestTitleTextView?.text = bindString(R.string.voc_request_successful_title)
-        processRequestDescriptionTextView?.text = ""
+        binding.processRequestNavHostFragment.includePMAProcessingSuccess.apply {
+            processRequestTitleTextView?.text = bindString(R.string.voc_request_successful_title)
+            processRequestDescriptionTextView?.text = ""
+        }
 
         Handler(getMainLooper()).postDelayed({
             (activity as? VoiceOfCustomerActivity)?.apply {
@@ -126,12 +131,15 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
         menuItem?.isVisible = true
         stopSpinning(false)
 
-        includePMAProcessingSuccess?.visibility = GONE
-        includePMAProcessingFailure?.visibility = VISIBLE
-        includePMAProcessing?.visibility = GONE
+        binding.processRequestNavHostFragment.apply {
+            includePMAProcessingSuccess?.root?.visibility = GONE
+            includePMAProcessingFailure?.root?.visibility = VISIBLE
+            includePMAProcessing?.root?.visibility = GONE
 
-        includePMAProcessingFailure?.processRequestTitleTextView?.text = bindString(R.string.voc_request_failed_title)
-        includePMAProcessingFailure?.processResultFailureTextView?.text = ""
+            includePMAProcessingFailure?.processRequestTitleTextView?.text =
+                bindString(R.string.voc_request_failed_title)
+            includePMAProcessingFailure?.processResultFailureTextView?.text = ""
+        }
     }
 
     override fun onClick(view: View?) {

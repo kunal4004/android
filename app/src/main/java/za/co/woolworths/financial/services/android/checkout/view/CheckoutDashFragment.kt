@@ -77,7 +77,6 @@ import za.co.woolworths.financial.services.android.util.pushnotification.Notific
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.ShoppingCartLiveData
 import java.util.regex.Pattern
-import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.deliverySummaryScrollView as deliverySummaryScrollView1
 
 
 class CheckoutDashFragment : Fragment(R.layout.fragment_checkout_returning_user_dash),

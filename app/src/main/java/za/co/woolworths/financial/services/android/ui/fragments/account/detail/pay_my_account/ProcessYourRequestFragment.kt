@@ -7,17 +7,20 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.ProcessRequestFragmentBinding
 import kotlinx.android.synthetic.main.circle_progress_layout.*
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.ui.views.tick_animation.AnimationState
 
-open class ProcessYourRequestFragment : Fragment() {
+open class ProcessYourRequestFragment : Fragment(R.layout.process_request_fragment) {
 
+    protected lateinit var binding: ProcessRequestFragmentBinding
     var isAPICallSuccessFul: Boolean = false
     private var stateAnimation: IProgressAnimationState? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.process_request_fragment, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = ProcessRequestFragmentBinding.bind(view)
     }
 
     fun circularProgressListener(codeSuccess: () -> Unit, codeFailure: () -> Unit) {

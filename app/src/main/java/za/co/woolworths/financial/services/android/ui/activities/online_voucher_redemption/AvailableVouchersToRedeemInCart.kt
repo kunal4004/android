@@ -9,17 +9,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.credit_card_activation_activity.*
-import za.co.woolworths.financial.services.android.ui.fragments.voucher_redeemption.ApplyPromoCodeFragment
+import com.awfs.coordination.databinding.CartAvailableVouchersToRedeemBinding
 import za.co.woolworths.financial.services.android.ui.fragments.voucher_redeemption.AvailableVoucherFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
-class AvailableVouchersToRedeemInCart : AppCompatActivity() {
+class AvailableVouchersToRedeemInCart : AppCompatActivity(R.layout.cart_available_vouchers_to_redeem) {
 
+    private lateinit var binding: CartAvailableVouchersToRedeemBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.cart_available_vouchers_to_redeem)
+        binding = CartAvailableVouchersToRedeemBinding.inflate(layoutInflater)
         Utils.updateStatusBarBackground(this)
         actionBar()
         loadNavHostFragment()
@@ -27,7 +27,7 @@ class AvailableVouchersToRedeemInCart : AppCompatActivity() {
 
 
     private fun actionBar() {
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.apply {
             setDisplayShowTitleEnabled(false)
             setDisplayUseLogoEnabled(false)
@@ -65,9 +65,8 @@ class AvailableVouchersToRedeemInCart : AppCompatActivity() {
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }
 
-
     private fun loadNavHostFragment() {
-        val navHostFragment = nav_host_fragment as NavHostFragment
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val graph = navHostFragment.navController.navInflater.inflate(R.navigation.voucher_redmeeption_nav_graph)
         graph.startDestination = if (intent.hasExtra("VoucherDetails")) R.id.availableVoucherFragment else R.id.applyPromoCodeFragment
         findNavController(R.id.nav_host_fragment).graph = graph

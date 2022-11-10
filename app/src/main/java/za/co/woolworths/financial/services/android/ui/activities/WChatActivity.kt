@@ -49,7 +49,7 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 @AndroidEntryPoint
 class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener {
 
-    private lateinit var binding: ChatActivityBinding
+    lateinit var binding: ChatActivityBinding
     private var mSubscribeToMessageReceiver: BroadcastReceiver? = null
     private var isChatToCollectionAgent: Boolean = false
     private var sessionType: SessionType? = null

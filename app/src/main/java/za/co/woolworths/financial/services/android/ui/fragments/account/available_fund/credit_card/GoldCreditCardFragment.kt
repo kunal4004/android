@@ -1,25 +1,19 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.credit_card
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.navigation.Navigation
 import androidx.fragment.app.setFragmentResultListener
+import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.available_funds_fragment.*
 import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
-import za.co.woolworths.financial.services.android.ui.activities.GetAPaymentPlanActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.OutSystemBuilder
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
-
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
-import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
-
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
 
@@ -27,17 +21,21 @@ class GoldCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        availableFundBackground?.setBackgroundResource(R.drawable.gold_credit_card_background)
 
-        navController = Navigation.findNavController(view)
+        binding.apply {
+            availableFundBackground?.setBackgroundResource(R.drawable.gold_credit_card_background)
 
-        initShimmer()
-        stopProgress()
+            navController = Navigation.findNavController(view)
 
-        incViewStatementButton?.visibility = if (AppConfigSingleton.absaBankingOpenApiServices?.isEnabled == true) View.VISIBLE else View.GONE
-        incRecentTransactionButton?.setOnClickListener(this)
-        incPayMyAccountButton?.setOnClickListener(this)
-        incViewStatementButton?.setOnClickListener(this)
+            binding.initShimmer()
+            binding.stopProgress()
+
+            incViewStatementButton?.root?.visibility =
+                if (AppConfigSingleton.absaBankingOpenApiServices?.isEnabled == true) View.VISIBLE else View.GONE
+            incRecentTransactionButton?.root?.setOnClickListener(this@GoldCreditCardFragment)
+            incPayMyAccountButton?.root?.setOnClickListener(this@GoldCreditCardFragment)
+            incViewStatementButton?.root?.setOnClickListener(this@GoldCreditCardFragment)
+        }
 
         navigateToDeepLinkView()
 

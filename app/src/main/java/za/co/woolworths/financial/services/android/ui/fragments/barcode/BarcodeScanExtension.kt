@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.barcode
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.google.gson.Gson
@@ -22,7 +23,7 @@ import za.co.woolworths.financial.services.android.util.ConnectionBroadcastRecei
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 
-abstract class BarcodeScanExtension : Fragment() {
+abstract class BarcodeScanExtension(@LayoutRes contentLayoutId: Int) : Fragment(contentLayoutId) {
 
     private var productsRequestParams: ProductsRequestParams? = null
     private var mProductDetailRequest: Call<ProductDetailResponse>? = null
