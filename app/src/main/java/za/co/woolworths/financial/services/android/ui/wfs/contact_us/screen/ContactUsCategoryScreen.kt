@@ -9,7 +9,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.awfs.coordination.R
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
@@ -54,7 +53,8 @@ fun ContactUsCategoryScreen(
                 }
 
                 serverErrorResponse is ServerErrorResponse -> FailureScenario(
-                 labelDescriptionWithPhoneNumber(serverErrorResponse?.desc))
+                 labelDescriptionWithPhoneNumber("We are unable to process your request, Please contact our call centre on \n0861 50 20 10"))
+                     //serverErrorResponse?.desc))
                 { event -> when (event) {
                         ButtonEvent.Retry -> { queryServiceContactUs() }
                         ButtonEvent.Dismiss -> { onEventSelected(ContactUsEvent.Dismiss) }

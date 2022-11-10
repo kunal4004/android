@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.wfs.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -16,6 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.wfs.theme.MyriadProFontFamily
@@ -98,10 +100,10 @@ fun LabelPhoneNumber(params: LabelProperties = LabelProperties()) {
 
     val label = params.annotatedString
     val phoneNumber = params.annotatedPhoneNumber
-    if (phoneNumber.isEmpty() || phoneNumber.length > 8){
+    if (phoneNumber.isEmpty() || phoneNumber.length < 10){
         Text(
             text = label.toString(),
-            modifier = params.modifier.fillMaxWidth(),
+          modifier = params.modifier,
             style = MaterialTheme.typography.titleSmall,
             textAlign = TextAlign.Center
         )
@@ -109,7 +111,7 @@ fun LabelPhoneNumber(params: LabelProperties = LabelProperties()) {
         ClickableText(
             text = label,
             style = params.style,
-            modifier = params.modifier.fillMaxWidth(),
+            modifier = params.modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp),
             onClick = {
                 label
                     .getStringAnnotations(phoneNumber, it, it)

@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -32,6 +33,7 @@ fun ButtonBlack(onClick: () -> Unit) {
             ,
             stringId = R.string.retry,
             letterSpacing = 2.sp,
+            isUpperCased = true,
             textColor = White,
             fontSize = 12.sp,
             textAlign = TextAlign.Center
@@ -45,6 +47,7 @@ fun ButtonNoBackground(onClick: () -> Unit) {
         params = LabelProperties(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(top= 8.dp, bottom = 10.dp)
                 .clickable {onClick()},
             textAlign = TextAlign.Center,
             isUpperCased =  true,

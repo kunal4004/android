@@ -6,12 +6,17 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ActivityEmailUsLoadingBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderFailure
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderHttpFailureFromServer
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderLoading
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.core.renderSuccess
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.list.EnquiriesListViewModel
-import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.ApiResult
 
 @AndroidEntryPoint
 class EmailUsLoadingActivity : AppCompatActivity(), View.OnClickListener {
@@ -20,31 +25,26 @@ class EmailUsLoadingActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.emailUsRequest.value = intent.extras?.getParcelable(EnquiriesListViewModel.EMAIL_US_REQUEST)
         binding = ActivityEmailUsLoadingBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initView()
     }
 
     private fun initView() {
-        viewModel.start(intent.extras?.getParcelable(EnquiriesListViewModel.EMAIL_US_REQUEST)!!)
         binding.btnEmailUsLoadingGotIt.setOnClickListener(this)
         binding.btnEmailUsLoadingDismiss.setOnClickListener(this)
-        viewModel.emailUsResponse.observe(this) {
-            binding.pbEmailUsLoading.visibility = GONE
-            when (it) {
-                is ApiResult.Success -> {
-                    if (it.data.httpCode == 200) {
-                        handleSuccess()
-                    } else {
-                        handleError(it.data.response?.desc ?: getString(R.string.oops_error_message))
-                    }
+        lifecycleScope.launch {
+            viewModel.userEmailResponse.collect { result ->
+                with(result){
+                    renderLoading { binding.pbEmailUsLoading.visibility = if (isLoading) VISIBLE else GONE }
+                    renderSuccess { handleSuccess() }
+                    renderHttpFailureFromServer { handleError(output.response?.desc ?: getString(R.string.oops_error_message)) }
+                    renderFailure { handleError(throwable.toString()) }
                 }
-                is ApiResult.Error -> {
-                    handleError(it.exception.toString())
-                }
-                else -> {}
             }
         }
+        viewModel.postContactUsEmail()
     }
 
     private fun handleError(error: String) {
@@ -55,7 +55,6 @@ class EmailUsLoadingActivity : AppCompatActivity(), View.OnClickListener {
             tvEmailUsLoadingTitle.text = bindString(R.string.enquiry_failed)
             tvEmailUsLoadingDesc.text = error
             ivEmailUsLoading.setImageResource(R.drawable.ic_error_icon)
-
         }
     }
 
@@ -88,7 +87,7 @@ class EmailUsLoadingActivity : AppCompatActivity(), View.OnClickListener {
         binding.pbEmailUsLoading.visibility = VISIBLE
         binding.tvEmailUsLoadingTitle.text = bindString(R.string.sending_enquiry)
         binding.tvEmailUsLoadingDesc.text = bindString(R.string.processing_your_request_desc)
-        viewModel.start(viewModel.emailUsRequest.value!!)
+        viewModel.postContactUsEmail()
     }
 
 

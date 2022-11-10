@@ -53,7 +53,7 @@ fun FailureScenario(item: Pair<AnnotatedString, String?>, onTap: (ButtonEvent) -
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
                     Image(
                         painter = painterResource(id = R.drawable.npc_failure_icon),
-                        modifier = Modifier.fillMaxSize(0.1f),
+                        modifier = Modifier.fillMaxSize(0.06f),
                         contentDescription = stringResource(id = R.string.failure_icon)
                     )
                     CircularProgress()
@@ -74,6 +74,8 @@ fun FailureScenario(item: Pair<AnnotatedString, String?>, onTap: (ButtonEvent) -
                 LabelPhoneNumber(
                     LabelProperties(
                         annotatedString = item.first,
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(start = 24.dp, end = 24.dp),
                         annotatedPhoneNumber = item.second,
                         fontSize = 16.sp,
                         textAlign = TextAlign.Center

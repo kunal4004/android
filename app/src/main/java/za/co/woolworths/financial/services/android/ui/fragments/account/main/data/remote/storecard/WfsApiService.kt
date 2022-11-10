@@ -12,6 +12,8 @@ import za.co.woolworths.financial.services.android.models.dto.npc.UnblockStoreCa
 import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
+import za.co.woolworths.financial.services.android.models.network.GenericResponse
+import za.co.woolworths.financial.services.android.ui.fragments.contact_us.enquiry.EmailUsRequest
 import za.co.woolworths.financial.services.android.ui.wfs.contact_us.model.ContactUsRemoteModel
 
 interface WfsApiService {
@@ -70,7 +72,6 @@ interface WfsApiService {
         @Query("productGroupCode") productGroupCode: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String
     ): Response<EligibilityPlanResponse>
-
 
     /**
      * Credit Limit Increase
@@ -132,4 +133,12 @@ interface WfsApiService {
     @GET("wfs/app/v4/user/creditCardToken")
     suspend fun getCreditCardToken(): Response<CreditCardTokenResponse>
 
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/v4/user/email/{emailId}")
+    suspend fun userSendEmail(
+        @Path("emailId") emailId: String = "contactUs",
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body emailUsRequest: EmailUsRequest?
+    ):  Response<GenericResponse>
 }

@@ -38,6 +38,7 @@ fun LabelMediumText(params: LabelProperties){
             textDecoration = params.textDecoration,
             stringId = params.stringId,
             textAlign = TextAlign.Center,
+            fontSize = params.fontSize,
             textColor = params.textColor,
             letterSpacing = params.letterSpacing,
             modifier = params.modifier

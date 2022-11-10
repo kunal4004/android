@@ -16,7 +16,7 @@ fun CircularProgress() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.147f)
+            .fillMaxHeight(0.17f)
             .padding(10.dp),
         horizontalArrangement = Arrangement.Center
     ) {
