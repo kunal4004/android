@@ -12,9 +12,9 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
+import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.link_card_fragment.*
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.REQUEST_CODE_BLOCK_MY_STORE_CARD
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity.Companion.REQUEST_CODE_BLOCK_MY_CARD
@@ -24,7 +24,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.M
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProcessBlockCardFragment.Companion.CARD_BLOCKED
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
 
-open class MyCardExtension : Fragment() {
+open class MyCardExtension(@LayoutRes contentLayoutId: Int) : Fragment(contentLayoutId) {
 
     companion object {
         @SuppressLint("DefaultLocale")
@@ -112,22 +112,6 @@ open class MyCardExtension : Fragment() {
             setDisplayHomeAsUpEnabled(false)
             setDisplayShowTitleEnabled(false)
             setDisplayUseLogoEnabled(false)
-        }
-    }
-
-    fun invalidCardNumberUI() {
-        activity?.apply {
-            cardNumberEditText?.background = ContextCompat.getDrawable(this, R.drawable.input_box_error_bg)
-            invalidCardNumberLabel?.visibility = View.VISIBLE
-            navigateToEnterOTPFragmentImageView?.isEnabled = false
-        }
-    }
-
-    fun validCardNumberUI() {
-        activity?.apply {
-            cardNumberEditText?.background = ContextCompat.getDrawable(this, R.drawable.input_box_active_bg)
-            invalidCardNumberLabel?.visibility = View.GONE
-            navigateToEnterOTPFragmentImageView?.isEnabled = true
         }
     }
 }
