@@ -1,9 +1,12 @@
 package za.co.woolworths.financial.services.android.onecartgetstream.chat
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.gson.Gson
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.channel.subscribeFor
 import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.models.Filters
@@ -49,6 +52,9 @@ class ChatViewModel : ViewModel() {
                 messages.clear()
                 messages.addAll(result.data().messages)
 
+                chatClient.channel(channelId).markRead().enqueue { result ->
+                    //Ignore
+                }
                 _state.postValue(ChatState.ReceivedMessagesData)
             }
         }
@@ -123,6 +129,9 @@ class ChatViewModel : ViewModel() {
         // Subscribe for new message events
         this.newMessageEventDisposable = channelClient.subscribeFor<NewMessageEvent> { event ->
             val message = event.message
+            channelClient.markMessageRead(message.id).enqueue {
+                //Ignore
+            }
             _state.postValue(ChatState.ReceivedMessageData(message))
         }
     }
@@ -158,7 +167,10 @@ class ChatViewModel : ViewModel() {
 
         ) {
             userWatchingEventsDisposable.dispose()
-            newMessageEventDisposable.dispose()
+            //Removing message event removes the attached listener for all
+            // events from DashChatMessageService as well and not able to listen to events in services
+            //hence commenting
+//            newMessageEventDisposable.dispose()
             userTypingEvent.dispose()
 
         }

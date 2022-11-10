@@ -53,6 +53,8 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListsRespo
 import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDetailsResponse
 import za.co.woolworths.financial.services.android.models.network.Parameter
 import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
+import za.co.woolworths.financial.services.android.onecartgetstream.service.DashChatMessageListeningService
+import za.co.woolworths.financial.services.android.receivers.DashOrderReceiver
 import za.co.woolworths.financial.services.android.receivers.DashOrderReceiver.Companion.ACTION_LAST_DASH_ORDER
 import za.co.woolworths.financial.services.android.receivers.DashOrderReceiverListener
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
@@ -97,10 +99,11 @@ import java.net.SocketTimeoutException
 class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     OnChildFragmentEvents,
     WMaterialShowcaseView.IWalkthroughActionListener, View.OnClickListener,
-    DashOrderReceiverListener{
+    DashOrderReceiverListener {
 
-    private val dashOrderReceiver: BroadcastReceiver? = null
-    val confirmAddressViewModel : ConfirmAddressViewModel by activityViewModels()
+    private var isRetrievedUnreadMessagesOnLaunch: Boolean = false
+    private var dashOrderReceiver: DashOrderReceiver? = null
+    val confirmAddressViewModel: ConfirmAddressViewModel by activityViewModels()
 
     private var timer: CountDownTimer? = null
     private var mTabTitle: MutableList<String>? = null
@@ -156,6 +159,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
     override fun onStart() {
         super.onStart()
+        dashOrderReceiver = DashOrderReceiver()
+        dashOrderReceiver?.setDashOrderReceiverListener(this)
         dashOrderReceiver?.let {
             LocalBroadcastManager.getInstance(requireContext()).registerReceiver(
                 it, IntentFilter(ACTION_LAST_DASH_ORDER)
@@ -189,11 +194,18 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
 
         val dashParams = Bundle()
-        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_MODE,
-            KotlinUtils.getPreferredDeliveryType()?.type)
-        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.BROWSE_MODE,
-            KotlinUtils.browsingDeliveryType?.type)
-        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.DASH_DELIVERY_BROWSE_MODE, dashParams)
+        dashParams.putString(
+            FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_MODE,
+            KotlinUtils.getPreferredDeliveryType()?.type
+        )
+        dashParams.putString(
+            FirebaseManagerAnalyticsProperties.PropertyNames.BROWSE_MODE,
+            KotlinUtils.browsingDeliveryType?.type
+        )
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.DASH_DELIVERY_BROWSE_MODE,
+            dashParams
+        )
     }
 
     private fun setEventsForSwitchingBrowsingType(browsingType: String?) {
@@ -201,11 +213,18 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             return
         }
         val dashParams = Bundle()
-        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_MODE,
-            KotlinUtils.getPreferredDeliveryType()?.name)
-        dashParams.putString(FirebaseManagerAnalyticsProperties.PropertyNames.BROWSE_MODE,
-            browsingType)
-        AnalyticsManager.logEvent(FirebaseManagerAnalyticsProperties.DASH_SWITCH_BROWSE_MODE, dashParams)
+        dashParams.putString(
+            FirebaseManagerAnalyticsProperties.PropertyNames.DELIVERY_MODE,
+            KotlinUtils.getPreferredDeliveryType()?.name
+        )
+        dashParams.putString(
+            FirebaseManagerAnalyticsProperties.PropertyNames.BROWSE_MODE,
+            browsingType
+        )
+        AnalyticsManager.logEvent(
+            FirebaseManagerAnalyticsProperties.DASH_SWITCH_BROWSE_MODE,
+            dashParams
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -366,6 +385,15 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                 visibility = View.VISIBLE
                 setImageResource(R.drawable.ic_chat_icon)
                 setOnClickListener(this@ShopFragment)
+                if (!isRetrievedUnreadMessagesOnLaunch) {
+                    isRetrievedUnreadMessagesOnLaunch = true
+                    params.orderId?.let {
+                        DashChatMessageListeningService.getUnreadMessageForOrder(
+                            requireContext(),
+                            it
+                        )
+                    }
+                }
             }
             // Driver tracking enabled STATUS == EN-ROUTE
             else if (params.isDriverTrackingEnabled) {
@@ -448,8 +476,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     tabs_main?.isClickable = true
                     FirebaseManager.logException(e)
                     /*TODO : show error screen*/
-                }
-                catch (e: JsonSyntaxException) {
+                } catch (e: JsonSyntaxException) {
                     shopProgressbar?.visibility = View.GONE
                     tabs_main?.isClickable = true
                     FirebaseManager.logException(e)
@@ -1467,7 +1494,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     override fun updateUnreadMessageCount(unreadMsgCount: Int) {
         inAppNotificationView?.inappOrderNotificationChatCount?.text = unreadMsgCount.toString()
         inAppNotificationView?.inappOrderNotificationChatCount?.visibility =
-            if(unreadMsgCount <= 0) View.GONE else VISIBLE
+            if (unreadMsgCount <= 0) View.GONE else VISIBLE
     }
 
     override fun updateLastDashOrder() {
