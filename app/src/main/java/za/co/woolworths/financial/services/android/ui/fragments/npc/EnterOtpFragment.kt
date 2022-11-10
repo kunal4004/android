@@ -315,13 +315,15 @@ class EnterOtpFragment : MyCardExtension(R.layout.enter_otp_fragment), IOTPLinkS
         //cancelSMSListener()
     }
 
-    fun EnterOtpFragmentBinding.onOTPReceived(otp: String?) {
-        displayRetrievedOTP(edtVerificationCode1, otp, 0)
-        displayRetrievedOTP(edtVerificationCode2, otp, 1)
-        displayRetrievedOTP(edtVerificationCode3, otp, 2)
-        displayRetrievedOTP(edtVerificationCode4, otp, 3)
-        displayRetrievedOTP(edtVerificationCode5, otp, 4)
-        //cancelSMSListener()
+    fun onOTPReceived(otp: String?) {
+        binding.apply {
+            displayRetrievedOTP(edtVerificationCode1, otp, 0)
+            displayRetrievedOTP(edtVerificationCode2, otp, 1)
+            displayRetrievedOTP(edtVerificationCode3, otp, 2)
+            displayRetrievedOTP(edtVerificationCode4, otp, 3)
+            displayRetrievedOTP(edtVerificationCode5, otp, 4)
+            //cancelSMSListener()
+        }
     }
 
     private fun cancelSMSListener() = (activity as? MyCardActivityExtension)?.cancelSMSRetriever()
