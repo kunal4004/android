@@ -50,18 +50,13 @@ class OrdersAdapter(val context: Context, val iPresentOrderDetailInterface: IPre
             itemView.orderNumber?.text = context.getString(R.string.order_id,
                 item.orderId.replaceFirstChar { it.uppercase() })
             var itemState = item.state
-            if (itemState?.contains(context.getString(R.string.order))) {
-                itemState = itemState.replace(context.getString(R.string.order), "")
-                itemView.orderState?.text = itemState
-            } else {
-                itemView.orderState?.text = itemState
-            }
+            itemView.orderState?.text = itemState?.replace(context.getString(R.string.order), "")
 
             itemView.purchaseDate?.text = WFormatter.formatOrdersHistoryDate(item.submittedDate)
             itemView.orderAmount?.text =
                 CurrencyFormatter.formatAmountToRandAndCentWithSpace(item.total)
             itemView.setOnClickListener { iPresentOrderDetailInterface?.presentOrderDetailsPage(item) }
-            itemView.orderState.setBackgroundResource(if (item.state.contains(context.getString(R.string.cancelled))) R.drawable.order_state_orange_bg else R.drawable.order_state_bg)
+            itemView.orderState.setBackgroundResource(if (item.state?.contains(context.getString(R.string.cancelled))) R.drawable.order_state_orange_bg else R.drawable.order_state_bg)
 
             if (!item.deliveryDates?.isJsonNull!!) {
                 val deliveryDates: HashMap<String, String> = hashMapOf()
