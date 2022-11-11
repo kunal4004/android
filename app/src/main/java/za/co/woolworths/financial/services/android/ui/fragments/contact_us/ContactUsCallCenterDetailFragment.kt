@@ -1,21 +1,16 @@
 package za.co.woolworths.financial.services.android.ui.fragments.contact_us
 
 import android.content.Context
-import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.contact_us_financial_services.callUsLinearLayoutContainer
-import kotlinx.android.synthetic.main.contact_us_detail_fragment.*
-import kotlinx.android.synthetic.main.contact_us_detail_fragment.contactFinancialServicesEmailLinearLayout
+import com.awfs.coordination.databinding.ContactUsDetailFragmentBinding
 import za.co.woolworths.financial.services.android.models.dto.app_config.contact_us.ConfigContactUsOptions
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -23,7 +18,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
-class ContactUsCallCenterDetailFragment : Fragment() {
+class ContactUsCallCenterDetailFragment : Fragment(R.layout.contact_us_detail_fragment) {
 
     companion object {
         private const val CONTACT_US_DETAIL = "CONTACT_US_DETAIL"
@@ -34,6 +29,7 @@ class ContactUsCallCenterDetailFragment : Fragment() {
         }
     }
 
+    private lateinit var binding: ContactUsDetailFragmentBinding
     private var mBottomNavigator: BottomNavigator? = null
     private var mContactUsDetail: ConfigContactUsOptions? = null
 
@@ -50,12 +46,9 @@ class ContactUsCallCenterDetailFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.contact_us_detail_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = ContactUsDetailFragmentBinding.bind(view)
 
         setupToolbar()
 
@@ -63,7 +56,7 @@ class ContactUsCallCenterDetailFragment : Fragment() {
             value?.apply {
                 call?.apply {
                     options?.forEachIndexed { index, item ->
-                        val localCallerRow = layoutInflater.inflate(R.layout.contact_us_call_options_item, callUsLinearLayoutContainer, false)
+                        val localCallerRow = layoutInflater.inflate(R.layout.contact_us_call_options_item, binding.callUsLinearLayoutContainer, false)
                         val localCallerTextView = localCallerRow.findViewById<TextView>(R.id.localCallerTextView)
                         val localCallerPhoneNumberTextView = localCallerRow.findViewById<TextView>(R.id.localCallerPhoneNumberTextView)
                         val localCallerPhoneNumberDivider = localCallerRow.findViewById<View>(R.id.localCallerPhoneNumberDivider)
@@ -78,15 +71,15 @@ class ContactUsCallCenterDetailFragment : Fragment() {
                         if (index == options.size.minus(1)){
                             localCallerPhoneNumberDivider.visibility = GONE
                         }
-                        callUsLinearLayoutContainer?.addView(localCallerRow)
+                        binding.callUsLinearLayoutContainer?.addView(localCallerRow)
                     }
 
-                    callCenterOperationHoursTextView?.text = operatingHours
+                    binding.callCenterOperationHoursTextView?.text = operatingHours
                 }
 
                 email?.apply {
                     forEachIndexed { index, option ->
-                        val localCallerRow = layoutInflater.inflate(R.layout.contact_us_email_item, contactFinancialServicesEmailLinearLayout, false)
+                        val localCallerRow = layoutInflater.inflate(R.layout.contact_us_email_item, binding.contactFinancialServicesEmailLinearLayout, false)
                         val contactUsEmailTextView = localCallerRow.findViewById<TextView>(R.id.contactUsEmailTextView)
                         val contactUsEmailDescriptionTextView = localCallerRow.findViewById<TextView>(R.id.contactUsEmailDescriptionTextView)
                         val contactUsEmailDescriptionDivider = localCallerRow.findViewById<View>(R.id.contactUsEmailDescriptionDivider)
@@ -102,14 +95,14 @@ class ContactUsCallCenterDetailFragment : Fragment() {
                         if (index == this.size.minus(1)){
                             contactUsEmailDescriptionDivider.visibility = GONE
                         }
-                        contactFinancialServicesEmailLinearLayout?.addView(localCallerRow)
+                        binding.contactFinancialServicesEmailLinearLayout?.addView(localCallerRow)
                     }
                 }
 
                     if (faxNumber?.isNotEmpty() == true) {
-                        contactUsFaxNumberRelativeLayout?.visibility = VISIBLE
-                        contactUsFaxNumberHorizontalView?.visibility = VISIBLE
-                        faxNumberTextView?.text = faxNumber
+                        binding.contactUsFaxNumberRelativeLayout?.visibility = VISIBLE
+                        binding.contactUsFaxNumberHorizontalView?.visibility = VISIBLE
+                        binding.faxNumberTextView?.text = faxNumber
                     }
             }
         }

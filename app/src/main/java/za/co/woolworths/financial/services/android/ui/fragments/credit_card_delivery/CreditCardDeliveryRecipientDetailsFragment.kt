@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
@@ -10,7 +9,7 @@ import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.credit_card_delivery_recipient_details_layout.*
+import com.awfs.coordination.databinding.CreditCardDeliveryRecipientDetailsLayoutBinding
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.AddressDetails
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.RecipientDetails
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.ScheduleDeliveryRequest
@@ -21,60 +20,61 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
-class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragment(), View.OnClickListener, RadioGroup.OnCheckedChangeListener {
+class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragment(R.layout.credit_card_delivery_recipient_details_layout), View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
+    private lateinit var binding: CreditCardDeliveryRecipientDetailsLayoutBinding
     var navController: NavController? = null
     private var recipientDetails = RecipientDetails()
     private lateinit var listOfInputFields: List<EditText>
     private var isRecipientIsThirdPerson: Boolean = false
     private var isEditRecipient: Boolean = false
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.credit_card_delivery_recipient_details_layout, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (arguments?.containsKey("isEditRecipient") == true) {
-            isEditRecipient = arguments?.get("isEditRecipient") as Boolean
-        }
-        if (isEditRecipient) {
-            confirmProceedButton.visibility = View.VISIBLE
-            val param = nestedScrollView.layoutParams as ViewGroup.MarginLayoutParams
-            param.setMargins(0, 0, 0, 40)
-            nestedScrollView.layoutParams = param
+        binding = CreditCardDeliveryRecipientDetailsLayoutBinding.bind(view)
 
-            confirm.visibility = View.GONE
-            clearDetails.visibility = View.GONE
-            recipientOption.visibility = View.GONE
-        }
+        binding.apply {
+            if (arguments?.containsKey("isEditRecipient") == true) {
+                isEditRecipient = arguments?.get("isEditRecipient") as Boolean
+            }
+            if (isEditRecipient) {
+                confirmProceedButton.visibility = View.VISIBLE
+                val param = nestedScrollView.layoutParams as ViewGroup.MarginLayoutParams
+                param.setMargins(0, 0, 0, 40)
+                nestedScrollView.layoutParams = param
 
-        navController = Navigation.findNavController(view)
-        setUpToolBar()
-        listOfInputFields = listOf(recipientName, cellphoneNumber, idNumber, alternativeNumber)
-        recipientName?.apply {
-            afterTextChanged { clearErrorInputField(this) }
-        }
-        cellphoneNumber?.apply {
-            afterTextChanged { clearErrorInputField(this) }
-        }
+                confirm.visibility = View.GONE
+                clearDetails.visibility = View.GONE
+                recipientOption.visibility = View.GONE
+            }
 
-        idNumber?.apply {
-            afterTextChanged { clearErrorInputField(this) }
-        }
+            navController = Navigation.findNavController(view)
+            setUpToolBar()
+            listOfInputFields = listOf(recipientName, cellphoneNumber, idNumber, alternativeNumber)
+            recipientName?.apply {
+                afterTextChanged { clearErrorInputField(this) }
+            }
+            cellphoneNumber?.apply {
+                afterTextChanged { clearErrorInputField(this) }
+            }
 
-        alternativeNumber?.apply {
-            afterTextChanged { clearErrorInputField(this) }
-        }
+            idNumber?.apply {
+                afterTextChanged { clearErrorInputField(this) }
+            }
 
-        recipientOption?.setOnCheckedChangeListener(this)
+            alternativeNumber?.apply {
+                afterTextChanged { clearErrorInputField(this) }
+            }
 
-        confirm?.setOnClickListener(this)
-        confirmProceedButton?.setOnClickListener { view ->
-            onConfirmButtonClicked()
+            recipientOption?.setOnCheckedChangeListener(this@CreditCardDeliveryRecipientDetailsFragment)
+
+            confirm?.setOnClickListener(this@CreditCardDeliveryRecipientDetailsFragment)
+            confirmProceedButton?.setOnClickListener { view ->
+                onConfirmButtonClicked()
+            }
+            clearDetails.setOnClickListener(this@CreditCardDeliveryRecipientDetailsFragment)
+            configureUI()
         }
-        clearDetails.setOnClickListener(this)
-        configureUI()
     }
 
     private fun setUpToolBar() {
@@ -86,7 +86,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
         }
     }
 
-    fun configureUI() {
+    fun CreditCardDeliveryRecipientDetailsLayoutBinding.configureUI() {
         statusResponse?.recipientDetails?.let {
             idNumber?.setText(it.idNumber ?: "")
             if (it.idNumber?.isEmpty() == true || it.idNumber == null) {
@@ -106,17 +106,19 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
     }
 
     override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.confirm -> {
-                onConfirmButtonClicked()
-            }
-            R.id.clearDetails -> {
-                if (recipientName.isEnabled) {
-                    recipientName?.text?.clear()
+        binding.apply {
+            when (v?.id) {
+                R.id.confirm -> {
+                    onConfirmButtonClicked()
                 }
-                cellphoneNumber?.text?.clear()
-                alternativeNumber?.text?.clear()
-                if (isRecipientIsThirdPerson) idNumber?.text?.clear()
+                R.id.clearDetails -> {
+                    if (recipientName.isEnabled) {
+                        recipientName?.text?.clear()
+                    }
+                    cellphoneNumber?.text?.clear()
+                    alternativeNumber?.text?.clear()
+                    if (isRecipientIsThirdPerson) idNumber?.text?.clear()
+                }
             }
         }
     }
@@ -140,7 +142,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
         navController?.navigate(R.id.action_from_recipient_to_creditCardScheduleDelivery, bundleOf("bundle" to bundle))
     }
 
-    private fun showErrorPhoneNumber(editText: EditText) {
+    private fun CreditCardDeliveryRecipientDetailsLayoutBinding.showErrorPhoneNumber(editText: EditText) {
         editText.setBackgroundResource(R.drawable.otp_box_error_background)
         when (editText.id) {
             R.id.cellphoneNumber -> {
@@ -154,7 +156,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
         }
     }
 
-    private fun showErrorInputField(editText: EditText) {
+    private fun CreditCardDeliveryRecipientDetailsLayoutBinding.showErrorInputField(editText: EditText) {
         if (editText.id == R.id.idNumber && !isRecipientIsThirdPerson)
             return
 
@@ -177,7 +179,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
         }
     }
 
-    private fun clearErrorInputField(editText: EditText) {
+    private fun CreditCardDeliveryRecipientDetailsLayoutBinding.clearErrorInputField(editText: EditText) {
         editText.setBackgroundResource(R.drawable.recipient_details_input_edittext_bg)
         when (editText.id) {
             R.id.recipientName -> {
@@ -194,7 +196,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
             }
         }
     }
-    private fun onConfirmButtonClicked() {
+    private fun CreditCardDeliveryRecipientDetailsLayoutBinding.onConfirmButtonClicked() {
         if (recipientName?.text.toString().trim().isNotEmpty() && cellphoneNumber?.text.toString().trim().isNotEmpty() && alternativeNumber?.text.toString().trim().isNotEmpty() && cellphoneNumber?.text?.length == 10 && alternativeNumber?.text?.length == 10 && if (isRecipientIsThirdPerson) idNumber?.text.toString().trim().isNotEmpty() else true) {
             recipientDetails.let {
                 it?.deliverTo = recipientName?.text.toString().trim()
@@ -226,10 +228,12 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
     }
 
     override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
-        isRecipientIsThirdPerson = checkedId == R.id.anotherPerson
-        idNumberLayout.visibility = if (isRecipientIsThirdPerson) View.VISIBLE else View.GONE
-        if (checkedId == R.id.mySelf && idNumberErrorMsg.visibility == View.VISIBLE) {
-            clearErrorInputField(idNumber)
+        binding.apply {
+            isRecipientIsThirdPerson = checkedId == R.id.anotherPerson
+            idNumberLayout.visibility = if (isRecipientIsThirdPerson) View.VISIBLE else View.GONE
+            if (checkedId == R.id.mySelf && idNumberErrorMsg.visibility == View.VISIBLE) {
+                clearErrorInputField(idNumber)
+            }
         }
     }
 }
