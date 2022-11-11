@@ -449,6 +449,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                     val confirmLocationResponse =
                         confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
                     progressBar.visibility = View.GONE
+                    if(!isAdded || !isVisible) return@launch
                     if (confirmLocationResponse != null) {
                         when (confirmLocationResponse.httpCode) {
                             HTTP_OK -> {

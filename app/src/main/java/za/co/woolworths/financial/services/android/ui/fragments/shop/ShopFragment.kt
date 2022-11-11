@@ -1468,7 +1468,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     }
                     // Driver tracking
                     else if (params.isDriverTrackingEnabled) {
-                        driverTrackingURL?.let { navigateToOrderTrackingScreen(it) }
+                        driverTrackingUrl?.let { navigateToOrderTrackingScreen(it) }
                     }
                 }
             }
