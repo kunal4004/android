@@ -454,7 +454,7 @@ class KotlinUtils {
                         tvDeliveringTo?.text =
                             context?.resources?.getString(R.string.collecting_from)
                         tvDeliveryLocation?.text =
-                            capitaliseFirstLetter(context?.resources?.getString(R.string.store) + storeName)
+                            capitaliseFirstLetter(storeName)
 
                         tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_collection_circle)
@@ -510,7 +510,7 @@ class KotlinUtils {
                         tvDeliveringTo?.text =
                             context?.resources?.getString(R.string.click_collect)
                         tvDeliveryLocation?.text =
-                            capitaliseFirstLetter(context?.resources?.getString(R.string.store) + storeName)
+                            capitaliseFirstLetter(storeName)
 
                         tvDeliveryLocation?.visibility = View.VISIBLE
                         deliverLocationIcon?.setImageResource(R.drawable.ic_collection_circle)
