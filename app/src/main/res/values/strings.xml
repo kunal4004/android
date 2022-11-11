@@ -2814,10 +2814,5 @@
     <string name="a_report_for_this_review_has_already_been_submitted">A report for this review has already been submitted.</string>
 
     <!--Pet Insurance -->
-    <string name="pet_insurance_dialog_title">What You’ll Need To Get Started</string>
-    <string name="pet_insurance_dialog_id">South African ID Number</string>
-    <string name="pet_insurance_dialog_id_desc">Pet Insurance is available for individuals 18 years or old with a valid SA ID number.</string>
-    <string name="pet_insurance_dialog_bank">Personal Banking Details</string>
-    <string name="pet_insurance_dialog_bank_desc">You’ll need these on hand to setup a recurring debit order.</string>
     <string name="pet_insurance_covered">.Covered</string>
 </resources>

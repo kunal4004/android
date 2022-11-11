@@ -49,8 +49,8 @@ import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.net.URLEncoder
-import retrofit2.adapter.rxjava2.Result.response
 import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDetailsResponse
+import za.co.woolworths.financial.services.android.models.dto.account.PetInsuranceModel
 
 object OneAppService : RetrofitConfig() {
 
@@ -1211,9 +1211,15 @@ object OneAppService : RetrofitConfig() {
         }
     }
 
-    suspend fun getLastDashOrder(): retrofit2.Response<LastOrderDetailsResponse>  {
+    suspend fun getLastDashOrder(): retrofit2.Response<LastOrderDetailsResponse> {
         return withContext(Dispatchers.IO) {
             mApiInterface.getLastDashOrder(getSessionToken(), getDeviceIdentityToken())
         }
+    }
+    fun getPetInsuranceResponse(): Call<PetInsuranceModel> {
+        return mApiInterface.getPetInsurance(
+            getSessionToken(),
+            getDeviceIdentityToken()
+        )
     }
 }
