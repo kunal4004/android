@@ -2424,7 +2424,7 @@
     <string name="collection_time_detail_title">When Would You Like To Collect?</string>
     <string name="native_checkout_collection_date">Collection Date</string>
     <string name="collection_details_text">Your order will be ready for collection in </string>
-    <string name="notify_text_label"> days. We\'ll notify you via SMS when it\'s ready.</string>
+    <string name="notify_text_label"> We\'ll notify you via SMS when it\'s ready.</string>
     <string name="native_checkout_collection_timeslot">Collection Timeslot</string>
     <string name="choose_date">Choose Date</string>
     <string name="confirm_date">CONFIRM DATE</string>

@@ -968,8 +968,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             if (!this.productDetails?.productType.equals(
                     getString(R.string.food_product_type),
                     ignoreCase = true
-                ) && (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC
-                        || KotlinUtils.getPreferredDeliveryType() == Delivery.DASH)
+                ) && (KotlinUtils.getPreferredDeliveryType() == Delivery.DASH)
+            ) {
+                showProductUnavailable()
+                showProductNotAvailableForCollection()
+                return
+            } else if(KotlinUtils.getPreferredDeliveryType() == Delivery.CNC
+               && (this.productDetails?.fulfillmentType == "01") // && fulfillmentStore - 02 or 07 && deliveryStatus - false                // (02 || 07 || (02 && 07)) //TODO add fulfillmentStore or deliveryStatus Type as well
             ) {
                 showProductUnavailable()
                 showProductNotAvailableForCollection()
@@ -1849,7 +1854,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             if (!this.productDetails?.productType.equals(
                                     getString(R.string.food_product_type),
                                     ignoreCase = true
-                                ) && KotlinUtils.getPreferredDeliveryType() == Delivery.CNC
+                                )
                             ) {
                                 storeIdForInventory = ""
                                 clearStockAvailability()

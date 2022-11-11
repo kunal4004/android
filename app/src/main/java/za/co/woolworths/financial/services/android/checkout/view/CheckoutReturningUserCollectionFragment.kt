@@ -418,12 +418,14 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                     initializeDatesAndTimeSlots(firstAvailableDateSlot)
                                     // Set default time slot selected
                                     var selectedSlotIndex = 0
-                                    ArrayList(firstAvailableDateSlot?.slots).forEachIndexed { index, slot ->
-                                        if (slot.slotId.equals(selectedTimeSlot?.slotId)) {
-                                            selectedSlotIndex = index
+                                    firstAvailableDateSlot?.let { week ->
+                                        ArrayList(week.slots).forEachIndexed { index, slot ->
+                                            if (slot.slotId.equals(selectedTimeSlot?.slotId)) {
+                                                selectedSlotIndex = index
+                                            }
                                         }
+                                        collectionTimeSlotsAdapter.setSelectedItem(selectedSlotIndex)
                                     }
-                                    collectionTimeSlotsAdapter.setSelectedItem(selectedSlotIndex)
                                 }
                                 if(response.orderSummary?.hasMinimumBasketAmount == false) {
                                    KotlinUtils.showMinCartValueError(
@@ -660,8 +662,11 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     private fun collectionDetails() {
-        val deliveryInDays = storePickupInfoResponse?.openDayDeliverySlots?.get(0)?.deliveryInDays
-        tvCollectionDetailsText.text = getString(R.string.collection_details_text) + " "+ deliveryInDays +" " + getString(R.string.notify_text_label)
+        if (storePickupInfoResponse?.openDayDeliverySlots?.isNullOrEmpty() == false) {
+            val deliveryInDays = storePickupInfoResponse?.openDayDeliverySlots?.get(0)?.deliveryInDays
+            checkoutCollectionDetailsInfoLayout.visibility = View.VISIBLE
+            tvCollectionDetailsText.text = getString(R.string.collection_details_text) + " " + deliveryInDays?.lowercase() + " " + getString(R.string.notify_text_label)
+        }
     }
 
     fun initializeDeliveryInstructions() {
