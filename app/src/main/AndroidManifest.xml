@@ -253,6 +253,11 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.SearchStoresActivity"
             android:screenOrientation="portrait"
             android:theme="@style/StoreSearch" />
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.maintenance.MaintenanceWebViewActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity"
             android:screenOrientation="portrait"
@@ -607,6 +612,20 @@
             android:name="za.co.woolworths.financial.services.android.ui.fragments.shop.OrderTrackingWebViewActivity"
             android:theme="@style/FaqStyle"
             android:screenOrientation="portrait"/>
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.ReportReviewActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.MoreReviewActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.ReviewerInfoDetailsActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
+
 
     </application>
 

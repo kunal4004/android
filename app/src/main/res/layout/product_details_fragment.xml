@@ -27,11 +27,11 @@
                 android:layout_height="wrap_content">
 
                 <include
-                    android:visibility="gone"
                     android:id="@+id/brand_view"
                     layout="@layout/layout_product_details_chanel"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_width="wrap_content" />
+                    android:visibility="gone" />
 
                 <ImageView
                     android:id="@+id/backArrow"
@@ -169,6 +169,16 @@
                     app:layout_constraintStart_toStartOf="@id/left_guideline"
                     app:layout_constraintTop_toBottomOf="@id/rangeName" />
 
+                <include
+                    android:id="@+id/ratingLayout"
+                    layout="@layout/pdp_rating_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    app:layout_constraintEnd_toStartOf="@+id/right_guideline"
+                    app:layout_constraintStart_toStartOf="@+id/left_guideline"
+                    app:layout_constraintTop_toBottomOf="@id/productName" />
+
 
                 <include
                     android:id="@+id/priceLayout"
@@ -178,7 +188,7 @@
                     android:layout_marginTop="10dp"
                     app:layout_constraintEnd_toStartOf="@+id/right_guideline"
                     app:layout_constraintStart_toStartOf="@+id/left_guideline"
-                    app:layout_constraintTop_toBottomOf="@id/productName" />
+                    app:layout_constraintTop_toBottomOf="@id/ratingLayout" />
 
                 <TextView
                     android:id="@+id/onlinePromotionalTextView1"

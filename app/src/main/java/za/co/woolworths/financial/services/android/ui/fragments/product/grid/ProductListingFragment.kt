@@ -38,7 +38,6 @@ import kotlinx.android.synthetic.main.no_connection_handler.view.*
 import kotlinx.android.synthetic.main.promotional_text_plp.*
 import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.*
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.chanel.views.ChanelNavigationClickListener
 import za.co.woolworths.financial.services.android.chanel.views.adapter.BrandLandingAdapter
@@ -90,6 +89,7 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseManage
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager.Companion.setCrashlyticsString
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.net.ConnectException
+import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.util.*
 
@@ -288,7 +288,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                         }
                     }
                 }
-            } catch (e: HttpException) {
+            } catch (e: Exception) {
                 FirebaseManager.logException(e)
                 dismissProgressBar()
             } catch (e: JsonSyntaxException) {
@@ -363,8 +363,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                         }
                     }
                 }
-            } catch (e: HttpException) {
-                e.printStackTrace()
+            } catch (e: Exception) {
+                FirebaseManager.logException(e)
                 dismissProgressBar()
             }
         }
@@ -913,6 +913,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
 
         mProductAdapter?.notifyItemChanged(actualSize, sizeOfList)
+
+
+
         canLoadMore(numItemsInTotal, sizeOfList)
     }
 
@@ -938,6 +941,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         if (!isLoadMore) {
             incCenteredProgress?.visibility = GONE
         }
+
+
     }
 
 
@@ -1544,7 +1549,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                                     }
                                 }
                             } else {
-                                val addToCartBalloon by balloon(AddedToCartBalloonFactory::class)
+                                val addToCartBalloon by balloon<AddedToCartBalloonFactory>()
                                 val bottomView =
                                     (activity as? BottomNavigationActivity)?.bottomNavigationById
                                 val buttonView: Button =

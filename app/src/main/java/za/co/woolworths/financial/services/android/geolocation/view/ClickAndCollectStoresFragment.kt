@@ -41,6 +41,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import java.net.SocketTimeoutException
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -253,7 +254,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
                         }
                     }
                 }
-            } catch (e: HttpException) {
+            } catch (e: Exception) {
                 FirebaseManager.logException(e)
                 clickCollectProgress?.visibility = View.GONE
                 showErrorDialog()

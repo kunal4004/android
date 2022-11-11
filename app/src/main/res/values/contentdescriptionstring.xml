@@ -146,25 +146,4 @@
     <string name="applicationBeingProcessedImage">applicationBeingProcessedImage</string>
     <string name="manageCardDotIndicator1">manageCardDotIndicator</string>
     <string name="manageCardDotIndicator2">manageCardDotIndicator2</string>
-
-    <!-- Voice of Customer -->
-    <string name="voc_list_questions">voc_list_questions</string>
-    <string name="voc_question_slider">voc_question_slider</string>
-    <string name="voc_question_freetext">voc_question_freetext</string>
-    <string name="voc_question_freetext_title">voc_question_freetext_title</string>
-    <string name="voc_question_freetext_input">voc_question_freetext_input</string>
-    <string name="voc_footer_action">voc_footer_action</string>
-    <string name="voc_action_submit">voc_action_submit</string>
-    <string name="voc_action_submit_label">voc_action_submit_label</string>
-    <string name="voc_action_optout">voc_action_optout</string>
-    <string name="voc_action_optout_label">voc_action_optout_label</string>
-
-    <!-- Generic Action or Cancel Dialog -->
-    <string name="dialog_confirmorcancel">dialog_confirmorcancel</string>
-    <string name="dialog_confirmorcancel_title">dialog_confirmorcancel_title</string>
-    <string name="dialog_confirmorcancel_description">dialog_confirmorcancel_description</string>
-    <string name="dialog_confirmorcancel_action_proceed">dialog_confirmorcancel_action_proceed</string>
-    <string name="dialog_confirmorcancel_action_proceed_label">dialog_confirmorcancel_action_proceed_label</string>
-    <string name="dialog_confirmorcancel_action_cancel">dialog_confirmorcancel_action_cancel</string>
-    <string name="dialog_confirmorcancel_action_cancel_label">dialog_confirmorcancel_action_cancel_label</string>
 </resources>

@@ -6,15 +6,21 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
 import android.view.ViewGroup.VISIBLE
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.constraintlayout.widget.ConstraintSet.*
 import androidx.core.content.ContextCompat
+import androidx.core.view.contains
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
@@ -25,6 +31,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.black_tool_tip_layout.*
 import kotlinx.android.synthetic.main.fragment_shop.*
 import kotlinx.android.synthetic.main.geo_location_delivery_address.*
+import kotlinx.android.synthetic.main.layout_inapp_order_notification.view.*
 import kotlinx.android.synthetic.main.shop_custom_tab.view.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -40,6 +47,9 @@ import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams.SearchType
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
+import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDetailsResponse
+import za.co.woolworths.financial.services.android.models.network.Parameter
+import za.co.woolworths.financial.services.android.onecartgetstream.OCChatActivity
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
@@ -49,6 +59,7 @@ import za.co.woolworths.financial.services.android.ui.activities.product.Product
 import za.co.woolworths.financial.services.android.ui.adapters.ShopPagerAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment.Companion.getInstance
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment.SelectedTabIndex.*
 import za.co.woolworths.financial.services.android.ui.fragments.shop.StandardDeliveryFragment.Companion.DEPARTMENT_LOGIN_REQUEST
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.DISPLAY_TOAST_RESULT_CODE
@@ -69,6 +80,8 @@ import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_L
 import za.co.woolworths.financial.services.android.util.analytics.AnalyticsManager
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
+import java.net.SocketTimeoutException
 
 
 /**
@@ -78,7 +91,7 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 @AndroidEntryPoint
 class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     OnChildFragmentEvents,
-    WMaterialShowcaseView.IWalkthroughActionListener {
+    WMaterialShowcaseView.IWalkthroughActionListener, View.OnClickListener {
 
     val confirmAddressViewModel : ConfirmAddressViewModel by activityViewModels()
 
@@ -93,6 +106,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private var user: String = ""
     private var validateLocationResponse: ValidateLocationResponse? = null
     private var tabWidth: Float? = 0f
+    private var inAppNotificationView: View? = null
     private val fragmentResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode != RESULT_OK) {
@@ -129,6 +143,10 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         DASH_TAB(2)
     }
 
+    protected val shopViewModel: ShopViewModel by viewModels(
+        ownerProducer = { this }
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mTabTitle = mutableListOf(
@@ -136,6 +154,10 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             bindString(R.string.click_and_collect),
             bindString(R.string.dash_delivery)
         )
+
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            shopViewModel.getLastDashOrderDetails()
+        }
     }
 
     fun setEventForDeliveryTypeAndBrowsingType() {
@@ -223,6 +245,114 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         tabs_main?.setupWithViewPager(viewpager_main)
         updateTabIconUI(STANDARD_TAB.index)
         showShopFeatureWalkThrough()
+        addObserverInAppNotificationToast()
+    }
+
+    private fun addObserverInAppNotificationToast() {
+        shopViewModel.lastDashOrder.observe(viewLifecycleOwner) {
+            it.peekContent()?.data?.apply {
+                addInappNotificationToast(this)
+            }
+        }
+    }
+
+    private fun removeNotificationToast() {
+        // Remove view
+        if (inAppNotificationView != null && fragmentShop?.contains(inAppNotificationView!!) == true)
+            fragmentShop?.removeView(inAppNotificationView)
+    }
+
+    fun addInappNotificationToast(params: LastOrderDetailsResponse) {
+        if (!isAdded || activity == null || view == null) {
+            return
+        }
+
+        // Remove view if already added.
+        removeNotificationToast()
+
+        // user should be authenticated
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            return
+        }
+
+        // Show only when showDashOrder flag is true
+        if (!params.showDashOrder) {
+            return
+        }
+
+        val inflater = LayoutInflater.from(requireContext())
+        inAppNotificationView =
+            inflater.inflate(R.layout.layout_inapp_order_notification, fragmentShop, false)
+        inAppNotificationView?.id = R.id.layoutInappNotification
+        inAppNotificationView?.layoutParams =
+            ConstraintLayout.LayoutParams(MATCH_CONSTRAINT, WRAP_CONTENT)
+        // Copy LayoutParams and add view
+        val set = ConstraintSet()
+        set.clone(fragmentShop)
+        // Align view to bottom
+        // pin to the bottom of the container
+        inAppNotificationView?.id?.let {
+            set.clear(it)
+            set.constrainHeight(it, WRAP_CONTENT)
+            set.constrainWidth(it, MATCH_CONSTRAINT)
+            set.connect(
+                it,
+                BOTTOM,
+                PARENT_ID,
+                BOTTOM,
+                requireContext().resources.getDimension(R.dimen.sixteen_dp).toInt()
+            )
+            set.connect(
+                it,
+                START,
+                PARENT_ID,
+                START,
+                requireContext().resources.getDimension(R.dimen.sixteen_dp).toInt()
+            )
+            set.connect(
+                it,
+                END,
+                PARENT_ID,
+                END,
+                requireContext().resources.getDimension(R.dimen.sixteen_dp).toInt()
+            )
+        }
+        fragmentShop.addView(inAppNotificationView)
+        // Apply the changes
+        set.applyTo(fragmentShop as ConstraintLayout)
+
+        inAppNotificationView?.inappOrderNotificationContainer?.setOnClickListener(this)
+        inAppNotificationView?.inappOrderNotificationContainer?.setTag(
+            R.id.inappOrderNotificationContainer,
+            params.orderId
+        )
+
+        params.orderId?.let { orderId ->
+            inAppNotificationView?.inappOrderNotificationTitle?.text = requireContext().getString(
+                R.string.inapp_order_notification_title,
+                orderId
+            )
+        }
+        inAppNotificationView?.inappOrderNotificationSubitle?.text =
+            params.orderStatus ?: params.state
+        // Chat / Driver Tracking / Location
+        inAppNotificationView?.inappOrderNotificationIcon?.apply {
+            setTag(R.id.inappOrderNotificationIcon, params)
+            // Chat enabled STATUS == PACKING i.e. CONFIRMED
+            if (params.isChatEnabled) {
+                visibility = View.VISIBLE
+                setImageResource(R.drawable.ic_chat_icon)
+                setOnClickListener(this@ShopFragment)
+            }
+            // Driver tracking enabled STATUS == EN-ROUTE
+            else if (params.isDriverTrackingEnabled) {
+                visibility = View.VISIBLE
+                setImageResource(R.drawable.ic_white_location)
+                setOnClickListener(this@ShopFragment)
+            } else {
+                visibility = View.GONE
+            }
+        }
     }
 
     fun showSearchAndBarcodeUi() {
@@ -290,7 +420,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                             }
                         }
                     }
-                } catch (e: HttpException) {
+                } catch (e: Exception) {
                     shopProgressbar?.visibility = View.GONE
                     tabs_main?.isClickable = true
                     FirebaseManager.logException(e)
@@ -326,6 +456,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     override fun onResume() {
         super.onResume()
 
+        //verify if the show dash order is true
+        refreshInAppNotificationToast()
+
         if ((KotlinUtils.isLocationSame == false && KotlinUtils.placeId != null) || WoolworthsApplication.getValidatePlaceDetails() == null) {
             executeValidateSuburb()
         }
@@ -342,6 +475,21 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
         }
         setDeliveryView()
+    }
+
+    private fun refreshInAppNotificationToast() {
+        shopViewModel.lastDashOrder.value?.peekContent()?.data?.apply {
+            if (showDashOrder
+                && SessionUtilities.getInstance().isUserAuthenticated
+                && shopViewModel.lastDashOrderInProgress.value == false
+            ) {
+                shopViewModel.getLastDashOrderDetails()
+            }
+        }
+    }
+
+    fun makeLastDashOrderDetailsCall() {
+        shopViewModel.getLastDashOrderDetails()
     }
 
     private fun updateCurrentTab(deliveryType: String?) {
@@ -508,6 +656,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     hideToolbar()
                 }, AppConstant.DELAY_1000_MS)
             }
+            refreshInAppNotificationToast()
         } else {
             if (blackToolTipLayout?.isVisible == true) {
                 timer?.cancel()
@@ -567,6 +716,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
         if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             refreshViewPagerFragment()
+            // Update Toast if logged in with another user
+            // Use Case: If first user does not have any order, Second user should update Last order details
+            shopViewModel.getLastDashOrderDetails()
         }
 
         if (requestCode == PDP_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
@@ -1243,4 +1395,49 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     fun isUserAuthenticated() = SessionUtilities.getInstance().isUserAuthenticated
 
     fun getCurrentFragmentIndex() = viewpager_main?.currentItem
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            // In App notification click, Navigate to Order Details
+            R.id.inappOrderNotificationContainer -> {
+                (requireActivity() as? BottomNavigationActivity)?.apply {
+                    val orderId: String? = v.getTag(R.id.inappOrderNotificationContainer) as? String
+                    orderId?.let {
+                        pushFragment(getInstance(Parameter(it)))
+                    }
+                }
+            }
+            // In App notification Chat click, Navigate to Chat
+            // Chat / Driver Tracking / Location
+            R.id.inappOrderNotificationIcon -> {
+                val params = v.getTag(R.id.inappOrderNotificationIcon) as? LastOrderDetailsResponse
+                params?.apply {
+                    // Chat
+                    if (params.isChatEnabled) {
+                        navigateToChat(orderId)
+                    }
+                    // Driver tracking
+                    else if (params.isDriverTrackingEnabled) {
+                        driverTrackingUrl?.let { navigateToOrderTrackingScreen(it) }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun navigateToChat(orderId: String?) {
+        orderId?.let {
+            startActivity(OCChatActivity.newIntent(requireActivity(), it))
+        }
+    }
+
+    private fun navigateToOrderTrackingScreen(url: String) {
+        requireActivity().apply {
+            startActivity(OrderTrackingWebViewActivity.newIntent(this, url))
+            overridePendingTransition(
+                R.anim.slide_from_right,
+                R.anim.slide_out_to_left
+            )
+        }
+    }
 }
