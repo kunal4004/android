@@ -1375,7 +1375,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 onlinePromotionalTextView2?.visibility = View.GONE
                 onlinePromotionalTextView3?.visibility = View.GONE
             }
-            if (it.isRnREnabled!= null && it.isRnREnabled && RatingAndReviewUtil.isRatingAndReviewConfigavailbel()) {
+            if (true == it.isRnREnabled && RatingAndReviewUtil.isRatingAndReviewConfigavailbel()) {
                 ratingBarTop?.rating = it.averageRating
                 tvTotalReviews?.text = resources.getQuantityString(
                     R.plurals.no_review,
