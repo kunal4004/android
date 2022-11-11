@@ -2341,7 +2341,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 when (Delivery.getType(it.deliveryType)) {
                     Delivery.CNC -> {
                         currentDeliveryLocation.text =
-                            resources?.getString(R.string.store) + it.storeName?.let {
+                             it.storeName?.let {
                                 convertToTitleCase(it)
                             } ?: ""
                         defaultLocationPlaceholder.text =
