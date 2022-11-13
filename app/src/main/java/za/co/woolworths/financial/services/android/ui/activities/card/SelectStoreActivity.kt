@@ -15,7 +15,7 @@ class SelectStoreActivity : AppCompatActivity() {
         const val STORE_DETAILS = "STORE_DETAILS"
     }
 
-    private lateinit var binding: SelectStoreActivityBinding
+    internal lateinit var binding: SelectStoreActivityBinding
     private var navController: NavController? = null
 
     override fun onSaveInstanceState(outState: Bundle) {
