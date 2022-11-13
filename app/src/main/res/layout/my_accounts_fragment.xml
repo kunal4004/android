@@ -187,16 +187,16 @@
                                 android:layout_alignParentEnd="true"
                                 android:layout_centerVertical="true"
                                 android:orientation="vertical">
-                                <ProgressBar
-                                    android:id="@+id/progressPetInsurance"
+                                <ImageView
+                                    android:id="@+id/iv_pet_insurance_progress"
                                     style="?android:attr/progressBarStyleLarge"
                                     android:layout_width="24dp"
                                     android:layout_height="24dp"
                                     android:layout_centerVertical="true"
                                     android:elevation="@dimen/two_dp"
                                     android:layout_alignParentEnd="true"
-                                    android:indeterminateTint="@color/black"
-                                    android:layout_centerInParent="true" />
+                                    android:layout_centerInParent="true"
+                                    app:srcCompat="@drawable/refresh_account_drawable_icon" />
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                                     android:id="@+id/tv_pet_insurance_apply"
                                     android:layout_width="wrap_content"

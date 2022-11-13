@@ -5,6 +5,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.dashboar
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
 import static za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.ACCOUNT_PRODUCT_PAYLOAD;
 import static za.co.woolworths.financial.services.android.ui.fragments.account.fica.FicaViewModel.GET_REFRESH_STATUS;
+import static za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.PET;
 import static za.co.woolworths.financial.services.android.ui.fragments.mypreferences.MyPreferencesFragment.IS_NON_WFS_USER;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_EXPECTATION_FAILED_502;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_OK;
@@ -154,6 +155,7 @@ import za.co.woolworths.financial.services.android.util.ServiceTools;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension;
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType;
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent;
 
@@ -250,7 +252,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private View applyNowSpacingView;
     private TextView appVersionNameInfoTextView;
     private TextView fspNumberInfoTextView;
-    private ProgressBar progressPetInsurance;
+    private ImageView ivPetInsuranceProgress;
     private TextView tvPetInsuranceCovered;
     private TextView tvPetInsuranceHelped;
     private TextView tvPetInsuranceApply;
@@ -313,7 +315,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             applyCreditCardView = view.findViewById(R.id.applyCrediCard);
             applyPersonalCardView = view.findViewById(R.id.applyPersonalLoan);
             applyPetInsuranceCardView = view.findViewById(R.id.applyPetInsurance);
-            progressPetInsurance = view.findViewById(R.id.progressPetInsurance);
+            ivPetInsuranceProgress = view.findViewById(R.id.iv_pet_insurance_progress);
             tvPetInsuranceCovered = view.findViewById(R.id.tv_pet_insurance_covered);
             tvPetInsuranceHelped = view.findViewById(R.id.tv_pet_insurance_help);
             tvPetInsuranceApply = view.findViewById(R.id.tv_pet_insurance_apply);
@@ -1655,7 +1657,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                         PetInsuranceModel petInsuranceModel = response.body();
                         if (petInsuranceModel != null) {
                             for (InsuranceProducts insuranceProduct : petInsuranceModel.getInsuranceProducts()) {
-                                if (insuranceProduct.getType().equals("pet")){
+                                if (insuranceProduct.getType().equals(PET)){
                                     petInsuranceCheck(insuranceProduct);
                                 }
                             }
@@ -1665,7 +1667,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
                 @Override
                 public void onFailure(Call<PetInsuranceModel> call, Throwable t) {
-
+                    petInsuranceCheck(null);
                 }
             });
         }else{
@@ -1675,14 +1677,17 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     private void petInsuranceShowLoading() {
         applyPetInsuranceCardView.setVisibility(View.VISIBLE);
-        progressPetInsurance.setVisibility(View.VISIBLE);
+        ivPetInsuranceProgress.setVisibility(View.VISIBLE);
+        ivPetInsuranceProgress.startAnimation(mUpdateMyAccount.rotateViewAnimation());
         tvPetInsuranceApply.setVisibility(View.GONE);
         tvPetInsuranceCovered.setVisibility(View.GONE);
         tvPetInsuranceHelped.setVisibility(View.GONE);
     }
 
     private void petInsuranceCheck(InsuranceProducts insuranceProduct) {
-        progressPetInsurance.setVisibility(View.GONE);
+        ivPetInsuranceProgress.setVisibility(View.GONE);
+        ivPetInsuranceProgress.clearAnimation();
+        if (insuranceProduct == null) return;
         if (insuranceProduct.getEligible() && !insuranceProduct.getCovered()){
             tvPetInsuranceApply.setVisibility(View.VISIBLE);
             tvPetInsuranceCovered.setVisibility(View.GONE);
