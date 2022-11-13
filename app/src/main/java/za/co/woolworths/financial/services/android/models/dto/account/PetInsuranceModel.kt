@@ -13,5 +13,5 @@ data class PetInsuranceModel(
 
 
 @Parcelize
-data class InsuranceProducts(var type: String, var eligible: Boolean, var covered: Boolean) :
+data class InsuranceProducts(var type: String, var covered: Boolean) :
     Parcelable
