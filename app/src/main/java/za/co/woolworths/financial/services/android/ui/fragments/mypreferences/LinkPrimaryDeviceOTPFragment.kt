@@ -9,25 +9,16 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.os.Handler
 import android.text.TextUtils
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_enter_otp.buttonNext
-import kotlinx.android.synthetic.main.fragment_enter_otp.didNotReceiveOTPTextView
-import kotlinx.android.synthetic.main.fragment_unlink_device_otp.*
-import kotlinx.android.synthetic.main.layout_link_device_validate_otp.*
-import kotlinx.android.synthetic.main.layout_sending_otp_request.*
-import kotlinx.android.synthetic.main.layout_unlink_device_result.*
+import com.awfs.coordination.databinding.FragmentUnlinkDeviceOtpBinding
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -44,10 +35,12 @@ import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesAc
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationInterface
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
+import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.utils.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextWatcher
 import za.co.woolworths.financial.services.android.util.*
 
-class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeListener {
+class LinkPrimaryDeviceOTPFragment : BaseFragmentBinding<FragmentUnlinkDeviceOtpBinding>(
+    FragmentUnlinkDeviceOtpBinding::inflate) , View.OnClickListener, NetworkChangeListener {
 
     private var mConnectionBroadCast: BroadcastReceiver? = null
     private var newPrimaryDevice: UserDevice? = null
@@ -59,54 +52,62 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
     private var deleteOldPrimaryDevice: Boolean = false
 
     private val mKeyListener = View.OnKeyListener { v, keyCode, event ->
+        binding.unlinkDeviceOTPScreenConstraintLayout.apply {
         if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
             when {
-                TextUtils.isEmpty(linkDeviceOTPEdtTxt1?.text) -> {
-                    linkDeviceOTPEdtTxt1?.setSelection(linkDeviceOTPEdtTxt1?.text?.length ?: 0)
-                    linkDeviceOTPEdtTxt1?.requestFocus(View.FOCUS_DOWN)
+                TextUtils.isEmpty(linkDeviceOTPEdtTxt1.text) -> {
+                    linkDeviceOTPEdtTxt1.setSelection(linkDeviceOTPEdtTxt1.text.length ?: 0)
+                    linkDeviceOTPEdtTxt1.requestFocus(View.FOCUS_DOWN)
                 }
-                TextUtils.isEmpty(linkDeviceOTPEdtTxt2?.text) -> {
-                    linkDeviceOTPEdtTxt1?.setSelection(linkDeviceOTPEdtTxt1?.text?.length ?: 0)
-                    linkDeviceOTPEdtTxt1?.requestFocus(View.FOCUS_DOWN)
+                TextUtils.isEmpty(linkDeviceOTPEdtTxt2.text) -> {
+                    linkDeviceOTPEdtTxt1.setSelection(linkDeviceOTPEdtTxt1.text?.length ?: 0)
+                    linkDeviceOTPEdtTxt1.requestFocus(View.FOCUS_DOWN)
                 }
-                TextUtils.isEmpty(linkDeviceOTPEdtTxt3?.text) -> {
-                    linkDeviceOTPEdtTxt2?.setSelection(linkDeviceOTPEdtTxt2?.text?.length ?: 0)
-                    linkDeviceOTPEdtTxt2?.requestFocus(View.FOCUS_DOWN)
+                TextUtils.isEmpty(linkDeviceOTPEdtTxt3.text) -> {
+                    linkDeviceOTPEdtTxt2.setSelection(linkDeviceOTPEdtTxt2.text?.length ?: 0)
+                    linkDeviceOTPEdtTxt2.requestFocus(View.FOCUS_DOWN)
                 }
-                TextUtils.isEmpty(linkDeviceOTPEdtTxt4?.text) -> {
-                    linkDeviceOTPEdtTxt3?.setSelection(linkDeviceOTPEdtTxt3?.text?.length ?: 0)
-                    linkDeviceOTPEdtTxt3?.requestFocus(View.FOCUS_DOWN)
+                TextUtils.isEmpty(linkDeviceOTPEdtTxt4.text) -> {
+                    linkDeviceOTPEdtTxt3.setSelection(linkDeviceOTPEdtTxt3.text?.length ?: 0)
+                    linkDeviceOTPEdtTxt3.requestFocus(View.FOCUS_DOWN)
                 }
-                TextUtils.isEmpty(linkDeviceOTPEdtTxt5?.text) -> {
-                    linkDeviceOTPEdtTxt4?.setSelection(linkDeviceOTPEdtTxt4?.text?.length ?: 0)
-                    linkDeviceOTPEdtTxt4?.requestFocus(View.FOCUS_DOWN)
+                TextUtils.isEmpty(linkDeviceOTPEdtTxt5.text) -> {
+                    linkDeviceOTPEdtTxt4.setSelection(linkDeviceOTPEdtTxt4.text?.length ?: 0)
+                    linkDeviceOTPEdtTxt4.requestFocus(View.FOCUS_DOWN)
                 }
             }
         } else if (keyCode == KeyEvent.KEYCODE_ENTER) {
             Utils.hideSoftKeyboard(activity)
         }
+    }
         false
     }
 
     private fun validateNextButton() {
-        if (TextUtils.isEmpty(linkDeviceOTPEdtTxt5.text) || TextUtils.isEmpty(linkDeviceOTPEdtTxt4.text)
-            || TextUtils.isEmpty(linkDeviceOTPEdtTxt3.text) || TextUtils.isEmpty(
-                linkDeviceOTPEdtTxt2.text
-            )
-            || TextUtils.isEmpty(linkDeviceOTPEdtTxt1.text)
-        ) {
-            disableNextButton()
-        } else {
-            enableNextButton()
-        }
+        binding.unlinkDeviceOTPScreenConstraintLayout.apply {
+            if (TextUtils.isEmpty(linkDeviceOTPEdtTxt5.text) || TextUtils.isEmpty(
+                    linkDeviceOTPEdtTxt4.text
+                )
+                || TextUtils.isEmpty(linkDeviceOTPEdtTxt3.text) || TextUtils.isEmpty(
+                    linkDeviceOTPEdtTxt2.text
+                )
+                || TextUtils.isEmpty(linkDeviceOTPEdtTxt1.text)
+            ) {
+                disableNextButton()
+            } else {
+                enableNextButton()
+            }
 
-        if (TextUtils.isEmpty(linkDeviceOTPEdtTxt5.text) && TextUtils.isEmpty(linkDeviceOTPEdtTxt4.text)
-            && TextUtils.isEmpty(linkDeviceOTPEdtTxt3.text) && TextUtils.isEmpty(
-                linkDeviceOTPEdtTxt2.text
-            )
-            && TextUtils.isEmpty(linkDeviceOTPEdtTxt1.text)
-        ) {
-            clearErrorMessage()
+            if (TextUtils.isEmpty(linkDeviceOTPEdtTxt5.text) && TextUtils.isEmpty(
+                    linkDeviceOTPEdtTxt4.text
+                )
+                && TextUtils.isEmpty(linkDeviceOTPEdtTxt3.text) && TextUtils.isEmpty(
+                    linkDeviceOTPEdtTxt2.text
+                )
+                && TextUtils.isEmpty(linkDeviceOTPEdtTxt1.text)
+            ) {
+                clearErrorMessage()
+            }
         }
     }
 
@@ -162,9 +163,11 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
     }
 
     private fun clearErrorMessage() {
-        if (linkDeviceOTPErrorTxt?.visibility == View.VISIBLE) {
-            linkDeviceOTPErrorTxt?.visibility = View.GONE
-            setOtpErrorBackground(R.drawable.otp_box_background_focus_selector)
+        binding.unlinkDeviceOTPScreenConstraintLayout.apply {
+            if (linkDeviceOTPErrorTxt.visibility == View.VISIBLE) {
+                linkDeviceOTPErrorTxt.visibility = View.GONE
+                setOtpErrorBackground(R.drawable.otp_box_background_focus_selector)
+            }
         }
     }
 
@@ -174,53 +177,53 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
         setToolbar()
         connectionDetector()
 
-        didNotReceiveOTPTextView?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-        didNotReceiveOTPTextView?.setOnClickListener(this)
+        binding.didNotReceiveOTPTextView.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+        binding.didNotReceiveOTPTextView.setOnClickListener(this)
+        binding.unlinkDeviceOTPScreenConstraintLayout.apply {
+            KotlinUtils.lowercaseEditText(linkDeviceOTPEdtTxt1)
+            KotlinUtils.lowercaseEditText(linkDeviceOTPEdtTxt2)
+            KotlinUtils.lowercaseEditText(linkDeviceOTPEdtTxt3)
+            KotlinUtils.lowercaseEditText(linkDeviceOTPEdtTxt4)
+            KotlinUtils.lowercaseEditText(linkDeviceOTPEdtTxt5)
 
-        KotlinUtils.lowercaseEditText(linkDeviceOTPEdtTxt1)
-        KotlinUtils.lowercaseEditText(linkDeviceOTPEdtTxt2)
-        KotlinUtils.lowercaseEditText(linkDeviceOTPEdtTxt3)
-        KotlinUtils.lowercaseEditText(linkDeviceOTPEdtTxt4)
-        KotlinUtils.lowercaseEditText(linkDeviceOTPEdtTxt5)
+            linkDeviceOTPEdtTxt1.addTextChangedListener(
+                OTPViewTextWatcher(
+                    linkDeviceOTPEdtTxt1,
+                    linkDeviceOTPEdtTxt1,
+                    linkDeviceOTPEdtTxt2
+                ) { validateNextButton() })
+            linkDeviceOTPEdtTxt2.addTextChangedListener(
+                OTPViewTextWatcher(
+                    linkDeviceOTPEdtTxt1,
+                    linkDeviceOTPEdtTxt2,
+                    linkDeviceOTPEdtTxt3
+                ) { validateNextButton() })
+            linkDeviceOTPEdtTxt3.addTextChangedListener(
+                OTPViewTextWatcher(
+                    linkDeviceOTPEdtTxt2,
+                    linkDeviceOTPEdtTxt3,
+                    linkDeviceOTPEdtTxt4
+                ) { validateNextButton() })
+            linkDeviceOTPEdtTxt4.addTextChangedListener(
+                OTPViewTextWatcher(
+                    linkDeviceOTPEdtTxt3,
+                    linkDeviceOTPEdtTxt4,
+                    linkDeviceOTPEdtTxt5
+                ) { validateNextButton() })
+            linkDeviceOTPEdtTxt5.addTextChangedListener(
+                OTPViewTextWatcher(
+                    linkDeviceOTPEdtTxt4,
+                    linkDeviceOTPEdtTxt5,
+                    linkDeviceOTPEdtTxt5
+                ) { validateNextButton() })
 
-        linkDeviceOTPEdtTxt1?.addTextChangedListener(
-            OTPViewTextWatcher(
-                linkDeviceOTPEdtTxt1,
-                linkDeviceOTPEdtTxt1,
-                linkDeviceOTPEdtTxt2
-            ) { validateNextButton() })
-        linkDeviceOTPEdtTxt2?.addTextChangedListener(
-            OTPViewTextWatcher(
-                linkDeviceOTPEdtTxt1,
-                linkDeviceOTPEdtTxt2,
-                linkDeviceOTPEdtTxt3
-            ) { validateNextButton() })
-        linkDeviceOTPEdtTxt3?.addTextChangedListener(
-            OTPViewTextWatcher(
-                linkDeviceOTPEdtTxt2,
-                linkDeviceOTPEdtTxt3,
-                linkDeviceOTPEdtTxt4
-            ) { validateNextButton() })
-        linkDeviceOTPEdtTxt4?.addTextChangedListener(
-            OTPViewTextWatcher(
-                linkDeviceOTPEdtTxt3,
-                linkDeviceOTPEdtTxt4,
-                linkDeviceOTPEdtTxt5
-            ) { validateNextButton() })
-        linkDeviceOTPEdtTxt5?.addTextChangedListener(
-            OTPViewTextWatcher(
-                linkDeviceOTPEdtTxt4,
-                linkDeviceOTPEdtTxt5,
-                linkDeviceOTPEdtTxt5
-            ) { validateNextButton() })
-
-        linkDeviceOTPEdtTxt1?.setOnKeyListener(mKeyListener)
-        linkDeviceOTPEdtTxt2?.setOnKeyListener(mKeyListener)
-        linkDeviceOTPEdtTxt3?.setOnKeyListener(mKeyListener)
-        linkDeviceOTPEdtTxt4?.setOnKeyListener(mKeyListener)
-        linkDeviceOTPEdtTxt5?.setOnKeyListener(mKeyListener)
-
-        buttonNext?.setOnClickListener(this)
+            linkDeviceOTPEdtTxt1.setOnKeyListener(mKeyListener)
+            linkDeviceOTPEdtTxt2.setOnKeyListener(mKeyListener)
+            linkDeviceOTPEdtTxt3.setOnKeyListener(mKeyListener)
+            linkDeviceOTPEdtTxt4.setOnKeyListener(mKeyListener)
+            linkDeviceOTPEdtTxt5.setOnKeyListener(mKeyListener)
+        }
+        binding.buttonNext.setOnClickListener(this)
 
         callGetOTPAPI(OTPMethodType.SMS.name)
     }
@@ -241,9 +244,9 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
     }
 
     private fun enableNextButton() {
-        buttonNext?.isEnabled = true
+        binding.buttonNext.isEnabled = true
         context?.let {
-            buttonNext?.setImageDrawable(
+            binding.buttonNext.setImageDrawable(
                 ContextCompat.getDrawable(
                     it,
                     R.drawable.next_button_icon
@@ -253,9 +256,9 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
     }
 
     private fun disableNextButton() {
-        buttonNext?.isEnabled = false
+        binding.buttonNext.isEnabled = false
         context?.let {
-            buttonNext?.setImageDrawable(
+            binding.buttonNext.setImageDrawable(
                 ContextCompat.getDrawable(
                     it,
                     R.drawable.next_button_inactive
@@ -292,32 +295,32 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
     }
 
     private fun makeValidateOTPRequest() {
+        binding.unlinkDeviceOTPScreenConstraintLayout.apply {
+            otpNumber = getNumberFromEditText(linkDeviceOTPEdtTxt1)
+                .plus(getNumberFromEditText(linkDeviceOTPEdtTxt2))
+                .plus(getNumberFromEditText(linkDeviceOTPEdtTxt3))
+                .plus(getNumberFromEditText(linkDeviceOTPEdtTxt4))
+                .plus(getNumberFromEditText(linkDeviceOTPEdtTxt5))
 
-        otpNumber = getNumberFromEditText(linkDeviceOTPEdtTxt1)
-            .plus(getNumberFromEditText(linkDeviceOTPEdtTxt2))
-            .plus(getNumberFromEditText(linkDeviceOTPEdtTxt3))
-            .plus(getNumberFromEditText(linkDeviceOTPEdtTxt4))
-            .plus(getNumberFromEditText(linkDeviceOTPEdtTxt5))
+            otpMethod = otpMethod ?: OTPMethodType.SMS.name
 
-        otpMethod = otpMethod ?: OTPMethodType.SMS.name
+            if (TextUtils.isEmpty(otpNumber) || otpNumber!!.length < 5) {
+                return
+            }
 
-        if (TextUtils.isEmpty(otpNumber) || otpNumber!!.length < 5) {
-            return
+            val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            imm?.hideSoftInputFromWindow(linkDeviceOTPEdtTxt5.windowToken, 0)
+
+            if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
+                enterOTPSubtitle.text = context?.getString(R.string.internet_waiting_subtitle)
+                return
+            }
         }
-
-        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-        imm?.hideSoftInputFromWindow(linkDeviceOTPEdtTxt5?.windowToken, 0)
-
-        if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
-            enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
-            return
-        }
-
         callLinkingDeviceAPI()
     }
 
 
-    private fun isRetrieveOTPCallInProgress(): Boolean = sendinOTPLayout?.visibility == View.VISIBLE
+    private fun isRetrieveOTPCallInProgress(): Boolean = binding.sendinOTPLayout.root.visibility == View.VISIBLE
 
     private fun getNumberFromEditText(numberEditText: EditText?) = numberEditText?.text?.toString()
         ?: ""
@@ -327,13 +330,13 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
         this.otpMethod = otpMethod
 
         if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
-            enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
+            binding.unlinkDeviceOTPScreenConstraintLayout.enterOTPSubtitle.text = context?.getString(R.string.internet_waiting_subtitle)
             retryApiCall = RETRY_GET_OTP
             return
         }
 
         context?.let {
-            didNotReceiveOTPTextView?.setTextColor(
+            binding.didNotReceiveOTPTextView.setTextColor(
                 ContextCompat.getColor(
                     it,
                     R.color.button_disable
@@ -346,7 +349,7 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
             override fun onSuccess(retrieveOTPResponse: RetrieveOTPResponse?) {
                 if (!isAdded || activity == null) return
                 context?.let {
-                    didNotReceiveOTPTextView?.setTextColor(
+                    binding.didNotReceiveOTPTextView.setTextColor(
                         ContextCompat.getColor(
                             it,
                             R.color.black
@@ -360,20 +363,20 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
                         if (!isAdded) {
                             return
                         }
-                        sendinOTPLayout?.visibility = View.GONE
-                        unlinkDeviceOTPScreenConstraintLayout?.visibility = View.VISIBLE
+                        binding.sendinOTPLayout.root.visibility = View.GONE
+                        binding.unlinkDeviceOTPScreenConstraintLayout.root.visibility = View.VISIBLE
                         retrieveOTPResponse.otpSentTo?.let {
                             if (otpMethod.equals(OTPMethodType.SMS.name, true)) {
                                 otpSMSNumber = it
                             }
-                            enterOTPSubtitle?.text =
+                            binding.unlinkDeviceOTPScreenConstraintLayout.enterOTPSubtitle.text =
                                 activity?.resources?.getString(R.string.sent_otp_desc, it)
                             Handler().postDelayed({
-                                linkDeviceOTPEdtTxt1?.requestFocus()
+                                binding.unlinkDeviceOTPScreenConstraintLayout.linkDeviceOTPEdtTxt1.requestFocus()
                                 val imm: InputMethodManager? =
                                     context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
                                 imm?.showSoftInput(
-                                    linkDeviceOTPEdtTxt1,
+                                    binding.unlinkDeviceOTPScreenConstraintLayout.linkDeviceOTPEdtTxt1,
                                     InputMethodManager.SHOW_IMPLICIT
                                 )
                             }, AppConstant.DELAY_200_MS)
@@ -393,7 +396,7 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
                         }
                     else -> retrieveOTPResponse?.response?.desc?.let { desc ->
                         context?.let {
-                            didNotReceiveOTPTextView?.setTextColor(
+                            binding.didNotReceiveOTPTextView.setTextColor(
                                 ContextCompat.getColor(
                                     it,
                                     R.color.black
@@ -402,27 +405,31 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
                         }
 
                         if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
-                            sendOTPFailedGroup?.visibility = View.GONE
-                            sendinOTPLayout?.visibility = View.GONE
-                            unlinkDeviceOTPScreenConstraintLayout?.visibility = View.VISIBLE
-                            enterOTPSubtitle?.text =
+                            binding.sendinOTPLayout.sendOTPFailedGroup.visibility = View.GONE
+                            binding.sendinOTPLayout.root.visibility = View.GONE
+                            binding.unlinkDeviceOTPScreenConstraintLayout.root.visibility = View.VISIBLE
+                            binding.unlinkDeviceOTPScreenConstraintLayout.enterOTPSubtitle.text =
                                 context?.getString(R.string.internet_waiting_subtitle)
                             retryApiCall = RETRY_GET_OTP
                             return
                         }
-                        sendOTPProcessingGroup?.visibility = View.GONE
-                        unlinkDeviceResultScreen?.visibility = View.GONE
-                        sendOTPFailedGroup?.visibility = View.VISIBLE
-                        sendOTPFailedImageView?.visibility = View.VISIBLE
-                        sendOTPFailedTitle?.visibility = View.VISIBLE
-                        sendOTPFailedTitle?.text = "Failed to send OTP."
+                        binding.apply {
+                            unlinkDeviceResultScreen.root.visibility = View.GONE
+                            sendinOTPLayout.apply {
+                                sendOTPProcessingGroup.visibility = View.GONE
+                                sendOTPFailedGroup.visibility = View.VISIBLE
+                                sendOTPFailedImageView.visibility = View.VISIBLE
+                                sendOTPFailedTitle.visibility = View.VISIBLE
+                                sendOTPFailedTitle.text = "Failed to send OTP."
+                            }
+                        }
                     }
                 }
             }
 
             override fun onFailure(error: Throwable?) {
                 context?.let {
-                    didNotReceiveOTPTextView?.setTextColor(
+                    binding.didNotReceiveOTPTextView.setTextColor(
                         ContextCompat.getColor(
                             it,
                             R.color.black
@@ -431,67 +438,76 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
                 }
 
                 if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
-                    sendOTPFailedGroup?.visibility = View.GONE
-                    sendinOTPLayout?.visibility = View.GONE
-                    unlinkDeviceOTPScreenConstraintLayout?.visibility = View.VISIBLE
-                    enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
+                    binding.sendinOTPLayout.sendOTPFailedGroup.visibility = View.GONE
+                    binding.sendinOTPLayout.root.visibility = View.GONE
+                    binding.unlinkDeviceOTPScreenConstraintLayout.root.visibility = View.VISIBLE
+                    binding.unlinkDeviceOTPScreenConstraintLayout.enterOTPSubtitle.text = context?.getString(R.string.internet_waiting_subtitle)
                     retryApiCall = RETRY_GET_OTP
                     return
                 }
-
-                sendOTPProcessingGroup?.visibility = View.GONE
-                unlinkDeviceResultScreen?.visibility = View.GONE
-                sendOTPFailedGroup?.visibility = View.VISIBLE
-                sendOTPFailedImageView?.visibility = View.VISIBLE
-                sendOTPFailedTitle?.visibility = View.VISIBLE
-                sendOTPFailedTitle?.text = "Failed to send OTP."
+                binding.apply {
+                    unlinkDeviceResultScreen.root.visibility = View.GONE
+                    sendinOTPLayout.apply {
+                        sendOTPProcessingGroup.visibility = View.GONE
+                        sendOTPFailedGroup.visibility = View.VISIBLE
+                        sendOTPFailedImageView.visibility = View.VISIBLE
+                        sendOTPFailedTitle.visibility = View.VISIBLE
+                        sendOTPFailedTitle.text = "Failed to send OTP."
+                    }
+                }
             }
         }, RetrieveOTPResponse::class.java))
     }
 
     private fun showValidateOTPError(msg: String) {
-        sendinOTPLayout?.visibility = View.GONE
-        unlinkDeviceOTPScreenConstraintLayout?.visibility = View.VISIBLE
-        buttonNext?.visibility = View.VISIBLE
-        didNotReceiveOTPTextView?.visibility = View.VISIBLE
+        binding.sendinOTPLayout.root.visibility = View.GONE
+        binding.unlinkDeviceOTPScreenConstraintLayout.root.visibility = View.VISIBLE
+        binding.buttonNext.visibility = View.VISIBLE
+        binding.didNotReceiveOTPTextView.visibility = View.VISIBLE
 
         if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
-            enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
+            binding.unlinkDeviceOTPScreenConstraintLayout.enterOTPSubtitle.text = context?.getString(R.string.internet_waiting_subtitle)
             retryApiCall = RETRY_VALIDATE
             return
         }
 
         setOtpErrorBackground(R.drawable.otp_box_error_background)
-        linkDeviceOTPErrorTxt?.text = msg
-        linkDeviceOTPErrorTxt?.visibility = View.VISIBLE
+        binding.unlinkDeviceOTPScreenConstraintLayout.apply {
+            linkDeviceOTPErrorTxt.text = msg
+            linkDeviceOTPErrorTxt.visibility = View.VISIBLE
+        }
     }
 
     fun setOtpErrorBackground(drawableId: Int) {
-        context?.let { context ->
-            ContextCompat.getDrawable(context, drawableId)?.apply {
-                linkDeviceOTPEdtTxt1?.setBackgroundResource(drawableId)
-                linkDeviceOTPEdtTxt2?.setBackgroundResource(drawableId)
-                linkDeviceOTPEdtTxt3?.setBackgroundResource(drawableId)
-                linkDeviceOTPEdtTxt4?.setBackgroundResource(drawableId)
-                linkDeviceOTPEdtTxt5?.setBackgroundResource(drawableId)
+        binding.unlinkDeviceOTPScreenConstraintLayout.apply {
+            context?.let { context ->
+                ContextCompat.getDrawable(context, drawableId)?.apply {
+                    linkDeviceOTPEdtTxt1.setBackgroundResource(drawableId)
+                    linkDeviceOTPEdtTxt2.setBackgroundResource(drawableId)
+                    linkDeviceOTPEdtTxt3.setBackgroundResource(drawableId)
+                    linkDeviceOTPEdtTxt4.setBackgroundResource(drawableId)
+                    linkDeviceOTPEdtTxt5.setBackgroundResource(drawableId)
+                }
             }
         }
     }
 
     fun clearOTP() {
-        linkDeviceOTPEdtTxt1?.text?.clear()
-        linkDeviceOTPEdtTxt2?.text?.clear()
-        linkDeviceOTPEdtTxt3?.text?.clear()
-        linkDeviceOTPEdtTxt4?.text?.clear()
-        linkDeviceOTPEdtTxt5?.text?.clear()
+        binding.unlinkDeviceOTPScreenConstraintLayout.apply {
+            linkDeviceOTPEdtTxt1.text?.clear()
+            linkDeviceOTPEdtTxt2.text?.clear()
+            linkDeviceOTPEdtTxt3.text?.clear()
+            linkDeviceOTPEdtTxt4.text?.clear()
+            linkDeviceOTPEdtTxt5.text?.clear()
+        }
     }
 
     private fun callLinkingDeviceAPI() {
 
         if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
-            sendinOTPLayout?.visibility = View.GONE
-            unlinkDeviceOTPScreenConstraintLayout?.visibility = View.VISIBLE
-            enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
+            binding.sendinOTPLayout.root.visibility = View.GONE
+            binding.unlinkDeviceOTPScreenConstraintLayout.root.visibility = View.VISIBLE
+            binding.unlinkDeviceOTPScreenConstraintLayout.enterOTPSubtitle.text = context?.getString(R.string.internet_waiting_subtitle)
             retryApiCall = RETRY_LINK_DEVICE
             return
         }
@@ -530,7 +546,7 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
     }
 
     private fun handleDeletePrimaryDeviceSuccess(response: ViewAllLinkedDeviceResponse?) {
-        sendinOTPLayout?.visibility = View.GONE
+        binding.sendinOTPLayout.root.visibility = View.GONE
         when (response?.httpCode) {
             AppConstant.HTTP_OK -> {
                 val primaryDevice = getPrimaryDevice(response)
@@ -573,10 +589,12 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
             else -> response?.response?.desc?.let { desc ->
                 showValidateOTPError(getString(R.string.icr_wrong_otp_error))
                 Handler().postDelayed({
-                    linkDeviceOTPEdtTxt5.requestFocus()
-                    val imm: InputMethodManager? =
-                        context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-                    imm?.showSoftInput(linkDeviceOTPEdtTxt5, InputMethodManager.SHOW_IMPLICIT)
+                    binding.unlinkDeviceOTPScreenConstraintLayout.apply {
+                        linkDeviceOTPEdtTxt5.requestFocus()
+                        val imm: InputMethodManager? =
+                            context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                        imm?.showSoftInput(linkDeviceOTPEdtTxt5, InputMethodManager.SHOW_IMPLICIT)
+                    }
                 }, AppConstant.DELAY_200_MS)
             }
         }
@@ -600,7 +618,7 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
     }
 
     private fun handleChangePrimaryDeviceSuccess(response: ViewAllLinkedDeviceResponse?) {
-        sendinOTPLayout?.visibility = View.GONE
+        binding.sendinOTPLayout.root.visibility = View.GONE
         when (response?.httpCode) {
             AppConstant.HTTP_OK -> {
                 val primaryDevice = getPrimaryDevice(response)
@@ -642,10 +660,12 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
             else -> response?.response?.desc?.let { desc ->
                 showValidateOTPError(getString(R.string.icr_wrong_otp_error))
                 Handler().postDelayed({
-                    linkDeviceOTPEdtTxt5.requestFocus()
-                    val imm: InputMethodManager? =
-                        context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-                    imm?.showSoftInput(linkDeviceOTPEdtTxt5, InputMethodManager.SHOW_IMPLICIT)
+                    binding.unlinkDeviceOTPScreenConstraintLayout.apply {
+                        linkDeviceOTPEdtTxt5.requestFocus()
+                        val imm: InputMethodManager? =
+                            context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                        imm?.showSoftInput(linkDeviceOTPEdtTxt5, InputMethodManager.SHOW_IMPLICIT)
+                    }
                 }, AppConstant.DELAY_200_MS)
             }
         }
@@ -665,10 +685,10 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
     }
 
     private fun handleChangeOrDeletePrimaryDeviceFailure() {
-        sendinOTPLayout?.visibility = View.GONE
-        unlinkDeviceOTPScreenConstraintLayout?.visibility = View.VISIBLE
-        buttonNext?.visibility = View.VISIBLE
-        didNotReceiveOTPTextView?.visibility = View.VISIBLE
+        binding.sendinOTPLayout.root.visibility = View.GONE
+        binding.unlinkDeviceOTPScreenConstraintLayout.root.visibility = View.VISIBLE
+        binding.buttonNext.visibility = View.VISIBLE
+        binding.didNotReceiveOTPTextView.visibility = View.VISIBLE
         showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
     }
 
@@ -680,45 +700,45 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
     }
 
     private fun showDeviceChanged() {
-        sendinOTPLayout?.visibility = View.GONE
-        unlinkDeviceOTPScreenConstraintLayout?.visibility = View.GONE
-        unlinkDeviceResultSubtitle?.visibility = View.GONE
-        unlinkDeviceResultScreen?.visibility = View.VISIBLE
+        binding.sendinOTPLayout.root.visibility = View.GONE
+        binding.unlinkDeviceOTPScreenConstraintLayout.root.visibility = View.GONE
+        binding.unlinkDeviceResultScreen.unlinkDeviceResultSubtitle.visibility = View.GONE
+        binding.unlinkDeviceResultScreen.root.visibility = View.VISIBLE
         context?.let {
             if (deleteOldPrimaryDevice) {
-                unlinkDeviceResultTitle?.text = it.getString(R.string.unlink_device_result_success)
+                binding.unlinkDeviceResultScreen.unlinkDeviceResultTitle.text = it.getString(R.string.unlink_device_result_success)
             } else {
-                unlinkDeviceResultTitle?.text =
+                binding.unlinkDeviceResultScreen.unlinkDeviceResultTitle.text =
                     it.getString(R.string.changing_primary_device_result_success)
             }
         }
     }
 
     private fun showLinkingDeviceProcessing() {
-        sendinOTPLayout?.visibility = View.GONE
-        unlinkDeviceOTPScreenConstraintLayout?.visibility = View.GONE
-        buttonNext?.visibility = View.GONE
-        didNotReceiveOTPTextView?.visibility = View.GONE
-        sendOTPTitle?.visibility = View.GONE
-        sendOTPSubtitle?.visibility = View.GONE
+        binding.sendinOTPLayout.root.visibility = View.GONE
+        binding.unlinkDeviceOTPScreenConstraintLayout.root.visibility = View.GONE
+        binding.buttonNext.visibility = View.GONE
+        binding.didNotReceiveOTPTextView.visibility = View.GONE
+        binding.sendinOTPLayout.sendOTPTitle.visibility = View.GONE
+        binding.sendinOTPLayout.sendOTPSubtitle.visibility = View.GONE
 
         context?.let {
-            sendOTPProcessingReq?.text = it.getString(R.string.changing_preferred_device_processing)
+            binding.sendinOTPLayout.sendOTPProcessingReq.text = it.getString(R.string.changing_preferred_device_processing)
         }
-        sendinOTPLayout?.visibility = View.VISIBLE
+        binding.sendinOTPLayout.root.visibility = View.VISIBLE
     }
 
 
     private fun showSendingOTPProcessing() {
-        sendOTPTitle?.visibility = View.VISIBLE
-        sendOTPSubtitle?.visibility = View.VISIBLE
-        unlinkDeviceOTPScreenConstraintLayout?.visibility = View.GONE
-        sendOTPFailedGroup?.visibility = View.GONE
+        binding.sendinOTPLayout.sendOTPTitle.visibility = View.VISIBLE
+        binding.sendinOTPLayout.sendOTPSubtitle.visibility = View.VISIBLE
+        binding.unlinkDeviceOTPScreenConstraintLayout.root.visibility = View.GONE
+        binding.sendinOTPLayout.sendOTPFailedGroup.visibility = View.GONE
 
         context?.let {
-            sendOTPProcessingReq?.text = it.getString(R.string.link_device_sending_otp_processing)
+            binding.sendinOTPLayout.sendOTPProcessingReq.text = it.getString(R.string.link_device_sending_otp_processing)
         }
-        sendinOTPLayout?.visibility = View.VISIBLE
+        binding.sendinOTPLayout.root.visibility = View.VISIBLE
     }
 
     private fun showErrorScreen(errorType: Int, errorMessage: String = "") {
@@ -744,12 +764,12 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
 
         if (resultCode == Activity.RESULT_CANCELED) {
             Handler().postDelayed({
-                linkDeviceOTPEdtTxt5.requestFocus()
+                binding.unlinkDeviceOTPScreenConstraintLayout.linkDeviceOTPEdtTxt5.requestFocus()
                 val imm: InputMethodManager? =
                     context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-                imm?.showSoftInput(linkDeviceOTPEdtTxt5, InputMethodManager.SHOW_IMPLICIT)
+                imm?.showSoftInput(binding.unlinkDeviceOTPScreenConstraintLayout.linkDeviceOTPEdtTxt5, InputMethodManager.SHOW_IMPLICIT)
             }, AppConstant.DELAY_200_MS)
-            unlinkDeviceOTPScreenConstraintLayout?.visibility = View.VISIBLE
+            binding.unlinkDeviceOTPScreenConstraintLayout.root.visibility = View.VISIBLE
         }
 
         when (requestCode) {
