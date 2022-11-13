@@ -6,17 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.need_help_fragment.*
+import com.awfs.coordination.databinding.NeedHelpFragmentBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
+import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.utils.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.ui.fragments.faq.FAQFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
-class HelpSectionFragment : Fragment(), View.OnClickListener {
+class HelpSectionFragment : BaseFragmentBinding<NeedHelpFragmentBinding>(
+    NeedHelpFragmentBinding::inflate
+), View.OnClickListener {
 
     var mBottomNavigator: BottomNavigator? = null
 
@@ -26,7 +28,11 @@ class HelpSectionFragment : Fragment(), View.OnClickListener {
             mBottomNavigator = context
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.need_help_fragment, container, false)
     }
 
@@ -35,17 +41,22 @@ class HelpSectionFragment : Fragment(), View.OnClickListener {
         setupToolbar()
 
         if (activity is MyAccountActivity) {
-            tipsAndTricks?.visibility = GONE
+            binding.tipsAndTricks.visibility = GONE
         }
 
-        relFAQ?.setOnClickListener(this)
-        tipsAndTricks?.setOnClickListener(this)
+        binding.relFAQ.setOnClickListener(this)
+        binding.tipsAndTricks.setOnClickListener(this)
 
     }
 
     override fun onResume() {
         super.onResume()
-        activity?.let { Utils.setScreenName(it, FirebaseManagerAnalyticsProperties.ScreenNames.HELP_SECTION) }
+        activity?.let {
+            Utils.setScreenName(
+                it,
+                FirebaseManagerAnalyticsProperties.ScreenNames.HELP_SECTION
+            )
+        }
     }
 
 
