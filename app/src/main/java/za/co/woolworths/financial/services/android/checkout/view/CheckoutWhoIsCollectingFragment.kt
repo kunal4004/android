@@ -35,7 +35,7 @@ import java.util.regex.Pattern
 class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(R.layout.checkout_who_is_collecting_fragment),
     View.OnClickListener {
 
-    private lateinit var binding: CheckoutWhoIsCollectingFragmentBinding
+    lateinit var binding: CheckoutWhoIsCollectingFragmentBinding
     private lateinit var listOfVehicleInputFields: List<View>
     private lateinit var listOfTaxiInputFields: List<View>
     private var isMyVehicle = true
