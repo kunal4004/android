@@ -2,17 +2,16 @@ package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.app.Activity
 import android.content.Context
-import androidx.recyclerview.widget.RecyclerView
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.text.HtmlCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import za.co.woolworths.financial.services.android.ui.adapters.holder.OrdersBaseViewHolder
 import kotlinx.android.synthetic.main.my_orders_past_orders_header.view.*
 import kotlinx.android.synthetic.main.order_details_commerce_item.view.*
 import kotlinx.android.synthetic.main.order_details_gift_commerce_item.view.*
@@ -20,9 +19,12 @@ import kotlinx.android.synthetic.main.order_history_chat_layout.view.*
 import kotlinx.android.synthetic.main.order_history_details_total_amount_layout.view.*
 import kotlinx.android.synthetic.main.order_history_type.view.*
 import za.co.woolworths.financial.services.android.common.convertToTitleCase
-import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem
+import za.co.woolworths.financial.services.android.models.dto.OrderDetailsItem
+import za.co.woolworths.financial.services.android.models.dto.OrderDetailsResponse
+import za.co.woolworths.financial.services.android.ui.adapters.holder.OrdersBaseViewHolder
 import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment
-import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.WFormatter

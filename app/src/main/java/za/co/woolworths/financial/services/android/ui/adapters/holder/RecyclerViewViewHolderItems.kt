@@ -2,25 +2,21 @@ package za.co.woolworths.financial.services.android.ui.adapters.holder
 
 import android.text.Html
 import android.text.TextUtils
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.product_listing_page_row.view.*
-import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
-import kotlinx.android.synthetic.main.product_listing_promotional_images.view.*
+import com.awfs.coordination.databinding.ProductListingPageRowBinding
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.util.ImageManager
-import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.Utils
 
-class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.product_listing_page_row, parent, false)) {
+class RecyclerViewViewHolderItems(val itemBinding: ProductListingPageRowBinding) : RecyclerViewViewHolder(itemBinding.root) {
 
     fun setProductItem(productList: ProductList, navigator: IProductListing, nextProduct: ProductList? = null, previousProduct: ProductList? = null) {
         with(productList) {
@@ -32,7 +28,7 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
             setPromotionalText(this)
             setRatingAndReviewCount(this)
             val priceItem = PriceItem()
-            priceItem.setPrice(productList, itemView)
+            priceItem.setPrice(productList, itemBinding.root)
             setProductVariant(this)
             quickShopAddToCartSwitch(this)
             setOnClickListener(navigator, this)
@@ -43,36 +39,36 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
         itemView.setOnClickListener { navigator.openProductDetailView(productList) }
     }
 
-    private fun setProductName(productList: ProductList?) = with(itemView) {
+    private fun setProductName(productList: ProductList?) = itemBinding.apply {
         tvProductName.maxLines = 3
         tvProductName.minLines = 1
         tvProductName?.text = productList?.productName ?: ""
     }
 
 
-    private fun setRatingAndReviewCount(productList: ProductList) = with(itemView) {
+    private fun setRatingAndReviewCount(productList: ProductList) = itemBinding.apply {
        if (RatingAndReviewUtil.isRatingAndReviewConfigavailbel() &&
            productList.isRnREnabled == true
        ) {
                val ratings:Float = productList.averageRating!!.toFloat()
                if (ratings == 0.0f) {
-                   rating_bar.visibility = View.INVISIBLE
-                   txt_rating_count.visibility = View.INVISIBLE
+                   ratingBar.visibility = View.INVISIBLE
+                   txtRatingCount.visibility = View.INVISIBLE
                } else {
-                   rating_bar.visibility = VISIBLE
-                   txt_rating_count.visibility = VISIBLE
-                   rating_bar.rating = KotlinUtils.getUpdatedUtils(productList.averageRating!!.toFloat())
-                   txt_rating_count.text = String.format("(\t%s\t)",productList.reviewCount)
+                   ratingBar.visibility = VISIBLE
+                   txtRatingCount.visibility = VISIBLE
+                   ratingBar.rating = KotlinUtils.getUpdatedUtils(productList.averageRating!!.toFloat())
+                   txtRatingCount.text = String.format("(\t%s\t)",productList.reviewCount)
                }
 
        }  else {
-           rating_bar.visibility = View.INVISIBLE
-           txt_rating_count.visibility = View.INVISIBLE
+           ratingBar.visibility = View.INVISIBLE
+           txtRatingCount.visibility = View.INVISIBLE
        }
 
     }
 
-    private fun setPromotionalText(productList: ProductList?) = with(itemView) {
+    private fun setPromotionalText(productList: ProductList?) = itemBinding.apply {
         if (productList?.promotions?.isEmpty() == false) {
             productList?.promotions?.forEachIndexed { i, it ->
                 var editedPromotionalText: String? = it.promotionalText
@@ -106,7 +102,7 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
         }
     }
 
-    private fun setProductVariant(productList: ProductList?) = with(itemView) {
+    private fun setProductVariant(productList: ProductList?) = itemBinding.apply {
         val productVarientName = productList?.productVariants ?: ""
         if (!TextUtils.isEmpty(productVarientName)) {
             productVariantTextView?.visibility = VISIBLE
@@ -117,7 +113,7 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
         }
     }
 
-    private fun setBrandText(productList: ProductList?, nextProduct: ProductList?, previousProduct: ProductList?) = with(itemView) {
+    private fun setBrandText(productList: ProductList?, nextProduct: ProductList?, previousProduct: ProductList?) = itemBinding.apply {
         brandName?.text = productList?.brandText ?: ""
         previousProduct?.let {
             if (productList?.brandText.isNullOrEmpty() && it.brandText.isNullOrEmpty()) {
@@ -135,7 +131,7 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
         }
     }
 
-    private fun setBrandHeaderDescriptionText(productList: ProductList?) = with(itemView) {
+    private fun setBrandHeaderDescriptionText(productList: ProductList?) = itemBinding.apply {
         if(TextUtils.isEmpty(productList?.brandHeaderDescription)){
             tvRangeName?.visibility = GONE
         } else {
@@ -145,31 +141,31 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
     }
 
     private fun setPromotionalImage(imPromo: PromotionImages?,virtualTryOn : String?) {
-        with(itemView) {
-            measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+        itemBinding.apply {
+            root.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
 
-            ImageManager.setPictureOverrideWidthHeight(imReducedImage, imPromo?.reduced ?: "")
-            ImageManager.setPictureWithoutPlaceHolder(imFreeGiftImage, imPromo?.freeGift ?: "")
-            ImageManager.setPictureOverrideWidthHeight(imSave, imPromo?.save ?: "")
-            ImageManager.setPictureWithoutPlaceHolder(imReward, imPromo?.wRewards ?: "")
-            ImageManager.setPictureWithoutPlaceHolder(imVitality, imPromo?.vitality ?: "")
-            ImageManager.setPictureWithoutPlaceHolder(imNewImage, imPromo?.newImage ?: "")
+            ImageManager.setPictureOverrideWidthHeight(productListingPromotionalImage.imReducedImage, imPromo?.reduced ?: "")
+            ImageManager.setPictureWithoutPlaceHolder(productListingPromotionalImage.imFreeGiftImage, imPromo?.freeGift ?: "")
+            ImageManager.setPictureOverrideWidthHeight(productListingPromotionalImage.imSave, imPromo?.save ?: "")
+            ImageManager.setPictureWithoutPlaceHolder(productListingPromotionalImage.imReward, imPromo?.wRewards ?: "")
+            ImageManager.setPictureWithoutPlaceHolder(productListingPromotionalImage.imVitality, imPromo?.vitality ?: "")
+            ImageManager.setPictureWithoutPlaceHolder(productListingPromotionalImage.imNewImage, imPromo?.newImage ?: "")
             if (VirtualTryOnUtil.isVtoConfigAvailable()) {
-                ImageManager.setPictureWithoutPlaceHolder(imgTryItOn, virtualTryOn ?: "")
+                ImageManager.setPictureWithoutPlaceHolder(productListingPromotionalImage.imgTryItOn, virtualTryOn ?: "")
             }
         }
     }
 
     private fun setProductImage(productList: ProductList) {
         val productImageUrl = productList.externalImageRefV2 ?: ""
-        ImageManager.setPicture(itemView.imProductImage, productImageUrl + if (productImageUrl.indexOf("?") > 0) "w=300&q=85" else "?w=300&q=85")
+        ImageManager.setPicture(itemBinding.imProductImage, productImageUrl + if (productImageUrl.indexOf("?") > 0) "w=300&q=85" else "?w=300&q=85")
     }
 
     private fun quickShopAddToCartSwitch(productList: ProductList?) {
-        with(itemView) {
-            context?.apply {
+        itemBinding.apply {
+            root.context?.apply {
                 productList?.apply {
-                    imQuickShopAddToCartIcon?.visibility = if (productType.equals(getString(R.string.food_product_type), ignoreCase = true)) VISIBLE else GONE
+                    includeProductListingPriceLayout.imQuickShopAddToCartIcon?.visibility = if (productType.equals(getString(R.string.food_product_type), ignoreCase = true)) VISIBLE else GONE
                 }
             }
         }
