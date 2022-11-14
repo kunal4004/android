@@ -292,7 +292,7 @@ class ProductCarouselItemViewHolder(val itemBinding: ItemProductCarouselListBind
             setProductName(this)
             setPromotionalText(this)
             val priceItem = PriceItem()
-            priceItem.setPrice(productList, itemView)
+            priceItem.setPrice(productList, itemBinding.rowLayout.includeProductListingPriceLayout)
             setProductVariant(this)
             quickShopAddToCartSwitch(this)
             iProductListing?.let { navigator ->

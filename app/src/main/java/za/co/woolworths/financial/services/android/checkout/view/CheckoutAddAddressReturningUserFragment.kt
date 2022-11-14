@@ -108,7 +108,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
     private var confirmDeliveryAddressResponse: ConfirmDeliveryAddressResponse? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
-    private val expandableGrid = ExpandableGrid(this)
+    private lateinit var expandableGrid: ExpandableGrid
     private var selectedSlotResponseFood: ConfirmDeliveryAddressResponse? = null
     private var selectedSlotResponseOther: ConfirmDeliveryAddressResponse? = null
     private var selectedFoodSlot = Slot()
@@ -153,6 +153,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = CheckoutAddAddressRetuningUserBinding.bind(view)
+        expandableGrid = ExpandableGrid(this, binding)
 
         // Hide keyboard in case it was visible from a previous screen
         KeyboardUtils.hideKeyboardIfVisible(activity)

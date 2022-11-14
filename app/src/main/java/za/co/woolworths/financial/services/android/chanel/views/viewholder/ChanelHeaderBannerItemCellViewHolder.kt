@@ -8,13 +8,11 @@ import android.view.View.VISIBLE
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.databinding.ChanelProductsHorizontalItemCellBinding
 import za.co.woolworths.financial.services.android.chanel.views.ChanelNavigationClickListener
-
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages
 import za.co.woolworths.financial.services.android.ui.adapters.holder.PriceItem
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.util.ImageManager
-
 
 class ChanelHeaderBannerItemCellViewHolder(val binding: ChanelProductsHorizontalItemCellBinding) :
     RecyclerView.ViewHolder(binding.root) {
@@ -33,7 +31,7 @@ class ChanelHeaderBannerItemCellViewHolder(val binding: ChanelProductsHorizontal
             setBrandHeaderDescriptionText(this)
             setPromotionalText(this)
             val priceItem = PriceItem()
-            priceItem.setPrice(productList, itemView)
+            priceItem.setPrice(productList, binding.rowLayout.includeProductListingPriceLayout)
             setProductVariant(this)
             binding.rowLayout.includeProductListingPriceLayout.imQuickShopAddToCartIcon.visibility = GONE
             setOnClickListener(chanelNavigationClickListener, this, bannerLabel, bannerImage)
