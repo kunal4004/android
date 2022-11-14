@@ -20,6 +20,8 @@ class AvailableVouchersToRedeemInCart : AppCompatActivity(R.layout.cart_availabl
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = CartAvailableVouchersToRedeemBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         Utils.updateStatusBarBackground(this)
         actionBar()
         loadNavHostFragment()

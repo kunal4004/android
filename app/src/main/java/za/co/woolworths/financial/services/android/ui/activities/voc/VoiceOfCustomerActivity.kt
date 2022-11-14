@@ -13,7 +13,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.GenericA
 import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
-class VoiceOfCustomerActivity : AppCompatActivity(R.layout.activity_voice_of_customer), VoiceOfCustomerInterface, GenericActionOrCancelDialogFragment.IActionOrCancel {
+class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, GenericActionOrCancelDialogFragment.IActionOrCancel {
 
     companion object {
         const val EXTRA_SURVEY_DETAILS = "extraSurveyDetails"
@@ -28,11 +28,12 @@ class VoiceOfCustomerActivity : AppCompatActivity(R.layout.activity_voice_of_cus
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityVoiceOfCustomerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
 
         Utils.updateStatusBarBackground(this)
-        binding = ActivityVoiceOfCustomerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
         val vocNavHostFrag = supportFragmentManager.findFragmentById(R.id.vocNavHostFrag) as NavHostFragment?
         if (vocNavHostFrag != null) {
