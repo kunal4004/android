@@ -2,18 +2,15 @@ package za.co.woolworths.financial.services.android.ui.fragments.store
 
 import android.location.Location
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.StoreLocatorFragmentBinding
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.store_locator_fragment.cardPager
-import kotlinx.android.synthetic.main.store_locator_fragment.dynamicMapView
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter
@@ -23,10 +20,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.vtc.SelectStoreD
 import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapDelegate
 import za.co.woolworths.financial.services.android.ui.views.maps.model.DynamicMapMarker
 import za.co.woolworths.financial.services.android.util.Utils
-import java.util.*
 
-class StoreLocatorFragment : Fragment(), DynamicMapDelegate, ViewPager.OnPageChangeListener {
+class StoreLocatorFragment : Fragment(R.layout.store_locator_fragment), DynamicMapDelegate, ViewPager.OnPageChangeListener {
 
+    private lateinit var binding: StoreLocatorFragmentBinding
     private var currentStorePostion: Int = 0
     private var mMarkers: HashMap<String, Int> = HashMap()
     private var markers: ArrayList<DynamicMapMarker>? = null
@@ -50,12 +47,9 @@ class StoreLocatorFragment : Fragment(), DynamicMapDelegate, ViewPager.OnPageCha
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.store_locator_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = StoreLocatorFragmentBinding.bind(view)
 
         initViews(savedInstanceState)
     }
@@ -67,29 +61,29 @@ class StoreLocatorFragment : Fragment(), DynamicMapDelegate, ViewPager.OnPageCha
 
     private fun initMap(savedInstanceState: Bundle?) {
         if (isAdded) {
-            dynamicMapView?.initializeMap(savedInstanceState, this)
+            binding.dynamicMapView?.initializeMap(savedInstanceState, this)
             mMarkers = HashMap()
             markers = ArrayList()
         }
     }
 
     private fun initCardPager() {
-        cardPager?.addOnPageChangeListener(this)
-        cardPager?.setOnItemClickListener { position ->
+        binding.cardPager?.addOnPageChangeListener(this)
+        binding.cardPager?.setOnItemClickListener { position ->
             currentStorePostion = position
             showStoreDetails(currentStorePostion)
         }
     }
 
     private fun drawMarker(latitude: Double?, longitude: Double?, @DrawableRes icon: Int, pos: Int) {
-        val marker: DynamicMapMarker? = dynamicMapView?.addMarker(requireContext(), latitude, longitude, icon)
+        val marker: DynamicMapMarker? = binding.dynamicMapView?.addMarker(requireContext(), latitude, longitude, icon)
         marker?.let { mark ->
             mark.getId()?.let {
                 mMarkers[it] = pos
             }
             markers?.add(marker)
             if (pos == 0) {
-                dynamicMapView?.animateCamera(
+                binding.dynamicMapView?.animateCamera(
                     latitude, longitude,
                     zoom = 13f,
                     duration = CAMERA_ANIMATION_SPEED
@@ -111,14 +105,14 @@ class StoreLocatorFragment : Fragment(), DynamicMapDelegate, ViewPager.OnPageCha
             val markerId = mMarkers[markerId]
             previousMarker?.setIcon(requireContext(), unSelectedIcon)
             marker?.setIcon(requireContext(), selectedIcon)
-            dynamicMapView?.animateCamera(
+            binding.dynamicMapView?.animateCamera(
                 marker?.getPositionLatitude(),
                 marker?.getPositionLongitude(),
                 zoom = 13f,
                 duration = CAMERA_ANIMATION_SPEED
             )
             previousMarker = marker
-            markerId?.let { id -> cardPager?.currentItem = id }
+            markerId?.let { id -> binding.cardPager?.currentItem = id }
         }
     }
 
@@ -136,7 +130,7 @@ class StoreLocatorFragment : Fragment(), DynamicMapDelegate, ViewPager.OnPageCha
         previousMarker?.apply {
             setIcon(requireContext(), unSelectedIcon)
             markers?.get(position)?.setIcon(requireContext(), selectedIcon)
-            dynamicMapView?.animateCamera(
+            binding.dynamicMapView?.animateCamera(
                 latitude = markers?.get(position)?.getPositionLatitude(),
                 longitude = markers?.get(position)?.getPositionLongitude(),
                 zoom = 13f,
@@ -156,14 +150,14 @@ class StoreLocatorFragment : Fragment(), DynamicMapDelegate, ViewPager.OnPageCha
                     unSelectedIcon?.let { unselectedIcon -> drawMarker(storeDetailsList[i].latitude, storeDetailsList[i].longitude, unselectedIcon, i) }
                 }
             }
-            activity?.let { activity -> cardPager?.adapter = CardsOnMapAdapter(activity, storeDetailsList) }
+            activity?.let { activity -> binding.cardPager?.adapter = CardsOnMapAdapter(activity, storeDetailsList) }
         }
     }
 
     private fun updateMyCurrentLocationOnMap(location: Location?) {
         location?.apply {
-            dynamicMapView?.addMarker(requireContext(), latitude, longitude, R.drawable.mapcurrentlocation)
-            dynamicMapView?.animateCamera(
+            binding.dynamicMapView?.addMarker(requireContext(), latitude, longitude, R.drawable.mapcurrentlocation)
+            binding.dynamicMapView?.animateCamera(
                 latitude, longitude,
                 zoom = 13f,
                 duration = CAMERA_ANIMATION_SPEED
@@ -186,26 +180,26 @@ class StoreLocatorFragment : Fragment(), DynamicMapDelegate, ViewPager.OnPageCha
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        dynamicMapView?.onSaveInstanceState(outState)
+        binding.dynamicMapView?.onSaveInstanceState(outState)
     }
 
     override fun onResume() {
         super.onResume()
-        dynamicMapView?.onResume()
+        binding.dynamicMapView?.onResume()
     }
 
     override fun onPause() {
-        dynamicMapView?.onPause()
+        binding.dynamicMapView?.onPause()
         super.onPause()
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-        dynamicMapView?.onLowMemory()
+        binding.dynamicMapView?.onLowMemory()
     }
 
     override fun onDestroyView() {
-        dynamicMapView?.onDestroy()
+        binding.dynamicMapView?.onDestroy()
         super.onDestroyView()
     }
 }
