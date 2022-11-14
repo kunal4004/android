@@ -55,7 +55,6 @@ class OrdersAdapter(val context: Context, val iPresentOrderDetailInterface: IPre
     inner class UpcomingOrderViewHolder(val itemBinding: OrderHistoryTypeBinding) : OrdersBaseViewHolder(itemBinding.root) {
         override fun bind(position: Int) {
             val item = dataList[position].item as Order
-
             itemBinding.orderNumber?.text = context.getString(R.string.order_id,
                 item.orderId.replaceFirstChar { it.uppercase() })
             var itemState = item.state
@@ -66,7 +65,6 @@ class OrdersAdapter(val context: Context, val iPresentOrderDetailInterface: IPre
                 CurrencyFormatter.formatAmountToRandAndCentWithSpace(item.total)
             itemBinding.root.setOnClickListener { iPresentOrderDetailInterface?.presentOrderDetailsPage(item) }
             itemBinding.orderState.setBackgroundResource(if (item.state?.contains(context.getString(R.string.cancelled)) == true) R.drawable.order_state_orange_bg else R.drawable.order_state_bg)
-
 
             if (!item.deliveryDates?.isJsonNull!!) {
                 val deliveryDates: HashMap<String, String> = hashMapOf()
