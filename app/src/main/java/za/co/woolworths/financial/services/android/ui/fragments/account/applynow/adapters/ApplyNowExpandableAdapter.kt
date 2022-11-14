@@ -43,13 +43,13 @@ class ApplyNowExpandableAdapter(parentItemList: List<ParentListItem?>?) : Expand
                 moreBenefitsTitleTextView.text = subCategoryModel.title
                 moreBenefitsIconImageView.loadSvg(subCategoryModel.imageUrl)
                 holder.itemView.setOnClickListener {
-                    if (holder.isExpanded) holder.collapseView() else holder.expandView()
+                    if (holder.isRowExpanded) holder.collapseView() else holder.expandView()
                 }
             }
         }
 
         override fun setExpanded(expanded: Boolean) {
-            super.setExpanded(expanded)
+            super.isRowExpanded = expanded
             binding.moreBenefitsArrowImageView?.rotation = if (expanded) AnimationUtilExtension.ROTATED_POSITION else AnimationUtilExtension.INITIAL_POSITION
         }
 

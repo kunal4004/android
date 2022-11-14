@@ -13,12 +13,12 @@ class MoreBenefitParentViewHolder(val binding: MoreBenefitParentItemBinding) : P
         binding.moreBenefitsTitleTextView?.text = subCategoryModel.name
         binding.moreBenefitsIconImageView?.setImageResource(subCategoryModel.drawableId)
         holder.binding.root.setOnClickListener {
-            if (holder.isExpanded) holder.collapseView() else holder.expandView()
+            if (holder.isRowExpanded) holder.collapseView() else holder.expandView()
         }
     }
 
     override fun setExpanded(expanded: Boolean) {
-        super.setExpanded(expanded)
+        super.isRowExpanded = expanded
         binding.moreBenefitsArrowImageView?.rotation = if (expanded) ROTATED_POSITION else INITIAL_POSITION
     }
 
