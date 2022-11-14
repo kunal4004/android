@@ -668,7 +668,6 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             tvCollectionDetailsText.text = getString(R.string.collection_details_text) + " " + deliveryInDays?.lowercase() + " " + getString(R.string.notify_text_label)
         }
     }
-
     fun initializeDeliveryInstructions() {
         edtTxtSpecialDeliveryInstruction?.addTextChangedListener(deliveryInstructionsTextWatcher)
         edtTxtGiftInstructions?.addTextChangedListener(deliveryInstructionsTextWatcher)

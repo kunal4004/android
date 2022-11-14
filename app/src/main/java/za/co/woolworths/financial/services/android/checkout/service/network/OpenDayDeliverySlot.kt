@@ -13,10 +13,6 @@ class OpenDayDeliverySlot : Serializable {
     var deliveryInDays: String? = null
     @SerializedName("amount")
     var amount: Long? = null
-    @SerializedName("startDeliveryDay")
-    var startDeliveryDay: Int? = null
-    @SerializedName("endDeliveryDay")
-    var endDeliveryDay: Int? = null
     @SerializedName("deliveryType")
     var deliveryType: String? = null
     var description: String? = null
