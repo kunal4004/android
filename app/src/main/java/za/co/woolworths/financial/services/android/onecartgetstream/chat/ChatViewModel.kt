@@ -129,7 +129,7 @@ class ChatViewModel : ViewModel() {
         // Subscribe for new message events
         this.newMessageEventDisposable = channelClient.subscribeFor<NewMessageEvent> { event ->
             val message = event.message
-            channelClient.markMessageRead(message.id).enqueue {
+            chatClient.channel(channelId).markRead().enqueue { result ->
                 //Ignore
             }
             _state.postValue(ChatState.ReceivedMessageData(message))
