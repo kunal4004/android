@@ -973,11 +973,21 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 showProductUnavailable()
                 showProductNotAvailableForCollection()
                 return
-            } else if(KotlinUtils.getPreferredDeliveryType() == Delivery.CNC
-               && (this.productDetails?.fulfillmentType == "01") // && fulfillmentStore - 02 or 07 && deliveryStatus - false                // (02 || 07 || (02 && 07)) //TODO add fulfillmentStore or deliveryStatus Type as well
-            ) {
-                showProductUnavailable()
-                showProductNotAvailableForCollection()
+            } else if(KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) {
+                //Food only
+                if(this.productDetails?.fulfillmentType == "01" && Utils.retrieveStoreId(this.productDetails?.fulfillmentType) == "") {
+                    showProductUnavailable()
+                    showProductNotAvailableForCollection()
+                }  //FBH only
+                else if((this.productDetails?.fulfillmentType == "02" || this.productDetails?.fulfillmentType == "07") &&
+                        (Utils.retrieveStoreId(this.productDetails?.fulfillmentType) != "")) {
+                    showProductUnavailable()
+                    showProductNotAvailableForCollection()
+                } else {
+                    //Unrelated item in selected store
+                    showProductUnavailable()
+                    showProductNotAvailableForCollection()
+                }
                 return
             }
         }
