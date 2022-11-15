@@ -12,8 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.add_new_payu_card_fragment.*
+import com.awfs.coordination.databinding.AddNewPayuCardFragmentBinding
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.models.dto.AddCardResponse
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
@@ -24,6 +23,7 @@ import za.co.woolworths.financial.services.android.util.NetworkManager
 
 class PMAAddNewPayUCardFragment : PMAFragment() {
 
+    private lateinit var binding: AddNewPayuCardFragmentBinding
     val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +33,8 @@ class PMAAddNewPayUCardFragment : PMAFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.add_new_payu_card_fragment, container, false)
+        binding = AddNewPayuCardFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -47,7 +48,7 @@ class PMAAddNewPayUCardFragment : PMAFragment() {
     @SuppressLint("SetJavaScriptEnabled")
     private fun configureWebView(navController: NavController?) {
 
-        with(addNewUserPayUWebView) {
+        with(binding.addNewUserPayUWebView) {
 
             settings.javaScriptEnabled = true
             isVerticalScrollBarEnabled = true
@@ -89,8 +90,8 @@ class PMAAddNewPayUCardFragment : PMAFragment() {
     }
 
     private fun processYourCard() {
-        processingYourCardFragment?.visibility = VISIBLE
-        processYourRequestFragment?.visibility = GONE
+        binding.processingYourCardFragment?.visibility = VISIBLE
+        binding.processYourRequestFragment?.visibility = GONE
     }
 
     private fun autoConnectionListener() {
@@ -101,7 +102,7 @@ class PMAAddNewPayUCardFragment : PMAFragment() {
                     when (hasConnection && !payMyAccountViewModel.isAddNewCardFormLoaded) {
                         true -> {
                             loadAddPayUForm()
-                            addNewUserPayUWebView?.loadUrl(payMyAccountViewModel.getAddNewCardUrl()!!)
+                            binding.addNewUserPayUWebView?.loadUrl(payMyAccountViewModel.getAddNewCardUrl()!!)
                         }
                         else -> {
                             if (!hasConnection)
@@ -114,8 +115,8 @@ class PMAAddNewPayUCardFragment : PMAFragment() {
     }
 
     private fun loadAddPayUForm() {
-        processingYourCardFragment?.visibility = GONE
-        processYourRequestFragment?.visibility = VISIBLE
+        binding.processingYourCardFragment?.visibility = GONE
+        binding.processYourRequestFragment?.visibility = VISIBLE
         showWebView(false)
         displayToolbarBackIcon(true)
     }
@@ -126,8 +127,8 @@ class PMAAddNewPayUCardFragment : PMAFragment() {
     }
 
     private fun showWebView(isVisible: Boolean) {
-        addNewUserPayUWebView?.visibility = if (isVisible) VISIBLE else GONE
-        processCardNavHostLinearLayout?.visibility = if (isVisible) GONE else VISIBLE
+        binding.addNewUserPayUWebView?.visibility = if (isVisible) VISIBLE else GONE
+        binding.processCardNavHostLinearLayout?.visibility = if (isVisible) GONE else VISIBLE
     }
 
     private fun displayToolbarBackIcon(isVisible: Boolean) {
