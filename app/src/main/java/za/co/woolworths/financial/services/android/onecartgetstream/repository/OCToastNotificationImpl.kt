@@ -13,8 +13,9 @@ import za.co.woolworths.financial.services.android.onecartgetstream.common.const
 import za.co.woolworths.financial.services.android.onecartgetstream.service.UpdateMessageCount
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.util.AppConstant
+import javax.inject.Inject
 
-class OCToastNotificationImpl : OCToastNotification {
+class OCToastNotificationImpl @Inject constructor(): OCToastNotification {
 
     private var updateMessageCount = 0
 
@@ -40,7 +41,7 @@ class OCToastNotificationImpl : OCToastNotification {
         } else {
             snackbarLayout.setPadding(20, 0, 20, 250)
         }
-        binding.ocChatLayout?.setOnClickListener {
+        binding.ocChatLayout.setOnClickListener {
             OCConstant.ocObserveCountMessage = 0
             UpdateMessageCount.value = 0
             snackbar.dismiss()
@@ -49,7 +50,7 @@ class OCToastNotificationImpl : OCToastNotification {
         }
         UpdateMessageCount.observe(context as LifecycleOwner) {
             updateMessageCount = it
-            binding.ocMessageCount?.text = it?.toString()
+            binding.ocMessageCount.text = it?.toString()
         }
         if (!snackbar.isShown) {
             snackbarLayout.addView(binding.root, 0)

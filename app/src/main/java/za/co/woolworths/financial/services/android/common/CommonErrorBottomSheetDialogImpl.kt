@@ -5,8 +5,9 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.CommonErrorBottomDialogLayoutBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
+import javax.inject.Inject
 
-class CommonErrorBottomSheetDialogImpl: CommonErrorBottomSheetDialog {
+class CommonErrorBottomSheetDialogImpl @Inject constructor(): CommonErrorBottomSheetDialog {
     override fun showCommonErrorBottomDialog(
         onClickListener: ClickOnDialogButton,
         context: Context,
@@ -16,11 +17,11 @@ class CommonErrorBottomSheetDialogImpl: CommonErrorBottomSheetDialog {
     ) {
         val dialog = BottomSheetDialog(context, R.style.BottomSheetDialogTheme)
         val binding = CommonErrorBottomDialogLayoutBinding.inflate(dialog.layoutInflater, null, false)
-        binding.imageError?.setImageDrawable(bindDrawable(R.drawable.ic_vto_error))
-        binding.tvErrorTitle?.text = title
-        binding.tvErrorDesc?.text = desc
-        binding.gotItButton?.text = buttonText
-        binding.gotItButton?.setOnClickListener {
+        binding.imageError.setImageDrawable(bindDrawable(R.drawable.ic_vto_error))
+        binding.tvErrorTitle.text = title
+        binding.tvErrorDesc.text = desc
+        binding.gotItButton.text = buttonText
+        binding.gotItButton.setOnClickListener {
             onClickListener.onClick()
             dialog.dismiss()
         }
