@@ -56,7 +56,7 @@ class LinkPrimaryDeviceOTPFragment : BaseFragmentBinding<FragmentUnlinkDeviceOtp
         if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
             when {
                 TextUtils.isEmpty(linkDeviceOTPEdtTxt1.text) -> {
-                    linkDeviceOTPEdtTxt1.setSelection(linkDeviceOTPEdtTxt1.text.length ?: 0)
+                    linkDeviceOTPEdtTxt1.setSelection(linkDeviceOTPEdtTxt1.text?.length ?: 0)
                     linkDeviceOTPEdtTxt1.requestFocus(View.FOCUS_DOWN)
                 }
                 TextUtils.isEmpty(linkDeviceOTPEdtTxt2.text) -> {
