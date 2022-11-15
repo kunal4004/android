@@ -10,13 +10,14 @@ import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.text.TextUtils
-import android.view.*
+import android.view.KeyEvent
+import android.view.View
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.findNavController
@@ -147,10 +148,23 @@ class LinkDeviceOTPFragment :
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    private fun resetOTPView() {
+        clearOTP()
+        clearErrorMessage()
+    }
+
+    private fun clearErrorMessage() {
+        binding.linkDeviceOTPScreen.apply {
+            if (linkDeviceOTPErrorTxt.visibility == View.VISIBLE) {
+                linkDeviceOTPErrorTxt.visibility = View.GONE
+                setOtpErrorBackground(R.drawable.otp_box_background_focus_selector)
+            }
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         activity?.runOnUiThread { activity?.window?.addFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE) }
         // Use the Kotlin extension in the fragment-ktx artifact
         setFragmentResultListener("resendOTPType") { requestKey, bundle ->
@@ -174,27 +188,6 @@ class LinkDeviceOTPFragment :
                 }
             }
         }
-
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_link_device_otp, container, false)
-    }
-
-    private fun resetOTPView() {
-        clearOTP()
-        clearErrorMessage()
-    }
-
-    private fun clearErrorMessage() {
-        binding.linkDeviceOTPScreen.apply {
-            if (linkDeviceOTPErrorTxt.visibility == View.VISIBLE) {
-                linkDeviceOTPErrorTxt.visibility = View.GONE
-                setOtpErrorBackground(R.drawable.otp_box_background_focus_selector)
-            }
-        }
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
         setToolbar()
 

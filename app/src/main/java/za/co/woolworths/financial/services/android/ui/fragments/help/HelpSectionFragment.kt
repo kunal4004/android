@@ -2,10 +2,8 @@ package za.co.woolworths.financial.services.android.ui.fragments.help
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
-import android.view.ViewGroup
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.NeedHelpFragmentBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -26,14 +24,6 @@ class HelpSectionFragment : BaseFragmentBinding<NeedHelpFragmentBinding>(
         super.onAttach(context)
         if (context is BottomNavigationActivity)
             mBottomNavigator = context
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.need_help_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

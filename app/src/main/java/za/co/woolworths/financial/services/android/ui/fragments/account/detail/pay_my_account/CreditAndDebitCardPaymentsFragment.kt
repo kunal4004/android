@@ -2,11 +2,9 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.detail.
 
 import android.graphics.Color
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
 import androidx.navigation.NavController
@@ -30,7 +28,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.applynow
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WhatsAppUnavailableFragment
-import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import java.net.ConnectException
 
@@ -42,22 +43,9 @@ class CreditAndDebitCardPaymentsFragment :
     private var mChatFloatingActionButtonBubbleView: ChatFloatingActionButtonBubbleView? = null
     private var payMyAccountPresenter: PayMyAccountPresenterImpl? = null
     private var navController: NavController? = null
-    private var layout: View? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
     private var payMyAccountOption: ConfigPayMyAccount? = null
     private var isQueryPayUPaymentMethodComplete: Boolean = false
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Prevent layout to reload when fragment refresh
-        if (layout == null)
-            layout =
-                inflater.inflate(R.layout.credit_and_debit_card_payments_fragment, container, false)
-        return layout
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
