@@ -82,7 +82,8 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
             manager?.createNotificationChannel(serviceChannel)
 
             val notificationIntent = Intent()
-            val pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0)
+            val pendingIntentFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_IMMUTABLE else 0
+            val pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, pendingIntentFlag)
             return context?.let {
                 NotificationCompat.Builder(it, CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_notification)
@@ -95,7 +96,6 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
         return null
     }
 
-    // TODO: If the user initiates a new chat from My Order Details, for a channel that was not registered here, then that fragment needs to communicate with this service to add the new channel and start listening to it too.
     // Scenario A: service is started on app launch; user adds to cart, checkout and make payment; that order goes to pending_picking state and shopper initiates a chat with this user - this would mean the service is not listening to this new channel
     // Scenario B: Same as above, except there's no channel for the service to listen to, which means it will stop on launch itself. When new order's channel is opened, service needs to be started and listen to that new channel.
     private fun connectUserAndListenToChannels() {
@@ -212,25 +212,32 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                 val orderId = channelIdToOrderIdMap[event.cid]
                 val orderSummary = ordersSummary.firstOrNull { it.orderId == orderId }
 
-                if (WoolworthsApplication.getInstance().currentActivity != null &&
-                    WoolworthsApplication.getInstance().currentActivity::class != OCChatActivity::class
-                ) {
-                    UpdateMessageCount.value = ++ocObserveCountMessage
-                        GlobalScope.launch(Dispatchers.Main) {
-                            val woolworthsApplication = WoolworthsApplication.getInstance()
-                            woolworthsApplication?.currentActivity?.let {
-                                it.window?.decorView?.rootView?.apply {
-                                    orderId?.let { orderID ->
-                                        ocToastNotification.showOCToastNotification(it,
-                                            "0",
-                                            250,
-                                            orderID)
-                                    }
-                                }
-                            }
-                    }
+                //TODO:
+                /*
+                  Hiding Toast as per requirement. currently not needed.
+                   if again requirement come will enable.
+                   if not needed.... need to remove all OC chat Toast implementation.
+                 */
 
-                }
+//                if (WoolworthsApplication.getInstance().currentActivity != null &&
+//                    WoolworthsApplication.getInstance().currentActivity::class != OCChatActivity::class
+//                ) {
+//                    UpdateMessageCount.value = ++ocObserveCountMessage
+//                        GlobalScope.launch(Dispatchers.Main) {
+//                            val woolworthsApplication = WoolworthsApplication.getInstance()
+//                            woolworthsApplication?.currentActivity?.let {
+//                                it.window?.decorView?.rootView?.apply {
+//                                    orderId?.let { orderID ->
+//                                        ocToastNotification.showOCToastNotification(it,
+//                                            "0",
+//                                            250,
+//                                            orderID)
+//                                    }
+//                                }
+//                            }
+//                    }
+//
+//                }
 
             }
         }

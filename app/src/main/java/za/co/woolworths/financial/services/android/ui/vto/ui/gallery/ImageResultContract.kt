@@ -79,13 +79,13 @@ class ImageResultContract : ActivityResultContract<Uri, Uri>() {
 
     }
 
-    override fun createIntent(context: Context, input: Uri?): Intent =
+    override fun createIntent(context: Context, input: Uri): Intent =
         Intent(context, BrowseFullScreenImageActivity::class.java).apply {
             putExtra(SEND_URI, input)
         }
 
-    override fun parseResult(resultCode: Int, intent: Intent?): Uri? = when {
-        resultCode != Activity.RESULT_OK -> null
+    override fun parseResult(resultCode: Int, intent: Intent?): Uri = when {
+        resultCode != Activity.RESULT_OK -> Uri.EMPTY
         else -> intent?.getParcelableExtra(GET_URI)!!
     }
 

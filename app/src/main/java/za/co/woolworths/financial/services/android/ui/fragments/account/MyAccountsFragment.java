@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
+import static za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.ACCOUNT_PRODUCT_PAYLOAD;
 import static za.co.woolworths.financial.services.android.ui.fragments.account.fica.FicaViewModel.GET_REFRESH_STATUS;
 import static za.co.woolworths.financial.services.android.ui.fragments.mypreferences.MyPreferencesFragment.IS_NON_WFS_USER;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_EXPECTATION_FAILED_502;
@@ -113,11 +114,13 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl;
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.activities.ApplyNowActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView;
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountCardDetailModelImpl;
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountCardDetailPresenterImpl;
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.fica.FicaActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.ContactUsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.SetUpDeliveryNowDialog;
@@ -1937,19 +1940,37 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private void redirectToAccountSignInActivity(ApplyNowState applyNowState) {
         Activity activity = getActivity();
         if (activity == null) return;
-        Intent intent = new Intent(activity, AccountSignedInActivity.class);
-        intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, applyNowState);
-        intent.putExtra(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Utils.objectToJson(mAccountResponse));
-        if (deepLinkParams != null)
-            intent.putExtra(AccountSignedInPresenterImpl.DEEP_LINKING_PARAMS, Utils.objectToJson(deepLinkParams));
-        activity.startActivityForResult(intent, ACCOUNT_CARD_REQUEST_CODE);
-        activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+        Intent intent;
+        if (applyNowState == ApplyNowState.STORE_CARD){
+            if (mAccountResponse == null) return;
+            for ( Account account: mAccountResponse.accountList){
+                if (account.productGroupCode.equalsIgnoreCase(ProductGroupCode.SC.getValue())) {
+                    String product = Utils.objectToJson(account);
+                    intent = new Intent(activity, StoreCardActivity.class);
+                    intent.putExtra(ACCOUNT_PRODUCT_PAYLOAD,  product);
+                    if (deepLinkParams != null)
+                        intent.putExtra(AccountSignedInPresenterImpl.DEEP_LINKING_PARAMS, Utils.objectToJson(deepLinkParams));
+                    activity.startActivityForResult(intent, ACCOUNT_CARD_REQUEST_CODE);
+                    return;
+                }
+            }
+        }else {
+            intent = new Intent(activity, AccountSignedInActivity.class);
+            intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, applyNowState);
+            intent.putExtra(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Utils.objectToJson(mAccountResponse));
+            if (deepLinkParams != null)
+                intent.putExtra(AccountSignedInPresenterImpl.DEEP_LINKING_PARAMS, Utils.objectToJson(deepLinkParams));
+            activity.startActivityForResult(intent, ACCOUNT_CARD_REQUEST_CODE);
+            activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+        }
     }
-
     private void redirectToMyAccountsCardsActivity(ApplyNowState applyNowState) {
         Activity activity = getActivity();
         if (activity == null) return;
         Intent intent = new Intent(getActivity(), AccountSalesActivity.class);
+        if(applyNowState == ApplyNowState.BLACK_CREDIT_CARD || applyNowState == ApplyNowState.GOLD_CREDIT_CARD || applyNowState ==  ApplyNowState.SILVER_CREDIT_CARD){
+            intent = new Intent(getActivity(), ApplyNowActivity.class);
+        }
         Bundle bundle = new Bundle();
         bundle.putSerializable("APPLY_NOW_STATE", applyNowState);
         HashMap<String, Account> accountHashMap = new HashMap<>();

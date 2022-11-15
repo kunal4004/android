@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/cardText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_30sdp"
+        android:fontFamily="@font/futura_semi_bold"
+        android:text="@string/my_card"
+        android:textAllCaps="true"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_12sdp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/manageCardText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_13sdp"
+        android:fontFamily="@font/futura_medium"
+        android:letterSpacing="0.1"
+        android:text="@string/manage_my_card_title"
+        android:textAllCaps="true"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_11sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/storeCardTagTextView"
+        style="@style/tag_sdp_badge_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/manageCardText"
+        app:layout_constraintEnd_toEndOf="@+id/manageCardText"
+        app:layout_constraintTop_toTopOf="@+id/manageCardText" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/manageAndCardTextGuideline"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintGuide_begin="@dimen/_20sdp" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/manageCardFragmentContainerView"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:tag="manageCardFragmentContainerView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/manageAndCardTextGuideline" />
+
+    <include
+        android:id="@+id/includeListOptions"
+        layout="@layout/account_options_manage_card_list_fragment" />
+
+    <RelativeLayout
+        android:id="@+id/rltCardShimmer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/cardShimmer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <include layout="@layout/account_card_skeleton" />
+        </com.facebook.shimmer.ShimmerFrameLayout>
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

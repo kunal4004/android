@@ -22,9 +22,9 @@ import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCust
 import za.co.woolworths.financial.services.android.ui.fragments.voc.SurveyAnswerDelegate
 
 class SurveyQuestionAdapter(
-        val context: Context,
-        private val questions: List<SurveyQuestion>,
-        val delegate: SurveyAnswerDelegate
+    val context: Context,
+    private val questions: List<SurveyQuestion>,
+    val delegate: SurveyAnswerDelegate
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -36,7 +36,7 @@ class SurveyQuestionAdapter(
     override fun getItemViewType(position: Int): Int {
         if (position < questions.size) {
             return SurveyQuestion.QuestionType.ofType(questions[position].type)?.viewType
-                    ?: SurveyQuestion.QuestionType.FREE_TEXT.viewType
+                ?: SurveyQuestion.QuestionType.FREE_TEXT.viewType
         }
         return VIEW_TYPE_FOOTER
     }
@@ -53,13 +53,13 @@ class SurveyQuestionAdapter(
         when (holder) {
             is FooterViewHolder -> {
                 holder.bind(
-                        delegate,
-                        submitCallback = {
-                            delegate.onSubmit()
-                        },
-                        optOutCallback = {
-                            delegate.onOptOut()
-                        }
+                    delegate,
+                    submitCallback = {
+                        delegate.onSubmit()
+                    },
+                    optOutCallback = {
+                        delegate.onOptOut()
+                    }
                 )
             }
             is RateSliderViewHolder -> {

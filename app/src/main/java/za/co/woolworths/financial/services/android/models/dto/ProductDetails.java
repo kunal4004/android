@@ -110,6 +110,16 @@ public class ProductDetails {
 	@SerializedName("virtualTryOn")
 	@Expose
 	public String virtualTryOn;
+
+	@SerializedName("isRnREnabled")
+	@Expose
+	public Boolean isRnREnabled = null;
+	@SerializedName("averageRating")
+	@Expose
+	public float averageRating;
+	@SerializedName("reviewCount")
+	@Expose
+	public int reviewCount;
 	@SerializedName("lowStockThreshold")
 	@Expose
 	public Integer lowStockIndicator;

@@ -4,10 +4,7 @@ import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
-import android.widget.AdapterView
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -80,6 +77,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.click_and_collec
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_100_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_500_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.FIFTY
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
@@ -101,7 +99,7 @@ import kotlin.coroutines.CoroutineContext
  * Created by Kunal Uttarwar on 29/05/21.
  */
 class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(),
-    View.OnClickListener, CoroutineScope {
+    View.OnClickListener, CoroutineScope, ErrorHandlerBottomSheetDialog.ClickListener {
 
     private var deliveringOptionsList: List<String>? = null
     private var navController: NavController? = null
@@ -179,14 +177,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                         if (!savedAddress?.city.isNullOrEmpty()) {
                             selectedAddress?.provinceName = savedAddress.city!!
                         } else {
-                            var provinceName: String? = ""
-                            provinceName = getProvinceName(savedAddress.region)
-                            if (!provinceName.isNullOrEmpty()) {
-                                selectedAddress?.provinceName = provinceName
-                            } else {
-                                savedAddress?.region?.let {
-                                    selectedAddress?.provinceName = it
-                                }
+                            if (!savedAddress?.region.isNullOrEmpty()) {
+                                selectedAddress?.provinceName = savedAddress?.region!!
                             }
 
                         }
@@ -218,20 +210,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     ?: getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
             }
         }
-    }
-
-    private fun getProvinceName(provinceId: String?): String {
-        val provinceList =
-            AppConfigSingleton.nativeCheckout?.regions as MutableList<Province>
-        if (!provinceId.isNullOrEmpty()) {
-            for (provinces in provinceList) {
-                if (provinceId == provinces.id) {
-                    // province id is matching with the province list from config.
-                    return provinces.name ?: ""
-                }
-            }
-        }
-        return ""
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -268,7 +246,12 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     // disable Google address view.
                     autoCompleteTextView?.isEnabled = false
                     autoCompleteTextView?.setBackgroundResource(R.drawable.input_box_inactive_bg)
-                    autoCompleteTextView?.setTextColor(ContextCompat.getColor(requireContext(), R.color.non_editable_edit_text_text_color))
+                    autoCompleteTextView?.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.non_editable_edit_text_text_color
+                        )
+                    )
                     saveAddress.text = getString(R.string.confirm_address)
                 }
             }
@@ -634,7 +617,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                 setSelection(autoCompleteTextView.length())
                 autoCompleteTextView.dismissDropDown()
             }
-            checkIfSelectedProvinceExist(AppConfigSingleton.nativeCheckout?.regions as MutableList<Province>)
+            checkIfSelectedProvinceExist()
+
         }
 
         if (!selectedAddress.savedAddress.suburb.isNullOrEmpty())
@@ -656,30 +640,10 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         }
     }
 
-    fun checkIfSelectedProvinceExist(provinceList: MutableList<Province>) {
-        val localProvince = Province()
+    fun checkIfSelectedProvinceExist() {
         val provinceName = selectedAddress.provinceName
         if (!provinceName.isNullOrEmpty()) {
-            for (provinces in provinceList) {
-                if (provinceName.equals(provinces.name)) {
-                    // province name is matching with the province list from config.
-                    localProvince.apply {
-                        id = provinces.id
-                        name = provinces.name
-                    }
-                    provinceAutocompleteEditText?.setText(provinceName)
-                    selectedAddress.apply {
-                        this.provinceName = localProvince.name ?: ""
-                        savedAddress.region = localProvince.id
-                    }
-                }
-            }
-            if (localProvince.name.isNullOrEmpty()) {
-                // province name is not matching with the province list from config.
-                provinceAutocompleteEditText?.setText("")
-                provinceSuburbEnableType =
-                    ONLY_PROVINCE
-            }
+            provinceAutocompleteEditText?.setText(provinceName)
         } else {
             provinceAutocompleteEditText.setText("")
             provinceSuburbEnableType = ONLY_PROVINCE
@@ -692,11 +656,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             suburbEditText?.setText(selectedAddress.savedAddress.suburb)
         }
 
-        when (selectedAddress.savedAddress.postalCode.isNullOrEmpty()) {
-
-            false -> {
-                postalCode.setText(selectedAddress.savedAddress.postalCode)
-            }
+        if (!selectedAddress.savedAddress.postalCode.isNullOrEmpty()) {
+            postalCode.setText(selectedAddress.savedAddress.postalCode)
         }
     }
 
@@ -732,6 +693,12 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     )
                     deliveringAddressTypesErrorMsg?.visibility = View.GONE
                     changeUnitComplexPlaceHolderOnType(selectedDeliveryAddressType)
+                    if (selectedDeliveryAddressType == ADDRESS_APARTMENT) {
+                        scrollView?.postDelayed(
+                            { scrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT) },
+                            DELAY_100_MS
+                        )
+                    }
                 }
                 titleTextView?.setOnClickListener {
                     setFirebaseEvents(titleTextView?.text.toString())
@@ -1330,10 +1297,11 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         )
 
         bundle.putInt(ERROR_TYPE, type)
-        view?.findNavController()?.navigate(
-            R.id.actionOpenErrorHandlerBottomSheetDialog,
-            bundle
-        )
+
+        val errorBottomSheetDialog =  ErrorHandlerBottomSheetDialog.newInstance(bundle, this)
+        requireActivity()?.supportFragmentManager?.let {
+            errorBottomSheetDialog?.show(it, ErrorHandlerBottomSheetDialog::class.java.simpleName)
+        }
     }
 
     fun showErrorDialog() {
@@ -1567,6 +1535,17 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             }
         }
         unitComplexFloorEditText?.setBackgroundResource(R.drawable.recipient_details_input_edittext_bg)
+    }
+
+    override fun onRetryClick(errorType: Int) {
+       when(errorType) {
+           ERROR_TYPE_ADD_ADDRESS -> {
+               onSaveAddressClicked()
+           }
+           ERROR_TYPE_DELETE_ADDRESS -> {
+               deleteAddress()
+           }
+       }
     }
 
 }

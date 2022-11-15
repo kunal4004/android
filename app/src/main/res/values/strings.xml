@@ -560,6 +560,7 @@
     <string name="account_details_reference_number">Reference Number:</string>
     <string name="account_details_swift_code">Swift Code:</string>
     <string name="refine">REFINE</string>
+    <string name="filter">FILTER</string>
     <string name="sort_by">SORT BY</string>
     <string name="refinement_show_me">show me</string>
     <string name="refinement_filter_by">filter by</string>
@@ -718,7 +719,7 @@
     <string name="update_title">Update Available</string>
     <string name="update_desc">Please update to the latest version of the App.</string>
     <string name="my_card_title">My Card</string>
-    <string name="my_card">MY CARD</string>
+    <string name="my_card">MY CARD%1$s</string>
     <string name="card_number_title">Card Number:</string>
     <string name="card_holder_title">Cardholder:</string>
     <string name="manage">Manage</string>
@@ -732,7 +733,7 @@
     <string name="processing_your_request_desc">This may take a few seconds</string>
     <string name="blocked">BLOCKED</string>
     <string name="no_active_card">No Active Card</string>
-    <string name="card_block_desc">Your card has been blocked and can no longer be used.</string>
+    <string name="card_block_desc">Your card has been blocked and can\nno longer be used.</string>
     <string name="card_block_replacement_card_disabled_desc">Your card has been blocked and can no longer be used. Call 0861 50 20 20 to arrange for delivery.</string>
     <string name="get_replacement_card">get replacement card</string>
     <string name="get_a_replacement_card">Get A Replacement Card</string>
@@ -1693,6 +1694,7 @@
     <string name="select_an_option">Please Select an Option</string>
     <string name="collection_location">Collection Location:</string>
     <string name="collection_date">Collection Date:</string>
+    <string name="store">Store\u0020</string>
     <string name="my_orders_title">My Orders</string>
     <string name="click_and_collect_max_items">Click &amp; Collect orders have a maximum limit of between %1$s and %2$s food items, store dependent.</string>
     <string name="click_and_collect_dialog_items_limit">UP TO %1$s ITEMS\n STORE DEPENDENT</string>
@@ -1763,7 +1765,7 @@
     <string name="first_available_food_delivery_date_store">The earliest collection slot we have available for %1$s is &lt;b>%2$s&lt;/b></string>
     <string name="confirm_store">Confirm Store</string>
     <string name="confirm_suburb">Confirm Suburb</string>
-    <string name="manage_my_card_title">Manage My Card</string>
+    <string name="manage_my_card_title">Manage My Card%1$s</string>
     <string name="activate_vtc_title">Activate Virtual Temp Card</string>
     <string name="temporary_card_freeze_title">Temporary Card Freeze</string>
     <string name="freeze_temporary_card_title">Temporary Card Freeze</string>
@@ -1854,7 +1856,7 @@
     <string name="chat_to_us_label">CHAT TO US</string>
 
     <string name="earliest_delivery_date">Earliest Delivery date:</string>
-    <string name="earliest_delivery_dates">Earliest Delivery Dates:</string>
+    <string name="earliest_delivery_dates">Earliest Standard Delivery Dates:</string>
     <string name="food_items">Food Items</string>
     <string name="fashion_beauty_home">Fashion, Beauty &amp; Home</string>
     <string name="get_your_free_credit_report">View Free Credit Report &amp; More</string>
@@ -1921,6 +1923,8 @@
     <string name="dash_track_your_order">Track Your Order</string>
     <string name="dash_email_id">wooliesdash@woolworths.co.za</string>
     <string name="dash_customer_care_no_phone">0860 100 987</string>
+    <string name="push_notification_turn_on_toast_message">PUSH NOTIFICATIONS HELP US SHARE ORDER UPDATES AS THEY HAPPEN.</string>
+    <string name="push_notification_turn_on_text">TURN ON</string>
 
     <string name="app_feature_title"></string>
     <string name="app_feature_get_delivered">Same-day delivery</string>
@@ -2199,16 +2203,6 @@
     <string name="reward_shake_tap_label">Not scanning? Tap here or shake to max brightness</string>
     <string name="credit_card_title">Credit Card</string>
 
-    <string name="already_have_a_wrewards_card">Already have a wrewards card?</string>
-    <string name="add_it_now">Add it now</string>
-    <string name="sign_up">SIGN UP</string>
-    <string name="wrewards_logo_rewards">REWARDS</string>
-    <string name="wrewards_logo_w">W</string>
-    <string name="payment_order_confirmed">Order Confirmed</string>
-    <string name="submitted_order_error_something_went_wrong">Your order was successful,  but we’re having trouble displaying the details here.</string>
-    <string name="submitted_order_error_message">Please try again, or check your order history under Account details later.</string>
-    <string name="submitted_order_error_continue_shopping">CONTINUE SHOPPING</string>
-    <string name="select_your_preferred_delivery_time_error">Please select a delivery timeslot.</string>
 
     <string name="absa_mobile_app_pin_blocked_title">Mobile App PIN Is Now\nBlocked</string>
     <string name="absa_mobile_app_pin_blocked_desc_block_1">To release the hold on your PIN, please contact customer service on 086 150 2020 or email queries@wfs.co.za.</string>
@@ -2467,6 +2461,7 @@
     <string name="treatment_plan_desc_2">Make payments on the Woolies app.</string>
     <string name="treatment_plan_desc_3">Track your payment plan history and schedule.</string>
     <string name="treatment_plan_desc_4">Simple and easy to manage from the palm of your hand.</string>
+    <string name="view_treatment_plan_caption">View Treatment Plan</string>
     <string name="geoloc_delivery">Standard Delivery</string>
     <string name="products_available_title">Products available:</string>
     <string name="item_limit">Item limit:</string>
@@ -2495,7 +2490,7 @@
     <string name="please_select_the_store_you_are_collecting_from">Please select the store you\nare collecting from.</string>
     <string name="search_by_store_or_location">Search by store or location</string>
     <string name="change">change</string>
-    <string name="near_stores">%d Strores near me.</string>
+    <string name="near_stores">%d Stores near me.</string>
     <string name="where_do_you_want_to_collect">Where do you want to collect?</string>
 
     <!--Dash-->
@@ -2579,7 +2574,7 @@
         <item quantity="one">This Item Will Be Removed From Your Cart.</item>
         <item quantity="other">@string/these_items_will_be_removed_from_your_cart</item>
     </plurals>
-    <string name="minspend_error_msg_cart">A minimum spend of R%.1f is required to checkout.</string>
+    <string name="minspend_error_msg_cart">A minimum spend of R%s is required to checkout.</string>
     <string name="minspend_error_msg_title">A minimum spend of R%.1f is required to checkout.</string>
     <string name="minspend_error_msg_desc">To complete your purchase, increase your order value, or change your delivery method.</string>
     <string name="min_spend_error_msg_checkout_title">A minimum spend of %d is required to checkout.</string>
@@ -2588,11 +2583,11 @@
 
     <string name="product_listing_price_from">From</string>
 
-    <string name="vtsc_card_not_arrived_title">Has Your Card Not\nArrived in the Post?</string>
-    <string name="vtsc_card_not_arrived_desc">We do our best to deliver all new cards within 30 days, but sometimes things go wrong. Please let us know if your card has not yet been delivered to you and a customer service agent will be in touch to arrange VIP delivery.</string>
+    <string name="vtsc_card_not_arrived_title">Has Your Card Not Arrived in the Post?</string>
+    <string name="vtsc_card_not_arrived_desc">We do our best to deliver all new cards within 35 days, but sometimes things go wrong. Please let us know if your card has not yet been delivered to you and a customer service agent will be in touch to arrange VIP delivery.</string>
     <string name="vtsc_card_not_arrived_button_caption">MY CARD HASN’T ARRIVED</string>
 
-    <string name="vtsc_card_not_arrived_notified_title">Thanks for Letting Us Know!</string>
+    <string name="vtsc_card_not_arrived_notified_title">Thanks for Letting Us Know</string>
     <string name="vtsc_card_not_arrived_notified_desc">A customer service agent will be in touch to arrange VIP delivery.</string>
 
     <string name="product_details_color_count">+ %d More</string>
@@ -2612,6 +2607,7 @@
     <string name="view_your_payment_plan">VIEW PAYMENT PLAN</string>
     <string name="total_amount_you_saving">This is the total amount you are saving as agreed \n upon in your settlement plan</string>
     <string name="pay_now">PAY NOW</string>
+
     <string name="account_in_recovery_label">Account in Recovery</string>
     <string name="account_in_recovery_desc">Your account is in arrears. Have you already agreed to a repayment plan? View your plan or make a payment now.</string>
 
@@ -2655,6 +2651,7 @@
     <string name="vtsc_oops_err_title">vtsc_oops_err_title</string>
     <string name="vtsc_oops_error_message">vtsc_oops_error_message</string>
     <string name="vtsc_try_again">vtsc_try_again</string>
+    <string name="vtsc_error_ok">vtsc_error_ok</string>
 
     <!--ContactUs Financial Services -->
     <string name="send_enquiry">Send Us An Enquiry</string>
@@ -2672,6 +2669,10 @@
     <string name="enquiry_failed">Failed To Send Enquiry.</string>
     <string name="enter_valid_email">Please enter valid email.</string>
     <string name="create_list_and_add">create list and add</string>
+    <string name="card_label">card</string>
+    <string name="temp_card_label">temp</string>
+    <string name="virtual_temp_card_label">Virtual Temporary Card</string>
+    <string name="primary_card">Primary Card</string>
 
     <!-- Feature Walkthrough : Barcode Scanning  -->
     <string name="feature_barcode_scanning_title">BARCODE SCANNING</string>
@@ -2704,10 +2705,12 @@
     <string name="to_contact_customer_support_dial_0860_100_987">To contact Customer Support, dial</string>
     <string name="delete_my_account">Delete my account</string>
     <string name="your_online_profile_has_been_successfully_deleted">Your Online Profile Has Been Successfully Deleted</string>
+
+
     <string name="dash_order">Dash Order:</string>
     <string name="dash_email_type">plain/text</string>
 
-         <!--one cart stream chat -->
+    <!--one cart stream chat -->
     <string name="type_a_message">Type a message</string>
     <string name="currently_active">Currently Active</string>
     <string name="currently_in_active">Currently Inactive</string>
@@ -2715,15 +2718,105 @@
     <string name="one_cart_chat_order_id">ORDER #%s</string>
     <string name="generic_error_something_wrong_newline">Unfortunately,\n Something Went Wrong</string>
     <string name="one_cart_chat_error_disc">We can’t seem to reach your shopper.\n Give them a few moments, and try again.</string>
-
+    <string name="frozen_primary_card">Frozen Primary Card</string>
+    <string name="upshell_message_freeze_title">Freeze Card to Activate</string>
+    <string name="upshell_message_activate_virtual_card_title">Activate Virtual Card</string>
+    <string name="virtual_temp_card_detail">Your new card has been issued and will be delivered to you. Activate your Virtual Temp Card and use it to pay in-store</string>
 
     <string name="we_need_more_info">We Need More Info</string>
+    <string name="enter_street_name">Please enter a street name for this location:</string>
+    <string name="your_shopper_is_trying_to">Your shopper is trying to \ncontact you.</string>
+
+    <string name="inapp_order_notification_title">Dash Delivery Order #%s</string>
+
+    <string name="my_card_has_arrived">My card has arrived</string>
+    <string name="map_not_available">Map app’s not installed</string>
+    <string name="petal_maps">PETAL MAPS</string>
+
+    <string name="liquor_dialog_description_text">WCellar Liquor is available for delivery \nand collection in selected areas in Gauteng and the Western Cape.</string>
+    <string name="edit_address_button">EDIT ADDRESS</string>
+    <string name="promotional_text_banner">Extra 5% off when you pay with your Woolies card.\nThis offer is available on selected items. Offer valid for a limited time only. Subject to availability. Discount applies at checkout.T\'s &amp; C\'s apply.</string>
+
+    <string name="already_have_a_wrewards_card">Already have a wrewards card?</string>
+    <string name="add_it_now">Add it now</string>
+    <string name="sign_up">SIGN UP</string>
+    <string name="wrewards_logo_rewards">REWARDS</string>
+    <string name="wrewards_logo_w">W</string>
+    <string name="payment_order_confirmed">Order Confirmed</string>
+    <string name="submitted_order_error_something_went_wrong">Your order was successful,  but we’re having trouble displaying the details here.</string>
+    <string name="submitted_order_error_message">Please try again, or check your order history under Account details later.</string>
+    <string name="submitted_order_error_continue_shopping">CONTINUE SHOPPING</string>
+    <string name="select_your_preferred_delivery_time_error">Please select a delivery timeslot.</string>
+
+
+    <!--  Rating and Review Feature -->
+    <string name="percent_recommend_to_friend">%s Would recommend this product to a friend</string>
+    <string name="ratings_details">Ratings Details</string>
+    <string name="rating_details">Rating Details</string>
+    <plurals name="no_review">
+        <item quantity="one">%d Review</item>
+        <item quantity="other">%d Reviews</item>
+    </plurals>
+    <plurals name="customer_review">
+        <item quantity="one">Customer Review (%d)</item>
+        <item quantity="other">Customer Reviews (%d)</item>
+    </plurals>
+    <plurals name="review_found">
+        <item quantity="one">REVIEW FOUND </item>
+        <item quantity="other">REVIEWS FOUND </item>
+    </plurals>
+    <plurals name="more_review">
+        <item quantity="one">%d MORE REVIEW</item>
+        <item quantity="other">%d MORE REVIEWS</item>
+    </plurals>
+    <string name="verified_buyer">Verified Buyer</string>
+    <string name="view_skin_profile">VIEW SKIN PROFILE</string>
+    <string name="verified_staff_member">Verified Staff Member</string>
+    <string name="report">REPORT</string>
+    <string name="thumbnail">thumbnail</string>
+    <string name="was_this_review_helpful">Was this Review Helpful?</string>
+    <string name="is_there_an_issue_with_this_review">Is there an issue with this review?</string>
+    <string name="why_would_you_like_to_report_this_review">Why would you like to report this review?</string>
+    <string name="skin_shade">Skin Shade:</string>
+    <string name="skin_type">Skin Type:</string>
+    <string name="skin_concerns">Skin Concerns:</string>
+    <string name="perfect_skin_label">Perfect for my skin!</string>
+    <string name="verified_buyer_label">Verified Buyer</string>
+    <string name="runs_small">Runs Small</string>
+    <string name="true_size">True To Size</string>
+    <string name="run_large">Runs Large</string>
+    <string name="fit">Fit:</string>
+    <string name="product_quality">Product Quality:</string>
+    <string name="review_details">REVIEW DETAIL</string>
+    <string name="close_btn">CLOSE</string>
+    <string name="star_1">1</string>
+    <string name="star_2">2</string>
+    <string name="star_3">3</string>
+    <string name="star_4">4</string>
+    <string name="star_5">5</string>
+    <string name="star_0">0</string>
+    <string name="slash">/</string>
+    <string name="skin_profile">Skin Profile</string>
+    <string name="customer_reviews">Customer Reviews</string>
+    <string name="report_reviews">Report Review</string>
+    <string name="report_sub_label">I find this review to contain:</string>
+    <string name="submit_report">Submit Report</string>
+    <string name="hint_reason">Please enter a reason here</string>
+    <string name="report_moderated">It is currently being moderated.</string>
+    <string name="your_report_on_this_review_has_been_submitted_we_will_review_your_concern_and_will_notify_you_once_action_has_been_taken">Your report on this review has been submitted.\nWe will review your concern and will notify you once action has been taken.</string>
+    <string name="report_submit">Report Submitted</string>
+    <string name="report_got_it">GOT IT</string>
+    <string name="failed_more_reviews">FAILED TO LOAD MORE REVIEWS</string>
+    <string name="retry_txt">RETRY</string>
+    <string name="reported">REPORTED</string>
+    <string name="cancelled">Cancelled</string>
+    <string name="order">Order\u0020</string>
+    <string name="a_report_for_this_review_has_already_been_submitted">A report for this review has already been submitted.</string>
+
     <string name="quick">QUICK</string>
     <string name="convenient">CONVENIENT</string>
     <string name="alarm_text">We\’ll notify you when your order is ready for collection.</string>
     <string name="calender_detail">Orders will be ready to collect within 1-5 working days.</string>
-    <string name="enter_street_name">Please enter a street name for this location:</string>
-    <string name="your_shopper_is_trying_to">Your shopper is trying to \ncontact you.</string>
 
     <string name="introducing_pargo_our_new_collection_partner">Introducing Pargo, Our New Collection Partner!</string>
     <string name="new_fbh_cnc_text">Introducing Click &amp; Collect for Fashion, Beauty &amp; Homeware</string>
