@@ -27,7 +27,7 @@ class MyAccountActivity : AppCompatActivity() {
         const val RESULT_CODE_MY_ACCOUNT_FRAGMENT = 4444
     }
 
-    private lateinit var binding: MyAccountActivityBinding
+    lateinit var binding: MyAccountActivityBinding
 
     @SuppressLint("DefaultLocale")
     override fun onCreate(savedInstanceState: Bundle?) {

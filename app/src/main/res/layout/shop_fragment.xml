@@ -32,7 +32,9 @@
                 android:visibility="gone" />
         </RelativeLayout>
 
-        <include layout="@layout/empty_state_template" />
+        <include
+            android:id="@+id/includeEmptyStateTemplate"
+            layout="@layout/empty_state_template" />
 
         <include
             android:id="@+id/dash_empty_state_template"

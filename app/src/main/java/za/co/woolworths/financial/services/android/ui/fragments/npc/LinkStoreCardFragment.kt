@@ -7,7 +7,9 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
@@ -16,10 +18,14 @@ import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.LinkStoreCardProcessFragmentBinding
 import com.google.gson.Gson
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IOTPLinkStoreCard
+import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.contracts.IStoreCardListener
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkCardType
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkStoreCard
@@ -28,18 +34,13 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
-import za.co.woolworths.financial.services.android.util.AppConstant
-import za.co.woolworths.financial.services.android.util.Utils
-import kotlinx.android.synthetic.main.npc_virtual_temp_card_staff_layout.*
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
-import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
-import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTag
+import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.Utils
 
 class LinkStoreCardFragment : MyCardExtension(R.layout.link_store_card_process_fragment), View.OnClickListener,
     IProgressAnimationState {
@@ -73,7 +74,7 @@ class LinkStoreCardFragment : MyCardExtension(R.layout.link_store_card_process_f
             closeIconImageView?.setOnClickListener(this@LinkStoreCardFragment)
             ibBack?.setOnClickListener(this@LinkStoreCardFragment)
             incLinkCardSuccessFulView.okGotItButton?.setOnClickListener(this@LinkStoreCardFragment)
-            okGotItStaffButton?.setOnClickListener(this@LinkStoreCardFragment)
+            includeVirtualTempCardSuccessStaffMessage.okGotItStaffButton?.setOnClickListener(this@LinkStoreCardFragment)
             uniqueIdsForLinkStoreCard()
         }
     }
@@ -352,11 +353,11 @@ class LinkStoreCardFragment : MyCardExtension(R.layout.link_store_card_process_f
                         binding.flProgressIndicator.visibility = GONE
                         binding.includeVirtualTempCardSuccessMessage?.root?.visibility = GONE
                         binding.includeVirtualTempCardSuccessStaffMessage?.root?.visibility = VISIBLE
-                        titleStaffTextView?.text = virtualCardStaffMemberMessage.title
+                        binding.includeVirtualTempCardSuccessStaffMessage.titleStaffTextView?.text = virtualCardStaffMemberMessage.title
                         if(virtualCardStaffMemberMessage.paragraphs.size >= 3){
-                            staffMessage1CheckBox.text = virtualCardStaffMemberMessage.paragraphs[0]
-                            staffMessage2CheckBox.text = virtualCardStaffMemberMessage.paragraphs[1]
-                            staffMessage3CheckBox.text = virtualCardStaffMemberMessage.paragraphs[2]
+                            binding.includeVirtualTempCardSuccessStaffMessage.staffMessage1CheckBox.text = virtualCardStaffMemberMessage.paragraphs[0]
+                            binding.includeVirtualTempCardSuccessStaffMessage.staffMessage2CheckBox.text = virtualCardStaffMemberMessage.paragraphs[1]
+                            binding.includeVirtualTempCardSuccessStaffMessage.staffMessage3CheckBox.text = virtualCardStaffMemberMessage.paragraphs[2]
                         }
                     }
                     else{

@@ -21,7 +21,6 @@ import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ReplaceCardFragmentBinding
-import kotlinx.android.synthetic.main.select_store_activity.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse
@@ -109,8 +108,8 @@ class GetReplacementCardFragment : MyCardExtension(R.layout.replace_card_fragmen
 
     private fun setActionBar() {
         (activity as? SelectStoreActivity)?.apply {
-            vtcReplacementToolbarTextView?.text = ""
-             supportActionBar?.apply {
+            (activity as? SelectStoreActivity)?.binding?.vtcReplacementToolbarTextView?.text = ""
+            supportActionBar?.apply {
                 setDisplayHomeAsUpEnabled(true)
                 setDisplayShowTitleEnabled(false)
                 setDisplayUseLogoEnabled(false)

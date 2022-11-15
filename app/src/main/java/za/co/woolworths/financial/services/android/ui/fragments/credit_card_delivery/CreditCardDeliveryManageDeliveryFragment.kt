@@ -1,24 +1,20 @@
 package za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.credit_card_delivery_manage_delivery.*
-import kotlinx.android.synthetic.main.credit_card_delivery_manage_delivery.deliveryDate
+import com.awfs.coordination.databinding.CreditCardDeliveryManageDeliveryBinding
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.StatusResponse
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
-import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
-class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListener {
+class CreditCardDeliveryManageDeliveryFragment : BaseFragmentBinding<CreditCardDeliveryManageDeliveryBinding>(CreditCardDeliveryManageDeliveryBinding::inflate), View.OnClickListener {
 
     var bundle: Bundle? = null
     private var statusResponse: StatusResponse? = null
@@ -29,14 +25,10 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
         bundle = arguments?.getBundle("bundle")
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.credit_card_delivery_manage_delivery, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
-        init()
+        binding.init()
         setupToolbar()
         if (activity is CreditCardDeliveryActivity) {
             (activity as? CreditCardDeliveryActivity?)?.supportActionBar?.show()
@@ -78,13 +70,13 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
         }
     }
 
-    private fun init() {
+    private fun CreditCardDeliveryManageDeliveryBinding.init() {
         bundle?.apply {
             statusResponse = getParcelable(BundleKeysConstants.STATUS_RESPONSE)
         }
-        editAddress?.setOnClickListener(this)
-        cancelDelivery?.setOnClickListener(this)
-        editRecipient?.setOnClickListener(this)
+        editAddress?.setOnClickListener(this@CreditCardDeliveryManageDeliveryFragment)
+        cancelDelivery?.setOnClickListener(this@CreditCardDeliveryManageDeliveryFragment)
+        editRecipient?.setOnClickListener(this@CreditCardDeliveryManageDeliveryFragment)
         splitAndApplyFormatedDate()
     }
 
@@ -97,7 +89,7 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
         }
     }
 
-    private fun splitAndApplyFormatedDate() {
+    private fun CreditCardDeliveryManageDeliveryBinding.splitAndApplyFormatedDate() {
         statusResponse?.slotDetails?.slot.also { deliveryTime.text = it }
         WFormatter.getDayAndFullDate(statusResponse?.slotDetails?.appointmentDate).also { deliveryDate.text = it }
         statusResponse?.addressDetails?.searchPhrase.also { deliveryAddress.text = it }
