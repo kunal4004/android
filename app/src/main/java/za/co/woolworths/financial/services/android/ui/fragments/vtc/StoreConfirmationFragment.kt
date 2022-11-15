@@ -5,7 +5,10 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.FragmentStoreConfirmationBinding
@@ -19,9 +22,9 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.StoreCardEmailConfirmBody
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.SelectStoreActivity
-import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.utils.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
 class StoreConfirmationFragment : BaseFragmentBinding<FragmentStoreConfirmationBinding>(FragmentStoreConfirmationBinding::inflate) {
 

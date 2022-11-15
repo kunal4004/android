@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.account.applynow.utils
+package za.co.woolworths.financial.services.android.util.binding
 
 import android.os.Bundle
 import android.view.LayoutInflater

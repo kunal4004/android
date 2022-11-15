@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import com.awfs.coordination.databinding.FragmentReportReviewSuccessBinding
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
-import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.utils.BaseFragmentBinding
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
 class ReportSuccessFragment : BaseFragmentBinding<FragmentReportReviewSuccessBinding>(FragmentReportReviewSuccessBinding::inflate) {
 

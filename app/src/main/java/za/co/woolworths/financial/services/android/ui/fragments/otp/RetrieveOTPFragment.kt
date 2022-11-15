@@ -16,10 +16,10 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTag
-import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.utils.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProgressStateFragment
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
 class RetrieveOTPFragment : BaseFragmentBinding<RetrieveOtpFragmentBinding>(RetrieveOtpFragmentBinding::inflate), IProgressAnimationState,View.OnClickListener {
 

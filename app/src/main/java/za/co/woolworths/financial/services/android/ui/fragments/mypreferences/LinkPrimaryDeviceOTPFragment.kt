@@ -37,9 +37,9 @@ import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesAc
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationInterface
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
-import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.utils.BaseFragmentBinding
 import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextWatcher
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBinding
 
 class LinkPrimaryDeviceOTPFragment : BaseFragmentBinding<FragmentUnlinkDeviceOtpBinding>(
     FragmentUnlinkDeviceOtpBinding::inflate) , View.OnClickListener, NetworkChangeListener {
