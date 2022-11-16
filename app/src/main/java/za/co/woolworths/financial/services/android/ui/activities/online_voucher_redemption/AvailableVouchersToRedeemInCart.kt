@@ -13,7 +13,7 @@ import com.awfs.coordination.databinding.CartAvailableVouchersToRedeemBinding
 import za.co.woolworths.financial.services.android.ui.fragments.voucher_redeemption.AvailableVoucherFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
-class AvailableVouchersToRedeemInCart : AppCompatActivity(R.layout.cart_available_vouchers_to_redeem) {
+class AvailableVouchersToRedeemInCart : AppCompatActivity() {
 
     private lateinit var binding: CartAvailableVouchersToRedeemBinding
 
