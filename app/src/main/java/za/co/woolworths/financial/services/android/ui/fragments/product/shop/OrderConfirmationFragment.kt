@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StyleSpan
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.content.res.AppCompatResources
@@ -46,13 +48,6 @@ class OrderConfirmationFragment :
 
     private var itemsOrder: ArrayList<OrderItem>? = ArrayList(0)
     private var itemsOrderListAdapter: ItemsOrderListAdapter? = null
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.fragment_order_confirmation, container, false)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
