@@ -26,7 +26,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BP
 
 class BalanceProtectionInsuranceActivity : AppCompatActivity() {
 
-    private lateinit var binding: BalanceProtectionInsuranceActivityBinding
+    lateinit var binding: BalanceProtectionInsuranceActivityBinding
     private var bpiOptIn: Boolean = false
     private var bpiProductGroupCode: String? = null
     private var bpiPresenter: BPIOverviewPresenter? = null

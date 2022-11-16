@@ -4,12 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatDialogFragment
+import androidx.fragment.app.DialogFragment
 import androidx.viewbinding.ViewBinding
 
-abstract class BaseAppCompatDialogFragmentBinding<VB: ViewBinding>(
+abstract class BaseDialogFragmentBinding<VB: ViewBinding>(
     private val inflate: Inflate<VB>
-) : AppCompatDialogFragment() {
+) : DialogFragment() {
 
     lateinit var binding: VB
 
