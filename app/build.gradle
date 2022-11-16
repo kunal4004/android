@@ -8,7 +8,7 @@ apply plugin: "androidx.navigation.safeargs"
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.huawei.agconnect'
 apply plugin: 'dagger.hilt.android.plugin'
-//apply plugin: 'kotlin-parcelize' // TODO: to uncomment
+apply plugin: 'kotlin-parcelize'
 
 android {
 
@@ -399,4 +399,3 @@ dependencies {
 }
 
 apply plugin: 'com.google.gms.google-services'
-apply plugin: 'kotlin-android-extensions' // TODO: to remove, to disable Kotlin synthetics throughout the project
