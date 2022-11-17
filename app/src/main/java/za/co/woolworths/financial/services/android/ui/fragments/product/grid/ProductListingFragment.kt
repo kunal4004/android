@@ -1176,6 +1176,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             }
             BundleKeysConstants.REQUEST_CODE -> {
                 updateToolbarTitle()
+                callConfirmPlace()
             }
             else -> return
         }
@@ -1341,6 +1342,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             KotlinUtils.setLiquorModalShown()
             showLiquorDialog()
             AppConfigSingleton.productItemForLiquorInventory = productList
+            return
+        }
+
+        if (KotlinUtils.getDeliveryType() == null ){
+            presentEditDeliveryActivity()
             return
         }
 
