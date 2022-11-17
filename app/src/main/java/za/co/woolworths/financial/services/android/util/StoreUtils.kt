@@ -14,6 +14,12 @@ class StoreUtils {
             FOOD_AND_OTHER("foodAndOther")
         }
 
+        enum class FulfillmentType(val type: String) {
+            FOOD_ITEMS("01"),
+            CLOTHING_ITEMS("02"),
+            CRG_ITEMS("07")
+        }
+
         fun sortedStoreList(address: List<Store>?): List<Store> {
             val storeArrayList = ArrayList(address)
             val sortRoles: HashMap<String, Int> = hashMapOf(

@@ -975,11 +975,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 return
             } else if(KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) {
                 //Food only
-                if(this.productDetails?.fulfillmentType == "01" && Utils.retrieveStoreId(this.productDetails?.fulfillmentType) == "") {
+                if(this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.FOOD_ITEMS.toString() && Utils.retrieveStoreId(this.productDetails?.fulfillmentType) == "") {
                     showProductUnavailable()
                     showProductNotAvailableForCollection()
                 }  //FBH only
-                else if((this.productDetails?.fulfillmentType == "02" || this.productDetails?.fulfillmentType == "07") &&
+                else if((this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS.toString() || this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CRG_ITEMS.toString()) &&
                         (Utils.retrieveStoreId(this.productDetails?.fulfillmentType) != "")) {
                     showProductUnavailable()
                     showProductNotAvailableForCollection()
