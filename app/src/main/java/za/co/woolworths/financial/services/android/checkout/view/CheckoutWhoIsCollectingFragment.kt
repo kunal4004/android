@@ -22,7 +22,6 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_COLLECTING_DETAILS
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -250,7 +249,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
         confirmDetails?.setOnClickListener(this)
         myVehicleText?.setOnClickListener(this)
         taxiText?.setOnClickListener(this)
-        FBHView()
+        fbhView()
 
         recipientNameEditText?.apply {
             afterTextChanged {
@@ -309,7 +308,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
         listOfTaxiInputFields = listOf(recipientNameEditText, cellphoneNumberEditText)
     }
 
-    private fun FBHView() {
+    private fun fbhView() {
         if(isComingFromCnc == true) {
             if(Utils.retrieveStoreId(StoreUtils.Companion.FulfillmentType.CRG_ITEMS.toString()) !="" || Utils.retrieveStoreId(StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS.toString()) !="") {
                 recipientDetailsTitle.visibility = View.GONE
