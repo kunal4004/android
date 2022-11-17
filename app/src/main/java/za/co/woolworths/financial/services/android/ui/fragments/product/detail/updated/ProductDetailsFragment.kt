@@ -1060,7 +1060,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     showProductUnavailable()
                     showProductNotAvailableForCollection()
                 }  //FBH only
-                else if((this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS.toString() || this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CRG_ITEMS.toString()) &&
+                else if((this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.toString() || this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CRG_ITEMS?.toString()) &&
                         (Utils.retrieveStoreId(this.productDetails?.fulfillmentType) != "")) {
                     showProductUnavailable()
                     showProductNotAvailableForCollection()

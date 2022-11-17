@@ -676,7 +676,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         if (storePickupInfoResponse?.openDayDeliverySlots?.isNullOrEmpty() == false) {
             val deliveryInDays = storePickupInfoResponse?.openDayDeliverySlots?.get(0)?.deliveryInDays
             checkoutCollectionDetailsInfoLayout?.visibility = View.VISIBLE
-            tvCollectionDetailsText.text = getString(R.string.collection_details_text) + " " + deliveryInDays?.lowercase() + " " + getString(R.string.notify_text_label)
+            tvCollectionDetailsText.text = context?.resources?.getString(R.string.collection_details_text) + " " + deliveryInDays?.lowercase() + " " + context?.resources?.getString(R.string.notify_text_label)
         }
     }
     fun initializeDeliveryInstructions() {
