@@ -41,5 +41,7 @@ public class ProductView {
     @SerializedName("dynamicBanners")
     @Expose
     public List<DynamicBanner> dynamicBanners;
-
+    @SerializedName("richText")
+    @Expose
+    public String richText;
 }

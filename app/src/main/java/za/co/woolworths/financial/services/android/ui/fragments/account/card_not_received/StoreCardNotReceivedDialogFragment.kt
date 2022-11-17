@@ -1,150 +1,76 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received
 
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
-import com.awfs.coordination.databinding.StoreCardVtscCardNotReceivedPopupDialogBinding
+import com.awfs.coordination.databinding.StoreCardCardNotReceivedDialogFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
-import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.Response
+import za.co.woolworths.financial.services.android.models.dto.account.ServerErrorResponse
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingBottomSheetFragment
-import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.ApiResult
-import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import za.co.woolworths.financial.services.android.ui.base.onClick
+import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.StoreCardNotReceivedFragment.Companion.CardNotArrivedRequestCode
 
 @AndroidEntryPoint
-class StoreCardNotReceivedDialogFragment : ViewBindingBottomSheetFragment<StoreCardVtscCardNotReceivedPopupDialogBinding>(), View.OnClickListener {
-
-    val viewModel: MyAccountsRemoteApiViewModel by viewModels()
+class StoreCardNotReceivedDialogFragment :
+    ViewBindingBottomSheetFragment<StoreCardCardNotReceivedDialogFragmentBinding>() {
 
     companion object {
+        const val REQUEST_CODE_TRY_AGAIN : String = "REQUEST_CODE_TRY_AGAIN"
         fun newInstance() = StoreCardNotReceivedDialogFragment()
     }
+
+    val viewModel: MyAccountsRemoteApiViewModel by viewModels()
+    val args: StoreCardNotReceivedDialogFragmentArgs by navArgs()
+
 
     override fun inflateViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
-    ): StoreCardVtscCardNotReceivedPopupDialogBinding {
-        return StoreCardVtscCardNotReceivedPopupDialogBinding.inflate(inflater, container, false)
+    ): StoreCardCardNotReceivedDialogFragmentBinding {
+        return StoreCardCardNotReceivedDialogFragmentBinding.inflate(inflater, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupViews()
-        subscribeObserver()
+        setContent(args.response)
     }
 
-    private fun setupViews() {
+
+    private fun setContent(response: ServerErrorResponse?) {
         with(binding) {
-            initialLabel()
-            AnimationUtilExtension.animateViewPushDown(actionButtonTextView)
-            actionButtonTextView.setOnClickListener(this@StoreCardNotReceivedDialogFragment)
-        }
-    }
 
-    private fun StoreCardVtscCardNotReceivedPopupDialogBinding.initialLabel() {
-        headerTextView.contentDescription =
-            getString(R.string.title_text_has_your_card_not_arrived_in_the_post)
-        descriptionTextView.contentDescription =
-            getString(R.string.copy_text_has_your_card_not_arrived_in_the_post)
-        actionButtonTextView.contentDescription = getString(R.string.button_my_card_hasnt_arrived)
-    }
-
-    private fun showProgress(isVisible: Boolean) {
-        with(binding) {
-            if (isVisible){
-                initialLabel()
+            with(headerTextView) {
+                text = getString(R.string.oops_err_title)
+                contentDescription = getString(R.string.vtsc_oops_err_title)
             }
-            notifyCardNotReceivedProgressbar.visibility = if (isVisible) VISIBLE else GONE
-            actionButtonTextView.apply {
-                setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        if (isVisible) R.color.black else R.color.white
-                    )
-                )
-                isEnabled = !isVisible
+
+            with(descriptionTextView) {
+                text = response?.desc ?: getString(R.string.oops_error_message)
+                contentDescription = getString(R.string.vtsc_oops_error_message)
             }
-        }
-    }
 
-    private fun subscribeObserver() {
-        viewModel.notifyCardNotReceived.observe(viewLifecycleOwner) { result ->
-            when (result) {
-                is ApiResult.Success -> successNotificationView()
-                is ApiResult.Failure -> httpErrorFromServer(result.data)
-                is ApiResult.Error -> errorMessage()
-            }
-        }
-    }
-
-    private fun httpErrorFromServer(response: Response?) {
-        showProgress(false)
-        with(binding) {
-            headerTextView.text = getString(R.string.oops_err_title)
-            descriptionTextView.text = response?.desc
-            actionButtonTextView.text = getString(R.string.try_again)
-        }
-    }
-
-    private fun errorMessage() {
-        showProgress(false)
-        with(binding) {
-            headerTextView.text = getString(R.string.oops_err_title)
-            descriptionTextView.text = getString(R.string.oops_error_message)
-            actionButtonTextView.text = getString(R.string.try_again)
-
-            headerTextView.contentDescription = getString(R.string.vtsc_oops_err_title)
-            descriptionTextView.contentDescription = getString(R.string.vtsc_oops_error_message)
-            actionButtonTextView.contentDescription = getString(R.string.vtsc_try_again)
-        }
-    }
-
-    private fun successNotificationView() {
-        showProgress(false)
-        Utils.sessionDaoSave(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN, "1")
-        with(binding) {
-            headerTextView.text = getString(R.string.vtsc_card_not_arrived_notified_title)
-            descriptionTextView.text = getString(R.string.vtsc_card_not_arrived_notified_desc)
-            actionButtonTextView.text = getString(R.string.got_it)
-
-            headerTextView.contentDescription = getString(R.string.title_text_thanks_for_letting_us_know)
-            descriptionTextView.contentDescription = getString(R.string.copy_text_thanks_for_letting_us_know)
-            actionButtonTextView.contentDescription = getString(R.string.button_thanks_for_letting_us_know)
-        }
-    }
-
-    override fun onClick(view: View?) {
-        when (view?.id) {
-            R.id.actionButtonTextView -> {
-                activity ?: return
-                when (binding.actionButtonTextView.text.toString().lowercase()) {
-                    getString(R.string.try_again).lowercase()-> { queryAPIServiceGetCardNotReceived() }
-                    getString(R.string.vtsc_card_not_arrived_button_caption).lowercase() -> {
-                        Utils.triggerFireBaseEvents(
-                            FirebaseManagerAnalyticsProperties.VTSC_CARD_NOT_DELIVERED,
-                            requireActivity()
-                        )
-                        queryAPIServiceGetCardNotReceived()
-                    }
-                    getString(R.string.got_it).lowercase() -> {
+            with(actionButtonTextView) {
+                if (TextUtils.isEmpty(response?.desc)){
+                    text =  getString(R.string.ok)
+                    contentDescription =getString(R.string.vtsc_error_ok)
+                    onClick { dismiss() }
+                }else {
+                    text =  getString(R.string.try_again)
+                    contentDescription =getString(R.string.vtsc_try_again)
+                    onClick {
+                        setFragmentResult(CardNotArrivedRequestCode, bundleOf(CardNotArrivedRequestCode to REQUEST_CODE_TRY_AGAIN))
                         dismiss()
                     }
                 }
             }
         }
-    }
-
-    private fun queryAPIServiceGetCardNotReceived() {
-        showProgress(true)
-        viewModel.queryServiceCardNotYetReceived()
     }
 }

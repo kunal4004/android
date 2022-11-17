@@ -5,8 +5,7 @@
     android:layout_height="wrap_content"
     android:background="@color/default_background"
     android:orientation="vertical"
-    android:paddingTop="@dimen/eight_dp"
-    android:paddingBottom="@dimen/eight_dp">
+    >
 
     <RelativeLayout
         android:id="@+id/headerProductOptions"
@@ -246,4 +245,122 @@
         <ImageView style="@style/card_item_end_icon_style" />
     </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/headerCustomerReview"
+        style="@style/card_items_header_layout_style"
+        android:layout_height="@dimen/sixty_six_dp"
+        android:layout_marginTop="@dimen/eight_dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/productIngredientsInformation">
+
+        <TextView
+            android:id="@+id/tvCustomerReviewCount"
+            style="@style/card_items_header_text_style"
+            android:layout_alignParentStart="true"
+            android:letterSpacing="0"
+            android:textAllCaps="false"
+            android:textSize="@dimen/eighteen_sp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/reviewDetailsInformation"
+        style="@style/clickable_card_item_layout_style"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/zero_dp"
+        android:paddingEnd="@dimen/twenty_four_dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headerCustomerReview">
+
+        <View
+            android:id="@+id/view_seprator"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/one_dp"
+            android:background="@color/layout_background_gray" />
+
+        <RatingBar
+            android:id="@+id/ratingBar"
+            style="@style/pdpRatingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:isIndicator="true"
+            android:numStars="5"
+            android:rating="3.5" />
+
+        <TextView
+            android:id="@+id/tvRatingDetails"
+            style="@style/pdp_no_of_review_text_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/view_seprator"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="28dp"
+            android:text="@string/rating_details"
+            android:textAllCaps="true"
+            android:textSize="@dimen/text_size_12sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ratingBar"
+            android:layout_marginTop="@dimen/ten_dp"
+            android:layout_marginBottom="@dimen/twenty_seven_dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvRecommendPer"
+                style="@style/card_item_semi_bold_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/tvRecommendTxt"
+                style="@style/card_item_regular_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+
+    </RelativeLayout>
+    <!--<RelativeLayout
+        android:id="@+id/headerCustomerReviewDetail"
+        style="@style/card_items_header_layout_style"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/reviewDetailsInformation">
+-->
+    <include
+        android:id="@+id/customerReview"
+        layout="@layout/review_row_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/eight_dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/reviewDetailsInformation" />
+
+    <RelativeLayout
+        android:id="@+id/rlViewMoreReview"
+        style="@style/card_items_header_layout_style"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-1dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/customerReview">
+
+        <Button
+            android:id="@+id/btViewMoreReview"
+            style="@style/whiteWButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ten_dp"
+            android:layout_marginBottom="@dimen/twenty_five_dp"
+            android:fontFamily="@font/futura_semi_bold" />
+    </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

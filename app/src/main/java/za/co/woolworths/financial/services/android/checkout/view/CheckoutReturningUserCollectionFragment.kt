@@ -77,6 +77,7 @@ import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_E
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
+import za.co.woolworths.financial.services.android.viewmodels.ShoppingCartLiveData
 import java.util.regex.Pattern
 
 class CheckoutReturningUserCollectionFragment : Fragment(),
@@ -149,6 +150,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         initializeCollectingFromView()
         initializeCollectingDetailsView()
         initializeCollectionTimeSlots()
+        isUnSellableLiquorItemRemoved()
         getLiquorComplianceDetails()
         callStorePickupInfoAPI()
         txtContinueToPaymentCollection?.setOnClickListener(this)
@@ -156,6 +158,15 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         setFragmentResults()
     }
 
+    private fun isUnSellableLiquorItemRemoved() {
+        ShoppingCartLiveData.observe(viewLifecycleOwner) { isLiquorOrder ->
+            if (isLiquorOrder == false) {
+                ageConfirmationLayout?.visibility = View.GONE
+                liquorComplianceBannerLayout?.visibility = View.GONE
+                ShoppingCartLiveData.value = true
+            }
+        }
+    }
     private fun setFragmentResults() {
 
         setFragmentResultListener(ErrorHandlerBottomSheetDialog.RESULT_ERROR_CODE_RETRY) { _, args ->
@@ -378,7 +389,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         initShimmerView()
 
         checkoutAddAddressNewUserViewModel?.getStorePickupInfo(getStorePickupInfoBody())
-            .observe(viewLifecycleOwner) { response ->
+            ?.observe(viewLifecycleOwner) { response ->
                 stopShimmerView()
                 when (response) {
                     is ConfirmDeliveryAddressResponse -> {

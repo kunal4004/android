@@ -34,11 +34,14 @@ import za.co.woolworths.financial.services.android.ui.activities.store_card.Requ
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.HowToUseTemporaryStoreCardActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.fragments.account.card_not_received.StoreCardNotReceivedDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard.Companion.ACTIVATE_UNBLOCK_CARD_ON_LANDING
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard.Companion.NOW
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard.Companion.TEMPORARY
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.FREEZE_CARD_DETAIL
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.PAY_WITH_CARD_DETAIL
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.SHOW_PAY_WITH_CARD_SCREEN
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity.Companion.SHOW_TEMPORARY_FREEZE_DIALOG
 import za.co.woolworths.financial.services.android.ui.fragments.temporary_store_card.ScanBarcodeToPayDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.temporary_store_card.TemporaryStoreCardExpireInfoDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
@@ -63,12 +66,6 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     private var autoConnectStoreCardType : AutoConnectStoreCardType = AutoConnectStoreCardType.FREEZE
 
     companion object {
-        var SHOW_TEMPORARY_FREEZE_DIALOG = false
-        var SHOW_BLOCK_CARD_SCREEN = false
-        var SHOW_PAY_WITH_CARD_SCREEN = false
-        var FREEZE_CARD_DETAIL = false
-        var BLOCK_CARD_DETAIL = false
-        var PAY_WITH_CARD_DETAIL = false
 
         fun newInstance(storeCardDetail: String?, shouldActivateUnblockCardOnLanding: Boolean) = MyCardDetailFragment().withArgs {
             putString(STORE_CARD_DETAIL, storeCardDetail)
@@ -86,21 +83,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupCard()
-        setupCardReceived()
         autoConnectDetector()
-    }
-
-    private fun setupCardReceived() {
-        mStoreCard?.apply {
-            val shouldNotifyUserByEmail = Utils.getSessionDaoValue(SessionDao.KEY.CARD_NOT_RECEIVED_DIALOG_WAS_SHOWN).isNullOrEmpty()
-            if (cardNotReceived && shouldNotifyUserByEmail) {
-                val dialog = StoreCardNotReceivedDialogFragment.newInstance()
-                dialog.show(
-                    childFragmentManager,
-                    StoreCardNotReceivedDialogFragment::class.java.simpleName
-                )
-            }
-        }
     }
 
     private fun setupCard() {
@@ -182,10 +165,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                 temporaryCardFreezeSwitch?.isChecked = true
                 temporaryFreezeCard?.showFreezeStoreCardDialog(childFragmentManager)
             }
-            SHOW_BLOCK_CARD_SCREEN -> {
-                SHOW_BLOCK_CARD_SCREEN = false
-                activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail) }
-            }
+
             SHOW_PAY_WITH_CARD_SCREEN -> {
                 SHOW_PAY_WITH_CARD_SCREEN = false
                 activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_PAY, this) }
@@ -402,13 +382,6 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     override fun onClick(v: View?) {
         if (isTemporaryCardFreezeInProgress()) return
         when (v?.id) {
-            R.id.blockCard -> {
-                KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
-                    BLOCK_CARD_DETAIL = true
-                },{
-                    activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail) }
-                })
-            }
             R.id.howItWorks -> {
                 if (isApiCallInProgress())
                     return
@@ -460,7 +433,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         showPayWithCardProgressBar(VISIBLE)
         val unblockStoreCardRequestBody = mStoreCard?.let {
             UnblockStoreCardRequestBody(mStoreCardsResponse?.storeCardsData?.visionAccountNumber
-                    ?: "", it.number, it.sequence, otp, OTPMethodType.SMS.name)
+                    ?: "", it.number, it.sequence.toString(), otp, OTPMethodType.SMS.name)
         }
         unblockStoreCardRequestBody?.let {
             StoreCardAPIRequest().unblockCard(mStoreCardsResponse?.storeCardsData?.productOfferingId
@@ -533,7 +506,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     private fun requestBlockCard() {
         val blockStoreCardRequestBody = mStoreCard?.let {
             BlockCardRequestBody(mStoreCardsResponse?.storeCardsData?.visionAccountNumber
-                    ?: "", it.number, it.sequence.toInt(), 6)
+                    ?: "", it.number, it.sequence, 6)
         }
         blockStoreCardRequestBody?.let {
             StoreCardAPIRequest().blockCard(mStoreCardsResponse?.storeCardsData?.productOfferingId

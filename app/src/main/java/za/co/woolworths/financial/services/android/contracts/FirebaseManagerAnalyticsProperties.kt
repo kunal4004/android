@@ -103,6 +103,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val WHATSAPP_CONTACT_US = "whatsapp_contact_us"
         const val WHATSAPP_CHAT_WITH_US = "whattsapp_chat_with_us"
         const val VTSC_CARD_NOT_DELIVERED = "cardnotdelivered"
+        const val VTSC_CARD_RECEIVED = "cardreceived"
 
         const val SHOP_SEARCH = "SHOP_Search"
 
@@ -420,6 +421,13 @@ open class FirebaseManagerAnalyticsProperties {
         const val ADDRESS_APARTMENT = "Apartment"
 
 
+         /*Dash*/
+         const val DASH_DELIVERY_BROWSE_MODE = "set_delivery_browse_mode"
+         const val DASH_SWITCH_DELIVERY_MODE = "switch_delivery_mode"
+         const val DASH_SWITCH_BROWSE_MODE = "switch_browse_mode"
+         const val REFUND = "refund"
+         const val DASH_DRIVER_TIP = "dash_driver_tip"
+         const val DASH_SELECT_CONTENT = "select_content"
     }
 
     class PropertyNames {
@@ -516,6 +524,19 @@ open class FirebaseManagerAnalyticsProperties {
             const val CATEGORY_NAME = "category"
             const val SUB_CATEGORY_NAME = "sub_category"
             const val SUB_SUB_CATEGORY_NAME = "sub_sub_category"
+
+            const val DELIVERY_MODE = "delivery_mode"
+            const val BROWSE_MODE = "browse_mode"
+            const val DASH_TIP = "dash_tip"
+            const val REFUND_TYPE = "refund_type"
+            const val CONTENT_NAME = "content_name"
+            const val CONTENT_SLOT = "content_slot"
+
+            const val FULFILLMENT_FOOD_STORE_KEY_01 = "food_ffstore"
+            const val FULFILLMENT_FBH_STORE_KEY_02 = "other02_ffstore"
+            const val FULFILLMENT_FBH_STORE_KEY_04 = "other04_ffstore"
+            const val FULFILLMENT_FBH_STORE_KEY_07 = "other07_ffstore"
+            const val LIQUOR_DELIVERABLE = "liquor_deliverable"
         }
     }
 
@@ -631,6 +652,11 @@ open class FirebaseManagerAnalyticsProperties {
             const val ACTION_VALUE_CHECKOUT_ADDRESS_DETAILS_COMPLEX: String = "Customer has selected Checkout and ‘Where are we delivering to’ page is displayed - Customer selects ‘Complex / Estate’ under ‘My address details’"
             const val ACTION_VALUE_CHECKOUT_ADDRESS_DETAILS_APARTMENT: String = "Customer has selected Checkout and ‘Where are we delivering to’ page is displayed - Customer selects ‘Apartment’ under ‘My address details’"
             const val ACTION_VALUE_CHECKOUT_ADDRESS_SAVE_ADDRESS: String = "Customer has entered all the relevant details and selects to save their address"
+
+            /*DASH ANALYTICS VALUES*/
+            const val DASH_MENU_CLICK: String = "Menu_Click"
+            const val DASH_CATEGORY_NAME: String = "Food"
+            const val DASH_CANCELLED_ORDER: String = "Cancelled_Order"
 
         }
     }
