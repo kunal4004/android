@@ -393,7 +393,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 stopShimmerView()
                 when (response) {
                     is ConfirmDeliveryAddressResponse -> {
-                        when (response.httpCode ?: 400) {
+                        when (response.httpCode ?: AppConstant.HTTP_SESSION_TIMEOUT_400) {
                             AppConstant.HTTP_OK -> {
                                 storePickupInfoResponse = response
                                 collectionDetails()
@@ -430,7 +430,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                     // Set default time slot selected
                                     var selectedSlotIndex = 0
                                     firstAvailableDateSlot?.let { week ->
-                                        ArrayList(week.slots).forEachIndexed { index, slot ->
+                                        ArrayList(week?.slots).forEachIndexed { index, slot ->
                                             if (slot?.slotId.equals(selectedTimeSlot?.slotId)) {
                                                 selectedSlotIndex = index
                                             }
@@ -675,7 +675,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     private fun collectionDetails() {
         if (storePickupInfoResponse?.openDayDeliverySlots?.isNullOrEmpty() == false) {
             val deliveryInDays = storePickupInfoResponse?.openDayDeliverySlots?.get(0)?.deliveryInDays
-            checkoutCollectionDetailsInfoLayout.visibility = View.VISIBLE
+            checkoutCollectionDetailsInfoLayout?.visibility = View.VISIBLE
             tvCollectionDetailsText.text = getString(R.string.collection_details_text) + " " + deliveryInDays?.lowercase() + " " + getString(R.string.notify_text_label)
         }
     }

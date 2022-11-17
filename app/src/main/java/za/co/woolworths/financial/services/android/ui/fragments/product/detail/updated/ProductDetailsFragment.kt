@@ -1056,7 +1056,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 return
             } else if(KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) {
                 //Food only
-                if(this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.FOOD_ITEMS.toString() && Utils.retrieveStoreId(this.productDetails?.fulfillmentType) == "") {
+                if(this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.toString() && Utils.retrieveStoreId(this.productDetails?.fulfillmentType) == "") {
                     showProductUnavailable()
                     showProductNotAvailableForCollection()
                 }  //FBH only

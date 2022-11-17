@@ -310,14 +310,14 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
 
     private fun showFBHView() {
         if(isComingFromCnc == true) {
-            if(Utils.retrieveStoreId(StoreUtils.Companion.FulfillmentType.CRG_ITEMS.toString()) !="" || Utils.retrieveStoreId(StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS.toString()) !="") {
-                recipientDetailsTitle.visibility = View.GONE
-                collectingPartition.visibility = View.GONE
-                vehiclesDetailsLayout.visibility = View.GONE
-                vehicleDetailsPartition.visibility = View.GONE
+            if(Utils.retrieveStoreId(StoreUtils.Companion.FulfillmentType.CRG_ITEMS?.toString()) !="" || Utils.retrieveStoreId(StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.toString()) !="") {
+                recipientDetailsTitle?.visibility = View.GONE
+                collectingPartition?.visibility = View.GONE
+                vehiclesDetailsLayout?.visibility = View.GONE
+                vehicleDetailsPartition?.visibility = View.GONE
                 isMyVehicle = false
 
-                whoIsCollectingDetailsInfoLayout.visibility = View.VISIBLE
+                whoIsCollectingDetailsInfoLayout?.visibility = View.VISIBLE
             }
         }
     }
