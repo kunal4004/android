@@ -249,7 +249,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
         confirmDetails?.setOnClickListener(this)
         myVehicleText?.setOnClickListener(this)
         taxiText?.setOnClickListener(this)
-        fbhView()
+        showFBHView()
 
         recipientNameEditText?.apply {
             afterTextChanged {
@@ -308,7 +308,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
         listOfTaxiInputFields = listOf(recipientNameEditText, cellphoneNumberEditText)
     }
 
-    private fun fbhView() {
+    private fun showFBHView() {
         if(isComingFromCnc == true) {
             if(Utils.retrieveStoreId(StoreUtils.Companion.FulfillmentType.CRG_ITEMS.toString()) !="" || Utils.retrieveStoreId(StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS.toString()) !="") {
                 recipientDetailsTitle.visibility = View.GONE
