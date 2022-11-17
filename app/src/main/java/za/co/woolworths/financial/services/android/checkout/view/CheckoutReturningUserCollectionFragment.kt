@@ -431,7 +431,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                     var selectedSlotIndex = 0
                                     firstAvailableDateSlot?.let { week ->
                                         ArrayList(week.slots).forEachIndexed { index, slot ->
-                                            if (slot.slotId.equals(selectedTimeSlot?.slotId)) {
+                                            if (slot?.slotId.equals(selectedTimeSlot?.slotId)) {
                                                 selectedSlotIndex = index
                                             }
                                         }
