@@ -4,24 +4,32 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.store_row_header_layout.view.*
 import kotlinx.android.synthetic.main.store_row_layout.view.*
-import kotlinx.android.synthetic.main.store_row_layout.view.storeSelectorLayout
 import za.co.woolworths.financial.services.android.common.changeMeterToKM
+import za.co.woolworths.financial.services.android.common.convertToTitleCase
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.StoreListRow
 import za.co.woolworths.financial.services.android.util.StoreUtils
 
-class StoreListAdapter(
+class StoreListAdapterNew(
     val context: Context,
-    val storesList: List<StoreListRow>,
+    val storeList: List<Store>?,
     val listener: OnStoreSelected
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+
+    private var storesList: ArrayList<StoreListRow> = ArrayList()
     private var lastSelectedPosition: Int = -1
+
+    fun submitData(list: ArrayList<StoreListRow>) {
+        storesList.clear()
+        storesList.addAll(list)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -38,7 +46,7 @@ class StoreListAdapter(
 
         val item = storesList[position]
         when (holder) {
-            is HeaderViewHolder -> holder.bindItems(item as StoreListRow.Header)
+            is HeaderViewHolder -> holder.bindItems(item as StoreListRow.Header, position)
             is SavedAddressViewHolder -> holder.bindItems(item as StoreListRow.StoreRow, position)
         }
 
@@ -50,28 +58,29 @@ class StoreListAdapter(
     override fun getItemViewType(position: Int) = when (storesList[position]) {
         is StoreListRow.StoreRow -> R.layout.store_row_layout
         is StoreListRow.Header -> R.layout.store_row_header_layout
+        null -> throw IllegalStateException("Unknown view")
     }
 
 
     inner class SavedAddressViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bindItems(storeRow: StoreListRow.StoreRow, position: Int) {
-            storeRow.apply {
-                if (store.locationId != "" && store.storeName?.contains(
+            storeRow?.apply {
+                if (store?.locationId != "" && store?.storeName?.contains(
                         StoreUtils.PARGO,
                         true
                     ) == false
                 ) {
                     var pargoStoreName = store.storeName
-                    pargoStoreName = " ${StoreUtils.PARGO} $pargoStoreName"
+                    pargoStoreName = "$StoreUtils.PARGO $pargoStoreName"
                     itemView.tvAddressNickName.text =
                         KotlinUtils.capitaliseFirstLetter(pargoStoreName)
                 } else {
                     itemView.tvAddressNickName.text =
-                        KotlinUtils.capitaliseFirstLetter(store.storeName)
+                        KotlinUtils.capitaliseFirstLetter(store?.storeName)
                 }
-                itemView.tvAddress.text = store.storeAddress
-                itemView.txtStoreDistance.text = store.distance?.let { changeMeterToKM(it) }
+                itemView.tvAddress.text = store?.storeAddress
+                itemView.txtStoreDistance.text = store?.distance?.let { changeMeterToKM(it) }
                 if (lastSelectedPosition == position) {
                     itemView.imgAddressSelector?.isChecked = true
                     itemView.storeSelectorLayout?.setBackgroundResource(R.drawable.bg_select_store)
@@ -80,7 +89,7 @@ class StoreListAdapter(
                     itemView.storeSelectorLayout?.setBackgroundResource(R.color.white)
                 }
                 itemView.storeSelectorLayout?.setOnClickListener {
-                    if (store.locationId != "" && !AppInstanceObject.get().featureWalkThrough.pargo_store) {
+                    if (store?.locationId != "" && !AppInstanceObject.get().featureWalkThrough.pargo_store) {
                         listener.onFirstTimePargo()
                     } else {
                         lastSelectedPosition = adapterPosition
@@ -93,11 +102,15 @@ class StoreListAdapter(
         }
     }
 
+
     inner class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bindItems(headerRow: StoreListRow.Header) {
-            itemView.tvStoreHeader?.text = headerRow.headerName
+        fun bindItems(storeRow: StoreListRow.Header, position: Int) {
+
+
         }
+
     }
+
 
     interface OnStoreSelected {
         fun onStoreSelected(store: Store?)

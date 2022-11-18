@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.google.gson.JsonSyntaxException
@@ -22,7 +21,6 @@ import kotlinx.android.synthetic.main.fragment_shop_department.*
 import kotlinx.android.synthetic.main.layout_dash_collection_store.*
 import kotlinx.android.synthetic.main.layout_dash_set_address_fragment.*
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
@@ -51,7 +49,6 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.TA
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-import java.net.SocketTimeoutException
 
 class ChangeFullfilmentCollectionStoreFragment() :
     DepartmentExtensionFragment(), DynamicMapDelegate,
@@ -148,8 +145,8 @@ class ChangeFullfilmentCollectionStoreFragment() :
         if (validatePlace == null) {
             val mPlaceId = getDeliveryType()?.address?.placeId ?: return
             if (!mPlaceId.isNullOrEmpty()) {
-             /* if place id is not null means previously location is set but validate place api
-               is not called yet or not in sync. so need to call again */
+                /* if place id is not null means previously location is set but validate place api
+                  is not called yet or not in sync. so need to call again */
                 executeValidatePlaceApi(mPlaceId)
             } else {
                 showSetLocationUi()
@@ -185,7 +182,8 @@ class ChangeFullfilmentCollectionStoreFragment() :
                                 R.string.near_stores,
                                 validateLocationResponse?.validatePlace?.stores?.size
                             )
-                            updatedAddressStoreList = validateLocationResponse?.validatePlace?.stores
+                            updatedAddressStoreList =
+                                validateLocationResponse?.validatePlace?.stores
                             tvAddress?.text =
                                 KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1)
                             placeId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
@@ -210,9 +208,10 @@ class ChangeFullfilmentCollectionStoreFragment() :
         rvStoreList.layoutManager =
             activity?.let { activity -> LinearLayoutManager(activity) }
         rvStoreList.adapter = activity?.let { activity ->
+
             StoreListAdapter(
                 activity,
-                StoreUtils.sortedStoreList(stores),
+                StoreUtils.getStoresListWithHeaders(StoreUtils.sortedStoreList(stores)),
                 this
             )
         }
@@ -267,7 +266,10 @@ class ChangeFullfilmentCollectionStoreFragment() :
     }
 
     override fun onFirstTimePargo() {
-       PargoStoreInfoBottomSheetDialog().show(parentFragmentManager,TAG_CHANGEFULLFILMENT_COLLECTION_STORE_FRAGMENT)
+        PargoStoreInfoBottomSheetDialog().show(
+            parentFragmentManager,
+            TAG_CHANGEFULLFILMENT_COLLECTION_STORE_FRAGMENT
+        )
     }
 
     override fun onMapReady() {
@@ -275,7 +277,7 @@ class ChangeFullfilmentCollectionStoreFragment() :
         val addressStoreList = WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
         if (addressStoreList != null && addressStoreList?.isEmpty() == false) {
             GeoUtils.showFirstFourLocationInMap(addressStoreList, dynamicMapView, context)
-        } else if (updatedAddressStoreList?.isEmpty() == false)  {
+        } else if (updatedAddressStoreList?.isEmpty() == false) {
             GeoUtils.showFirstFourLocationInMap(updatedAddressStoreList, dynamicMapView, context)
         }
     }
@@ -388,8 +390,13 @@ class ChangeFullfilmentCollectionStoreFragment() :
                     SubCategoryFragment.KEY_ARGS_ROOT_CATEGORY,
                     Utils.toJson(rootCategory)
                 )
-                bundle.putBoolean(AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS,
-                    arguments?.getBoolean(AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false) ?: false)
+                bundle.putBoolean(
+                    AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS,
+                    arguments?.getBoolean(
+                        AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS,
+                        false
+                    ) ?: false
+                )
                 bundle.putString(SubCategoryFragment.KEY_ARGS_VERSION, version)
                 bundle.putBoolean(
                     SubCategoryFragment.KEY_ARGS_IS_LOCATION_ENABLED,
@@ -397,7 +404,10 @@ class ChangeFullfilmentCollectionStoreFragment() :
                 )
                 bundle.putBoolean(
                     AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS,
-                    arguments?.getBoolean(AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false) ?: false
+                    arguments?.getBoolean(
+                        AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS,
+                        false
+                    ) ?: false
                 )
                 //     location?.let { bundle.putParcelable(SubCategoryFragment.KEY_ARGS_LOCATION, it) }
                 drillDownCategoryFragment.arguments = bundle
@@ -408,7 +418,10 @@ class ChangeFullfilmentCollectionStoreFragment() :
                 rootCategory.categoryName,
                 rootCategory.dimValId,
                 isBrowsing = true,
-                sendDeliveryDetails = arguments?.getBoolean(AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false)
+                sendDeliveryDetails = arguments?.getBoolean(
+                    AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS,
+                    false
+                )
             )
         }
     }
@@ -477,8 +490,10 @@ class ChangeFullfilmentCollectionStoreFragment() :
             WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
         stores?.let {
             for (store in it) {
-                if (store.storeName?.contains(s.toString(),
-                        true) == true || store.storeAddress?.contains(s.toString(), true) == true
+                if (store.storeName?.contains(
+                        s.toString(),
+                        true
+                    ) == true || store.storeAddress?.contains(s.toString(), true) == true
                 ) {
                     list.add(store)
                 }

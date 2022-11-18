@@ -11,7 +11,6 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
@@ -22,7 +21,6 @@ import kotlinx.android.synthetic.main.fragment_click_and_collect_stores.dynamicM
 import kotlinx.android.synthetic.main.geo_location_delivery_address.*
 import kotlinx.android.synthetic.main.no_connection.view.*
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
@@ -43,7 +41,6 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseManage
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.StoreUtils
 import za.co.woolworths.financial.services.android.util.Utils
-import java.net.SocketTimeoutException
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -149,12 +146,16 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
     }
 
     private fun setStoreList(address: List<Store>?) {
+
+      //  StoreUtils. getFbhStoreList(address)
         rvStoreList.layoutManager =
             activity?.let { activity -> LinearLayoutManager(activity) }
+
         rvStoreList.adapter = activity?.let { activity ->
             StoreListAdapter(
                 activity,
-                StoreUtils.sortedStoreList(address),
+               // StoreUtils.sortedStoreList(address),
+                StoreUtils.getStoresListWithHeaders(StoreUtils.sortedStoreList(address)),
                 this
             )
         }
