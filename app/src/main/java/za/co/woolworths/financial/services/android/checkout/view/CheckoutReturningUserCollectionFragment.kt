@@ -32,6 +32,7 @@ import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.loadingBar
 import kotlinx.android.synthetic.main.fragment_cart.*
 import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.*
+import kotlinx.android.synthetic.main.layout_collection_details.*
 import kotlinx.android.synthetic.main.layout_collection_time_details.*
 import kotlinx.android.synthetic.main.layout_collection_user_information.*
 import kotlinx.android.synthetic.main.layout_delivering_to_details.*
@@ -201,6 +202,15 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 radioGroupFoodSubstitution
             ),
 
+            Pair<ShimmerFrameLayout, View>(
+                 collectionDetailsTitleShimmerFrameLayout,
+                 tvCollectionDetailsTitle
+            ),
+
+            Pair<ShimmerFrameLayout, View>(
+                collectionDetailsTextShimmerFrameLayout,
+                tvCollectionDetailsText
+            ),
             Pair<ShimmerFrameLayout, View>(
                 ageConfirmationTitleShimmerFrameLayout,
                 txtAgeConfirmationTitle
@@ -383,9 +393,10 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 stopShimmerView()
                 when (response) {
                     is ConfirmDeliveryAddressResponse -> {
-                        when (response.httpCode ?: 400) {
+                        when (response.httpCode ?: AppConstant.HTTP_SESSION_TIMEOUT_400) {
                             AppConstant.HTTP_OK -> {
                                 storePickupInfoResponse = response
+                                collectionDetails()
                                 if (!isAdded) {
                                     return@observe
                                 }
@@ -418,12 +429,14 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                     initializeDatesAndTimeSlots(firstAvailableDateSlot)
                                     // Set default time slot selected
                                     var selectedSlotIndex = 0
-                                    ArrayList(firstAvailableDateSlot?.slots).forEachIndexed { index, slot ->
-                                        if (slot.slotId.equals(selectedTimeSlot?.slotId)) {
-                                            selectedSlotIndex = index
+                                    firstAvailableDateSlot?.let { week ->
+                                        ArrayList(week?.slots).forEachIndexed { index, slot ->
+                                            if (slot?.slotId.equals(selectedTimeSlot?.slotId)) {
+                                                selectedSlotIndex = index
+                                            }
                                         }
+                                        collectionTimeSlotsAdapter.setSelectedItem(selectedSlotIndex)
                                     }
-                                    collectionTimeSlotsAdapter.setSelectedItem(selectedSlotIndex)
                                 }
                                 if(response.orderSummary?.hasMinimumBasketAmount == false) {
                                    KotlinUtils.showMinCartValueError(
@@ -659,6 +672,13 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         checkoutCollectingUserInfoLayout.setOnClickListener(this)
     }
 
+    private fun collectionDetails() {
+        if (storePickupInfoResponse?.openDayDeliverySlots?.isNullOrEmpty() == false) {
+            val deliveryInDays = storePickupInfoResponse?.openDayDeliverySlots?.get(0)?.deliveryInDays
+            checkoutCollectionDetailsInfoLayout?.visibility = View.VISIBLE
+            tvCollectionDetailsText.text = context?.resources?.getString(R.string.collection_details_text) + " " + deliveryInDays?.lowercase() + " " + context?.resources?.getString(R.string.notify_text_label)
+        }
+    }
     fun initializeDeliveryInstructions() {
         edtTxtSpecialDeliveryInstruction?.addTextChangedListener(deliveryInstructionsTextWatcher)
         edtTxtGiftInstructions?.addTextChangedListener(deliveryInstructionsTextWatcher)

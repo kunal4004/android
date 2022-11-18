@@ -7,11 +7,13 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_checkout.*
 import kotlinx.android.synthetic.main.edit_delivery_location_activity.toolbar
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment
@@ -61,6 +63,19 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
         supportActionBar?.apply {
             setDisplayShowTitleEnabled(false)
             setDisplayUseLogoEnabled(false)
+        }
+    }
+
+    fun showBackArrowWithoutTitle() {
+        toolbar?.visibility = View.VISIBLE
+        appbar?.visibility = View.VISIBLE
+        setSupportActionBar(toolbar)
+        toolbarText?.text = ""
+        supportActionBar?.apply {
+            title = ""
+            setDisplayShowTitleEnabled(false)
+            setDisplayHomeAsUpEnabled(true)
+            setHomeAsUpIndicator(R.drawable.back24)
         }
     }
 

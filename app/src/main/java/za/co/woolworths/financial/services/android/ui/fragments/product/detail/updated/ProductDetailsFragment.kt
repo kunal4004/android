@@ -1049,11 +1049,26 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             if (!this.productDetails?.productType.equals(
                     getString(R.string.food_product_type),
                     ignoreCase = true
-                ) && (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC
-                        || KotlinUtils.getPreferredDeliveryType() == Delivery.DASH)
+                ) && (KotlinUtils.getPreferredDeliveryType() == Delivery.DASH)
             ) {
                 showProductUnavailable()
                 showProductNotAvailableForCollection()
+                return
+            } else if(KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) {
+                //Food only
+                if(this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.toString() && Utils.retrieveStoreId(this.productDetails?.fulfillmentType) == "") {
+                    showProductUnavailable()
+                    showProductNotAvailableForCollection()
+                }  //FBH only
+                else if((this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.toString() || this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CRG_ITEMS?.toString()) &&
+                        (Utils.retrieveStoreId(this.productDetails?.fulfillmentType) != "")) {
+                    showProductUnavailable()
+                    showProductNotAvailableForCollection()
+                } else {
+                    //Unrelated item in selected store
+                    showProductUnavailable()
+                    showProductNotAvailableForCollection()
+                }
                 return
             }
         }
@@ -2132,7 +2147,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             if (!this.productDetails?.productType.equals(
                                     getString(R.string.food_product_type),
                                     ignoreCase = true
-                                ) && KotlinUtils.getPreferredDeliveryType() == Delivery.CNC
+                                )
                             ) {
                                 storeIdForInventory = ""
                                 clearStockAvailability()

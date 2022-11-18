@@ -30,6 +30,7 @@ import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Comp
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CNC_SELETION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
 import za.co.woolworths.financial.services.android.util.Constant
+import za.co.woolworths.financial.services.android.util.StoreUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.regex.Pattern
 
@@ -248,6 +249,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
         confirmDetails?.setOnClickListener(this)
         myVehicleText?.setOnClickListener(this)
         taxiText?.setOnClickListener(this)
+        showFBHView()
 
         recipientNameEditText?.apply {
             afterTextChanged {
@@ -306,6 +308,19 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
         listOfTaxiInputFields = listOf(recipientNameEditText, cellphoneNumberEditText)
     }
 
+    private fun showFBHView() {
+        if(isComingFromCnc == true) {
+            if(Utils.retrieveStoreId(StoreUtils.Companion.FulfillmentType.CRG_ITEMS?.toString()) !="" || Utils.retrieveStoreId(StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.toString()) !="") {
+                recipientDetailsTitle?.visibility = View.GONE
+                collectingPartition?.visibility = View.GONE
+                vehiclesDetailsLayout?.visibility = View.GONE
+                vehicleDetailsPartition?.visibility = View.GONE
+                isMyVehicle = false
+
+                whoIsCollectingDetailsInfoLayout?.visibility = View.VISIBLE
+            }
+        }
+    }
     private fun setEditText(whoIsCollectingDetails: WhoIsCollectingDetails) {
         if (whoIsCollectingDetails != null) {
             if (whoIsCollectingDetails.isMyVehicle) {
