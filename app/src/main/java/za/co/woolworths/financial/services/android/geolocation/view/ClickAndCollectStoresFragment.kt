@@ -116,13 +116,30 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
 
     private fun showFirstFourLocationInMap(addressStoreList: List<Store>?) {
         addressStoreList?.let {
+
             for (i in 0..3) {
-                dynamicMapView?.addMarker(
-                    requireContext(),
-                    latitude = addressStoreList?.get(i)?.latitude,
-                    longitude = addressStoreList?.get(i)?.longitude,
-                    icon = R.drawable.pin
-                )
+
+               if( !addressStoreList?.get(i).locationId.isNullOrEmpty()){
+                   dynamicMapView?.addMarker(
+                       requireContext(),
+                       latitude = addressStoreList?.get(i)?.latitude,
+                       longitude = addressStoreList?.get(i)?.longitude,
+                       icon = R.drawable.pargo
+                   )
+
+               }
+
+                else{
+
+                   dynamicMapView?.addMarker(
+                       requireContext(),
+                       latitude = addressStoreList?.get(i)?.latitude,
+                       longitude = addressStoreList?.get(i)?.longitude,
+                       icon = R.drawable.pin
+                   )
+               }
+
+
             }
         }
         //after plotting all the markers pointing the camera to nearest store
