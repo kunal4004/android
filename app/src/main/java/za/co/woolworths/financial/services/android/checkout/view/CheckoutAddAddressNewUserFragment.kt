@@ -1424,16 +1424,16 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     private fun showAnimationErrorMessage(
-        textView: TextView,
+        textView: TextView?,
         visible: Int,
-        recipientLayoutValue: Int,
+        recipientLayoutValue: Int?,
     ) {
         textView?.visibility = visible
-        if (View.VISIBLE == visible) {
+        if (View.VISIBLE == visible && textView != null) {
             val anim = ObjectAnimator.ofInt(
                 newUserNestedScrollView,
                 "scrollY",
-                recipientLayoutValue + textView.y.toInt()
+                recipientLayoutValue ?: 0 + textView.y?.toInt()
             )
             anim.setDuration(300).start()
         }

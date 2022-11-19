@@ -414,7 +414,7 @@ class ChangeFullfilmentCollectionStoreFragment() :
         KotlinUtils.browsingCncStore =
             GeoUtils.getStoreDetails(
                 storeId,
-                WoolworthsApplication.getCncBrowsingValidatePlaceDetails().stores
+                WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
             )
     }
 
