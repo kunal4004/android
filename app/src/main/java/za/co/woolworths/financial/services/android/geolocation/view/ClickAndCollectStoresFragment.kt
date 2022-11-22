@@ -53,6 +53,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
     private var validateLocationResponse: ValidateLocationResponse? = null
     private var placeId: String? = null
     private var isComingFromConfirmAddress: Boolean? = false
+
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
 
@@ -71,8 +72,8 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
         bundle = arguments?.getBundle(BUNDLE)
         bundle?.apply {
             placeId = this.getString(KEY_PLACE_ID, "")
-            isComingFromConfirmAddress = getBoolean(IS_COMING_CONFIRM_ADD,false)
-            if(containsKey(VALIDATE_RESPONSE)){
+            isComingFromConfirmAddress = getBoolean(IS_COMING_CONFIRM_ADD, false)
+            if (containsKey(VALIDATE_RESPONSE)) {
                 getSerializable(VALIDATE_RESPONSE)?.let {
                     mValidateLocationResponse =
                         it as ValidateLocationResponse
@@ -105,49 +106,52 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
                     getDeliveryDetailsFromValidateLocation(it)
                     noClickAndCollectConnectionLayout?.no_connection_layout?.visibility = View.GONE
                 } else {
-                    noClickAndCollectConnectionLayout?.no_connection_layout?.visibility = View.VISIBLE
+                    noClickAndCollectConnectionLayout?.no_connection_layout?.visibility =
+                        View.VISIBLE
                 }
             }
         } else {
-            setAddressUI(mValidateLocationResponse?.validatePlace?.stores,
-                mValidateLocationResponse)
+            setAddressUI(
+                mValidateLocationResponse?.validatePlace?.stores,
+                mValidateLocationResponse
+            )
         }
     }
 
     private fun showFirstFourLocationInMap(addressStoreList: List<Store>?) {
         addressStoreList?.let {
-
-            for (i in 0..3) {
-
-               if( !addressStoreList?.get(i).locationId.isNullOrEmpty()){
-                   dynamicMapView?.addMarker(
-                       requireContext(),
-                       latitude = addressStoreList?.get(i)?.latitude,
-                       longitude = addressStoreList?.get(i)?.longitude,
-                       icon = R.drawable.pargo
-                   )
-
-               }
-
-                else{
-
-                   dynamicMapView?.addMarker(
-                       requireContext(),
-                       latitude = addressStoreList?.get(i)?.latitude,
-                       longitude = addressStoreList?.get(i)?.longitude,
-                       icon = R.drawable.pin
-                   )
-               }
-
-
+            val size = when {
+                addressStoreList.size > 4-> {
+                    4
+                }
+                else -> {
+                    addressStoreList.size
+                }
+            }
+            for (i in 0..size) {
+                if (!addressStoreList?.get(i).locationId.isNullOrEmpty()) {
+                    dynamicMapView?.addMarker(
+                        requireContext(),
+                        latitude = addressStoreList?.getOrNull(i)?.latitude,
+                        longitude = addressStoreList?.getOrNull(i)?.longitude,
+                        icon = R.drawable.pargopin
+                    )
+                } else {
+                    dynamicMapView?.addMarker(
+                        requireContext(),
+                        latitude = addressStoreList?.getOrNull(i)?.latitude,
+                        longitude = addressStoreList?.getOrNull(i)?.longitude,
+                        icon = R.drawable.pin
+                    )
+                }
             }
         }
         //after plotting all the markers pointing the camera to nearest store
-        val store:Store?=addressStoreList?.get(0)
-        store?.let{
+        val store: Store? = addressStoreList?.get(0)
+        store?.let {
             dynamicMapView?.moveCamera(
                 latitude = it.latitude,
-                longitude =it.longitude,
+                longitude = it.longitude,
                 zoom = 11f
             )
         }
@@ -158,20 +162,21 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
         mValidateLocationResponse: ValidateLocationResponse?
     ) {
         tvStoresNearMe?.text = resources.getString(R.string.near_stores, address?.size)
-        tvAddress?.text = KotlinUtils.capitaliseFirstLetter(mValidateLocationResponse?.validatePlace?.placeDetails?.address1)
+        tvAddress?.text =
+            KotlinUtils.capitaliseFirstLetter(mValidateLocationResponse?.validatePlace?.placeDetails?.address1)
         setStoreList(address)
     }
 
     private fun setStoreList(address: List<Store>?) {
 
-      //  StoreUtils. getFbhStoreList(address)
+        //  StoreUtils. getFbhStoreList(address)
         rvStoreList.layoutManager =
             activity?.let { activity -> LinearLayoutManager(activity) }
 
         rvStoreList.adapter = activity?.let { activity ->
             StoreListAdapter(
                 activity,
-               // StoreUtils.sortedStoreList(address),
+                // StoreUtils.sortedStoreList(address),
                 StoreUtils.getStoresListWithHeaders(StoreUtils.sortedStoreList(address)),
                 this
             )
@@ -185,7 +190,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
     }
 
     override fun onFirstTimePargo() {
-        findNavController().navigate( R.id.action_clickAndCollectStoresFragment_to_pargoStoreInfoBottomSheetDialog)
+        findNavController().navigate(R.id.action_clickAndCollectStoresFragment_to_pargoStoreInfoBottomSheetDialog)
     }
 
     override fun onClick(v: View?) {
@@ -197,11 +202,12 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
                         FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
                                 FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_SHOP_CONFIRM_STORE
                     ),
-                    activity)
+                    activity
+                )
                 navigateToFulfillmentScreen()
             }
             R.id.ivCross -> {
-               dismiss()
+                dismiss()
             }
             R.id.btChange -> {
                 IS_FROM_STORE_LOCATOR = true
@@ -222,7 +228,8 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
                 IS_FROM_STORE_LOCATOR = false
                 setFragmentResult(
                     DeliveryAddressConfirmationFragment.STORE_LOCATOR_REQUEST_CODE,
-                    bundleOf(BUNDLE to it))
+                    bundleOf(BUNDLE to it)
+                )
             }
             findNavController().navigate(
                 R.id.action_clickAndCollectStoresFragment_to_deliveryAddressConfirmationFragment,
@@ -232,7 +239,8 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
             dataStore?.let {
                 setFragmentResult(
                     DeliveryAddressConfirmationFragment.STORE_LOCATOR_REQUEST_CODE,
-                    bundleOf(BUNDLE to it))
+                    bundleOf(BUNDLE to it)
+                )
             }
             dismiss()
         }
@@ -250,7 +258,11 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
         val list = ArrayList<Store>()
         mValidateLocationResponse?.validatePlace?.stores?.let {
             for (store in it) {
-                if (store.storeName?.contains(s.toString(), true) == true || store.storeAddress?.contains(s.toString(), true)==true) {
+                if (store.storeName?.contains(
+                        s.toString(),
+                        true
+                    ) == true || store.storeAddress?.contains(s.toString(), true) == true
+                ) {
                     list.add(store)
                 }
             }
@@ -271,10 +283,13 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
                 if (validateLocationResponse != null) {
                     when (validateLocationResponse?.httpCode) {
                         AppConstant.HTTP_OK -> {
-                            setAddressUI(validateLocationResponse?.validatePlace?.stores, validateLocationResponse)
+                            setAddressUI(
+                                validateLocationResponse?.validatePlace?.stores,
+                                validateLocationResponse
+                            )
                         }
                         else -> {
-                         showErrorDialog()
+                            showErrorDialog()
                         }
                     }
                 }
@@ -282,7 +297,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
                 FirebaseManager.logException(e)
                 clickCollectProgress?.visibility = View.GONE
                 showErrorDialog()
-            } catch (e:JsonSyntaxException) {
+            } catch (e: JsonSyntaxException) {
                 FirebaseManager.logException(e)
                 clickCollectProgress?.visibility = View.GONE
                 showErrorDialog()
@@ -301,9 +316,10 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
             )
         }
     }
+
     override fun tryAgain() {
-        if(confirmAddressViewModel.isConnectedToInternet(requireActivity()))
-        placeId?.let { getDeliveryDetailsFromValidateLocation(it) }
+        if (confirmAddressViewModel.isConnectedToInternet(requireActivity()))
+            placeId?.let { getDeliveryDetailsFromValidateLocation(it) }
     }
 
     override fun onMapReady() {
@@ -311,7 +327,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
         showFirstFourLocationInMap(mValidateLocationResponse?.validatePlace?.stores)
     }
 
-    override fun onMarkerClicked(marker: DynamicMapMarker) { }
+    override fun onMarkerClicked(marker: DynamicMapMarker) {}
 
     override fun onResume() {
         super.onResume()
