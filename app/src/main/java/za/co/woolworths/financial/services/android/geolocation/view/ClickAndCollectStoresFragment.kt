@@ -176,7 +176,6 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
         rvStoreList.adapter = activity?.let { activity ->
             StoreListAdapter(
                 activity,
-                // StoreUtils.sortedStoreList(address),
                 StoreUtils.getStoresListWithHeaders(StoreUtils.sortedStoreList(address)),
                 this
             )
