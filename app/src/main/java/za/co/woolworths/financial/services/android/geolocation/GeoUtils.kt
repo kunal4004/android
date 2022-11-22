@@ -60,14 +60,14 @@ class GeoUtils {
                     if (context != null) {
                         dynamicMapView?.addMarker(
                             context,
-                            addressStoreList?.get(i)?.latitude,
-                            addressStoreList?.get(i)?.longitude,
+                            addressStoreList?.getOrNull(i)?.latitude,
+                            addressStoreList?.getOrNull(i)?.longitude,
                             R.drawable.pin
                         )
                     }
                     dynamicMapView?.moveCamera(
-                        addressStoreList.get(i)?.latitude,
-                        addressStoreList.get(i)?.longitude,
+                        addressStoreList.getOrNull(i)?.latitude,
+                        addressStoreList.getOrNull(i)?.longitude,
                         11f
                     )
                 }
