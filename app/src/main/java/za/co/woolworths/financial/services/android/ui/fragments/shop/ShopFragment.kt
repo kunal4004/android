@@ -630,6 +630,15 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     fun setDeliveryView() {
         activity?.let {
             getDeliveryType()?.let { fulfillmentDetails ->
+                val store = GeoUtils.getStoreDetails(
+                        fulfillmentDetails.storeId,
+                        validateLocationResponse?.validatePlace?.stores
+                )
+                if(store?.locationId != "" && store?.storeName?.contains(StoreUtils.PARGO, true) == false) {
+                    store.storeName = StoreUtils.PARGO + " " + store.storeName
+                }
+                fulfillmentDetails.storeName = store?.storeName.toString()
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName = store?.storeName.toString()
                 KotlinUtils.setDeliveryAddressViewFoShop(
                     it,
                     fulfillmentDetails,
