@@ -12,19 +12,18 @@ import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.toolbar.AccountProductsToolbarHelper
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.utils.setupGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
-
 @AndroidEntryPoint
 class AccountProductsMainFragment : Fragment(R.layout.account_product_landing_main_fragment) {
 
     val viewModel: AccountProductsHomeViewModel by activityViewModels()
 
-    lateinit var mToolbarContainer: AccountProductsToolbarHelper
+    val mToolbarContainer: AccountProductsToolbarHelper by lazy { AccountProductsToolbarHelper(this@AccountProductsMainFragment) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = AccountProductLandingMainFragmentBinding.bind(view)
+        mToolbarContainer.setLayout(binding.accountProductLandingToolbarView)
         requireActivity().window?.let {window -> WindowCompat.setDecorFitsSystemWindows(window, false) }
-        mToolbarContainer = AccountProductsToolbarHelper(binding.accountProductLandingToolbarView, this@AccountProductsMainFragment)
         setupLandingScreen()
     }
 
@@ -38,5 +37,10 @@ class AccountProductsMainFragment : Fragment(R.layout.account_product_landing_ma
     }
 
     fun getChildNavHost(): NavHostFragment? = childFragmentManager.findFragmentById(R.id.productNavigationContainerView) as? NavHostFragment
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+    }
+
 
 }

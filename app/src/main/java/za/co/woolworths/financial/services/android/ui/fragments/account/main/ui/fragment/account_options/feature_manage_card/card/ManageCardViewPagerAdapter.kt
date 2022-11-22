@@ -6,13 +6,10 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.adapter.FragmentViewHolder
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card_slider.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
-import javax.inject.Inject
 
-
-class ManageCardViewPagerAdapter @Inject constructor(fragment: Fragment) :
+class ManageCardViewPagerAdapter(private var listOfStoreCards: MutableList<StoreCardFeatureType>? = mutableListOf(), fragment: Fragment) :
     FragmentStateAdapter(fragment) {
 
-    private var listOfStoreCards: MutableList<StoreCardFeatureType>? = mutableListOf()
     private var pageIds = mapOfPageIds()
     private fun isListOfItemsNullOrEmpty() = listOfStoreCards.isNullOrEmpty()
 
@@ -22,7 +19,6 @@ class ManageCardViewPagerAdapter @Inject constructor(fragment: Fragment) :
         this.listOfStoreCards?.clear()
         this.listOfStoreCards = cardList ?: mutableListOf()
         notifyItemChanged(0, itemCount)
-        notifyItemRangeChanged(0, listOfStoreCards?.size ?: 1)
     }
 
 // Setting the automatically-generated ViewPager2's FrameLayout's clipChildren to false
@@ -80,3 +76,4 @@ class ManageCardViewPagerAdapter @Inject constructor(fragment: Fragment) :
     override fun containsItem(itemId: Long): Boolean =
         if (isListOfItemsNullOrEmpty()) false else pageIds?.contains(itemId) ?: false
 }
+
