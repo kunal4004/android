@@ -147,7 +147,7 @@ class OrderConfirmationFragment : Fragment() {
     }
 
     private fun setToolbar(orderId: String) {
-        orderIdText.text = bindString(R.string.order_details_toolbar_title, orderId)
+        orderIdText?.text = bindString(R.string.order_details_toolbar_title, orderId)
         btnClose?.setOnClickListener { requireActivity().onBackPressed() }
 
         helpTextView?.setOnClickListener {
@@ -350,8 +350,8 @@ class OrderConfirmationFragment : Fragment() {
             Delivery.DASH -> {
                 companyDiscountLinearLayout.visibility = GONE
                 companyDiscountSeparator?.visibility = GONE
-                wRewardsVouchersLinearLayout.visibility = GONE
-                wRewardsVouchersSeparator.visibility = GONE
+                wRewardsVouchersLinearLayout?.visibility = GONE
+                wRewardsVouchersSeparator?.visibility = GONE
                 deliveryFeeTextView?.text =
                     CurrencyFormatter.formatAmountToRandAndCentWithSpace(response?.deliveryDetails?.shippingAmount)
 
