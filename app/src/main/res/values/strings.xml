@@ -2815,4 +2815,7 @@
 
     <!--Pet Insurance -->
     <string name="pet_insurance_covered">.Covered</string>
+    <string name="pet_insurance_pending">.Pending</string>
+    <string name="pet_insurance_pending_title">Your Woolies Pet Insurance Application is Being Processed.</string>
+    <string name="pet_insurance_pending_desc">Your application has been received, and approval is pending.</string>
 </resources>

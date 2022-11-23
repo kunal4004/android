@@ -187,22 +187,24 @@
                                 android:layout_alignParentEnd="true"
                                 android:layout_centerVertical="true"
                                 android:orientation="vertical">
+
                                 <ImageView
                                     android:id="@+id/iv_pet_insurance_progress"
                                     style="?android:attr/progressBarStyleLarge"
                                     android:layout_width="24dp"
                                     android:layout_height="24dp"
-                                    android:layout_centerVertical="true"
-                                    android:elevation="@dimen/two_dp"
                                     android:layout_alignParentEnd="true"
                                     android:layout_centerInParent="true"
+                                    android:layout_centerVertical="true"
+                                    android:elevation="@dimen/two_dp"
                                     app:srcCompat="@drawable/refresh_account_drawable_icon" />
+
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                                     android:id="@+id/tv_pet_insurance_apply"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
                                     android:layout_weight="4"
-                                    android:visibility="gone"
                                     android:drawableRight="@drawable/ic_caret_black"
                                     android:focusable="false"
                                     android:focusableInTouchMode="false"
@@ -210,17 +212,18 @@
                                     android:text="@string/apply_now"
                                     android:textColor="@color/black_off"
                                     android:textSize="@dimen/acc_thirteen_sp"
-                                    android:layout_alignParentEnd="true"
+                                    android:visibility="gone"
                                     app:WTextView_font="medium_bold" />
+
                                 <androidx.appcompat.widget.AppCompatTextView
                                     android:id="@+id/tv_pet_insurance_help"
-                                    style="@style/link_text_style"
-                                    android:textSize="@dimen/_10ssp"
-                                    android:layout_centerInParent="true"
-                                    android:visibility="gone"
-                                    android:layout_alignParentEnd="true"
                                     android:layout_height="wrap_content"
-                                    android:text="@string/dash_help" />
+                                    android:layout_width="wrap_content"
+                                    android:drawableEnd="@drawable/ic_caret_black"
+                                    android:layout_alignParentEnd="true"
+                                    android:layout_centerInParent="true"
+                                    android:textSize="@dimen/_10ssp"
+                                    android:visibility="gone" />
                             </RelativeLayout>
                             <za.co.woolworths.financial.services.android.ui.views.WTextView
                                 android:id="@+id/tv_pet_insurance_covered"
