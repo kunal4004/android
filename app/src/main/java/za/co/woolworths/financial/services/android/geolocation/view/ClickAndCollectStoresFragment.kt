@@ -22,6 +22,7 @@ import kotlinx.android.synthetic.main.geo_location_delivery_address.*
 import kotlinx.android.synthetic.main.no_connection.view.*
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.StoreListAdapter
@@ -118,7 +119,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
         }
     }
 
-    private fun showFirstFourLocationInMap(addressStoreList: List<Store>?) {
+    private fun showFirstFourLocationInMap1(addressStoreList: List<Store>?) {
         addressStoreList?.let {
             val size = when {
                 addressStoreList.size > 4-> {
@@ -323,7 +324,8 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
 
     override fun onMapReady() {
         dynamicMapView?.setAllGesturesEnabled(false)
-        showFirstFourLocationInMap(mValidateLocationResponse?.validatePlace?.stores)
+       // showFirstFourLocationInMap(StoreUtils.sortedStoreListBasedOnDistance(mValidateLocationResponse?.validatePlace?.stores))
+        GeoUtils.showFirstFourLocationInMap(StoreUtils.sortedStoreListBasedOnDistance(mValidateLocationResponse?.validatePlace?.stores), dynamicMapView, context)
     }
 
     override fun onMarkerClicked(marker: DynamicMapMarker) {}

@@ -56,23 +56,45 @@ class GeoUtils {
 
         fun showFirstFourLocationInMap(addressStoreList: List<Store>?, dynamicMapView: DynamicMapView?, context: Context?) {
             addressStoreList?.let {
-                for (i in 0..3) {
-                    if (context != null) {
+                val size = when {
+                    addressStoreList.size > 4-> {
+                        4
+                    }
+                    else -> {
+                        addressStoreList.size
+                    }
+                }
+                for (i in 0..size) {
+                    if (!addressStoreList?.getOrNull(i)?.locationId.isNullOrEmpty()) {
                         dynamicMapView?.addMarker(
-                            context,
-                            addressStoreList?.get(i)?.latitude,
-                            addressStoreList?.get(i)?.longitude,
-                            R.drawable.pin
+                            context!!,
+                            latitude = addressStoreList?.getOrNull(i)?.latitude,
+                            longitude = addressStoreList?.getOrNull(i)?.longitude,
+                            icon = R.drawable.pargopin
+                        )
+                    } else {
+                        dynamicMapView?.addMarker(
+                           context!!,
+                            latitude = addressStoreList?.getOrNull(i)?.latitude,
+                            longitude = addressStoreList?.getOrNull(i)?.longitude,
+                            icon = R.drawable.pin
                         )
                     }
-                    dynamicMapView?.moveCamera(
-                        addressStoreList.get(i)?.latitude,
-                        addressStoreList.get(i)?.longitude,
-                        11f
-                    )
                 }
             }
+            //after plotting all the markers pointing the camera to nearest store
+            val store: Store? = addressStoreList?.get(0)
+            store?.let {
+                dynamicMapView?.moveCamera(
+                    latitude = it.latitude,
+                    longitude = it.longitude,
+                    zoom = 11f
+                )
+            }
         }
+
+
+
 
         private fun BitmapFromVector(context: Context, vectorResId: Int): BitmapDescriptor? {
             val vectorDrawable: Drawable? = ContextCompat.getDrawable(context, vectorResId)

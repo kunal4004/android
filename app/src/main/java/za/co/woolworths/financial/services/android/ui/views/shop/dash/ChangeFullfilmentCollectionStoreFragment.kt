@@ -276,9 +276,9 @@ class ChangeFullfilmentCollectionStoreFragment() :
         dynamicMapView?.setAllGesturesEnabled(false)
         val addressStoreList = WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
         if (addressStoreList != null && addressStoreList?.isEmpty() == false) {
-            GeoUtils.showFirstFourLocationInMap(addressStoreList, dynamicMapView, context)
+            GeoUtils.showFirstFourLocationInMap(StoreUtils.sortedStoreListBasedOnDistance(addressStoreList), dynamicMapView, context)
         } else if (updatedAddressStoreList?.isEmpty() == false) {
-            GeoUtils.showFirstFourLocationInMap(updatedAddressStoreList, dynamicMapView, context)
+            GeoUtils.showFirstFourLocationInMap(StoreUtils.sortedStoreListBasedOnDistance(updatedAddressStoreList), dynamicMapView, context)
         }
     }
 
