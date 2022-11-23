@@ -48,7 +48,6 @@ import za.co.woolworths.financial.services.android.viewmodels.shop.ShopViewModel
 class StandardDeliveryFragment : DepartmentExtensionFragment() {
 
     private var locator: Locator? = null
-    private var isRootCallInProgress: Boolean = false
     private var location: Location? = null
     private var rootCategoryCall: Call<RootCategories>? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
@@ -59,6 +58,7 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
     private val shopViewModel: ShopViewModel by viewModels(
         ownerProducer = { requireParentFragment() }
     )
+
     companion object {
         var DEPARTMENT_LOGIN_REQUEST = 1717
     }
@@ -107,9 +107,10 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
             ) == PackageManager.PERMISSION_GRANTED
         }
 
-        if (isDashEnabled && isFragmentVisible) {
-            startLocationDiscoveryProcess()
-        } else if (isFragmentVisible) {
+        if (isFragmentVisible) {
+            if (isDashEnabled) {
+                startLocationDiscoveryProcess()
+            }
             initializeRootCategoryList()
         }
     }
@@ -133,11 +134,13 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
     private fun handleLocationEvent(locationEvent: Event.Location?) {
         Utils.saveLastLocation(locationEvent?.locationData, context)
         location = locationEvent?.locationData
-        initializeRootCategoryList()
     }
 
     private fun initializeRootCategoryList() {
-        if (parentFragment?.getCategoryResponseData()?.rootCategories != null) bindDepartment() else executeDepartmentRequest(mDepartmentAdapter, parentFragment, location)
+        if (parentFragment?.getCategoryResponseData()?.rootCategories != null) bindDepartment() else executeDepartmentRequest(
+            mDepartmentAdapter,
+            parentFragment,
+            location)
     }
 
     private fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -162,15 +165,16 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
     }
 
 
-
     private fun getDeliveryType(): String {
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let { fulfillmentDetails ->
-               return Delivery.getType(fulfillmentDetails.deliveryType)?.name ?: BundleKeysConstants.STANDARD
+                return Delivery.getType(fulfillmentDetails.deliveryType)?.name
+                    ?: BundleKeysConstants.STANDARD
             }
         } else {
             KotlinUtils.getAnonymousUserLocationDetails()?.fulfillmentDetails?.let { fulfillmentDetails ->
-                return Delivery.getType(fulfillmentDetails.deliveryType)?.name ?: BundleKeysConstants.STANDARD
+                return Delivery.getType(fulfillmentDetails.deliveryType)?.name
+                    ?: BundleKeysConstants.STANDARD
             }
         }
         return BundleKeysConstants.STANDARD
@@ -256,7 +260,8 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
                     Utils.toJson(rootCategory)
                 )
                 bundle.putBoolean(AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS,
-                    arguments?.getBoolean(AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false) ?: false)
+                    arguments?.getBoolean(AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS,
+                        false) ?: false)
                 bundle.putString(SubCategoryFragment.KEY_ARGS_VERSION, version)
                 bundle.putBoolean(
                     SubCategoryFragment.KEY_ARGS_IS_LOCATION_ENABLED,
@@ -264,7 +269,8 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
                 )
                 bundle.putBoolean(
                     AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS,
-                    arguments?.getBoolean(AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false) ?: false
+                    arguments?.getBoolean(AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS,
+                        false) ?: false
                 )
                 location?.let { bundle.putParcelable(SubCategoryFragment.KEY_ARGS_LOCATION, it) }
                 drillDownCategoryFragment.arguments = bundle
@@ -275,7 +281,8 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
                 rootCategory.categoryName,
                 rootCategory.dimValId,
                 isBrowsing = true,
-                sendDeliveryDetails = arguments?.getBoolean(AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS, false)
+                sendDeliveryDetails = arguments?.getBoolean(AppConstant.Keys.EXTRA_SEND_DELIVERY_DETAILS_PARAMS,
+                    false)
             )
         }
     }
@@ -360,7 +367,7 @@ class StandardDeliveryFragment : DepartmentExtensionFragment() {
         parentFragment?.getCategoryResponseData()?.dash = null
     }
 
-    public fun reloadRequest(){
+    fun reloadRequest() {
         executeDepartmentRequest(mDepartmentAdapter, parentFragment, location)
     }
 }
