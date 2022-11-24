@@ -62,13 +62,13 @@ class StoreListAdapter(
                         true
                     ) == false
                 ) {
-                    var pargoStoreName = store.storeName
+                    var pargoStoreName = " "+store.storeName
                     pargoStoreName = " ${StoreUtils.PARGO} $pargoStoreName"
                     itemView?.tvAddressNickName?.text =
                         KotlinUtils.capitaliseFirstLetter(pargoStoreName)
                 } else {
                     itemView?.tvAddressNickName?.text =
-                        KotlinUtils.capitaliseFirstLetter(store.storeName)
+                        KotlinUtils.capitaliseFirstLetter(store?.storeName)
                 }
                 itemView?.tvAddress?.text = store.storeAddress
                 itemView?.txtStoreDistance?.text = store.distance?.let { changeMeterToKM(it) }
