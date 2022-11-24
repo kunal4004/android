@@ -28,17 +28,19 @@ class GeoUtils {
         fun getSelectedPlaceId(savedAddresses: SavedAddressResponse): String {
             savedAddresses.addresses?.forEach { address ->
                 if (savedAddresses.defaultAddressNickname.equals(address.nickname)) {
-                   return address.placesId.toString()
+                    return address.placesId.toString()
                 }
             }
-            return  ""
+            return ""
         }
 
         fun getSelectedDefaultName(
             savedAddresses: SavedAddressResponse?,
             selectedAddressPosition: Int,
         ): Boolean {
-            if (savedAddresses?.addresses?.getOrNull(selectedAddressPosition)?.nickname.equals(savedAddresses?.defaultAddressNickname,true)
+            if (savedAddresses?.addresses?.getOrNull(selectedAddressPosition)?.nickname.equals(
+                    savedAddresses?.defaultAddressNickname,
+                    true)
             ) {
                 return true
             }
@@ -54,22 +56,28 @@ class GeoUtils {
             return null
         }
 
-        fun showFirstFourLocationInMap(addressStoreList: List<Store>?, dynamicMapView: DynamicMapView?, context: Context?) {
+        fun showFirstFourLocationInMap(
+            addressStoreList: List<Store>?,
+            dynamicMapView: DynamicMapView?,
+            context: Context?,
+        ) {
             addressStoreList?.let {
-                for (i in 0..3) {
-                    if (context != null) {
-                        dynamicMapView?.addMarker(
-                            context,
-                            addressStoreList?.get(i)?.latitude,
-                            addressStoreList?.get(i)?.longitude,
-                            R.drawable.pin
+                it.forEachIndexed { position, store ->
+                    if (position <= 3) {
+                        if (context != null) {
+                            dynamicMapView?.addMarker(
+                                context,
+                                store?.latitude,
+                                store?.longitude,
+                                R.drawable.pin
+                            )
+                        }
+                        dynamicMapView?.moveCamera(
+                            store?.latitude,
+                            store?.longitude,
+                            11f
                         )
                     }
-                    dynamicMapView?.moveCamera(
-                        addressStoreList.get(i)?.latitude,
-                        addressStoreList.get(i)?.longitude,
-                        11f
-                    )
                 }
             }
         }
