@@ -977,6 +977,13 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
     }
 
     private fun GeoLocationDeliveryAddressBinding.setGeoDeliveryTextForCnc() {
+        val store = GeoUtils.getStoreDetails(
+                mStoreId,
+                validateLocationResponse?.validatePlace?.stores
+        )
+        if(store?.locationId != "" && store?.storeName?.contains(StoreUtils.PARGO, true) == false) {
+            mStoreName = StoreUtils.PARGO + " " + store.storeName
+        }
         geoDeliveryText.text = KotlinUtils.capitaliseFirstLetter(mStoreName)
         editDelivery.text = bindString(R.string.edit)
         btnConfirmAddress.isEnabled = true
@@ -995,7 +1002,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                 it.distance!!
             }
             if(shortestDistance?.locationId != "" && shortestDistance?.storeName?.contains(StoreUtils.PARGO, true) == false) {
-                shortestDistance.storeName = StoreUtils.PARGO + " " + shortestDistance.storeName
+                shortestDistance.storeName = StoreUtils.PARGO + " " + shortestDistance?.storeName
             }
         }
         return shortestDistance?.storeName

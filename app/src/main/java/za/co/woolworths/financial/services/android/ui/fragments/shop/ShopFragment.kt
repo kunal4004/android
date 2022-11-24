@@ -393,6 +393,17 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     shopProgressbar?.visibility = View.GONE
                     tabs_main?.isClickable = true
 
+                    if(KotlinUtils.placeId != null) {
+                        val store = GeoUtils.getStoreDetails(
+                                KotlinUtils.placeId,
+                                validateLocationResponse?.validatePlace?.stores
+                        )
+                        if (store?.locationId != "" && store?.storeName?.contains(StoreUtils.PARGO, true) == false) {
+                            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName = StoreUtils.PARGO + " " + store?.storeName.toString()
+                            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.locationId =  store?.locationId.toString()
+                        }
+                    }
+
                     geoDeliveryView?.visibility = View.VISIBLE
                     if (validateLocationResponse != null) {
                         when (validateLocationResponse?.httpCode) {
@@ -635,10 +646,11 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                         validateLocationResponse?.validatePlace?.stores
                 )
                 if(store?.locationId != "" && store?.storeName?.contains(StoreUtils.PARGO, true) == false) {
-                    store.storeName = StoreUtils.PARGO + " " + store.storeName
+                    fulfillmentDetails.storeName = StoreUtils.PARGO + " " + store?.storeName.toString()
+                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.locationId =  store?.locationId.toString()
+                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName = StoreUtils.PARGO + " " + store?.storeName.toString()
                 }
-                fulfillmentDetails.storeName = store?.storeName.toString()
-                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName = store?.storeName.toString()
+
                 KotlinUtils.setDeliveryAddressViewFoShop(
                     it,
                     fulfillmentDetails,
