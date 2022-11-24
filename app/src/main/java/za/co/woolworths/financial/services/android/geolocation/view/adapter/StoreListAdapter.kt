@@ -103,5 +103,4 @@ class StoreListAdapter(
         fun onStoreSelected(store: Store?)
         fun onFirstTimePargo()
     }
-
 }

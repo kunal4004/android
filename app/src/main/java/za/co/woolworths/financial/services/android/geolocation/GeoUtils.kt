@@ -93,9 +93,6 @@ class GeoUtils {
             }
         }
 
-
-
-
         private fun BitmapFromVector(context: Context, vectorResId: Int): BitmapDescriptor? {
             val vectorDrawable: Drawable? = ContextCompat.getDrawable(context, vectorResId)
             vectorDrawable?.apply {
