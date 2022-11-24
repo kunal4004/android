@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.util
 
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
+import java.util.ArrayList
+import java.util.HashMap
 
 class StoreUtils {
     companion object {
@@ -86,7 +88,6 @@ class StoreUtils {
             return storeListRowsList
 
         }
-
 
         fun sortedStoreListBasedOnDistance(address: List<Store>?): List<Store> {
             address?.stream()?.sorted { store1, store2 ->
