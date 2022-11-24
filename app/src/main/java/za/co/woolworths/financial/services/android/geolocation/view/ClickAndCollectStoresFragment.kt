@@ -119,45 +119,6 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
         }
     }
 
-    private fun showFirstFourLocationInMap1(addressStoreList: List<Store>?) {
-        addressStoreList?.let {
-            val size = when {
-                addressStoreList.size > 4-> {
-                    4
-                }
-                else -> {
-                    addressStoreList.size
-                }
-            }
-            for (i in 0..size) {
-                if (!addressStoreList?.get(i).locationId.isNullOrEmpty()) {
-                    dynamicMapView?.addMarker(
-                        requireContext(),
-                        latitude = addressStoreList?.getOrNull(i)?.latitude,
-                        longitude = addressStoreList?.getOrNull(i)?.longitude,
-                        icon = R.drawable.pargopin
-                    )
-                } else {
-                    dynamicMapView?.addMarker(
-                        requireContext(),
-                        latitude = addressStoreList?.getOrNull(i)?.latitude,
-                        longitude = addressStoreList?.getOrNull(i)?.longitude,
-                        icon = R.drawable.pin
-                    )
-                }
-            }
-        }
-        //after plotting all the markers pointing the camera to nearest store
-        val store: Store? = addressStoreList?.get(0)
-        store?.let {
-            dynamicMapView?.moveCamera(
-                latitude = it.latitude,
-                longitude = it.longitude,
-                zoom = 11f
-            )
-        }
-    }
-
     private fun setAddressUI(
         address: List<Store>?,
         mValidateLocationResponse: ValidateLocationResponse?
@@ -324,7 +285,6 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
 
     override fun onMapReady() {
         dynamicMapView?.setAllGesturesEnabled(false)
-       // showFirstFourLocationInMap(StoreUtils.sortedStoreListBasedOnDistance(mValidateLocationResponse?.validatePlace?.stores))
         GeoUtils.showFirstFourLocationInMap(StoreUtils.sortedStoreListBasedOnDistance(mValidateLocationResponse?.validatePlace?.stores), dynamicMapView, context)
     }
 
