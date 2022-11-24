@@ -56,31 +56,31 @@ class StoreListAdapter(
     inner class SavedAddressViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bindItems(storeRow: StoreListRow.StoreRow, position: Int) {
-            storeRow.apply {
-                if (store.locationId != "" && store.storeName?.contains(
+            storeRow?.apply {
+                if (store?.locationId != "" && store?.storeName?.contains(
                         StoreUtils.PARGO,
                         true
                     ) == false
                 ) {
                     var pargoStoreName = store.storeName
                     pargoStoreName = " ${StoreUtils.PARGO} $pargoStoreName"
-                    itemView.tvAddressNickName.text =
+                    itemView?.tvAddressNickName?.text =
                         KotlinUtils.capitaliseFirstLetter(pargoStoreName)
                 } else {
-                    itemView.tvAddressNickName.text =
+                    itemView?.tvAddressNickName?.text =
                         KotlinUtils.capitaliseFirstLetter(store.storeName)
                 }
-                itemView.tvAddress.text = store.storeAddress
-                itemView.txtStoreDistance.text = store.distance?.let { changeMeterToKM(it) }
+                itemView?.tvAddress?.text = store.storeAddress
+                itemView?.txtStoreDistance?.text = store.distance?.let { changeMeterToKM(it) }
                 if (lastSelectedPosition == position) {
-                    itemView.imgAddressSelector?.isChecked = true
-                    itemView.storeSelectorLayout?.setBackgroundResource(R.drawable.bg_select_store)
+                    itemView?.imgAddressSelector?.isChecked = true
+                    itemView?.storeSelectorLayout?.setBackgroundResource(R.drawable.bg_select_store)
                 } else {
-                    itemView.imgAddressSelector?.isChecked = false
-                    itemView.storeSelectorLayout?.setBackgroundResource(R.color.white)
+                    itemView?.imgAddressSelector?.isChecked = false
+                    itemView?.storeSelectorLayout?.setBackgroundResource(R.color.white)
                 }
-                itemView.storeSelectorLayout?.setOnClickListener {
-                    if (store.locationId != "" && !AppInstanceObject.get().featureWalkThrough.pargo_store) {
+                itemView?.storeSelectorLayout?.setOnClickListener {
+                    if (store?.locationId != "" && !AppInstanceObject.get().featureWalkThrough.pargo_store) {
                         listener.onFirstTimePargo()
                     } else {
                         lastSelectedPosition = adapterPosition
@@ -95,7 +95,7 @@ class StoreListAdapter(
 
     inner class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindItems(headerRow: StoreListRow.Header) {
-            itemView.tvStoreHeader?.text = headerRow.headerName
+            itemView?.tvStoreHeader?.text = headerRow.headerName
         }
     }
 
