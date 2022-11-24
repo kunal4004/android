@@ -4,7 +4,7 @@ import za.co.woolworths.financial.services.android.geolocation.network.model.Sto
 
 class StoreUtils {
     companion object {
-        const val PARGO: String = "Pargo"
+        const val PARGO : String = "Pargo"
 
         enum class StoreDeliveryType(val type: String) {
             OTHER("other"),
@@ -21,24 +21,20 @@ class StoreUtils {
         fun sortedStoreList(address: List<Store>?): List<Store> {
             val storeArrayList = ArrayList(address)
             val sortRoles: HashMap<String, Int> = hashMapOf(
-                StoreDeliveryType.OTHER.type.lowercase() to 0,
-                StoreDeliveryType.FOOD.type.lowercase() to 1,
-                StoreDeliveryType.FOOD_AND_OTHER.type.lowercase() to 2
+                    StoreDeliveryType.OTHER.type.lowercase() to 0,
+                    StoreDeliveryType.FOOD.type.lowercase() to 1,
+                    StoreDeliveryType.FOOD_AND_OTHER.type.lowercase() to 2
             )
             val comparator = Comparator { s1: Store, s2: Store ->
-                if (s1?.locationId != "" && s1?.storeName?.contains(PARGO, true) == false) {
-                    s1.storeName = PARGO + " " + s1.storeName
+                if(s1?.locationId != "" && s1?.storeName?.contains(PARGO, true) == false) {
+                    s1.storeName = PARGO+" " + s1.storeName
                 }
-                if (s2?.locationId != "" && s2?.storeName?.contains(PARGO, true) == false) {
-                    s2.storeName = PARGO + " " + s2.storeName
+                if(s2?.locationId != "" && s2?.storeName?.contains(PARGO, true) == false) {
+                    s2.storeName = PARGO +" "+ s2.storeName
                 }
 
-                return@Comparator sortRoles[s2.storeDeliveryType?.lowercase()]?.let {
-                    sortRoles[s1.storeDeliveryType?.lowercase()]?.minus(
-                        it
-                    )
-                }
-                    ?: -1
+                return@Comparator sortRoles[s2.storeDeliveryType?.lowercase()]?.let { sortRoles[s1.storeDeliveryType?.lowercase()]?.minus(it) }
+                        ?: -1
             }
             val sortedStoreList = arrayListOf<Store>().apply { addAll(storeArrayList) }
             sortedStoreList.sortWith(comparator)
