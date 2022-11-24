@@ -370,8 +370,10 @@ dependencies {
     huaweiProductionImplementation 'com.huawei.hms:maps:6.3.1.300'
     huaweiQaImplementation 'com.huawei.hms:push:6.5.0.300'
     huaweiProductionImplementation 'com.huawei.hms:push:6.5.0.300'
-    huaweiQaImplementation 'com.huawei.hms:hianalytics:6.6.0.300'
-    huaweiProductionImplementation 'com.huawei.hms:hianalytics:6.6.0.300'
+    huaweiQaImplementation 'com.huawei.hms:hianalytics:6.7.0.300'
+    huaweiProductionImplementation 'com.huawei.hms:hianalytics:6.7.0.300'
+    huaweiQaImplementation 'com.huawei.agconnect:agconnect-crash:1.7.2.300'
+    huaweiProductionImplementation 'com.huawei.agconnect:agconnect-crash:1.7.2.300'
 
     // get stream chat Client + offline
     implementation "io.getstream:stream-chat-android-offline:$stream_version"
