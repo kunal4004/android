@@ -34,7 +34,6 @@
         style="@style/futura_medium_black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:maxLines="1"
         android:textSize="@dimen/twenty_four_sp"
         android:textColor="@color/black"
         app:layout_constraintTop_toBottomOf="@+id/tvStoresStock" />
