@@ -13,9 +13,9 @@ android {
 
     def major = "9"
     def minor = "5"
-    def fix = "1"
-    def jobNumberProduction = 208
-    def jobNumberQa = 651
+    def fix = "2"
+    def jobNumberProduction = 209
+    def jobNumberQa = 653
     def jobNumberFeature = 1357
 
     buildFeatures {
@@ -361,7 +361,7 @@ dependencies {
     implementation "com.google.dagger:hilt-android:2.38.1"
     kapt "com.google.dagger:hilt-android-compiler:2.37"
     implementation 'com.google.maps:google-maps-services:2.0.0'
-    implementation 'com.github.corouteam:GlideToVectorYou:v2.0.0'
+    implementation 'com.github.corouteam:GlideToVectorYou:2.0.0'
 
     // Huawei
     huaweiQaImplementation 'com.huawei.hms:location:6.4.0.300'
