@@ -27,10 +27,10 @@ class StoreUtils {
             )
             val comparator = Comparator { s1: Store, s2: Store ->
                 if(s1?.locationId != "" && s1?.storeName?.contains(PARGO, true) == false) {
-                    s1.storeName = PARGO+" " + s1.storeName
+                    s1.storeName = PARGO + " " + s1?.storeName
                 }
                 if(s2?.locationId != "" && s2?.storeName?.contains(PARGO, true) == false) {
-                    s2.storeName = PARGO +" "+ s2.storeName
+                    s2.storeName = PARGO + " " + s2?.storeName
                 }
 
                 return@Comparator sortRoles[s2.storeDeliveryType?.lowercase()]?.let { sortRoles[s1.storeDeliveryType?.lowercase()]?.minus(it) }
