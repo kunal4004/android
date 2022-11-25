@@ -2418,7 +2418,7 @@
     <string name="collection_time_detail_title">When Would You Like To Collect?</string>
     <string name="native_checkout_collection_date">Collection Date</string>
     <string name="collection_details_text">Your order will be ready for collection in </string>
-    <string name="notify_text_label"> <b>We\'ll notify you via SMS when it\'s ready.</b></string>
+    <string name="notify_text_label"> <b><i>We\'ll notify you via SMS when it\'s ready.</i></b></string>
     <string name="who_is_collecting_label">Upon collection, the recipient will have to show proof of identification using their <b>ID, passport or drivers license.</b></string>
     <string name="native_checkout_collection_timeslot">Collection Timeslot</string>
     <string name="choose_date">Choose Date</string>
