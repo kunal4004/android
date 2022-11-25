@@ -126,6 +126,8 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
                         icon = R.drawable.pin
                     )
                 }
+                else
+                    return@forEachIndexed
             }
         }
         //after plotting all the markers pointing the camera to nearest store

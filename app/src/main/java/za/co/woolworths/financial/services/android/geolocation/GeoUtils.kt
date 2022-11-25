@@ -78,6 +78,8 @@ class GeoUtils {
                             11f
                         )
                     }
+                    else
+                        return@forEachIndexed
                 }
             }
         }
