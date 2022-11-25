@@ -334,7 +334,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
             store?.let {
                 if (it.storeName != null) {
                     if(it?.locationId != "" && it?.storeName?.contains(StoreUtils.PARGO, true) == false) {
-                        it.storeName = StoreUtils.PARGO + " " + it.storeName
+                        it.storeName = it.storeName + "." + StoreUtils.PARGO
                     }
                     geoDeliveryText?.text = KotlinUtils.capitaliseFirstLetter(it.storeName)
                 }
@@ -982,7 +982,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                 validateLocationResponse?.validatePlace?.stores
         )
         if(store?.locationId != "" && store?.storeName?.contains(StoreUtils.PARGO, true) == false) {
-            mStoreName = StoreUtils.PARGO + " " + store.storeName
+            mStoreName = store.storeName + "." + StoreUtils.PARGO
         }
         geoDeliveryText.text = KotlinUtils.capitaliseFirstLetter(mStoreName)
         editDelivery.text = bindString(R.string.edit)
@@ -1002,7 +1002,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                 it.distance!!
             }
             if(shortestDistance?.locationId != "" && shortestDistance?.storeName?.contains(StoreUtils.PARGO, true) == false) {
-                shortestDistance.storeName = StoreUtils.PARGO + " " + shortestDistance?.storeName
+                shortestDistance.storeName = shortestDistance?.storeName + "." + StoreUtils.PARGO
             }
         }
         return shortestDistance?.storeName

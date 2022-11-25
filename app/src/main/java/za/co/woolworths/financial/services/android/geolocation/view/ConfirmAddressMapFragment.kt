@@ -36,6 +36,7 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAu
 import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.ROUTE
 import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.STREET_NUMBER
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
@@ -291,6 +292,18 @@ class ConfirmAddressMapFragment :
                                     }
                                     return@let
                                 } else if (KotlinUtils.isComingFromCncTab == true) {
+
+                                    if(placeId != null) {
+                                        val store = GeoUtils.getStoreDetails(
+                                                placeId,
+                                                validateLocationResponse?.validatePlace?.stores
+                                        )
+                                        if (store?.locationId != "" && store?.storeName?.contains(StoreUtils.PARGO, true) == false) {
+                                            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName = store?.storeName.toString() + "." + StoreUtils.PARGO
+                                            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.locationId =  store?.locationId.toString()
+                                        }
+                                    }
+
                                     /*user is coming from CNC i.e. set Location flow */
                                     // navigate to CNC home tab.
                                     KotlinUtils.isComingFromCncTab = false

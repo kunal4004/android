@@ -283,6 +283,18 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                                         KotlinUtils.browsingDeliveryType?.name
                                     )
                                 }
+
+                                val placeId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
+                                if(placeId != null) {
+                                    val store = GeoUtils.getStoreDetails(
+                                            placeId,
+                                            validateLocationResponse?.validatePlace?.stores
+                                    )
+                                    if (store?.locationId != "" && store?.storeName?.contains(StoreUtils.PARGO, true) == false) {
+                                        Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName = store?.storeName.toString() + "." + StoreUtils.PARGO
+                                        Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.locationId = store?.locationId.toString()
+                                    }
+                                }
                             } else
                                 callConfirmPlace()
                         }

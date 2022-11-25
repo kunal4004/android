@@ -12,6 +12,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Save
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapView
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.StoreUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
 class GeoUtils {
@@ -47,6 +48,11 @@ class GeoUtils {
 
         fun getStoreDetails(storeId: String?, stores: List<Store>?): Store? {
             stores?.forEach {
+
+                if(it?.locationId != "" && it?.storeName?.contains(StoreUtils.PARGO, true) == false) {
+                    it.storeName = it?.storeName + "." + StoreUtils.PARGO
+                }
+
                 if (it.storeId == storeId) {
                     return it
                 }
