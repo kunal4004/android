@@ -17,8 +17,8 @@ import za.co.woolworths.financial.services.android.util.StoreListRow
 import za.co.woolworths.financial.services.android.util.StoreUtils
 
 class StoreListAdapter(
-    val context: Context,
-    val storesList: List<StoreListRow>,
+    val context: Context?,
+    val storesList: List<StoreListRow>?,
     val listener: OnStoreSelected
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var lastSelectedPosition: Int = -1
@@ -36,7 +36,7 @@ class StoreListAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
-        val item = storesList[position]
+        val item = storesList?.get(position)
         when (holder) {
             is HeaderViewHolder -> holder.bindItems(item as StoreListRow.Header)
             is SavedAddressViewHolder -> holder.bindItems(item as StoreListRow.StoreRow, position)
@@ -44,12 +44,16 @@ class StoreListAdapter(
 
     }
 
-    override fun getItemCount(): Int = storesList.size
+    override fun getItemCount(): Int = storesList?.size!!
 
 
-    override fun getItemViewType(position: Int) = when (storesList[position]) {
+    override fun getItemViewType(position: Int) = when (storesList?.get(position)) {
         is StoreListRow.StoreRow -> R.layout.store_row_layout
         is StoreListRow.Header -> R.layout.store_row_header_layout
+        else->{
+            R.layout.store_row_layout
+
+        }
     }
 
 
@@ -63,7 +67,7 @@ class StoreListAdapter(
                     ) == false
                 ) {
                     var pargoStoreName = " "+store.storeName
-                    pargoStoreName = " ${StoreUtils.PARGO} $pargoStoreName"
+                    pargoStoreName = "$pargoStoreName  ${StoreUtils.BULLET} ${StoreUtils.PARGO}"
                     itemView?.tvAddressNickName?.text =
                         KotlinUtils.capitaliseFirstLetter(pargoStoreName)
                 } else {
@@ -83,7 +87,7 @@ class StoreListAdapter(
                     if (store?.locationId != "" && !AppInstanceObject.get().featureWalkThrough.pargo_store) {
                         listener.onFirstTimePargo()
                     } else {
-                        lastSelectedPosition = adapterPosition
+                        lastSelectedPosition = bindingAdapterPosition
                         notifyDataSetChanged()
                         listener.onStoreSelected(store)
                     }
@@ -94,8 +98,8 @@ class StoreListAdapter(
     }
 
     inner class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bindItems(headerRow: StoreListRow.Header) {
-            itemView?.tvStoreHeader?.text = headerRow.headerName
+        fun bindItems(headerRow: StoreListRow.Header?) {
+            itemView?.tvStoreHeader?.text = headerRow?.headerName
         }
     }
 

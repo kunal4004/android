@@ -127,13 +127,18 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
     private fun setStoreList(address: List<Store>?) {
         rvStoreList.layoutManager =
             activity?.let { activity -> LinearLayoutManager(activity) }
-        rvStoreList.adapter = activity?.let { activity ->
-            StoreListAdapter(
-                activity,
-                StoreUtils.getStoresListWithHeaders(StoreUtils.sortedStoreList(address)),
-                this
-            )
+        val storesListWithHeaders=StoreUtils.getStoresListWithHeaders(StoreUtils.sortedStoreList(address))
+
+        if(storesListWithHeaders?.isNotEmpty()){
+            rvStoreList.adapter = activity?.let { activity ->
+                StoreListAdapter(
+                    activity,
+                    storesListWithHeaders,
+                    this
+                )
         }
+       }
+
         rvStoreList.adapter?.notifyDataSetChanged()
     }
 
@@ -213,7 +218,10 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
                 }
             }
         }
-        setStoreList(list)
+
+        if(list?.isNotEmpty()){
+            setStoreList(list)
+        }
     }
 
     private fun getDeliveryDetailsFromValidateLocation(placeId: String) {
@@ -266,7 +274,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
 
     override fun onMapReady() {
         dynamicMapView?.setAllGesturesEnabled(false)
-        GeoUtils.showFirstFourLocationInMap(StoreUtils.sortedStoreListBasedOnDistance(mValidateLocationResponse?.validatePlace?.stores), dynamicMapView, context)
+        GeoUtils.showFirstFourLocationInMap(StoreUtils.sortedStoreListBasedOnDistance(mValidateLocationResponse?.validatePlace?.stores),mValidateLocationResponse?.validatePlace?.placeDetails, dynamicMapView, context)
     }
 
     override fun onMarkerClicked(marker: DynamicMapMarker) { }
