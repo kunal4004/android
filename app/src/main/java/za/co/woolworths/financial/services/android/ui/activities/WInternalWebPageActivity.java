@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl.ELITE_PLAN_MODEL;
+import static za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.IS_PET_INSURANCE;
 import static za.co.woolworths.financial.services.android.util.ChromeClient.CAMERA_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.util.ChromeClient.INPUT_FILE_REQUEST_CODE;
 
@@ -73,6 +74,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	private String collectionsExitUrl;
     private ChromeClient chromeClient;
     private Boolean ficaCanceled = false;
+    private Boolean isPetInsurance = false;
 	private FicaRefresh fica;
 	private boolean mustRedirectBlankTargetLinkToExternal = false;
 
@@ -212,6 +214,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 
 				}
 				ficaHandling(url);
+				petInsuranceHandling(url);
 			}
 		});
         webInternalPage.loadUrl(mExternalLink);
@@ -226,6 +229,15 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 				downloadFile(url,mimeType,userAgent,contentDisposition);
 			}
 		});
+	}
+
+	private void petInsuranceHandling(String url) {
+		if (isPetInsurance){
+			if (!url.contains(collectionsExitUrl)){
+				webInternalPage.destroy();
+				finishActivity();
+			}
+		}
 	}
 
 	public void ficaHandling(String url){
@@ -350,6 +362,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 			treatmentPlan = bundle.getBoolean(KotlinUtils.TREATMENT_PLAN);
 			collectionsExitUrl = bundle.getString(KotlinUtils.COLLECTIONS_EXIT_URL);
 			mustRedirectBlankTargetLinkToExternal = bundle.getBoolean(ARG_REDIRECT_BLANK_TARGET_LINK_EXTERNAL, false);
+			isPetInsurance = bundle.getBoolean(IS_PET_INSURANCE, false);
 		}
 	}
 

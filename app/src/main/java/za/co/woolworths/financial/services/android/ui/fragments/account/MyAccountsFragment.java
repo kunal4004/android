@@ -5,6 +5,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.dashboar
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
 import static za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.ACCOUNT_PRODUCT_PAYLOAD;
 import static za.co.woolworths.financial.services.android.ui.fragments.account.fica.FicaViewModel.GET_REFRESH_STATUS;
+import static za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.IS_PET_INSURANCE;
 import static za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.PET;
 import static za.co.woolworths.financial.services.android.ui.fragments.mypreferences.MyPreferencesFragment.IS_NON_WFS_USER;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_EXPECTATION_FAILED_502;
@@ -92,6 +93,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.AccountsPr
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState;
 import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplication;
 import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType;
+import za.co.woolworths.financial.services.android.models.dto.account.CoveredStatus;
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState;
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus;
 import za.co.woolworths.financial.services.android.models.dto.account.FicaModel;
@@ -1013,7 +1015,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 redirectToMyAccountsCardsActivity(ApplyNowState.PERSONAL_LOAN);
                 break;
             case R.id.applyPetInsurance:
-                navigateToPEtInsurance();
+                navigateToPetInsurance();
                 break;
             case R.id.linkedStoreCard:
                 navigateToLinkedStoreCard();
@@ -1122,8 +1124,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         }
     }
 
-    private void navigateToPEtInsurance() {
+    private void navigateToPetInsurance() {
         Intent intent = new Intent(getActivity(), WInternalWebPageActivity.class);
+        intent.putExtra(IS_PET_INSURANCE,true);
         getActivity().startActivityForResult(intent, PET_INSURANCE_REQUEST_CODE);
         getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
     }
@@ -1621,6 +1624,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     public void ficaRequest() {
+        KotlinUtils.Companion.showPetInsurancePendingDialog(getActivity().getSupportFragmentManager());
         if (SessionUtilities.getInstance().isUserAuthenticated() && KotlinUtils.Companion.isFicaEnabled()
                 && KotlinUtils.Companion.hasADayPassed(Utils.getSessionDaoValue(SessionDao.KEY.FICA_LAST_REQUEST_TIME))) {
             OneAppService.INSTANCE.getFicaResponse().enqueue(new Callback<FicaModel>() {
@@ -1689,14 +1693,24 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         ivPetInsuranceProgress.setVisibility(View.GONE);
         ivPetInsuranceProgress.clearAnimation();
         if (insuranceProduct == null) applyPetInsuranceCardView.setVisibility(View.GONE);
-        if (!insuranceProduct.getCovered()){
-            tvPetInsuranceApply.setVisibility(View.VISIBLE);
-            tvPetInsuranceCovered.setVisibility(View.GONE);
-            tvPetInsuranceHelped.setVisibility(View.GONE);
-        }else if (insuranceProduct.getCovered()){
-            tvPetInsuranceApply.setVisibility(View.GONE);
-            tvPetInsuranceCovered.setVisibility(View.VISIBLE);
-            tvPetInsuranceHelped.setVisibility(View.VISIBLE);
+        switch (CoveredStatus.valueOf(insuranceProduct.getStatus())){
+            case Covered:
+                tvPetInsuranceApply.setVisibility(View.GONE);
+                tvPetInsuranceCovered.setVisibility(View.VISIBLE);
+                tvPetInsuranceHelped.setVisibility(View.VISIBLE);
+                tvPetInsuranceCovered.setText(getString(R.string.pet_insurance_covered));
+                break;
+            case NotCovered:
+                tvPetInsuranceApply.setVisibility(View.VISIBLE);
+                tvPetInsuranceCovered.setVisibility(View.GONE);
+                tvPetInsuranceHelped.setVisibility(View.GONE);
+                break;
+            case Pending:
+                tvPetInsuranceApply.setVisibility(View.GONE);
+                tvPetInsuranceCovered.setVisibility(View.VISIBLE);
+                tvPetInsuranceHelped.setVisibility(View.VISIBLE);
+                tvPetInsuranceCovered.setText(getString(R.string.pet_insurance_pending));
+                break;
         }
     }
 

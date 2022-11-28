@@ -78,6 +78,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.petinsurance.PetInsurancePendingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiFailureHandler
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.CustomBottomSheetDialogFragment
@@ -1482,6 +1483,14 @@ class KotlinUtils {
                 title = title,
                 actionText = context.getString(R.string.got_it),
                 infoIcon = R.drawable.icon_dash_delivery_scooter
+            )
+        }
+        fun showPetInsurancePendingDialog(fragmentManager: FragmentManager) {
+            val petInsurancePendingFragment =
+                PetInsurancePendingFragment.newInstance()
+            petInsurancePendingFragment.show(
+                fragmentManager,
+                PetInsurancePendingFragment::class.java.simpleName
             )
         }
     }
