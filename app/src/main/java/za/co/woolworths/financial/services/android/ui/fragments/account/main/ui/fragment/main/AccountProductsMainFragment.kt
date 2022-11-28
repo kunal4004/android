@@ -38,9 +38,4 @@ class AccountProductsMainFragment : Fragment(R.layout.account_product_landing_ma
 
     fun getChildNavHost(): NavHostFragment? = childFragmentManager.findFragmentById(R.id.productNavigationContainerView) as? NavHostFragment
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-    }
-
-
 }
