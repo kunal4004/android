@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.text.HtmlCompat
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
@@ -44,8 +45,9 @@ class StoreListAdapter (
         fun bindItems(store: Store?, position: Int) {
             if(store?.locationId != "" && store?.storeName?.contains(StoreUtils.PARGO, true) == false) {
                 var pargoStoreName = store.storeName
-                pargoStoreName= " $pargoStoreName . ${StoreUtils.PARGO}"
-                itemView.tvAddressNickName.text = KotlinUtils.capitaliseFirstLetter(pargoStoreName)
+                pargoStoreName= KotlinUtils.capitaliseFirstLetter(pargoStoreName).toString() + " " + HtmlCompat.fromHtml(context.getString(R.string.pargo),
+                        HtmlCompat.FROM_HTML_MODE_LEGACY)
+                itemView.tvAddressNickName.text = pargoStoreName
             } else {
                 itemView.tvAddressNickName.text = KotlinUtils.capitaliseFirstLetter(store?.storeName)
             }

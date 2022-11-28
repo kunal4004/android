@@ -144,6 +144,7 @@ import kotlin.collections.get
 import kotlin.collections.set
 import android.util.Log
 import android.widget.*
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import retrofit2.HttpException
@@ -820,7 +821,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                                             validateLocationResponse?.validatePlace?.stores
                                     )
                                     if (store?.locationId != "" && store?.storeName?.contains(StoreUtils.PARGO, true) == false) {
-                                        Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName = store?.storeName.toString() + "." + StoreUtils.PARGO
+                                        Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName = store?.storeName.toString() + " " + context?.let {
+                                            HtmlCompat.fromHtml(it.getString(R.string.pargo),
+                                                    HtmlCompat.FROM_HTML_MODE_LEGACY)
+                                        }
                                         Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.locationId = store?.locationId.toString()
                                     }
                                 }

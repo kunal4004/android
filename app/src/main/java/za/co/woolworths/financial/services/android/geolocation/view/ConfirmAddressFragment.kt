@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
@@ -503,13 +504,16 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                                     }
                                 } else if (KotlinUtils.isComingFromCncTab == true) {
                                     KotlinUtils.isComingFromCncTab = false
-                                    if(address.placesId!! != null) {
+                                    if(address.placesId != null) {
                                         val store = GeoUtils.getStoreDetails(
-                                                address.placesId!!,
+                                                address.placesId,
                                                 validateLocationResponse?.validatePlace?.stores
                                         )
                                         if (store?.locationId != "" && store?.storeName?.contains(StoreUtils.PARGO, true) == false) {
-                                            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName = store?.storeName.toString() + "." + StoreUtils.PARGO
+                                            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName = store?.storeName.toString() + " " + context?.let {
+                                                HtmlCompat.fromHtml(it.getString(R.string.pargo),
+                                                        HtmlCompat.FROM_HTML_MODE_LEGACY)
+                                            }
                                             Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.locationId =  store?.locationId.toString()
                                         }
                                     }

@@ -14,6 +14,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProviders
@@ -682,7 +683,10 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 if (storePickupInfoResponse?.openDayDeliverySlots?.isNullOrEmpty() == false) {
                     val deliveryInDays = storePickupInfoResponse?.openDayDeliverySlots?.get(0)?.deliveryInDays
                     checkoutCollectionDetailsInfoLayout?.visibility = View.VISIBLE
-                    tvCollectionDetailsText.text = context?.resources?.getString(R.string.collection_details_text) + " " + deliveryInDays?.lowercase() + " " + context?.resources?.getString(R.string.notify_text_label)
+                    tvCollectionDetailsText.text = context?.resources?.getString(R.string.collection_details_text) + " " + deliveryInDays?.lowercase() + " " + (context?.resources?.getString(R.string.notify_text_label)?.let {
+                        HtmlCompat.fromHtml(it,
+                                HtmlCompat.FROM_HTML_MODE_LEGACY)
+                    })
                 }
 
                 checkoutCollectingTimeDetailsLayout.visibility = View.GONE

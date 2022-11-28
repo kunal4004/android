@@ -5,11 +5,13 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import com.awfs.coordination.R
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapView
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.StoreUtils
@@ -50,7 +52,8 @@ class GeoUtils {
             stores?.forEach {
 
                 if(it?.locationId != "" && it?.storeName?.contains(StoreUtils.PARGO, true) == false) {
-                    it.storeName = it?.storeName + "." + StoreUtils.PARGO
+                    it.storeName = it?.storeName + " " + HtmlCompat.fromHtml(WoolworthsApplication.getInstance().getString(R.string.pargo),
+                            HtmlCompat.FROM_HTML_MODE_LEGACY)
                 }
 
                 if (it.storeId == storeId) {
