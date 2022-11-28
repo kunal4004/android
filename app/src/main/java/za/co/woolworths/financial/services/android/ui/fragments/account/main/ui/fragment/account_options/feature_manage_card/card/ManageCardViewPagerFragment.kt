@@ -28,13 +28,14 @@ import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManag
 @AndroidEntryPoint
 class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_fragment) {
 
-    lateinit var manageCardAdapter: ManageCardViewPagerAdapter
+    var manageCardAdapter: ManageCardViewPagerAdapter?  = null
     val viewModel: MyAccountsRemoteApiViewModel by activityViewModels()
     val cardFreezeViewModel: TemporaryFreezeCardViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = ManageCardViewpagerFragmentBinding.bind(view)
+        manageCardAdapter = ManageCardViewPagerAdapter(fragment = requireActivity())
         with(binding) {
             initCardViewPager()
             subscribeObservers()
@@ -48,7 +49,7 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
                     with(response) {
                         renderSuccess {
                             val listOfStoreCardFeatures = handleStoreCardResponseResult(output)
-                            manageCardAdapter.setItem(listOfStoreCardFeatures)
+                            manageCardAdapter?.setItem(listOfStoreCardFeatures)
                             setDotIndicatorVisibility(listOfStoreCardFeatures)
                             val currentPosition = getCardPosition(listOfStoreCardFeatures)
                             if (listOfStoreCardFeatures?.isNotEmpty() == true) {
@@ -104,7 +105,6 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
     private fun ManageCardViewpagerFragmentBinding.initCardViewPager() {
         val dimens = resources.getDimension(R.dimen._15sdp).toInt()
         with(cardItemViewPager) {
-            manageCardAdapter = ManageCardViewPagerAdapter(fragment = this@ManageCardViewPagerFragment)
             disableNestedScrolling()
             offscreenPageLimit = 2
             adapter = manageCardAdapter
@@ -135,7 +135,6 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
             dotAtPosition1Img.setOnClickListener { cardItemViewPager.setCurrentItem(1, true) }
 
         }
-
         manageCardAdapter?.setItem(viewModel.listOfStoreCardFeatureType)
         setDotIndicatorVisibility(viewModel.listOfStoreCardFeatureType)
 

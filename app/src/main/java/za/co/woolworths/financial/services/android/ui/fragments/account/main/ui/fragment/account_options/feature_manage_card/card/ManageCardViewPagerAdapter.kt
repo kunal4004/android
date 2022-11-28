@@ -2,12 +2,12 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.adapter.FragmentViewHolder
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.card_slider.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.account_options.feature_manage_card.main.StoreCardFeatureType
-
-class ManageCardViewPagerAdapter(private var listOfStoreCards: MutableList<StoreCardFeatureType>? = mutableListOf(), fragment: Fragment) :
+class ManageCardViewPagerAdapter(private var listOfStoreCards: MutableList<StoreCardFeatureType>? = mutableListOf(), fragment: FragmentActivity) :
     FragmentStateAdapter(fragment) {
 
     private var pageIds = mapOfPageIds()
@@ -18,10 +18,12 @@ class ManageCardViewPagerAdapter(private var listOfStoreCards: MutableList<Store
     fun setItem(cardList: MutableList<StoreCardFeatureType>?) = run {
         this.listOfStoreCards?.clear()
         this.listOfStoreCards = cardList ?: mutableListOf()
-        notifyItemChanged(0, itemCount)
+        this.pageIds = mapOfPageIds()
+        this.notifyItemChanged(0, itemCount)
+        this.notifyItemRangeChanged(0, itemCount)
     }
 
-// Setting the automatically-generated ViewPager2's FrameLayout's clipChildren to false
+    // Setting the automatically-generated ViewPager2's FrameLayout's clipChildren to false
     // Uncomment this block
     override fun onBindViewHolder(
         holder: FragmentViewHolder,
@@ -31,13 +33,10 @@ class ManageCardViewPagerAdapter(private var listOfStoreCards: MutableList<Store
         (holder.itemView as ViewGroup).clipChildren = false
         super.onBindViewHolder(holder, position, payloads)
     }
-
     fun getListOfStoreCards(): MutableList<StoreCardFeatureType>? = this.listOfStoreCards
-
     override fun getItemCount(): Int =
         if (isListOfItemsNullOrEmpty()) 1
         else listOfStoreCards?.size ?: 1
-
     override fun createFragment(position: Int): Fragment {
         return when (isListOfItemsNullOrEmpty()) {
             true -> NoStoreCardFragment()
@@ -68,7 +67,6 @@ class ManageCardViewPagerAdapter(private var listOfStoreCards: MutableList<Store
             }
         }
     }
-
     override fun getItemId(position: Int): Long =
         if (isListOfItemsNullOrEmpty()) 0 else listOfStoreCards?.get(position)?.hashCode()?.toLong()
             ?: 0 // remove default fragment
@@ -76,4 +74,3 @@ class ManageCardViewPagerAdapter(private var listOfStoreCards: MutableList<Store
     override fun containsItem(itemId: Long): Boolean =
         if (isListOfItemsNullOrEmpty()) false else pageIds?.contains(itemId) ?: false
 }
-
