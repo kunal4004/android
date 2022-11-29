@@ -569,8 +569,8 @@ class DashChatMessageListeningService : LifecycleService(), ChatEventListener<Ne
                     .channel(channelId)
                     .queryMembers(0, 2, Filters.neutral()).enqueue { result ->
                         if (result.isSuccess) {
-                            val member = result.data().last { x -> x.user.id != currentUser.id }
-                            onSuccess(member.user)
+                            val member = result.data().lastOrNull { x -> x.user.id != currentUser.id }
+                            member?.user?.let { onSuccess(it) }
                         } else {
                             onFailure()
                         }
