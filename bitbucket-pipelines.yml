@@ -12,14 +12,8 @@ pipelines:
             artifacts:
               - app/build/reports/**
         - step:
-            name: Huawei QA Unit Test
+            name: Unit Test
             caches:
               - gradle
             script:
               - ./gradlew :app:testHuaweiQaDebugUnitTest
-        - step:
-            name: Google QA Unit Test
-            caches:
-              - gradle
-            script:
-              - ./gradlew :app:testGoogleQaDebugUnitTest
