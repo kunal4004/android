@@ -3,9 +3,8 @@ package za.co.woolworths.financial.services.android.checkout.view
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextUtils
-import android.text.TextWatcher
+import android.text.*
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -676,26 +675,29 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     private fun collectionDetails() {
-
         val fulfillmentStoreType = retriveFulfillmentStoreIdList()
         if (fulfillmentStoreType != null) {
-            if(fulfillmentStoreType.containsKey(StoreUtils1.Companion.FulfillmentType.CLOTHING_ITEMS?.type) || fulfillmentStoreType.containsKey(StoreUtils1.Companion.FulfillmentType.CRG_ITEMS?.type)) {
-                if (storePickupInfoResponse?.openDayDeliverySlots?.isNullOrEmpty() == false) {
-                    val deliveryInDays = storePickupInfoResponse?.openDayDeliverySlots?.get(0)?.deliveryInDays
-                    checkoutCollectionDetailsInfoLayout?.visibility = View.VISIBLE
-                    tvCollectionDetailsText.text = context?.resources?.getString(R.string.collection_details_text) + " " + deliveryInDays?.lowercase() + " " + (context?.resources?.getString(R.string.notify_text_label)?.let {
-                        HtmlCompat.fromHtml(it,
-                                HtmlCompat.FROM_HTML_MODE_LEGACY)
-                    })
-                }
+            if((fulfillmentStoreType.containsKey(StoreUtils1.Companion.FulfillmentType.CLOTHING_ITEMS?.type)
+                            || fulfillmentStoreType.containsKey(StoreUtils1.Companion.FulfillmentType.CRG_ITEMS?.type))
+                    && storePickupInfoResponse?.openDayDeliverySlots?.isNullOrEmpty() == false) {
+
+                val deliveryInDays = storePickupInfoResponse?.openDayDeliverySlots?.get(0)?.deliveryInDays
+                checkoutCollectionDetailsInfoLayout?.visibility = View.VISIBLE
+
+                val collectionDetailsTextString  = context?.resources?.getString(R.string.collection_details_text).toString() +
+                        " " + deliveryInDays?.lowercase() + ". " + (context?.resources?.getString(R.string.notify_text_label))
+                val spannableStringBuilder = SpannableStringBuilder(collectionDetailsTextString)
+                val styleSpam = StyleSpan(android.graphics.Typeface.BOLD)
+                spannableStringBuilder.setSpan(styleSpam, (collectionDetailsTextString.length - 41),
+                        collectionDetailsTextString.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+
+                tvCollectionDetailsText.text = spannableStringBuilder
 
                 checkoutCollectingTimeDetailsLayout.visibility = View.GONE
                 nativeCheckoutReturningFoodSubstitutionLayout.visibility = View.GONE
                 switchNeedBags.visibility = View.GONE
             }
         }
-
-
     }
     fun initializeDeliveryInstructions() {
         edtTxtSpecialDeliveryInstruction?.addTextChangedListener(deliveryInstructionsTextWatcher)

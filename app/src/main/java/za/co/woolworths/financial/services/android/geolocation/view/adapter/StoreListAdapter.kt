@@ -45,8 +45,8 @@ class StoreListAdapter (
         fun bindItems(store: Store?, position: Int) {
             if(store?.locationId != "" && store?.storeName?.contains(StoreUtils.PARGO, true) == false) {
                 var pargoStoreName = store.storeName
-                pargoStoreName= KotlinUtils.capitaliseFirstLetter(pargoStoreName).toString() + " " + HtmlCompat.fromHtml(context.getString(R.string.pargo),
-                        HtmlCompat.FROM_HTML_MODE_LEGACY)
+                pargoStoreName= KotlinUtils.capitaliseFirstLetter(pargoStoreName).toString() +
+                        StoreUtils.BULLET + StoreUtils.PARGO
                 itemView.tvAddressNickName.text = pargoStoreName
             } else {
                 itemView.tvAddressNickName.text = KotlinUtils.capitaliseFirstLetter(store?.storeName)

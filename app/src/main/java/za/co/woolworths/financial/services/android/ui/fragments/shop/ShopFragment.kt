@@ -401,10 +401,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                                 validateLocationResponse?.validatePlace?.stores
                         )
                         if (store?.locationId != "" && store?.storeName?.contains(StoreUtils.PARGO, true) == false) {
-                            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName = store?.storeName.toString() + " " + context?.let { it1 ->
-                                HtmlCompat.fromHtml(it1.getString(R.string.pargo),
-                                        HtmlCompat.FROM_HTML_MODE_LEGACY)
-                            }
+                            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName = StoreUtils.pargoStoreName(store?.storeName)
                             Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.locationId =  store?.locationId.toString()
                         }
                     }
@@ -651,15 +648,9 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                         validateLocationResponse?.validatePlace?.stores
                 )
                 if(store?.locationId != "" && store?.storeName?.contains(StoreUtils.PARGO, true) == false) {
-                    fulfillmentDetails.storeName = store?.storeName.toString() + " " + context?.let { it1 ->
-                        HtmlCompat.fromHtml(it1.getString(R.string.pargo),
-                                HtmlCompat.FROM_HTML_MODE_LEGACY)
-                    }
+                    fulfillmentDetails.storeName = StoreUtils.pargoStoreName(store?.storeName)
                     Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.locationId =  store?.locationId.toString()
-                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName = store?.storeName.toString() + " " + context?.let { it1 ->
-                        HtmlCompat.fromHtml(it1.getString(R.string.pargo),
-                                HtmlCompat.FROM_HTML_MODE_LEGACY)
-                    }
+                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName = StoreUtils.pargoStoreName(store?.storeName)
                 }
 
                 KotlinUtils.setDeliveryAddressViewFoShop(

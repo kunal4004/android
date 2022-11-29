@@ -52,8 +52,7 @@ class GeoUtils {
             stores?.forEach {
 
                 if(it?.locationId != "" && it?.storeName?.contains(StoreUtils.PARGO, true) == false) {
-                    it.storeName = it?.storeName + " " + HtmlCompat.fromHtml(WoolworthsApplication.getInstance().getString(R.string.pargo),
-                            HtmlCompat.FROM_HTML_MODE_LEGACY)
+                    it.storeName = StoreUtils.pargoStoreName(it?.storeName)
                 }
 
                 if (it.storeId == storeId) {

@@ -335,10 +335,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
             store?.let {
                 if (it.storeName != null) {
                     if(it?.locationId != "" && it?.storeName?.contains(StoreUtils.PARGO, true) == false) {
-                        it.storeName = it.storeName + " " + context?.let { it1 ->
-                            HtmlCompat.fromHtml(it1.getString(R.string.pargo),
-                                    HtmlCompat.FROM_HTML_MODE_LEGACY)
-                        }
+                        it.storeName = StoreUtils.pargoStoreName(it.storeName)
                     }
                     geoDeliveryText?.text = KotlinUtils.capitaliseFirstLetter(it.storeName)
                 }
@@ -986,10 +983,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                 validateLocationResponse?.validatePlace?.stores
         )
         if(store?.locationId != "" && store?.storeName?.contains(StoreUtils.PARGO, true) == false) {
-            mStoreName = store.storeName + " " + context?.let {
-                HtmlCompat.fromHtml(it.getString(R.string.pargo),
-                        HtmlCompat.FROM_HTML_MODE_LEGACY)
-            }
+            mStoreName = StoreUtils.pargoStoreName(store.storeName)
         }
         geoDeliveryText.text = KotlinUtils.capitaliseFirstLetter(mStoreName)
         editDelivery.text = bindString(R.string.edit)
@@ -1009,10 +1003,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                 it.distance!!
             }
             if(shortestDistance?.locationId != "" && shortestDistance?.storeName?.contains(StoreUtils.PARGO, true) == false) {
-                shortestDistance.storeName = shortestDistance?.storeName + " " + context?.let {
-                    HtmlCompat.fromHtml(it.getString(R.string.pargo),
-                            HtmlCompat.FROM_HTML_MODE_LEGACY)
-                }
+                shortestDistance.storeName = StoreUtils.pargoStoreName(shortestDistance?.storeName)
             }
         }
         return shortestDistance?.storeName

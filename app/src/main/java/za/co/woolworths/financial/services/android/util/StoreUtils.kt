@@ -10,6 +10,7 @@ import java.util.HashMap
 class StoreUtils {
     companion object {
         const val PARGO : String = "Pargo"
+        const val BULLET:String= " "+'\u2022'+" "
 
         enum class StoreDeliveryType(val type: String) {
             OTHER("other"),
@@ -23,6 +24,10 @@ class StoreUtils {
             CRG_ITEMS("07")
         }
 
+        fun pargoStoreName(storeName : String?) : String {
+            return storeName + BULLET + PARGO
+        }
+
         fun sortedStoreList(address: List<Store>?): List<Store> {
             val storeArrayList = ArrayList(address)
             val sortRoles: HashMap<String, Int> = hashMapOf(
@@ -32,12 +37,10 @@ class StoreUtils {
             )
             val comparator = Comparator { s1: Store, s2: Store ->
                 if(s1?.locationId != "" && s1?.storeName?.contains(PARGO, true) == false) {
-                    s1.storeName = s1?.storeName + " " + HtmlCompat.fromHtml(WoolworthsApplication.getInstance().getString(R.string.pargo),
-                            HtmlCompat.FROM_HTML_MODE_LEGACY)
+                    s1.storeName = pargoStoreName(s1?.storeName)
                 }
                 if(s2?.locationId != "" && s2?.storeName?.contains(PARGO, true) == false) {
-                    s2.storeName = s2?.storeName + " " + HtmlCompat.fromHtml(WoolworthsApplication.getInstance().getString(R.string.pargo),
-                            HtmlCompat.FROM_HTML_MODE_LEGACY)
+                    s2.storeName = pargoStoreName(s2?.storeName)
                 }
 
                 return@Comparator sortRoles[s2.storeDeliveryType?.lowercase()]?.let { sortRoles[s1.storeDeliveryType?.lowercase()]?.minus(it) }
