@@ -13,7 +13,7 @@ import za.co.woolworths.financial.services.android.geolocation.network.model.Val
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.Response
-import za.co.woolworths.financial.services.android.models.dto.account.FicaModel
+import za.co.woolworths.financial.services.android.models.dto.account.*
 import za.co.woolworths.financial.services.android.models.dto.bpi.BPIBody
 import za.co.woolworths.financial.services.android.models.dto.bpi.InsuranceTypeOptInBody
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
@@ -50,7 +50,6 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.net.URLEncoder
 import za.co.woolworths.financial.services.android.models.dto.dash.LastOrderDetailsResponse
-import za.co.woolworths.financial.services.android.models.dto.account.PetInsuranceModel
 
 object OneAppService : RetrofitConfig() {
 
@@ -1216,10 +1215,23 @@ object OneAppService : RetrofitConfig() {
             mApiInterface.getLastDashOrder(getSessionToken(), getDeviceIdentityToken())
         }
     }
+    fun getFeatureEnablementResponse(): Call<FeatureEnablementModel> {
+        return mApiInterface.getFeatureEnablement(
+            getSessionToken(),
+            getDeviceIdentityToken()
+        )
+    }
     fun getPetInsuranceResponse(): Call<PetInsuranceModel> {
         return mApiInterface.getPetInsurance(
             getSessionToken(),
             getDeviceIdentityToken()
+        )
+    }
+    fun getAppGUIDResponse(appGUIDRequestType: AppGUIDRequestType): Call<AppGUIDModel> {
+        return mApiInterface.getAppGUID(
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            getRequestBody(appGUIDRequestType)
         )
     }
 }

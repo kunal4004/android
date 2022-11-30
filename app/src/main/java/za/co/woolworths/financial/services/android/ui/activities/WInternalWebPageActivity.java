@@ -232,11 +232,9 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	}
 
 	private void petInsuranceHandling(String url) {
-		if (isPetInsurance){
-			if (!url.contains(collectionsExitUrl)){
-				webInternalPage.destroy();
-				finishActivity();
-			}
+		if (isPetInsurance && !url.contains(collectionsExitUrl)){
+			webInternalPage.destroy();
+			finishActivity();
 		}
 	}
 

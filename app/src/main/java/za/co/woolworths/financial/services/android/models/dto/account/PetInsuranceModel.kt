@@ -15,8 +15,8 @@ data class PetInsuranceModel(
 data class InsuranceProducts(var type: String, var status: String, var planType: String) :
     Parcelable
 
-enum class CoveredStatus(s: String) {
-    NotCovered("NOT_COVERED"),
-    Covered("COVERED"),
-    Pending("PENDING")
+enum class CoveredStatus() {
+    NOT_COVERED,
+    COVERED,
+    PENDING
 }
