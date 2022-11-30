@@ -5,11 +5,11 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
-import androidx.core.text.HtmlCompat
 import com.awfs.coordination.R
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.geolocation.network.model.PlaceDetails
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapView
@@ -62,49 +62,44 @@ class GeoUtils {
             return null
         }
 
-        fun showFirstFourLocationInMap(addressStoreList: List<Store>?, dynamicMapView: DynamicMapView?, context: Context?) {
+        fun showFirstFourLocationInMap(
+            addressStoreList: List<Store>?,
+            placeDetails: PlaceDetails?,
+            dynamicMapView: DynamicMapView?, context: Context?
+        ) {
             addressStoreList?.let {
-                for (i in 0..3) {
-                    if (context != null) {
-                        dynamicMapView?.addMarker(
-                            context,
-                            addressStoreList?.get(i)?.latitude,
-                            addressStoreList?.get(i)?.longitude,
-                            R.drawable.pin
-                        )
+                it.forEachIndexed { position, store ->
+                    if (position <= 4) {
+                        if (context != null) {
+                            dynamicMapView?.addMarker(
+                                context,
+                                latitude = store?.latitude,
+                                longitude = store?.longitude,
+                                icon = if (!store.locationId.isNullOrEmpty()) R.drawable.pargopin else R.drawable.pin
+                            )
+                        }
+                        if(position==0) {
+                            dynamicMapView?.moveCamera(
+                                store?.latitude,
+                                store?.longitude,
+                                11f
+                            )
+                        }
                     }
-                    dynamicMapView?.moveCamera(
-                        addressStoreList.get(i)?.latitude,
-                        addressStoreList.get(i)?.longitude,
-                        11f
+                    else
+                        return@forEachIndexed
+                }
+            }
+            placeDetails?.let {
+                context?.let {
+                    dynamicMapView?.addMarker(
+                        context,
+                        latitude = placeDetails.latitude,
+                        longitude = placeDetails.longitude,
+                        icon = R.drawable.cur_address_pin
                     )
                 }
             }
-        }
-
-        private fun BitmapFromVector(context: Context, vectorResId: Int): BitmapDescriptor? {
-            val vectorDrawable: Drawable? = ContextCompat.getDrawable(context, vectorResId)
-            vectorDrawable?.apply {
-                setBounds(
-                    0,
-                    0,
-                    vectorDrawable.intrinsicWidth,
-                    vectorDrawable.intrinsicHeight
-                )
-            }
-
-            val bitmap: Bitmap? = vectorDrawable?.intrinsicWidth?.let {
-                Bitmap.createBitmap(
-                    it,
-                    vectorDrawable.intrinsicHeight,
-                    Bitmap.Config.ARGB_8888
-                )
-            }
-            val canvas = bitmap?.let { Canvas(it) }
-            if (canvas != null) {
-                vectorDrawable?.draw(canvas)
-            }
-            return BitmapDescriptorFactory.fromBitmap(bitmap)
         }
     }
 }

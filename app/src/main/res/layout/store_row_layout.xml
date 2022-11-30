@@ -12,14 +12,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="@dimen/twelve_dp" />
+        app:layout_constraintGuide_end="@dimen/ten_dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineStart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="@dimen/twelve_dp" />
+        app:layout_constraintGuide_begin="@dimen/five_dp" />
 
 
     <androidx.constraintlayout.widget.Guideline
@@ -40,7 +40,7 @@
         android:id="@+id/imgAddressSelector"
         android:layout_width="@dimen/twenty_four_dp"
         android:layout_height="@dimen/twenty_dp"
-        android:layout_marginEnd="@dimen/sixteen_dp"
+        android:layout_marginEnd="@dimen/five_dp"
         android:button="@drawable/address_selector_background"
         android:clickable="false"
         android:padding="@dimen/two_dp"
@@ -52,15 +52,13 @@
     <TextView
         android:id="@+id/tvAddressNickName"
         style="@style/myriad_pro_semi_bold_black_15_text_style"
-        android:layout_width="@dimen/zero_dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/sixteen_dp"
+        android:layout_marginEnd="@dimen/five_dp"
         android:lineSpacingExtra="@dimen/_2sdp"
-        android:maxWidth="@dimen/two_hundred_ten_dp"
-        android:maxLines="1"
+        android:maxLines="2"
         android:translationY="-1sp"
         app:layout_constraintBottom_toTopOf="@+id/tvAddress"
-        app:layout_constraintEnd_toStartOf="@+id/txtStoreDistance"
         app:layout_constraintStart_toStartOf="@+id/tvAddress"
         app:layout_constraintTop_toTopOf="@id/guidelineTop"
         tools:text="Constantia Emporium" />
@@ -69,10 +67,10 @@
         android:id="@+id/tvAddress"
         style="@style/myriad_pro_regular_black_14_text_style"
         android:layout_width="0dp"
-        android:layout_height="@dimen/thirty_five_dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/sixteen_dp"
-        android:layout_marginTop="@dimen/_2sdp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="@dimen/five_dp"
+        android:layout_marginTop="@dimen/five_dp"
         android:ellipsize="end"
         android:lineSpacingExtra="@dimen/_2sdp"
         android:maxLines="2"
@@ -82,7 +80,7 @@
         app:layout_constraintEnd_toStartOf="@+id/txtStoreDistance"
         app:layout_constraintStart_toEndOf="@+id/imgAddressSelector"
         app:layout_constraintTop_toBottomOf="@+id/tvAddressNickName"
-        tools:text="Constantia Emporium, Ladies Mile Rd, Constantia, Cape Town, 7806" />
+        tools:text="Constantia Emporium, " />
 
     <TextView
         android:id="@+id/txtStoreDistance"
@@ -94,9 +92,9 @@
         android:paddingTop="@dimen/seven_dp"
         android:paddingEnd="@dimen/twelve_dp"
         android:paddingBottom="@dimen/seven_dp"
-        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintTop_toTopOf="@id/guidelineTop"
+        app:layout_constraintLeft_toRightOf="@id/tvAddress"
+        app:layout_constraintTop_toBottomOf="@id/tvAddressNickName"
         tools:text="400m" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

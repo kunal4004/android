@@ -12,7 +12,6 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
@@ -23,7 +22,6 @@ import kotlinx.android.synthetic.main.fragment_click_and_collect_stores.dynamicM
 import kotlinx.android.synthetic.main.geo_location_delivery_address.*
 import kotlinx.android.synthetic.main.no_connection.view.*
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
@@ -45,7 +43,6 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseManage
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.StoreUtils
 import za.co.woolworths.financial.services.android.util.Utils
-import java.net.SocketTimeoutException
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -119,28 +116,6 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
         }
     }
 
-    private fun showFirstFourLocationInMap(addressStoreList: List<Store>?) {
-        addressStoreList?.let {
-            for (i in 0..3) {
-                dynamicMapView?.addMarker(
-                    requireContext(),
-                    latitude = addressStoreList?.get(i)?.latitude,
-                    longitude = addressStoreList?.get(i)?.longitude,
-                    icon = R.drawable.pin
-                )
-            }
-        }
-        //after plotting all the markers pointing the camera to nearest store
-        val store:Store?=addressStoreList?.get(0)
-        store?.let{
-            dynamicMapView?.moveCamera(
-                latitude = it.latitude,
-                longitude =it.longitude,
-                zoom = 11f
-            )
-        }
-    }
-
     private fun setAddressUI(
         address: List<Store>?,
         mValidateLocationResponse: ValidateLocationResponse?
@@ -153,13 +128,18 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
     private fun setStoreList(address: List<Store>?) {
         rvStoreList.layoutManager =
             activity?.let { activity -> LinearLayoutManager(activity) }
-        rvStoreList.adapter = activity?.let { activity ->
-            StoreListAdapter(
-                activity,
-                StoreUtils.sortedStoreList(address),
-                this
-            )
+        val storesListWithHeaders=StoreUtils.getStoresListWithHeaders(StoreUtils.sortedStoreList(address))
+
+        if(storesListWithHeaders?.isNotEmpty()){
+            rvStoreList.adapter = activity?.let { activity ->
+                StoreListAdapter(
+                    activity,
+                    storesListWithHeaders,
+                    this
+                )
         }
+       }
+
         rvStoreList.adapter?.notifyDataSetChanged()
     }
 
@@ -239,7 +219,10 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
                 }
             }
         }
-        setStoreList(list)
+
+        if(list?.isNotEmpty()){
+            setStoreList(list)
+        }
     }
 
     private fun getDeliveryDetailsFromValidateLocation(placeId: String) {
@@ -300,7 +283,7 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
 
     override fun onMapReady() {
         dynamicMapView?.setAllGesturesEnabled(false)
-        showFirstFourLocationInMap(mValidateLocationResponse?.validatePlace?.stores)
+        GeoUtils.showFirstFourLocationInMap(StoreUtils.sortedStoreListBasedOnDistance(mValidateLocationResponse?.validatePlace?.stores),mValidateLocationResponse?.validatePlace?.placeDetails, dynamicMapView, context)
     }
 
     override fun onMarkerClicked(marker: DynamicMapMarker) { }

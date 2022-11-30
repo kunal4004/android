@@ -13,7 +13,6 @@ import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.google.gson.JsonSyntaxException
@@ -23,11 +22,11 @@ import kotlinx.android.synthetic.main.fragment_shop_department.*
 import kotlinx.android.synthetic.main.layout_dash_collection_store.*
 import kotlinx.android.synthetic.main.layout_dash_set_address_fragment.*
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
+import za.co.woolworths.financial.services.android.geolocation.network.model.PlaceDetails
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidatePlace
 import za.co.woolworths.financial.services.android.geolocation.view.PargoStoreInfoBottomSheetDialog
@@ -52,7 +51,6 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.TA
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getDeliveryType
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-import java.net.SocketTimeoutException
 
 class ChangeFullfilmentCollectionStoreFragment() :
     DepartmentExtensionFragment(), DynamicMapDelegate,
@@ -66,6 +64,7 @@ class ChangeFullfilmentCollectionStoreFragment() :
     private var parentFragment: ShopFragment? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
     private var saveInstanceState: Bundle? = null
+    private var updatedPlace:PlaceDetails?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -157,7 +156,7 @@ class ChangeFullfilmentCollectionStoreFragment() :
             }
             return
         }
-        if (validatePlace.stores?.isNullOrEmpty() == true) {
+        if (validatePlace.stores.isNullOrEmpty()) {
             showNoCollectionStoresUi()
             return
         }
@@ -187,6 +186,7 @@ class ChangeFullfilmentCollectionStoreFragment() :
                                 validateLocationResponse?.validatePlace?.stores?.size
                             )
                             updatedAddressStoreList = validateLocationResponse?.validatePlace?.stores
+                            updatedPlace=validateLocationResponse?.validatePlace?.placeDetails
                             tvAddress?.text =
                                 KotlinUtils.capitaliseFirstLetter(validateLocationResponse?.validatePlace?.placeDetails?.address1)
                             placeId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
@@ -221,12 +221,20 @@ class ChangeFullfilmentCollectionStoreFragment() :
         layoutClickAndCollectStore?.ivCross?.visibility = View.GONE
         rvStoreList.layoutManager =
             activity?.let { activity -> LinearLayoutManager(activity) }
-        rvStoreList.adapter = activity?.let { activity ->
-            StoreListAdapter(
-                activity,
-                StoreUtils.sortedStoreList(stores),
-                this
-            )
+
+        if (stores?.isNotEmpty() == true) {
+            val storesListWithHeaders =
+                StoreUtils.getStoresListWithHeaders(StoreUtils.sortedStoreList(stores))
+            if (storesListWithHeaders.isNotEmpty()) {
+                rvStoreList.adapter = activity?.let { activity ->
+                    StoreListAdapter(
+                        activity,
+                        storesListWithHeaders,
+                        this
+                    )
+                }
+            }
+
         }
         rvStoreList.adapter?.notifyDataSetChanged()
     }
@@ -285,12 +293,23 @@ class ChangeFullfilmentCollectionStoreFragment() :
     override fun onMapReady() {
         dynamicMapView?.setAllGesturesEnabled(false)
         val addressStoreList = WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
-        if (addressStoreList != null && addressStoreList?.isEmpty() == false) {
-            GeoUtils.showFirstFourLocationInMap(addressStoreList, dynamicMapView, context)
-        } else if (updatedAddressStoreList?.isEmpty() == false)  {
-            GeoUtils.showFirstFourLocationInMap(updatedAddressStoreList, dynamicMapView, context)
+        val placeDetails=WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.placeDetails
+        if (addressStoreList?.isNotEmpty() == true) {
+            GeoUtils.showFirstFourLocationInMap(
+                StoreUtils.sortedStoreListBasedOnDistance(
+                    addressStoreList
+                ), placeDetails, dynamicMapView, context
+            )
+        } else if (updatedAddressStoreList?.isNotEmpty() == true) {
+            GeoUtils.showFirstFourLocationInMap(
+                StoreUtils.sortedStoreListBasedOnDistance(
+                    updatedAddressStoreList
+                ), updatedPlace, dynamicMapView, context
+            )
         }
-    }
+
+        }
+
 
     override fun onMarkerClicked(marker: DynamicMapMarker) {
 

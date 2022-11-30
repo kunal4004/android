@@ -1,9 +1,6 @@
 package za.co.woolworths.financial.services.android.util
 
-import androidx.core.text.HtmlCompat
-import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import java.util.ArrayList
 import java.util.HashMap
 
@@ -50,5 +47,42 @@ class StoreUtils {
             sortedStoreList.sortWith(comparator)
             return sortedStoreList
         }
+
+        fun getStoresListWithHeaders(addressList: List<Store>?): List<StoreListRow> {
+            val storeListRowsList = arrayListOf<StoreListRow>()
+            addressList?.forEachIndexed { index, store ->
+                var type: String? = null
+                when (store.storeDeliveryType?.lowercase()) {
+                    StoreDeliveryType.OTHER.type.lowercase() -> {
+                        type = Constant.FASHION_BEAUTY_HOME_WARE
+                    }
+                    StoreDeliveryType.FOOD.type.lowercase() -> {
+                        type = Constant.FOOD_ITEMS_ONLY
+                    }
+                    StoreDeliveryType.FOOD_AND_OTHER.type.lowercase() -> {
+                        type = Constant.ALL_WOOL_WORTHS_PRODUCTS_ONLY
+                    }
+                }
+                if (index == 0) {
+                    type?.let { StoreListRow.Header(it) }?.let { storeListRowsList.add(it) }
+                    storeListRowsList.add(StoreListRow.StoreRow(store))
+                } else if (!store?.storeDeliveryType?.equals(addressList?.get(index - 1)?.storeDeliveryType)!!) {
+                    type?.let { StoreListRow.Header(it) }?.let { storeListRowsList.add(it) }
+                    storeListRowsList.add(StoreListRow.StoreRow(store))
+                } else {
+                    storeListRowsList.add(StoreListRow.StoreRow(store))
+                }
+            }
+            return storeListRowsList
+
+        }
+
+        fun sortedStoreListBasedOnDistance(address: List<Store>?): List<Store>? {
+            address?.stream()?.sorted { store1, store2 ->
+                store2?.distance?.let { store1?.distance?.compareTo(it) }!!
+            }
+            return address
+        }
+
     }
 }
