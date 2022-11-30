@@ -3,9 +3,8 @@ package za.co.woolworths.financial.services.android.checkout.view
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextUtils
-import android.text.TextWatcher
+import android.text.*
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +13,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProviders
@@ -73,12 +73,14 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.retriveFulfillmentStoreIdList
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
 import za.co.woolworths.financial.services.android.util.analytics.FirebaseManager
 import za.co.woolworths.financial.services.android.util.pushnotification.NotificationUtils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.viewmodels.ShoppingCartLiveData
 import java.util.regex.Pattern
+import za.co.woolworths.financial.services.android.util.StoreUtils as StoreUtils1
 
 class CheckoutReturningUserCollectionFragment : Fragment(),
     ShoppingBagsRadioGroupAdapter.EventListner, View.OnClickListener, CollectionTimeSlotsListener,
@@ -673,10 +675,28 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     private fun collectionDetails() {
-        if (storePickupInfoResponse?.openDayDeliverySlots?.isNullOrEmpty() == false) {
-            val deliveryInDays = storePickupInfoResponse?.openDayDeliverySlots?.get(0)?.deliveryInDays
-            checkoutCollectionDetailsInfoLayout?.visibility = View.VISIBLE
-            tvCollectionDetailsText.text = context?.resources?.getString(R.string.collection_details_text) + " " + deliveryInDays?.lowercase() + " " + context?.resources?.getString(R.string.notify_text_label)
+        val fulfillmentStoreType = retriveFulfillmentStoreIdList()
+        if (fulfillmentStoreType != null) {
+            if((fulfillmentStoreType.containsKey(StoreUtils1.Companion.FulfillmentType.CLOTHING_ITEMS?.type)
+                            || fulfillmentStoreType.containsKey(StoreUtils1.Companion.FulfillmentType.CRG_ITEMS?.type))
+                    && storePickupInfoResponse?.openDayDeliverySlots?.isNullOrEmpty() == false) {
+
+                val deliveryInDays = storePickupInfoResponse?.openDayDeliverySlots?.get(0)?.deliveryInDays
+                checkoutCollectionDetailsInfoLayout?.visibility = View.VISIBLE
+
+                val collectionDetailsTextString  = context?.resources?.getString(R.string.collection_details_text).toString() +
+                        " " + deliveryInDays?.lowercase() + ". " + (context?.resources?.getString(R.string.notify_text_label))
+                val spannableStringBuilder = SpannableStringBuilder(collectionDetailsTextString)
+                val styleSpam = StyleSpan(android.graphics.Typeface.BOLD)
+                spannableStringBuilder.setSpan(styleSpam, (collectionDetailsTextString.length - 41),
+                        collectionDetailsTextString.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+
+                tvCollectionDetailsText.text = spannableStringBuilder
+
+                checkoutCollectingTimeDetailsLayout.visibility = View.GONE
+                nativeCheckoutReturningFoodSubstitutionLayout.visibility = View.GONE
+                switchNeedBags.visibility = View.GONE
+            }
         }
     }
     fun initializeDeliveryInstructions() {

@@ -144,6 +144,7 @@ import kotlin.collections.get
 import kotlin.collections.set
 import android.util.Log
 import android.widget.*
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import retrofit2.HttpException
@@ -151,6 +152,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_select_store_details.*
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.view.*
 import kotlinx.coroutines.*
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.*
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.apihelper.RatingAndReviewApiHelper
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModel
@@ -812,6 +814,17 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                                     navigateToUnsellableItemsFragment(it as java.util.ArrayList<UnSellableCommerceItem>,
                                         KotlinUtils.browsingDeliveryType?.name)
                                 }
+                                val placeId = validateLocationResponse?.validatePlace?.placeDetails?.placeId
+                                if(placeId != null) {
+                                    val store = GeoUtils.getStoreDetails(
+                                            placeId,
+                                            validateLocationResponse?.validatePlace?.stores
+                                    )
+                                    if (store?.locationId != "" && store?.storeName?.contains(StoreUtils.PARGO, true) == false) {
+                                        Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName = StoreUtils.pargoStoreName(store?.storeName)
+                                        Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.locationId = store?.locationId.toString()
+                                    }
+                                }
                             } else
                                 callConfirmPlace()
                         }
@@ -1059,17 +1072,14 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 if(this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.FOOD_ITEMS?.type && Utils.retrieveStoreId(this.productDetails?.fulfillmentType) == "") {
                     showProductUnavailable()
                     showProductNotAvailableForCollection()
+                    return
                 }  //FBH only
                 else if((this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CLOTHING_ITEMS?.type || this.productDetails?.fulfillmentType == StoreUtils.Companion.FulfillmentType.CRG_ITEMS?.type) &&
                         (Utils.retrieveStoreId(this.productDetails?.fulfillmentType) == "")) {
                     showProductUnavailable()
                     showProductNotAvailableForCollection()
-                } /*else {
-                    //Unrelated item in selected store
-                    showProductUnavailable()
-                    showProductNotAvailableForCollection()
-                }*/
-                return
+                    return
+                }
             }
         }
 
