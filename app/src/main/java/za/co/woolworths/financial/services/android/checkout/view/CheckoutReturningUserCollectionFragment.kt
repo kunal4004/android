@@ -691,11 +691,11 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 spannableStringBuilder.setSpan(styleSpam, (collectionDetailsTextString.length - 41),
                         collectionDetailsTextString.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
 
-                tvCollectionDetailsText.text = spannableStringBuilder
+                tvCollectionDetailsText?.text = spannableStringBuilder
 
-                checkoutCollectingTimeDetailsLayout.visibility = View.GONE
-                nativeCheckoutReturningFoodSubstitutionLayout.visibility = View.GONE
-                switchNeedBags.visibility = View.GONE
+                checkoutCollectingTimeDetailsLayout?.visibility = View.GONE
+                nativeCheckoutReturningFoodSubstitutionLayout?.visibility = View.GONE
+                txtNeedBags?.visibility = View.GONE
             }
         }
     }
