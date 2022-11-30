@@ -1,9 +1,6 @@
 package za.co.woolworths.financial.services.android.util
 
-import androidx.core.text.HtmlCompat
-import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import java.util.ArrayList
 import java.util.HashMap
 
