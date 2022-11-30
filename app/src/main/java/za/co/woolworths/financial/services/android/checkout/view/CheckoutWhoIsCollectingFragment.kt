@@ -10,6 +10,7 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
@@ -26,12 +27,11 @@ import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
+import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.IS_COMING_FROM_CNC_SELETION
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.SAVED_ADDRESS_RESPONSE
-import za.co.woolworths.financial.services.android.util.Constant
-import za.co.woolworths.financial.services.android.util.StoreUtils
-import za.co.woolworths.financial.services.android.util.Utils
 import java.util.regex.Pattern
 
 /**
@@ -80,6 +80,20 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
             }
             R.id.myVehicleText -> {
                 onVehicleSelected()
+            }
+
+            R.id.backArrow -> {
+                activity ?.apply{
+                    setResult(CheckOutFragment.RESULT_RELOAD_CART)
+                    view?.let{
+                        closeFragment(it)
+                    }
+                    overridePendingTransition(
+                        R.anim.slide_in_from_left,
+                        R.anim.slide_out_to_right
+                    )
+                }
+
             }
         }
     }
@@ -250,6 +264,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
         myVehicleText?.setOnClickListener(this)
         taxiText?.setOnClickListener(this)
         showFBHView()
+        backArrow.setOnClickListener(this)
 
         recipientNameEditText?.apply {
             afterTextChanged {
@@ -390,4 +405,10 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
     fun testGetTaxiList(): List<View> {
         return listOfTaxiInputFields
     }
+
+    private fun FragmentActivity.closeFragment(view: View) {
+        view.postDelayed({ onBackPressed() }, AppConstant.DELAY_500_MS)
+    }
+
+
 }
