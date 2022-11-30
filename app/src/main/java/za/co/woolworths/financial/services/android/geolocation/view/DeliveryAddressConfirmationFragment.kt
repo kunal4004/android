@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
@@ -334,7 +335,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
             store?.let {
                 if (it.storeName != null) {
                     if(it?.locationId != "" && it?.storeName?.contains(StoreUtils.PARGO, true) == false) {
-                        it.storeName = StoreUtils.PARGO + " " + it.storeName
+                        it.storeName = StoreUtils.pargoStoreName(it.storeName)
                     }
                     geoDeliveryText?.text = KotlinUtils.capitaliseFirstLetter(it.storeName)
                 }
@@ -982,7 +983,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                 validateLocationResponse?.validatePlace?.stores
         )
         if(store?.locationId != "" && store?.storeName?.contains(StoreUtils.PARGO, true) == false) {
-            mStoreName = StoreUtils.PARGO + " " + store.storeName
+            mStoreName = StoreUtils.pargoStoreName(store.storeName)
         }
         geoDeliveryText.text = KotlinUtils.capitaliseFirstLetter(mStoreName)
         editDelivery.text = bindString(R.string.edit)
@@ -1002,7 +1003,7 @@ class DeliveryAddressConfirmationFragment : Fragment(R.layout.geo_location_deliv
                 it.distance!!
             }
             if(shortestDistance?.locationId != "" && shortestDistance?.storeName?.contains(StoreUtils.PARGO, true) == false) {
-                shortestDistance.storeName = StoreUtils.PARGO + " " + shortestDistance?.storeName
+                shortestDistance.storeName = StoreUtils.pargoStoreName(shortestDistance?.storeName)
             }
         }
         return shortestDistance?.storeName

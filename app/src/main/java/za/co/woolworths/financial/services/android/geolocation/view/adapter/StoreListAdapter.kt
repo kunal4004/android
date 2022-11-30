@@ -58,21 +58,15 @@ class StoreListAdapter(
 
 
     inner class SavedAddressViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
         fun bindItems(storeRow: StoreListRow.StoreRow, position: Int) {
             storeRow?.apply {
-                if (store?.locationId != "" && store?.storeName?.contains(
-                        StoreUtils.PARGO,
-                        true
-                    ) == false
-                ) {
-                    var pargoStoreName = " "+store.storeName
-                    pargoStoreName = "$pargoStoreName  ${StoreUtils.BULLET} ${StoreUtils.PARGO}"
-                    itemView?.tvAddressNickName?.text =
-                        KotlinUtils.capitaliseFirstLetter(pargoStoreName)
+                if(store?.locationId != "" && store?.storeName?.contains(StoreUtils.PARGO, true) == false) {
+                    var pargoStoreName = store.storeName
+                    pargoStoreName= KotlinUtils.capitaliseFirstLetter(pargoStoreName).toString() +
+                            StoreUtils.BULLET + StoreUtils.PARGO
+                    itemView.tvAddressNickName?.text = pargoStoreName
                 } else {
-                    itemView?.tvAddressNickName?.text =
-                        KotlinUtils.capitaliseFirstLetter(store?.storeName)
+                    itemView.tvAddressNickName?.text = KotlinUtils.capitaliseFirstLetter(store?.storeName)
                 }
                 itemView?.tvAddress?.text = store.storeAddress
                 itemView?.txtStoreDistance?.text = store.distance?.let { changeMeterToKM(it) }

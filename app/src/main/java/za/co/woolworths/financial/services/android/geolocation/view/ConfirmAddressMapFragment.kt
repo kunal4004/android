@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
@@ -36,6 +37,7 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAu
 import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.ROUTE
 import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.STREET_NUMBER
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
@@ -291,6 +293,18 @@ class ConfirmAddressMapFragment :
                                     }
                                     return@let
                                 } else if (KotlinUtils.isComingFromCncTab == true) {
+
+                                    if(placeId != null) {
+                                        val store = GeoUtils.getStoreDetails(
+                                                placeId,
+                                                validateLocationResponse?.validatePlace?.stores
+                                        )
+                                        if (store?.locationId != "" && store?.storeName?.contains(StoreUtils.PARGO, true) == false) {
+                                            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName = StoreUtils.pargoStoreName(store?.storeName)
+                                            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.locationId =  store?.locationId.toString()
+                                        }
+                                    }
+
                                     /*user is coming from CNC i.e. set Location flow */
                                     // navigate to CNC home tab.
                                     KotlinUtils.isComingFromCncTab = false

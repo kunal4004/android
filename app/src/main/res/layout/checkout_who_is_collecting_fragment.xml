@@ -24,16 +24,27 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <ImageView
+                android:id="@+id/backArrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/sixteen_dp"
+                android:layout_marginTop="@dimen/thirty_dp"
+                android:layout_marginEnd="@dimen/sixteen_dp"
+                android:background="@drawable/back_arrow"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <include
                 android:id="@+id/whoIsCollectingDetailsInfoLayout"
                 layout="@layout/layout_who_is_collecting_details_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/thirty_dp"
                 android:layout_marginStart="@dimen/sixteen_dp"
+                android:layout_marginTop="@dimen/thirty_dp"
                 android:layout_marginEnd="@dimen/sixteen_dp"
                 android:visibility="gone"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toBottomOf="@+id/backArrow" />
 
             <include
                 android:id="@+id/whoIsCollectingDetailsLayout"

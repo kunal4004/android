@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
@@ -237,6 +238,14 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
                 if (validateLocationResponse != null) {
                     when (validateLocationResponse?.httpCode) {
                         AppConstant.HTTP_OK -> {
+                                val store = GeoUtils.getStoreDetails(
+                                        placeId,
+                                        validateLocationResponse?.validatePlace?.stores
+                                )
+                                if (store?.locationId != "" && store?.storeName?.contains(StoreUtils.PARGO, true) == false) {
+                                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName = StoreUtils.pargoStoreName(store?.storeName)
+                                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.locationId = store?.locationId.toString()
+                                }
                             setAddressUI(validateLocationResponse?.validatePlace?.stores, validateLocationResponse)
                         }
                         else -> {
