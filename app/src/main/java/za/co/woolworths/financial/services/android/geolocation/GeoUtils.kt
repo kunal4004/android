@@ -5,13 +5,16 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import com.awfs.coordination.R
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.views.maps.DynamicMapView
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.StoreUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
 class GeoUtils {
@@ -47,6 +50,11 @@ class GeoUtils {
 
         fun getStoreDetails(storeId: String?, stores: List<Store>?): Store? {
             stores?.forEach {
+
+                if(it?.locationId != "" && it?.storeName?.contains(StoreUtils.PARGO, true) == false) {
+                    it.storeName = StoreUtils.pargoStoreName(it?.storeName)
+                }
+
                 if (it.storeId == storeId) {
                     return it
                 }

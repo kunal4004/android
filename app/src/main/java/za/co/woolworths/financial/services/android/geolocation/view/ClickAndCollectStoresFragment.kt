@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
@@ -24,6 +25,7 @@ import kotlinx.android.synthetic.main.no_connection.view.*
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.StoreListAdapter
@@ -253,6 +255,14 @@ class ClickAndCollectStoresFragment : DialogFragment(), DynamicMapDelegate,
                 if (validateLocationResponse != null) {
                     when (validateLocationResponse?.httpCode) {
                         AppConstant.HTTP_OK -> {
+                                val store = GeoUtils.getStoreDetails(
+                                        placeId,
+                                        validateLocationResponse?.validatePlace?.stores
+                                )
+                                if (store?.locationId != "" && store?.storeName?.contains(StoreUtils.PARGO, true) == false) {
+                                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName = StoreUtils.pargoStoreName(store?.storeName)
+                                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.locationId = store?.locationId.toString()
+                                }
                             setAddressUI(validateLocationResponse?.validatePlace?.stores, validateLocationResponse)
                         }
                         else -> {

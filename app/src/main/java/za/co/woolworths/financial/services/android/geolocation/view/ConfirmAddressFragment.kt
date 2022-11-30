@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
@@ -33,6 +34,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Save
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.GeoUtils
 import za.co.woolworths.financial.services.android.geolocation.model.MapData
 import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
@@ -502,6 +504,16 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                                     }
                                 } else if (KotlinUtils.isComingFromCncTab == true) {
                                     KotlinUtils.isComingFromCncTab = false
+                                    if(address.placesId != null) {
+                                        val store = GeoUtils.getStoreDetails(
+                                                address.placesId,
+                                                validateLocationResponse?.validatePlace?.stores
+                                        )
+                                        if (store?.locationId != "" && store?.storeName?.contains(StoreUtils.PARGO, true) == false) {
+                                            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName = StoreUtils.pargoStoreName(store?.storeName)
+                                            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.locationId =  store?.locationId.toString()
+                                        }
+                                    }
                                     /* set cnc browsing data */
                                     WoolworthsApplication.setCncBrowsingValidatePlaceDetails(
                                         validateLocationResponse?.validatePlace)
