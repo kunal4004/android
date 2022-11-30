@@ -47,9 +47,9 @@ class StoreListAdapter (
                 var pargoStoreName = store.storeName
                 pargoStoreName= KotlinUtils.capitaliseFirstLetter(pargoStoreName).toString() +
                         StoreUtils.BULLET + StoreUtils.PARGO
-                itemView.tvAddressNickName.text = pargoStoreName
+                itemView.tvAddressNickName?.text = pargoStoreName
             } else {
-                itemView.tvAddressNickName.text = KotlinUtils.capitaliseFirstLetter(store?.storeName)
+                itemView.tvAddressNickName?.text = KotlinUtils.capitaliseFirstLetter(store?.storeName)
             }
             itemView.tvAddress.text = store?.storeAddress
             itemView.txtStoreDistance.text = store?.distance?.let { changeMeterToKM(it) }
