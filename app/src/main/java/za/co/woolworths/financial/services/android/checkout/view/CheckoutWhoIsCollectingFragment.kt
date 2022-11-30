@@ -264,7 +264,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
         myVehicleText?.setOnClickListener(this)
         taxiText?.setOnClickListener(this)
         showFBHView()
-        backArrow.setOnClickListener(this)
+        backArrow?.setOnClickListener(this)
 
         recipientNameEditText?.apply {
             afterTextChanged {
