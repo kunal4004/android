@@ -2,7 +2,7 @@ image: androidsdk/android-30
 
 pipelines:
   pull-requests:
-    default:
+    '**':
       - step:
           name: Unit Test
           size: 2x
