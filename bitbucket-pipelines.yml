@@ -4,6 +4,7 @@ pipelines:
   default:
     - step:
         name: Unit Test
+        size: 2x
         caches:
           - gradle
         script:
