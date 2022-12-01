@@ -22,6 +22,8 @@ class FirebaseEventDetailManager {
 
         fun success(eventName: String, activity: Activity) = triggerEvent(hashMapOf(FirebaseManagerAnalyticsProperties.PropertyNames.SUCCESSFUL to FirebaseManagerAnalyticsProperties.PropertyNames.SUCCESSFUL), eventName, activity)
 
+        fun passcodeSuccess(eventName: String, activity: Activity) = triggerEvent(hashMapOf(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION to FirebaseManagerAnalyticsProperties.PropertyNames.SUCCESSFUL), eventName, activity)
+
         private fun triggerEvent(arguments: HashMap<String, String>, eventName: String, activity: Activity) {
             SessionUtilities.getInstance()?.jwt?.C2Id?.let { c2id -> arguments[FirebaseManagerAnalyticsProperties.PropertyNames.C2ID] = c2id }
             Utils.triggerFireBaseEvents(eventName, arguments, activity)
