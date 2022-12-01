@@ -47,12 +47,16 @@ class OrdersAdapter(val context: Context, val iPresentOrderDetailInterface: IPre
     inner class UpcomingOrderViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
         override fun bind(position: Int) {
             val item = dataList[position].item as Order
-            itemView.orderNumber?.text =  context.getString(R.string.order_id,item.orderId.replaceFirstChar { it.uppercase() })
-            itemView.orderState?.text = item.state?.drop(6)
+            itemView.orderNumber?.text = context.getString(R.string.order_id,
+                item.orderId.replaceFirstChar { it.uppercase() })
+            var itemState = item.state
+            itemView.orderState?.text = itemState?.replace(context.getString(R.string.order), "")
+
             itemView.purchaseDate?.text = WFormatter.formatOrdersHistoryDate(item.submittedDate)
-            itemView.orderAmount?.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item.total)
+            itemView.orderAmount?.text =
+                CurrencyFormatter.formatAmountToRandAndCentWithSpace(item.total)
             itemView.setOnClickListener { iPresentOrderDetailInterface?.presentOrderDetailsPage(item) }
-            itemView.orderState.setBackgroundResource(if (item.state.equals("Order Cancelled", true)) R.drawable.order_state_orange_bg else R.drawable.order_state_bg)
+            itemView.orderState.setBackgroundResource(if (item.state?.contains(context.getString(R.string.cancelled))) R.drawable.order_state_orange_bg else R.drawable.order_state_bg)
 
             if (!item.deliveryDates?.isJsonNull!!) {
                 val deliveryDates: HashMap<String, String> = hashMapOf()
