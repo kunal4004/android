@@ -447,7 +447,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
 
         BottomNavigationMenuView bottomNavigationMenu = getBottomNavigationById().getBottomNavigationMenuView();
-        if(bottomNavigationMenu != null && bottomNavigationMenu.getChildAt(INDEX_ACCOUNT) instanceof BottomNavigationItemView) {
+        if (bottomNavigationMenu != null && bottomNavigationMenu.getChildAt(INDEX_ACCOUNT) instanceof BottomNavigationItemView) {
             accountNavigationView = (BottomNavigationItemView) bottomNavigationMenu.getChildAt(INDEX_ACCOUNT);
             notificationBadgeOne = LayoutInflater.from(this).inflate(R.layout.green_circle_icon, accountNavigationView, false);
             onlineIconImageView = notificationBadgeOne.findViewById(R.id.onlineIconImageView);
