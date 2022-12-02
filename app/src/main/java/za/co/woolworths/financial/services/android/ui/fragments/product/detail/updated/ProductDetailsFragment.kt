@@ -1375,7 +1375,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 onlinePromotionalTextView2?.visibility = View.GONE
                 onlinePromotionalTextView3?.visibility = View.GONE
             }
-            if (true == it?.isRnREnabled && RatingAndReviewUtil.isRatingAndReviewConfigavailbel()) {
+            if (true == it.isRnREnabled && RatingAndReviewUtil.isRatingAndReviewConfigavailbel()) {
                 ratingBarTop?.rating = it.averageRating
                 tvTotalReviews?.text = resources.getQuantityString(
                     R.plurals.no_review,
@@ -1424,8 +1424,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         )
                         val recommend = recommendedPercentage.split("%")
                         if (recommend.size == 2) {
-                            tvRecommendPer?.text = "${recommend[0]}% "
-                            tvRecommendTxt?.text = recommend[1]
+                            tvRecommendPer.text = "${recommend[0]}% "
+                            tvRecommendTxt.text = recommend[1]
                         }
                         if (reviewCount > 1)
                             btViewMoreReview?.text = resources.getQuantityString(
@@ -1467,22 +1467,22 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             setSecondaryRatingsUI(secondaryRatings)
                             setReviewThumbnailUI(photos.thumbnails)
                             if (contextDataValue.isEmpty() && tagDimensions.isEmpty()) {
-                                tvSkinProfile?.visibility = View.GONE
+                                tvSkinProfile.visibility = View.GONE
                             }
                             if (RatingAndReviewUtil.likedReviews.contains(id.toString())) {
                                 iv_like.setImageResource(R.drawable.iv_like_selected)
                             }
 
                             if (RatingAndReviewUtil.reportedReviews.contains(id.toString())) {
-                                tvReport?.setTextColor(Color.RED)
-                                tvReport?.setText(resources.getString(R.string.reported))
+                                tvReport.setTextColor(Color.RED)
+                                tvReport.setText(resources.getString(R.string.reported))
                                 tvReport?.setTypeface(tvReport.typeface, Typeface.BOLD)
                                 tvReport.paintFlags = Paint.UNDERLINE_TEXT_FLAG
                             }
                         }
                     } else {
-                        customerReview?.visibility = View.GONE
-                        tvRatingDetails?.visibility = View.GONE
+                        customerReview.visibility = View.GONE
+                        tvRatingDetails.visibility = View.GONE
                     }
                 }
 
@@ -3733,14 +3733,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun onScrollChanged() {
         scrollView?.let {
             if (!it.canScrollVertically(1) && !isRnRAPICalled) {
-                if (productDetails?.isRnREnabled == true && RatingAndReviewUtil.isRatingAndReviewConfigavailbel())
-                    productDetails?.productId?.let {
-                        productDetailsPresenter?.loadRatingNReview(it, 1, 0)
-                        isRnRAPICalled = true
-                        showProgressBar()
-                        RatingAndReviewUtil.reportedReviews.clear()
-                        RatingAndReviewUtil.likedReviews.clear()
-                    }
+                productDetails?.isRnREnabled?.let {
+                    if (productDetails?.isRnREnabled == true && RatingAndReviewUtil.isRatingAndReviewConfigavailbel())
+                        productDetails?.productId?.let {
+                            productDetailsPresenter?.loadRatingNReview(it, 1, 0)
+                            isRnRAPICalled = true
+                            showProgressBar()
+                            RatingAndReviewUtil.reportedReviews.clear()
+                            RatingAndReviewUtil.likedReviews.clear()
+                        }
+                }
             }
         }
 
