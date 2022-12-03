@@ -696,6 +696,11 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 checkoutCollectingTimeDetailsLayout?.visibility = View.GONE
                 nativeCheckoutReturningFoodSubstitutionLayout?.visibility = View.GONE
                 txtNeedBags?.visibility = View.GONE
+                instructionTxtShimmerFrameLayout?.visibility = View.GONE
+                switchNeedBags?.visibility = View.GONE
+                specialInstructionSwitchShimmerFrameLayout?.visibility = View.GONE
+                shoppingBagSeparator?.visibility = View.GONE
+                viewGiftHorizontalSeparator?.visibility = View.GONE
             }
         }
     }
