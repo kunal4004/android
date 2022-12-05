@@ -163,8 +163,8 @@ class ManageStoreCardLandingList(
         return storeCard?.actions?.let { action ->
             action.forEach {  actionButton ->
                 when(actionButton.action){
-                    StoreCardItemActions.LINK_STORE_CARD -> showLinkNewCardItem(true, actionButton.label)
-                    StoreCardItemActions.ACTIVATE_VIRTUAL_CARD -> showActivateVirtualCardItem(true, actionButton.label)
+                    StoreCardItemActions.LINK_STORE_CARD -> showLinkNewCardItem(true)
+                    StoreCardItemActions.ACTIVATE_VIRTUAL_CARD -> showActivateVirtualCardItem(true)
                     null -> Unit
                 }
             }
