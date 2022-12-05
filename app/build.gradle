@@ -12,10 +12,10 @@ apply plugin: 'dagger.hilt.android.plugin'
 android {
 
     def major = "9"
-    def minor = "5"
-    def fix = "2"
+    def minor = "6"
+    def fix = "0"
     def jobNumberProduction = 209
-    def jobNumberQa = 653
+    def jobNumberQa = 654
     def jobNumberFeature = 653
 
     buildFeatures {
