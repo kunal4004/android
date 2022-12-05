@@ -12,10 +12,10 @@ apply plugin: 'dagger.hilt.android.plugin'
 android {
 
     def major = "9"
-    def minor = "5"
+    def minor = "6"
     def fix = "0"
-    def jobNumberProduction = 201
-    def jobNumberQa = 651
+    def jobNumberProduction = 209
+    def jobNumberQa = 654
     def jobNumberFeature = 1006132
 
     dataBinding {
@@ -254,7 +254,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-analytics:18.0.1'
 
     //noinspection GradleCompatible
-    implementation 'androidx.viewpager2:viewpager2:1.0.0'
+    implementation 'androidx.viewpager2:viewpager2:1.1.0-beta01'
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
     implementation 'androidx.annotation:annotation:1.2.0'
@@ -367,7 +367,7 @@ dependencies {
     implementation "com.google.dagger:hilt-android:2.42"
     kapt "com.google.dagger:hilt-android-compiler:2.42"
     implementation 'com.google.maps:google-maps-services:2.0.0'
-    implementation 'com.github.corouteam:GlideToVectorYou:v2.0.0'
+    implementation 'com.github.corouteam:GlideToVectorYou:2.0.0'
 
     // Huawei
     huaweiQaImplementation 'com.huawei.hms:location:6.4.0.300'
@@ -378,6 +378,8 @@ dependencies {
     huaweiProductionImplementation 'com.huawei.hms:push:6.5.0.300'
     huaweiQaImplementation 'com.huawei.hms:hianalytics:6.6.0.300'
     huaweiProductionImplementation 'com.huawei.hms:hianalytics:6.6.0.300'
+    huaweiQaImplementation 'com.huawei.agconnect:agconnect-crash:1.7.2.300'
+    huaweiProductionImplementation 'com.huawei.agconnect:agconnect-crash:1.7.2.300'
 
     // get stream chat Client + offline
     implementation "io.getstream:stream-chat-android-offline:$stream_version"
