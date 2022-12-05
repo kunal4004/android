@@ -410,13 +410,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             if (ratingReviewResponse?.reviews?.isNotEmpty() == true) {
                 ratingReviewResponse?.reviews?.get(0)?.let {
                     if (RatingAndReviewUtil.likedReviews.contains(it.id.toString())) {
-                        iv_like.setImageResource(R.drawable.iv_like_selected)
+                        iv_like?.setImageResource(R.drawable.iv_like_selected)
                     }
                     if (RatingAndReviewUtil.reportedReviews.contains(it.id.toString())) {
-                        tvReport.setTextColor(Color.RED)
-                        tvReport.text = resources.getString(R.string.reported)
+                        tvReport?.setTextColor(Color.RED)
+                        tvReport?.text = resources?.getString(R.string.reported)
                         tvReport?.setTypeface(tvReport.typeface, Typeface.BOLD)
-                        tvReport.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                        tvReport?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
                     }
                 }
 
@@ -509,7 +509,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     R.id.tvSkinProfile -> viewSkinProfileDialog()
                     R.id.btViewMoreReview -> navigateToMoreReviewsScreen()
                     R.id.tvTotalReviews -> {
-                        if (tvTotalReviews.text != ZERO_REVIEWS) navigateToMoreReviewsScreen()
+                        if (tvTotalReviews?.text != ZERO_REVIEWS) navigateToMoreReviewsScreen()
                     }
                     R.id.tvReport -> navigateToReportReviewScreen()
                     R.id.iv_like -> likeButtonClicked()
@@ -1375,17 +1375,17 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 onlinePromotionalTextView2?.visibility = View.GONE
                 onlinePromotionalTextView3?.visibility = View.GONE
             }
-            if (it.isRnREnabled && RatingAndReviewUtil.isRatingAndReviewConfigavailbel()) {
-                ratingBarTop.rating = it.averageRating
-                tvTotalReviews.text = resources.getQuantityString(
+            if (true == it.isRnREnabled && RatingAndReviewUtil.isRatingAndReviewConfigavailbel()) {
+                ratingBarTop?.rating = it.averageRating
+                tvTotalReviews?.text = resources.getQuantityString(
                     R.plurals.no_review,
                     it.reviewCount,
                     it.reviewCount
                 )
-                ratingBarTop.visibility = View.VISIBLE
-                tvTotalReviews.visibility = View.VISIBLE
+                ratingBarTop?.visibility = View.VISIBLE
+                tvTotalReviews?.visibility = View.VISIBLE
                 prodId = it.productId
-                tvTotalReviews.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                tvTotalReviews?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
             } else {
                 hideRatingAndReview()
             }
@@ -1399,25 +1399,25 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
             private fun hideRatingAndReview() {
-                headerCustomerReview.visibility = View.GONE
-                reviewDetailsInformation.visibility = View.GONE
-                customerReview.visibility = View.GONE
-                rlViewMoreReview.visibility = View.GONE
+                headerCustomerReview?.visibility = View.GONE
+                reviewDetailsInformation?.visibility = View.GONE
+                customerReview?.visibility = View.GONE
+                rlViewMoreReview?.visibility = View.GONE
             }
 
             private fun showRatingAndReview() {
-                headerCustomerReview.visibility = View.VISIBLE
-                reviewDetailsInformation.visibility = View.VISIBLE
-                customerReview.visibility = View.VISIBLE
-                rlViewMoreReview.visibility = View.VISIBLE
+                headerCustomerReview?.visibility = View.VISIBLE
+                reviewDetailsInformation?.visibility = View.VISIBLE
+                customerReview?.visibility = View.VISIBLE
+                rlViewMoreReview?.visibility = View.VISIBLE
             }
 
             private fun setReviewUI(ratingNReviewResponse: RatingReviewResponse) {
                 ratingNReviewResponse.apply {
                     reviewStatistics.apply {
-                        ratingBar.rating = averageRating
-                        ratingBarTop.rating = averageRating
-                        tvCustomerReviewCount.text = resources.getQuantityString(
+                        ratingBar?.rating = averageRating
+                        ratingBarTop?.rating = averageRating
+                        tvCustomerReviewCount?.text = resources.getQuantityString(
                             R.plurals.customer_review,
                             reviewCount,
                             reviewCount
@@ -1428,41 +1428,41 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             tvRecommendTxt.text = recommend[1]
                         }
                         if (reviewCount > 1)
-                            btViewMoreReview.text = resources.getQuantityString(
+                            btViewMoreReview?.text = resources.getQuantityString(
                                 R.plurals.more_review,
                                 (reviewCount - 1),
                                 (reviewCount - 1)
                             )
                         else {
-                            btViewMoreReview.visibility = View.GONE
+                            btViewMoreReview?.visibility = View.GONE
                         }
-                        tvTotalReviews.text =
+                        tvTotalReviews?.text =
                             resources.getQuantityString(
                                 R.plurals.no_review,
                                 reviewCount,
                                 reviewCount
                             )
                     }
-                    tvReport.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-                    tvSkinProfile.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-                    tvRatingDetails.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-                    if (reviews.isNotEmpty()) {
+                    tvReport?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                    tvSkinProfile?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                    tvRatingDetails?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                    if (reviews?.isNotEmpty()) {
                         reviews[0].apply {
-                            tvName.text = userNickname
+                            tvName?.text = userNickname
                             if (isVerifiedBuyer)
-                                tvVerifiedBuyer.visibility = View.VISIBLE
+                                tvVerifiedBuyer?.visibility = View.VISIBLE
                             else
-                                tvVerifiedBuyer.visibility = View.GONE
+                                tvVerifiedBuyer?.visibility = View.GONE
                             if (isStaffMember)
-                                tvVerifiedStaffMember.visibility = View.VISIBLE
+                                tvVerifiedStaffMember?.visibility = View.VISIBLE
                             else
-                                tvVerifiedStaffMember.visibility = View.GONE
-                            ratingBar.rating = rating
-                            tvReviewHeading.text = title
-                            tvCustomerReview.text = reviewText
-                            tvReviewPostedOn.text = syndicatedSource
-                            tvDate.text = submissionTime
-                            tvLikes.text = totalPositiveFeedbackCount.toString()
+                                tvVerifiedStaffMember?.visibility = View.GONE
+                            ratingBar?.rating = rating
+                            tvReviewHeading?.text = title
+                            tvCustomerReview?.text = reviewText
+                            tvReviewPostedOn?.text = syndicatedSource
+                            tvDate?.text = submissionTime
+                            tvLikes?.text = totalPositiveFeedbackCount.toString()
                             setReviewAdditionalFields(additionalFields)
                             setSecondaryRatingsUI(secondaryRatings)
                             setReviewThumbnailUI(photos.thumbnails)
@@ -1544,7 +1544,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     rootView.addView(tvAdditionalFieldLabel)
                     rootView.addView(ivCircle)
                     rootView.addView(tvAdditionalFieldValue)
-                    llAdditionalFields.addView(rootView)
+                    llAdditionalFields?.addView(rootView)
                 }
             }
 
@@ -1556,9 +1556,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
 
             private fun setReviewThumbnailUI(thumbnails: List<Thumbnails>) {
-                rvThumbnail.layoutManager = GridLayoutManager(requireContext(), 3)
+                rvThumbnail?.layoutManager = GridLayoutManager(requireContext(), 3)
                 reviewThumbnailAdapter = ReviewThumbnailAdapter(requireContext(), this)
-                rvThumbnail.adapter = reviewThumbnailAdapter
+                rvThumbnail?.adapter = reviewThumbnailAdapter
                 thumbnailFullList = thumbnails
                 if (thumbnails.size > 2) {
                     reviewThumbnailAdapter.setDataList(thumbnailFullList.subList(0, 2))
@@ -2964,8 +2964,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             showRatingAndReview()
             setReviewUI(ratingNReview.data[0])
             ratingReviewResponse = ratingNReview.data[0]
-            scrollView.post {
-                scrollView.fullScroll(View.FOCUS_DOWN)
+            scrollView?.post {
+                scrollView?.fullScroll(View.FOCUS_DOWN)
             }
         } else
             hideRatingAndReview()
@@ -3733,14 +3733,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun onScrollChanged() {
         scrollView?.let {
             if (!it.canScrollVertically(1) && !isRnRAPICalled) {
-                if (productDetails?.isRnREnabled == true && RatingAndReviewUtil.isRatingAndReviewConfigavailbel())
-                    productDetails?.productId?.let {
-                        productDetailsPresenter?.loadRatingNReview(it, 1, 0)
-                        isRnRAPICalled = true
-                        showProgressBar()
-                        RatingAndReviewUtil.reportedReviews.clear()
-                        RatingAndReviewUtil.likedReviews.clear()
-                    }
+                productDetails?.isRnREnabled?.let {
+                    if (productDetails?.isRnREnabled == true && RatingAndReviewUtil.isRatingAndReviewConfigavailbel())
+                        productDetails?.productId?.let {
+                            productDetailsPresenter?.loadRatingNReview(it, 1, 0)
+                            isRnRAPICalled = true
+                            showProgressBar()
+                            RatingAndReviewUtil.reportedReviews.clear()
+                            RatingAndReviewUtil.likedReviews.clear()
+                        }
+                }
             }
         }
 
