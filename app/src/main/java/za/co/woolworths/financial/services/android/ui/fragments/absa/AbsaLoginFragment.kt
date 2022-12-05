@@ -163,6 +163,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
     private fun successHandler(nonce: String?, esessionid: String?) {
 
         activity?.apply {
+            FirebaseEventDetailManager.passcodeSuccess(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this)
             Intent(activity, AbsaStatementsActivity::class.java).let {
                 it.putExtra(NONCE, nonce)
                 it.putExtra(E_SESSION_ID, esessionid)
