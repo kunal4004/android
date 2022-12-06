@@ -255,7 +255,7 @@ class ChangeFullfilmentCollectionStoreFragment :
     override fun onMapReady() {
         binding.layoutClickAndCollectStore.dynamicMapView?.setAllGesturesEnabled(false)
         val addressStoreList = WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
-        if (addressStoreList != null && addressStoreList?.isEmpty() == false) {
+        if (addressStoreList?.isNullOrEmpty() == false) {
             GeoUtils.showFirstFourLocationInMap(addressStoreList, binding.layoutClickAndCollectStore.dynamicMapView, context)
         } else if (updatedAddressStoreList?.isEmpty() == false)  {
             GeoUtils.showFirstFourLocationInMap(updatedAddressStoreList, binding.layoutClickAndCollectStore.dynamicMapView, context)
@@ -403,7 +403,7 @@ class ChangeFullfilmentCollectionStoreFragment :
         KotlinUtils.browsingCncStore =
             GeoUtils.getStoreDetails(
                 storeId,
-                WoolworthsApplication.getCncBrowsingValidatePlaceDetails().stores
+                WoolworthsApplication.getCncBrowsingValidatePlaceDetails()?.stores
             )
     }
 

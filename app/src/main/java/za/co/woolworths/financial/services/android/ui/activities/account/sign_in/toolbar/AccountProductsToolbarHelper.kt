@@ -16,10 +16,14 @@ import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 class AccountProductsToolbarHelper(
-    private val binding: AccountProductLandingToolbarViewBinding,
     private val fragment: Fragment?
 ) {
     private val mContext = fragment?.requireContext()
+    private lateinit var binding: AccountProductLandingToolbarViewBinding
+    fun setLayout(content: AccountProductLandingToolbarViewBinding){
+        binding = content
+    }
+
     private fun setToolbar(
         @StringRes title: Int,
         @ColorRes colorId: Int? = R.color.white

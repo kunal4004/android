@@ -113,8 +113,8 @@ class ClickAndCollectStoresFragment : BaseDialogFragmentBinding<FragmentClickAnd
             for (i in 0..3) {
                 binding.dynamicMapView?.addMarker(
                     requireContext(),
-                    latitude = addressStoreList?.get(i)?.latitude,
-                    longitude = addressStoreList?.get(i)?.longitude,
+                    latitude = addressStoreList?.getOrNull(i)?.latitude,
+                    longitude = addressStoreList?.getOrNull(i)?.longitude,
                     icon = R.drawable.pin
                 )
             }

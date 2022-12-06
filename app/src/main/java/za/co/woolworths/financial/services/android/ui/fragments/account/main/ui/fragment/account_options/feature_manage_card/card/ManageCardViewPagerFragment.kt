@@ -28,15 +28,15 @@ import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManag
 @AndroidEntryPoint
 class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_fragment) {
 
-    private var manageCardAdapter: ManageCardViewPagerAdapter? = null
+    var manageCardAdapter: ManageCardViewPagerAdapter?  = null
     val viewModel: MyAccountsRemoteApiViewModel by activityViewModels()
     val cardFreezeViewModel: TemporaryFreezeCardViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = ManageCardViewpagerFragmentBinding.bind(view)
+        manageCardAdapter = ManageCardViewPagerAdapter(fragment = requireActivity())
         with(binding) {
-            manageCardAdapter = ManageCardViewPagerAdapter(this@ManageCardViewPagerFragment)
             initCardViewPager()
             subscribeObservers()
         }
@@ -135,7 +135,6 @@ class ManageCardViewPagerFragment : Fragment(R.layout.manage_card_viewpager_frag
             dotAtPosition1Img.setOnClickListener { cardItemViewPager.setCurrentItem(1, true) }
 
         }
-
         manageCardAdapter?.setItem(viewModel.listOfStoreCardFeatureType)
         setDotIndicatorVisibility(viewModel.listOfStoreCardFeatureType)
 

@@ -42,7 +42,6 @@ import za.co.woolworths.financial.services.android.util.binding.BaseFragmentBind
 import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
-
 class OrderConfirmationFragment :
     BaseFragmentBinding<FragmentOrderConfirmationBinding>(FragmentOrderConfirmationBinding::inflate) {
 
@@ -169,7 +168,6 @@ class OrderConfirmationFragment :
         binding.apply {
             orderIdText.text = bindString(R.string.order_details_toolbar_title, orderId)
             btnClose.setOnClickListener { requireActivity().onBackPressed() }
-
             helpTextView.setOnClickListener {
                 findNavController()?.navigate(R.id.action_OrderConfirmationFragment_to_helpAndSupportFragment)
             }
