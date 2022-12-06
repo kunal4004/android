@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.setFragmentResultListener
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.available_funds_fragment.*
 import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
@@ -12,10 +11,8 @@ import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.OutSystemBuilder
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
-
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
-
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
 
@@ -23,16 +20,20 @@ class BlackCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        availableFundBackground?.setBackgroundResource(R.drawable.black_credit_card_background)
 
-        initShimmer()
-        stopProgress()
+        binding?.apply {
+            availableFundBackground?.setBackgroundResource(R.drawable.black_credit_card_background)
 
-        incViewStatementButton?.visibility = if (AppConfigSingleton.absaBankingOpenApiServices?.isEnabled == true) View.VISIBLE else View.GONE
+            binding.initShimmer()
+            binding.stopProgress()
 
-        incRecentTransactionButton?.setOnClickListener(this)
-        incViewStatementButton?.setOnClickListener(this)
-        incPayMyAccountButton?.setOnClickListener(this)
+            incViewStatementButton?.root?.visibility =
+                if (AppConfigSingleton.absaBankingOpenApiServices?.isEnabled == true) View.VISIBLE else View.GONE
+
+            incRecentTransactionButton?.root?.setOnClickListener(this@BlackCreditCardFragment)
+            incViewStatementButton?.root?.setOnClickListener(this@BlackCreditCardFragment)
+            incPayMyAccountButton?.root?.setOnClickListener(this@BlackCreditCardFragment)
+        }
 
         navigateToDeepLinkView()
 

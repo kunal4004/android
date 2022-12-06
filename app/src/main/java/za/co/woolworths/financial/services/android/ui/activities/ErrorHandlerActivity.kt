@@ -2,13 +2,11 @@ package za.co.woolworths.financial.services.android.ui.activities
 
 import android.app.Activity
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.activity_checkout.*
-import kotlinx.android.synthetic.main.error_handler_activity.*
+import com.awfs.coordination.databinding.ErrorHandlerActivityBinding
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.ErrorHandlerFragment
 import za.co.woolworths.financial.services.android.util.Utils
@@ -46,9 +44,12 @@ class ErrorHandlerActivity : AppCompatActivity() {
         const val ERROR_EMPTY_REQUEST_CODE: Int = 191
     }
 
+    private lateinit var binding: ErrorHandlerActivityBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.error_handler_activity)
+        binding = ErrorHandlerActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         Utils.updateStatusBarBackground(this)
         if (savedInstanceState == null) {
             getBundleArgument()
@@ -62,7 +63,7 @@ class ErrorHandlerActivity : AppCompatActivity() {
     }
 
     private fun actionBar() {
-        setSupportActionBar(tbErrorHandler)
+        setSupportActionBar(binding.tbErrorHandler)
         supportActionBar?.apply {
             setDisplayShowTitleEnabled(false)
             when (errorType) {

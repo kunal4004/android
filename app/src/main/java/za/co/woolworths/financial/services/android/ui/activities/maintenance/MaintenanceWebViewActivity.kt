@@ -10,7 +10,7 @@ import android.webkit.WebViewClient
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.maintenance_web_view_layout.*
+import com.awfs.coordination.databinding.MaintenanceWebViewLayoutBinding
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants.Companion.BUNDLE
 import za.co.woolworths.financial.services.android.util.SessionUtilities
@@ -20,25 +20,35 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities
  */
 class MaintenanceWebViewActivity : AppCompatActivity() {
 
+    private lateinit var binding: MaintenanceWebViewLayoutBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.maintenance_web_view_layout)
-        val b = intent.getBundleExtra(BUNDLE)
-        val url = b!!.getString("link")
-        maintenanceWebView.settings.javaScriptEnabled = true
-        maintenanceWebView.settings.domStorageEnabled = true
-        maintenanceWebView.settings.cacheMode = WebSettings.LOAD_NO_CACHE
-        maintenanceWebView.settings.mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
-        maintenanceWebView.webViewClient = WebViewController()
-        try {
-            val m =
-                WebSettings::class.java.getMethod("setMixedContentMode",
-                    Int::class.javaPrimitiveType)
-            m.invoke(maintenanceWebView.settings, 2) // 2 = MIXED_CONTENT_COMPATIBILITY_MODE
-        } catch (ex: Exception) {
+        binding = MaintenanceWebViewLayoutBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        binding.apply {
+            val b = intent.getBundleExtra(BUNDLE)
+            val url = b!!.getString("link")
+            maintenanceWebView.settings.javaScriptEnabled = true
+            maintenanceWebView.settings.domStorageEnabled = true
+            maintenanceWebView.settings.cacheMode = WebSettings.LOAD_NO_CACHE
+            maintenanceWebView.settings.mixedContentMode =
+                WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
+            maintenanceWebView.webViewClient = WebViewController()
+            try {
+                val m =
+                    WebSettings::class.java.getMethod(
+                        "setMixedContentMode",
+                        Int::class.javaPrimitiveType
+                    )
+                m.invoke(maintenanceWebView.settings, 2) // 2 = MIXED_CONTENT_COMPATIBILITY_MODE
+            } catch (ex: Exception) {
+            }
+            maintenanceWebView.settings.mixedContentMode =
+                WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
+            maintenanceWebView.loadUrl(url!!, getExtraHeader()!!)
         }
-        maintenanceWebView.settings.mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
-        maintenanceWebView.loadUrl(url!!, getExtraHeader()!!)
     }
 
     protected class WebViewController : WebViewClient() {

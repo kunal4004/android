@@ -1,44 +1,37 @@
 package za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in
 
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.TextPaint
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.bpi_opt_in_confirmation_fragment.*
+import com.awfs.coordination.databinding.BpiOptInConfirmationFragmentBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
-import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
-import za.co.woolworths.financial.services.android.util.Utils
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.TextPaint
-import android.text.method.LinkMovementMethod
-
-import android.text.style.ClickableSpan
+import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import java.util.HashMap
-
-import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
+import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp.BpiEnterOtpFragment
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIViewModel
 import za.co.woolworths.financial.services.android.util.BundleKeysConstants
+import za.co.woolworths.financial.services.android.util.Utils
 
-class BPIOptInConfirmationFragment : Fragment() {
+class BPIOptInConfirmationFragment : Fragment(R.layout.bpi_opt_in_confirmation_fragment) {
 
+    private lateinit var binding: BpiOptInConfirmationFragmentBinding
     private val bpiViewModel: BPIViewModel? by activityViewModels()
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.bpi_opt_in_confirmation_fragment, container, false)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = BpiOptInConfirmationFragmentBinding.bind(view)
         setClickableDescriptionText()
         addConfirmBtnListner()
     }
@@ -73,14 +66,14 @@ class BPIOptInConfirmationFragment : Fragment() {
                 }
             }, descriptionText.indexOf(numberText), descriptionText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
-        optInDescription2TextView?.apply {
+        binding.optInDescription2TextView?.apply {
             text = descriptionText
             movementMethod = LinkMovementMethod.getInstance()
         }
     }
 
     private fun addConfirmBtnListner() {
-        confirmOptInButton?.setOnClickListener {
+        binding.confirmOptInButton?.setOnClickListener {
             BpiEnterOtpFragment.shouldBackPressed = false
             arguments?.getString(BalanceProtectionInsuranceActivity.BPI_PRODUCT_GROUP_CODE)
                 .let { productGroupCode ->

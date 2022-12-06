@@ -16,11 +16,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_enter_otp.buttonNext
-import kotlinx.android.synthetic.main.fragment_enter_otp.didNotReceiveOTPTextView
-import kotlinx.android.synthetic.main.fragment_unlink_device_otp.*
-import kotlinx.android.synthetic.main.fragment_view_all_linked_devices.*
-import kotlinx.android.synthetic.main.layout_unlink_device_result.*
+import com.awfs.coordination.databinding.FragmentViewAllLinkedDevicesBinding
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -35,8 +31,9 @@ import za.co.woolworths.financial.services.android.util.analytics.FirebaseManage
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
-class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
+class ViewAllLinkedDevicesFragment : Fragment(R.layout.fragment_view_all_linked_devices), View.OnClickListener {
 
+    private lateinit var binding: FragmentViewAllLinkedDevicesBinding
     private var deviceIdentityId: String = ""
     private var viewAllDevicesAdapter: ViewAllLinkedDevicesAdapter? = null
     private var deviceList: ArrayList<UserDevice>? = ArrayList(0)
@@ -51,8 +48,82 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    private fun unlinkDevice() {
+        OneAppService.deleteDevice(deviceIdentityId, null, null, null)
+            .enqueue(CompletionHandler(
+                object : IResponseListener<ViewAllLinkedDeviceResponse> {
+                    override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
+
+                        when (response?.httpCode) {
+                            AppConstant.HTTP_OK -> {
+                                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_DELETE, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE, FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceDelete)), this) }
+
+                                deviceList = response.userDevices
+
+                                binding.showDeviceUnlinked()
+
+                                Handler().postDelayed({
+                                    if (!isAdded) return@postDelayed
+
+                                    setupToolbar()
+                                    context?.let { it ->
+                                        binding.viewAllDeviceConstraintLayout?.background = AppCompatResources.getDrawable(it, R.color.default_background)
+                                    }
+                                    binding.unlinkDeviceConfirmationConstraintLayout?.root?.visibility = View.GONE
+                                    binding.viewAllLinkedDevicesRecyclerView?.visibility = View.VISIBLE
+
+                                    setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
+                                        IS_UPDATE to true
+                                    ))
+                                    if (deviceList.isNullOrEmpty()) {
+                                        SessionUtilities.getInstance().removeCurrentDeviceIdentityToken()
+                                        view?.findNavController()?.navigateUp()
+                                        return@postDelayed
+                                    }
+
+                                    binding.initRecyclerView()
+                                }, AppConstant.DELAY_1000_MS)
+                            }
+                        }
+                    }
+
+                    override fun onFailure(error: Throwable?) {
+                        binding.apply {
+                            progressLoadDevices?.visibility = View.GONE
+                        }
+                    }
+                }, ViewAllLinkedDeviceResponse::class.java))
+    }
+
+    private fun FragmentViewAllLinkedDevicesBinding.callRetrieveDevices() {
+        progressLoadDevices?.visibility = View.VISIBLE
+        val mViewAllLinkedDevices: Call<ViewAllLinkedDeviceResponse> = OneAppService.getAllLinkedDevices(true)
+        mViewAllLinkedDevices.enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
+            override fun onFailure(error: Throwable?) {
+                //Do Nothing
+                progressLoadDevices?.visibility = View.GONE
+            }
+            
+            override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
+                progressLoadDevices?.visibility = View.GONE
+                deviceList = ArrayList(0)
+                deviceList = response?.userDevices
+                if (deviceList.isNullOrEmpty()) {
+                    setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
+                            IS_UPDATE to true
+                    ))
+                    view?.findNavController()?.navigateUp()
+                    return
+                }
+                initRecyclerView()
+            }
+        }, ViewAllLinkedDeviceResponse::class.java))
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = FragmentViewAllLinkedDevicesBinding.bind(view)
+
         setFragmentResultListener(CONFIRM_DELETE_SECONDARY_DEVICE) { requestKey, bundle ->
             val navController = view?.findNavController()
             navController?.navigate(R.id.action_confirm_delete_device, bundleOf(
@@ -81,89 +152,10 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
             navController?.navigate(R.id.action_change_to_primary_device, bundle)
         }
 
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_view_all_linked_devices, container, false)
-    }
-
-    private fun unlinkDevice() {
-        OneAppService.deleteDevice(deviceIdentityId, null, null, null)
-            .enqueue(CompletionHandler(
-                object : IResponseListener<ViewAllLinkedDeviceResponse> {
-                    override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
-
-                        when (response?.httpCode) {
-                            AppConstant.HTTP_OK -> {
-                                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_DELETE, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE, FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceDelete)), this) }
-
-                                deviceList = response.userDevices
-
-                                showDeviceUnlinked()
-
-                                Handler().postDelayed({
-                                    if (!isAdded) return@postDelayed
-
-                                    setupToolbar()
-                                    context?.let { it ->
-                                        viewAllDeviceConstraintLayout?.background = AppCompatResources.getDrawable(it, R.color.default_background)
-                                    }
-                                    unlinkDeviceConfirmationConstraintLayout?.visibility = View.GONE
-                                    viewAllLinkedDevicesRecyclerView?.visibility = View.VISIBLE
-
-                                    setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
-                                        IS_UPDATE to true
-                                    ))
-                                    if (deviceList.isNullOrEmpty()) {
-                                        SessionUtilities.getInstance().removeCurrentDeviceIdentityToken()
-                                        view?.findNavController()?.navigateUp()
-                                        return@postDelayed
-                                    }
-
-                                    initRecyclerView()
-                                }, AppConstant.DELAY_1000_MS)
-                            }
-                        }
-                    }
-
-                    override fun onFailure(error: Throwable?) {
-                        unlinkDeviceOTPScreenConstraintLayout?.visibility = View.VISIBLE
-                        buttonNext?.visibility = View.VISIBLE
-                        didNotReceiveOTPTextView?.visibility = View.VISIBLE
-                    }
-                }, ViewAllLinkedDeviceResponse::class.java))
-    }
-
-    private fun callRetrieveDevices() {
-        progressLoadDevices?.visibility = View.VISIBLE
-        val mViewAllLinkedDevices: Call<ViewAllLinkedDeviceResponse> = OneAppService.getAllLinkedDevices(true)
-        mViewAllLinkedDevices.enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
-            override fun onFailure(error: Throwable?) {
-                //Do Nothing
-                progressLoadDevices?.visibility = View.GONE
-            }
-            
-            override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
-                progressLoadDevices?.visibility = View.GONE
-                deviceList = ArrayList(0)
-                deviceList = response?.userDevices
-                if (deviceList.isNullOrEmpty()) {
-                    setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
-                            IS_UPDATE to true
-                    ))
-                    view?.findNavController()?.navigateUp()
-                    return
-                }
-                initRecyclerView()
-            }
-        }, ViewAllLinkedDeviceResponse::class.java))
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
         setupToolbar()
-        callRetrieveDevices()
+        binding.callRetrieveDevices()
         if (viewAllDevicesAdapter == null) {
-            initRecyclerView()
+            binding.initRecyclerView()
         }
     }
 
@@ -192,28 +184,28 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun initRecyclerView() {
+    private fun FragmentViewAllLinkedDevicesBinding.initRecyclerView() {
 
         if (deviceList.isNullOrEmpty()) {
             return
         }
         context?.let {
             viewAllLinkedDevicesRecyclerView?.layoutManager = LinearLayoutManager(it, RecyclerView.VERTICAL, false)
-            viewAllDevicesAdapter = ViewAllLinkedDevicesAdapter(it, this)
+            viewAllDevicesAdapter = ViewAllLinkedDevicesAdapter(it, this@ViewAllLinkedDevicesFragment)
             deviceList?.sortByDescending { userDevice -> userDevice.primarydDevice }
             viewAllDevicesAdapter?.setDeviceList(deviceList)
         }
         viewAllLinkedDevicesRecyclerView?.adapter = viewAllDevicesAdapter
     }
 
-    private fun showDeviceUnlinked() {
+    private fun FragmentViewAllLinkedDevicesBinding.showDeviceUnlinked() {
         clearToolbar()
         viewAllLinkedDevicesRecyclerView?.visibility = View.GONE
-        unlinkDeviceConfirmationConstraintLayout?.visibility = View.VISIBLE
-        unlinkDeviceResultSubtitle?.visibility = View.GONE
+        unlinkDeviceConfirmationConstraintLayout?.root?.visibility = View.VISIBLE
+        unlinkDeviceConfirmationConstraintLayout.unlinkDeviceResultSubtitle?.visibility = View.GONE
         context?.let { it ->
             viewAllDeviceConstraintLayout?.background = AppCompatResources.getDrawable(it, R.color.white)
-            unlinkDeviceResultTitle?.text = it.getString(R.string.unlink_device_result_success)
+            unlinkDeviceConfirmationConstraintLayout.unlinkDeviceResultTitle?.text = it.getString(R.string.unlink_device_result_success)
         }
     }
 

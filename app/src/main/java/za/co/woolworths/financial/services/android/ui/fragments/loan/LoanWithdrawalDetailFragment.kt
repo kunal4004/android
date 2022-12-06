@@ -1,29 +1,33 @@
 package za.co.woolworths.financial.services.android.ui.fragments.loan
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.ViewGroup
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.LoanConfirmationLayoutBinding
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.loan_confirmation_layout.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
-import za.co.woolworths.financial.services.android.models.dto.IssueLoan
-import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
-import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
-import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanRequest
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanResponse
+import za.co.woolworths.financial.services.android.models.dto.IssueLoan
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
+import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.DialogManager
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 
 class LoanWithdrawalDetailFragment : LoanBaseFragment() {
 
+    private lateinit var binding: LoanConfirmationLayoutBinding
     private var mIssueLoan: IssueLoan? = null
     private var mInstallmentAmount = 0
     private var mAuthoriseLoan: Call<AuthoriseLoanResponse>? = null
@@ -49,27 +53,32 @@ class LoanWithdrawalDetailFragment : LoanBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.loan_confirmation_layout, container, false)
+        binding = LoanConfirmationLayoutBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.let {
-            mErrorHandlerView = ErrorHandlerView(it)
-            (it as? LoanWithdrawalActivity)?.setHomeIndicatorIcon(R.drawable.back_white)
-            mIssueLoan?.apply {
-                tvDrawnDownSelectedAmount?.text = currencyFormatter(drawDownAmount)
-                val repaymentPeriod = "$repaymentPeriod month".plus(if (repaymentPeriod == 1) "" else "s")
-                tvRepaymentPeriod?.text = repaymentPeriod
-                tvAdditionalMonthlyRepayment?.text = currencyFormatter((mInstallmentAmount))
-            }
-        }
 
-        btnConfirm?.setOnClickListener { authoriseLoanRequest() }
-        uniqueIdsForLoanWithdrawalDetails()
+        binding.apply {
+            activity?.let {
+                mErrorHandlerView = ErrorHandlerView(it)
+                (it as? LoanWithdrawalActivity)?.setHomeIndicatorIcon(R.drawable.back_white)
+                mIssueLoan?.apply {
+                    tvDrawnDownSelectedAmount?.text = currencyFormatter(drawDownAmount)
+                    val repaymentPeriod =
+                        "$repaymentPeriod month".plus(if (repaymentPeriod == 1) "" else "s")
+                    tvRepaymentPeriod?.text = repaymentPeriod
+                    tvAdditionalMonthlyRepayment?.text = currencyFormatter((mInstallmentAmount))
+                }
+            }
+
+            btnConfirm?.setOnClickListener { authoriseLoanRequest() }
+            uniqueIdsForLoanWithdrawalDetails()
+        }
     }
 
-    private fun uniqueIdsForLoanWithdrawalDetails() {
+    private fun LoanConfirmationLayoutBinding.uniqueIdsForLoanWithdrawalDetails() {
         activity?.resources?.let {
             txtWithdrawAmount?.contentDescription = getString(R.string.pldd_drawn_down_amount_description_layout)
             rlRepaymentPeriod?.contentDescription = getString(R.string.repayment_period_layout)
@@ -81,7 +90,7 @@ class LoanWithdrawalDetailFragment : LoanBaseFragment() {
     }
 
     private fun authoriseLoanRequest() {
-        progressBarVisibility(true)
+        binding.progressBarVisibility(true)
 
         mAuthoriseLoan =  OneAppService.authoriseLoan(AuthoriseLoanRequest(mIssueLoan!!.productOfferingId,
                 mIssueLoan!!.drawDownAmount,mIssueLoan!!.repaymentPeriod, mInstallmentAmount,
@@ -90,7 +99,7 @@ class LoanWithdrawalDetailFragment : LoanBaseFragment() {
         mAuthoriseLoan?.enqueue(CompletionHandler(object : IResponseListener<AuthoriseLoanResponse> {
             override fun onSuccess(authoriseLoanResponse: AuthoriseLoanResponse?) {
                 activity?.let { fragmentActivity ->
-                    progressBarVisibility(false)
+                    binding.progressBarVisibility(false)
                     autoIssueLoanConnectIsActivated = false
                     authoriseLoanResponse?.apply {
                         when (httpCode) {
@@ -120,14 +129,14 @@ class LoanWithdrawalDetailFragment : LoanBaseFragment() {
 
             override fun onFailure(error: Throwable?) {
                 activity?.apply {
-                    progressBarVisibility(false)
+                    binding.progressBarVisibility(false)
                     autoIssueLoanConnectIsActivated = true
                 }
             }
         },AuthoriseLoanResponse::class.java))
     }
 
-    private fun progressBarVisibility(visible: Boolean) {
+    private fun LoanConfirmationLayoutBinding.progressBarVisibility(visible: Boolean) {
         mConfirmProgressBar?.visibility = if (visible) VISIBLE else GONE
         btnConfirm?.visibility = if (visible) GONE else VISIBLE
     }
@@ -155,11 +164,11 @@ class LoanWithdrawalDetailFragment : LoanBaseFragment() {
         activity?.runOnUiThread {
             if (hasInternet) {
                 if (arrowIsVisible && autoIssueLoanConnectIsActivated) {
-                    progressBarVisibility(true)
+                    binding.progressBarVisibility(true)
                     authoriseLoanRequest()
                 }
             } else {
-                progressBarVisibility(false)
+                binding.progressBarVisibility(false)
                 mErrorHandlerView?.showToast()
             }
         }

@@ -11,13 +11,10 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
-
-import kotlinx.android.synthetic.main.review_helpful_and_report_layout.view.*
-import kotlinx.android.synthetic.main.review_row_layout.view.*
+import com.awfs.coordination.databinding.ReviewRowLayoutBinding
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Reviews
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Thumbnails
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.ui.adapters.ReviewThumbnailAdapter
 
 class MoreReviewsAdapter(
@@ -43,9 +40,9 @@ class MoreReviewsAdapter(
         this.reportReviewOptions = reportReviewOptions
     }
 
-    inner class ReviewsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ReviewsViewHolder(val itemBinding: ReviewRowLayoutBinding) : RecyclerView.ViewHolder(itemBinding.root) {
         fun bindView(review: Reviews?, position: Int) {
-            itemView.apply {
+            itemBinding.apply {
                 review?.apply {
                     tvName.text = userNickname
                     if (isVerifiedBuyer)
@@ -61,11 +58,11 @@ class MoreReviewsAdapter(
                     tvCustomerReview.text = reviewText
                     tvReviewPostedOn.text = syndicatedSource
                     tvDate.text = submissionTime
-                    tvLikes.text = totalPositiveFeedbackCount.toString()
+                    reviewHelpfulReport.tvLikes.text = totalPositiveFeedbackCount.toString()
                     if (RatingAndReviewUtil.likedReviews.contains(review.id.toString()))
-                        iv_like.setImageResource(R.drawable.iv_like_selected)
+                        reviewHelpfulReport.ivLike.setImageResource(R.drawable.iv_like_selected)
                     else
-                        iv_like.setImageResource(R.drawable.iv_like)
+                        reviewHelpfulReport.ivLike.setImageResource(R.drawable.iv_like)
                     RatingAndReviewUtil.setReviewAdditionalFields(
                         additionalFields,
                         llAdditionalFields,
@@ -83,12 +80,12 @@ class MoreReviewsAdapter(
                     reviewHelpfulReport.apply {
                         if(RatingAndReviewUtil.reportedReviews.contains(review.id.toString())){
                             tvReport.setTextColor(Color.RED)
-                            tvReport.setText(resources.getString(R.string.reported))
+                            tvReport.setText(root.resources.getString(R.string.reported))
                             tvReport?.setTypeface(tvReport.typeface, Typeface.BOLD)
                             RatingAndReviewUtil.isSuccessFullyReported = false
                         }else{
                             tvReport.setTextColor(Color.BLACK)
-                            tvReport.setText(resources.getString(R.string.report))
+                            tvReport.setText(root.resources.getString(R.string.report))
                         }
                         tvReport.paintFlags = Paint.UNDERLINE_TEXT_FLAG
                         tvReport.setOnClickListener {
@@ -104,11 +101,11 @@ class MoreReviewsAdapter(
                         reviewItemClickListener.openSkinProfileDialog(review)
                     }
 
-                    linear_layout_customer_review.setOnClickListener {
+                    linearLayoutCustomerReview.setOnClickListener {
                         reviewItemClickListener.openReviewDetailsScreen(review, reportReviewOptions)
                     }
 
-                    iv_like.setOnClickListener {
+                    reviewHelpfulReport.ivLike.setOnClickListener {
                         reviewItemClickListener.reviewHelpfulClicked(review)
                     }
                 }
@@ -133,12 +130,9 @@ class MoreReviewsAdapter(
         holder.bindView(getItem(position), position)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):
-            ReviewsViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewsViewHolder {
         return ReviewsViewHolder(
-            LayoutInflater
-                .from(parent.context)
-                .inflate(R.layout.review_row_layout, parent, false)
+            ReviewRowLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 

@@ -2,9 +2,10 @@ package za.co.woolworths.financial.services.android.onecartgetstream
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.ActivityOneCartChatActivityBinding
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.common.ClickOnDialogButton
 import za.co.woolworths.financial.services.android.common.CommonErrorBottomSheetDialog
@@ -13,8 +14,9 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 @Suppress("JoinDeclarationAndAssignment")
-class OCChatActivity : AppCompatActivity(R.layout.activity_one_cart_chat_activity) {
+class OCChatActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityOneCartChatActivityBinding
     private var orderID: String? = ""
     private var channelId: String? = null
 
@@ -23,6 +25,9 @@ class OCChatActivity : AppCompatActivity(R.layout.activity_one_cart_chat_activit
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityOneCartChatActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         Utils.updateStatusBarBackground(this)
         orderID = checkNotNull(intent.getStringExtra(ORDER_ID))
         channelId = intent.getStringExtra(CHANNEL_ID)

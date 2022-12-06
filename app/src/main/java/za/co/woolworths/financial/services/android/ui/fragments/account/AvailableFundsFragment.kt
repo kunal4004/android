@@ -3,14 +3,12 @@ package za.co.woolworths.financial.services.android.ui.fragments.account
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.AvailableFundsFragmentBinding
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.available_funds_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
@@ -21,9 +19,10 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.util.*
-import kotlin.jvm.Throws
 
-open class AvailableFundsFragment : Fragment(), View.OnClickListener {
+open class AvailableFundsFragment : Fragment(R.layout.available_funds_fragment), View.OnClickListener {
+
+    private lateinit var binding: AvailableFundsFragmentBinding
     private var mAccountPair: Pair<ApplyNowState, Account>? = null
     private var mAccount: Account? = null
 
@@ -36,19 +35,19 @@ open class AvailableFundsFragment : Fragment(), View.OnClickListener {
         mAccount = mAccountPair?.second
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.available_funds_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setUpView()
-        incRecentTransactionButton?.setOnClickListener(this)
-        incViewStatementButton?.setOnClickListener(this)
+        binding = AvailableFundsFragmentBinding.bind(view)
+
+        binding.apply {
+            setUpView()
+            incRecentTransactionButton?.root?.setOnClickListener(this@AvailableFundsFragment)
+            incViewStatementButton?.root?.setOnClickListener(this@AvailableFundsFragment)
+        }
     }
 
     @SuppressLint("VisibleForTests")
-    private fun setUpView() {
+    private fun AvailableFundsFragmentBinding.setUpView() {
         mAccount?.apply {
             val availableFund = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.formatAmountToRandAndCent(availableFunds), 1))
             val currentBalance = Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(currentBalance))

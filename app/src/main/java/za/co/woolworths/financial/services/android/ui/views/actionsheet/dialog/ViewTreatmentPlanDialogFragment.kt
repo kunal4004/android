@@ -4,16 +4,13 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Paint
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.view_treatment_plan_dialog_fragment.*
+import com.awfs.coordination.databinding.ViewTreatmentPlanDialogFragmentBinding
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IShowChatBubble
 import za.co.woolworths.financial.services.android.models.dto.Account
@@ -27,8 +24,9 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickListener {
+class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(R.layout.view_treatment_plan_dialog_fragment), View.OnClickListener {
 
+    private lateinit var binding: ViewTreatmentPlanDialogFragmentBinding
     private lateinit var mTreatmentPlanImpl: ViewTreatmentPlanImpl
     private var account: Account? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
@@ -53,16 +51,9 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.view_treatment_plan_dialog_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = ViewTreatmentPlanDialogFragmentBinding.bind(view)
 
         state = arguments?.getSerializable(APPLY_NOW_STATE) as? ApplyNowState
         eligibilityPlan = arguments?.getSerializable(ELIGIBILITY_PLAN) as? EligibilityPlan
@@ -74,46 +65,48 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
             applyNowState = state)
 
 
-        setTitleAndDescription()
-        setListeners()
-        setupMainButton()
-        setupMakePaymentButton()
-        setupViewPaymentOptionsButton()
-        setupCannotAffordPaymentButton()
+        binding.apply {
+            setTitleAndDescription()
+            setListeners()
+            setupMainButton()
+            setupMakePaymentButton()
+            setupViewPaymentOptionsButton()
+            setupCannotAffordPaymentButton()
+        }
     }
 
     @SuppressLint("VisibleForTests")
-    private fun setTitleAndDescription() {
+    private fun ViewTreatmentPlanDialogFragmentBinding.setTitleAndDescription() {
         with(mTreatmentPlanImpl.getTitleAndDescription()) {
             viewTreatmentPlanTitleTextView?.text = bindString(first)
             viewTreatmentPlanDescriptionTextView?.text = second
         }
     }
 
-    private fun setupMainButton() {
+    private fun ViewTreatmentPlanDialogFragmentBinding.setupMainButton() {
         mainButton?.text = mTreatmentPlanImpl.makePaymentPlanButtonLabel()
     }
 
-    private fun setupMakePaymentButton() {
+    private fun ViewTreatmentPlanDialogFragmentBinding.setupMakePaymentButton() {
         makePaymentButton?.apply {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
             visibility = mTreatmentPlanImpl.isMakePaymentButtonVisible()
         }
     }
 
-    private fun setupViewPaymentOptionsButton() {
+    private fun ViewTreatmentPlanDialogFragmentBinding.setupViewPaymentOptionsButton() {
         viewPaymentOptionsButton?.apply {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
             visibility = mTreatmentPlanImpl.isViewPaymentOptionsButtonVisible()
         }
     }
 
-    private fun setupCannotAffordPaymentButton() {
+    private fun ViewTreatmentPlanDialogFragmentBinding.setupCannotAffordPaymentButton() {
         cannotAffordPaymentButton?.visibility =
             mTreatmentPlanImpl.isCannotAffordPaymentButtonVisible()
     }
 
-    fun setListeners() {
+    fun ViewTreatmentPlanDialogFragmentBinding.setListeners() {
         mainButton?.apply {
             setOnClickListener(this@ViewTreatmentPlanDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)

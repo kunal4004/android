@@ -76,7 +76,9 @@
             android:paddingBottom="@dimen/eighty_dp"
             android:visibility="gone" />
 
-        <include layout="@layout/empty_state_template" />
+        <include
+            android:id="@+id/includeEmptyStateTemplate"
+            layout="@layout/empty_state_template" />
 
     </LinearLayout>
 
@@ -89,9 +91,12 @@
         android:indeterminateTint="@color/black"
         android:visibility="gone" />
 
-    <include layout="@layout/no_connection_handler" />
+    <include
+        android:id="@+id/includeNoConnectionHandler"
+        layout="@layout/no_connection_handler" />
 
     <include
+        android:id="@+id/includeChatCollectAgentFloatingButton"
         layout="@layout/chat_collect_agent_floating_button_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

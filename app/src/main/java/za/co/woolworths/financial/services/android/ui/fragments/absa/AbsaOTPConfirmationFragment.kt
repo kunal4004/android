@@ -5,15 +5,13 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.KeyEvent
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.absa_otp_confirmation_fragment.*
+import com.awfs.coordination.databinding.AbsaOtpConfirmationFragmentBinding
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
@@ -24,8 +22,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.integration.util
 import za.co.woolworths.financial.services.android.ui.fragments.integration.viewmodel.AbsaIntegrationViewModel
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 
-class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListener, IDialogListener {
+class AbsaOTPConfirmationFragment : AbsaFragmentExtension(R.layout.absa_otp_confirmation_fragment), View.OnClickListener, IDialogListener {
 
+    private lateinit var binding: AbsaOtpConfirmationFragmentBinding
     private var mCreditCardToken: String? = null
     private var userCellNumber: String? = ""
 
@@ -53,19 +52,19 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        alwaysShowWindowSoftInputMode()
-        return inflater.inflate(R.layout.absa_otp_confirmation_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViewsAndEvents()
-        createTextListener(enterOTPEditText)
-        absaApiResultObservers()
+        alwaysShowWindowSoftInputMode()
+        binding = AbsaOtpConfirmationFragmentBinding.bind(view)
+
+        with(binding) {
+            initViewsAndEvents()
+            createTextListener(enterOTPEditText)
+            absaApiResultObservers()
+        }
     }
 
-    private fun absaApiResultObservers() {
+    private fun AbsaOtpConfirmationFragmentBinding.absaApiResultObservers() {
         with(mViewModel){
             createAliasId.observe(viewLifecycleOwner) { aliasId ->
                 replaceFragment(
@@ -106,11 +105,11 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
         }
     }
 
-    private fun initViewsAndEvents() {
+    private fun AbsaOtpConfirmationFragmentBinding.initViewsAndEvents() {
         val description = "${bindString(R.string.absa_otp_screen_description)} ${userCellNumber?.toMaskABSAPhoneNumber()}"
         otpDescription.text = description
         activity?.apply { (this as ABSAOnlineBankingRegistrationActivity).setPageTitle(getString(R.string.absa_registration_title_step_1)) }
-        ivNavigateToDigitFragment.setOnClickListener(this)
+        ivNavigateToDigitFragment.setOnClickListener(this@AbsaOTPConfirmationFragment)
         enterOTPEditText.setOnKeyPreImeListener { activity?.onBackPressed() }
         enterOTPEditText.setOnEditorActionListener { _, actionId, _ ->
             var handled = false
@@ -130,7 +129,7 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
         })
     }
 
-    private fun navigateToFiveDigitCodeFragment() {
+    private fun AbsaOtpConfirmationFragmentBinding.navigateToFiveDigitCodeFragment() {
         if ((enterOTPEditText.length() - 1) >= AbsaEnterAtmPinCodeFragment.MAXIMUM_PIN_ALLOWED && enterOTPProgressBar.visibility != View.VISIBLE) {
             activity?.let {
                 val otpToBeVerified = enterOTPEditText.text.toString()
@@ -140,14 +139,14 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
         }
     }
 
-    private fun progressIndicator(state: Int) {
+    private fun AbsaOtpConfirmationFragmentBinding.progressIndicator(state: Int) {
         enterOTPProgressBar?.visibility = state
         activity?.let { enterOTPProgressBar?.indeterminateDrawable?.setColorFilter(ContextCompat.getColor(it, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN) }
         if (state == View.VISIBLE)
             wrongOTP?.visibility = View.INVISIBLE
     }
 
-    private fun createTextListener(enterOTPEditText: EditText?) {
+    private fun AbsaOtpConfirmationFragmentBinding.createTextListener(enterOTPEditText: EditText?) {
         var previousLength = 0
         enterOTPEditText?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
@@ -168,7 +167,7 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
         })
     }
 
-    private fun updateEnteredPin(pinEnteredLength: Int) {
+    private fun AbsaOtpConfirmationFragmentBinding.updateEnteredPin(pinEnteredLength: Int) {
         //Submit button will be enabled when the pin length is 4 & above(at most 5 : As EditText maxLength="5" )
         if (pinEnteredLength > -1) {
             if (pinEnteredLength >= MAXIMUM_PIN_ALLOWED) {
@@ -178,7 +177,7 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
         }
     }
 
-    private fun deletePin(pinEnteredLength: Int) {
+    private fun AbsaOtpConfirmationFragmentBinding.deletePin(pinEnteredLength: Int) {
         if (pinEnteredLength > -1) {
             if (pinEnteredLength <= MAXIMUM_PIN_ALLOWED) {
                 ivNavigateToDigitFragment.alpha = 0.5f
@@ -192,7 +191,7 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
         when (view?.id) {
 
             R.id.ivNavigateToDigitFragment -> {
-                navigateToFiveDigitCodeFragment()
+                binding.navigateToFiveDigitCodeFragment()
             }
         }
     }
@@ -201,19 +200,19 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
         alwaysShowWindowSoftInputMode()
     }
 
-    private fun showCommonError() {
+    private fun AbsaOtpConfirmationFragmentBinding.showCommonError() {
         progressIndicator(View.INVISIBLE)
         clearPin()
         showErrorScreen(ErrorHandlerActivity.COMMON)
     }
 
-    private fun showMaxOTPError() {
+    private fun AbsaOtpConfirmationFragmentBinding.showMaxOTPError() {
         progressIndicator(View.INVISIBLE)
         clearPin()
         showErrorScreen(ErrorHandlerActivity.WITH_NO_ACTION)
     }
 
-    private fun handleFatalError(failure: AbsaApiFailureHandler) {
+    private fun AbsaOtpConfirmationFragmentBinding.handleFatalError(failure: AbsaApiFailureHandler) {
         progressIndicator(View.GONE)
         clearPin()
         when(failure){
@@ -222,18 +221,15 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
         }
     }
 
-
-
-
     override fun onResume() {
         super.onResume()
-        enterOTPEditText?.apply {
+        binding.enterOTPEditText?.apply {
             showKeyboard(this)
         }
     }
 
     private fun clearPin() {
-        enterOTPEditText?.apply {
+        binding.enterOTPEditText?.apply {
             text.clear()
             showKeyboard(this)
         }
@@ -254,7 +250,7 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
         mViewModel.fetchValidateSureCheckForOTP(otpToBeVerified)
     }
 
-    private fun showWrongOTPMessage() {
+    private fun AbsaOtpConfirmationFragmentBinding.showWrongOTPMessage() {
         wrongOTP?.visibility = View.VISIBLE
         progressIndicator(View.INVISIBLE)
         clearPin()

@@ -20,8 +20,6 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
-import kotlinx.android.synthetic.main.no_connection_handler.*
-import kotlinx.android.synthetic.main.wrewards_overview_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse
@@ -35,7 +33,6 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.adapters.FeaturedPromotionsAdapter
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.Utils.triggerFireBaseEvents
-
 import androidx.annotation.RequiresApi
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.brightness.CountDownTimerImpl
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.brightness.ScreenBrightnessDelegate
@@ -43,12 +40,13 @@ import za.co.woolworths.financial.services.android.ui.fragments.wreward.brightne
 import androidx.activity.result.contract.ActivityResultContracts
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.brightness.ScreenBrightnessImpl.Companion.HUNDRED_PERCENT_VALUE
 import android.animation.AnimatorListenerAdapter
-import kotlinx.android.synthetic.main.wrewards_virtual_card_number_row.*
+import com.awfs.coordination.databinding.WrewardsOverviewFragmentBinding
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.brightness.ShakeDetectorImpl
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in.WRewardsLoggedinAndLinkedFragment
 
-class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
+class WRewardsOverviewFragment : Fragment(R.layout.wrewards_overview_fragment), View.OnClickListener {
 
+    private lateinit var binding: WrewardsOverviewFragmentBinding
     private var initialBrightness: Int = 0
     private var mScreenBrightnessDelegate: ScreenBrightnessDelegate? = null
     private val TAGREWARD: String = WRewardsOverviewFragment::class.java.simpleName
@@ -73,49 +71,52 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
         voucherResponse = Gson().fromJson(bundle?.getString("WREWARDS"), VoucherResponse::class.java)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity?.apply { triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSOVERVIEW, this) }
-        return inflater.inflate(R.layout.wrewards_overview_fragment, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = WrewardsOverviewFragmentBinding.bind(view)
 
-        initBrightnessControl()
+        activity?.apply { triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSOVERVIEW, this) }
 
-        activity?.let { activity ->
-            mErrorHandlerView = ErrorHandlerView(activity, no_connection_layout)
-            mErrorHandlerView?.setMargin(no_connection_layout, 0, 0, 0, 0)
-        }
+        with(binding) {
+            initBrightnessControl()
 
-        voucherResponse?.tierInfo?.apply {
-            handleTireHistoryView(this)
-            bundle?.apply {
-                if (containsKey("CARD_DETAILS")) {
-                    cardDetailsResponse = Gson().fromJson(getString("CARD_DETAILS"), CardDetailsResponse::class.java)
-                    handleCard(cardDetailsResponse)
-                } else {
-                    handleNoTireHistoryView()
+            activity?.let { activity ->
+                mErrorHandlerView = ErrorHandlerView(activity, includeNoConnectionHandler.noConnectionLayout)
+                mErrorHandlerView?.setMargin(includeNoConnectionHandler.noConnectionLayout, 0, 0, 0, 0)
+            }
+
+            voucherResponse?.tierInfo?.apply {
+                handleTireHistoryView(this)
+                bundle?.apply {
+                    if (containsKey("CARD_DETAILS")) {
+                        cardDetailsResponse = Gson().fromJson(
+                            getString("CARD_DETAILS"),
+                            CardDetailsResponse::class.java
+                        )
+                        handleCard(cardDetailsResponse)
+                    } else {
+                        handleNoTireHistoryView()
+                    }
                 }
             }
+
+            infoImage.setOnClickListener(this@WRewardsOverviewFragment)
+            tvMoreInfo.setOnClickListener(this@WRewardsOverviewFragment)
+            includeNoConnectionHandler.btnRetry.setOnClickListener(this@WRewardsOverviewFragment)
+            includeWrewardsVirtualCardNumberRow.moreInfoVirtualCardTextView.setOnClickListener(this@WRewardsOverviewFragment)
+            includeWrewardsVirtualCardNumberRow.rightIndicatorIconImageView.setOnClickListener(this@WRewardsOverviewFragment)
+            flipCardFrontLayout.setOnClickListener(this@WRewardsOverviewFragment)
+            shakeOrTapNumberTextView.setOnClickListener(this@WRewardsOverviewFragment)
+
+            uniqueIdsForWRewardOverview()
         }
-
-        infoImage.setOnClickListener(this)
-        tvMoreInfo.setOnClickListener(this)
-        btnRetry.setOnClickListener(this)
-        moreInfoVirtualCardTextView.setOnClickListener(this)
-        rightIndicatorIconImageView.setOnClickListener(this)
-        flipCardFrontLayout.setOnClickListener(this)
-        shakeOrTapNumberTextView.setOnClickListener(this)
-
-        uniqueIdsForWRewardOverview()
     }
 
-    private fun initBrightnessControl() {
+    private fun WrewardsOverviewFragmentBinding.initBrightnessControl() {
         mScreenBrightnessDelegate = ScreenBrightnessDelegate(
             ScreenBrightnessImpl(),
             CountDownTimerImpl(),
-            ShakeDetectorImpl(this)
+            ShakeDetectorImpl(this@WRewardsOverviewFragment)
         )
 
         mScreenBrightnessDelegate?.apply {
@@ -162,7 +163,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
         )
     }
 
-    private fun uniqueIdsForWRewardOverview() {
+    private fun WrewardsOverviewFragmentBinding.uniqueIdsForWRewardOverview() {
         activity?.resources?.apply {
 //            wRewardCardFrameLayout?.contentDescription = getString(R.string.wreward_flip_card_framelayout)
             flipCardBackLayout?.contentDescription = getString(R.string.flipCardBackLayout)
@@ -177,15 +178,15 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    fun scrollToTop() = scrollWRewardsOverview?.let { ObjectAnimator.ofInt(it, "scrollY", it.scrollY, 0).setDuration(500).start() }
+    fun scrollToTop() = binding.scrollWRewardsOverview?.let { ObjectAnimator.ofInt(it, "scrollY", it.scrollY, 0).setDuration(500).start() }
 
-    private fun handleTireHistoryView(tireInfo: TierInfo) {
+    private fun WrewardsOverviewFragmentBinding.handleTireHistoryView(tireInfo: TierInfo) {
         overviewLayout.visibility = VISIBLE
         noTireHistory.visibility = GONE
         currentStatus = tireInfo.currentTier
         savings.setText(CurrencyFormatter.formatAmountToRandAndCentWithSpace(tireInfo.earned))
-        flipCardFrontLayout.setOnClickListener(this)
-        flipCardBackLayout.setOnClickListener(this)
+        flipCardFrontLayout.setOnClickListener(this@WRewardsOverviewFragment)
+        flipCardBackLayout.setOnClickListener(this@WRewardsOverviewFragment)
         currentStatus?.let {
             if (!it.contains(tireStatusVIP, true)) {
                 toNextTireLayout.visibility = VISIBLE
@@ -196,7 +197,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
         loadPromotionsAPI()
     }
 
-    private fun handleCard(cardDetailsResponse: CardDetailsResponse?) {
+    private fun WrewardsOverviewFragmentBinding.handleCard(cardDetailsResponse: CardDetailsResponse?) {
         if (activity == null) return
         cardDetailsResponse?.apply {
             if (cardType != null && cardNumber != null) {
@@ -229,7 +230,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun loadAnimations() {
+    private fun WrewardsOverviewFragmentBinding.loadAnimations() {
         activity?.apply {
 
             mSetRightOut = AnimatorInflater.loadAnimator(this, R.animator.card_flip_out) as? AnimatorSet
@@ -245,7 +246,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun showVIPLogo() {
+    private fun WrewardsOverviewFragmentBinding.showVIPLogo() {
             currentStatus?.let { state ->
                 if (state.contains(tireStatusVIP, ignoreCase = true)) {
                     vipLogo?.visibility = VISIBLE
@@ -253,7 +254,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
             }
     }
 
-    private fun flipCard() {
+    private fun WrewardsOverviewFragmentBinding.flipCard() {
         activity?.apply { triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSFLIP, this) }
         mIsBackVisible = if (!mIsBackVisible) {
             mSetRightOut?.setTarget(flipCardFrontLayout)
@@ -285,7 +286,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun changeCameraDistance() {
+    private fun WrewardsOverviewFragmentBinding.changeCameraDistance() {
         val distance = 8000
         val scale = resources.displayMetrics.density * distance
         flipCardFrontLayout?.cameraDistance = scale
@@ -315,7 +316,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
             R.id.btnRetry -> {
                 activity?.apply {
                     if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
-                        loadPromotionsAPI()
+                        binding.loadPromotionsAPI()
                     }
                 }
             }
@@ -350,12 +351,12 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
         startTimer { setScreenBrightness(initialBrightness) }
     }
 
-    private fun handleNoTireHistoryView() {
+    private fun WrewardsOverviewFragmentBinding.handleNoTireHistoryView() {
         overviewLayout?.visibility = GONE
         noTireHistory?.visibility = VISIBLE
     }
 
-    private fun loadPromotionsAPI() {
+    private fun WrewardsOverviewFragmentBinding.loadPromotionsAPI() {
         mErrorHandlerView?.hideErrorHandlerLayout()
         val promotionsResponseCall = OneAppService.getPromotions()
         promotionsResponseCall.enqueue(CompletionHandler(object : IResponseListener<PromotionsResponse> {
@@ -370,7 +371,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
 
     }
 
-    fun handlePromotionResponse(promotionsResponse: PromotionsResponse) {
+    fun WrewardsOverviewFragmentBinding.handlePromotionResponse(promotionsResponse: PromotionsResponse) {
         try {
             with(promotionsResponse) {
                 if (httpCode == 200) {

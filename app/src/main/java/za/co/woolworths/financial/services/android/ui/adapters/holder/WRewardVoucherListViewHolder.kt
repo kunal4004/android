@@ -1,28 +1,24 @@
 package za.co.woolworths.financial.services.android.ui.adapters.holder
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.wrewards_vouchers_list_item.view.*
-
+import com.awfs.coordination.databinding.WrewardsVouchersListItemBinding
 import za.co.woolworths.financial.services.android.models.dto.Voucher
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.DateFormatter
 import za.co.woolworths.financial.services.android.util.WFormatter
-import java.lang.IllegalArgumentException
 import java.text.ParseException
 
-class WRewardVoucherListViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class WRewardVoucherListViewHolder constructor(val itemBinding: WrewardsVouchersListItemBinding) : RecyclerView.ViewHolder(itemBinding.root) {
     constructor(parent: ViewGroup) : this(
-        LayoutInflater.from(parent.context)
-            .inflate(R.layout.wrewards_vouchers_list_item, parent, false)
+        WrewardsVouchersListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
     )
 
     fun setItem(voucher: Voucher) {
         with(voucher) {
-            with(itemView) {
+            itemBinding.apply {
                 voucherValue?.text = when (type ?: "") {
                     "PERCENTAGE" -> WFormatter.formatPercent(amount)
                     else -> WFormatter.formatAmountNoDecimal(amount)
@@ -30,7 +26,7 @@ class WRewardVoucherListViewHolder constructor(itemView: View) : RecyclerView.Vi
 
                 voucherMessage?.text = description
 
-                context?.apply {
+                root.context?.apply {
                     voucherExpireDate?.text = try {
                         if (DateFormatter.isDateExpired(validToDate))
                             bindString(R.string.expired) + DateFormatter.formatDate(validToDate)

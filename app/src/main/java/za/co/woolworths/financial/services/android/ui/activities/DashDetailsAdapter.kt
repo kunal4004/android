@@ -2,17 +2,12 @@ package za.co.woolworths.financial.services.android.ui.activities
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.layout_dash_details_app_feature_list.view.*
-import kotlinx.android.synthetic.main.layout_dash_details_app_feature_list_item.view.app_feature_list_title_text
-import kotlinx.android.synthetic.main.layout_dash_details_terms_and_condition.view.*
-import kotlinx.android.synthetic.main.layout_dash_terms_and_conditions_list_item.view.*
+import com.awfs.coordination.databinding.*
 import za.co.woolworths.financial.services.android.util.AppConstant
-
 
 class DashDetailsAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -28,12 +23,18 @@ class DashDetailsAdapter(val context: Context) : RecyclerView.Adapter<RecyclerVi
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             AppConstant.DashDetailsViewType.HEADER_TITLE.value -> {
-                HeaderTitleViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.layout_dash_details_header_titles, parent, false))
+                HeaderTitleViewHolder(
+                    LayoutDashDetailsHeaderTitlesBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                )
             }
             AppConstant.DashDetailsViewType.APP_FEATURE_LIST.value -> {
-                AppFeatureViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.layout_dash_details_app_feature_list, parent, false))
+                AppFeatureViewHolder(
+                    LayoutDashDetailsAppFeatureListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                )
             }
-            else -> TermsAndConditionsViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.layout_dash_details_terms_and_condition, parent, false))
+            else -> TermsAndConditionsViewHolder(
+                LayoutDashDetailsTermsAndConditionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            )
         }
     }
 
@@ -59,26 +60,26 @@ class DashDetailsAdapter(val context: Context) : RecyclerView.Adapter<RecyclerVi
         }
     }
 
-    inner class HeaderTitleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-    inner class AppFeatureViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class HeaderTitleViewHolder(val itemBinding: LayoutDashDetailsHeaderTitlesBinding) : RecyclerView.ViewHolder(itemBinding.root)
+    inner class AppFeatureViewHolder(val itemBinding: LayoutDashDetailsAppFeatureListBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
         fun bind() {
             for ((i, feature) in featureList.withIndex()) {
-                val listItem = LayoutInflater.from(context).inflate(R.layout.layout_dash_details_app_feature_list_item, null, false)
-                listItem.app_feature_list_title_text.text = context.getString(feature)
-                listItem.app_feature_list_title_text.setCompoundDrawablesWithIntrinsicBounds(if(featureDrawableList[i] != -1) ContextCompat.getDrawable(context, featureDrawableList[i]) else null, null, null, null)
-                itemView.app_feature_list_container.addView(listItem)
+                val listItem = LayoutDashDetailsAppFeatureListItemBinding.inflate(LayoutInflater.from(context), null, false)
+                listItem.appFeatureListTitleText.text = context.getString(feature)
+                listItem.appFeatureListTitleText.setCompoundDrawablesWithIntrinsicBounds(if(featureDrawableList[i] != -1) ContextCompat.getDrawable(context, featureDrawableList[i]) else null, null, null, null)
+                itemBinding.appFeatureListContainer.addView(listItem.root)
             }
         }
     }
 
-    inner class TermsAndConditionsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class TermsAndConditionsViewHolder(val itemBinding: LayoutDashDetailsTermsAndConditionBinding) : RecyclerView.ViewHolder(itemBinding.root) {
         fun bind() {
             val layoutInflater = LayoutInflater.from(context)
             for (term in termsAndConditions) {
-                val listItem = layoutInflater.inflate(R.layout.layout_dash_terms_and_conditions_list_item, null, false)
-                listItem.terms_list_title_text.text = context.getString(term)
-                itemView.dash_terms_and_conditions_list_container.addView(listItem)
+                val listItem = LayoutDashTermsAndConditionsListItemBinding.inflate(layoutInflater, null, false)
+                listItem.termsListTitleText.text = context.getString(term)
+                itemBinding.dashTermsAndConditionsListContainer.addView(listItem.root)
             }
         }
     }

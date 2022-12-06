@@ -1,44 +1,34 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
-
 import android.content.Context
 import android.content.Intent
-import android.opengl.Visibility
 import android.os.Bundle
+import android.util.Base64
+import android.view.View
+import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import android.util.Base64
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_tax_invoice_list.*
+import com.awfs.coordination.databinding.FragmentTaxInvoiceListBinding
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.OrderTaxInvoiceResponse
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity
 import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.Companion.FILE_NAME
 import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.Companion.FILE_VALUE
 import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.Companion.PAGE_TITLE
-import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.activities.BottomActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.TaxInvoiceAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import java.io.UnsupportedEncodingException
 
+class TaxInvoiceLIstFragment : Fragment(R.layout.fragment_tax_invoice_list), TaxInvoiceAdapter.OnItemClick {
 
-class TaxInvoiceLIstFragment : Fragment(), TaxInvoiceAdapter.OnItemClick {
-
+    private lateinit var binding: FragmentTaxInvoiceListBinding
     var taxNoteNumbers: ArrayList<String>? = null
     var orderId: String? = null
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_tax_invoice_list, container, false)
-    }
 
     companion object {
         private val ARG_PARAM = "taxNoteNumbers"
@@ -64,7 +54,6 @@ class TaxInvoiceLIstFragment : Fragment(), TaxInvoiceAdapter.OnItemClick {
         }
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.apply {
@@ -75,17 +64,21 @@ class TaxInvoiceLIstFragment : Fragment(), TaxInvoiceAdapter.OnItemClick {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = FragmentTaxInvoiceListBinding.bind(view)
         initView()
     }
 
     private fun initView() {
-        val orderText = getString(R.string.order_page_title_prefix).plus(orderId)
-        btnBack.setOnClickListener {
-            activity?.onBackPressed()
+        binding.apply {
+            val orderText = getString(R.string.order_page_title_prefix).plus(orderId)
+            btnBack.setOnClickListener {
+                activity?.onBackPressed()
+            }
+            toolbarText.setText(orderText)
+            taxInvoiceList.layoutManager =
+                LinearLayoutManager(activity) as RecyclerView.LayoutManager?
+            taxInvoiceList.adapter = TaxInvoiceAdapter(taxNoteNumbers, this@TaxInvoiceLIstFragment)
         }
-        toolbarText.setText(orderText)
-        taxInvoiceList.layoutManager = LinearLayoutManager(activity) as RecyclerView.LayoutManager?
-        taxInvoiceList.adapter = TaxInvoiceAdapter(taxNoteNumbers, this)
     }
 
     override fun onItemSelection(taxNumber: String) {
@@ -115,10 +108,8 @@ class TaxInvoiceLIstFragment : Fragment(), TaxInvoiceAdapter.OnItemClick {
             val byteArray = Base64.decode(data, Base64.DEFAULT)
             showTAxInvoice(byteArray)
         } catch (e: UnsupportedEncodingException) {
-            // TODO Auto-generated catch block
             e.printStackTrace()
         }
-
     }
 
     private fun showTAxInvoice(fileData: ByteArray) {
@@ -138,7 +129,7 @@ class TaxInvoiceLIstFragment : Fragment(), TaxInvoiceAdapter.OnItemClick {
     private fun hideProgressBar() {
         activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         activity?.runOnUiThread {
-            loadingBar.visibility = View.INVISIBLE
+            binding.loadingBar.visibility = View.INVISIBLE
         }
     }
 
@@ -146,7 +137,7 @@ class TaxInvoiceLIstFragment : Fragment(), TaxInvoiceAdapter.OnItemClick {
         activity?.window?.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         activity?.runOnUiThread {
-            loadingBar.visibility = View.VISIBLE
+            binding.loadingBar.visibility = View.VISIBLE
         }
     }
 
