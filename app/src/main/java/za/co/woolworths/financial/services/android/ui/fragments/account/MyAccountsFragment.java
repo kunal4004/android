@@ -5,8 +5,6 @@ import static za.co.woolworths.financial.services.android.ui.activities.dashboar
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
 import static za.co.woolworths.financial.services.android.ui.fragments.account.fica.FicaViewModel.GET_REFRESH_STATUS;
 import static za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.ACCOUNT_PRODUCT_PAYLOAD;
-import static za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.PET;
-import static za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.PET_INSURANCE;
 import static za.co.woolworths.financial.services.android.ui.fragments.mypreferences.MyPreferencesFragment.IS_NON_WFS_USER;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_EXPECTATION_FAILED_502;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_OK;
@@ -30,8 +28,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
 import android.webkit.CookieManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -91,7 +87,6 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode;
-import za.co.woolworths.financial.services.android.models.dto.account.AppGUIDModel;
 import za.co.woolworths.financial.services.android.models.dto.account.AppGUIDRequestType;
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState;
 import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplication;
@@ -99,14 +94,9 @@ import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuran
 import za.co.woolworths.financial.services.android.models.dto.account.CoveredStatus;
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState;
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus;
-import za.co.woolworths.financial.services.android.models.dto.account.FeatureEnabled;
-import za.co.woolworths.financial.services.android.models.dto.account.FeatureEnablementModel;
 import za.co.woolworths.financial.services.android.models.dto.account.FicaModel;
-import za.co.woolworths.financial.services.android.models.dto.account.InsuranceProducts;
-import za.co.woolworths.financial.services.android.models.dto.account.PetInsuranceModel;
 import za.co.woolworths.financial.services.android.models.dto.account.Products;
 import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigCreditCardDeliveryCardTypes;
-import za.co.woolworths.financial.services.android.models.dto.app_config.account_options.PetInsuranceConfig;
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse;
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.DeliveryStatus;
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice;
@@ -127,7 +117,6 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.applynow.activities.ApplyNowActivity;
-import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView;
@@ -135,6 +124,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.c
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountCardDetailPresenterImpl;
 import za.co.woolworths.financial.services.android.ui.fragments.account.fica.FicaActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCardActivity;
+import za.co.woolworths.financial.services.android.ui.fragments.account.petinsurance.PetInsuranceHandler;
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.ContactUsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.SetUpDeliveryNowDialog;
 import za.co.woolworths.financial.services.android.ui.fragments.help.HelpSectionFragment;
@@ -262,8 +252,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private TextView tvPetInsuranceCovered;
     private TextView tvPetInsuranceHelped;
     private TextView tvPetInsuranceApply;
-    private InsuranceProducts insuranceProducts = null;
-
+    private PetInsuranceHandler petInsuranceHandler = null;
     public MyAccountsFragment() {
         // Required empty public constructor
         this.unavailableAccounts = new ArrayList<>();
@@ -438,6 +427,14 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 }
             });
         }
+        petInsuranceHandler = new PetInsuranceHandler(getActivity(),
+                mUpdateMyAccount,
+                ivPetInsuranceProgress,
+                tvPetInsuranceApply,
+                tvPetInsuranceCovered,
+                tvPetInsuranceHelped,
+                applyPetInsuranceCardView
+        );
 
         // disable refresh icon or pull to refresh if user is not a C2User
         if (!SessionUtilities.getInstance().isC2User()) {
@@ -545,7 +542,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     private void initialize() {
         ficaRequest();
-        featureEnablementRequest();
+        petInsuranceHandler.featureEnablementRequest();
         this.mAccountResponse = null;
         new AppStateRepository().saveLinkedDevices(new ArrayList(0));
         this.hideAllLayers();
@@ -1019,7 +1016,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 redirectToMyAccountsCardsActivity(ApplyNowState.PERSONAL_LOAN);
                 break;
             case R.id.applyPetInsurance:
-                navigateToPetInsurance();
+                petInsuranceHandler.navigateToPetInsurance();
                 break;
             case R.id.linkedStoreCard:
                 navigateToLinkedStoreCard();
@@ -1126,16 +1123,6 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 break;
 
         }
-    }
-
-    private void navigateToPetInsurance() {
-        if (insuranceProducts != null) {
-            if (CoveredStatus.valueOf(insuranceProducts.getStatus()).equals(CoveredStatus.PENDING)) {
-                KotlinUtils.Companion.showPetInsurancePendingDialog(getActivity().getSupportFragmentManager());
-                return;
-            }
-        }
-        appGUIDRequest(AppGUIDRequestType.PET_INSURANCE);
     }
 
     private void navigateToLinkedStoreCard() {
@@ -1658,141 +1645,6 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         }
     }
 
-    public void featureEnablementRequest() {
-        if (SessionUtilities.getInstance().isUserAuthenticated() && KotlinUtils.Companion.isPetInsuranceEnabled()) {
-            OneAppService.INSTANCE.getFeatureEnablementResponse().enqueue(new Callback<FeatureEnablementModel>() {
-                @Override
-                public void onResponse(Call<FeatureEnablementModel> call, Response<FeatureEnablementModel> response) {
-                    if (getActivity() != null) {
-                        FeatureEnablementModel featureEnablementModel = response.body();
-                        if (featureEnablementModel != null) {
-                            for (FeatureEnabled featureEnabled : featureEnablementModel.getFeatureEnabled()) {
-                                if (featureEnabled.getFeatureName().equals(PET_INSURANCE)) {
-                                    if (featureEnabled.getEnabled()) {
-                                        petInsuranceRequest();
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<FeatureEnablementModel> call, Throwable t) {
-                    hideView(applyPetInsuranceCardView);
-                    petInsuranceCheck(null);
-                }
-            });
-        }
-    }
-
-    public void petInsuranceRequest() {
-        petInsuranceShowLoading(true);
-        OneAppService.INSTANCE.getPetInsuranceResponse().enqueue(new Callback<PetInsuranceModel>() {
-            @Override
-            public void onResponse(Call<PetInsuranceModel> call, Response<PetInsuranceModel> response) {
-                if (getActivity() != null) {
-                    PetInsuranceModel petInsuranceModel = response.body();
-                    if (petInsuranceModel != null) {
-                        for (InsuranceProducts insuranceProduct : petInsuranceModel.getInsuranceProducts()) {
-                            if (insuranceProduct.getType().equals(PET)) {
-                                insuranceProducts = insuranceProduct;
-                            }
-                        }
-                        petInsuranceCheck(insuranceProducts);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<PetInsuranceModel> call, Throwable t) {
-                petInsuranceCheck(null);
-            }
-        });
-    }
-
-    public void appGUIDRequest(AppGUIDRequestType appGUIDRequestType) {
-        petInsuranceShowLoading(true);
-        OneAppService.INSTANCE.getAppGUIDResponse(appGUIDRequestType).enqueue(new Callback<AppGUIDModel>() {
-            @Override
-            public void onResponse(Call<AppGUIDModel> call, Response<AppGUIDModel> response) {
-                AppGUIDModel appGUIDModel = response.body();
-                if (appGUIDModel != null) {
-                    if (getActivity() != null && appGUIDModel.getHttpCode() == 200) {
-                        if (appGUIDModel.getAppGuid() != null && !appGUIDModel.getAppGuid().isEmpty()) {
-                            PetInsuranceConfig config = AppConfigSingleton.INSTANCE.getAccountOptions().getInsuranceProducts();
-                            KotlinUtils.Companion.petInsuranceRedirect(getActivity(), config.getPetInsuranceUrl() + appGUIDModel.getAppGuid(), config.getRenderMode().equals(AvailableFundFragment.WEBVIEW), config.getExitUrl());
-                        }else {
-                            petInsuranceCheck(null);
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<AppGUIDModel> call, Throwable t) {
-                petInsuranceCheck(null);
-            }
-        });
-    }
-
-    private void petInsuranceShowLoading(boolean animateProgress) {
-        applyPetInsuranceCardView.setVisibility(View.VISIBLE);
-        ivPetInsuranceProgress.setVisibility(View.VISIBLE);
-
-        if (animateProgress) {
-            RotateAnimation rotateAnimation = mUpdateMyAccount.rotateViewAnimation();
-            rotateAnimation.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                    applyPetInsuranceCardView.setEnabled(false);
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    applyPetInsuranceCardView.setEnabled(true);
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            });
-            ivPetInsuranceProgress.startAnimation(rotateAnimation);
-        }
-        tvPetInsuranceApply.setVisibility(View.GONE);
-        tvPetInsuranceCovered.setVisibility(View.GONE);
-        tvPetInsuranceHelped.setVisibility(View.GONE);
-    }
-
-    private void petInsuranceCheck(InsuranceProducts insuranceProduct) {
-        ivPetInsuranceProgress.setVisibility(View.GONE);
-        ivPetInsuranceProgress.clearAnimation();
-        if (insuranceProduct == null) {
-            petInsuranceShowLoading(false);
-            return;
-        }
-        switch (CoveredStatus.valueOf(insuranceProduct.getStatus())) {
-            case COVERED:
-                tvPetInsuranceApply.setVisibility(View.GONE);
-                tvPetInsuranceCovered.setVisibility(View.VISIBLE);
-                tvPetInsuranceHelped.setVisibility(View.VISIBLE);
-                tvPetInsuranceCovered.setText(getString(R.string.pet_insurance_covered));
-                break;
-            case NOT_COVERED:
-                tvPetInsuranceApply.setVisibility(View.VISIBLE);
-                tvPetInsuranceCovered.setVisibility(View.GONE);
-                tvPetInsuranceHelped.setVisibility(View.GONE);
-                break;
-            case PENDING:
-                tvPetInsuranceApply.setVisibility(View.GONE);
-                tvPetInsuranceCovered.setVisibility(View.VISIBLE);
-                tvPetInsuranceHelped.setVisibility(View.VISIBLE);
-                tvPetInsuranceCovered.setText(getString(R.string.pet_insurance_pending));
-                break;
-        }
-    }
-
     @Override
     public void onShoppingListsResponse(ShoppingListsResponse shoppingListsResponse) {
     }
@@ -1857,7 +1709,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             }
         } else if (requestCode == PET_INSURANCE_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
-                petInsuranceRequest();
+                petInsuranceHandler.petInsuranceRequest();
             }
         } else if (resultCode == RELOAD_ACCOUNT_RESULT_CODE) {
             if (mUpdateMyAccount != null) {
