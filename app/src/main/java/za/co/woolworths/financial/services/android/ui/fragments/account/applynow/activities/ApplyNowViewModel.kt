@@ -24,7 +24,7 @@ class ApplyNowViewModel @Inject constructor(val bottomSheet: ApplyNowBottomSheet
     suspend fun applyNowResponse(contentId:String) = getViewStateFlowForNetworkCall { queryServiceApplyNow(contentId) }
 
     var applyNowResponse: MutableStateFlow<ApplyNowModel?> = MutableStateFlow(null)
-    var applyNowState = ApplyNowState.GOLD_CREDIT_CARD
+    var applyNowState = ApplyNowState.BLACK_CREDIT_CARD
 
     fun contentID():String {
         return when(applyNowState){

@@ -40,6 +40,7 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
             clickListeners()
             setupToolbarTopMargin()
             setHeader()
+            setHeaderTitleAndDesc()
         }
         callApplyNow(viewModel.contentID())
     }
@@ -49,6 +50,14 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
         val params = toolbar.layoutParams as? ViewGroup.MarginLayoutParams
         params?.topMargin = KotlinUtils.getStatusBarHeight()
         toolbar.layoutParams = params
+    }
+    private fun ActivityApplyNowBinding.setHeaderTitleAndDesc(){
+        viewModel.getApplyNowResourcesData().apply{
+            incAccountSalesFrontLayout.let {
+                it.titleTextView.text = this.cardHeader.title
+                it.descriptionTextView.text = this.cardHeader.description
+            }
+        }
     }
 
     private fun ActivityApplyNowBinding.setHeader(){
@@ -95,6 +104,7 @@ class ApplyNowActivity : AppCompatActivity(), View.OnClickListener {
                                 setupView(this[0])
                                 viewModel.setApplyNowStateForCC(ApplyNowSectionReference.valueOf(this[0].reference))
                                 setHeader()
+                                tabLayoutApplyNow.selectTab(tabLayoutApplyNow.getTabAt(1))
                             }
                         }
                     }
